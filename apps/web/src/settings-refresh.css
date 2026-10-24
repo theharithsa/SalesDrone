@@ -1060,3 +1060,24 @@ input[type='tel'] {
     line-height: 1.75;
   }
 }
+
+.about-story-illustration {
+  margin: 0 0 28px;
+  max-width: 52rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  color: #334155;
+}
+.about-story-illustration img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.about-story-illustration figcaption {
+  padding: 0 1rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  text-align: center;
+}

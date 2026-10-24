@@ -3,8 +3,11 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+## [1.1.3] - 2026-10-25
 
-
+### Changed
+- Illustrate the About story and README with an original sketch connecting each enquiry, conversation and next step. Keep the image responsive and readable in both themes.
+- Add linked Firebase, React, TypeScript, Node.js and Gemini badges; review README setup, import wording, release instructions and the actual SVG chart stack.
 
 ## [1.1.2] - 2026-10-25
 

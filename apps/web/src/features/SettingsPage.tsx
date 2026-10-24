@@ -1,3 +1,4 @@
+import aboutStoryIllustration from '../../../../assets/salesdrone-guide-illustrations/04-the-story-behind-each-row.png';
 import DeveloperSettings from './DeveloperSettings';
 import { APP_VERSION } from '../lib/version';
 import PeopleSettings from './PeopleSettings';
@@ -540,6 +541,17 @@ export default function SettingsPage({
               <article className="panel about-story">
                 <span className="eyebrow">WHY WE BUILT SALESDRONE</span>
                 <h3>Built for the people growing a small business.</h3>
+                <figure className="about-story-illustration">
+                  <img
+                    src={aboutStoryIllustration}
+                    width={1672}
+                    height={941}
+                    alt="A small character stitches enquiry, conversation and next-step cards into a spreadsheet row, keeping the story behind each lead together."
+                  />
+                  <figcaption>
+                    The story behind each row. The next step within reach.
+                  </figcaption>
+                </figure>
                 <p>
                   Small companies have plenty of software to choose from. Yet
                   for many founders, independent businesses and small sales

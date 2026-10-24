@@ -6,7 +6,13 @@
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-0756a5)](https://theharithsa.github.io/SalesDrone/)
 [![OpenAPI 3.1](https://img.shields.io/badge/OpenAPI-3.1-0756a5)](https://sales-drone-avinya.firebaseapp.com/api/docs)
 
-**Part of Avinya Enterprises · v1.1.2 · MIT**
+[![Firebase](https://img.shields.io/badge/Firebase-Hosting_%C2%B7_Firestore_%C2%B7_Functions-0756a5?logo=firebase&logoColor=FFCA28)](https://firebase.google.com/)
+[![React 19](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
+
+**Part of Avinya Enterprises · v1.1.3 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -14,9 +20,17 @@ A sales workspace that keeps an enquiry, its conversations and its next step tog
 
 ![The dashboard funnel shows each stage’s current lead count. Synthetic demo data only.](site/assets/screenshots/dashboard-demo.jpg)
 
+## Why SalesDrone
+
+For a small business, the hard part is often keeping track of the conversation behind each spreadsheet row. SalesDrone helps founders, SDRs and small teams carry that context from the first enquiry to the next follow-up. AI provides a starting point for reminders and priorities; people stay in control of the relationship.
+
+![A character stitches enquiry, conversation and next-step cards into a spreadsheet row.](assets/salesdrone-guide-illustrations/04-the-story-behind-each-row.png)
+
+We currently use SalesDrone internally and shape it around everyday work. More modules are planned as that experience grows. Read [our story and mission](https://sales-drone-avinya.firebaseapp.com/settings?section=about) in Settings → About SalesDrone; the demo includes it too.
+
 ## From enquiry to follow-through
 
-Import the first Excel worksheet or CSV, map the fields, and select several discussion columns to become separate dated comments. New enquiries then arrive through the form. Search and combine column filters, edit a lead, record a call, and keep its comments in one timeline.
+Import the first Excel worksheet or CSV, map the fields, and select several discussion columns to become separate timeline comments; historical discussion dates remain unknown rather than being invented. New enquiries then arrive through the form. Search and combine column filters, edit a lead, record a call, and keep its comments in one timeline.
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard funnel is a snapshot of current counts: selecting a stage opens its filtered leads. Its widths do not claim conversion rates or an invented history.
 
@@ -43,7 +57,7 @@ The repository contains application code and reviewed synthetic screenshots. It 
 
 ## Run locally
 
-Use Node **22.18+**, npm, and Java **21** for the Firestore emulator.
+Use Node **22.18+ within Node 22 LTS**, npm, and Java **21** for the Firestore emulator. The deployed backend runs Node 22.
 
 ```sh
 npm ci
@@ -72,14 +86,14 @@ See the [API integration guide](docs/API.md) for scopes, CRUD examples, paginati
 
 ## Stack and technical documentation
 
-| Layer | Technology |
-|---|---|
-| Interface | React, TypeScript, Vite, Radix UI, Recharts, CSS |
-| Identity and access | Firebase Google Authentication, App Check, server-enforced capabilities |
-| API and data | Node.js 22 Cloud Functions, versioned HTTP API, Firestore transactions and indexes |
-| Follow-ups | Gemini, durable note analysis, scheduled reminder workers, Firebase Cloud Messaging |
-| Monitoring | Dynatrace browser RUM, OpenTelemetry traces/logs/metrics, transactional BizEvent outbox |
-| Delivery | GitHub Actions, Google Workload Identity Federation, Firebase Hosting/Functions, GitHub Pages |
+| Layer               | Technology                                                                                    |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| Interface           | React 19, TypeScript, Vite, Radix Dialog, Lucide icons, custom SVG charts, responsive CSS     |
+| Identity and access | Firebase Google Authentication, App Check, server-enforced capabilities                       |
+| API and data        | Node.js 22 Cloud Functions, versioned HTTP API, Firestore transactions and indexes            |
+| Follow-ups          | Gemini, durable note analysis, scheduled reminder workers, Firebase Cloud Messaging           |
+| Monitoring          | Dynatrace browser RUM, OpenTelemetry traces/logs/metrics, transactional BizEvent outbox       |
+| Delivery            | GitHub Actions, Google Workload Identity Federation, Firebase Hosting/Functions, GitHub Pages |
 
 - [Technical architecture and data flow](docs/TECHNICAL.md)
 - [Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs) and [API integration guide](docs/API.md)
@@ -96,10 +110,10 @@ The automated checks cover domain policy, scoped access, imports, reminders, sta
 
 Main-branch pushes run verification, deploy Firestore indexes/rules, wait for indexes, deploy Cloud Functions and Hosting, check published commit metadata, and send the deployment result and version to Dynatrace. A separate job publishes only the curated documentation site. Cloud authentication uses short-lived OIDC credentials; ingestion credentials stay in Secret Manager and GitHub Actions secrets.
 
-Start at **v1.0.0**. Subsequent changes use `npm run release -- patch`, `minor` or `major`, fill the dated [changelog](CHANGELOG.md), and commit the resulting version files. The workflow rejects version regressions or unchanged release versions on subsequent pushes. API contract versions are independent of app versions.
+The initial release was **v1.0.0**. Subsequent changes use `npm run release -- patch`, `minor` or `major`, fill the dated [changelog](CHANGELOG.md), and commit the resulting version files. The workflow rejects version regressions or unchanged release versions on subsequent pushes. API contract versions are independent of app versions.
 
 ## Licence and illustrations
 
 Application code is released under the [MIT licence](LICENSE), copyright Avinya Enterprises. Brand names and logos remain their owners’ marks. Font and dependency licences are documented in [third-party notices](THIRD-PARTY-NOTICES.md).
 
-The public guide includes original generated illustrations made using the [Ian Xiaohei illustration workflow](https://github.com/tojileon/ian-xiaohei-illustrations-en). Their [review manifest](assets/salesdrone-guide-illustrations/QA.md) accompanies the source images. Product screenshots use synthetic demo data; the API portal image shows only public schemas.
+The About story, README and public guide include original generated illustrations made using the [Ian Xiaohei illustration workflow](https://github.com/tojileon/ian-xiaohei-illustrations-en). Their [review manifest](assets/salesdrone-guide-illustrations/QA.md) accompanies the source images. Product screenshots use synthetic demo data; the API portal image shows only public schemas.
