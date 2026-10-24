@@ -6,7 +6,7 @@
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-0756a5)](https://theharithsa.github.io/SalesDrone/)
 [![OpenAPI 3.1](https://img.shields.io/badge/OpenAPI-3.1-0756a5)](https://sales-drone-avinya.firebaseapp.com/api/docs)
 
-**Part of Avinya Enterprises · v1.1.1 · MIT**
+**Part of Avinya Enterprises · v1.1.2 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 

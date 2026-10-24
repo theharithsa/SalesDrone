@@ -111,7 +111,7 @@ export default function SettingsPage({
       id: 'about',
       label: 'About SalesDrone',
       icon: Info,
-      description: 'Product information and privacy.',
+      description: 'Our story, our mission and the people we build for.',
     },
   ];
   const [section, setSection] = useState(
@@ -536,17 +536,65 @@ export default function SettingsPage({
             <PeopleSettings request={request} />
           ) : null}
           {section === 'about' ? (
-            <div className="brand-attribution">
-              <strong>SalesDrone by AvinyaTech</strong>
-              <span>Part of Avinya Enterprises · v{APP_VERSION}</span>
-              <a
-                href="https://firebase.google.com/support/privacy"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Built on Firebase <ExternalLink size={12} />
-              </a>
-            </div>
+            <section className="about-salesdrone">
+              <article className="panel about-story">
+                <span className="eyebrow">WHY WE BUILT SALESDRONE</span>
+                <h3>Built for the people growing a small business.</h3>
+                <p>
+                  Small companies have plenty of software to choose from. Yet
+                  for many founders, independent businesses and small sales
+                  teams, Excel is still where the work feels most comfortable.
+                  It is familiar, flexible and already part of the day.
+                </p>
+                <p>
+                  The challenge is keeping the story behind each row. An enquiry
+                  turns into a call, a discussion needs a follow-up, and useful
+                  context can end up spread across spreadsheets, messages and
+                  memory. Staying on top of it all becomes another job.
+                </p>
+                <p>
+                  SalesDrone was built to make that work feel simpler. It brings
+                  leads, conversations and follow-ups into one intuitive
+                  workspace, starting with the spreadsheets people already use.
+                  It is for founders, SDRs and anyone in a small team who is
+                  building customer relationships alongside the rest of their
+                  work.
+                </p>
+                <p>
+                  AI adds a useful starting point: turning clear follow-up notes
+                  into reminders and surfacing insights that help people decide
+                  where to focus. The aim is to give every promising enquiry the
+                  attention it needs as it moves toward a sale.
+                </p>
+                <aside
+                  className="about-mission"
+                  aria-labelledby="about-mission-title"
+                >
+                  <h4 id="about-mission-title">Our mission</h4>
+                  <p>
+                    Simplify the everyday workflow of small-business founders
+                    and their teams, so they can spend more time with customers
+                    and less time keeping track of the work.
+                  </p>
+                </aside>
+                <p>
+                  SalesDrone is currently used internally and shaped by everyday
+                  experience. More modules and updates are planned as we learn
+                  from the people using it. This is our first chapter.
+                </p>
+              </article>
+              <div className="brand-attribution">
+                <strong>SalesDrone by AvinyaTech</strong>
+                <span>Part of Avinya Enterprises · v{APP_VERSION}</span>
+                <a
+                  href="https://firebase.google.com/support/privacy"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Built on Firebase <ExternalLink size={12} />
+                </a>
+              </div>
+            </section>
           ) : null}
         </div>
       </div>

@@ -5,6 +5,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.1.2] - 2026-10-25
+
+### Changed
+- Tell the SalesDrone story in Settings → About: the familiarity of Excel, the challenge of keeping lead conversations and follow-ups together, the small teams it serves, AI as a starting point, and our mission and internal-use beginnings.
+- Present the story with readable typography, a mission callout and responsive spacing.
+
 ## [1.1.1] - 2026-10-25
 
 ### Changed

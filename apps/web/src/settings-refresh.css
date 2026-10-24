@@ -1000,3 +1000,63 @@ input[type='tel'] {
   flex-direction: row;
   align-items: flex-start;
 }
+
+.about-salesdrone {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.about-story > h3 {
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  max-width: 26ch;
+  margin: 12px 0 24px;
+}
+.about-story > p,
+.about-mission p {
+  max-width: 66ch;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--text);
+}
+.about-story > p {
+  margin: 0 0 20px;
+}
+.about-story > p:last-child {
+  margin-bottom: 0;
+}
+.about-mission {
+  padding: 22px 24px;
+  margin: 28px 0;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 14px 14px 0;
+  background: var(--accent-soft);
+}
+.about-mission h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.about-mission p {
+  margin: 0;
+}
+.about-salesdrone .brand-attribution strong {
+  font-size: 16px;
+}
+.about-salesdrone .brand-attribution span,
+.about-salesdrone .brand-attribution a {
+  font-size: 14px;
+}
+@media (max-width: 640px) {
+  .about-mission {
+    padding: 18px;
+  }
+  .about-story > h3 {
+    font-size: 26px;
+  }
+  .about-story > p,
+  .about-mission p {
+    font-size: 16px;
+    line-height: 1.75;
+  }
+}
