@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Authentication"
+  short_description: "Maintain authentication in SalesDrone"
+  default_prompt: "Use $salesdrone-authentication to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

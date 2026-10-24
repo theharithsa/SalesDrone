@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Interface and demo shell"
+  short_description: "Maintain interface and demo shell in SalesDrone"
+  default_prompt: "Use $salesdrone-interface to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

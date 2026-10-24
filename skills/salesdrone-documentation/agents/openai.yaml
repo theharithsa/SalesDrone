@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Public documentation and illustrations"
+  short_description: "Maintain public documentation and illustrations in SalesDrone"
+  default_prompt: "Use $salesdrone-documentation to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

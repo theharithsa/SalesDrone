@@ -3,6 +3,13 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+
+## [1.1.4] - 2026-10-25
+
+### Changed
+- Add 18 repository-local module skills with source, API ownership, invariants, diagnosis, tests and deployment guidance for future agents.
+- Share policy and release boundaries, expose project skill discovery, and validate metadata, links and ownership of all 47 API operations in CI.
+
 ## [1.1.3] - 2026-10-25
 
 ### Changed

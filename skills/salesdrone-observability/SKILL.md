@@ -1,0 +1,67 @@
+---
+name: salesdrone-observability
+description: "Maintain SalesDrone Dynatrace RUM, OpenTelemetry signals, committed business-event outbox and release reporting. Use for instrumentation changes; tenant investigations may use specialist Dynatrace tooling."
+---
+
+# Application observability
+
+Read [the shared operating contract](../SHARED.md) before editing. Paths and commands
+are relative to the repository root. Inspect current source rather than assuming
+this map is an immutable schema or a standalone microservice.
+
+## Responsibility and entry points
+
+RUM action/request → authenticated API + store spans → committed business outbox → exportTelemetry worker → OTLP/BizEvent ingest; release workflow emits version/commit/deployment metadata.
+
+- [functions/src/telemetry.js](../../functions/src/telemetry.js)
+- [functions/src/telemetry-outbox.js](../../functions/src/telemetry-outbox.js)
+- [functions/src/observable-store.js](../../functions/src/observable-store.js)
+- [apps/web/src/lib/rum.ts](../../apps/web/src/lib/rum.ts)
+- [apps/web/public/rum-bootstrap.js](../../apps/web/public/rum-bootstrap.js)
+- [scripts/notify-deployment.mjs](../../scripts/notify-deployment.mjs)
+- [scripts/collect-deployment.mjs](../../scripts/collect-deployment.mjs)
+- [scripts/verify-monitoring.mjs](../../scripts/verify-monitoring.mjs)
+
+## Primary API ownership
+
+No module-specific HTTP endpoints. This module supports the shared application surfaces.
+
+Read the exact request/response/error schemas in [OpenAPI](../../docs/openapi.json)
+and the route handler in [app.js](../../functions/src/app.js) when changing an API.
+
+## Data and invariants
+
+telemetryOutbox committed CloudEvents; safe service/version/request context; private token only in Secret Manager/Actions secrets.
+
+- Browser RUM is client-observed. Canonical business events come only from committed server transactions; retain at-least-once event IDs for deduplication.
+- Allowlist low-cardinality fields; exclude contact/notes/task titles/URLs/bodies/tokens/prompts. Keep Session Replay disabled and normalize action names.
+- Maintain real W3C trace context, request ID correlation, HTTP/protobuf OTLP and independently decoded transport tests. A client action is not proof of a successful backend write.
+- Exporter failure must not roll back customer operations. Preserve bounded retries, leases, stable event IDs and rejected/pending work for repair.
+- HTTP 202/201 proves ingest acceptance only, not tenant searchability, retention or native RUM-to-trace navigation. Verify each claim at its actual boundary.
+
+## Change and diagnosis
+
+Inspect sanitized status/counts and correlation IDs. Test concurrent trace isolation, malformed parent contexts, redirected ingestion endpoints, failed exports and outbox retries. Use dt-obs if available for an instrumentation task; this skill does not require it to exist.
+
+## Verification
+
+- [functions/test/observability.test.js](../../functions/test/observability.test.js)
+- [functions/test/app.test.js](../../functions/test/app.test.js)
+
+Apply the shared verification matrix to the changed behavior; these are the
+module-specific regression entry points, not a substitute for integration checks.
+
+## Deployment and handoff
+
+All affected functions when shared instrumentation changes (api, reminders, analyzeNotes, leadIntelligence, exportTelemetry), plus Hosting for RUM. Deployment reporting changes belong in the shared Actions workflow.
+
+Use [the release skill](../salesdrone-release/SKILL.md) for authorized publication.
+Adjacent owners:
+
+- [salesdrone-data-platform](../salesdrone-data-platform/SKILL.md)
+- [salesdrone-release](../salesdrone-release/SKILL.md)
+- [salesdrone-api-integrations](../salesdrone-api-integrations/SKILL.md)
+
+Read for detailed behavior:
+
+- [docs/observability.md](../../docs/observability.md)

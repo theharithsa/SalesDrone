@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Dashboard and AI insights"
+  short_description: "Maintain dashboard and ai insights in SalesDrone"
+  default_prompt: "Use $salesdrone-dashboard to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

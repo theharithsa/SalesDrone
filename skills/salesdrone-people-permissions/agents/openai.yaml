@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone People and permissions"
+  short_description: "Maintain people and permissions in SalesDrone"
+  default_prompt: "Use $salesdrone-people-permissions to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

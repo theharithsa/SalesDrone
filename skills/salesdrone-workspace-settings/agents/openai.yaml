@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Workspace fields and preferences"
+  short_description: "Maintain workspace fields and preferences in SalesDrone"
+  default_prompt: "Use $salesdrone-workspace-settings to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Firestore data platform"
+  short_description: "Maintain firestore data platform in SalesDrone"
+  default_prompt: "Use $salesdrone-data-platform to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

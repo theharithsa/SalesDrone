@@ -1,29 +1,43 @@
 # SalesDrone technical guide
 
-Current application: **1.1.3** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **1.1.4** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
 
-| Layer | Implementation |
-|---|---|
-| UI | React 19, TypeScript 5, Vite 7, Lucide icons, Radix Dialog, responsive CSS |
-| Fonts | Manrope body; Google Sans headings; Caveat first names in lead details; monospace contacts |
-| API | Node.js 22, Express 5, Zod 4, Firebase Admin SDK |
-| Identity | Firebase Auth Google provider, App Check, server memberships/capabilities |
-| Persistence | Firestore Standard, transactionally consistent writes and service-owned outboxes |
-| Hosting | Firebase Hosting SPA with function rewrites and immutable fingerprinted assets |
-| Background | Cloud Functions v2 + Cloud Scheduler, Firebase Cloud Messaging |
-| AI | Server-side Gemini structured JSON, validation and evidence grounding |
-| Import | ExcelJS in a dedicated browser worker, CSV/XLSX, bounded validated chunks |
-| Monitoring | Dynatrace RUM; OpenTelemetry HTTP/protobuf traces/logs/metrics; CloudEvents BizEvents |
-| Delivery | GitHub Actions, Google OIDC federation, Firebase CLI, GitHub Pages |
+| Layer       | Implementation                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------ |
+| UI          | React 19, TypeScript 5, Vite 7, Lucide icons, Radix Dialog, responsive CSS                 |
+| Fonts       | Manrope body; Google Sans headings; Caveat first names in lead details; monospace contacts |
+| API         | Node.js 22, Express 5, Zod 4, Firebase Admin SDK                                           |
+| Identity    | Firebase Auth Google provider, App Check, server memberships/capabilities                  |
+| Persistence | Firestore Standard, transactionally consistent writes and service-owned outboxes           |
+| Hosting     | Firebase Hosting SPA with function rewrites and immutable fingerprinted assets             |
+| Background  | Cloud Functions v2 + Cloud Scheduler, Firebase Cloud Messaging                             |
+| AI          | Server-side Gemini structured JSON, validation and evidence grounding                      |
+| Import      | ExcelJS in a dedicated browser worker, CSV/XLSX, bounded validated chunks                  |
+| Monitoring  | Dynatrace RUM; OpenTelemetry HTTP/protobuf traces/logs/metrics; CloudEvents BizEvents      |
+| Delivery    | GitHub Actions, Google OIDC federation, Firebase CLI, GitHub Pages                         |
 
 `apps/web` owns presentation, in-memory demo state and authenticated API calls.
 `functions/src` owns policy, validation, domain transactions and workers. `tests`
 and `functions/test` hold unit/domain/integration tests. `site` is the curated public
 product guide. `assets/salesdrone-guide-illustrations` retains original generated
 illustrations. `scripts` contains release, contract, security and operator tooling.
+
+## Module skills and agent ownership
+
+The [module skill catalog](../skills/README.md) covers 18 logical domains and
+platform modules. Each entry maps source files, primary API ownership, state,
+invariants, diagnosis, tests and deployment impact. The [shared contract](../skills/SHARED.md)
+keeps policy and release rules consistent. Project discovery uses .agents/skills,
+a symlink to canonical skills/. No global skill installation is performed.
+
+These boundaries support future authorized agent assignments; they do not split
+Firebase into independently deployed microservices. Shared router/policy/contracts,
+indexes, types and release metadata need one integrator. npm run skills:check
+checks discovery, references and complete single-owner coverage of OpenAPI operations
+and runs in CI.
 
 ## Request and domain lifecycle
 

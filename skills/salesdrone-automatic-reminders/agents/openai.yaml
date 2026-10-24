@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone AI automatic reminders"
+  short_description: "Maintain ai automatic reminders in SalesDrone"
+  default_prompt: "Use $salesdrone-automatic-reminders to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

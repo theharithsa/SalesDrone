@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Conversations and call timeline"
+  short_description: "Maintain conversations and call timeline in SalesDrone"
+  default_prompt: "Use $salesdrone-conversations to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

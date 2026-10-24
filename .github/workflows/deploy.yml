@@ -31,6 +31,7 @@ jobs:
       - run: npm ci
       - run: npm run build:metadata
       - run: npm run security:scan
+      - run: npm run skills:check
       - run: npm run release:check
         if: github.event_name != 'workflow_dispatch'
       - run: npm test

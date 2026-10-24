@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone API platform and personal access tokens"
+  short_description: "Maintain api platform and personal access tokens in SalesDrone"
+  default_prompt: "Use $salesdrone-api-integrations to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

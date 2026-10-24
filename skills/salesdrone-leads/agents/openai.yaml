@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Lead service"
+  short_description: "Maintain lead service in SalesDrone"
+  default_prompt: "Use $salesdrone-leads to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

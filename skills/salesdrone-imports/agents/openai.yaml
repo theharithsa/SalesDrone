@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Workbook and CSV imports"
+  short_description: "Maintain workbook and csv imports in SalesDrone"
+  default_prompt: "Use $salesdrone-imports to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."

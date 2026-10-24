@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.1.3 · MIT**
+**Part of Avinya Enterprises · v1.1.4 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -96,6 +96,7 @@ See the [API integration guide](docs/API.md) for scopes, CRUD examples, paginati
 | Delivery            | GitHub Actions, Google Workload Identity Federation, Firebase Hosting/Functions, GitHub Pages |
 
 - [Technical architecture and data flow](docs/TECHNICAL.md)
+- [Module skills for future agents](skills/README.md) — 18 service playbooks with code, API, test and deployment boundaries
 - [Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs) and [API integration guide](docs/API.md)
 - [Versioned OpenAPI contract](docs/openapi.json)
 - [Automatic reminders](docs/AUTOMATIC-REMINDERS.md) and [intelligence/scoring](docs/INTELLIGENCE.md)

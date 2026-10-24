@@ -10,6 +10,14 @@ filler praise. Distinguish local tests, deployment, HTTP ingest acceptance and t
 searchability. Do not claim screenshots or physical-device tests that were not done.
 Do not spawn agents unless the human explicitly asks for delegation.
 
+## Module skills
+
+Use the matching [module skill](skills/README.md) and its [shared contract](skills/SHARED.md)
+for domain work. Canonical skills live in skills/; .agents/skills provides project
+discovery. Update module ownership when APIs change and run npm run skills:check.
+These are logical module boundaries, not permission to deploy or spawn agents.
+Coordinate shared-file changes and keep one integrated release owner.
+
 ## Domain and security
 
 - Firebase Google Auth UID and active server-side membership control access. Assigned
@@ -17,7 +25,7 @@ Do not spawn agents unless the human explicitly asks for delegation.
 - Unapproved identities see isolated synthetic demo data. Never use production data as
   a demo fixture. Preserve the two protected bootstrap administrator identities.
 - Keep Firestore client rules deny-all. Public Firebase browser config is not a secret;
-  Gemini, Dynatrace and cursor credentials belong in Secret Manager, never VITE_*.
+  Gemini, Dynatrace and cursor credentials belong in Secret Manager, never VITE\_\*.
 - New features need versioned HTTP contracts, validation, policy, bounded pagination,
   optimistic versions where appropriate, audit/observability and meaningful tests.
 - Idempotency, atomic domain/outbox writes, suppression, private reminders, note

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Tasks and reminder delivery"
+  short_description: "Maintain tasks and reminder delivery in SalesDrone"
+  default_prompt: "Use $salesdrone-tasks-reminders to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
