@@ -1,0 +1,11 @@
+# Avinya Enterprises branding — 24 October 2026
+
+The supplied `SPR LOGO (2).png` is preserved byte-for-byte at `apps/web/public/brand/avinya-enterprises-original.png`. The generated cutout attempts were not used. A self-contained SVG embeds the original image and applies an sRGB filter plus its original alpha channel to create a monochrome mask. CSS renders that mask in white for dark mode and dark navy for light mode, including System appearance. The supplied mark's transparency and outline are retained, with its pale stripes shown as cutouts. No external image service is used at runtime.
+
+The Enterprises mark and a small Avinya Enterprises wordmark appear at the right of the login header and the authenticated workspace header. The SalesDrone brand stays in the login header and main sidebar. Narrow screens use the Enterprises symbol with its accessible name; desktop adds the wordmark. The workspace mark remains available when the sidebar is collapsed. Logos are decorative brand identities, not new navigation controls.
+
+The supplied PNG's blue (#0054A6) is the primary button colour and light-theme link/selection accent. Dark-theme links use a lighter blue in the same colour family for legibility; primary buttons keep the supplied blue with white labels. Login emphasis, avatars, focus cards, focus outlines and formerly purple decorative badges now use the blue palette. Semantic warning/error/success colours remain distinct.
+
+Verification: TypeScript and production build pass. Login and workspace headers were visually checked in both themes, including a compact mobile layout and the normal desktop viewport. Observed 390px login/workspace and 1280px desktop views did not overflow. The source file copy is byte-identical, the development-only comparison page is excluded from the production build, and screenshots are under `screenshots/avinya-brand/`. No backend or customer-data writes were needed.
+
+Production verification: Firebase Hosting release completed. The original PNG, monochrome SVG and current stylesheet return HTTP 200. The authenticated production header exposes the Avinya Enterprises identity and uses the live mask asset; the latest blue theme stylesheet is loaded. Verification did not change live records or account preferences.

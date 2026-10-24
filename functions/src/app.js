@@ -1,0 +1,1715 @@
+import { APP_VERSION } from './version.js';
+import { recordStage,transitionId } from './journey.js';
+import { z } from 'zod';
+import {
+  SCORING_PATH,
+  ScoringPatch,
+  readScoring,
+  scoreView,
+  processLeadScore,
+} from './scoring.js';
+import { dashboardSnapshot, dashboardBrief } from './dashboard.js';
+import { queueLeadNotification, notificationVisible } from './notifications.js';
+import {
+  readFieldOptions,
+  mergeFieldSettings,
+  validateCustomValues,
+  assertFieldOption,
+  FieldOptionsPatch,
+  FIELD_SETTINGS_PATH,
+} from './field-options.js';
+import express from 'express';
+import {
+  randomUUID,
+  randomBytes,
+  createHmac,
+  timingSafeEqual,
+} from 'node:crypto';
+import {
+  AppError,
+  parse,
+  LeadInput,
+  LeadPatch,
+  AssignmentPatch,
+  NotificationPatch,
+  ActivityInput,
+  AutomaticReminderAction,
+  TaskInput,
+  TaskPatch,
+  TaskDelete,
+  GrantInput,
+  MemberPatch,
+  Preferences,
+  DeviceInput,
+  ImportInput,
+  PRESETS,
+  STAGES,
+} from './contracts.js';
+import {
+  ROOT,
+  path,
+  hash,
+  googleIdentity,
+  resolveIdentity,
+  requireMember,
+  scopeFilters,
+  leadAccess,
+  canReadLead,
+  assertVersion,
+  validateTimezone,
+  ADMIN_EMAILS,
+} from './policy.js';
+import { parseLeadFilters, matchesLead } from './lead-filters.js';
+import { appendDiscussions, appendImportedComments } from './discussions.js';
+import { prepareLead, normalizeLead, contactKeys } from './leads.js';
+import { IMPORT_CHUNK_SIZE, previewRows } from './imports.js';
+import { makeTask, queueTask } from './tasks.js';
+import { enqueueAnalysis, AUTO_DEFAULTS } from './automatic-reminders.js';
+const cursorSecret =
+  process.env.CURSOR_SECRET || randomBytes(32).toString('hex');
+const uid = () => Date.now().toString(36) + '_' + randomUUID();
+const sign = (v) =>
+  createHmac('sha256', cursorSecret).update(v).digest('base64url');
+const encodeCursor = (after, binding) => {
+  const v = Buffer.from(JSON.stringify({ after, binding })).toString(
+    'base64url',
+  );
+  return `${v}.${sign(v)}`;
+};
+function decodeCursor(value, binding) {
+  try {
+    const [v, s] = value.split('.');
+    const expected = sign(v);
+    if (
+      !s ||
+      s.length !== expected.length ||
+      !timingSafeEqual(Buffer.from(s), Buffer.from(expected))
+    )
+      throw Error();
+    const c = JSON.parse(Buffer.from(v, 'base64url').toString());
+    if (c.binding !== binding || !Array.isArray(c.after)) throw Error();
+    return c.after;
+  } catch {
+    throw new AppError(
+      400,
+      'CURSOR',
+      'Invalid or expired cursor for these filters',
+    );
+  }
+}
+export function createApp({
+  store,
+  telemetry = () => null,
+  verifyToken,
+  verifyAppCheck,
+  sendTest = async () => {},
+  extractScore = null,
+  summarizeDashboard = null,
+  now = () => new Date().toISOString(),
+}) {
+  const app = express();
+  app.disable('x-powered-by');
+  app.use((req, res, next) => {
+    req.requestId = randomUUID();
+    res.set({
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Request-Id': req.requestId,
+      'X-App-Version': APP_VERSION,
+    });
+    next();
+  });
+  app.use((req, res, next) => {
+    const t = telemetry();
+    return t ? t.http(req, res, next) : next();
+  });
+  app.use(express.json({ limit: '12mb' }));
+  const router = express.Router();
+  router.use(async (req, res, next) => {
+    try {
+      const bearer = req.headers.authorization?.match(/^Bearer (.+)$/)?.[1];
+      if (!bearer)
+        throw new AppError(401, 'UNAUTHENTICATED', 'Sign in to continue');
+      let token;
+      try {
+        token = await verifyToken(bearer);
+      } catch {
+        throw new AppError(
+          401,
+          'UNAUTHENTICATED',
+          'Your session expired. Sign in again.',
+        );
+      }
+      req.identity = googleIdentity(token);
+      telemetry()?.identify(req.identity.uid);
+      if (verifyAppCheck)
+        await verifyAppCheck(req.headers['x-firebase-appcheck']);
+      for (const p of req.path.split('/').filter(Boolean))
+        if (!/^[A-Za-z0-9_.:-]+$/.test(p))
+          throw new AppError(400, 'PATH', 'Invalid path');
+      next();
+    } catch (e) {
+      next(e);
+    }
+  });
+  const route = (method, url, capability, handler) =>
+    router[method](url, async (req, res, next) => {
+      try {
+        req.member = await requireMember(store, req.identity, capability);
+        telemetry()?.operation(method.toUpperCase() + ' ' + url);
+        const allowed =
+          url === '/lead-scores'
+            ? ['ids']
+            : url === '/leads'
+              ? [
+                  'limit',
+                  'cursor',
+                  'stage',
+                  'source',
+                  'assignedToUid',
+                  'search',
+                  'field',
+                  'filters',
+                ]
+              : url === '/tasks'
+                ? ['limit', 'cursor', 'state', 'leadId']
+                : ['limit', 'cursor'];
+        for (const [key, value] of Object.entries(req.query))
+          if (!allowed.includes(key) || typeof value !== 'string')
+            throw new AppError(
+              400,
+              'FILTER',
+              'Unknown or invalid query parameter: ' + key,
+            );
+        const result = await handler(req);
+        res.json(result ?? { ok: true });
+      } catch (e) {
+        next(e);
+      }
+    });
+  async function mutate(req, capability, fn, { idempotent = false } = {}) {
+    const key = req.headers['idempotency-key'];
+    if (idempotent && (!key || !/^[a-f0-9-]{36}$/i.test(key)))
+      throw new AppError(400, 'IDEMPOTENCY', 'Supply a UUID Idempotency-Key');
+    const fingerprint = hash(JSON.stringify([req.method, req.path, req.body]));
+    return store.run(async (tx) => {
+      const member = await requireMember(tx, req.identity, capability);
+      const requestPath = path('requests', hash(member.uid + ':' + key));
+      const prior = idempotent ? await tx.get(requestPath) : null;
+      if (prior) {
+        if (prior.fingerprint !== fingerprint)
+          throw new AppError(
+            409,
+            'IDEMPOTENCY_CONFLICT',
+            'This key was already used for a different request',
+          );
+        const resource = req.params.id;
+        if (req.path.startsWith('/leads/') && resource)
+          await leadAccess(tx, member, resource);
+        if (req.path === '/leads' && prior.result?.id)
+          await leadAccess(tx, member, prior.result.id);
+        if (req.path === '/tasks' && prior.result?.leadId)
+          await leadAccess(tx, member, prior.result.leadId);
+        if (req.path.startsWith('/activities/') && prior.result?.leadId)
+          await leadAccess(tx, member, prior.result.leadId);
+        return prior.result;
+      }
+      const ratePath = path(
+        'rateLimits',
+        hash(`${member.uid}:${now().slice(0, 16)}`),
+      );
+      const rate = await tx.get(ratePath);
+      if ((rate?.count || 0) >= 180)
+        throw new AppError(
+          429,
+          'RATE_LIMIT',
+          'Too many changes. Try again in a minute.',
+        );
+      const result = await fn(tx, member);
+      tx.set(ratePath, {
+        count: (rate?.count || 0) + 1,
+        expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+      });
+      const id = uid();
+      tx.set(path('auditEvents', id), {
+        id,
+        actorUid: member.uid,
+        action: req.method + ' ' + req.route.path,
+        requestId: req.requestId,
+        createdAt: now(),
+      });
+      if (idempotent)
+        tx.set(requestPath, { fingerprint, result, createdAt: now() });
+      return result;
+    });
+  }
+  async function list(
+    req,
+    collection,
+    filters = [],
+    ownerPath,
+    order = 'id',
+    direction = 'desc',
+  ) {
+    const n = Number(req.query.limit || 30);
+    if (!Number.isInteger(n) || n < 1 || n > 100)
+      throw new AppError(400, 'LIMIT', 'Limit must be 1–100');
+    const binding = hash(
+      JSON.stringify([
+        req.member.uid,
+        req.member.version,
+        collection,
+        filters,
+        order,
+        direction,
+      ]),
+    );
+    const after = req.query.cursor
+      ? decodeCursor(String(req.query.cursor), binding)
+      : undefined;
+    const records = await store.query(ownerPath || path(collection), {
+      filters,
+      order,
+      direction,
+      after,
+      limit: n + 1,
+    });
+    const items = records.slice(0, n);
+    return {
+      items,
+      nextCursor:
+        records.length > n
+          ? encodeCursor(
+              order === 'id'
+                ? [items.at(-1).id]
+                : [items.at(-1)[order], items.at(-1).id],
+              binding,
+            )
+          : null,
+    };
+  }
+  const taskRecord = (input, member, id, leadId) =>
+    makeTask(input, member, id, leadId, now());
+  async function readTask(db, m, id) {
+    const t = await db.get(path('tasks', id));
+    if (!t || t.deleted) throw new AppError(404, 'NOT_FOUND', 'Task not found');
+    if (t.leadId) await leadAccess(db, m, t.leadId);
+    else if (t.creatorUid !== m.uid)
+      throw new AppError(404, 'NOT_FOUND', 'Task not found');
+    return t;
+  }
+  router.get('/me', async (req, res, next) => {
+    try {
+      const m = await resolveIdentity(store, req.identity);
+      const invitation = !m
+        ? await store.get(path('invitations', hash(req.identity.email)))
+        : null;
+      const prefs = await store.get(`users/${req.identity.uid}`);
+      res.json({
+        identity: req.identity,
+        mode: m ? 'live' : 'demo',
+        member: m,
+        preferences: {
+          timezone: 'Asia/Kolkata',
+          appearance: 'system',
+          ...AUTO_DEFAULTS,
+          ...prefs,
+        },
+        invitation:
+          invitation?.active && invitation.expiresAt > now()
+            ? {
+                id: invitation.id,
+                role: invitation.role,
+                scope: invitation.scope,
+              }
+            : null,
+      });
+    } catch (e) {
+      next(e);
+    }
+  });
+  router.post('/invitations/:id/accept', async (req, res, next) => {
+    try {
+      if (req.params.id !== hash(req.identity.email))
+        throw new AppError(
+          403,
+          'INVITATION',
+          'Invitation does not match this identity',
+        );
+      await store.run(async (tx) => {
+        const p = path('invitations', req.params.id);
+        const inv = await tx.get(p);
+        const existing = await tx.get(path('members', req.identity.uid));
+        if (!inv?.active || inv.expiresAt <= now())
+          throw new AppError(
+            404,
+            'INVITATION',
+            'Invitation has expired or was revoked',
+          );
+        if (existing?.role === 'Admin')
+          throw new AppError(409, 'ADMIN', 'Administrator already has access');
+        tx.set(path('members', req.identity.uid), {
+          ...req.identity,
+          id: req.identity.uid,
+          role: inv.role,
+          capabilities: inv.capabilities,
+          scope: inv.scope,
+          active: true,
+          version: (existing?.version || 0) + 1,
+        });
+        tx.set(p, { ...inv, active: false, acceptedUid: req.identity.uid });
+        const id = uid();
+        tx.set(path('auditEvents', id), {
+          id,
+          actorUid: req.identity.uid,
+          action: 'invitation.accept',
+          createdAt: now(),
+        });
+      });
+      res.json({ ok: true });
+    } catch (e) {
+      next(e);
+    }
+  });
+  route('patch', '/me', null, (req) => {
+    const input = parse(Preferences, req.body);
+    validateTimezone(input.timezone);
+    return mutate(req, null, async (tx) => {
+      const prefs = {
+        ...AUTO_DEFAULTS,
+        ...(await tx.get(`users/${req.identity.uid}`)),
+        ...input,
+      };
+      tx.set(`users/${req.identity.uid}`, prefs);
+      return prefs;
+    });
+  });
+  // Scan authorized, indexed lead pages, then apply arbitrary column combinations.
+  // The signed cursor resumes after the last scanned row, even on sparse pages.
+  async function filteredLeads(req) {
+    const n = Number(req.query.limit || 30);
+    if (!Number.isInteger(n) || n < 1 || n > 100)
+      throw new AppError(400, 'LIMIT', 'Limit must be 1–100');
+    const filters = parseLeadFilters(req.query.filters || '[]');
+    const customFilters = filters.filter((f) => f.field.startsWith('cf_'));
+    if (customFilters.length) {
+      const config = await readFieldOptions(store);
+      for (const filter of customFilters) {
+        const definition = config.customFields.find(
+          (f) => f.id === filter.field && !f.deleted,
+        );
+        if (
+          !definition ||
+          (['before', 'after'].includes(filter.op) &&
+            definition.type !== 'date')
+        )
+          throw new AppError(
+            400,
+            'FILTER',
+            'Choose an available custom field and a compatible comparison',
+          );
+      }
+    }
+    if (req.query.stage) {
+      if (String(req.query.stage).length > 100)
+        throw new AppError(400, 'FILTER', 'Unknown stage');
+      filters.push({ field: 'stage', op: 'equals', value: req.query.stage });
+    }
+    if (req.query.source)
+      filters.push({ field: 'source', op: 'equals', value: req.query.source });
+    if (req.query.search) {
+      const field = req.query.field || 'name';
+      if (
+        !['name', 'company', 'phone', 'email', 'location', 'zone'].includes(
+          field,
+        )
+      )
+        throw new AppError(400, 'FILTER', 'Unknown search field');
+      filters.push({ field, op: 'contains', value: req.query.search });
+    }
+    const base = [...scopeFilters(req.member), ['archived', '==', false]];
+    if (req.query.assignedToUid) {
+      if (req.member.role !== 'Admin')
+        throw new AppError(
+          403,
+          'SCOPE',
+          'Only admins can filter other assignees',
+        );
+      base.push(['assignedToUid', '==', req.query.assignedToUid]);
+    }
+    const binding = hash(
+      JSON.stringify([
+        req.member.uid,
+        req.member.version,
+        'columnFilters',
+        base,
+        filters,
+      ]),
+    );
+    let after = req.query.cursor
+      ? decodeCursor(String(req.query.cursor), binding)
+      : undefined;
+    const items = [];
+    let scanned = 0,
+      hasMore = false;
+    while (items.length < n && scanned < 1000) {
+      const page = await store.query(path('leads'), {
+        filters: base,
+        order: 'id',
+        direction: 'desc',
+        after,
+        limit: Math.min(100, 1000 - scanned),
+      });
+      if (!page.length) {
+        hasMore = false;
+        break;
+      }
+      for (let i = 0; i < page.length; i++) {
+        const lead = page[i];
+        scanned++;
+        after = [lead.id];
+        if (matchesLead(lead, filters)) items.push(lead);
+        if (items.length === n) {
+          hasMore = i < page.length - 1 || page.length === 100;
+          break;
+        }
+      }
+      if (items.length === n) break;
+      hasMore = page.length === 100;
+      if (!hasMore) break;
+    }
+    return {
+      items,
+      nextCursor: hasMore ? encodeCursor(after, binding) : null,
+      scanLimited: scanned >= 1000 && hasMore,
+    };
+  }
+  route('get', '/field-options', 'leads:read', () => readFieldOptions(store));
+  route('patch', '/field-options', 'members:write', (req) => {
+    const input = parse(FieldOptionsPatch, req.body);
+    return mutate(req, 'members:write', async (tx, m) => {
+      if (m.role !== 'Admin')
+        throw new AppError(
+          403,
+          'ADMIN',
+          'Only administrators can change field choices',
+        );
+      const current = await readFieldOptions(tx);
+      assertVersion(current, input.expectedVersion);
+      const updated = {
+        version: current.version + 1,
+        ...mergeFieldSettings(current, input),
+        updatedAt: now(),
+        updatedByUid: m.uid,
+      };
+      tx.set(FIELD_SETTINGS_PATH, updated);
+      return updated;
+    });
+  });
+  route('get', '/leads', 'leads:read', (req) => {
+    if (
+      req.query.filters !== undefined ||
+      ['location', 'zone'].includes(req.query.field)
+    )
+      return filteredLeads(req);
+    let searchOrder = 'id';
+    const filters = [...scopeFilters(req.member), ['archived', '==', false]];
+    if (req.query.stage) {
+      if (String(req.query.stage).length > 100)
+        throw new AppError(400, 'FILTER', 'Invalid stage');
+      filters.push(['stage', '==', req.query.stage]);
+    }
+    if (req.query.source)
+      filters.push(['source', '==', String(req.query.source)]);
+    if (req.query.assignedToUid) {
+      if (req.member.role !== 'Admin')
+        throw new AppError(
+          403,
+          'SCOPE',
+          'Only admins can filter other assignees',
+        );
+      filters.push(['assignedToUid', '==', String(req.query.assignedToUid)]);
+    }
+    if (req.query.search) {
+      const field = req.query.field || 'name';
+      const fields = {
+        name: 'nameNormalized',
+        company: 'companyNormalized',
+        phone: 'phoneNormalized',
+        email: 'email',
+      };
+      if (!fields[field])
+        throw new AppError(400, 'FILTER', 'Unknown search field');
+      const value = String(req.query.search).trim().toLowerCase().slice(0, 200);
+      if (field === 'name' || field === 'company') {
+        searchOrder = fields[field];
+        filters.push(
+          [fields[field], '>=', value],
+          [fields[field], '<=', value + '\uf8ff'],
+        );
+      } else filters.push([fields[field], '==', value]);
+    }
+    return list(
+      req,
+      'leads',
+      filters,
+      undefined,
+      searchOrder,
+      searchOrder === 'id' ? 'desc' : 'asc',
+    );
+  });
+  route('post', '/leads', 'leads:create', (req) => {
+    const input = parse(LeadInput, req.body);
+    if (req.member.role !== 'Admin' && input.needsReview)
+      throw new AppError(
+        403,
+        'REVIEW',
+        'Only admins may save incomplete legacy contacts',
+      );
+    return mutate(
+      req,
+      'leads:create',
+      async (tx, m) => {
+        const options = await readFieldOptions(tx);
+        assertFieldOption(options, 'stage', input.stage);
+        validateCustomValues(options, input.customFields);
+        const id = uid();
+        const prepared = await prepareLead(tx, input, {
+          uid: m.uid,
+          id,
+          now: now(),
+        });
+        prepared.write();
+        queueLeadNotification(
+          tx,
+          prepared.record,
+          m.uid,
+          'lead_created',
+          now(),
+        );
+        await appendDiscussions(tx, prepared.record, m, now());
+        return prepared.record;
+      },
+      { idempotent: true },
+    );
+  });
+  route('get', '/leads/:id', 'leads:read', (req) =>
+    leadAccess(store, req.member, req.params.id),
+  );
+  route('patch', '/leads/:id', 'leads:edit', (req) => {
+    const input = parse(LeadPatch, req.body);
+    return mutate(req, 'leads:edit', async (tx, m) => {
+      const old = await leadAccess(tx, m, req.params.id);
+      assertVersion(old, input.expectedVersion);
+      const base = {};
+      for (const k of Object.keys(LeadInput.shape))
+        if (k in old) base[k] = old[k];
+      const { expectedVersion, doNotContact, suppressionReason, ...changes } =
+        input;
+      if (changes.needsReview !== undefined && m.role !== 'Admin')
+        throw new AppError(
+          403,
+          'REVIEW',
+          'Only admins may change legacy review status',
+        );
+      const options = await readFieldOptions(tx);
+      assertFieldOption(options, 'stage', changes.stage, old.stage);
+      if (changes.customFields !== undefined) {
+        changes.customFields = { ...old.customFields, ...changes.customFields };
+        validateCustomValues(
+          options,
+          changes.customFields,
+          old.customFields || {},
+        );
+      }
+      const normalized = normalizeLead({ ...base, ...changes });
+      const keys = [
+        ...new Set([...contactKeys(old), ...contactKeys(normalized)]),
+      ];
+      const docs = await Promise.all(
+        keys.map((k) => tx.get(path('dedupeKeys', k))),
+      );
+      const otherIds = keys
+        .filter((k) => contactKeys(normalized).includes(k))
+        .flatMap((k) =>
+          (docs[keys.indexOf(k)]?.leadIds || []).filter((id) => id !== old.id),
+        );
+      if (otherIds.length)
+        throw new AppError(
+          409,
+          'DUPLICATE',
+          'This contact belongs to another lead',
+        );
+      const tasks =
+        doNotContact === true
+          ? await tx.query(path('tasks'), {
+              filters: [
+                ['leadId', '==', old.id],
+                ['state', '==', 'Pending'],
+              ],
+              limit: 101,
+            })
+          : [];
+      if (tasks.length > 100)
+        throw new AppError(
+          409,
+          'TASK_LIMIT',
+          'Cancel pending tasks before suppressing this lead',
+        );
+      const { allowDuplicate, ...fields } = normalized;
+      const updated = {
+        ...old,
+        ...fields,
+        doNotContact: doNotContact ?? old.doNotContact,
+        suppressionReason: suppressionReason ?? old.suppressionReason,
+        updatedAt: now(),
+        version: old.version + 1,
+      };
+      if (updated.doNotContact && !updated.suppressionReason)
+        throw new AppError(400, 'REASON', 'Add a do-not-contact reason');
+      keys.forEach((k, i) => {
+        const ids = (docs[i]?.leadIds || []).filter((id) => id !== old.id);
+        if (contactKeys(normalized).includes(k)) ids.push(old.id);
+        tx.set(path('dedupeKeys', k), { id: k, leadIds: ids });
+      });
+      await appendDiscussions(tx, updated, m, now(), {
+        previous: old,
+        idPrefix: uid(),
+      });
+      tx.set(path('leads', old.id), updated);
+      recordStage(tx, updated, old.stage, m.uid, now(), 'edited');
+      for (const t of tasks)
+        if (t.kind === 'outreach')
+          tx.set(path('tasks', t.id), {
+            ...t,
+            state: 'Cancelled',
+            version: t.version + 1,
+          });
+      const aid = uid();
+      tx.set(path('activities', aid), {
+        id: aid,
+        leadId: old.id,
+        type: 'change',
+        notes:
+          old.stage !== updated.stage
+            ? `Stage changed to ${updated.stage}`
+            : 'Lead details updated',
+        actorUid: m.uid,
+        createdAt: now(),
+      });
+      return updated;
+    });
+  });
+  route('post', '/leads/:id/archive', 'leads:edit', (req) =>
+    mutate(req, 'leads:edit', async (tx, m) => {
+      const l = await leadAccess(tx, m, req.params.id);
+      assertVersion(l, req.body.expectedVersion);
+      const tasks = await tx.query(path('tasks'), {
+        filters: [
+          ['leadId', '==', l.id],
+          ['state', '==', 'Pending'],
+        ],
+        limit: 101,
+      });
+      if (tasks.length > 100)
+        throw new AppError(409, 'TASK_LIMIT', 'Too many pending tasks');
+      tx.set(path('leads', l.id), {
+        ...l,
+        archived: true,
+        version: l.version + 1,
+        updatedAt: now(),
+      });
+      for (const t of tasks)
+        tx.set(path('tasks', t.id), {
+          ...t,
+          state: 'Cancelled',
+          version: t.version + 1,
+        });
+      return { ok: true };
+    }),
+  );
+  route('patch', '/leads/:id/assignment', 'assignments:write', (req) =>
+    mutate(req, 'assignments:write', async (tx, m) => {
+      const input = parse(AssignmentPatch, req.body);
+      const l = await leadAccess(tx, m, req.params.id);
+      assertVersion(l, input.expectedVersion);
+      const target = input.assignedToUid;
+      if (target === l.assignedToUid) return l;
+      if (l.archived)
+        throw new AppError(
+          400,
+          'ARCHIVED',
+          'Restore this lead before assigning it',
+        );
+      const member = target ? await tx.get(path('members', target)) : null;
+      if (
+        target &&
+        (!member?.active || !member.capabilities.includes('leads:read'))
+      )
+        throw new AppError(
+          400,
+          'ASSIGNEE',
+          'Choose an active member with lead access',
+        );
+      const tasks = await tx.query(path('tasks'), {
+        filters: [
+          ['leadId', '==', l.id],
+          ['state', '==', 'Pending'],
+        ],
+        limit: 101,
+      });
+      if (tasks.length > 100)
+        throw new AppError(409, 'TASK_LIMIT', 'Too many pending tasks');
+      const updated = {
+        ...l,
+        assignedToUid: target || null,
+        assignmentRevision: (l.assignmentRevision || 1) + 1,
+        version: l.version + 1,
+        updatedAt: now(),
+      };
+      tx.set(path('leads', l.id), updated);
+      queueLeadNotification(tx, updated, m.uid, 'lead_assigned', now());
+      for (const t of tasks)
+        tx.set(path('tasks', t.id), {
+          ...t,
+          state: 'Cancelled',
+          version: t.version + 1,
+        });
+      return updated;
+    }),
+  );
+  route('get', '/leads/:id/journey', 'leads:read', async (req) => {
+    const lead = await leadAccess(store, req.member, req.params.id);
+    const history = await list(req, 'leadTransitions', [
+      ['leadId', '==', lead.id],
+    ]);
+    return {
+      ...history,
+      currentStage: lead.stage,
+      historyComplete: !!(await store.get(path('leadTransitions',transitionId(lead.id,1)))),
+    };
+  });
+  route('get', '/leads/:id/activities', 'leads:read', async (req) => {
+    await leadAccess(store, req.member, req.params.id);
+    return list(req, 'activities', [['leadId', '==', req.params.id]]);
+  });
+  route('post', '/leads/:id/activities', 'activities:write', (req) => {
+    const input = parse(ActivityInput, req.body);
+    if (input.type === 'call' && !input.outcome)
+      throw new AppError(400, 'OUTCOME', 'Choose a call outcome');
+    if (input.type === 'note' && !input.notes)
+      throw new AppError(400, 'NOTE', 'Write a note');
+    return mutate(
+      req,
+      'activities:write',
+      async (tx, m) => {
+        const l = await leadAccess(tx, m, req.params.id);
+        assertVersion(l, input.expectedVersion);
+        const options = await readFieldOptions(tx);
+        assertFieldOption(options, 'stage', input.stage, l.stage);
+        assertFieldOption(options, 'outcome', input.outcome);
+        assertFieldOption(options, 'disposition', input.disposition);
+        if (
+          input.type === 'call' &&
+          (l.doNotContact || l.needsReview || l.archived)
+        )
+          throw new AppError(
+            409,
+            'SUPPRESSED',
+            'This lead is not available for outreach',
+          );
+        if (input.followUp && !m.capabilities.includes('tasks:write'))
+          throw new AppError(403, 'TASKS', 'You cannot create tasks');
+        if (input.stage && !m.capabilities.includes('leads:edit'))
+          throw new AppError(403, 'STAGE', 'You cannot change lead stages');
+        const suppress = input.disposition === 'Do not contact';
+        if (suppress && input.followUp?.kind === 'outreach')
+          throw new AppError(
+            400,
+            'SUPPRESSED',
+            'Do not create outreach for a suppressed lead',
+          );
+        const pending = suppress
+          ? await tx.query(path('tasks'), {
+              filters: [
+                ['leadId', '==', l.id],
+                ['state', '==', 'Pending'],
+              ],
+              limit: 101,
+            })
+          : [];
+        if (pending.length > 100)
+          throw new AppError(409, 'TASK_LIMIT', 'Too many pending tasks');
+        const id = uid();
+        const { followUp, expectedVersion, stage, ...fields } = input;
+        const activity = {
+          ...fields,
+          id,
+          leadId: l.id,
+          actorUid: m.uid,
+          createdAt: now(),
+          revision: 1,
+        };
+        const updated = {
+          ...l,
+          stage: stage || l.stage,
+          ...(input.notes ? { latestComment: input.notes } : {}),
+          version: l.version + 1,
+          updatedAt: now(),
+          ...(input.type === 'call'
+            ? { lastContactAt: now(), lastCallOutcome: input.outcome }
+            : {}),
+          ...(suppress
+            ? {
+                doNotContact: true,
+                suppressionReason: input.notes || 'Do not contact requested',
+              }
+            : {}),
+        };
+        const savedActivity = await enqueueAnalysis(
+          tx,
+          activity,
+          m,
+          updated,
+          now(),
+          { manual: Boolean(followUp) },
+        );
+        tx.set(path('leads', l.id), updated);
+        recordStage(tx, updated, l.stage, m.uid, now(), 'conversation');
+        if (followUp) {
+          const task = taskRecord(followUp, m, uid(), l.id);
+          if (task.kind === 'outreach' && (l.doNotContact || l.needsReview))
+            throw new AppError(409, 'SUPPRESSED', 'Cannot schedule outreach');
+          queueTask(tx, task);
+        }
+        for (const t of pending)
+          if (t.kind === 'outreach')
+            tx.set(path('tasks', t.id), {
+              ...t,
+              state: 'Cancelled',
+              version: t.version + 1,
+            });
+        return { activity: savedActivity, lead: updated };
+      },
+      { idempotent: true },
+    );
+  });
+  route('post', '/activities/:id/corrections', 'activities:write', (req) => {
+    const input = parse(
+      ActivityInput.omit({
+        followUp: true,
+        stage: true,
+        expectedVersion: true,
+      }).extend({ expectedRevision: LeadPatch.shape.expectedVersion }),
+      req.body,
+    );
+    if (input.type === 'call' && !input.outcome)
+      throw new AppError(400, 'OUTCOME', 'Choose a call outcome');
+    return mutate(
+      req,
+      'activities:write',
+      async (tx, m) => {
+        const old = await tx.get(path('activities', req.params.id));
+        if (!old) throw new AppError(404, 'NOT_FOUND', 'Activity not found');
+        const lead = await leadAccess(tx, m, old.leadId);
+        const latest = await tx.query(path('activities'), {
+          filters: [
+            ['leadId', '==', old.leadId],
+            ['type', '==', 'call'],
+          ],
+          order: 'id',
+          direction: 'desc',
+          limit: 1,
+        });
+        const options = await readFieldOptions(tx);
+        assertFieldOption(options, 'outcome', input.outcome, old.outcome);
+        assertFieldOption(
+          options,
+          'disposition',
+          input.disposition,
+          old.disposition,
+        );
+        if (input.type !== old.type)
+          throw new AppError(
+            400,
+            'TYPE',
+            'A correction cannot change the activity type',
+          );
+        if (old.revision !== input.expectedRevision)
+          throw new AppError(409, 'STALE_VERSION', 'Activity changed');
+        const id = uid();
+        tx.set(path('activityRevisions', id), {
+          ...old,
+          id,
+          activityId: old.id,
+          correctedAt: now(),
+          correctedBy: m.uid,
+        });
+        const { expectedRevision, ...fields } = input;
+        const updated = { ...old, ...fields, revision: old.revision + 1 };
+        let preserveManual = false;
+        if (old.autoReminder?.taskId) {
+          const task = await tx.get(path('tasks', old.autoReminder.taskId));
+          if (task?.state === 'Pending' && task.version === 1)
+            tx.set(path('tasks', task.id), {
+              ...task,
+              state: 'Cancelled',
+              version: task.version + 1,
+            });
+          else if (task) preserveManual = true;
+        }
+        const previousJob = old.autoReminder?.id
+          ? await tx.get(path('noteAnalyses', old.autoReminder.id))
+          : null;
+        if (previousJob)
+          tx.set(path('noteAnalyses', previousJob.id), {
+            ...previousJob,
+            status: 'Cancelled',
+          });
+        const saved = await enqueueAnalysis(tx, updated, m, lead, now(), {
+          manual: old.autoReminder?.status === 'Manual',
+          preserveManual,
+        });
+        tx.set(path('leads', lead.id), {
+          ...lead,
+          ...(old.type === 'call' && latest[0]?.id === old.id
+            ? { lastCallOutcome: input.outcome }
+            : {}),
+          version: lead.version + 1,
+          updatedAt: now(),
+        });
+        return saved;
+      },
+      { idempotent: true },
+    );
+  });
+  route('patch', '/activities/:id/automatic-reminder', 'tasks:write', (req) => {
+    const input = parse(AutomaticReminderAction, req.body);
+    return mutate(req, 'tasks:write', async (tx, m) => {
+      const activity = await tx.get(path('activities', req.params.id));
+      if (!activity) throw new AppError(404, 'NOT_FOUND', 'Activity not found');
+      const lead = await leadAccess(tx, m, activity.leadId);
+      if (activity.autoReminder?.ownerUid !== m.uid)
+        throw new AppError(
+          403,
+          'OWNER',
+          'Only the reminder owner can change automatic scheduling',
+        );
+      if (activity.revision !== input.expectedRevision)
+        throw new AppError(
+          409,
+          'STALE_VERSION',
+          'This note changed. Refresh and try again.',
+        );
+      const auto = activity.autoReminder;
+      if (
+        !['Pending', 'Failed', 'NeedsReview', 'Scheduled'].includes(auto.status)
+      )
+        throw new AppError(
+          409,
+          'ANALYSIS_STATE',
+          'This analysis is already resolved',
+        );
+      const task = auto.taskId
+        ? await tx.get(path('tasks', auto.taskId))
+        : null;
+      if (task && (task.version !== 1 || task.state !== 'Pending'))
+        throw new AppError(
+          409,
+          'TASK_CHANGED',
+          'This reminder was already changed. Edit it from Reminders.',
+        );
+      const job = await tx.get(path('noteAnalyses', auto.id));
+      let summary;
+      if (input.action === 'retry') {
+        if (auto.status !== 'Failed')
+          throw new AppError(
+            409,
+            'ANALYSIS_STATE',
+            'Only failed analyses can be retried',
+          );
+        if (!m.capabilities.includes('activities:write'))
+          throw new AppError(403, 'FORBIDDEN', 'You cannot analyze notes');
+        if (job && (job.retryCount || 0) >= 3)
+          throw new AppError(
+            429,
+            'RETRY_LIMIT',
+            'Use manual scheduling after repeated analysis failures',
+          );
+        if (job)
+          tx.set(path('noteAnalyses', auto.id), {
+            ...job,
+            status: 'Pending',
+            attemptCount: 0,
+            retryCount: (job.retryCount || 0) + 1,
+            nextAttemptAt: now(),
+          });
+        summary = {
+          ...auto,
+          status: 'Pending',
+          message: 'Checking this note again.',
+        };
+      } else {
+        if (
+          input.action === 'schedule' &&
+          (lead.archived || lead.doNotContact || lead.needsReview)
+        )
+          throw new AppError(
+            409,
+            'SUPPRESSED',
+            'Outreach is disabled for this lead',
+          );
+        if (task)
+          tx.set(path('tasks', task.id), {
+            ...task,
+            state: 'Cancelled',
+            version: task.version + 1,
+          });
+        if (job)
+          tx.set(path('noteAnalyses', job.id), { ...job, status: 'Cancelled' });
+        if (input.action === 'schedule') {
+          if (Date.parse(input.task.dueAt) <= Date.parse(now()))
+            throw new AppError(400, 'DATE', 'Choose a future time');
+          const manual = taskRecord(input.task, m, uid(), lead.id);
+          queueTask(tx, manual);
+          summary = {
+            ...auto,
+            status: 'Manual',
+            taskId: manual.id,
+            dueAt: manual.dueAt,
+            message: 'Reminder scheduled manually.',
+          };
+        } else
+          summary = {
+            ...auto,
+            status: 'Dismissed',
+            message: 'Automatic reminder dismissed.',
+          };
+      }
+      const updated = { ...activity, autoReminder: summary };
+      tx.set(path('activities', activity.id), updated);
+      return updated;
+    });
+  });
+  route('get', '/tasks', 'leads:read', (req) => {
+    const filters = [['recipientUid', '==', req.member.uid]];
+    if (req.query.state) filters.push(['state', '==', String(req.query.state)]);
+    if (req.query.leadId)
+      filters.push(['leadId', '==', String(req.query.leadId)]);
+    return list(req, 'tasks', filters, undefined, 'dueAt', 'asc').then(
+      async (result) => {
+        const items = [];
+        for (const t of result.items) {
+          try {
+            await readTask(store, req.member, t.id);
+            items.push(t);
+          } catch (e) {
+            if (e.status !== 404) throw e;
+          }
+        }
+        return { ...result, items };
+      },
+    );
+  });
+  route('get', '/tasks/:id', 'leads:read', (req) =>
+    readTask(store, req.member, req.params.id),
+  );
+  route('post', '/tasks', 'tasks:write', (req) => {
+    const input = parse(TaskInput, req.body);
+    return mutate(
+      req,
+      'tasks:write',
+      async (tx, m) => {
+        if (input.leadId) {
+          const l = await leadAccess(tx, m, input.leadId);
+          if (
+            input.kind === 'outreach' &&
+            (l.doNotContact || l.needsReview || l.archived)
+          )
+            throw new AppError(
+              409,
+              'SUPPRESSED',
+              'Outreach is disabled for this lead',
+            );
+        }
+        const task = taskRecord(input, m, uid(), input.leadId);
+        queueTask(tx, task);
+        return task;
+      },
+      { idempotent: true },
+    );
+  });
+  route('patch', '/tasks/:id', 'tasks:write', (req) => {
+    const input = parse(TaskPatch, req.body);
+    return mutate(req, 'tasks:write', async (tx, m) => {
+      const old = await readTask(tx, m, req.params.id);
+      if (old.recipientUid !== m.uid)
+        throw new AppError(
+          403,
+          'TASK_OWNER',
+          'Only the recipient can update this task',
+        );
+      assertVersion(old, input.expectedVersion);
+      if (input.timezone) validateTimezone(input.timezone);
+      const { expectedVersion, ...fields } = input;
+      const t = {
+        ...old,
+        ...fields,
+        version: old.version + 1,
+        completedAt:
+          input.state === 'Completed'
+            ? now()
+            : input.state === 'Pending'
+              ? null
+              : old.completedAt,
+      };
+      if (t.state === 'Pending') {
+        if (t.leadId) {
+          const l = await leadAccess(tx, m, t.leadId);
+          if (
+            t.kind === 'outreach' &&
+            (l.doNotContact || l.archived || l.needsReview)
+          )
+            throw new AppError(409, 'SUPPRESSED', 'Outreach is disabled');
+        }
+        queueTask(tx, t);
+      } else tx.set(path('tasks', t.id), t);
+      if (old.sourceActivityId) {
+        const a = await tx.get(path('activities', old.sourceActivityId));
+        if (a?.autoReminder?.taskId === old.id)
+          tx.set(path('activities', a.id), {
+            ...a,
+            autoReminder: {
+              ...a.autoReminder,
+              status: 'TaskChanged',
+              message:
+                t.state === 'Pending'
+                  ? 'Reminder was edited manually. Open Reminders to change it again.'
+                  : 'Reminder ' + t.state.toLowerCase() + '.',
+              dueAt: t.dueAt,
+            },
+          });
+      }
+      return t;
+    });
+  });
+  route('delete', '/tasks/:id', 'tasks:write', (req) => {
+    const input = parse(TaskDelete, req.body);
+    return mutate(req, 'tasks:write', async (tx, m) => {
+      const task = await readTask(tx, m, req.params.id);
+      if (task.recipientUid !== m.uid)
+        throw new AppError(
+          403,
+          'TASK_OWNER',
+          'Only the recipient can delete this task',
+        );
+      assertVersion(task, input.expectedVersion);
+      const delivery = await tx.get(
+        path('reminderDeliveries', task.id + '_' + task.version),
+      );
+      const activity = task.sourceActivityId
+        ? await tx.get(path('activities', task.sourceActivityId))
+        : null;
+      tx.set(path('tasks', task.id), {
+        ...task,
+        state: 'Cancelled',
+        deleted: true,
+        deletedAt: now(),
+        version: task.version + 1,
+      });
+      if (delivery?.status === 'Pending')
+        tx.set(path('reminderDeliveries', delivery.id), {
+          ...delivery,
+          status: 'Cancelled',
+        });
+      if (activity?.autoReminder?.taskId === task.id)
+        tx.set(path('activities', activity.id), {
+          ...activity,
+          autoReminder: {
+            ...activity.autoReminder,
+            status: 'TaskChanged',
+            message: 'Reminder deleted.',
+          },
+        });
+      return { ok: true };
+    });
+  });
+  route('get', '/members', 'members:write', (req) => list(req, 'members'));
+  route('get', '/invitations', 'members:write', (req) =>
+    list(req, 'invitations'),
+  );
+  route('post', '/invitations', 'members:write', (req) => {
+    const input = parse(GrantInput, req.body);
+    if (ADMIN_EMAILS.includes(input.email))
+      throw new AppError(
+        409,
+        'ADMIN',
+        'This account is a bootstrap administrator',
+      );
+    return mutate(
+      req,
+      'members:write',
+      async (tx) => {
+        const id = hash(input.email);
+        const prior = await tx.get(path('invitations', id));
+        const inv = {
+          ...input,
+          capabilities: input.capabilities || PRESETS[input.role],
+          id,
+          active: true,
+          createdAt: now(),
+          expiresAt: new Date(Date.parse(now()) + 7 * 86400000).toISOString(),
+          version: (prior?.version || 0) + 1,
+        };
+        tx.set(path('invitations', id), inv);
+        return inv;
+      },
+      { idempotent: true },
+    );
+  });
+  route('delete', '/invitations/:id', 'members:write', (req) =>
+    mutate(req, 'members:write', async (tx) => {
+      const inv = await tx.get(path('invitations', req.params.id));
+      if (inv) tx.set(path('invitations', inv.id), { ...inv, active: false });
+      return { ok: true };
+    }),
+  );
+  route('patch', '/members/:uid', 'members:write', (req) => {
+    const input = parse(MemberPatch, req.body);
+    return mutate(req, 'members:write', async (tx) => {
+      const old = await tx.get(path('members', req.params.uid));
+      if (!old) throw new AppError(404, 'NOT_FOUND', 'Member not found');
+      if (old.role === 'Admin')
+        throw new AppError(
+          403,
+          'BOOTSTRAP_ADMIN',
+          'Bootstrap administrators cannot be changed through this screen',
+        );
+      assertVersion(old, input.expectedVersion);
+      const { expectedVersion, ...fields } = input;
+      const m = {
+        ...old,
+        ...fields,
+        capabilities: input.capabilities || PRESETS[input.role],
+        version: old.version + 1,
+      };
+      tx.set(path('members', m.uid), m);
+      return m;
+    });
+  });
+  route('post', '/imports/preview', 'imports:write', async (req) => {
+    const input = parse(ImportInput, req.body);
+    const options = await readFieldOptions(store);
+    const rows = previewRows(input, options.values.stage);
+    const fingerprint = hash(
+      JSON.stringify([
+        input.sheet,
+        input.rows,
+        input.statusMap,
+        input.dateOrder,
+        input.duplicateMode,
+        options.version,
+        'discussion-import-v2',
+      ]),
+    );
+    const duplicate = await store.get(path('imports', fingerprint));
+    if (duplicate) return duplicate;
+    return mutate(
+      req,
+      'imports:write',
+      async (tx, m) => {
+        for (let offset = 0; offset < rows.length; offset += IMPORT_CHUNK_SIZE)
+          tx.set(
+            path(
+              'importChunks',
+              fingerprint + '_' + offset / IMPORT_CHUNK_SIZE,
+            ),
+            {
+              id: fingerprint + '_' + offset / IMPORT_CHUNK_SIZE,
+              importId: fingerprint,
+              rows: rows.slice(offset, offset + IMPORT_CHUNK_SIZE),
+            },
+          );
+        const result = {
+          id: fingerprint,
+          filename: input.filename,
+          sheet: input.sheet,
+          duplicateMode: input.duplicateMode,
+          chunkSize: IMPORT_CHUNK_SIZE,
+          commentCount: rows.reduce(
+            (count, row) => count + (row.comments?.length || 0),
+            0,
+          ),
+          total: rows.length,
+          valid: rows.filter((r) => !r.error).length,
+          invalid: rows.filter((r) => r.error).length,
+          needsReview: rows.filter((r) => r.row?.needsReview).length,
+          blank: input.blankRows,
+          offset: 0,
+          imported: 0,
+          duplicates: 0,
+          failed: 0,
+          status: 'Preview',
+          createdByUid: m.uid,
+          createdAt: now(),
+          expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+          errors: rows.filter((r) => r.error).slice(0, 100),
+        };
+        tx.set(path('imports', fingerprint), result);
+        return result;
+      },
+      { idempotent: true },
+    );
+  });
+  route('get', '/imports/:id', 'imports:write', async (req) => {
+    const i = await store.get(path('imports', req.params.id));
+    if (!i) throw new AppError(404, 'NOT_FOUND', 'Import not found');
+    return i;
+  });
+  route('get', '/imports/:id/errors', 'imports:write', async (req) => {
+    const job = await store.get(path('imports', req.params.id));
+    if (!job) throw new AppError(404, 'NOT_FOUND', 'Import not found');
+    const result = await list(req, 'importChunks', [
+      ['importId', '==', job.id],
+    ]);
+    return {
+      ...result,
+      items: result.items.flatMap((c) =>
+        c.rows
+          .filter((r) => r.error)
+          .map((r) => ({ index: r.index, error: r.error })),
+      ),
+    };
+  });
+  route('post', '/imports/:id/commit', 'imports:write', async (req) => {
+    return mutate(
+      req,
+      'imports:write',
+      async (tx, m) => {
+        const p = path('imports', req.params.id);
+        const job = await tx.get(p);
+        if (!job) throw new AppError(404, 'NOT_FOUND', 'Import not found');
+        if (job.expiresAt <= now() && job.status !== 'Completed')
+          throw new AppError(
+            409,
+            'EXPIRED',
+            'Preview expired. Re-upload and validate again.',
+          );
+        if (job.status === 'Completed') return job;
+        const chunk = await tx.get(
+          path(
+            'importChunks',
+            job.id + '_' + job.offset / (job.chunkSize || 25),
+          ),
+        );
+        const prepared = [];
+        const seen = new Set();
+        const results = [];
+        for (const item of chunk?.rows || []) {
+          if (item.error) {
+            results.push('invalid');
+            continue;
+          }
+          const { phoneNormalized, nameNormalized, companyNormalized, ...row } =
+            item.row;
+          const keys = contactKeys(item.row);
+          if (job.duplicateMode !== 'keep' && keys.some((k) => seen.has(k))) {
+            results.push('duplicate');
+            continue;
+          }
+          try {
+            const id = job.id.slice(0, 16) + '_' + item.index;
+            const l = await prepareLead(
+              tx,
+              { ...row, allowDuplicate: job.duplicateMode === 'keep' },
+              { uid: null, id, now: now() },
+            );
+            l.record.createdByUid = m.uid;
+            l.record.importId = job.id;
+            l.importComments = item.comments;
+            prepared.push(l);
+            keys.forEach((k) => seen.add(k));
+            results.push('imported');
+          } catch (e) {
+            if (e.code === 'DUPLICATE') results.push('duplicate');
+            else throw e;
+          }
+        }
+        const next = {
+          ...job,
+          offset: Math.min(job.total, job.offset + (chunk?.rows.length || 0)),
+          imported:
+            job.imported + results.filter((v) => v === 'imported').length,
+          duplicates:
+            job.duplicates + results.filter((v) => v === 'duplicate').length,
+          status:
+            job.offset + (chunk?.rows.length || 0) >= job.total
+              ? 'Completed'
+              : 'Importing',
+        };
+        const combinedKeys = new Map();
+        for (const l of prepared)
+          for (const key of contactKeys(l.record)) {
+            if (!combinedKeys.has(key))
+              combinedKeys.set(
+                key,
+                new Set((await tx.get(path('dedupeKeys', key)))?.leadIds || []),
+              );
+            combinedKeys.get(key).add(l.record.id);
+          }
+        for (const l of prepared) {
+          l.write();
+          if (l.importComments)
+            appendImportedComments(
+              tx,
+              l.record,
+              m,
+              l.importComments,
+              now(),
+              job.id,
+            );
+          else
+            await appendDiscussions(tx, l.record, m, now(), {
+              imported: true,
+              importId: job.id,
+            });
+        }
+        for (const [id, ids] of combinedKeys)
+          tx.set(path('dedupeKeys', id), { id, leadIds: [...ids] });
+        tx.set(p, next);
+        return next;
+      },
+      { idempotent: true },
+    );
+  });
+  route('get', '/notifications', 'leads:read', (req) =>
+    list(
+      req,
+      'notifications',
+      [],
+      `users/${req.member.uid}/notifications`,
+    ).then(async (result) => {
+      const visibility = await Promise.all(
+        result.items.map((n) => notificationVisible(store, req.member, n)),
+      );
+      const items = result.items.filter((n, i) => visibility[i]);
+      return { ...result, items };
+    }),
+  );
+  route('patch', '/notifications/:id', 'leads:read', (req) =>
+    mutate(req, 'leads:read', async (tx, m) => {
+      const p = `users/${m.uid}/notifications/${req.params.id}`;
+      const n = await tx.get(p);
+      const input = parse(NotificationPatch, req.body);
+      if (!n || !(await notificationVisible(tx, m, n)))
+        throw new AppError(404, 'NOT_FOUND', 'Notification not found');
+      tx.set(p, { ...n, readAt: input.read ? now() : null });
+      return { ok: true };
+    }),
+  );
+  route('get', '/devices', 'leads:read', (req) =>
+    list(req, 'devices', [], `users/${req.member.uid}/devices`),
+  );
+  route('post', '/devices', 'leads:read', (req) => {
+    const input = parse(DeviceInput, req.body);
+    return mutate(req, 'leads:read', async (tx, m) => {
+      const p = `users/${m.uid}/devices/${input.id}`;
+      const old = await tx.get(p);
+      const devices = await tx.query(`users/${m.uid}/devices`, { limit: 11 });
+      if (!old && devices.length >= 10)
+        throw new AppError(
+          400,
+          'DEVICE_LIMIT',
+          'Revoke an old device before adding another (maximum 10).',
+        );
+      const d = {
+        ...input,
+        enabled: true,
+        lastSeenAt: now(),
+        createdAt: old?.createdAt || now(),
+      };
+      tx.set(p, d);
+      return { id: d.id, label: d.label, enabled: true };
+    });
+  });
+  route('delete', '/devices/:id', 'leads:read', (req) =>
+    mutate(req, 'leads:read', async (tx, m) => {
+      tx.delete(`users/${m.uid}/devices/${req.params.id}`);
+      return { ok: true };
+    }),
+  );
+  route('post', '/devices/:id/test', 'leads:read', async (req) => {
+    const device = await store.get(
+      `users/${req.member.uid}/devices/${req.params.id}`,
+    );
+    if (!device?.enabled)
+      throw new AppError(404, 'NOT_FOUND', 'Device not found');
+    await mutate(req, 'leads:read', async (tx) => {
+      const p = path('pushTests', req.member.uid);
+      const old = await tx.get(p);
+      if (old && Date.parse(now()) - Date.parse(old.at) < 60000)
+        throw new AppError(
+          429,
+          'RATE_LIMIT',
+          'Wait a minute before sending another test',
+        );
+      tx.set(p, { at: now() });
+      return { ok: true };
+    });
+    await sendTest(device);
+    return { ok: true };
+  });
+  route('get', '/scoring-settings', 'leads:read', () => readScoring(store));
+  route('patch', '/scoring-settings', 'members:write', (req) => {
+    const input = parse(ScoringPatch, req.body);
+    return mutate(req, 'members:write', async (tx, m) => {
+      if (m.role !== 'Admin')
+        throw new AppError(
+          403,
+          'ADMIN',
+          'Only administrators can change scoring factors',
+        );
+      const current = await readScoring(tx);
+      assertVersion(current, input.expectedVersion);
+      const updated = {
+        version: current.version + 1,
+        enabled: input.enabled,
+        factors: input.factors,
+        updatedAt: now(),
+        updatedByUid: m.uid,
+      };
+      tx.set(SCORING_PATH, updated);
+      return updated;
+    });
+  });
+  route('get', '/lead-scores', 'leads:read', async (req) => {
+    const ids = parse(
+      z
+        .array(z.string().regex(/^[A-Za-z0-9_.:-]{1,120}$/))
+        .min(1)
+        .max(100),
+      String(req.query.ids || '').split(','),
+    );
+    const unique = [...new Set(ids)],
+      config = await readScoring(store);
+    const leads = await Promise.all(
+      unique.map((id) => leadAccess(store, req.member, id)),
+    );
+    const records = await Promise.all(
+      unique.map((id) => store.get(path('leadScores', id))),
+    );
+    return {
+      items: leads.map((lead, i) => {
+        const v = scoreView(config, lead, records[i]);
+        const { factors, ...summary } = v;
+        return summary;
+      }),
+    };
+  });
+  route('get', '/leads/:id/score', 'leads:read', async (req) => {
+    const lead = await leadAccess(store, req.member, req.params.id),
+      config = await readScoring(store),
+      record = await store.get(path('leadScores', lead.id));
+    return scoreView(config, lead, record);
+  });
+  route('post', '/leads/:id/score/refresh', 'leads:edit', async (req) => {
+    parse(z.object({}).strict(), req.body);
+    await mutate(req, 'leads:edit', async (tx, m) => {
+      await leadAccess(tx, m, req.params.id);
+      return { ok: true };
+    });
+    if (!extractScore)
+      throw new AppError(
+        503,
+        'AI_UNAVAILABLE',
+        'Scoring is temporarily unavailable',
+      );
+    const result = await processLeadScore({
+      store,
+      leadId: req.params.id,
+      extract: extractScore,
+      now,
+    });
+    const current = await requireMember(store, req.identity, 'leads:read');
+    await leadAccess(store, current, req.params.id);
+    return result;
+  });
+  route('get', '/dashboard', 'leads:read', async (req) => {
+    const { aiContext, ...snapshot } = await dashboardSnapshot(
+      store,
+      req.member,
+      now(),
+    );
+    return snapshot;
+  });
+  route('post', '/dashboard/insights', 'leads:read', async (req) => {
+    parse(z.object({}).strict(), req.body);
+    if (!summarizeDashboard) return { status: 'Unavailable' };
+    const snapshot = await dashboardSnapshot(store, req.member, now());
+    return dashboardBrief({
+      store,
+      member: req.member,
+      snapshot,
+      summarize: summarizeDashboard,
+      now,
+    });
+  });
+  route('get', '/summary', 'leads:read', async (req) => {
+    const leadFilters = [
+      ...scopeFilters(req.member),
+      ['archived', '==', false],
+    ];
+    const taskFilters = [
+      ['recipientUid', '==', req.member.uid],
+      ['state', '==', 'Pending'],
+    ];
+    const since = new Date(Date.parse(now()) - 7 * 86400000).toISOString();
+    const activityFilters = [
+      ['actorUid', '==', req.member.uid],
+      ['type', '==', 'call'],
+      ['createdAt', '>=', since],
+    ];
+    const [total, newLeads, due, calls, connected] = await Promise.all([
+      store.count(path('leads'), leadFilters),
+      store.count(path('leads'), [...leadFilters, ['stage', '==', 'New']]),
+      store.count(path('tasks'), [...taskFilters, ['dueAt', '<=', now()]]),
+      store.count(path('activities'), activityFilters),
+      store.count(path('activities'), [
+        ...activityFilters,
+        ['outcome', '==', 'Connected'],
+      ]),
+    ]);
+    return { total, newLeads, due, calls, connected, period: 'Last 7 days' };
+  });
+  app.use('/api/v1', router);
+  app.use((req, res) =>
+    res.status(404).json({
+      error: {
+        code: 'NOT_FOUND',
+        message: 'Endpoint not found',
+        requestId: req.requestId,
+      },
+    }),
+  );
+  app.use((err, req, res, next) => {
+    const status = err.status || 500;
+    if (status >= 500)
+      console.error(
+        JSON.stringify({
+          requestId: req.requestId,
+          code: err.code || 'INTERNAL',
+          message: 'Request failed',
+        }),
+      );
+    res.status(status).json({
+      error: {
+        code: err.code || 'INTERNAL',
+        message:
+          status >= 500 ? 'Something went wrong. Please retry.' : err.message,
+        details: err.details,
+        requestId: req.requestId,
+      },
+    });
+  });
+  return app;
+}

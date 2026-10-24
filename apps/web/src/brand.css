@@ -1,0 +1,231 @@
+/* Avinya's supplied PNG uses #0054a6. The SVG keeps that PNG intact and
+   isolates its printed ink with an sRGB colour filter for a theme-aware mask. */
+:root {
+  --brand-blue: #0054a6;
+  --brand-blue-hover: #004487;
+  --accent: var(--brand-blue);
+  --accent-dark: var(--brand-blue-hover);
+  --accent-soft: #e5effa;
+  --on-accent: #fff;
+  --enterprise-ink: #14283e;
+}
+:root[data-theme='dark'] {
+  --accent: #8ec6ff;
+  --accent-dark: #b6daff;
+  --accent-soft: #173451;
+  --on-accent: #10243b;
+  --enterprise-ink: #fff;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='system'] {
+    --accent: #8ec6ff;
+    --accent-dark: #b6daff;
+    --accent-soft: #173451;
+    --on-accent: #10243b;
+    --enterprise-ink: #fff;
+  }
+}
+.button.primary,
+:root[data-theme='dark'] .button.primary {
+  background: var(--brand-blue);
+  color: #fff;
+  border-color: var(--brand-blue);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='system'] .button.primary {
+    color: #fff;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .button.primary:hover:not(:disabled) {
+    background: var(--brand-blue-hover);
+    border-color: var(--brand-blue-hover);
+  }
+}
+.enterprise-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--enterprise-ink);
+  flex-shrink: 0;
+}
+.enterprise-mark {
+  display: block;
+  width: 42px;
+  height: 42px;
+  background: currentColor;
+  -webkit-mask: url('/brand/avinya-enterprises-mark.svg') center/contain
+    no-repeat;
+  mask: url('/brand/avinya-enterprises-mark.svg') center/contain no-repeat;
+}
+.enterprise-wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.enterprise-wordmark strong {
+  font-family: var(--heading-font);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.enterprise-wordmark > span {
+  font-size: 9px;
+  line-height: 1.1;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+}
+.enterprise-brand-workspace {
+  border-inline-start: 1px solid var(--line);
+  padding-inline-start: 18px;
+  margin-inline-start: 8px;
+}
+.enterprise-brand-workspace .enterprise-mark {
+  width: 34px;
+  height: 34px;
+}
+.enterprise-brand-workspace .enterprise-wordmark strong {
+  font-size: 18px;
+}
+.enterprise-brand-workspace .enterprise-wordmark > span {
+  font-size: 8px;
+}
+.login-top-actions {
+  gap: 24px;
+}
+.login-page {
+  background:
+    radial-gradient(
+      ellipse at 15% 50%,
+      color-mix(in srgb, var(--accent-soft) 55%, transparent),
+      transparent 55%
+    ),
+    var(--bg);
+}
+.login-copy h1 em,
+.login-benefits svg {
+  color: var(--accent);
+}
+.avatar,
+.purple {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.focus-graphic svg {
+  color: var(--accent);
+  background: linear-gradient(135deg, var(--accent-soft), var(--panel));
+}
+.focus-card,
+.focus-panel {
+  background: linear-gradient(140deg, var(--panel), var(--accent-soft));
+}
+.badge.stage-meeting-booked {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.automatic-reminder {
+  border-color: var(--line);
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline-color: var(--accent);
+}
+@media (max-width: 1100px) {
+  .enterprise-brand-workspace .enterprise-wordmark {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .login-top-actions {
+    gap: 12px;
+  }
+  .enterprise-brand-login .enterprise-wordmark {
+    display: none;
+  }
+  .enterprise-brand-login .enterprise-mark {
+    width: 38px;
+    height: 38px;
+  }
+  .enterprise-brand-workspace {
+    padding-inline-start: 10px;
+    margin-inline-start: 4px;
+  }
+  .enterprise-brand-workspace .enterprise-mark {
+    width: 30px;
+    height: 30px;
+  }
+}
+.focus-card p,
+.focus-card > small {
+  color: var(--muted);
+}
+.focus-card .button {
+  color: var(--accent);
+  background: var(--panel);
+  border-color: var(--line);
+}
+.focus-graphic span {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.focus-card {
+  color: var(--text);
+  border-color: var(--line);
+}
+.focus-card .eyebrow,
+.empty-icon {
+  color: var(--accent);
+}
+.nav-item.active small {
+  background: var(--accent-soft);
+}
+.badge:not(.stage-working):not(.stage-qualified):not(.stage-nurture):not(
+    .stage-disqualified
+  ):not(.stage-won) {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.button.primary {
+  box-shadow: 0 3px 6px #0054a61c;
+}
+.login-card {
+  box-shadow: 0 15px 60px #0054a608;
+}
+.breadcrumb,
+.breadcrumb strong {
+  min-width: 0;
+}
+.breadcrumb strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 1100px) {
+  .topbar-actions .today-date {
+    display: none;
+  }
+}
+.dialog-overlay,
+.mobile-nav-scrim {
+  background: #0b1e3466;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .dialog-overlay,
+  .mobile-nav-scrim {
+    background: #0b1e34b3;
+  }
+}
+.enterprise-brand-workspace .enterprise-mark {
+  width: 38px;
+  height: 38px;
+}
+@media (max-width: 640px) {
+  .enterprise-brand-workspace .enterprise-mark {
+    width: 36px;
+    height: 36px;
+  }
+}

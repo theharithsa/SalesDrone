@@ -1,0 +1,37 @@
+{
+  "name": "salesdrone",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/web",
+    "functions"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build:metadata && npm run build -w apps/web",
+    "test": "npm test -w functions && node --test tests/*.test.ts",
+    "check": "npm run check -w apps/web",
+    "api:docs": "node scripts/openapi.mjs",
+    "emulators": "firebase emulators:start --project demo-salesdrone",
+    "test:emulator": "firebase emulators:exec --project demo-salesdrone --only firestore,auth 'npm run test:emulator -w functions'",
+    "release": "node scripts/release.mjs",
+    "release:check": "node scripts/check-release.mjs",
+    "security:scan": "node scripts/check-secrets.mjs",
+    "docs:build": "node scripts/build-docs.mjs",
+    "build:metadata": "node scripts/build-release.mjs"
+  },
+  "devDependencies": {
+    "firebase-tools": "^15.34.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.18.0 <25"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.6",
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
+  },
+  "version": "1.0.0"
+}

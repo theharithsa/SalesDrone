@@ -1,0 +1,114 @@
+.detail-profile h2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.1;
+}
+.detail-profile .lead-first-name {
+  font-family: var(--script-font);
+  font-size: 1.5em;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.detail-profile .lead-family-name {
+  font-family: var(--heading-font);
+  font-size: 0.95em;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+.detail-edit-button {
+  gap: 7px;
+}
+.worksheet-actions {
+  position: sticky;
+  right: 0;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  min-width: 88px;
+  z-index: 1;
+}
+.worksheet-leads-table th.worksheet-actions {
+  background: var(--bg);
+}
+.worksheet-actions .text-button,
+.worksheet-card-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.worksheet-card-open {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: var(--text);
+}
+.comment-column-picker {
+  min-width: 0;
+  padding: 22px;
+  margin: 28px 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.comment-column-picker legend {
+  font-family: var(--heading-font);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 8px;
+}
+.comment-column-picker > p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 18px;
+}
+.comment-column-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+.comment-column-options label {
+  min-height: 64px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+}
+.comment-column-options label:has(input:checked) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.comment-column-options label span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.comment-column-options small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+.comment-column-picker > .field-hint {
+  margin: 16px 0 0;
+}
+@media (max-width: 767px) {
+  .comment-column-picker {
+    padding: 16px;
+  }
+  .comment-column-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .worksheet-card-edit {
+    margin-top: 4px;
+  }
+}
+.worksheet-leads-table { min-width:1000px; }

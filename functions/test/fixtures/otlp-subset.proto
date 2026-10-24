@@ -1,0 +1,25 @@
+// Minimal independent OTLP wire schema for transport assertions (Apache-2.0 OTLP spec).
+syntax = "proto3";
+package wire;
+message AnyValue { oneof value { string stringValue=1; bool boolValue=2; int64 intValue=3; double doubleValue=4; ArrayValue arrayValue=5; KeyValueList kvlistValue=6; bytes bytesValue=7; } }
+message ArrayValue { repeated AnyValue values=1; }
+message KeyValueList { repeated KeyValue values=1; }
+message KeyValue { string key=1; AnyValue value=2; }
+message Resource { repeated KeyValue attributes=1; }
+message Scope { string name=1; string version=2; }
+message Span { bytes traceId=1; bytes spanId=2; string traceState=3; bytes parentSpanId=4; string name=5; int32 kind=6; fixed64 startTimeUnixNano=7; fixed64 endTimeUnixNano=8; repeated KeyValue attributes=9; }
+message ScopeSpans { Scope scope=1; repeated Span spans=2; }
+message ResourceSpans { Resource resource=1; repeated ScopeSpans scopeSpans=2; }
+message ExportTraceServiceRequest { repeated ResourceSpans resourceSpans=1; }
+message LogRecord { fixed64 timeUnixNano=1; int32 severityNumber=2; string severityText=3; AnyValue body=5; repeated KeyValue attributes=6; fixed32 flags=8; bytes traceId=9; bytes spanId=10; fixed64 observedTimeUnixNano=11; }
+message ScopeLogs { Scope scope=1; repeated LogRecord logRecords=2; }
+message ResourceLogs { Resource resource=1; repeated ScopeLogs scopeLogs=2; }
+message ExportLogsServiceRequest { repeated ResourceLogs resourceLogs=1; }
+message NumberPoint { fixed64 startTimeUnixNano=2; fixed64 timeUnixNano=3; double asDouble=4; sfixed64 asInt=6; repeated KeyValue attributes=7; }
+message HistogramPoint { fixed64 startTimeUnixNano=2; fixed64 timeUnixNano=3; fixed64 count=4; double sum=5; repeated fixed64 bucketCounts=6 [packed=true]; repeated double explicitBounds=7 [packed=true]; repeated KeyValue attributes=9; }
+message Sum { repeated NumberPoint dataPoints=1; int32 aggregationTemporality=2; bool isMonotonic=3; }
+message Histogram { repeated HistogramPoint dataPoints=1; int32 aggregationTemporality=2; }
+message Metric { string name=1; string description=2; string unit=3; Sum sum=7; Histogram histogram=9; }
+message ScopeMetrics { Scope scope=1; repeated Metric metrics=2; }
+message ResourceMetrics { Resource resource=1; repeated ScopeMetrics scopeMetrics=2; }
+message ExportMetricsServiceRequest { repeated ResourceMetrics resourceMetrics=1; }

@@ -1,0 +1,43 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+functions/.env.*
+*-debug.log
+.firebase/
+test-results/
+playwright-report/
+.DS_Store
+
+.node_modules-partial/
+
+functions/.node_modules-partial/
+
+# Release/deployment credentials and local capture scratch files
+!functions/.env.example
+gha-creds-*.json
+*.pem
+*.key
+**/.secret.local
+**/.runtimeconfig.json
+**/service-account*.json
+**/credentials*.json
+docs/demo/frames/
+docs/demo/video-frames/
+site/.build/
+# Local evidence may contain real workspace information. Curate demo captures in site/.
+docs/screenshots/
+docs/demo/
+docs/VERIFICATION.md
+
+.node_modules-install-incomplete/
+
+functions/.node_modules-observability-incomplete/
+deployment.json
+
+node_modules
+**/.node_modules*/
+# Legacy local-only capture helpers tied to an operator's Mac runtime.
+scripts/qa-admin.mjs
+scripts/qa-ui.mjs

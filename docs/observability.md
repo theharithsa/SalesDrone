@@ -1,0 +1,91 @@
+# SalesDrone observability
+
+This document is the implementation contract and release evidence ledger. Entries
+are marked by actual evidence; configuration alone is not end-to-end verification.
+
+## Signal map
+
+| Journey | Trace boundary | Canonical evidence | Sensitive data excluded |
+|---|---|---|---|
+| Login/API | Browser request → authenticated Express span → policy/store spans | Verified membership, not a browser success claim | Google token, email, profile name |
+| Lead/call/note/journey | API → Firestore transaction | Per-domain committed transaction outbox event | Contact values, note text, factor evidence |
+| Task/reminder | API/worker → persisted task/inbox/push outcome | Committed task/notification counts; worker result logs | Task title, FCM token, phone |
+| Import | Validated chunk → Firestore transaction | Unique committed domain-write counts per transaction | Workbook rows, cells, errors with source text |
+| AI | Request/worker → Gemini dependency span → validated persisted result | Score/task state commits; no prompt/response capture | Notes, prompts, free text, evidence quotations |
+| Admin | Verified capability → member/settings transaction | Committed versioned domain changes | Invite address, custom-field values |
+| Release | GitHub main → verified Firebase deployment | Version/commit/run/build/deployment event | Credentials, source data, customer screenshots |
+
+## Identity and transport
+
+Tenant ingestion: https://indiacs.live.dynatrace.com (not an apps UI host).
+RUM uses the user-provided CDN tag. Backend service namespace is avinyatech;
+service names distinguish API, reminder, note-analysis, scoring and telemetry workers.
+Resources include service.version, deployment.environment.name and build commit.
+The secret is DYNATRACE_API_TOKEN. Classic dt0c01 tokens use Api-Token auth;
+OTLP uses HTTP binary protobuf at /api/v2/otlp/v1/{traces,logs,metrics}. BizEvents use
+/api/v2/bizevents/ingest; deployment markers use /api/v2/events/ingest.
+
+Backend spans use real OpenTelemetry context and validated W3C traceparent input.
+Verified user IDs are hashed before export. A request ID identifies an attempt;
+a transaction ID survives Firestore retries; event.id survives export retries.
+Incoming context provides correlation only, never authorization. Export requests
+are not auto-instrumented, preventing recursion. Firestore spans describe the SDK
+boundary, not Google's managed database internals. Scheduled jobs start genuine
+worker traces; the original request context is continued/linked only when persisted.
+
+Browser RUM identifies pseudonymously, normalizes operation/route names, marks
+private content for masking and disables Session Replay. No contact names, emails,
+notes or form values are manually added. Tenant consent, IP-masking, retention and
+server-side RUM settings remain tenant-controlled. Local/emulator sessions do not
+load RUM. Browser observations never certify a database commit. RUM-to-backend
+navigation requires compatible tenant linking/configuration and is verified separately.
+
+## Committed events and delivery
+
+The observable store records bounded, allowlisted collection summaries in the same
+transaction as domain writes. Multiple writes of the same document are counted once
+per transaction. Events describe committed writes, not customer business revenue or
+unique lead-count deltas. Failed/retried transactions and idempotent replays do not
+produce extra committed events. No request body, result object or free-text source
+is serialized. Background writes use system attribution unless a trusted caller is
+available. Outbox/lease/rate-limit/audit-internal writes do not recursively emit events.
+
+The scheduled exporter leases bounded records, sends individual CloudEvents and
+marks delivered only on full documented acceptance. Timeouts/429/5xx retry with
+bounded exponential backoff; persistent 400/401/403 stop automatic attempts until an
+operator repairs configuration. Expired leases recover. A lost response can duplicate
+an accepted event: consumers must deduplicate event.id before summing record counts.
+Retain pending/rejected records; never delete them as a retry shortcut. For recovery,
+fix the secret/scope/endpoint then reset a selected rejected record to Pending with
+nextAttemptAt=now through an authorized operator, preserving its event ID/payload.
+
+## Operational signals and privacy
+
+Request counts/outcomes, request duration (seconds), domain transaction results and
+worker/export results use bounded operation/method/status dimensions. Entity IDs,
+UIDs, URLs and exception strings are not metric dimensions. Logs contain bounded
+semantic event names, result categories, release IDs and genuine trace context.
+Export queues/timeouts/flush waits are bounded. Monitoring errors do not replace a
+business response or undo a committed operation. The outbox itself adds a bounded
+number of transaction writes; preserve Firestore write-limit headroom for imports.
+
+No customer records, lead text, task titles, notes, AI content, tokens or raw URLs
+are exported deliberately. Deleting source app data does not erase tenant telemetry.
+Retention/erasure must be managed separately. This integration does not create tenant
+SLOs, dashboards or alert policies merely by emitting telemetry.
+
+## Verification ledger
+
+| Stage | Required evidence | Release result |
+|---|---|---|
+| Local OTLP | Independent protobuf receiver decodes all signals and resources | Passed: independently decoded real OTLP protobuf in the automated suite |
+| Policy/resilience | Concurrency isolation, retry/idempotency, invalid context, exporter failure | Passed: concurrency, idempotency, rollback, leases, retries and failed-export tests |
+| RUM | Approved tag load, masked UI, identity/sign-out, beacon delivery | Build includes approved masked loader; production beacon and native linkage require browser/tenant verification |
+| Deployment | Secret bindings, function versions, worker health | See the versioned GitHub Actions deployment artifact and function revisions |
+| Ingest | Distinct accepted response for traces, logs, metrics, BizEvents and release marker | Live synthetic probes: OTLP traces/logs/metrics HTTP 200, zero rejected; BizEvents 202; event marker 201 with OK result. Workflow verifies each deployment separately. |
+| Search | Authorized tenant query locates exact IDs/versions | Requires query access; ingest alone is insufficient |
+| Cross-signal | Navigate actual RUM action to backend trace | Requires tenant configuration and direct verification |
+
+Release-specific deployment evidence is retained in GitHub Actions artifacts. Do not silently promote
+HTTP acceptance to tenant searchability or assert cross-signal linkage from a custom
+trace-id field alone.

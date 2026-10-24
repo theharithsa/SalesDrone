@@ -1,0 +1,34 @@
+[
+  {
+    "file": "dashboard-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "dd21ccaf9eb9dcbf506e1d2dfc5e4873ee0a5c74a0c4a5f23b8ef9c1d9d21cbc",
+    "capturedAt": "2026-10-24T19:49:53.016Z",
+    "viewport": "1440 × 900",
+    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+  },
+  {
+    "file": "journey-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "f4a7041e41e2d3bf443e30af7043070ade4d5f95512cdbfe44dfac04b560fae7",
+    "capturedAt": "2026-10-24T19:49:53.101Z",
+    "viewport": "1440 × 900",
+    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+  },
+  {
+    "file": "mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "3cd0eeb01a9dc671dccdce91eafc0aeb5b088acf2ecae75c8b557548f96cfee4",
+    "capturedAt": "2026-10-24T19:49:53.161Z",
+    "viewport": "390 × 844",
+    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+  },
+  {
+    "file": "notifications-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "2735c9905f0bcbe39fc17bb5055e2579bdbfc656be14ae8be9068fadc5239151",
+    "capturedAt": "2026-10-24T19:49:53.256Z",
+    "viewport": "1440 × 900",
+    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+  }
+]
