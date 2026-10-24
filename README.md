@@ -1,6 +1,12 @@
 # SalesDrone by AvinyaTech
 
-**Part of Avinya Enterprises · v1.1.0 · MIT**
+[![Verify, deploy and observe](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
+[![Latest release](https://img.shields.io/github/v/release/theharithsa/SalesDrone?color=0756a5)](https://github.com/theharithsa/SalesDrone/releases/latest)
+[![MIT licence](https://img.shields.io/github/license/theharithsa/SalesDrone?color=0756a5)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-0756a5)](https://theharithsa.github.io/SalesDrone/)
+[![OpenAPI 3.1](https://img.shields.io/badge/OpenAPI-3.1-0756a5)](https://sales-drone-avinya.firebaseapp.com/api/docs)
+
+**Part of Avinya Enterprises · v1.1.1 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 

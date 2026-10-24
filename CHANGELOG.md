@@ -4,6 +4,13 @@ Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
 
+
+## [1.1.1] - 2026-10-25
+
+### Changed
+- Align all ten guide navigation entries and section headings, including Overview and API integrations. Generate matching numbers from document order and reject mismatched anchors during the documentation build.
+- Add linked README badges for the deployment workflow, latest release, MIT licence, public documentation and OpenAPI portal.
+
 ## [1.1.0] - 2026-10-24
 
 ### Changed
