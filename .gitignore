@@ -41,3 +41,5 @@ node_modules
 # Legacy local-only capture helpers tied to an operator's Mac runtime.
 scripts/qa-admin.mjs
 scripts/qa-ui.mjs
+# Rebuilt from the pinned Swagger npm distribution, including its licence.
+apps/web/public/swagger/

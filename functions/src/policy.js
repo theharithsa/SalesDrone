@@ -1,3 +1,4 @@
+import { TOKEN_SCOPES } from './api-scopes.js';
 import { createHash } from 'node:crypto';
 import { AppError, PRESETS } from './contracts.js';
 export const ROOT = 'workspaces/avinyatech';
@@ -65,6 +66,45 @@ export async function requireMember(store, identity, capability) {
       'DEMO_ONLY',
       'Live workspace access has not been granted',
     );
+  const access = identity.personalAccess;
+  if (access) {
+    const token = await store.get(path('personalAccessTokens', access.id));
+    if (
+      !token?.active ||
+      token.ownerUid !== m.uid ||
+      token.tokenHash !== access.digest ||
+      token.expiresAt <= access.now() ||
+      m.role !== 'Admin'
+    )
+      throw new AppError(
+        401,
+        'INVALID_TOKEN',
+        'Personal access token is invalid, expired or revoked',
+      );
+    if (
+      !access.requiredScopes?.length ||
+      access.requiredScopes.some((scope) => !token.scopes.includes(scope))
+    )
+      throw new AppError(
+        403,
+        'TOKEN_SCOPE',
+        'This token does not have the required API scope',
+      );
+    const granted = new Set(
+      TOKEN_SCOPES.filter((s) => token.scopes.includes(s.id)).map(
+        (s) => s.capability,
+      ),
+    );
+    // Existing membership policy needs this baseline internally. The route-level
+    // PAT scope still gates every data read, so a tasks-only key cannot read leads.
+    granted.add('leads:read');
+    m.capabilities = m.capabilities.filter((c) => granted.has(c));
+    // Preserve request policy through nested domain transactions without serializing it.
+    Object.defineProperty(m, 'personalAccess', {
+      value: access,
+      enumerable: false,
+    });
+  }
   if (
     capability &&
     (!m.capabilities.includes(capability) ||

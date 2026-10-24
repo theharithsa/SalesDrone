@@ -1,3 +1,8 @@
+import {
+  TokenInput,
+  TOKEN_SCOPES,
+  PAT_ROUTES,
+} from '../functions/src/personal-access-tokens.js';
 import { ScoringPatch } from '../functions/src/scoring.js';
 import { FieldOptionsPatch } from '../functions/src/field-options.js';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -37,6 +42,10 @@ schemas.ImportInput.properties.rows.items.properties = {
   },
 };
 schemas.ScoringPatch = z.toJSONSchema(ScoringPatch, { io: 'input' });
+schemas.TokenInput = z.toJSONSchema(TokenInput, { io: 'input' });
+schemas.TokenInput.properties.scopes.uniqueItems = true;
+schemas.TokenInput.description =
+  'Google-authenticated administrators only. Choose at least one unique permission scope. The raw token is returned once and is never stored in an idempotency response.';
 schemas.EmptyInput = { type: 'object', additionalProperties: false };
 schemas.ScoringConfig = {
   type: 'object',
@@ -345,7 +354,51 @@ schemas.Summary = object({
 });
 schemas.CallSaved = object({ activity: ref('Activity'), lead: ref('Lead') });
 schemas.Ok = object({ ok: { type: 'boolean' } });
+schemas.PersonalAccessToken = object(
+  {
+    id: string,
+    name: string,
+    prefix: string,
+    scopes: {
+      type: 'array',
+      items: { type: 'string', enum: TOKEN_SCOPES.map((s) => s.id) },
+    },
+    createdAt: instant,
+    expiresAt: instant,
+    lastUsedAt: nullableInstant,
+    revokedAt: nullableInstant,
+    active: { type: 'boolean' },
+  },
+  ['id', 'name', 'prefix', 'scopes', 'createdAt', 'expiresAt', 'active'],
+);
+schemas.TokenCreated = object(
+  {
+    token: {
+      type: 'string',
+      readOnly: true,
+      description:
+        'One-time raw Bearer credential. Store securely; never put in a URL.',
+    },
+    personalAccessToken: ref('PersonalAccessToken'),
+  },
+  ['token', 'personalAccessToken'],
+);
+schemas.TokenPage = object(
+  {
+    items: { type: 'array', items: ref('PersonalAccessToken') },
+    nextCursor: { type: ['string', 'null'] },
+    availableScopes: {
+      type: 'array',
+      items: object({ id: string, description: string, capability: string }),
+    },
+    maxActiveTokens: { type: 'integer', const: 20 },
+  },
+  ['items', 'nextCursor', 'availableScopes', 'maxActiveTokens'],
+);
 const responseFor = (method, url) => {
+  if (url === '/personal-access-tokens')
+    return ref(method === 'get' ? 'TokenPage' : 'TokenCreated');
+  if (url.startsWith('/personal-access-tokens/')) return ref('Ok');
   if (url.endsWith('/journey'))
     return {
       type: 'object',
@@ -437,50 +490,55 @@ endpoints.push(
   },
 );
 const bodyFor = (m, u) =>
-  u === '/scoring-settings'
-    ? 'ScoringPatch'
-    : u.endsWith('/score/refresh') || u === '/dashboard/insights'
-      ? 'EmptyInput'
-      : u === '/field-options'
-        ? 'FieldOptionsPatch'
-        : u.endsWith('/assignment')
-          ? 'AssignmentPatch'
-          : u === '/notifications/:id'
-            ? 'NotificationPatch'
-            : u === '/me'
-              ? 'Preferences'
-              : u.endsWith('/automatic-reminder')
-                ? 'AutomaticReminderAction'
-                : u === '/leads'
-                  ? 'LeadInput'
-                  : u === '/leads/:id'
-                    ? 'LeadPatch'
-                    : u.endsWith('/activities')
-                      ? 'ActivityInput'
-                      : u === '/tasks'
-                        ? 'TaskInput'
-                        : u === '/tasks/:id'
-                          ? m === 'delete'
-                            ? 'TaskDelete'
-                            : 'TaskPatch'
-                          : u === '/invitations'
-                            ? 'GrantInput'
-                            : u === '/members/:uid'
-                              ? 'MemberPatch'
-                              : u === '/devices'
-                                ? 'DeviceInput'
-                                : u === '/imports/preview'
-                                  ? 'ImportInput'
-                                  : null;
+  u === '/personal-access-tokens' && m === 'post'
+    ? 'TokenInput'
+    : u === '/scoring-settings'
+      ? 'ScoringPatch'
+      : u.endsWith('/score/refresh') || u === '/dashboard/insights'
+        ? 'EmptyInput'
+        : u === '/field-options'
+          ? 'FieldOptionsPatch'
+          : u.endsWith('/assignment')
+            ? 'AssignmentPatch'
+            : u === '/notifications/:id'
+              ? 'NotificationPatch'
+              : u === '/me'
+                ? 'Preferences'
+                : u.endsWith('/automatic-reminder')
+                  ? 'AutomaticReminderAction'
+                  : u === '/leads'
+                    ? 'LeadInput'
+                    : u === '/leads/:id'
+                      ? 'LeadPatch'
+                      : u.endsWith('/activities')
+                        ? 'ActivityInput'
+                        : u === '/tasks'
+                          ? 'TaskInput'
+                          : u === '/tasks/:id'
+                            ? m === 'delete'
+                              ? 'TaskDelete'
+                              : 'TaskPatch'
+                            : u === '/invitations'
+                              ? 'GrantInput'
+                              : u === '/members/:uid'
+                                ? 'MemberPatch'
+                                : u === '/devices'
+                                  ? 'DeviceInput'
+                                  : u === '/imports/preview'
+                                    ? 'ImportInput'
+                                    : null;
 const paths = {};
 for (const e of endpoints) {
   const url = '/api/v1' + e.url.replace(/:([a-zA-Z]+)/g, '{$1}');
   const operation = {
     operationId: e.method + e.url.replace(/[^a-zA-Z]/g, '_'),
     summary: e.method.toUpperCase() + ' ' + e.url,
-    description: `Requires: ${e.capability}. Server verifies active membership and assigned/all lead scope. Private responses use Cache-Control: no-store.`,
+    description: `Requires: ${e.capability}. ${PAT_ROUTES[e.method + ' ' + e.url] ? 'Personal access token scope: ' + PAT_ROUTES[e.method + ' ' + e.url] + '.' : 'Google sign-in and App Check required; personal access tokens are not accepted.'} Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.${e.url === '/leads/:id/activities' && e.method === 'post' ? ' Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.' : ''}${e.url === '/personal-access-tokens' && e.method === 'post' ? ' Admin-only. Do not send Idempotency-Key. Token is shown once; list and delete metadata never include the credential or its hash.' : ''}`,
     tags: [e.url.split('/')[1]],
-    security: [{ firebaseIdToken: [], appCheck: [] }],
+    security: PAT_ROUTES[e.method + ' ' + e.url]
+      ? [{ personalAccessToken: [] }, { firebaseIdToken: [], appCheck: [] }]
+      : [{ firebaseIdToken: [], appCheck: [] }],
+    'x-personal-access-token-scope': PAT_ROUTES[e.method + ' ' + e.url] || null,
     parameters: [],
     responses: {
       200: {
@@ -493,14 +551,14 @@ for (const e of endpoints) {
           {
             description: {
               400: 'Validation failure',
-              401: 'Sign-in required',
+              401: 'Missing, invalid, expired or revoked credential',
               403: 'Permission denied',
               404: 'Resource unavailable',
               409: 'Duplicate, stale version or conflict',
               429: 'Rate limited',
               500: 'Internal failure',
               502: 'AI response could not be grounded',
-              503: 'AI temporarily unavailable',
+              503: 'Dependency or account verification temporarily unavailable',
             }[status],
             content: {
               'application/json': {
@@ -567,7 +625,17 @@ for (const e of endpoints) {
           name === 'stage'
             ? { type: 'string' }
             : name === 'field'
-              ? { type: 'string', enum: ['name', 'company', 'phone', 'email'] }
+              ? {
+                  type: 'string',
+                  enum: [
+                    'name',
+                    'company',
+                    'phone',
+                    'email',
+                    'location',
+                    'zone',
+                  ],
+                }
               : { type: 'string' },
         description:
           name === 'search'
@@ -578,7 +646,9 @@ for (const e of endpoints) {
     operation.parameters.push({
       in: 'query',
       name: 'filters',
-      content: { 'application/json': { schema: ref('LeadFilters') } },
+      content: {
+        'application/json': { schema: ref('LeadFilters'), example: [] },
+      },
       description:
         'AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. Uses a bounded scan of authorized lead pages, with a signed continuation cursor. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment.',
     });
@@ -595,6 +665,7 @@ for (const e of endpoints) {
     !e.url.endsWith('/test') &&
     !e.url.endsWith('/archive') &&
     e.url !== '/dashboard/insights' &&
+    e.url !== '/personal-access-tokens' &&
     !e.url.endsWith('/score/refresh')
   )
     operation.parameters.push({
@@ -649,7 +720,13 @@ for (const e of endpoints) {
   operation.responses[200].headers = {
     'Cache-Control': { schema: { type: 'string', const: 'no-store' } },
     'X-Request-Id': { schema: { type: 'string', format: 'uuid' } },
+    'X-App-Version': { schema: { type: 'string' } },
   };
+  for (const response of Object.values(operation.responses)) {
+    response.headers = { ...operation.responses[200].headers };
+  }
+  operation.responses[401].headers['WWW-Authenticate'] = {schema:{type:'string'},description:'Bearer authentication challenge'};
+  operation.responses[429].headers['Retry-After'] = {schema:{type:'string',const:'60'},description:'Wait at least 60 seconds before retrying'};
   paths[url] ??= {};
   paths[url][e.method] = operation;
 }
@@ -657,14 +734,21 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.8.0',
+    version: '1.9.0',
     description:
-      'Part of Avinya Enterprises. Firebase Auth Google ID token and App Check protected API. Non-members may resolve their demo mode through /me only; no live business endpoints are available in demo mode.',
+      'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
   servers: [{ url: '/' }],
   paths,
   components: {
     securitySchemes: {
+      personalAccessToken: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'sd_pat_<id>_<secret>',
+        description:
+          'Generate in Settings → Developer settings → Personal Access Tokens. Enter the raw token, without Bearer. Stored only in memory by this portal. Scope and active owner permissions are rechecked server-side; not accepted for Google-only operations.',
+      },
       firebaseIdToken: {
         type: 'http',
         scheme: 'bearer',

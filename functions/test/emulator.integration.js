@@ -1,3 +1,4 @@
+import { path } from '../src/policy.js';
 import { observableStore } from '../src/observable-store.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -71,6 +72,10 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   const app = createApp({
     store,
     verifyToken: (t) => auth.verifyIdToken(t, true),
+    verifyPersonalTokenOwner: async (uid) => {
+      const user = await auth.getUser(uid);
+      return !user.disabled;
+    },
     extractScore: async () => ({ signals: [] }),
     summarizeDashboard: async (c) => ({
       headline: 'Verified emulator brief',
@@ -542,6 +547,89 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
       })
     ).length,
     480,
+  );
+  // Real Firestore queries, transactions and Google Auth token issuance for PATs.
+  const patResult = (
+    await req('post', '/personal-access-tokens', {
+      name: 'Synthetic emulator integration',
+      scopes: ['leads:read', 'leads:create', 'leads:edit', 'leads:archive'],
+      expiresInDays: 7,
+    }).expect(200)
+  ).body;
+  const patCall = (method, url, body, key) => {
+    let r = request(app)
+      [method]('/api/v1' + url)
+      .set('Authorization', 'Bearer ' + patResult.token);
+    if (key) r = r.set('Idempotency-Key', key);
+    return body === undefined ? r : r.send(body);
+  };
+  const patKey = randomUUID(),
+    patInput = {
+      name: 'Synthetic PAT enquiry',
+      enquiryDate: '2026-10-25',
+      phone: '+12025550169',
+    };
+  let patLead = (await patCall('post', '/leads', patInput, patKey).expect(200))
+    .body;
+  assert.equal(
+    (await patCall('post', '/leads', patInput, patKey).expect(200)).body.id,
+    patLead.id,
+  );
+  patLead = (
+    await patCall('patch', '/leads/' + patLead.id, {
+      expectedVersion: patLead.version,
+      stage: 'Working',
+    }).expect(200)
+  ).body;
+  await patCall('get', '/leads/' + patLead.id + '/journey').expect(200);
+  await patCall('post', '/leads/' + patLead.id + '/archive', {
+    expectedVersion: patLead.version,
+  }).expect(200);
+  const patPage = (
+    await req('get', '/personal-access-tokens?limit=1').expect(200)
+  ).body;
+  assert.equal(patPage.items[0].id, patResult.personalAccessToken.id);
+  assert.ok(!JSON.stringify(patPage).includes(patResult.token));
+  await patCall('get', '/personal-access-tokens').expect(403);
+  await req(
+    'delete',
+    '/personal-access-tokens/' + patResult.personalAccessToken.id,
+    {},
+  ).expect(200);
+  await patCall('get', '/leads').expect(401);
+  const accountToken = (
+    await req('post', '/personal-access-tokens', {
+      name: 'Synthetic disabled-owner test',
+      scopes: ['tasks:read'],
+      expiresInDays: 7,
+    }).expect(200)
+  ).body;
+  const ownerUid = (await auth.verifyIdToken(token)).uid;
+  await auth.updateUser(ownerUid, { disabled: true });
+  await request(app)
+    .get('/api/v1/tasks')
+    .set('Authorization', 'Bearer ' + accountToken.token)
+    .expect(401);
+  await auth.updateUser(ownerUid, { disabled: false });
+  await req(
+    'delete',
+    '/personal-access-tokens/' + accountToken.personalAccessToken.id,
+    {},
+  ).expect(200);
+  const securityEvents = await store.query(path('telemetryOutbox'), {
+    limit: 1000,
+  });
+  const safeEvents = JSON.stringify(securityEvents);
+  assert.ok(!safeEvents.includes(patResult.token));
+  const storedPAT = await store.get(
+    path('personalAccessTokens', patResult.personalAccessToken.id),
+  );
+  assert.ok(!safeEvents.includes(storedPAT.tokenHash));
+  assert.ok(!safeEvents.includes('Synthetic emulator integration'));
+  assert.ok(
+    securityEvents.some(
+      (e) => e.event?.data?.['record.domain'] === 'personalAccessTokens',
+    ),
   );
   await db.terminate();
 });

@@ -19,3 +19,6 @@ lockfiles identify exact versions. This document does not replace their notices.
   copies and a QA manifest are under assets/salesdrone-guide-illustrations.
 - README/site screenshots show synthetic demo data only. Historical local evidence
   captures are ignored and are not part of the public repository or Pages build.
+
+Swagger UI Distribution 5.34.0 (Swagger / SmartBear) is Apache-2.0 licensed. Its
+licence is copied with the self-hosted runtime assets to `/swagger/LICENSE`.

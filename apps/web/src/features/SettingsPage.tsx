@@ -1,3 +1,4 @@
+import DeveloperSettings from './DeveloperSettings';
 import { APP_VERSION } from '../lib/version';
 import PeopleSettings from './PeopleSettings';
 import ScoringSettings from './ScoringSettings';
@@ -19,6 +20,7 @@ import {
   ListFilter,
   Info,
   ChevronRight,
+  CodeXml,
 } from 'lucide-react';
 import { Session, Entity } from '../lib/types';
 import { Avatar, ErrorMessage, SaveButton, useSubmit } from '../components/UI';
@@ -90,6 +92,12 @@ export default function SettingsPage({
             icon: SlidersHorizontal,
             description:
               'Choose the signals and weights behind each lead score.',
+          },
+          {
+            id: 'developer',
+            label: 'Developer settings',
+            icon: CodeXml,
+            description: 'Personal Access Tokens and the Swagger API portal.',
           },
           {
             id: 'access',
@@ -232,7 +240,7 @@ export default function SettingsPage({
         <div className="settings-content">
           <div className="settings-section-header">
             <span className="eyebrow">
-              {['fields', 'choices', 'access', 'scoring'].includes(
+              {['fields', 'choices', 'access', 'scoring', 'developer'].includes(
                 currentSection.id,
               )
                 ? 'WORKSPACE SETTINGS'
@@ -520,6 +528,9 @@ export default function SettingsPage({
           ) : null}
           {isAdmin && section === 'scoring' ? (
             <ScoringSettings request={request} />
+          ) : null}
+          {isAdmin && section === 'developer' ? (
+            <DeveloperSettings request={request} />
           ) : null}
           {isAdmin && section === 'access' ? (
             <PeopleSettings request={request} />

@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Application baseline: **1.0.0**. Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **1.1.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -29,6 +29,8 @@ illustrations. `scripts` contains release, contract, security and operator tooli
 
 A browser obtains a verified Google ID token and App Check attestation. The API
 verifies both, resolves active membership and checks the operation capability.
+Explicitly supported data routes also accept scoped Personal Access Tokens. Only active Admin users with Google/App Check sessions can issue and manage their own tokens. A token stores a hash, expires within 90 days, and is checked against current owner capabilities/scope and revocation state on every request and business transaction. Google-only routes remain protected by browser attestation. See [the API integration guide](API.md).
+
 Every scoped lead read independently verifies assigned/all access. Business writes
 recheck membership inside a Firestore transaction. Expected versions reject lost
 updates; idempotency keys bind a logical create to its request fingerprint and
@@ -43,7 +45,7 @@ Admin access grants require the intended verified identity and can be revoked.
 
 Under `workspaces/avinyatech`: leads, activities, activityRevisions, leadTransitions,
 tasks, members, invitations, dedupeKeys, imports/importChunks, requests, auditEvents,
-settings, leadScores, noteAnalyses, reminderDeliveries, telemetryOutbox and rateLimits.
+settings, leadScores, noteAnalyses, reminderDeliveries, telemetryOutbox, personalAccessTokens and rateLimits.
 Private user settings/devices/notifications/insights live under `users/{uid}`.
 
 Lead contact normalization supports duplicate checks while preserving original

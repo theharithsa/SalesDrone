@@ -1,5 +1,52 @@
-import {spawnSync} from 'node:child_process';import {readFileSync,statSync} from 'node:fs';
-const list=spawnSync('git',['ls-files','--cached','--others','--exclude-standard','-z'],{encoding:'utf8'});if(list.status)throw Error('Run inside the repository');const files=[...new Set(list.stdout.split('\0').filter(Boolean))];
-const patterns=[['Dynatrace ingestion token',/dt0c01\.[A-Z0-9]{20,}\.[A-Z0-9]{30,}/],['GitHub credential',/\bgh[opusr]_[A-Za-z0-9]{30,}/],['Gemini credential',/\bAQ\.[A-Za-z0-9_-]{30,}/],['Private key',/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],['Service account credential',/"private_key"\s*:\s*"[^"\\]*\\n/]];
-const issues=[];for(const file of files){if(!statSync(file).isFile())continue;if(/(^|\/)(\.env(?:\..*)?|\.secret\.local|gha-creds-.*\.json)$/.test(file)&&!file.endsWith('.env.example'))issues.push([file,'Environment or credential file']);if(/\.(xlsx?|csv|tsv|har|zip)$/i.test(file))issues.push([file,'Potential customer/export file']);if(file.startsWith('docs/screenshots/')||file.startsWith('docs/demo/')||file==='docs/VERIFICATION.md')issues.push([file,'Uncurated local evidence']);const bytes=readFileSync(file);if(bytes.includes(0)||bytes.length>5_000_000)continue;const text=bytes.toString('utf8');for(const [name,re] of patterns)if(re.test(text))issues.push([file,name]);for(const match of text.matchAll(/AIza[A-Za-z0-9_-]{35}/g))if(match[0]!=='AIzaSyCHqWlqPaz1J117_vdm8NkH3koqcOGvkzw')issues.push([file,'Unrecognized Google API key']);}
-if(issues.length){for(const [file,type] of issues)console.error(file+': '+type);process.exitCode=1;}else console.log(`Scanned ${files.length} Git-visible files; no matched credentials or uncurated exports.`);
+import { spawnSync } from 'node:child_process';
+import { readFileSync, statSync } from 'node:fs';
+const list = spawnSync(
+  'git',
+  ['ls-files', '--cached', '--others', '--exclude-standard', '-z'],
+  { encoding: 'utf8' },
+);
+if (list.status) throw Error('Run inside the repository');
+const files = [...new Set(list.stdout.split('\0').filter(Boolean))];
+const patterns = [
+  [
+    'SalesDrone personal access token',
+    /\bsd_pat_[a-f0-9]{32}_[A-Za-z0-9_-]{43}\b/,
+  ],
+  ['Dynatrace ingestion token', /dt0c01\.[A-Z0-9]{20,}\.[A-Z0-9]{30,}/],
+  ['GitHub credential', /\bgh[opusr]_[A-Za-z0-9]{30,}/],
+  ['Gemini credential', /\bAQ\.[A-Za-z0-9_-]{30,}/],
+  ['Private key', /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],
+  ['Service account credential', /"private_key"\s*:\s*"[^"\\]*\\n/],
+];
+const issues = [];
+for (const file of files) {
+  if (!statSync(file).isFile()) continue;
+  if (
+    /(^|\/)(\.env(?:\..*)?|\.secret\.local|gha-creds-.*\.json)$/.test(file) &&
+    !file.endsWith('.env.example')
+  )
+    issues.push([file, 'Environment or credential file']);
+  if (/\.(xlsx?|csv|tsv|har|zip)$/i.test(file))
+    issues.push([file, 'Potential customer/export file']);
+  if (
+    file.startsWith('docs/screenshots/') ||
+    file.startsWith('docs/demo/') ||
+    file === 'docs/VERIFICATION.md'
+  )
+    issues.push([file, 'Uncurated local evidence']);
+  const bytes = readFileSync(file);
+  if (bytes.includes(0) || bytes.length > 5_000_000) continue;
+  const text = bytes.toString('utf8');
+  for (const [name, re] of patterns)
+    if (re.test(text)) issues.push([file, name]);
+  for (const match of text.matchAll(/AIza[A-Za-z0-9_-]{35}/g))
+    if (match[0] !== 'AIzaSyCHqWlqPaz1J117_vdm8NkH3koqcOGvkzw')
+      issues.push([file, 'Unrecognized Google API key']);
+}
+if (issues.length) {
+  for (const [file, type] of issues) console.error(file + ': ' + type);
+  process.exitCode = 1;
+} else
+  console.log(
+    `Scanned ${files.length} Git-visible files; no matched credentials or uncurated exports.`,
+  );

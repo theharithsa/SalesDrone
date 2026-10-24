@@ -8,6 +8,7 @@ const domains = new Set([
   'leadTransitions',
   'tasks',
   'members',
+  'personalAccessTokens',
   'invitations',
   'imports',
   'leadScores',

@@ -12,6 +12,7 @@ are marked by actual evidence; configuration alone is not end-to-end verificatio
 | Task/reminder | API/worker → persisted task/inbox/push outcome | Committed task/notification counts; worker result logs | Task title, FCM token, phone |
 | Import | Validated chunk → Firestore transaction | Unique committed domain-write counts per transaction | Workbook rows, cells, errors with source text |
 | AI | Request/worker → Gemini dependency span → validated persisted result | Score/task state commits; no prompt/response capture | Notes, prompts, free text, evidence quotations |
+| Token lifecycle | Google/App Check → Admin owner → token transaction | Hashed credential; safe metadata; audit with opaque token ID | Token secret/hash, name, response body |
 | Admin | Verified capability → member/settings transaction | Committed versioned domain changes | Invite address, custom-field values |
 | Release | GitHub main → verified Firebase deployment | Version/commit/run/build/deployment event | Credentials, source data, customer screenshots |
 

@@ -30,5 +30,21 @@
     "capturedAt": "2026-10-24T19:49:53.256Z",
     "viewport": "1440 × 900",
     "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+  },
+  {
+    "file": "api-portal-demo.jpg",
+    "mode": "public-contract",
+    "review": "Public schemas only; fresh unauthorized Swagger tab, no request responses or credentials.",
+    "sha256": "6f81bdbb552dfdaf1140c816ba0951ea5a2e232bb0bbbd180904d16d4effe479",
+    "capturedAt": "2026-10-24T20:30:59.283Z",
+    "viewport": "1440 × 900"
+  },
+  {
+    "file": "developer-settings-demo.jpg",
+    "mode": "synthetic-demo",
+    "review": "Isolated demo-salesdrone emulator with fictional Demo Admin and revoked synthetic credential metadata; raw credential hidden.",
+    "sha256": "87a4d22e30317f44b4d478e3dc37f10084e68ae69431c472218b4a74b0261f50",
+    "capturedAt": "2026-10-24T20:30:59.308Z",
+    "viewport": "1440 × 900"
   }
 ]

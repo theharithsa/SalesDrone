@@ -1,1 +1,78 @@
-<!DOCTYPE html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"/><title>SalesDrone API · AvinyaTech</title><link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.30.3/swagger-ui.css"/></head><body><div id="swagger-ui"></div><script src="https://unpkg.com/swagger-ui-dist@5.30.3/swagger-ui-bundle.js"></script><script>SwaggerUIBundle({url:'/openapi.json',dom_id:'#swagger-ui',persistAuthorization:false,displayRequestDuration:true});</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>SalesDrone API Portal · AvinyaTech</title>
+    <link rel="icon" href="/icon.svg" />
+    <link rel="stylesheet" href="/swagger/swagger-ui.css" />
+    <link rel="stylesheet" href="/api-portal.css" />
+  </head>
+  <body>
+    <header class="portal-header">
+      <a href="/">SalesDrone<span>.</span></a
+      ><span>API PORTAL · by AvinyaTech</span
+      ><a href="/settings?section=developer">Developer settings ↗</a>
+    </header>
+    <main>
+      <section class="portal-intro">
+        <p class="eyebrow">BUILD WITH YOUR WORKSPACE</p>
+        <h1>Every operation. One API portal.</h1>
+        <p>
+          Browse read, create, update and delete operations, request schemas,
+          scopes and errors.
+          <strong>Try it out sends real requests to your workspace.</strong> Use
+          a test enquiry for write examples.
+        </p>
+        <ol>
+          <li>
+            Generate a Personal Access Token in
+            <a href="/settings?section=developer"
+              >Settings → Developer settings</a
+            >. Start with read-only scopes.
+          </li>
+          <li>
+            Open <b>Authorize</b> and enter the raw token under
+            <b>personalAccessToken</b>. The portal adds <code>Bearer</code>. No
+            App Check header is needed for this credential.
+          </li>
+          <li>
+            Choose an operation and read its required scope. Google-only
+            operations instead require a Google Firebase ID token
+            <em>and</em> App Check attestation; authorize one identity method at
+            a time.
+          </li>
+        </ol>
+        <p class="portal-note">
+          Authorization stays in this tab’s memory and clears on page exit. This
+          page loads Swagger locally, has no analytics or session replay, and
+          sends requests only to this origin. Lead deletion means archiving;
+          timeline corrections preserve history.
+        </p>
+        <div class="portal-links">
+          <a href="/openapi.json" download="salesdrone-openapi.json"
+            >Download OpenAPI 3.1</a
+          ><a
+            href="https://github.com/theharithsa/SalesDrone/blob/main/docs/API.md"
+            rel="noreferrer"
+            target="_blank"
+            >Integration guide ↗</a
+          ><a
+            href="https://theharithsa.github.io/SalesDrone/"
+            rel="noreferrer"
+            target="_blank"
+            >Product guide ↗</a
+          >
+        </div>
+      </section>
+      <div id="swagger-ui"></div>
+      <noscript
+        >Enable JavaScript to use Swagger. The OpenAPI contract is available
+        from the download link above.</noscript
+      >
+    </main>
+    <script src="/swagger/swagger-ui-bundle.js"></script>
+    <script src="/api-portal.js"></script>
+  </body>
+</html>

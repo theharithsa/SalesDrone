@@ -77,3 +77,22 @@ permissions; iOS requires a supported installed web app. Monitoring can be sampl
 blocked or unavailable and must never authorize an operation or certify a business
 commit. Runtime errors and failed exports should be repaired without weakening
 App Check, Firestore rules or membership checks.
+
+## Personal Access Tokens
+
+Admin-issued PATs use 256-bit random secrets, SHA-256 storage, one-time display and
+7/30/90-day expiry. Only authenticated Google/App Check Admin owners with
+members:write can list, create or revoke their own credentials. PATs cannot manage
+tokens, members, security settings or devices and cannot invoke AI generation.
+Explicit data scopes intersect the owner's current capabilities and lead scope.
+Disabled/deleted Firebase Auth owners are rejected on admission. Credential validity and membership policy are rechecked in business transactions; scoped
+idempotency replays are reauthorized. Per-token/owner limits bound API traffic.
+
+Keep credentials in an integration secret manager. Never put them in browser
+bundles, query strings, screenshots, exports or logs. The Swagger portal is
+self-hosted, has no RUM/replay, disables remote validation and allows requests only
+to its own origin. Authorization is in memory and cleared on page exit. Revocation
+blocks subsequent authorization checks, not already-completed operations. A lost
+creation response cannot recover the secret: revoke its metadata entry and reissue.
+Rotate before expiry and revoke exposed tokens promptly. Treat the token owner as
+the integration's data controller; no client Firestore access is granted by a PAT.

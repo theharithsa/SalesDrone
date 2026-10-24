@@ -34,12 +34,19 @@ const app = initializeApp(
 );
 export const auth = getAuth(app);
 if (emulator)
-  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  connectAuthEmulator(
+    auth,
+    `http://${window.location.hostname === 'localhost' ? 'localhost' : '127.0.0.1'}:9099`,
+    { disableWarnings: true },
+  );
 const siteKey = import.meta.env.VITE_FIREBASE_APPCHECK_KEY;
 const appCheck =
   siteKey && !emulator
     ? initializeAppCheck(app, {
-        provider: import.meta.env.VITE_FIREBASE_APPCHECK_PROVIDER === 'enterprise' ? new ReCaptchaEnterpriseProvider(siteKey) : new ReCaptchaV3Provider(siteKey),
+        provider:
+          import.meta.env.VITE_FIREBASE_APPCHECK_PROVIDER === 'enterprise'
+            ? new ReCaptchaEnterpriseProvider(siteKey)
+            : new ReCaptchaV3Provider(siteKey),
         isTokenAutoRefreshEnabled: true,
       })
     : null;

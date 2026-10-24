@@ -1,5 +1,15 @@
+import {
+  PAT_ROUTES,
+  TOKEN_SCOPES,
+  TokenInput,
+  MAX_TOKENS,
+  tokenMetadata,
+  generateToken,
+  assertAdmin,
+  authenticatePersonalToken,
+} from './personal-access-tokens.js';
 import { APP_VERSION } from './version.js';
-import { recordStage,transitionId } from './journey.js';
+import { recordStage, transitionId } from './journey.js';
 import { z } from 'zod';
 import {
   SCORING_PATH,
@@ -102,6 +112,7 @@ export function createApp({
   telemetry = () => null,
   verifyToken,
   verifyAppCheck,
+  verifyPersonalTokenOwner = null,
   sendTest = async () => {},
   extractScore = null,
   summarizeDashboard = null,
@@ -130,20 +141,40 @@ export function createApp({
       const bearer = req.headers.authorization?.match(/^Bearer (.+)$/)?.[1];
       if (!bearer)
         throw new AppError(401, 'UNAUTHENTICATED', 'Sign in to continue');
-      let token;
-      try {
-        token = await verifyToken(bearer);
-      } catch {
-        throw new AppError(
-          401,
-          'UNAUTHENTICATED',
-          'Your session expired. Sign in again.',
-        );
+      if (bearer.startsWith('sd_pat_')) {
+        req.identity = await authenticatePersonalToken(store, bearer, now);
+        if (
+          verifyPersonalTokenOwner &&
+          !(await verifyPersonalTokenOwner(req.identity.uid))
+        )
+          throw new AppError(
+            401,
+            'INVALID_TOKEN',
+            'The personal access token owner is unavailable',
+          );
+        // These identity/bootstrap routes are intentionally Google-only.
+        if (req.path === '/me' || req.path.startsWith('/invitations/'))
+          throw new AppError(
+            403,
+            'GOOGLE_REQUIRED',
+            'Use Google sign-in for this operation',
+          );
+      } else {
+        let token;
+        try {
+          token = await verifyToken(bearer);
+        } catch {
+          throw new AppError(
+            401,
+            'UNAUTHENTICATED',
+            'Your session expired. Sign in again.',
+          );
+        }
+        req.identity = googleIdentity(token);
+        if (verifyAppCheck)
+          await verifyAppCheck(req.headers['x-firebase-appcheck']);
       }
-      req.identity = googleIdentity(token);
       telemetry()?.identify(req.identity.uid);
-      if (verifyAppCheck)
-        await verifyAppCheck(req.headers['x-firebase-appcheck']);
       for (const p of req.path.split('/').filter(Boolean))
         if (!/^[A-Za-z0-9_.:-]+$/.test(p))
           throw new AppError(400, 'PATH', 'Invalid path');
@@ -155,6 +186,22 @@ export function createApp({
   const route = (method, url, capability, handler) =>
     router[method](url, async (req, res, next) => {
       try {
+        if (req.identity.personalAccess) {
+          const scope = PAT_ROUTES[method + ' ' + url];
+          if (!scope)
+            throw new AppError(
+              403,
+              'GOOGLE_REQUIRED',
+              'This operation requires Google sign-in and App Check',
+            );
+          req.identity.personalAccess.requiredScopes = [scope];
+          if (url === '/leads/:id/activities' && method === 'post') {
+            if (req.body?.stage)
+              req.identity.personalAccess.requiredScopes.push('leads:edit');
+            if (req.body?.followUp)
+              req.identity.personalAccess.requiredScopes.push('tasks:write');
+          }
+        }
         req.member = await requireMember(store, req.identity, capability);
         telemetry()?.operation(method.toUpperCase() + ' ' + url);
         const allowed =
@@ -234,6 +281,12 @@ export function createApp({
       tx.set(path('auditEvents', id), {
         id,
         actorUid: member.uid,
+        authentication: req.identity.personalAccess
+          ? 'personal_access_token'
+          : 'google',
+        ...(req.identity.personalAccess
+          ? { personalAccessTokenId: req.identity.personalAccess.id }
+          : {}),
         action: req.method + ' ' + req.route.path,
         requestId: req.requestId,
         createdAt: now(),
@@ -484,6 +537,92 @@ export function createApp({
       scanLimited: scanned >= 1000 && hasMore,
     };
   }
+  route('get', '/personal-access-tokens', 'members:write', async (req) => {
+    assertAdmin(req.member);
+    const page = await list(
+      req,
+      'personalAccessTokens',
+      [['ownerUid', '==', req.member.uid]],
+      undefined,
+      'createdAt',
+    );
+    return {
+      ...page,
+      items: page.items.map(tokenMetadata),
+      availableScopes: TOKEN_SCOPES.filter((s) =>
+        req.member.capabilities.includes(s.capability),
+      ),
+      maxActiveTokens: MAX_TOKENS,
+    };
+  });
+  route('post', '/personal-access-tokens', 'members:write', (req) => {
+    if (req.headers['idempotency-key'])
+      throw new AppError(
+        400,
+        'TOKEN_ONE_TIME',
+        'Token creation cannot be replayed; do not send Idempotency-Key',
+      );
+    const input = parse(TokenInput, req.body),
+      generated = generateToken(req.member.uid, input, now());
+    return mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      if (
+        input.scopes.some(
+          (id) =>
+            !member.capabilities.includes(
+              TOKEN_SCOPES.find((s) => s.id === id).capability,
+            ),
+        )
+      )
+        throw new AppError(
+          403,
+          'TOKEN_SCOPE',
+          'Tokens cannot exceed your current permissions',
+        );
+      const existing = await tx.query(path('personalAccessTokens'), {
+        filters: [
+          ['ownerUid', '==', member.uid],
+          ['active', '==', true],
+        ],
+        direction: 'desc',
+        limit: MAX_TOKENS + 1,
+      });
+      if (existing.filter((t) => t.expiresAt > now()).length >= MAX_TOKENS)
+        throw new AppError(
+          409,
+          'TOKEN_LIMIT',
+          'Revoke an existing token before creating another',
+        );
+      for (const t of existing.filter((t) => t.expiresAt <= now()))
+        tx.set(path('personalAccessTokens', t.id), { ...t, active: false });
+      tx.set(
+        path('personalAccessTokens', generated.record.id),
+        generated.record,
+      );
+      return {
+        token: generated.token,
+        personalAccessToken: tokenMetadata(generated.record),
+      };
+    });
+  });
+  route('delete', '/personal-access-tokens/:id', 'members:write', (req) => {
+    parse(z.object({}).strict(), req.body ?? {});
+    if (!/^[a-f0-9]{32}$/.test(req.params.id))
+      throw new AppError(404, 'NOT_FOUND', 'Personal access token not found');
+    return mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      const t = await tx.get(path('personalAccessTokens', req.params.id));
+      if (!t || t.ownerUid !== member.uid)
+        throw new AppError(404, 'NOT_FOUND', 'Personal access token not found');
+      if (t.active)
+        tx.set(path('personalAccessTokens', t.id), {
+          ...t,
+          active: false,
+          revokedAt: now(),
+        });
+      return { ok: true };
+    });
+  });
   route('get', '/field-options', 'leads:read', () => readFieldOptions(store));
   route('patch', '/field-options', 'members:write', (req) => {
     const input = parse(FieldOptionsPatch, req.body);
@@ -786,7 +925,9 @@ export function createApp({
     return {
       ...history,
       currentStage: lead.stage,
-      historyComplete: !!(await store.get(path('leadTransitions',transitionId(lead.id,1)))),
+      historyComplete: !!(await store.get(
+        path('leadTransitions', transitionId(lead.id, 1)),
+      )),
     };
   });
   route('get', '/leads/:id/activities', 'leads:read', async (req) => {
@@ -1693,6 +1834,9 @@ export function createApp({
   );
   app.use((err, req, res, next) => {
     const status = err.status || 500;
+    if (status === 401)
+      res.set('WWW-Authenticate', 'Bearer realm="SalesDrone"');
+    if (status === 429) res.set('Retry-After', '60');
     if (status >= 500)
       console.error(
         JSON.stringify({

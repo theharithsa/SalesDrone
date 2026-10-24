@@ -80,6 +80,22 @@ const handler = createApp({
   summarizeDashboard: (input) =>
     dependency('gemini.dashboard', () => intelligence.summarize(input)),
   verifyToken: (token) => getAuth().verifyIdToken(token, true),
+  verifyPersonalTokenOwner: async (uid) => {
+    try {
+      const owner = await getAuth().getUser(uid);
+      return (
+        !owner.disabled &&
+        owner.providerData.some((p) => p.providerId === 'google.com')
+      );
+    } catch (error) {
+      if (error.code === 'auth/user-not-found') return false;
+      throw new AppError(
+        503,
+        'AUTH_UNAVAILABLE',
+        'Account verification is temporarily unavailable',
+      );
+    }
+  },
   verifyAppCheck: async (token) => {
     if (process.env.FUNCTIONS_EMULATOR === 'true') return;
     if (appCheckMode.value() !== 'enforce')

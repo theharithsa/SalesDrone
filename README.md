@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-**Part of Avinya Enterprises · v1.0.0 · MIT**
+**Part of Avinya Enterprises · v1.1.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -56,6 +56,14 @@ Select **Explore the demo** to preview without production credentials. For the l
 
 An unavailable live API produces an error; it does not silently replace a live workspace with demo data.
 
+## API integrations
+
+[Open the Swagger API portal](https://sales-drone-avinya.firebaseapp.com/api/docs) for all 47 supported read, create, update and delete operations. Admins can generate expiring, scoped **Personal Access Tokens** in **Settings → Developer settings**. Tokens are shown once, stored as hashes and revocable. They inherit current owner permissions and cannot administer people, security settings or other tokens.
+
+![Self-hosted Swagger portal showing GET, POST, PATCH and DELETE task APIs; no credentials or customer records.](site/assets/screenshots/api-portal-demo.jpg)
+
+See the [API integration guide](docs/API.md) for scopes, CRUD examples, pagination, concurrency, errors and rotation. The portal is self-hosted on Firebase with no analytics or third-party JavaScript.
+
 ## Stack and technical documentation
 
 | Layer | Technology |
@@ -68,6 +76,7 @@ An unavailable live API produces an error; it does not silently replace a live w
 | Delivery | GitHub Actions, Google Workload Identity Federation, Firebase Hosting/Functions, GitHub Pages |
 
 - [Technical architecture and data flow](docs/TECHNICAL.md)
+- [Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs) and [API integration guide](docs/API.md)
 - [Versioned OpenAPI contract](docs/openapi.json)
 - [Automatic reminders](docs/AUTOMATIC-REMINDERS.md) and [intelligence/scoring](docs/INTELLIGENCE.md)
 - [Workbook mapping](docs/WORKBOOK-ALIGNMENT.md)
@@ -87,4 +96,4 @@ Start at **v1.0.0**. Subsequent changes use `npm run release -- patch`, `minor` 
 
 Application code is released under the [MIT licence](LICENSE), copyright Avinya Enterprises. Brand names and logos remain their owners’ marks. Font and dependency licences are documented in [third-party notices](THIRD-PARTY-NOTICES.md).
 
-The public guide includes original generated illustrations made using the [Ian Xiaohei illustration workflow](https://github.com/tojileon/ian-xiaohei-illustrations-en). Their [review manifest](assets/salesdrone-guide-illustrations/QA.md) accompanies the source images. All app screenshots above come from the synthetic guest demo.
+The public guide includes original generated illustrations made using the [Ian Xiaohei illustration workflow](https://github.com/tojileon/ian-xiaohei-illustrations-en). Their [review manifest](assets/salesdrone-guide-illustrations/QA.md) accompanies the source images. Product screenshots use synthetic demo data; the API portal image shows only public schemas.

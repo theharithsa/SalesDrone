@@ -826,3 +826,177 @@ input[type='tel'] {
   background: var(--accent);
   box-shadow: 0 0 0 2px var(--panel);
 }
+
+/* Developer settings keep credentials local to the one-time reveal. */
+.developer-settings {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.developer-settings .panel {
+  min-width: 0;
+}
+.developer-settings h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 10px;
+}
+.developer-settings .notice p {
+  margin: 0;
+}
+.token-create {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  margin-top: 20px;
+  display: grid;
+  gap: 24px;
+}
+.token-form-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+}
+.token-form-row label {
+  display: grid;
+  gap: 8px;
+}
+.token-create fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.token-create legend {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.token-scope-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.token-scope {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.token-scope input {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  margin: 4px 0;
+  accent-color: var(--accent);
+}
+.token-scope span {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+.token-scope strong {
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.token-scope small {
+  line-height: 1.5;
+}
+.token-reveal {
+  border: 2px solid var(--accent);
+}
+.token-reveal > code {
+  display: block;
+  padding: 18px;
+  background: var(--bg);
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+  user-select: all;
+  font-size: 16px;
+}
+.token-list {
+  display: grid;
+  gap: 14px;
+}
+.token-card {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  min-width: 0;
+}
+.token-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.token-card h4 {
+  font-size: 18px;
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.token-scope-summary {
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.token-dates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+.token-dates dt {
+  font-size: 13px;
+  color: var(--muted);
+}
+.token-dates dd {
+  margin: 5px 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.token-revoke-confirm {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.token-revoke-confirm .button {
+  margin: 0 8px 8px 0;
+}
+.api-example {
+  padding: 18px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+.developer-settings .section-heading {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .token-form-row,
+  .token-scope-grid,
+  .token-dates {
+    grid-template-columns: 1fr;
+  }
+  .token-card {
+    padding: 16px;
+  }
+  .token-reveal .form-actions {
+    flex-wrap: wrap;
+  }
+  .developer-intro .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+.developer-settings .token-scope {
+  flex-direction: row;
+  align-items: flex-start;
+}

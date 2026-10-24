@@ -24,6 +24,7 @@ await cloud(`https://cloudresourcemanager.googleapis.com/v1/projects/${project}:
 async function bindServiceAccount(target,role,member){const url=`https://iam.googleapis.com/v1/projects/-/serviceAccounts/${target}`;const p=await cloud(url+':getIamPolicy',{method:'POST',body:'{}'});p.bindings||=[];let b=p.bindings.find(v=>v.role===role&&!v.condition);if(!b){b={role,members:[]};p.bindings.push(b);}if(!b.members.includes(member))b.members.push(member);await cloud(url+':setIamPolicy',{method:'POST',body:JSON.stringify({policy:p})});}
 await bindServiceAccount(email,'roles/iam.workloadIdentityUser',`principalSet://iam.googleapis.com/projects/${number}/locations/global/workloadIdentityPools/${pool}/attribute.repository_id/${repoId}`);
 await bindServiceAccount(`${number}-compute@developer.gserviceaccount.com`,'roles/iam.serviceAccountUser','serviceAccount:'+email);
+await bindServiceAccount(`${project}@appspot.gserviceaccount.com`,'roles/iam.serviceAccountUser','serviceAccount:'+email);
 gh(['api',`repos/${repo}/environments/production`,'--method','PUT','--input','-'],JSON.stringify({wait_timer:0}));
 const vars={GCP_PROJECT_ID:project,GCP_WORKLOAD_IDENTITY_PROVIDER:`projects/${number}/locations/global/workloadIdentityPools/${pool}/providers/${provider}`,GCP_DEPLOY_SERVICE_ACCOUNT:email,DYNATRACE_TENANT_URL:'https://indiacs.live.dynatrace.com',VITE_ENABLE_RUM:'true'};
 let env='';for(const file of ['.env','.env.local','.env.production','.env.production.local'])env+='\n'+await readFile(new URL('../apps/web/'+file,import.meta.url),'utf8').catch(()=> '');

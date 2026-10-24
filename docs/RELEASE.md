@@ -40,7 +40,7 @@ The one-time operator provisioning scripts use the operator's existing Firebase/
 login, preserve IAM policies with etags, and create no service-account private key.
 Federation is restricted by numeric owner/repository ID, main ref and exact deploy
 workflow. The deployment service account has product-specific deploy roles plus
-narrow IAM-publication permissions and actAs on the runtime account. That actAs
+narrow IAM-publication permissions and actAs on both the compute runtime account and the App Engine default service account (required by Firebase CLI preflight). That actAs
 permission makes main a production trust boundary even without a direct data role.
 
 The public documentation job uploads only site/ after its curated build. It does
