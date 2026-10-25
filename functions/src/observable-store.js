@@ -103,7 +103,7 @@ export function observableStore(base, getTelemetry = () => null) {
               const id = hash(transactionId + ':' + d);
               const data = {
                 'event.id': id,
-                'event.provider': 'salesdrone.backend',
+                'event.provider': 'com.avinyatech.salesdrone.backend',
                 'event.authority': 'server-confirmed',
                 'schema.version': 1,
                 'transaction.id': transactionId,

@@ -151,7 +151,12 @@ export function createTelemetry({
         ],
       },
     }),
-    workers = meter.createCounter('salesdrone.worker.runs');
+    workers = meter.createCounter('salesdrone.worker.runs'),
+    businessDeliveries = meter.createCounter('salesdrone.bizevents.delivery', {
+      description:
+        'Finalized outbox delivery attempts, not unique business outcomes',
+      unit: '{attempt}',
+    });
   let flushing;
   const self = {
     enabled: true,
@@ -168,6 +173,16 @@ export function createTelemetry({
             ? `00-${c.traceId}-${c.spanId}-${c.traceFlags & 1 ? '01' : '00'}`
             : null,
       };
+    },
+    businessDelivery(outcome, status) {
+      if (!['delivered', 'retried', 'rejected'].includes(outcome)) return;
+      businessDeliveries.add(1, {
+        outcome,
+        'http.status_class':
+          status >= 100 && status < 600
+            ? Math.floor(status / 100) + 'xx'
+            : 'network',
+      });
     },
     identify(uid) {
       const s = scope.getStore();

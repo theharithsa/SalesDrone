@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.6.1
+Version 1.6.2
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -343,6 +343,8 @@ Manage fields includes editable built-in labels and supported required/active be
 Reports & lead access controls exports and assigned-only visibility for non-admins. People & permissions manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.
 
 The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.
+
+The top-right theme switch uses a sunrise/sunset horizon. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is planned separately for v1.6.3; it is not enabled by this release.
 
 ### Questions
 

@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.6.1 · MIT**
+**Part of Avinya Enterprises · v1.6.2 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -34,7 +34,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard funnel is a snapshot of current counts: selecting a stage opens its filtered leads. Its widths do not claim conversion rates or an invented history.
 
-![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=2a2a96cae01a)
+![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=23034f4ee3b6)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -45,7 +45,7 @@ The notification bell opens an overlay without losing your place. Assignment and
 <details>
 <summary>Mobile lead view</summary>
 
-<img src="site/assets/screenshots/mobile-demo.jpg?sha=d1512d034919" alt="A fictional lead’s journey on mobile" width="320">
+<img src="site/assets/screenshots/mobile-demo.jpg?sha=ca31c3595a3a" alt="A fictional lead’s journey on mobile" width="320">
 
 </details>
 
@@ -129,8 +129,10 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with Comments, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=837623c6b26e)
+![Lead workspace with Comments, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=290758788773)
 
 Current v1.6.1 maintenance improves inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
 The full lead page opens in **All**: loaded activity, review information and your private tasks. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
+
+Current **v1.6.2** standardizes Dynatrace CloudEvents delivery and adds a sunrise/sunset theme control. [Book mode is planned for v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).

@@ -29,7 +29,7 @@ const metadata = JSON.parse(await readFile('deployment.json', 'utf8')),
     )
     .digest('hex');
 const version = metadata.version;
-async function send(path, body) {
+async function send(path, body, contentType = 'application/json') {
   for (let attempt = 0; attempt < 3; attempt++) {
     let r;
     try {
@@ -38,7 +38,7 @@ async function send(path, body) {
         redirect: 'error',
         headers: {
           Authorization: 'Api-Token ' + token,
-          'Content-Type': 'application/json',
+          'Content-Type': contentType,
         },
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(15000),
@@ -53,7 +53,7 @@ async function send(path, body) {
 }
 const data = {
   'event.id': id,
-  'event.provider': 'salesdrone.github-actions',
+  'event.provider': 'com.avinyatech.salesdrone.github-actions',
   'event.authority': 'automation-confirmed',
   'schema.version': 1,
   'app.version': version,
@@ -69,14 +69,18 @@ const data = {
   'deployment.functions': JSON.stringify(metadata.functions),
   'changelog.url': metadata.changelogUrl,
 };
-const biz = await send('/api/v2/bizevents/ingest', {
-  specversion: '1.0',
-  id,
-  source: 'com.avinyatech.salesdrone.github-actions',
-  type: 'com.avinyatech.salesdrone.deployment.' + outcome,
-  time: new Date().toISOString(),
-  data,
-});
+const biz = await send(
+  '/api/v2/bizevents/ingest',
+  {
+    specversion: '1.0',
+    id,
+    source: 'com.avinyatech.salesdrone.github-actions',
+    type: 'com.avinyatech.salesdrone.deployment.' + outcome,
+    time: new Date().toISOString(),
+    data,
+  },
+  'application/cloudevent+json',
+);
 const marker = await send('/api/v2/events/ingest', {
   eventType: 'CUSTOM_DEPLOYMENT',
   title: `SalesDrone v${version} · ${outcome}`,

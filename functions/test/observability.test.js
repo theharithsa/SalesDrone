@@ -39,6 +39,7 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
     for await (const c of req) chunks.push(c);
     const raw = Buffer.concat(chunks);
     if (req.url === '/api/v2/bizevents/ingest') {
+      assert.equal(req.headers['content-type'], 'application/cloudevent+json');
       biz.push(JSON.parse(raw));
       res.writeHead(202);
       res.end();
@@ -271,6 +272,38 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
       ),
     );
     assert.ok(!JSON.stringify(biz).includes('PRIVATE'));
+    assert.ok(
+      biz.every(
+        (e) =>
+          e.specversion === '1.0' &&
+          e.source.startsWith('com.avinyatech.salesdrone') &&
+          e.type.startsWith('com.avinyatech.salesdrone') &&
+          e.id === e.data['event.id'],
+      ),
+    );
+    await t.flush();
+    const deliveryMetric = received
+      .filter((r) => r.path.endsWith('metrics'))
+      .flatMap((r) =>
+        r.decoded.resourceMetrics.flatMap((rs) =>
+          rs.scopeMetrics.flatMap((s) => s.metrics),
+        ),
+      )
+      .find((m) => m.name === 'salesdrone.bizevents.delivery');
+    assert.ok(deliveryMetric);
+    assert.ok(
+      deliveryMetric.sum.dataPoints.every((p) =>
+        Object.keys(attr(p.attributes)).every((k) =>
+          ['outcome', 'http.status_class'].includes(k),
+        ),
+      ),
+    );
+    assert.ok(
+      deliveryMetric.sum.dataPoints.some(
+        (p) => attr(p.attributes).outcome === 'delivered',
+      ),
+    );
+
     await store.run(async (tx) =>
       tx.set(path('tasks', 'retry-test'), {
         id: 'retry-test',
@@ -311,6 +344,10 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
     assert.equal(
       (await base.get(path('telemetryOutbox', pending.id))).status,
       'Delivered',
+    );
+    assert.equal(
+      (await base.get(path('telemetryOutbox', pending.id))).deliveryFormat,
+      'cloudevent-v1',
     );
     await store.run(async (tx) =>
       tx.set(path('tasks', 'rejected-test'), {
@@ -364,4 +401,50 @@ test('context and endpoint validation rejects malformed parents and credential r
     tenantOrigin('https://indiacs.live.dynatrace.com'),
     'https://indiacs.live.dynatrace.com',
   );
+});
+
+test('a worker that loses its delivery lease cannot finalize or count another worker outcome', async () => {
+  const store = memoryStore();
+  const p = path('telemetryOutbox', 'lease-fixture');
+  await store.run(async (tx) =>
+    tx.set(p, {
+      id: 'lease-fixture',
+      status: 'Pending',
+      attemptCount: 0,
+      nextAttemptAt: '2026-10-01T00:00:00.000Z',
+      event: {
+        specversion: '1.0',
+        id: 'lease-fixture',
+        source: 'com.avinyatech.salesdrone.test',
+        type: 'test',
+        data: {},
+      },
+    }),
+  );
+  let metrics = 0;
+  const result = await deliverTelemetry({
+    store,
+    tenant: 'https://fixture.live.dynatrace.com',
+    key: 'synthetic',
+    telemetry: {
+      span: async (_name, fn) => fn(),
+      capture: () => ({}),
+      businessDelivery: () => metrics++,
+    },
+    fetchImpl: async (_url, options) => {
+      assert.equal(
+        options.headers['Content-Type'],
+        'application/cloudevent+json',
+      );
+      await store.run(async (tx) => {
+        const current = await tx.get(p);
+        tx.set(p, { ...current, lease: 'replacement-worker' });
+      });
+      return { status: 202, headers: new Headers() };
+    },
+  });
+  assert.equal(result.delivered, 0);
+  assert.equal(metrics, 0);
+  assert.equal((await store.get(p)).lease, 'replacement-worker');
+  assert.equal((await store.get(p)).status, 'Sending');
 });

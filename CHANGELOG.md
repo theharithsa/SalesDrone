@@ -12,6 +12,15 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.6.2] - 2026-10-26
+
+### Changed
+- Correct business and deployment CloudEvents content types and consistent provider fields for Dynatrace normalization; retain immutable IDs and at-least-once outbox guarantees.
+- Add bounded BizEvent delivery metrics and read-only projected outbox diagnostics; a stale worker cannot finalize or count another worker’s lease.
+- Animate the sun and moon across the theme toggle horizon, with immediate theme changes, keyboard access and reduced-motion support.
+- Document the separate Book mode plan for v1.6.3.
+
 ## [1.6.1] - 2026-10-25
 
 ### Lead activity tabs (same-version maintenance)

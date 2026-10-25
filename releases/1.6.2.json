@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "version": "1.6.2",
+  "summary": "Correct Dynatrace CloudEvents normalization, expose bounded outbox delivery diagnostics and add reversible sunrise/sunset theme control.",
+  "modules": [
+    "salesdrone-observability",
+    "salesdrone-interface",
+    "salesdrone-release"
+  ],
+  "documentation": [
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/observability.md",
+    "docs/BUSINESS-EVENTS.md",
+    "docs/BOOK-MODE-PLAN.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "No HTTP contract or permission changes: existing user-owned appearance preference and backend committed outbox remain authoritative.",
+    "contractVersion": "1.12.0",
+    "permissions": "Existing membership, Google/App Check and own-preference policy unchanged; diagnostic CLI requires existing operator IAM and exposes no customer payload.",
+    "tests": [
+      "functions/test/observability.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Correct CloudEvents media type/provider mapping, preserve stable IDs and delivery leases. New bounded delivery counter complements existing safe logs/traces. Deployment transport tested independently; no customer contents exported.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Correct CloudEvents media type/provider mapping, preserve stable IDs and delivery leases. New bounded delivery counter complements existing safe logs/traces. Deployment transport tested independently; no customer contents exported.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Correct CloudEvents media type/provider mapping, preserve stable IDs and delivery leases. New bounded delivery counter complements existing safe logs/traces. Deployment transport tested independently; no customer contents exported.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Correct CloudEvents media type/provider mapping, preserve stable IDs and delivery leases. New bounded delivery counter complements existing safe logs/traces. Deployment transport tested independently; no customer contents exported.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Correct CloudEvents media type/provider mapping, preserve stable IDs and delivery leases. New bounded delivery counter complements existing safe logs/traces. Deployment transport tested independently; no customer contents exported.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic desktop/mobile theme toggles in both directions and keyboard access; reduced-motion stylesheet verification; projected production outbox counts show 3 accepted, none pending/rejected. Tenant query returned401, searchability unverified. No production customer edits.",
+  "screenshots": [
+    "dashboard-demo.jpg",
+    "journey-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "mobile-demo.jpg",
+    "lead-overlay-demo.jpg",
+    "notifications-demo.jpg"
+  ]
+}

@@ -104,3 +104,7 @@ Lead workspace navigation reuses safe RUM navigation and existing API instrument
 The explicit same-version v1.6.1 maintenance deployment is identified by commit SHA and workflow run, preserving the original release tag. Composer typing sends no inference request or telemetry content; the existing sanitized activity API instrumentation and committed event outbox remain authoritative.
 
 Lead All/Comments/Calls tabs reuse existing safe navigation and API telemetry. Local filtering creates no canonical business event or new trace/log/metric payload. Review details, call comments and unsaved drafts remain excluded. Same-version maintenance deployment signals retain exact commit/run identifiers.
+
+## v1.6.2 BizEvents normalization
+
+See [the business event catalog, diagnostics and DQL templates](BUSINESS-EVENTS.md). The committed outbox and GitHub deployment notifier now send application/cloudevent+json with consistent provider fields. The original ordinary-JSON receipts were accepted but their intended field normalization was not tenant-verified. Preserve historical IDs; do not replay delivered records. A bounded salesdrone.bizevents.delivery counter records finalized delivery attempts by outcome/status class; lease-loss attempts cannot report success. Source/delivery trace limits and privacy exclusions remain unchanged.

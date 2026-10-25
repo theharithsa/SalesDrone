@@ -84,7 +84,7 @@ export async function deliverTelemetry({
               redirect: 'error',
               headers: {
                 Authorization: 'Api-Token ' + key,
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/cloudevent+json',
               },
               body: JSON.stringify(event),
               signal: AbortSignal.timeout(10000),
@@ -99,9 +99,9 @@ export async function deliverTelemetry({
             permanent =
               (!!status && status < 500 && ![202, 408, 429].includes(status)) ||
               claimed.attemptCount >= 10;
-          await store.run(async (tx) => {
+          const finalized = await store.run(async (tx) => {
             const current = await tx.get(p);
-            if (current?.lease !== lease) return;
+            if (current?.lease !== lease) return false;
             tx.set(p, {
               ...current,
               status: accepted
@@ -111,6 +111,7 @@ export async function deliverTelemetry({
                   : 'Pending',
               ...(accepted ? { deliveredAt: now() } : {}),
               lastStatus: status,
+              deliveryFormat: 'cloudevent-v1',
               nextAttemptAt: new Date(
                 Date.parse(now()) +
                   Math.max(
@@ -120,13 +121,16 @@ export async function deliverTelemetry({
                     1000,
               ).toISOString(),
             });
+            return true;
           });
+          if (!finalized) return;
           const result = accepted
             ? 'delivered'
             : permanent
               ? 'rejected'
               : 'retried';
           stats[result]++;
+          telemetry?.businessDelivery?.(result, status);
           telemetry?.log('telemetry.delivery', {
             outcome: result,
             'event.id': claimed.id,

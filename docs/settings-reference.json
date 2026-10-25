@@ -35,7 +35,7 @@
           "id": "appearance",
           "label": "Theme",
           "default": "System",
-          "description": "Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch.",
+          "description": "Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch. The quick switch animates a small sunrise/sunset horizon; reduced-motion users receive an immediate state change. It never covers the workspace.",
           "effect": "Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local. On desktop, lead blade width is adjusted directly in Leads using its left edge (double-click resets it); expand opens a dedicated lead page. That width is remembered only in the current browser, separately from account preferences; double-click the edge to reset it.",
           "example": ""
         },

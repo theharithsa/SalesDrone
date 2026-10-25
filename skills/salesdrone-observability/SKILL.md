@@ -69,3 +69,5 @@ Adjacent owners:
 Read for detailed behavior:
 
 - [docs/observability.md](../../docs/observability.md)
+
+Send outbox and deployment envelopes using application/cloudevent+json, not ordinary JSON. Keep source and data event.provider identical to avoid conflicting provider normalization; preserve IDs on retries and never replay delivered legacy events merely to rename fields. deliveryFormat=cloudevent-v1 distinguishes corrected delivery receipts. salesdrone.bizevents.delivery counts finalized attempts by bounded outcome/status class, not unique business conversions. scripts/inspect-bizevents.mjs projects queue metadata only and requires existing operator IAM; tenant search needs separate query access. Test the independent collector header, deployment notifier, stale leases and safe metric dimensions.

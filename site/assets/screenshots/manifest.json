@@ -2,38 +2,38 @@
   {
     "file": "dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1974b5bc0b587446c1e534257144be4df1d14f96376d355b1b8803eeb7bf3d3e",
-    "capturedAt": "2026-10-25T16:49:37.086654+00:00",
+    "sha256": "6667587487caffef6b338b89845abf2ed2cea78b556de98e887a67885e9d88e4",
+    "capturedAt": "2026-10-25T18:50:19.689545+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo.",
-    "version": "1.6.0"
+    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport.",
+    "version": "1.6.2"
   },
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2a2a96cae01aac4bd618e3840ed14bcc34451d40a36145d4ba37cca242187830",
-    "capturedAt": "2026-10-25T18:26:12.219272+00:00",
+    "sha256": "23034f4ee3b67b412b7557d67c84289c06ebc3e218ca0adbe9c28c885dcc5c31",
+    "capturedAt": "2026-10-25T18:50:19.718092+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production records. Updated All/Comments/Calls tabs and filtered history. Measured desktop 1828 x 1028 CSS pixel viewport.",
-    "version": "1.6.1"
+    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport.",
+    "version": "1.6.2"
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d1512d03491988239bec92f76a5a38ca87eb62fcc59d02a65e4afceb985a4b21",
-    "capturedAt": "2026-10-25T18:26:12.460685+00:00",
+    "sha256": "ca31c3595a3a2f1682f7ffb35c25ea81ead9e5a92e1c372a906bcef02a1f111b",
+    "capturedAt": "2026-10-25T18:50:19.769071+00:00",
     "viewport": "390 \u00d7 844 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production records. Updated All/Comments/Calls tabs and filtered history. Measured 390 x 844 CSS pixel application frame; browser breakpoint check, not physical hardware.",
-    "version": "1.6.1"
+    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 390 x 844 CSS pixel frame; not physical hardware.",
+    "version": "1.6.2"
   },
   {
     "file": "notifications-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d6b243dec4f4e29d1ba1c101281cd994c3ebad59b3860062d9f7157300a11882",
-    "capturedAt": "2026-10-25T16:49:37.106289+00:00",
+    "sha256": "1455bbe8cf8f64cc546cb9726ad82f5a312610cc854af5db14d3f110a74a33a0",
+    "capturedAt": "2026-10-25T18:50:19.814267+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo.",
-    "version": "1.6.0"
+    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport.",
+    "version": "1.6.2"
   },
   {
     "file": "api-portal-demo.jpg",
@@ -55,19 +55,19 @@
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "93b0580cfcf50f6a35edcfd31523ae21ff6a1e65609b5508459a2b083cd40d9f",
-    "capturedAt": "2026-10-25T16:49:37.188313+00:00",
+    "sha256": "5a0a8dc817d6af9fc11a747e6559ca5656c9aaf1bfa2b3c46d61c6fde4204a34",
+    "capturedAt": "2026-10-25T18:50:19.863398+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "version": "1.6.0",
-    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo."
+    "version": "1.6.2",
+    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport."
   },
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "837623c6b26e1a4d2f68f68e216f076be39b475ff23d1a90154935685eaa7512",
-    "capturedAt": "2026-10-25T18:26:12.726780+00:00",
+    "sha256": "2907587887738ffd0d0dbb8b37b18168807c9d1f4ff0630f4a56d503895e358a",
+    "capturedAt": "2026-10-25T18:50:19.902683+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "version": "1.6.1",
-    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production records. Updated All/Comments/Calls tabs and filtered history. Measured desktop 1828 x 1028 CSS pixel viewport."
+    "version": "1.6.2",
+    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport."
   }
 ]
