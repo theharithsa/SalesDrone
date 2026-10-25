@@ -33,3 +33,5 @@ No module-specific HTTP endpoints. Reuse domain contracts and the API integratio
 [tests/product-guide.test.ts](../../tests/product-guide.test.ts) exercises escaping and duplicate/incomplete anchors. Browser rehearsal proves interactions and screenshots; generated text checks do not prove the product works. If a physical-device test or tenant query was not performed, report that boundary.
 
 Adjacent owners: [documentation](../salesdrone-documentation/SKILL.md), [interface](../salesdrone-interface/SKILL.md), [release readiness](../salesdrone-release-readiness/SKILL.md).
+
+For visual preference features include how to enable, save, combine with theme and disable; distinguish personal from workspace scope and visual styling from offline/hardware behaviour. Book mode uses separate reviewed day, night, mobile and settings captures so standard screenshots can remain accurate with Book mode off. Keep explicit public asset allowlists; never publish a fixture directory.

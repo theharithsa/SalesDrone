@@ -198,3 +198,7 @@ Inline comment entry uses the existing POST lead activities operation, including
 ### Lead activity views
 
 All, Comments and Calls are presentation filters over the same authorized, paginated GET `/api/v1/leads/{id}/activities` result. Comments selects note entries (including imported discussions), Calls selects call entries, and All preserves all types and review metadata in source order. All also reuses recipient-private GET `/api/v1/tasks?leadId=...`; it grants no access to another member’s tasks. No new endpoint, scope or API contract version is introduced. Earlier activity remains necessary to inspect unloaded history.
+
+## Preferences: Book mode (contract 1.13.0)
+
+GET /api/v1/me returns preferences.bookMode (false for missing records). PATCH /api/v1/me accepts optional boolean bookMode together with the existing required timezone and appearance. Omitting bookMode preserves the stored value; false explicitly disables it. This additive field changes no role or capability. Only the verified active Google/App Check caller can update their own preferences; Personal Access Tokens cannot use this route, and uid/owner fields are rejected. No new endpoint, token scope or lead access is introduced. Book mode is independent from light/dark/system. Tests: book-mode.test.js and the real Auth/Firestore emulator scenario cover persistence, old-client omission, isolation, invalid payloads and denied access.

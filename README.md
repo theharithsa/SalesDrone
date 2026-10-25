@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.6.2 · MIT**
+**Part of Avinya Enterprises · v1.6.3 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -123,16 +123,22 @@ Filtered Excel reports are available directly in Leads, with a column picker and
 
 Read the [complete settings guide](docs/SETTINGS.md) or its [published version](https://theharithsa.github.io/SalesDrone/settings.html) for every control, default, permission and environment boundary. Agent routing: [skill-tree.json](skill-tree.json) / [skill-tree.md](skill-tree.md). Every feature release follows the [completion and deployment checks](skills/salesdrone-release-readiness/SKILL.md).
 
-The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changing the table. Open full lead page for Comments, Tasks and Review tabs at a bookmarkable URL. Wider journeys run horizontally; stage/assignment stay at the top. Keyboard resizing, aligned fluid navigation and reduced-motion preferences are supported.
+The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changing the table. Open full lead page for All, Comments, Calls, Tasks and Review tabs at a bookmarkable URL. Wider journeys run horizontally; stage/assignment stay at the top. Keyboard resizing, aligned fluid navigation and reduced-motion preferences are supported.
 
 ## Product handbook
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with Comments, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=290758788773)
+![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=290758788773)
 
-Current v1.6.1 maintenance improves inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
+The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
 The full lead page opens in **All**: loaded activity, review information and your private tasks. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
 
-Current **v1.6.2** standardizes Dynatrace CloudEvents delivery and adds a sunrise/sunset theme control. [Book mode is planned for v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
+**v1.6.2** standardized Dynatrace CloudEvents delivery and added a sunrise/sunset theme control. [Book mode is available in v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
+
+## Read in Book mode
+
+Open **Settings → Appearance & time**, enable **Book mode**, and save. Warm paper and serif reading passages work with Light, Dark and System; the sunrise/sunset switch keeps your reading style. This is personal to your account.
+
+![Book mode with fictional lead data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=c040dc083c2c)

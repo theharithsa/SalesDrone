@@ -37,6 +37,10 @@ const screenshots = [
   'mobile-demo.jpg',
   'api-portal-demo.jpg',
   'developer-settings-demo.jpg',
+  'book-mode-light.jpg',
+  'book-mode-dark.jpg',
+  'book-mode-mobile.jpg',
+  'book-settings-demo.jpg',
 ];
 for (const name of screenshots) {
   const source = 'site/assets/screenshots/' + name,

@@ -1,4 +1,4 @@
-# Book mode — implementation plan for v1.6.3
+# Book mode — design and implementation for v1.6.3
 
 Book mode is a personal reading style, independent of System/Light/Dark. It is off by default. Enable it in Settings → Appearance & time and save preferences. The top-right sunrise/sunset toggle continues to change day/night without turning Book mode off.
 
@@ -20,3 +20,7 @@ Apply a data-reading-mode attribute at the shared root; use theme-aware CSS toke
 Ship v1.6.2 (BizEvents transport and sunrise/sunset control) first; ship Book mode as v1.6.3. Update the additive OpenAPI Preferences schema, settings reference, product handbook, owner skills, changelog and release plan. Reuse existing safe request telemetry; never emit note contents or a business conversion event for styling.
 
 Test true/false persistence, default/missing values, omission by older clients, invalid input, own-user isolation and token-route denial. Verify day/night/system styles, quick toggle preserving Book mode, settings save/revert, navigation, long text, forms, dashboard charts, mobile viewport and disabling the mode. Refresh reviewed synthetic screenshots and verify exact app/docs commit after release; report physical-device and tenant-query limits separately.
+
+## Implemented contract
+
+The planned setting is implemented as optional boolean bookMode on Preferences (API contract 1.13.0). Server reads default false; PATCH merges without resetting an omitted field. App sets data-reading-mode=book|standard and a resolved data-color-scheme for the palette. Guest fallback uses the guarded salesdrone.guestBookMode key; live preference updates do not populate it. The save action applies the style, and disabling it restores the unmodified standard theme. Release verification evidence is collected separately in CI.

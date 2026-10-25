@@ -40,6 +40,14 @@
           "example": ""
         },
         {
+          "id": "bookMode",
+          "label": "Book mode",
+          "default": "Off",
+          "description": "A personal reading style with warm paper surfaces, ink colours and serif notes/descriptions. Dark mode uses charcoal paper. Headings, table controls, status colours and monospace phone numbers stay clear. This is a visual style, not a physical e-ink or offline reader.",
+          "effect": "Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback.",
+          "example": "Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace."
+        },
+        {
           "id": "timezone",
           "label": "Display timezone",
           "default": "Asia/Kolkata for live accounts",

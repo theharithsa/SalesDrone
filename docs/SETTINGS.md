@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v1.6.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v1.6.3**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -41,6 +41,16 @@ Permissions are enforced server-side, including direct links and API requests.
 Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch. The quick switch animates a small sunrise/sunset horizon; reduced-motion users receive an immediate state change. It never covers the workspace.
 
 Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local. On desktop, lead blade width is adjusted directly in Leads using its left edge (double-click resets it); expand opens a dedicated lead page. That width is remembered only in the current browser, separately from account preferences; double-click the edge to reset it.
+
+### Book mode
+
+**Default:** Off.
+
+A personal reading style with warm paper surfaces, ink colours and serif notes/descriptions. Dark mode uses charcoal paper. Headings, table controls, status colours and monospace phone numbers stay clear. This is a visual style, not a physical e-ink or offline reader.
+
+Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback.
+
+**Example:** Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace.
 
 ### Display timezone
 

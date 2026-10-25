@@ -46,3 +46,5 @@ if ('serviceWorker' in navigator)
   );
 
 import './lead-workspace.css';
+
+import './book-mode.css';

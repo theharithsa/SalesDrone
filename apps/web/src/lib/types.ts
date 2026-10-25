@@ -36,6 +36,7 @@ export type Session = {
   preferences: {
     timezone: string;
     appearance: 'light' | 'dark' | 'system';
+    bookMode?: boolean;
     automaticReminders?: boolean;
     reminderTime?: string;
     nextWeekRule?: 'seven_days' | 'next_monday';

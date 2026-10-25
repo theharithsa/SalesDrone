@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "version": "1.6.3",
+  "summary": "Personal Book mode with warm day/night reading palettes, preserved theme switching and additive self-owned Preferences API.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-workspace-settings",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/API.md",
+    "docs/BOOK-MODE-PLAN.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Optional boolean bookMode added to self-owned Preferences. Missing reads default false and omitted PATCH preserves saved value. No new endpoint or token scopes.",
+    "contractVersion": "1.13.0",
+    "permissions": "Existing active Google/App Check membership and self-owned /me policy; PAT and identity spoofing remain denied.",
+    "tests": [
+      "functions/test/book-mode.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse safe request/worker telemetry and corrected CloudEvents deployment transport. Book mode is cosmetic: no new canonical business event or customer content export.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Reuse safe request/worker telemetry and corrected CloudEvents deployment transport. Book mode is cosmetic: no new canonical business event or customer content export.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Reuse safe request/worker telemetry and corrected CloudEvents deployment transport. Book mode is cosmetic: no new canonical business event or customer content export.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Reuse safe request/worker telemetry and corrected CloudEvents deployment transport. Book mode is cosmetic: no new canonical business event or customer content export.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Reuse safe request/worker telemetry and corrected CloudEvents deployment transport. Book mode is cosmetic: no new canonical business event or customer content export.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic desktop and 390px Book mode settings save, both palettes, quick toggle preserving mode, navigation, forms/notes/tables/charts, disable/restore and guest fallback. Account isolation and live persistence through API/emulator tests. Physical devices and tenant query access excluded.",
+  "screenshots": [
+    "book-mode-light.jpg",
+    "book-mode-dark.jpg",
+    "book-mode-mobile.jpg",
+    "book-settings-demo.jpg"
+  ]
+}

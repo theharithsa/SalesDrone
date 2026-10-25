@@ -52,7 +52,10 @@
     "typography",
     "theme",
     "responsive",
-    "navigation"
+    "navigation",
+    "book mode",
+    "reading style",
+    "sunrise sunset"
   ],
   "salesdrone-lead-journey": [
     "lead journey",
@@ -118,7 +121,8 @@
     "lead fields",
     "dropdown choices",
     "settings",
-    "custom fields"
+    "custom fields",
+    "book mode preference"
   ],
   "salesdrone-product-guide": [
     "product handbook",

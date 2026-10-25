@@ -13,6 +13,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.6.3] - 2026-10-26
+
+### Changed
+- Add personal Book mode in Appearance & time: warm paper and charcoal palettes, serif reading text and preserved editable workflows.
+- Keep Book mode independent from System/Light/Dark and the sunrise/sunset control. Save self-owned preferences through the existing API; older clients preserve omitted values.
+- Extend the additive Preferences contract to 1.13.0 with policy/persistence/emulator coverage; update the settings reference, handbook, screenshots and owner skills.
+
 ## [1.6.2] - 2026-10-26
 
 ### Changed

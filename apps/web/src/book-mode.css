@@ -1,0 +1,177 @@
+/* Reading style is orthogonal to Light/Dark/System; it never changes layout or data. */
+:root[data-reading-mode='book'] {
+  --bg: #f4eddf;
+  --panel: #fffaf0;
+  --sidebar: #eae1cf;
+  --text: #302a23;
+  --muted: #665d50;
+  --line: #cec2ac;
+  --accent: #34566e;
+  --accent-dark: #244257;
+  --accent-soft: #e4e5d8;
+  --input: #fffcf5;
+  --on-accent: #fffaf0;
+  --shadow: 0 3px 18px #4134210a;
+  --reading-font:
+    'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  --book-success-bg: #e3eadb;
+  --book-success-text: #355238;
+  --book-warning-bg: #f2e4c5;
+  --book-warning-text: #704a14;
+  --book-danger-bg: #f0ded8;
+  --book-danger-text: #8b372d;
+}
+:root[data-reading-mode='book'][data-color-scheme='dark'] {
+  --bg: #211e19;
+  --panel: #2b2721;
+  --sidebar: #24211c;
+  --text: #eee4d1;
+  --muted: #c3b69e;
+  --line: #665a47;
+  --accent: #a9c2cd;
+  --accent-dark: #c7dae0;
+  --accent-soft: #353b37;
+  --input: #322d25;
+  --on-accent: #211e19;
+  --book-success-bg: #303c2d;
+  --book-success-text: #bfd2ad;
+  --book-warning-bg: #453921;
+  --book-warning-text: #e7c78c;
+  --book-danger-bg: #482d28;
+  --book-danger-text: #f2b6a6;
+}
+:root[data-reading-mode='book']
+  :is(
+    .panel,
+    .metric-card,
+    .chart-card,
+    .lead-blade,
+    .modal,
+    .task-work-card,
+    .notification-overlay
+  ) {
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  border-color: var(--line);
+}
+:root[data-reading-mode='book']
+  :is(.topbar, .bottom-nav, .sidebar, .demo-banner) {
+  background: var(--sidebar);
+}
+:root[data-reading-mode='book']
+  :is(
+    .brief-card,
+    .brief-panel,
+    .dashboard-brief,
+    .about-mission,
+    .sidebar-note,
+    .timeline-item > div,
+    .lead-inline-composer
+  ) {
+  background: var(--panel);
+  background-image: none;
+  border-color: var(--line);
+}
+:root[data-reading-mode='book']
+  :is(.comment-body, .about-story > p, .about-mission > p, .brief-main > p) {
+  font-family: var(--reading-font);
+  font-size: 1.1rem;
+  line-height: 1.85;
+  letter-spacing: 0.005em;
+}
+:root[data-reading-mode='book'] .comment-body {
+  max-width: 72ch;
+}
+:root[data-reading-mode='book'] :is(.detail-section-title, .section-heading) {
+  border-color: var(--line);
+}
+:root[data-reading-mode='book'] .button.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+:root[data-reading-mode='book'] .badge {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--line);
+}
+:root[data-reading-mode='book']
+  :is(.badge.stage-qualified, .badge.stage-won, .success-message) {
+  background: var(--book-success-bg);
+  color: var(--book-success-text);
+}
+:root[data-reading-mode='book'] :is(.badge.stage-working, .notice) {
+  background: var(--book-warning-bg);
+  color: var(--book-warning-text);
+}
+:root[data-reading-mode='book'] :is(.badge.stage-disqualified, .error-message) {
+  background: var(--book-danger-bg);
+  color: var(--book-danger-text);
+}
+:root[data-reading-mode='book']
+  :is(input:not([type='checkbox']), select, textarea) {
+  background-color: var(--input);
+  color: var(--text);
+  border-color: var(--line);
+}
+:root[data-reading-mode='book'] :is(.muted, .field-hint) {
+  color: var(--muted);
+}
+.book-mode-control {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  margin: 20px 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  cursor: pointer;
+}
+.book-mode-emblem {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.book-mode-control > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.book-mode-control strong,
+.book-mode-control small {
+  display: block;
+}
+.book-mode-control small {
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.6;
+}
+.book-mode-control input {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.book-mode-control:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .book-mode-control {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+  .book-mode-emblem {
+    width: 36px;
+    height: 40px;
+    flex-basis: 36px;
+  }
+}

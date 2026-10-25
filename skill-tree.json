@@ -184,7 +184,10 @@
         "typography",
         "theme",
         "responsive",
-        "navigation"
+        "navigation",
+        "book mode",
+        "reading style",
+        "sunrise sunset"
       ],
       "related": [
         "salesdrone-release",
@@ -426,7 +429,8 @@
         "lead fields",
         "dropdown choices",
         "settings",
-        "custom fields"
+        "custom fields",
+        "book mode preference"
       ],
       "related": [
         "salesdrone-release",

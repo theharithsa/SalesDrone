@@ -13,6 +13,7 @@ import { useState, useEffect } from 'react';
 import {
   Bell,
   Monitor,
+  BookOpen,
   Sun,
   Moon,
   Smartphone,
@@ -32,6 +33,7 @@ import { Avatar, ErrorMessage, SaveButton, useSubmit } from '../components/UI';
 import { enablePush, revokeThisDevice } from '../lib/api';
 export default function SettingsPage({
   session,
+  guestPreferences,
   demo,
   devices,
   request,
@@ -45,6 +47,7 @@ export default function SettingsPage({
   initialSection?: string;
   onWorkspacePolicyChanged?: () => void;
   session: Session | null;
+  guestPreferences?: Partial<Session['preferences']>;
   fieldOptions: FieldOptions;
   onFieldOptions: (options: FieldOptions) => void;
   demo: boolean;
@@ -124,10 +127,17 @@ export default function SettingsPage({
       <ChevronRight size={15} />
     </button>
   );
-  const preferences = session?.preferences || {
+  const preferences = (!demo && session?.preferences) || {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     appearance: 'system',
+    bookMode: false,
+    ...guestPreferences,
   };
+  const [bookMode, setBookMode] = useState(preferences.bookMode === true);
+  useEffect(
+    () => setBookMode(preferences.bookMode === true),
+    [preferences.bookMode],
+  );
   const [appearance, setAppearance] = useState(preferences.appearance),
     [timezone, setTimezone] = useState(preferences.timezone),
     [automaticReminders, setAutomaticReminders] = useState(
@@ -152,6 +162,7 @@ export default function SettingsPage({
   const submit = useSubmit(async (data) => {
     const settings = {
       ...data,
+      bookMode,
       automaticReminders,
       reminderTime,
       nextWeekRule,
@@ -450,6 +461,30 @@ export default function SettingsPage({
                         );
                       })}
                     </div>
+                    <label className="book-mode-control">
+                      <span className="book-mode-emblem" aria-hidden="true">
+                        <BookOpen size={24} />
+                      </span>
+                      <span>
+                        <strong>Book mode</strong>
+                        <small>
+                          Warm paper, quiet colours and serif reading text.
+                          Works with Light, Dark or System.
+                        </small>
+                      </span>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        checked={bookMode}
+                        onChange={(e) => setBookMode(e.target.checked)}
+                        aria-label="Book mode"
+                        aria-describedby="book-mode-help"
+                      />
+                    </label>
+                    <p id="book-mode-help" className="field-hint">
+                      Personal to you. Choose Save changes to apply; turning it
+                      off restores the standard workspace.
+                    </p>
                     <label className="timezone-field">
                       Display timezone
                       <input

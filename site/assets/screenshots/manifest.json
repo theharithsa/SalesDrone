@@ -69,5 +69,41 @@
     "viewport": "1828 \u00d7 1028 CSS pixels",
     "version": "1.6.2",
     "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport."
+  },
+  {
+    "file": "book-mode-light.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "c040dc083c2c30a58e19d1e094bc3f39cbabf8da8659f73017ef7a4720b06938",
+    "capturedAt": "2026-10-25T19:02:02.116482+00:00",
+    "viewport": "1828 x 1028 CSS pixel desktop viewport",
+    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode day/night appearance and reading text/settings.",
+    "version": "1.6.3"
+  },
+  {
+    "file": "book-mode-dark.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "eb0c270342e052cdeb9cea88ade23c53836ed102e4f346aedcfb65efb49ed8e6",
+    "capturedAt": "2026-10-25T19:02:02.373535+00:00",
+    "viewport": "1828 x 1028 CSS pixel desktop viewport",
+    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode day/night appearance and reading text/settings.",
+    "version": "1.6.3"
+  },
+  {
+    "file": "book-mode-mobile.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "0e7b80e0c0cdc7c272aec49984853a317768c73c9407ceea2b5aef39c4748ff2",
+    "capturedAt": "2026-10-25T19:02:02.512495+00:00",
+    "viewport": "390 x 844 CSS pixel actual application frame",
+    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode mobile comment entry; browser breakpoint check, not physical hardware.",
+    "version": "1.6.3"
+  },
+  {
+    "file": "book-settings-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "654fab7967efe2da76865f2be60c9ae279c800e4abdce628d1bbded8aed5f08f",
+    "capturedAt": "2026-10-25T19:02:02.567435+00:00",
+    "viewport": "1828 x 1028 CSS pixel desktop viewport",
+    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode day/night appearance and reading text/settings.",
+    "version": "1.6.3"
   }
 ]

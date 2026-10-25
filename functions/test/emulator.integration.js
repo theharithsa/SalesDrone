@@ -106,6 +106,31 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     return body ? r.send(body) : r;
   };
   await req('get', '/me').expect(200);
+  assert.equal(
+    (await req('get', '/me').expect(200)).body.preferences.bookMode,
+    false,
+  );
+  await req('patch', '/me', {
+    timezone: 'Asia/Kolkata',
+    appearance: 'light',
+    bookMode: true,
+  }).expect(200);
+  await req('patch', '/me', {
+    timezone: 'Asia/Kolkata',
+    appearance: 'dark',
+  }).expect(200);
+  assert.equal(
+    (await req('get', '/me').expect(200)).body.preferences.bookMode,
+    true,
+  );
+  const ownUser = (await auth.verifyIdToken(token)).uid;
+  assert.equal((await db.doc('users/' + ownUser).get()).data().bookMode, true);
+  await req('patch', '/me', {
+    timezone: 'Asia/Kolkata',
+    appearance: 'system',
+    bookMode: false,
+  }).expect(200);
+
   await request(app)
     .get('/api/v1/me')
     .set('Authorization', 'Bearer ' + outsider)

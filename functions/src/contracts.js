@@ -197,6 +197,7 @@ export const Preferences = z
   .object({
     timezone: text(100),
     appearance: z.enum(['system', 'light', 'dark']),
+    bookMode: z.boolean().optional(),
     automaticReminders: z.boolean().optional(),
     reminderTime: z
       .string()

@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.6.2
+Version 1.6.3
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -128,9 +128,9 @@ Members with activities:write for changes
 
 1. Open a lead and choose Log call. Select the actual outcome, add discussion notes and any supported disposition or follow-up fields, then save.
 
-2. On the full lead page, type directly into Write a comment in the Comments tab and choose Post comment. In the quick-inspection overlay, Add comment still opens the compact dialog. Each successful post creates a separate entry.
+2. On the full lead page, type directly into Write a comment in All or Comments and choose Post comment. In the quick-inspection overlay, Add comment still opens the compact dialog. Each successful post creates a separate entry.
 
-3. Check the entry in Comments. If you made a mistake, choose Correct entry and submit a correction; the original revision remains part of the record.
+3. Check notes in Comments and logged calls in Calls; All combines both. If you made a mistake, choose Correct entry and submit a correction; the original revision remains part of the record.
 
 4. Use Earlier activity to retrieve older pages. Imported discussions show their source column; an unknown original conversation date is explicitly described as unknown.
 
@@ -140,7 +140,7 @@ Corrections preserve previous revisions and invalidate stale analysis so an old 
 
 Notes can contain customer context; keep them out of support screenshots and public documentation. Application telemetry excludes comment content and task titles.
 
-Inline drafts stay in memory while you switch Comments, Tasks and Review for the same lead. Failed posts retain text; retrying an unchanged uncertain write reuses its original identity. Blank and in-flight posts are disabled. Drafts are cleared when you leave that lead, change account or reload; customer notes are not stored in browser storage.
+Inline drafts stay in memory while you switch All, Comments, Calls, Tasks and Review for the same lead. Failed posts retain text; retrying an unchanged uncertain write reuses its original identity. Blank and in-flight posts are disabled. Drafts are cleared when you leave that lead, change account or reload; customer notes are not stored in browser storage.
 
 ### Questions
 
@@ -344,7 +344,7 @@ Reports & lead access controls exports and assigned-only visibility for non-admi
 
 The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.
 
-The top-right theme switch uses a sunrise/sunset horizon. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is planned separately for v1.6.3; it is not enabled by this release.
+The top-right theme switch uses a sunrise/sunset horizon. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.
 
 ### Questions
 
@@ -355,6 +355,38 @@ Use Manage fields > Lead fields. A label change does not rename its stable API k
 **Can I remove a field without losing historical data?**
 
 Supported retirement/active controls hide it from future capture while preserving existing records. Review the per-control limits before changing required fields or types.
+
+## Book mode: a quieter reading workspace
+
+Every active member; personal preference
+
+1. Open Settings > Appearance & time. On mobile, choose that section from the section selector.
+
+2. Enable Book mode and select Save changes. The workspace uses warm paper surfaces, ink-like text and serif reading passages.
+
+3. Choose Light, Dark or System as usual. The top-right sunrise/sunset control changes day/night while preserving Book mode.
+
+4. Return to Appearance & time, disable Book mode and save to restore the standard workspace.
+
+The mode applies across dashboard, leads, tasks, forms, notifications and settings. Lead comments and narrative descriptions use a local serif font; headings, phone numbers, table controls and status distinctions remain readable. Page borders are restrained and no page-turn animation covers working data.
+
+The saved preference belongs to your account, not the team. Existing clients that omit bookMode preserve the stored value. Demo/guest changes use a guarded local fallback; a live account uses its own server preference, default off.
+
+This is a visual reading style. It does not add offline access, physical e-ink behaviour or a separate read-only view. You can continue editing and following up on leads. Reduced motion disables the celestial toggle animation.
+
+### Questions
+
+**Does switching to dark mode turn Book mode off?**
+
+No. They are independent; dark Book mode uses charcoal paper and warm ink.
+
+**Will this change my colleagues’ screens?**
+
+No. Book mode is a personal preference.
+
+**Why did the style not change after selecting it?**
+
+Save preferences to apply it. If saving fails, the previous saved style remains in use; check the error and retry.
 
 ## People, permissions and assignment
 

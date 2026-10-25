@@ -1,3 +1,4 @@
+import { resolveVisualPreferences } from './lib/appearance';
 import { readStored, writeStored, removeStored } from './lib/browser-storage';
 import InlineCommentComposer from './components/InlineCommentComposer';
 import LeadTaskTab from './components/LeadTaskTab';
@@ -216,6 +217,9 @@ export default function App() {
       return 'system';
     }
   });
+  const [guestBookMode, setGuestBookMode] = useState(
+    () => readStored('localStorage', 'salesdrone.guestBookMode') === 'true',
+  );
   const [inboxOpen, setInboxOpen] = useState(false);
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [leadScores, setLeadScores] = useState<Record<string, any>>({});
@@ -354,17 +358,34 @@ export default function App() {
       window.removeEventListener('focus', recheck);
     };
   }, [session, demo]);
-  const appearance = session?.preferences.appearance || guestAppearance;
+  const { appearance, bookMode } = resolveVisualPreferences(
+    session?.preferences || null,
+    demo,
+    { appearance: guestAppearance, bookMode: guestBookMode },
+  );
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
       document.documentElement.dataset.theme = appearance;
       const dark =
         appearance === 'dark' || (appearance === 'system' && media.matches);
+      document.documentElement.dataset.colorScheme = dark ? 'dark' : 'light';
+      document.documentElement.dataset.readingMode = bookMode
+        ? 'book'
+        : 'standard';
       document
         .querySelectorAll('meta[name="theme-color"]')
         .forEach((meta) =>
-          meta.setAttribute('content', dark ? '#141923' : '#f7f9fc'),
+          meta.setAttribute(
+            'content',
+            bookMode
+              ? dark
+                ? '#211e19'
+                : '#f4eddf'
+              : dark
+                ? '#141923'
+                : '#f7f9fc',
+          ),
         );
     };
     apply();
@@ -373,7 +394,7 @@ export default function App() {
     } catch {}
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
-  }, [appearance]);
+  }, [appearance, bookMode]);
   async function changeTheme(next: 'light' | 'dark') {
     if (demo || !session) {
       setGuestAppearance(next);
@@ -2761,6 +2782,7 @@ export default function App() {
                 onWorkspacePolicyChanged={() => void resolveSession()}
                 initialSection={page === 'members' ? 'access' : undefined}
                 session={session}
+                guestPreferences={{ appearance, bookMode, timezone }}
                 demo={demo}
                 devices={data.devices}
                 fieldOptions={fieldOptions}
@@ -2769,8 +2791,17 @@ export default function App() {
                 onRefresh={() => void refresh()}
                 onPreferences={(p) => {
                   document.documentElement.dataset.theme = p.appearance;
-                  if (session) setSession({ ...session, preferences: p });
-                  else setGuestAppearance(p.appearance);
+                  if (session && !demo)
+                    setSession({ ...session, preferences: p });
+                  else {
+                    setGuestAppearance(p.appearance);
+                    setGuestBookMode(p.bookMode === true);
+                    writeStored(
+                      'localStorage',
+                      'salesdrone.guestBookMode',
+                      String(p.bookMode === true),
+                    );
+                  }
                   notify('Preferences saved.');
                 }}
               />

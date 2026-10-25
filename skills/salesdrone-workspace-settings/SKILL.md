@@ -81,3 +81,5 @@ Adjacent owners:
 - [salesdrone-lead-scoring](../salesdrone-lead-scoring/SKILL.md)
 - [salesdrone-people-permissions](../salesdrone-people-permissions/SKILL.md)
 - [salesdrone-api-integrations](../salesdrone-api-integrations/SKILL.md)
+
+Personal Appearance includes optional boolean bookMode (default false), independent of appearance. GET /me defaults it; PATCH merges omitted values so older clients retain the choice. Keep Google/App Check self-service boundaries and PAT denial. Settings saves include bookMode even when saving reminder preferences; apply the style only after successful save. Guest settings receive App guestPreferences so navigation does not reset the local style; live account preferences override local fallback. Verify book-mode.test.js, generated API Preferences and emulator persistence/isolation.

@@ -380,6 +380,7 @@ export function createApp({
         preferences: {
           timezone: 'Asia/Kolkata',
           appearance: 'system',
+          bookMode: false,
           ...AUTO_DEFAULTS,
           ...prefs,
         },
@@ -444,6 +445,7 @@ export function createApp({
     validateTimezone(input.timezone);
     return mutate(req, null, async (tx) => {
       const prefs = {
+        bookMode: false,
         ...AUTO_DEFAULTS,
         ...(await tx.get(`users/${req.identity.uid}`)),
         ...input,

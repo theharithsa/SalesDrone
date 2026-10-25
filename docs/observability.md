@@ -108,3 +108,5 @@ Lead All/Comments/Calls tabs reuse existing safe navigation and API telemetry. L
 ## v1.6.2 BizEvents normalization
 
 See [the business event catalog, diagnostics and DQL templates](BUSINESS-EVENTS.md). The committed outbox and GitHub deployment notifier now send application/cloudevent+json with consistent provider fields. The original ordinary-JSON receipts were accepted but their intended field normalization was not tenant-verified. Preserve historical IDs; do not replay delivered records. A bounded salesdrone.bizevents.delivery counter records finalized delivery attempts by outcome/status class; lease-loss attempts cannot report success. Source/delivery trace limits and privacy exclusions remain unchanged.
+
+Book mode (v1.6.3) is a self-owned cosmetic preference. Reuse existing safe PATCH /me request spans/logs/metrics and release BizEvents. Do not emit a lead/business conversion or capture text, palette values or per-keystroke events for a style change; preference records remain excluded from the business-domain outbox.
