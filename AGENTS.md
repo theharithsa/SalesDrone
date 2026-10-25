@@ -10,6 +10,10 @@ filler praise. Distinguish local tests, deployment, HTTP ingest acceptance and t
 searchability. Do not claim screenshots or physical-device tests that were not done.
 Do not spawn agents unless the human explicitly asks for delegation.
 
+## Feature and release completion
+
+Use [release readiness](skills/salesdrone-release-readiness/SKILL.md) for every feature/setting and version release alongside its owner. [skill-tree.json](skill-tree.json) and [skill-tree.md](skill-tree.md) route user prompts. Update docs, module skills, API/permissions where applicable, metrics/traces/logs/committed events, tests, changelog and the versioned release impact plan. A UI-only change records why no API or business event is needed. Pre-deploy gates and post-deploy artifacts are separate; never label pending checks or HTTP ingest as tenant-query verification. Every setting needs default, scope, permissions, API and behavior/limits in the generated settings guide.
+
 ## Module skills
 
 Use the matching [module skill](skills/README.md) and its [shared contract](skills/SHARED.md)

@@ -92,3 +92,7 @@ trace-id field alone.
 ## Email tagging verification
 
 The RUM identifyUser call accepts the approved member email. Local lifecycle tests cover late readiness, stale login cancellation, account switches and sign-out. Tenant query credentials were checked during this release and returned HTTP 401; searchable email-tagged sessions remain unverified. Do not treat a successful browser API call as proof of tenant-side visibility. New sessions must use the updated app; historical hashed sessions are not relabelled.
+
+## Per-release instrumentation probes
+
+The deployment workflow forwards synthetic SDK-generated OTLP traces, metrics and logs under salesdrone-deployment-check, without reading customer data. It decodes partial-success responses and requires zero rejected records for every signal. Separate deployment BizEvent and CUSTOM_DEPLOYMENT marker receipts must be accepted. monitoring.json records only signal status/rejection counts and safe release IDs. This verifies ingest acceptance, not tenant searchability, live user behavior, worker health or native RUM-to-trace navigation.

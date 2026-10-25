@@ -31,6 +31,8 @@ jobs:
       - run: npm ci
       - run: npm run build:metadata
       - run: npm run security:scan
+      - run: npm run docs:check
+      - run: npm run release:readiness
       - run: npm run skills:check
       - run: npm run release:check
         if: github.event_name != 'workflow_dispatch'
@@ -104,18 +106,25 @@ jobs:
       - name: Collect deployment metadata
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         run: node scripts/collect-deployment.mjs
+      - name: Verify deployed contract and protected boundaries
+        id: postcheck
+        if: success()
+        run: npm run release:postcheck
       - name: Notify Dynatrace
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         env:
           DYNATRACE_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
-          DEPLOYMENT_OUTCOME: ${{ steps.functions.outcome == 'success' && steps.hosting.outcome == 'success' && steps.published.outcome == 'success' && 'succeeded' || 'failed' }}
+          DEPLOYMENT_OUTCOME: ${{ steps.functions.outcome == 'success' && steps.hosting.outcome == 'success' && steps.published.outcome == 'success' && steps.postcheck.outcome == 'success' && 'succeeded' || 'failed' }}
         run: node scripts/notify-deployment.mjs
       - name: Archive safe deployment details
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: salesdrone-deployment-${{ github.run_id }}-${{ github.run_attempt }}
-          path: deployment.json
+          path: |
+            deployment.json
+            release-verification.json
+            monitoring.json
           retention-days: 30
       - name: Publish versioned GitHub release
         if: success()
@@ -149,3 +158,12 @@ jobs:
           path: site/.build
       - id: publish
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Verify public settings documentation
+        run: npm run release:postcheck -- --docs
+      - name: Archive documentation verification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: salesdrone-docs-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: docs-verification.json
+          retention-days: 30

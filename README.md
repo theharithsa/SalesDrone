@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.4.0 · MIT**
+**Part of Avinya Enterprises · v1.5.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -78,7 +78,7 @@ An unavailable live API produces an error; it does not silently replace a live w
 
 ## API integrations
 
-[Open the Swagger API portal](https://sales-drone-avinya.firebaseapp.com/api/docs) for all 49 supported read, create, update and delete operations. Admins can generate expiring, scoped **Personal Access Tokens** in **Settings → Developer settings**. Tokens are shown once, stored as hashes and revocable. They inherit current owner permissions and cannot administer people, security settings or other tokens.
+[Open the Swagger API portal](https://sales-drone-avinya.firebaseapp.com/api/docs) for all supported read, create, update and delete operations. Admins can generate expiring, scoped **Personal Access Tokens** in **Settings → Developer settings**. Tokens are shown once, stored as hashes and revocable. They inherit current owner permissions and cannot administer people, security settings or other tokens.
 
 ![Self-hosted Swagger portal showing GET, POST, PATCH and DELETE task APIs; no credentials or customer records.](site/assets/screenshots/api-portal-demo.jpg)
 
@@ -120,3 +120,5 @@ Application code is released under the [MIT licence](LICENSE), copyright Avinya 
 The About story, README and public guide include original generated illustrations made using the [Ian Xiaohei illustration workflow](https://github.com/tojileon/ian-xiaohei-illustrations-en). Their [review manifest](assets/salesdrone-guide-illustrations/QA.md) accompanies the source images. Product screenshots use synthetic demo data; the API portal image shows only public schemas.
 
 Filtered Excel reports are available directly in Leads, with a column picker and the same applied filters across all matching pages. Admins control report availability and non-admin assigned-only access under Settings → Reports & lead access. See [report behavior and limits](docs/REPORTS.md).
+
+Read the [complete settings guide](docs/SETTINGS.md) or its [published version](https://theharithsa.github.io/SalesDrone/settings.html) for every control, default, permission and environment boundary. Agent routing: [skill-tree.json](skill-tree.json) / [skill-tree.md](skill-tree.md). Every feature release follows the [completion and deployment checks](skills/salesdrone-release-readiness/SKILL.md).

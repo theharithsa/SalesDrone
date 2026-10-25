@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "version": "1.5.0",
+  "summary": "Group field customization and enforce documented, tested release completion with honest post-deployment evidence.",
+  "modules": [
+    "salesdrone-workspace-settings",
+    "salesdrone-interface",
+    "salesdrone-documentation",
+    "salesdrone-release",
+    "salesdrone-observability",
+    "salesdrone-release-readiness"
+  ],
+  "documentation": [
+    "docs/SETTINGS.md",
+    "docs/settings-reference.json",
+    "docs/RELEASE.md",
+    "docs/observability.md",
+    "docs/API.md"
+  ],
+  "settingsSections": [
+    "fields",
+    "choices"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Navigation-only change reuses the 52 published operations; no new domain contract is needed.",
+    "contractVersion": "1.12.0",
+    "permissions": "Preserve Admin-only field navigation and existing field-option API authorization. Public guide contains only source-defined settings.",
+    "tests": [
+      "functions/test/api-portal.test.js",
+      "functions/test/custom-fields-and-tasks.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Retain existing application signals and add a per-release synthetic real-OTLP acceptance probe without customer-data reads.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Retain existing application signals and add a per-release synthetic real-OTLP acceptance probe without customer-data reads.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Retain existing application signals and add a per-release synthetic real-OTLP acceptance probe without customer-data reads.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Navigation does not commit business data; existing transactional outbox privacy and retry tests remain the canonical coverage.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Validate deployment BizEvent and CUSTOM_DEPLOYMENT marker alongside all three OTLP signals; archive safe receipts and fail incomplete acceptance.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Use synthetic browser checks for Manage fields expansion, legacy deep links, Admin-only visibility and the public settings guide. Inspect deployed read-only settings and safe RUM mode; tenant searches remain separately gated by query access."
+}

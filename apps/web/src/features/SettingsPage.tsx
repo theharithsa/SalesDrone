@@ -1,3 +1,4 @@
+import settingsSections from '../lib/settings-sections.json';
 import WorkspacePolicySettings from './WorkspacePolicySettings';
 import AIPersonalizationSettings from './AIPersonalizationSettings';
 import aboutStoryIllustration from '../../../../assets/salesdrone-guide-illustrations/04-the-story-behind-each-row.png';
@@ -53,86 +54,27 @@ export default function SettingsPage({
   onPreferences: (p: any) => void;
 }) {
   const isAdmin = !demo && session?.member?.role === 'Admin';
-  const sections = [
-    {
-      id: 'profile',
-      label: 'Profile',
-      icon: UserRound,
-      description: 'Your Google account and workspace identity.',
-    },
-    {
-      id: 'appearance',
-      label: 'Appearance & time',
-      icon: Monitor,
-      description: 'Choose your theme and display timezone.',
-    },
-    {
-      id: 'reminders',
-      label: 'Automatic reminders',
-      icon: Bell,
-      description: 'Control how notes become follow-ups.',
-    },
-    {
-      id: 'notifications',
-      label: 'Notifications & devices',
-      icon: Smartphone,
-      description: 'Manage push notifications on your devices.',
-    },
-    ...(isAdmin
-      ? [
-          {
-            id: 'workspace',
-            label: 'Reports & lead access',
-            icon: ShieldCheck,
-            description: 'Control Excel exports and access to assigned leads.',
-          },
-          {
-            id: 'fields',
-            label: 'Lead fields',
-            icon: SlidersHorizontal,
-            description: 'Build an enquiry form for your business.',
-          },
-          {
-            id: 'choices',
-            label: 'Dropdown choices',
-            icon: ListFilter,
-            description: 'Manage shared choices for your team.',
-          },
-          {
-            id: 'ai',
-            label: 'Dashboard insights',
-            icon: SlidersHorizontal,
-            description:
-              'Guide the focus, tone and language of workspace insights.',
-          },
-          {
-            id: 'scoring',
-            label: 'Lead scoring',
-            icon: SlidersHorizontal,
-            description:
-              'Choose the signals and weights behind each lead score.',
-          },
-          {
-            id: 'developer',
-            label: 'Developer settings',
-            icon: CodeXml,
-            description: 'Personal Access Tokens and the Swagger API portal.',
-          },
-          {
-            id: 'access',
-            label: 'People & access',
-            icon: ShieldCheck,
-            description: 'Manage who can use your live workspace.',
-          },
-        ]
-      : []),
-    {
-      id: 'about',
-      label: 'About SalesDrone',
-      icon: Info,
-      description: 'Our story, our mission and the people we build for.',
-    },
-  ];
+  const icons: Record<string, typeof UserRound> = {
+    profile: UserRound,
+    appearance: Monitor,
+    notifications: Smartphone,
+    workspace: ShieldCheck,
+    fields: SlidersHorizontal,
+    choices: ListFilter,
+    ai: SlidersHorizontal,
+    reminders: Bell,
+    scoring: SlidersHorizontal,
+    developer: CodeXml,
+    access: ShieldCheck,
+    about: Info,
+  };
+  const sections = settingsSections
+    .filter((item) => !item.admin || isAdmin)
+    .map((item) => ({ ...item, icon: icons[item.id] }));
+  const fieldIds = ['fields', 'choices'];
+  const fieldSections = sections.filter(
+    (item) => item.group === 'manageFields',
+  );
   const aiIds = ['ai', 'reminders', 'scoring'];
   const aiSections = sections
     .filter((item) => aiIds.includes(item.id))
@@ -151,17 +93,25 @@ export default function SettingsPage({
         '',
     ),
   );
+  const [fieldsExpanded, setFieldsExpanded] = useState(() =>
+    fieldIds.includes(
+      initialSection ||
+        new URLSearchParams(window.location.search).get('section') ||
+        '',
+    ),
+  );
   const currentSection = sections.find((s) => s.id === section) || sections[0];
   const personalSections = sections.filter((item) =>
     ['profile', 'appearance', 'notifications'].includes(item.id),
   );
   const workspaceSections = sections.filter((item) =>
-    ['workspace', 'fields', 'choices', 'developer', 'access'].includes(item.id),
+    ['workspace', 'developer', 'access'].includes(item.id),
   );
   const chooseSection = (id: string) => {
     setSection(id);
     setMessage('');
     if (aiIds.includes(id)) setAIExpanded(true);
+    if (fieldIds.includes(id)) setFieldsExpanded(true);
   };
   const navButton = (item: (typeof sections)[number]) => (
     <button
@@ -247,6 +197,14 @@ export default function SettingsPage({
           <span className="eyebrow">MAKE IT YOURS</span>
           <h1>Settings</h1>
           <p>A workspace that fits the way you work.</p>
+          <a
+            className="text-button"
+            href="https://theharithsa.github.io/SalesDrone/settings.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Read the settings guide <ExternalLink size={14} />
+          </a>
         </div>
       </div>
       <div className="settings-layout">
@@ -274,6 +232,15 @@ export default function SettingsPage({
                 ))}
               </optgroup>
             ) : null}
+            {fieldSections.length ? (
+              <optgroup label="Manage fields">
+                {fieldSections.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.label}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
             <optgroup label="AvinyaIntelligence">
               {aiSections.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -294,6 +261,36 @@ export default function SettingsPage({
               <span className="eyebrow">WORKSPACE · ADMIN</span>
               {workspaceSections.map(navButton)}
             </>
+          ) : null}
+          {fieldSections.length ? (
+            <div
+              className={
+                'settings-ai-group' +
+                (fieldIds.includes(currentSection.id) ? ' is-active' : '')
+              }
+            >
+              <button
+                type="button"
+                className="settings-ai-toggle"
+                aria-expanded={fieldsExpanded}
+                aria-controls="settings-field-children"
+                onClick={() => setFieldsExpanded((v) => !v)}
+              >
+                <SlidersHorizontal size={18} />
+                <span>Manage fields</span>
+                <ChevronRight
+                  size={15}
+                  className={fieldsExpanded ? 'expanded' : ''}
+                />
+              </button>
+              <div
+                id="settings-field-children"
+                className="settings-ai-children"
+                hidden={!fieldsExpanded}
+              >
+                {fieldSections.map(navButton)}
+              </div>
+            </div>
           ) : null}
           <div
             className={
@@ -329,13 +326,15 @@ export default function SettingsPage({
         <div className="settings-content">
           <div className="settings-section-header">
             <span className="eyebrow">
-              {aiIds.includes(currentSection.id)
-                ? 'AVINYAINTELLIGENCE'
-                : workspaceSections.some(
-                      (item) => item.id === currentSection.id,
-                    )
-                  ? 'WORKSPACE SETTINGS'
-                  : 'YOUR SETTINGS'}
+              {fieldIds.includes(currentSection.id)
+                ? 'MANAGE FIELDS'
+                : aiIds.includes(currentSection.id)
+                  ? 'AVINYAINTELLIGENCE'
+                  : workspaceSections.some(
+                        (item) => item.id === currentSection.id,
+                      )
+                    ? 'WORKSPACE SETTINGS'
+                    : 'YOUR SETTINGS'}
             </span>
             <h2>{currentSection.label}</h2>
             <p>{currentSection.description}</p>

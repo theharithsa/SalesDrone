@@ -43,6 +43,8 @@ Describe both insight modes in the public guide: manual is the default, automati
 
 Document the Reports & lead access settings, selected-column filtered XLSX workflow and reports API limits. Public screenshots/exports must remain synthetic. Distinguish approved RUM email tags from still-pseudonymous backend actors and report tenant query limitations.
 
+Every release regenerates docs/SETTINGS.md and publishes settings.html from the shared section/control catalogs, including every control’s default, scope, permissions, API, effect and example. The public API count comes from OpenAPI, not a hardcoded number. docs:check rejects stale settings and skill-tree outputs. No recursive publication of engineering docs or private evidence.
+
 ## Change and diagnosis
 
 Check all local Markdown targets, image loading, anchor order and generated numbering. Run docs:build; inspect the actual public guide and README after publish, not only a local preview.

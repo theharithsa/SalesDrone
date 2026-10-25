@@ -1,0 +1,123 @@
+{
+  "salesdrone-api-integrations": [
+    "swagger",
+    "openapi",
+    "personal access token",
+    "api key",
+    "api scopes"
+  ],
+  "salesdrone-authentication": [
+    "google login",
+    "sign in",
+    "authentication",
+    "app check"
+  ],
+  "salesdrone-automatic-reminders": [
+    "automatic reminder",
+    "note to task",
+    "gemini follow-up"
+  ],
+  "salesdrone-conversations": [
+    "call comment",
+    "lead note",
+    "timeline comment",
+    "call outcome"
+  ],
+  "salesdrone-dashboard": [
+    "dashboard",
+    "insights",
+    "funnel graph"
+  ],
+  "salesdrone-data-platform": [
+    "firestore",
+    "index",
+    "transaction",
+    "cursor"
+  ],
+  "salesdrone-documentation": [
+    "readme",
+    "documentation",
+    "settings guide",
+    "screenshots"
+  ],
+  "salesdrone-imports": [
+    "excel import",
+    "csv import",
+    "xlsx import",
+    "spreadsheet mapping"
+  ],
+  "salesdrone-interface": [
+    "sidebar",
+    "mobile ui",
+    "typography",
+    "theme",
+    "responsive",
+    "navigation"
+  ],
+  "salesdrone-lead-journey": [
+    "lead journey",
+    "stage flow",
+    "transition history"
+  ],
+  "salesdrone-lead-scoring": [
+    "lead score",
+    "scoring factor",
+    "qualification"
+  ],
+  "salesdrone-leads": [
+    "lead filter",
+    "edit lead",
+    "create lead",
+    "excel export",
+    "filtered report"
+  ],
+  "salesdrone-notifications": [
+    "push notification",
+    "notification bell",
+    "read unread",
+    "fcm"
+  ],
+  "salesdrone-observability": [
+    "dynatrace",
+    "rum",
+    "telemetry",
+    "trace",
+    "metric",
+    "logs",
+    "bizevent"
+  ],
+  "salesdrone-people-permissions": [
+    "people access",
+    "permissions",
+    "assign lead",
+    "member role",
+    "assigned only"
+  ],
+  "salesdrone-release": [
+    "deploy",
+    "release",
+    "version",
+    "changelog",
+    "rollback"
+  ],
+  "salesdrone-release-readiness": [
+    "pre-deployment",
+    "post-deployment",
+    "release checklist",
+    "feature completeness",
+    "release readiness"
+  ],
+  "salesdrone-tasks-reminders": [
+    "edit task",
+    "delete task",
+    "manual reminder",
+    "snooze"
+  ],
+  "salesdrone-workspace-settings": [
+    "manage fields",
+    "lead fields",
+    "dropdown choices",
+    "settings",
+    "custom fields"
+  ]
+}

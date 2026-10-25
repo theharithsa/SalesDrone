@@ -41,6 +41,8 @@ telemetryOutbox committed CloudEvents; safe service/version/request context; pri
 
 Approved live workspace members now use their verified email as the RUM user tag, per the application owner's explicit privacy choice. Demo/unapproved users remain anonymous; backend telemetry still hashes UIDs and excludes emails. createRumIdentity handles account switches/sign-out and the late salesdrone:rum-ready event after bounded polling. A DOM diagnostic exposes only email/pseudonymous/anonymous mode, never the tag value. Test rum-identity.test.ts. An API call returning without error is not proof of tenant ingestion/searchability; query credentials can differ from ingest credentials.
 
+Each deployment probes real SDK-generated OTLP traces, logs and metrics under salesdrone-deployment-check and validates rejected counts, then records separate deployment BizEvent/marker acceptance. monitoring.json is safe CI evidence, not proof of tenant searchability. Use deployment-signals.mjs and release-readiness.test.ts for missing/partial/malformed responses; a reporting failure cannot undo customer operations.
+
 ## Change and diagnosis
 
 Inspect sanitized status/counts and correlation IDs. Test concurrent trace isolation, malformed parent contexts, redirected ingestion endpoints, failed exports and outbox retries. Use dt-obs if available for an instrumentation task; this skill does not require it to exist.

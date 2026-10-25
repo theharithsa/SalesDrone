@@ -1,0 +1,86 @@
+[
+  {
+    "id": "profile",
+    "label": "Profile",
+    "description": "Your Google account and workspace identity.",
+    "group": "personal",
+    "admin": false
+  },
+  {
+    "id": "appearance",
+    "label": "Appearance & time",
+    "description": "Choose your theme and display timezone.",
+    "group": "personal",
+    "admin": false
+  },
+  {
+    "id": "notifications",
+    "label": "Notifications & devices",
+    "description": "Manage push notifications on your devices.",
+    "group": "personal",
+    "admin": false
+  },
+  {
+    "id": "workspace",
+    "label": "Reports & lead access",
+    "description": "Control Excel exports and access to assigned leads.",
+    "group": "workspace",
+    "admin": true
+  },
+  {
+    "id": "fields",
+    "label": "Lead fields",
+    "description": "Build an enquiry form for your business.",
+    "group": "manageFields",
+    "admin": true
+  },
+  {
+    "id": "choices",
+    "label": "Dropdown choices",
+    "description": "Manage shared choices for your team.",
+    "group": "manageFields",
+    "admin": true
+  },
+  {
+    "id": "ai",
+    "label": "Dashboard insights",
+    "description": "Guide the focus, tone and language of workspace insights.",
+    "group": "intelligence",
+    "admin": true
+  },
+  {
+    "id": "reminders",
+    "label": "Automatic reminders",
+    "description": "Control how notes become follow-ups.",
+    "group": "intelligence",
+    "admin": false
+  },
+  {
+    "id": "scoring",
+    "label": "Lead scoring",
+    "description": "Choose the signals and weights behind each lead score.",
+    "group": "intelligence",
+    "admin": true
+  },
+  {
+    "id": "developer",
+    "label": "Developer settings",
+    "description": "Personal Access Tokens and the Swagger API portal.",
+    "group": "workspace",
+    "admin": true
+  },
+  {
+    "id": "access",
+    "label": "People & access",
+    "description": "Manage who can use your live workspace.",
+    "group": "workspace",
+    "admin": true
+  },
+  {
+    "id": "about",
+    "label": "About SalesDrone",
+    "description": "Our story, our mission and the people we build for.",
+    "group": "product",
+    "admin": false
+  }
+]

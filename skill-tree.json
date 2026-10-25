@@ -1,0 +1,431 @@
+{
+  "schemaVersion": 1,
+  "readinessSkill": "salesdrone-release-readiness",
+  "sharedContract": "skills/SHARED.md",
+  "selectionPolicy": "Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.",
+  "nodes": [
+    {
+      "id": "salesdrone-api-integrations",
+      "path": "skills/salesdrone-api-integrations/SKILL.md",
+      "description": "Maintain SalesDrone scoped Personal Access Tokens, versioned OpenAPI/Swagger portal and HTTP integration policy. Use for external API contracts and token lifecycle; domain behavior stays with its module skill.",
+      "matchTerms": [
+        "swagger",
+        "openapi",
+        "personal access token",
+        "api key",
+        "api scopes"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-authentication",
+        "salesdrone-people-permissions",
+        "salesdrone-data-platform"
+      ],
+      "apiOperations": [
+        "GET /api/v1/personal-access-tokens",
+        "POST /api/v1/personal-access-tokens",
+        "DELETE /api/v1/personal-access-tokens/{id}"
+      ]
+    },
+    {
+      "id": "salesdrone-authentication",
+      "path": "skills/salesdrone-authentication/SKILL.md",
+      "description": "Maintain SalesDrone Google sign-in, App Check, session bootstrap and demo isolation. Use for login failures or identity verification; membership administration belongs to people-permissions.",
+      "matchTerms": [
+        "google login",
+        "sign in",
+        "authentication",
+        "app check"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-people-permissions",
+        "salesdrone-api-integrations",
+        "salesdrone-interface"
+      ],
+      "apiOperations": [
+        "GET /api/v1/me"
+      ]
+    },
+    {
+      "id": "salesdrone-automatic-reminders",
+      "path": "skills/salesdrone-automatic-reminders/SKILL.md",
+      "description": "Maintain SalesDrone Gemini extraction of dated follow-ups from new lead notes/call comments, review states and Edit/Undo. Use for notes not becoming tasks; manual reminders belong to tasks-reminders.",
+      "matchTerms": [
+        "automatic reminder",
+        "note to task",
+        "gemini follow-up"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-conversations",
+        "salesdrone-tasks-reminders",
+        "salesdrone-notifications",
+        "salesdrone-workspace-settings"
+      ],
+      "apiOperations": [
+        "PATCH /api/v1/activities/{id}/automatic-reminder"
+      ]
+    },
+    {
+      "id": "salesdrone-conversations",
+      "path": "skills/salesdrone-conversations/SKILL.md",
+      "description": "Maintain SalesDrone lead notes, call outcomes, discussion imports and revision-preserving corrections. Use for timeline/call changes; reminder extraction is owned by automatic-reminders.",
+      "matchTerms": [
+        "call comment",
+        "lead note",
+        "timeline comment",
+        "call outcome"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-leads",
+        "salesdrone-imports",
+        "salesdrone-automatic-reminders",
+        "salesdrone-tasks-reminders",
+        "salesdrone-lead-journey"
+      ],
+      "apiOperations": [
+        "GET /api/v1/leads/{id}/activities",
+        "POST /api/v1/leads/{id}/activities",
+        "POST /api/v1/activities/{id}/corrections"
+      ]
+    },
+    {
+      "id": "salesdrone-dashboard",
+      "path": "skills/salesdrone-dashboard/SKILL.md",
+      "description": "Maintain SalesDrone dashboard aggregates, charts, current-stage funnel and grounded Gemini outreach briefs. Use for analytics/visualization and insight issues; per-lead scoring belongs to lead-scoring.",
+      "matchTerms": [
+        "dashboard",
+        "insights",
+        "funnel graph"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-lead-scoring",
+        "salesdrone-leads",
+        "salesdrone-lead-journey",
+        "salesdrone-interface"
+      ],
+      "apiOperations": [
+        "GET /api/v1/dashboard",
+        "POST /api/v1/dashboard/insights",
+        "GET /api/v1/summary"
+      ]
+    },
+    {
+      "id": "salesdrone-data-platform",
+      "path": "skills/salesdrone-data-platform/SKILL.md",
+      "description": "Maintain SalesDrone store adapters, transaction behavior, cursor/query infrastructure, indexes and deny-all client rules. Use for data-layer changes; domain schema and records remain owned by feature skills.",
+      "matchTerms": [
+        "firestore",
+        "index",
+        "transaction",
+        "cursor"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-leads",
+        "salesdrone-imports",
+        "salesdrone-tasks-reminders",
+        "salesdrone-observability"
+      ],
+      "apiOperations": []
+    },
+    {
+      "id": "salesdrone-documentation",
+      "path": "skills/salesdrone-documentation/SKILL.md",
+      "description": "Maintain SalesDrone README, public guide, technical docs, demo screenshots and illustration provenance. Use for documentation changes; API schema and release machinery have their own skills.",
+      "matchTerms": [
+        "readme",
+        "documentation",
+        "settings guide",
+        "screenshots"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-interface",
+        "salesdrone-api-integrations"
+      ],
+      "apiOperations": []
+    },
+    {
+      "id": "salesdrone-imports",
+      "path": "skills/salesdrone-imports/SKILL.md",
+      "description": "Maintain SalesDrone first-sheet XLSX/CSV mapping, multiple comment columns, preview, bounded chunk commit and recovery. Use for ingestion issues; ordinary enquiry forms belong to leads.",
+      "matchTerms": [
+        "excel import",
+        "csv import",
+        "xlsx import",
+        "spreadsheet mapping"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-leads",
+        "salesdrone-conversations",
+        "salesdrone-workspace-settings",
+        "salesdrone-notifications"
+      ],
+      "apiOperations": [
+        "POST /api/v1/imports/preview",
+        "GET /api/v1/imports/{id}",
+        "GET /api/v1/imports/{id}/errors",
+        "POST /api/v1/imports/{id}/commit"
+      ]
+    },
+    {
+      "id": "salesdrone-interface",
+      "path": "skills/salesdrone-interface/SKILL.md",
+      "description": "Maintain SalesDrone shared responsive shell, navigation, typography, themes, accessible overlays and synthetic demo adapters. Use for cross-module UI work; feature logic belongs to the corresponding domain skill.",
+      "matchTerms": [
+        "sidebar",
+        "mobile ui",
+        "typography",
+        "theme",
+        "responsive",
+        "navigation"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-authentication",
+        "salesdrone-workspace-settings",
+        "salesdrone-notifications",
+        "salesdrone-dashboard"
+      ],
+      "apiOperations": []
+    },
+    {
+      "id": "salesdrone-lead-journey",
+      "path": "skills/salesdrone-lead-journey/SKILL.md",
+      "description": "Maintain SalesDrone recorded stage transitions and current-stage journey UI. Use for flow/history changes; aggregate funnel and lead mutations belong to dashboard and leads.",
+      "matchTerms": [
+        "lead journey",
+        "stage flow",
+        "transition history"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-leads",
+        "salesdrone-workspace-settings",
+        "salesdrone-dashboard"
+      ],
+      "apiOperations": [
+        "GET /api/v1/leads/{id}/journey"
+      ]
+    },
+    {
+      "id": "salesdrone-lead-scoring",
+      "path": "skills/salesdrone-lead-scoring/SKILL.md",
+      "description": "Maintain SalesDrone configurable Fit, Intent and Red-flag factors, grounded evidence extraction, deterministic scores and refresh workers. Use for scoring changes; dashboard brief prose belongs to dashboard.",
+      "matchTerms": [
+        "lead score",
+        "scoring factor",
+        "qualification"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-dashboard",
+        "salesdrone-workspace-settings",
+        "salesdrone-conversations",
+        "salesdrone-people-permissions"
+      ],
+      "apiOperations": [
+        "GET /api/v1/scoring-settings",
+        "PATCH /api/v1/scoring-settings",
+        "GET /api/v1/lead-scores",
+        "GET /api/v1/leads/{id}/score",
+        "POST /api/v1/leads/{id}/score/refresh"
+      ]
+    },
+    {
+      "id": "salesdrone-leads",
+      "path": "skills/salesdrone-leads/SKILL.md",
+      "description": "Maintain SalesDrone enquiry capture, editing, filtering, deduplication, assignment, suppression and archive behavior. Use for lead data changes; conversations, imports and journey history have separate skills.",
+      "matchTerms": [
+        "lead filter",
+        "edit lead",
+        "create lead",
+        "excel export",
+        "filtered report"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-workspace-settings",
+        "salesdrone-conversations",
+        "salesdrone-lead-journey",
+        "salesdrone-imports",
+        "salesdrone-notifications"
+      ],
+      "apiOperations": [
+        "GET /api/v1/leads",
+        "POST /api/v1/leads/export",
+        "POST /api/v1/leads",
+        "GET /api/v1/leads/{id}",
+        "PATCH /api/v1/leads/{id}",
+        "POST /api/v1/leads/{id}/archive",
+        "PATCH /api/v1/leads/{id}/assignment"
+      ]
+    },
+    {
+      "id": "salesdrone-notifications",
+      "path": "skills/salesdrone-notifications/SKILL.md",
+      "description": "Maintain SalesDrone owner-only inbox, read/unread state, lead-assignment alerts, FCM registration and notification overlay. Use for push/inbox/overlay bugs; task scheduling belongs to tasks-reminders.",
+      "matchTerms": [
+        "push notification",
+        "notification bell",
+        "read unread",
+        "fcm"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-tasks-reminders",
+        "salesdrone-leads",
+        "salesdrone-authentication",
+        "salesdrone-interface"
+      ],
+      "apiOperations": [
+        "GET /api/v1/notifications",
+        "PATCH /api/v1/notifications/{id}",
+        "GET /api/v1/devices",
+        "POST /api/v1/devices",
+        "DELETE /api/v1/devices/{id}",
+        "POST /api/v1/devices/{id}/test"
+      ]
+    },
+    {
+      "id": "salesdrone-observability",
+      "path": "skills/salesdrone-observability/SKILL.md",
+      "description": "Maintain SalesDrone Dynatrace RUM, OpenTelemetry signals, committed business-event outbox and release reporting. Use for instrumentation changes; tenant investigations may use specialist Dynatrace tooling.",
+      "matchTerms": [
+        "dynatrace",
+        "rum",
+        "telemetry",
+        "trace",
+        "metric",
+        "logs",
+        "bizevent"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-data-platform",
+        "salesdrone-api-integrations"
+      ],
+      "apiOperations": []
+    },
+    {
+      "id": "salesdrone-people-permissions",
+      "path": "skills/salesdrone-people-permissions/SKILL.md",
+      "description": "Maintain SalesDrone invitations, member roles, capabilities, assigned scope and protected admin rules. Use for granting/revoking workspace access; Google login mechanics belong to authentication.",
+      "matchTerms": [
+        "people access",
+        "permissions",
+        "assign lead",
+        "member role",
+        "assigned only"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-authentication",
+        "salesdrone-leads",
+        "salesdrone-notifications",
+        "salesdrone-api-integrations"
+      ],
+      "apiOperations": [
+        "GET /api/v1/members",
+        "GET /api/v1/invitations",
+        "POST /api/v1/invitations",
+        "DELETE /api/v1/invitations/{id}",
+        "PATCH /api/v1/members/{uid}",
+        "POST /api/v1/invitations/{id}/accept"
+      ]
+    },
+    {
+      "id": "salesdrone-release",
+      "path": "skills/salesdrone-release/SKILL.md",
+      "description": "Release SalesDrone modules through SemVer, GitHub Actions, Firebase and GitHub Pages with deployment evidence. Use for publishing or rollback; a module skill alone does not authorize production actions.",
+      "matchTerms": [
+        "deploy",
+        "release",
+        "version",
+        "changelog",
+        "rollback"
+      ],
+      "related": [
+        "salesdrone-data-platform",
+        "salesdrone-observability",
+        "salesdrone-documentation",
+        "salesdrone-api-integrations"
+      ],
+      "apiOperations": []
+    },
+    {
+      "id": "salesdrone-release-readiness",
+      "path": "skills/salesdrone-release-readiness/SKILL.md",
+      "description": "Review SalesDrone feature and setting changes for complete docs, skills, API permissions, Dynatrace signals, tests and pre/post-deployment evidence. Use alongside the owning module for every release; publication still requires user authorization.",
+      "matchTerms": [
+        "pre-deployment",
+        "post-deployment",
+        "release checklist",
+        "feature completeness",
+        "release readiness"
+      ],
+      "related": [
+        "salesdrone-release"
+      ],
+      "apiOperations": []
+    },
+    {
+      "id": "salesdrone-tasks-reminders",
+      "path": "skills/salesdrone-tasks-reminders/SKILL.md",
+      "description": "Maintain SalesDrone manual tasks, edits, snooze/completion, soft deletion and scheduled reminder dispatch. Use for due-task and delivery eligibility issues; note interpretation belongs to automatic-reminders.",
+      "matchTerms": [
+        "edit task",
+        "delete task",
+        "manual reminder",
+        "snooze"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-automatic-reminders",
+        "salesdrone-notifications",
+        "salesdrone-people-permissions"
+      ],
+      "apiOperations": [
+        "GET /api/v1/tasks",
+        "POST /api/v1/tasks",
+        "GET /api/v1/tasks/{id}",
+        "PATCH /api/v1/tasks/{id}",
+        "DELETE /api/v1/tasks/{id}"
+      ]
+    },
+    {
+      "id": "salesdrone-workspace-settings",
+      "path": "skills/salesdrone-workspace-settings/SKILL.md",
+      "description": "Maintain SalesDrone configurable field definitions/dropdowns, field retirement, personal preferences and sectioned Settings UI. Use for settings changes; member grants, scoring factors and tokens belong to their own skills.",
+      "matchTerms": [
+        "manage fields",
+        "lead fields",
+        "dropdown choices",
+        "settings",
+        "custom fields"
+      ],
+      "related": [
+        "salesdrone-release",
+        "salesdrone-imports",
+        "salesdrone-leads",
+        "salesdrone-lead-scoring",
+        "salesdrone-people-permissions",
+        "salesdrone-api-integrations"
+      ],
+      "apiOperations": [
+        "GET /api/v1/workspace-settings",
+        "PATCH /api/v1/workspace-settings",
+        "GET /api/v1/ai-settings",
+        "PATCH /api/v1/ai-settings",
+        "PATCH /api/v1/me",
+        "GET /api/v1/field-options",
+        "PATCH /api/v1/field-options"
+      ]
+    }
+  ]
+}

@@ -58,3 +58,15 @@ monitoring or pause its exporter only as an explicit operational measure; retain
 pending/rejected events for later repair. Do not weaken access policy to verify a fix.
 
 Every published change must update an affected `skills/salesdrone-*/SKILL.md`. CI compares `BASE_SHA` with HEAD and rejects changes without an added or modified module playbook; deleted skills and catalog-only updates do not count. Describe changed behavior, verification or operating guidance, rather than adding an empty version note.
+
+## Mandatory feature completion and evidence
+
+Every release uses the [readiness skill](../skills/salesdrone-release-readiness/SKILL.md) and an impact plan in releases/<version>.json. The release helper initializes the template; complete affected modules, docs/settings sections, API and permission decisions, metrics/traces/logs/business-event/deployment-event impact, tests and manual verification. Unchanged or inapplicable items need a reason. A new domain feature needs a versioned API; cosmetic navigation does not need a fabricated endpoint or business event.
+
+Update every changed setting in settings-reference.json and regenerate SETTINGS.md. The shared UI section catalog plus token scopes generates the public settings.html reference. Update module skills, intent routing and skill-tree outputs. CI rejects stale generated docs, missing ownership, incomplete impact plans and missing module skill updates.
+
+Pre-deployment: behavior/negative authorization tests, types, real Auth/Firestore emulator integration, generated API diff, settings/skill routing consistency, security scan, production and curated docs builds. Post-deployment: exact version/SHA, matching OpenAPI, four protected unauthenticated endpoints returning 401 with current version, five ACTIVE function revisions, and the current settings guide on Pages. These checks never authenticate to or export customer data.
+
+Dynatrace reporting sends release BizEvent and deployment marker plus synthetic SDK-generated metrics, traces and logs. Each signal must be accepted with zero partial rejections. release-verification.json, monitoring.json, deployment.json and docs-verification.json are sanitized Actions artifacts retained for 30 days. An impact plan is intent, not evidence. HTTP acceptance is not searchable tenant data or native trace linkage. Record manual browser checks and query-access limitations honestly.
+
+If a post-check or telemetry export fails after Hosting succeeds, the application may already be deployed. Inspect the exact failing result; do not blindly redeploy, roll back business records or overwrite a release tag. A failed post-check reports the deployment outcome as failed and blocks the versioned GitHub release step.

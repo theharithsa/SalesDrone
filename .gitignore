@@ -43,3 +43,8 @@ scripts/qa-admin.mjs
 scripts/qa-ui.mjs
 # Rebuilt from the pinned Swagger npm distribution, including its licence.
 apps/web/public/swagger/
+
+# Sanitized CI verification artifacts are archived by Actions, not source.
+release-verification.json
+docs-verification.json
+monitoring.json

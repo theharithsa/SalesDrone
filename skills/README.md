@@ -1,5 +1,7 @@
 # SalesDrone module skills
 
+Start with [skill-tree.json](../skill-tree.json) or [skill-tree.md](../skill-tree.md) for prompt routing. Every feature/setting release uses [release readiness](salesdrone-release-readiness/SKILL.md) with its domain owner.
+
 These are logical service playbooks for the existing modular application, not
 independently deployed microservices. The backend is one Firebase Functions codebase
 with an HTTP API and four scheduled exports. A future agent should load the relevant
@@ -64,3 +66,5 @@ project discovery and full OpenAPI ownership coverage. When the skill-creator sk
 is installed, also run its `scripts/quick_validate.py` against each module folder.
 Neither structural check proves behavioral quality: verify playbooks against current
 source/tests when using or changing them.
+
+- [salesdrone-release-readiness](salesdrone-release-readiness/SKILL.md): cross-module feature completion and honest pre/post-deployment checks.

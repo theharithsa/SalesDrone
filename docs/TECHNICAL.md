@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **1.4.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **1.5.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -27,7 +27,7 @@ illustrations. `scripts` contains release, contract, security and operator tooli
 
 ## Module skills and agent ownership
 
-The [module skill catalog](../skills/README.md) covers 18 logical domains and
+The [module skill catalog](../skills/README.md) covers 19 logical domains and
 platform modules. Each entry maps source files, primary API ownership, state,
 invariants, diagnosis, tests and deployment impact. The [shared contract](../skills/SHARED.md)
 keeps policy and release rules consistent. Project discovery uses .agents/skills,
@@ -143,3 +143,5 @@ transactions and deny-all client rules. For browser tests run the emulators plus
 Vite with VITE_USE_EMULATORS=true and RUM disabled. Use synthetic accounts/data only.
 Never attach production data or telemetry credentials to a rehearsal. See SETUP.md
 for Firebase setup and SECURITY.md for deployment trust boundaries.
+
+Release readiness is the cross-module completion owner. Shared settings catalogs generate the full reference, and skill-tree.json routes prompts to the 19 module skills. CI validates impact plans and retains post-deployment/telemetry acceptance separately from manual and tenant-query evidence. See RELEASE.md.

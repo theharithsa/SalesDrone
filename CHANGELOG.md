@@ -8,6 +8,16 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.5.0] - 2026-10-25
+
+### Changed
+- Group Lead fields and Dropdown choices under Manage fields, preserving deep links and Admin-only visibility.
+- Publish a complete generated settings/environment reference linked from Settings and the public guide.
+- Add a release-readiness skill, JSON/Markdown skill tree, versioned impact plans and stale-documentation gates.
+- Verify live version, contract, protected API denial, function revisions and published documentation after deployment.
+- Probe real Dynatrace OTLP metrics/traces/logs and validate deployment BizEvent/marker acceptance with sanitized CI evidence and negative tests.
+
 ## [1.4.0] - 2026-10-25
 
 ### Changed

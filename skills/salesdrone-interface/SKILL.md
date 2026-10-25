@@ -46,6 +46,8 @@ Settings groups AvinyaIntelligence in an accessible aria-expanded accordion with
 
 Lead export uses the shared focus-managed Modal, native checkboxes, progress/cancel states and a worker-built XLSX. Controls must wrap on mobile and stay readable in both themes; close/account-policy changes cancel pending work.
 
+Manage fields and AvinyaIntelligence use separate expanded states; selecting a child opens its group without resetting edits. Shared settings-sections.json controls section identity, group and Admin filtering; keep mobile optgroups and deep links consistent. Read settings documentation through the in-app guide link.
+
 ## Change and diagnosis
 
 Use the approved browser tool with synthetic demo data. Measure desktop/mobile viewport and horizontal overflow; check both themes, long names/labels, empty/error/loading states and keyboard focus. Do not claim physical-device testing from a resized viewport.

@@ -44,6 +44,8 @@ Synchronized root/web/functions versions and lockfiles, build metadata, GitHub r
 
 Every published change, including documentation-only maintenance, must update an affected module SKILL.md with behavioral or operational guidance. CI skills:check compares BASE_SHA to HEAD and requires an added/modified module playbook; catalog-only updates and deleted skills do not count. Inspect affected ownership rather than adding empty version notes.
 
+Use salesdrone-release-readiness for the completion review and releases/<version>.json. release creates an unfinished impact template; fill it before CI. CI now checks exact live contract/version, unauthenticated denial and ACTIVE function metadata, then archives sanitized release/monitoring evidence. Pages has an independent versioned settings-guide check. Post-check failures affect deployment-event outcome; inspect actual artifacts before retrying.
+
 ## Change and diagnosis
 
 Inspect the failing job and exact step before retrying; distinguish already-deployed app from failed telemetry/reporting. For rollback revert code into a new forward release, preserve compatible schema/outbox state and verify the prior working behavior.

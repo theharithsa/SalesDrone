@@ -1,6 +1,67 @@
-import {readFileSync,writeFileSync} from 'node:fs';
-const bump=process.argv[2],index={major:0,minor:1,patch:2}[bump];if(index===undefined)throw Error('Usage: npm run release -- major|minor|patch');
-const current=JSON.parse(readFileSync('package.json','utf8')).version,parts=current.split('.').map(Number);parts[index]++;for(let i=index+1;i<3;i++)parts[i]=0;const version=parts.join('.');
-for(const f of ['package.json','apps/web/package.json','functions/package.json']){const j=JSON.parse(readFileSync(f));j.version=version;writeFileSync(f,JSON.stringify(j,null,2)+'\n');}
-for(const f of ['package-lock.json','functions/package-lock.json']){const j=JSON.parse(readFileSync(f));j.version=version;for(const p of ['',...(f==='package-lock.json'?['apps/web','functions']:[])])if(j.packages?.[p])j.packages[p].version=version;writeFileSync(f,JSON.stringify(j,null,2)+'\n');}
-writeFileSync('functions/src/release.json',JSON.stringify({version,commit:'development',builtAt:null},null,2)+'\n');const file='CHANGELOG.md',old=readFileSync(file,'utf8'),at=old.indexOf('\n## [');writeFileSync(file,old.slice(0,at)+`\n\n## [${version}] - ${new Date().toISOString().slice(0,10)}\n\n### Changed\n- Describe this release before committing.\n`+old.slice(at));console.log(`Version advanced ${current} → ${version}. Complete CHANGELOG.md before pushing.`);
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+const bump = process.argv[2],
+  index = { major: 0, minor: 1, patch: 2 }[bump];
+if (index === undefined)
+  throw Error('Usage: npm run release -- major|minor|patch');
+const current = JSON.parse(readFileSync('package.json', 'utf8')).version,
+  parts = current.split('.').map(Number);
+parts[index]++;
+for (let i = index + 1; i < 3; i++) parts[i] = 0;
+const version = parts.join('.');
+for (const f of [
+  'package.json',
+  'apps/web/package.json',
+  'functions/package.json',
+]) {
+  const j = JSON.parse(readFileSync(f));
+  j.version = version;
+  writeFileSync(f, JSON.stringify(j, null, 2) + '\n');
+}
+for (const f of ['package-lock.json', 'functions/package-lock.json']) {
+  const j = JSON.parse(readFileSync(f));
+  j.version = version;
+  for (const p of [
+    '',
+    ...(f === 'package-lock.json' ? ['apps/web', 'functions'] : []),
+  ])
+    if (j.packages?.[p]) j.packages[p].version = version;
+  writeFileSync(f, JSON.stringify(j, null, 2) + '\n');
+}
+writeFileSync(
+  'functions/src/release.json',
+  JSON.stringify({ version, commit: 'development', builtAt: null }, null, 2) +
+    '\n',
+);
+const file = 'CHANGELOG.md',
+  old = readFileSync(file, 'utf8'),
+  at = old.indexOf('\n## [');
+writeFileSync(
+  file,
+  old.slice(0, at) +
+    `\n\n## [${version}] - ${new Date().toISOString().slice(0, 10)}\n\n### Changed\n- Describe this release before committing.\n` +
+    old.slice(at),
+);
+console.log(
+  `Version advanced ${current} → ${version}. Complete CHANGELOG.md before pushing.`,
+);
+
+mkdirSync('releases', { recursive: true });
+const template = JSON.parse(
+  readFileSync(
+    'skills/salesdrone-release-readiness/assets/release-plan.template.json',
+    'utf8',
+  ),
+);
+template.version = version;
+template.api.contractVersion = JSON.parse(
+  readFileSync('docs/openapi.json', 'utf8'),
+).info.version;
+writeFileSync(
+  'releases/' + version + '.json',
+  JSON.stringify(template, null, 2) + '\n',
+);
+console.log(
+  'Complete releases/' +
+    version +
+    '.json, regenerate docs:settings and verify release:readiness.',
+);

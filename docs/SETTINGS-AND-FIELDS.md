@@ -47,3 +47,5 @@ AvinyaIntelligence groups Dashboard insights, Automatic reminders and Lead scori
 ## Reports & lead access
 
 Admin Settings groups export availability and the non-admin assigned-only cap in Reports & lead access. Both default on; changes are versioned and enforced by the API. See [Reports](REPORTS.md).
+
+Manage fields now groups Lead fields and Dropdown choices. Existing section=fields and section=choices URLs still open the matching child. Read [SETTINGS.md](SETTINGS.md) for the full user-facing control reference, generated on every release.

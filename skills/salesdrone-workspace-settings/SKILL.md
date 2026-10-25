@@ -54,6 +54,8 @@ AvinyaIntelligence is an expandable settings group containing Dashboard insights
 
 Settings → Reports & lead access owns [workspace-settings.js](../../functions/src/workspace-settings.js) and [WorkspacePolicySettings.tsx](../../apps/web/src/features/WorkspacePolicySettings.tsx). Admin Google/App Check writes require members:write and expectedVersion; active members can read the safe booleans. Defaults are exportsEnabled=true and assignedOnly=true. No-op saves retain the version. Saving must refresh /me so controls update immediately. Disabling assignedOnly restores configured member scopes, never promotes an assigned member to all. Verify reports-policy.test.js and the emulator integration.
 
+Manage fields groups Lead fields (fields) and Dropdown choices (choices), with an accessible desktop accordion and mobile optgroup. Preserve legacy section deep links and Admin visibility. The shared settings-sections.json catalog drives navigation and documentation; every changed control needs defaults, scope, permissions and behavior in docs/settings-reference.json. Generate docs:settings and verify docs:check.
+
 ## Change and diagnosis
 
 Test current versus retired values, duplicate choices, type changes, essential-field removal, stale versions and optional hidden fields. If a dropdown differs across screens, inspect shared adapters before hardcoding another list.

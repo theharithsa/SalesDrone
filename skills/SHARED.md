@@ -80,6 +80,10 @@ add wording-only tests or repeat broad tests after success without a new reason.
 For UI work use the available approved browser tool; do not claim a resized viewport
 is a physical device. Keep local browser rehearsals synthetic and RUM disabled.
 
+## Feature completeness
+
+Use [release readiness](salesdrone-release-readiness/SKILL.md) with every feature/setting release. Route via [the JSON skill tree](../skill-tree.json). Settings reference data and shared UI section IDs must stay synchronized; generate docs:settings and skills:tree, then run docs:check. Document API/permissions and each Dynatrace signal's impact even when unchanged or inapplicable. releases/<version>.json declares expected coverage; CI artifacts record actual checks. Never use an impact plan as proof that deployment or telemetry succeeded.
+
 ## Release boundary
 
 Follow [the release skill](salesdrone-release/SKILL.md) and

@@ -1,3 +1,5 @@
+import { renderSettings } from './settings-reference.mjs';
+import { TOKEN_SCOPES } from '../functions/src/api-scopes.js';
 // Curated public build: never copy docs/, arbitrary captures or workspace files.
 import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -98,7 +100,22 @@ const html = template
     if (index < 0) throw Error('Unknown guide section: ' + id);
     return String(index + 1).padStart(2, '0');
   })
-  .replaceAll('{{APP_VERSION}}', pkg.version);
+  .replaceAll('{{APP_VERSION}}', pkg.version)
+  .replaceAll(
+    '{{API_COUNT}}',
+    String(
+      Object.values(
+        JSON.parse(await readFile('docs/openapi.json', 'utf8')).paths,
+      ).reduce(
+        (n, p) =>
+          n +
+          Object.keys(p).filter((m) =>
+            ['get', 'post', 'patch', 'put', 'delete'].includes(m),
+          ).length,
+        0,
+      ),
+    ),
+  );
 await writeFile(out + '/index.html', html);
 await copyFile('site/guide.css', out + '/guide.css');
 await writeFile(out + '/.nojekyll', '');
@@ -109,3 +126,13 @@ console.log(
     screenshots.length +
     ' reviewed public screenshots.',
 );
+
+const settings = renderSettings(
+  JSON.parse(await readFile('docs/settings-reference.json', 'utf8')),
+  JSON.parse(await readFile('apps/web/src/lib/settings-sections.json', 'utf8')),
+  TOKEN_SCOPES,
+  pkg.version,
+);
+await writeFile(out + '/settings.html', settings.html);
+if ((await readFile('docs/SETTINGS.md', 'utf8')) !== settings.markdown)
+  throw Error('Stale settings reference: npm run docs:settings');

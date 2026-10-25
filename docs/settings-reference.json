@@ -1,0 +1,471 @@
+{
+  "schemaVersion": 1,
+  "sections": [
+    {
+      "sectionId": "profile",
+      "scope": "Personal account; read only",
+      "api": "GET /api/v1/me",
+      "permissions": "Verified Google sign-in",
+      "controls": [
+        {
+          "id": "googleProfile",
+          "label": "Name, email and profile photo",
+          "default": "From Google",
+          "description": "Displays the verified Google identity and its profile photo, with initials as a fallback. These details are not edited in SalesDrone.",
+          "effect": "Change the source profile in Google, then sign in again.",
+          "example": ""
+        },
+        {
+          "id": "membership",
+          "label": "Workspace role and access",
+          "default": "Granted by an administrator",
+          "description": "Shows whether this identity has live membership. Signing in alone does not grant lead access; unapproved identities see synthetic demo data.",
+          "effect": "Permissions are enforced server-side, including direct links and API requests.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "appearance",
+      "scope": "Personal preference",
+      "api": "GET /api/v1/me; PATCH /api/v1/me",
+      "permissions": "Active member; own preferences",
+      "controls": [
+        {
+          "id": "appearance",
+          "label": "Theme",
+          "default": "System",
+          "description": "Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch.",
+          "effect": "Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local.",
+          "example": ""
+        },
+        {
+          "id": "timezone",
+          "label": "Display timezone",
+          "default": "Asia/Kolkata for live accounts",
+          "description": "Use an IANA timezone, such as Asia/Kolkata or Europe/London. It controls displayed dates, dashboard calendar boundaries and automatic reminder interpretation.",
+          "effect": "Save preferences. Manual reminder forms label the device timezone they use; already scheduled instants do not move.",
+          "example": "Set Europe/London before adding a note saying \u201ctomorrow morning\u201d."
+        }
+      ]
+    },
+    {
+      "sectionId": "notifications",
+      "scope": "Personal browser/device",
+      "api": "GET/POST /api/v1/devices; POST /api/v1/devices/{id}/test; DELETE /api/v1/devices/{id}",
+      "permissions": "Active member; own devices; Google/App Check",
+      "controls": [
+        {
+          "id": "enablePush",
+          "label": "Enable notifications",
+          "default": "Not registered until enabled",
+          "description": "Requests browser notification permission and registers this device for Firebase Cloud Messaging. In-app notifications remain available even when push is blocked.",
+          "effect": "Allow the browser prompt. On supported iPhone/iPad versions, install the web app on the Home Screen and enable it there. Delivery can be delayed by the OS.",
+          "example": ""
+        },
+        {
+          "id": "testPush",
+          "label": "Send test",
+          "default": "On demand",
+          "description": "Sends a synthetic readiness notification to the selected registered device.",
+          "effect": "FCM acceptance does not prove the device displayed it. Check the browser permission and OS settings if it is absent.",
+          "example": ""
+        },
+        {
+          "id": "revokeDevice",
+          "label": "Revoke a device",
+          "default": "Enabled registrations remain until revoked or invalidated",
+          "description": "Stops future push delivery to that registration. Revoking this browser also deletes its local messaging registration.",
+          "effect": "In-app reminders and notifications are retained. The notification bell lets you mark inbox items read or unread.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "workspace",
+      "scope": "Workspace-wide; Admin only",
+      "api": "GET/PATCH /api/v1/workspace-settings",
+      "permissions": "Read: leads:read (PAT configuration:read). Write: Admin + members:write + Google/App Check; expectedVersion",
+      "controls": [
+        {
+          "id": "exportsEnabled",
+          "label": "Allow Excel reports",
+          "default": "On",
+          "description": "Lets members with lead access export matching lead fields and selected columns from Leads \u2192 Export Excel. Admins are also subject to this switch.",
+          "effect": "Turning it off blocks the report API as well as hiding the action. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.",
+          "example": "Filter Sector equals MEP, choose phone and company, then export all matching pages."
+        },
+        {
+          "id": "assignedOnly",
+          "label": "Non-admins see assigned leads only",
+          "default": "On",
+          "description": "Caps every non-admin at assigned scope, including members whose configured scope is All leads. Admins retain their existing scope.",
+          "effect": "Applies to lists, direct links, reports, dashboards and reminder/notification eligibility on the next API request. Existing UI sessions recheck on focus/every minute. Off restores configured member scope; it does not broaden an assigned member.",
+          "example": "Keep on for SDRs working separate portfolios."
+        }
+      ]
+    },
+    {
+      "sectionId": "fields",
+      "scope": "Workspace-wide; Admin only",
+      "api": "GET/PATCH /api/v1/field-options",
+      "permissions": "Read: leads:read (PAT configuration:read). Write: members:write via Google/App Check; expectedVersion",
+      "controls": [
+        {
+          "id": "labels",
+          "label": "Built-in field names",
+          "default": "Standard enquiry labels",
+          "description": "Rename display names for existing lead fields. The internal API keys, stored values, field types and validation semantics stay fixed. Names must be nonempty, distinct and no more than 80 characters.",
+          "effect": "Shared forms, table/filter labels and report headers use the configured names after refresh.",
+          "example": "Rename Sector to Business segment without changing the zone API key."
+        },
+        {
+          "id": "visibility",
+          "label": "Optional field visibility",
+          "default": "Visible",
+          "description": "Hide supported optional fields from the enquiry UI. Essential identity/workflow requirements remain protected.",
+          "effect": "Hiding is not deletion or a substitute for authorization. Historical records remain; hidden fields cannot be selected in a new Excel report.",
+          "example": ""
+        },
+        {
+          "id": "customDefinition",
+          "label": "Custom field name, type and required flag",
+          "default": "No custom fields",
+          "description": "Add up to 30 custom fields: text, long text, number, date, dropdown or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs/types cannot be changed or reused after retirement.",
+          "effect": "Required rules apply to new manual entries or explicit custom-value edits, not unrelated edits to legacy records. The first-sheet importer currently maps standard enquiry fields, not arbitrary custom-field columns.",
+          "example": "Add a dropdown named Material category with Cement, Aggregates and Blocks."
+        },
+        {
+          "id": "customChoices",
+          "label": "Custom dropdown choices",
+          "default": "Provided when creating the dropdown",
+          "description": "A custom dropdown needs at least one distinct nonempty choice. Choice labels are bounded and case-normalized duplicates are rejected.",
+          "effect": "Removing a choice preserves unchanged historical values but prevents new use of that retired value.",
+          "example": ""
+        },
+        {
+          "id": "retireField",
+          "label": "Retire/remove a custom field",
+          "default": "Active",
+          "description": "Remove an unused custom field from new-entry controls without erasing historical lead values.",
+          "effect": "Retired IDs cannot be reused. Create a new field for a different data type instead of rewriting existing values.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "choices",
+      "scope": "Workspace-wide; Admin only",
+      "api": "GET/PATCH /api/v1/field-options",
+      "permissions": "Read: leads:read (PAT configuration:read). Write: members:write via Google/App Check; expectedVersion",
+      "controls": [
+        {
+          "id": "source",
+          "label": "Enquiry sources",
+          "default": "Direct enquiry, Website, Referral, Exhibition, Social media, Other",
+          "description": "Maintain where enquiries originate.",
+          "effect": "Used in lead capture, filters and imports. Existing historical values remain readable.",
+          "example": ""
+        },
+        {
+          "id": "location",
+          "label": "Cities / locations",
+          "default": "No preset list",
+          "description": "Add city/location suggestions appropriate to the business.",
+          "effect": "The same configured options are reused by shared controls; old records are preserved.",
+          "example": ""
+        },
+        {
+          "id": "zone",
+          "label": "Sectors",
+          "default": "No preset list",
+          "description": "Add industry, territory or sector choices matching your sales process.",
+          "effect": "The underlying key remains zone even if you rename its label in Lead fields.",
+          "example": ""
+        },
+        {
+          "id": "legacyStatus",
+          "label": "Enquiry statuses",
+          "default": "Call/WA done, Samples sent, Won/Order placed, Quoted",
+          "description": "Maintain spreadsheet enquiry status choices separately from sales stages and call outcomes.",
+          "effect": "Historical enquiry status is not automatically treated as a stage transition.",
+          "example": ""
+        },
+        {
+          "id": "stage",
+          "label": "Sales stages",
+          "default": "New, Working, Qualified, Meeting booked, Nurture, Disqualified, Won",
+          "description": "Add sales stages and arrange the sequence used by forms, journeys and dashboard funnel.",
+          "effect": "Protected baseline workflow values are retained. A current-stage funnel is not a historic conversion rate.",
+          "example": ""
+        },
+        {
+          "id": "outcome",
+          "label": "Call outcomes",
+          "default": "Standard connected / unanswered call outcomes",
+          "description": "Customize the available results of a phone call while retaining protected workflow outcomes.",
+          "effect": "Changing choices does not rewrite old call records.",
+          "example": ""
+        },
+        {
+          "id": "disposition",
+          "label": "Call dispositions",
+          "default": "None, Interested, Not interested, Callback requested, Do not contact",
+          "description": "Describe the contact\u2019s response separately from the technical call outcome.",
+          "effect": "Do not contact is protected and suppresses outreach; renaming a field does not remove suppression rules.",
+          "example": ""
+        },
+        {
+          "id": "countryCode",
+          "label": "Phone country codes",
+          "default": "+91, +1, +44, +971, +65, +61",
+          "description": "Maintain country dialing prefixes used in contact entry.",
+          "effect": "Preserves original phone input and normalized duplicate checks. Each choice list supports up to 100 distinct values of up to 100 characters.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "ai",
+      "scope": "Workspace-wide; Admin only",
+      "api": "GET/PATCH /api/v1/ai-settings",
+      "permissions": "Admin + members:write + Google/App Check; PAT access denied; expectedVersion",
+      "controls": [
+        {
+          "id": "insightMode",
+          "label": "When to get insights",
+          "default": "When I ask (manual)",
+          "description": "Manual shows a compact Get insights / Refresh insights action. When the dashboard opens requests insights once per visit and hides the button.",
+          "effect": "Recent matching cached briefs are reused. Chart refreshes do not regenerate. Automatic mode can use more model requests; failures do not loop.",
+          "example": ""
+        },
+        {
+          "id": "instructions",
+          "label": "Instructions for insights",
+          "default": "Default grounded sales briefing",
+          "description": "Customize focus, tone and language, up to 4,000 characters. Blank text uses the displayed default; Use default clears custom guidance, and Save preferences applies it.",
+          "effect": "Applies to dashboard prose, not scoring factors or automatic reminder interpretation. Guidance cannot expand access, invent evidence or contact leads. Changes invalidate cached/stale in-flight briefs.",
+          "example": "Use concise Tamil bullets, focusing first on overdue callbacks and missing qualification context."
+        }
+      ]
+    },
+    {
+      "sectionId": "reminders",
+      "scope": "Personal preference",
+      "api": "GET /api/v1/me; PATCH /api/v1/me",
+      "permissions": "Active member; own preferences; scheduling also requires activities:write and tasks:write",
+      "controls": [
+        {
+          "id": "automaticReminders",
+          "label": "Automatically schedule follow-ups from notes",
+          "default": "On",
+          "description": "New lead notes and call comments are analyzed by Gemini for a clear dated next step. Conditional, conflicting or vague instructions need review.",
+          "effect": "Disabling stops pending analysis and new automatic extraction; it does not delete existing tasks. Manual tasks/edits take priority. Imported historical comments do not schedule new reminders.",
+          "example": ""
+        },
+        {
+          "id": "reminderTime",
+          "label": "Default time",
+          "default": "10:00",
+          "description": "Time of day used when an inferred dated follow-up has no explicit time.",
+          "effect": "Uses your display timezone; exact written times take precedence.",
+          "example": "\u201cCall tomorrow\u201d uses 10:00 unless you choose another default."
+        },
+        {
+          "id": "nextWeekRule",
+          "label": "\u201cNext week\u201d means",
+          "default": "Seven days after the note",
+          "description": "Choose seven days after the note or next Monday for ambiguous next-week wording.",
+          "effect": "Only ambiguous relative wording uses this preference; named dates/weekdays remain explicit.",
+          "example": ""
+        },
+        {
+          "id": "moveWeekends",
+          "label": "Move relative dates to a working day",
+          "default": "Off",
+          "description": "Moves qualifying relative dates without an explicit time from a weekend to the next working day.",
+          "effect": "Exact dates and named weekdays are kept as written; this is not a configurable holiday calendar.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "scoring",
+      "scope": "Workspace-wide; Admin only",
+      "api": "GET/PATCH /api/v1/scoring-settings",
+      "permissions": "Read: leads:read (PAT configuration:read). Write: members:write + Google/App Check; expectedVersion",
+      "controls": [
+        {
+          "id": "scoringEnabled",
+          "label": "Enable lead scoring",
+          "default": "On",
+          "description": "Controls background evidence-based qualification under the workspace model.",
+          "effect": "Off disables scoring; it does not fabricate zero scores or delete historical lead data.",
+          "example": ""
+        },
+        {
+          "id": "factorDefinition",
+          "label": "Factor label, group and evidence condition",
+          "default": "Commercial construction / wholesale defaults",
+          "description": "Define what counts as Fit, Intent or a Red flag. Gemini must cite recorded evidence rather than guess. Conditions are 10\u2013600 characters; labels up to 80; up to 30 factors.",
+          "effect": "Condition/factor changes require fresh evidence analysis. Missing evidence remains unknown. This is sales prioritization, not a credit, licensing or safety verification.",
+          "example": "Add an Intent factor for a documented active RFQ."
+        },
+        {
+          "id": "factorWeight",
+          "label": "Factor weight and enabled flag",
+          "default": "Default positive weights and red-flag penalties",
+          "description": "Give enabled factors integer weights from 1 to 100, or disable an irrelevant factor. Keep at least one enabled Fit or Intent factor when scoring is on.",
+          "effect": "Positive matches are normalized against enabled positive weights; red flags subtract points; the result is clamped to 0\u2013100. Weight-only edits can recalculate without new extraction.",
+          "example": ""
+        },
+        {
+          "id": "factorLifecycle",
+          "label": "Add/remove factors",
+          "default": "Default factor set",
+          "description": "Add business-specific signals or remove irrelevant ones. Stable factor identity ties evidence to the model.",
+          "effect": "Background scans are bounded; bulk changes are not guaranteed to finish immediately. Inspect evidence coverage, not just the score.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "developer",
+      "scope": "Personal credentials; Admin only",
+      "api": "GET/POST /api/v1/personal-access-tokens; DELETE /api/v1/personal-access-tokens/{id}",
+      "permissions": "Admin + members:write + Google/App Check; tokens cannot manage tokens",
+      "controls": [
+        {
+          "id": "tokenName",
+          "label": "Personal Access Token name",
+          "default": "Provided on creation",
+          "description": "A descriptive name of 1\u201380 characters helps identify an integration.",
+          "effect": "Names are metadata, not secrets or unique identifiers.",
+          "example": ""
+        },
+        {
+          "id": "tokenScopes",
+          "label": "Permission scopes",
+          "default": "Explicit selection required",
+          "description": "Select only needed data operations. Scopes intersect the current owner\u2019s capabilities and effective lead scope. Read leads and Export leads are separate.",
+          "effect": "Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route\u2019s scope. See the generated scope catalog below.",
+          "example": ""
+        },
+        {
+          "id": "tokenExpiry",
+          "label": "Expiry",
+          "default": "30 days",
+          "description": "Choose 7, 30 or 90 days. Up to 20 active tokens are allowed per owner.",
+          "effect": "Expiry and scopes are immutable; issue a replacement to change them.",
+          "example": ""
+        },
+        {
+          "id": "tokenCopy",
+          "label": "Copy a newly generated token",
+          "default": "Shown once",
+          "description": "Save the secret directly in your integration\u2019s secret manager. SalesDrone stores a hash and cannot recover the full token later.",
+          "effect": "Never put it in URLs, screenshots, code or documentation. A lost creation response requires revoking its metadata and generating a replacement.",
+          "example": ""
+        },
+        {
+          "id": "tokenRevoke",
+          "label": "Revoke a token",
+          "default": "Active until expiry/revocation",
+          "description": "Stops subsequent authorization using that credential.",
+          "effect": "Already completed operations are not undone. Demoting/suspending the owner also blocks access.",
+          "example": ""
+        },
+        {
+          "id": "swagger",
+          "label": "Swagger API portal",
+          "default": "Same-origin /api/docs",
+          "description": "Inspect request schemas, permissions and examples. Trying a write request changes real records.",
+          "effect": "Authorization stays in tab memory. Clear it when finished, especially on shared devices.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "access",
+      "scope": "Workspace access; Admin only",
+      "api": "GET /api/v1/members; GET/POST /api/v1/invitations; DELETE /api/v1/invitations/{id}; PATCH /api/v1/members/{uid}",
+      "permissions": "members:write + Google/App Check; PAT access denied",
+      "controls": [
+        {
+          "id": "inviteIdentity",
+          "label": "Invite by verified Google email",
+          "default": "No access until granted and accepted",
+          "description": "Invite the intended Google account. Invitations expire after seven days and can be revoked.",
+          "effect": "The invitation binds to the verified identity that accepts it. Merely signing in does not grant live data.",
+          "example": ""
+        },
+        {
+          "id": "memberRole",
+          "label": "Role",
+          "default": "Viewer or SDR chosen for each grant",
+          "description": "Viewer can read leads. SDR can also create/edit leads, record activity and manage tasks. Administrative capabilities are reserved for protected administrators.",
+          "effect": "This screen does not promote other users to Admin or edit protected bootstrap admins.",
+          "example": ""
+        },
+        {
+          "id": "memberScope",
+          "label": "Configured lead scope",
+          "default": "Assigned",
+          "description": "Choose Assigned or All leads for a member. The workspace assigned-only cap still limits non-admins when enabled.",
+          "effect": "Changing scope applies server-side; old cursors/cached context cannot grant broader access.",
+          "example": ""
+        },
+        {
+          "id": "memberCapabilities",
+          "label": "Detailed permissions",
+          "default": "Role preset unless customized",
+          "description": "Fine-tune allowed non-administrative actions while retaining lead-read permission for workspace access.",
+          "effect": "Removing a capability blocks subsequent relevant operations. UI visibility alone is not authorization.",
+          "example": ""
+        },
+        {
+          "id": "memberActive",
+          "label": "Suspend/restore membership",
+          "default": "Active after valid acceptance",
+          "description": "Disable a member\u2019s live workspace access without deleting their historical work.",
+          "effect": "Current API requests, token checks and worker delivery eligibility use active membership. Re-enabling restores only the configured role/scope/capabilities.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "about",
+      "scope": "Read only",
+      "api": "No dedicated settings mutation",
+      "permissions": "Available in demo and live app",
+      "controls": [
+        {
+          "id": "aboutStory",
+          "label": "Story, mission and version",
+          "default": "Current installed release",
+          "description": "Explains why SalesDrone exists and shows the application version.",
+          "effect": "Refresh after a release to load current assets. This page does not change business data.",
+          "example": ""
+        }
+      ]
+    }
+  ],
+  "environment": [
+    {
+      "name": "Firebase project and identity",
+      "description": "Operators configure Firebase Auth Google provider, authorized domains, App Check, Hosting, Firestore rules/indexes and the deployed Functions project. These are not editable through business Settings. See SETUP.md and RELEASE.md. Never weaken deny-all client Firestore rules to customize the app."
+    },
+    {
+      "name": "AI and notification services",
+      "description": "GEMINI_API_KEY stays in Secret Manager; GEMINI_MODEL is server configuration. VITE_FIREBASE_VAPID_KEY and VITE_FIREBASE_APPCHECK_KEY are public browser identifiers configured by deployment. The browser must be rebuilt for VITE changes; never put Gemini or ingestion secrets in VITE variables."
+    },
+    {
+      "name": "Dynatrace and releases",
+      "description": "DYNATRACE_API_TOKEN is a protected server/workflow secret; DYNATRACE_TENANT_URL selects the approved ingestion tenant. VITE_ENABLE_RUM controls loading the approved browser tag. Approved live members use verified-email RUM tags; backend actors remain hashed and Replay stays disabled. Retention/consent and tenant query permissions are managed in Dynatrace separately."
+    },
+    {
+      "name": "Safe customization procedure",
+      "description": "Use synthetic data to test changed fields, options, scopes and reminder rules. Save with the current version; if another admin changed the record, reload before retrying. Do not rewrite historical data or rotate project secrets through the UI. Export/report files are private local files, not public documentation assets."
+    }
+  ]
+}

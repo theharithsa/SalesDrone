@@ -19,7 +19,12 @@
     "security:scan": "node scripts/check-secrets.mjs",
     "docs:build": "node scripts/build-docs.mjs",
     "build:metadata": "node scripts/build-release.mjs",
-    "skills:check": "node scripts/check-skills.mjs"
+    "skills:check": "node scripts/check-skills.mjs",
+    "docs:settings": "node scripts/build-settings-docs.mjs",
+    "docs:check": "node scripts/build-settings-docs.mjs --check && node scripts/build-skill-tree.mjs --check",
+    "release:readiness": "node scripts/check-readiness.mjs",
+    "release:postcheck": "node scripts/post-deploy.mjs",
+    "skills:tree": "node scripts/build-skill-tree.mjs"
   },
   "devDependencies": {
     "firebase-tools": "^15.34.1",
@@ -34,5 +39,5 @@
       "uuid": "^11.1.1"
     }
   },
-  "version": "1.4.0"
+  "version": "1.5.0"
 }
