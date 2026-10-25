@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.1.5 · MIT**
+**Part of Avinya Enterprises · v1.2.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -51,7 +51,7 @@ The notification bell opens an overlay without losing your place. Assignment and
 
 ## Access and configuration
 
-Google sign-in establishes identity; server-side membership and capabilities determine access. Unapproved users see an isolated synthetic demo, never live leads. Administrators manage people and permissions, field definitions, dropdown options, scoring factors and workspace preferences in Settings. Protected bootstrap administrators are defined in server configuration.
+Google sign-in establishes identity; server-side membership and capabilities determine access. Unapproved users see an isolated synthetic demo, never live leads. Administrators manage people and permissions, field definitions and built-in names, dropdown options, dashboard AI instructions, scoring factors and workspace preferences in Settings. Protected bootstrap administrators are defined in server configuration.
 
 The repository contains application code and reviewed synthetic screenshots. It contains no imported customer workbook, production lead export, private credentials or production screenshots. Public Firebase browser configuration is an identifier, not an authorization boundary. Firestore client access is denied; the authenticated API enforces permissions and lead scope.
 
@@ -78,7 +78,7 @@ An unavailable live API produces an error; it does not silently replace a live w
 
 ## API integrations
 
-[Open the Swagger API portal](https://sales-drone-avinya.firebaseapp.com/api/docs) for all 47 supported read, create, update and delete operations. Admins can generate expiring, scoped **Personal Access Tokens** in **Settings → Developer settings**. Tokens are shown once, stored as hashes and revocable. They inherit current owner permissions and cannot administer people, security settings or other tokens.
+[Open the Swagger API portal](https://sales-drone-avinya.firebaseapp.com/api/docs) for all 49 supported read, create, update and delete operations. Admins can generate expiring, scoped **Personal Access Tokens** in **Settings → Developer settings**. Tokens are shown once, stored as hashes and revocable. They inherit current owner permissions and cannot administer people, security settings or other tokens.
 
 ![Self-hosted Swagger portal showing GET, POST, PATCH and DELETE task APIs; no credentials or customer records.](site/assets/screenshots/api-portal-demo.jpg)
 

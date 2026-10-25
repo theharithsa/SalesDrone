@@ -469,16 +469,32 @@ export default function DashboardPage({
               <Sparkles size={30} />
             </div>
             <div className="brief-main">
-              <span className="eyebrow">
-                <Sparkles size={13} />
-                {demo
-                  ? 'DEMO WORKSPACE SNAPSHOT'
-                  : b
-                    ? 'GEMINI · YOUR WORKSPACE SUMMARY'
-                    : briefBusy
-                      ? 'PREPARING AI SUMMARY'
-                      : 'WORKSPACE SNAPSHOT'}
-              </span>
+              <div className="brief-heading-row">
+                <span className="eyebrow">
+                  <Sparkles size={13} />
+                  {demo
+                    ? 'DEMO WORKSPACE SNAPSHOT'
+                    : b
+                      ? 'AI INSIGHTS'
+                      : briefBusy
+                        ? 'WORKING ON IT'
+                        : 'YOUR SNAPSHOT'}
+                </span>
+                {!demo ? (
+                  <button
+                    className="insights-action"
+                    disabled={briefBusy}
+                    onClick={() => void refreshBrief()}
+                  >
+                    <Sparkles size={15} />
+                    {briefBusy
+                      ? 'Working…'
+                      : b
+                        ? 'Refresh insights'
+                        : 'Get insights'}
+                  </button>
+                ) : null}
+              </div>
               <h2>
                 {briefBusy
                   ? 'Connecting the dots…'
@@ -497,25 +513,10 @@ export default function DashboardPage({
                     ? (b ? 'Summary snapshot ' : 'Snapshot ') +
                       displayDate(brief?.asOf || snapshot.asOf, timezone)
                     : ''}
-                {!demo ? (
-                  <button
-                    className="button primary"
-                    disabled={briefBusy}
-                    onClick={() => void refreshBrief()}
-                  >
-                    <Sparkles size={15} />
-                    {briefBusy
-                      ? 'Generating summary…'
-                      : b
-                        ? 'Update AI summary'
-                        : 'Generate AI summary'}
-                  </button>
-                ) : null}
               </div>
               {!demo && !b && !briefBusy ? (
                 <p className="field-hint">
-                  Generate a summary when you need one. Opening or refreshing
-                  this dashboard does not run AI.
+                  Insights are ready when you need them.
                 </p>
               ) : null}
               {briefError ? (

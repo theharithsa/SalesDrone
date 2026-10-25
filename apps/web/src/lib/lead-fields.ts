@@ -70,7 +70,7 @@ export function matchesColumnFilters(
                 : value.includes(term);
   });
 }
-export function detectHeaderRow(rows: string[][]) {
+export function detectHeaderRow(rows: string[][], extraLabels: string[] = []) {
   const aliases = new Set([
     'sl no',
     'enq source',
@@ -90,11 +90,14 @@ export function detectHeaderRow(rows: string[][]) {
     'status',
     'initial discussion',
     '1st follow up',
+    ...extraLabels.map((v) => v.normalize('NFKC').trim().toLowerCase()),
   ]);
   let best = 0,
     score = 0;
   rows.slice(0, 25).forEach((row, index) => {
-    const s = row.filter((v) => aliases.has(v.trim().toLowerCase())).length;
+    const s = row.filter((v) =>
+      aliases.has(v.normalize('NFKC').trim().toLowerCase()),
+    ).length;
     if (s > score) {
       score = s;
       best = index;

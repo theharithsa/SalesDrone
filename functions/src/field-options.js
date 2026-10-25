@@ -1,3 +1,5 @@
+import DEFAULT_FIELD_LABELS from './lead-labels.json' with { type: 'json' };
+export { DEFAULT_FIELD_LABELS };
 import { z } from 'zod';
 import { STAGES, OUTCOMES, AppError } from './contracts.js';
 import { ROOT } from './policy.js';
@@ -73,6 +75,23 @@ export const CustomField = z
 export const FieldOptionsPatch = z
   .object({
     expectedVersion: z.number().int().positive(),
+    labels: z
+      .object(
+        Object.fromEntries(
+          Object.keys(DEFAULT_FIELD_LABELS).map((key) => [
+            key,
+            z
+              .string()
+              .trim()
+              .min(1)
+              .max(80)
+              .regex(/^[^\r\n\x00-\x1f]+$/),
+          ]),
+        ),
+      )
+      .partial()
+      .strict()
+      .optional(),
     customFields: z.array(CustomField).max(100).optional(),
     hiddenFields: z.array(z.enum(OPTIONAL_LEAD_FIELDS)).max(10).optional(),
     values: z
@@ -134,6 +153,7 @@ export async function readFieldOptions(store) {
     values: { ...DEFAULT_FIELD_OPTIONS, ...doc?.values },
     customFields: doc?.customFields || [],
     hiddenFields: doc?.hiddenFields || [],
+    labels: { ...DEFAULT_FIELD_LABELS, ...doc?.labels },
   };
 }
 export function assertFieldOption(config, key, value, previous) {
@@ -157,7 +177,26 @@ export function mergeFieldSettings(current, input) {
         'Retire existing fields without changing their IDs or types. Retired IDs cannot be reused.',
       );
   }
+  const labels = {
+    ...DEFAULT_FIELD_LABELS,
+    ...current.labels,
+    ...input.labels,
+  };
+  const activeLabels = [
+    ...Object.values(labels),
+    ...fields.filter((f) => !f.deleted).map((f) => f.label),
+  ];
+  if (
+    new Set(activeLabels.map((v) => v.normalize('NFKC').toLowerCase())).size !==
+    activeLabels.length
+  )
+    throw new AppError(
+      400,
+      'FIELD_LABEL',
+      'Use distinct names for built-in and custom fields',
+    );
   return {
+    labels,
     values: input.values,
     customFields: fields,
     hiddenFields: input.hiddenFields || current.hiddenFields,

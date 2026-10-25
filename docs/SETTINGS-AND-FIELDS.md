@@ -37,3 +37,9 @@ Screenshots: `screenshots/settings-redesign/` (synthetic local data only).
 ## Production release check
 
 The API and Hosting release completed successfully. Live Hosting serves the latest main asset, both new font files and licenses with HTTP 200; the public API contract reports 1.4.0. The authenticated production Settings page displays the new navigation and Google Sans headings. All three visible account-photo images loaded successfully from Googleusercontent. Production checks were read-only.
+
+## Built-in names and AI guidance (v1.2.0)
+
+Lead fields now provides Edit for built-in display labels, including essential fields. Names are 1–80 characters and distinct across built-in/custom fields after normalization. IDs, data types, contact validation, required workflow fields and stored values remain unchanged. Original-name reset is available; existing hidden/retired field behavior remains. New labels appear in entry/edit forms, worksheet headings, details, filter choices and import mapping; original workbook aliases remain accepted. Older clients that omit labels preserve current names.
+
+Personalize AI is an Admin workspace section on desktop and in the mobile section selector. It edits dashboard guidance with a default fallback and expected-version conflict protection. See INTELLIGENCE.md.

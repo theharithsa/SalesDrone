@@ -69,6 +69,7 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
       traceparent: null,
     }),
   }));
+  let lastBriefingInput;
   const app = createApp({
     store,
     verifyToken: (t) => auth.verifyIdToken(t, true),
@@ -77,20 +78,23 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
       return !user.disabled;
     },
     extractScore: async () => ({ signals: [] }),
-    summarizeDashboard: async (c) => ({
-      headline: 'Verified emulator brief',
-      summary: 'Review your current reminders.',
-      insights: [
-        {
-          title: 'Open reminders',
-          detail: 'Review the outstanding work.',
-          type: 'priority',
-          taskIds: [],
-          leadIds: [],
-          facts: [{ key: 'pendingTasks', value: c.facts.pendingTasks }],
-        },
-      ],
-    }),
+    summarizeDashboard: async (c) => {
+      lastBriefingInput = c;
+      return {
+        headline: 'Verified emulator brief',
+        summary: 'Review your current reminders.',
+        insights: [
+          {
+            title: 'Open reminders',
+            detail: 'Review the outstanding work.',
+            type: 'priority',
+            taskIds: [],
+            leadIds: [],
+            facts: [{ key: 'pendingTasks', value: c.facts.pendingTasks }],
+          },
+        ],
+      };
+    },
   });
   const token = await signIn('spraghav@gmail.com');
   const outsider = await signIn('outsider@example.com');
@@ -175,10 +179,31 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   const dashboard = (await req('get', '/dashboard').expect(200)).body;
   assert.ok(dashboard.coverage.totalLeads >= 1);
   assert.equal(dashboard.aiContext, undefined);
+  const aiPreferences = (await req('get', '/ai-settings').expect(200)).body;
+  assert.equal(aiPreferences.usingDefault, true);
+  await req('patch', '/ai-settings', {
+    expectedVersion: aiPreferences.version,
+    instructions: 'Emulator guidance: focus on callbacks.',
+  }).expect(200);
+  assert.equal(
+    (await req('get', '/ai-settings').expect(200)).body.usingDefault,
+    false,
+  );
   const intelligence = (
     await req('post', '/dashboard/insights', {}).expect(200)
   ).body;
   assert.equal(intelligence.status, 'Ready');
+  assert.ok(
+    !JSON.stringify(
+      await store.query('workspaces/avinyatech/telemetryOutbox', {
+        limit: 250,
+      }),
+    ).includes('Emulator guidance: focus on callbacks.'),
+  );
+  assert.equal(
+    lastBriefingInput.workspaceGuidance,
+    'Emulator guidance: focus on callbacks.',
+  );
   assert.equal(
     (await req('get', '/scoring-settings').expect(200)).body.factors.length,
     14,
@@ -321,7 +346,12 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   await req('patch', '/field-options', {
     expectedVersion: fields.version,
     values: fields.values,
+    labels: { name: 'Contact person', zone: 'Industry' },
   }).expect(200);
+  assert.equal(
+    (await req('get', '/field-options').expect(200)).body.labels.name,
+    'Contact person',
+  );
   const custom = (
     await req(
       'post',

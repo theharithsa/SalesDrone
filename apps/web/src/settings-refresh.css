@@ -1081,3 +1081,46 @@ input[type='tel'] {
   line-height: 1.6;
   text-align: center;
 }
+
+.standard-label-editor {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+.standard-label-editor .form-actions {
+  flex-wrap: wrap;
+}
+.ai-personalization > p {
+  color: var(--muted);
+  max-width: 65ch;
+  line-height: 1.7;
+}
+.ai-personalization form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+.ai-personalization textarea {
+  min-height: 160px;
+  resize: vertical;
+}
+.ai-default-guidance {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.ai-default-guidance summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.ai-default-guidance p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.settings-field-row strong,
+.settings-field-row small {
+  overflow-wrap: anywhere;
+}

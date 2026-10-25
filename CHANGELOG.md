@@ -5,6 +5,15 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.2.0] - 2026-10-25
+
+### Changed
+- Replace the large dashboard action with a compact Get insights control in the card header, with a mobile touch target and on-demand generation.
+- Add Admin-only AI personalization with default fallback, versioned API, cache invalidation, stale-generation protection and privacy-safe audit metadata.
+- Allow Admins to rename built-in lead field labels across entry, tables, details, filters and import mapping without changing stored keys or validation.
+- Publish OpenAPI 1.10.0 with 49 operations and extend domain/emulator coverage and module guidance.
+
 ## [1.1.5] - 2026-10-25
 
 ### Changed

@@ -12,6 +12,7 @@ import {
   defaultFieldOptions,
   FieldOptions,
   withCurrent,
+  labelFor,
 } from './lib/field-options';
 import LeadFilters from './components/LeadFilters';
 import WorksheetLeads from './components/WorksheetLeads';
@@ -1620,19 +1621,33 @@ export default function App() {
                       value={searchField}
                       onChange={(e) => setSearchField(e.target.value)}
                     >
-                      <option value="name">Name</option>
-                      <option value="company">Company</option>
-                      <option value="phone">Phone</option>
-                      <option value="email">Email</option>
-                      <option value="location">City</option>
-                      <option value="zone">Sector</option>
+                      <option value="name">
+                        {labelFor(fieldOptions, 'name')}
+                      </option>
+                      <option value="company">
+                        {labelFor(fieldOptions, 'company')}
+                      </option>
+                      <option value="phone">
+                        {labelFor(fieldOptions, 'phone')}
+                      </option>
+                      <option value="email">
+                        {labelFor(fieldOptions, 'email')}
+                      </option>
+                      <option value="location">
+                        {labelFor(fieldOptions, 'location')}
+                      </option>
+                      <option value="zone">
+                        {labelFor(fieldOptions, 'zone')}
+                      </option>
                     </select>
                     <select
                       aria-label="Filter stage"
                       value={stage}
                       onChange={(e) => setStage(e.target.value)}
                     >
-                      <option value="">All stages</option>
+                      <option value="">
+                        All {labelFor(fieldOptions, 'stage').toLowerCase()}
+                      </option>
                       {withCurrent(
                         fieldOptions.values.stage,
                         selected?.stage,
@@ -1645,7 +1660,9 @@ export default function App() {
                       value={source}
                       onChange={(e) => setSource(e.target.value)}
                     >
-                      <option value="">All sources</option>
+                      <option value="">
+                        All {labelFor(fieldOptions, 'source').toLowerCase()}
+                      </option>
                       {sourceOptions.map((s) => (
                         <option key={s}>{s}</option>
                       ))}
@@ -1843,7 +1860,7 @@ export default function App() {
                             )
                             .map(([field, label]) => (
                               <div key={field}>
-                                <dt>{label}</dt>
+                                <dt>{labelFor(fieldOptions, field, label)}</dt>
                                 <dd
                                   className={
                                     field === 'phone'
@@ -2303,6 +2320,7 @@ export default function App() {
             ) : null}
             {page === 'imports' ? (
               <ImportPage
+                config={fieldOptions}
                 choices={fieldOptions.values}
                 demo={demo || !admin}
                 request={request}
@@ -2408,6 +2426,7 @@ export default function App() {
       >
         {selected && modal === 'call' ? (
           <CallForm
+            config={fieldOptions}
             lead={selected}
             choices={fieldOptions.values}
             canEdit={can('leads:edit')}

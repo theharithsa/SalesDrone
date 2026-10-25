@@ -3,6 +3,7 @@ import {
   defaultFieldOptions,
   FieldOptions,
   withCurrent,
+  labelFor,
 } from '../lib/field-options';
 import { FormEvent, useState } from 'react';
 import { localInstant } from '../lib/dates';
@@ -81,7 +82,7 @@ export function LeadForm({
       <div className="form-grid">
         {visible('source') ? (
           <label>
-            Enquiry source
+            {labelFor(config, 'source')}
             <input
               name="source"
               list="workspace-source-options"
@@ -91,7 +92,7 @@ export function LeadForm({
           </label>
         ) : null}
         <label>
-          Customer name
+          {labelFor(config, 'name')}
           <input
             name="name"
             required={!lead?.needsReview}
@@ -102,7 +103,7 @@ export function LeadForm({
           />
         </label>
         <label>
-          Phone number
+          {labelFor(config, 'phone')}
           <input
             name="phone"
             type="tel"
@@ -116,7 +117,7 @@ export function LeadForm({
         </label>
         {visible('company') ? (
           <label>
-            Company name
+            {labelFor(config, 'company')}
             <input
               name="company"
               maxLength={200}
@@ -127,7 +128,7 @@ export function LeadForm({
         ) : null}
         {visible('location') ? (
           <label>
-            City / location
+            {labelFor(config, 'location')}
             <input
               name="location"
               list="workspace-location-options"
@@ -138,7 +139,7 @@ export function LeadForm({
         ) : null}
         {visible('zone') ? (
           <label>
-            Sector
+            {labelFor(config, 'zone')}
             <input
               name="zone"
               list="workspace-sector-options"
@@ -148,7 +149,7 @@ export function LeadForm({
           </label>
         ) : null}
         <label>
-          Enquiry date
+          {labelFor(config, 'enquiryDate')}
           <input
             name="enquiryDate"
             type="date"
@@ -161,7 +162,7 @@ export function LeadForm({
         </label>
         {visible('legacyStatus') ? (
           <label>
-            Enquiry status
+            {labelFor(config, 'legacyStatus')}
             <input
               name="legacyStatus"
               list="enquiry-statuses"
@@ -176,7 +177,7 @@ export function LeadForm({
           </label>
         ) : null}
         <label>
-          Sales stage
+          {labelFor(config, 'stage')}
           <select name="stage" defaultValue={lead?.stage || 'New'}>
             {withCurrent(choices.stage, lead?.stage).map((v) => (
               <option key={v}>{v}</option>
@@ -185,7 +186,7 @@ export function LeadForm({
         </label>
         {visible('initialDiscussion') ? (
           <label className="full">
-            Initial discussion
+            {labelFor(config, 'initialDiscussion')}
             <textarea
               name="initialDiscussion"
               rows={3}
@@ -198,7 +199,7 @@ export function LeadForm({
 
       <div className="form-grid">
         <label>
-          Email
+          {labelFor(config, 'email')}
           <input
             name="email"
             type="email"
@@ -207,7 +208,7 @@ export function LeadForm({
           />
         </label>
         <label>
-          Country code
+          {labelFor(config, 'countryCode')}
           <select
             name="countryCode"
             defaultValue={lead?.countryCode || choices.countryCode[0]}
@@ -299,6 +300,7 @@ export function CallForm({
   canEdit = true,
   canTask = true,
   choices = defaultFieldOptions.values,
+  config = defaultFieldOptions,
 }: {
   lead: Lead;
   onSave: (data: any, key: string) => Promise<void>;
@@ -306,6 +308,7 @@ export function CallForm({
   canEdit?: boolean;
   canTask?: boolean;
   choices?: FieldOptions['values'];
+  config?: FieldOptions;
 }) {
   const [followUp, setFollowUp] = useState(false);
   const [disposition, setDisposition] = useState('None');
@@ -348,7 +351,7 @@ export function CallForm({
     >
       <div className="form-grid">
         <label>
-          Call outcome
+          {labelFor(config, 'outcome')}
           <select name="outcome" autoFocus>
             {choices.outcome.map((s) => (
               <option key={s}>{s}</option>
@@ -356,7 +359,7 @@ export function CallForm({
           </select>
         </label>
         <label>
-          Disposition
+          {labelFor(config, 'disposition')}
           <select
             value={disposition}
             onChange={(e) => {
@@ -381,7 +384,7 @@ export function CallForm({
         </label>
         {canEdit ? (
           <label>
-            Lead stage
+            {labelFor(config, 'stage')}
             <select name="stage" defaultValue={lead.stage}>
               {withCurrent(choices.stage, lead?.stage).map((s) => (
                 <option key={s}>{s}</option>

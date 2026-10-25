@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **1.1.5** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **1.2.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -101,7 +101,7 @@ membership version and filter context. Private responses are no-store. Examples:
 
 - GET/PATCH leads, POST lead activities, POST corrections, GET lead journey.
 - GET/POST/PATCH/DELETE tasks, owner-only inbox read/unread and device registration.
-- Admin grants, members, field definitions, choices and scoring settings.
+- Admin grants, members, field definitions/display labels, choices, AI guidance and scoring settings.
 - Import preview/commit/recovery, score reads/refresh and dashboard/AI brief.
 
 New APIs should reuse the existing policy/domain layers. No separate MCP surface

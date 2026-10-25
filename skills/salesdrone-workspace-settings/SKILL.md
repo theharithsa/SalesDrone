@@ -13,6 +13,8 @@ this map is an immutable schema or a standalone microservice.
 
 Admin field edit or personal preference → schema/ownership/version validation → persisted configuration → shared controls and filters → downstream data validation.
 
+- [functions/src/ai-settings.js](../../functions/src/ai-settings.js)
+- [apps/web/src/features/AIPersonalizationSettings.tsx](../../apps/web/src/features/AIPersonalizationSettings.tsx)
 - [functions/src/field-options.js](../../functions/src/field-options.js)
 - [functions/src/contracts.js](../../functions/src/contracts.js)
 - [functions/src/app.js](../../functions/src/app.js)
@@ -25,6 +27,8 @@ Admin field edit or personal preference → schema/ownership/version validation 
 
 ## Primary API ownership
 
+- GET /api/v1/ai-settings
+- PATCH /api/v1/ai-settings
 - PATCH /api/v1/me
 - GET /api/v1/field-options
 - PATCH /api/v1/field-options
@@ -39,6 +43,8 @@ workspaces/avinyatech/settings/fields; users/{uid} preferences; persisted lead c
 - Admin-only workspace field writes use expectedVersion. Personal preferences remain user-owned; capabilities are not inferred from editable preference payloads.
 - Preserve protected/essential fields and workflow values. Enforce custom types, required rules, stable cf_ IDs and normalized unique dropdown choices.
 - Retiring fields/choices does not erase historical records or block unchanged legacy values. New use of retired options is rejected.
+- Built-in display labels can change but keys, stored values, types and validation semantics stay fixed. Validate distinct built-in/custom names; preserve labels when older clients save only choices.
+- AI personalization is Google/App Check Admin-only. Blank guidance restores defaults; changes invalidate summary caches and in-flight older generations cannot publish. Prompts are not telemetry.
 - Apply the same configured options in forms, calls, imports, filters, journey and demo behavior. Use full “Enquiry” labels and omit serial number UI.
 - Desktop settings use section navigation; mobile uses a section selector. Preserve profile photo fallback, readable fonts and accessible labels.
 

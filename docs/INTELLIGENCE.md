@@ -4,7 +4,7 @@ SalesDrone displays six responsive views: pipeline stage composition, 14-day per
 
 ## AI workspace brief
 
-Dashboard AI summaries are on demand. Opening the page, navigating back or refreshing charts does not request Gemini. Choose **Generate AI summary** (or **Update AI summary**) to request one; duplicate clicks are guarded while it runs. The summary retains its own snapshot time when charts refresh. Server caching and rate limits still apply.
+Dashboard AI summaries are on demand. Opening the page, navigating back or refreshing charts does not request Gemini. Choose **Get insights** (or **Refresh insights**) to request one; duplicate clicks are guarded while it runs. The summary retains its own snapshot time when charts refresh. Server caching and rate limits still apply.
 
 `POST /api/v1/dashboard/insights` uses Gemini server-side to produce a headline and up to four suggestions about permitted pipeline counts and the signed-in user's open tasks. It receives aggregate facts, up to 25 task titles/dates and authorized lead IDs/scores, without structured customer names, phones or emails. Free text can contain information entered by a user. Input is treated as untrusted data; the model has no tools and cannot contact leads or create tasks.
 
@@ -48,3 +48,9 @@ Admin Settings contains Lead scoring and the actual People & access controls. Ex
 OpenAPI 1.7.0 adds seven operations (43 total): GET/PATCH scoring-settings; GET lead-scores (at most 100 IDs, all scope checked); GET lead detail score; POST score refresh; GET dashboard; POST dashboard insights. Writes use expectedVersion where configuration is edited. Scores and briefs are service-side derived records; direct Firestore client access remains denied.
 
 Both `api` and `leadIntelligence` explicitly bind Secret Manager's existing `GEMINI_API_KEY`; no secret is shipped to the browser. Current model is `GEMINI_MODEL`, default `gemini-3.5-flash-lite`. Additional indexes are activities actorUid/type/id DESC, leads archived/id ASC and leads archived/assignedToUid/id ASC. Deploy it and wait for READY before releasing dashboard assets. The new worker logs only result counts. The API audits manual score refreshes, scoring settings changes and brief generation. Derived scores and per-user briefs have no automatic erasure/retention workflow beyond existing project practices; minute budget documents should be included in future retention cleanup.
+
+## Admin personalization
+
+Settings → Personalize AI lets an Admin set up to 4,000 characters of workspace guidance for dashboard focus, tone and language. Blank instructions use the displayed default. GET/PATCH /api/v1/ai-settings require Google/App Check, members:write and the Admin role; PATs cannot read or change them. PATCH uses expectedVersion and records only safe audit metadata.
+
+Guidance is supplied separately from task/lead text under fixed grounding and output rules. It cannot expand access, bypass blocked-lead rules, fabricate references or run tools. It applies only to dashboard insights; automatic reminders and scoring retain their own contracts. Each cached brief includes the guidance version in its fingerprint. A changed version rejects an older in-flight generation; the next user-triggered request uses current instructions. Saving settings itself does not call Gemini.

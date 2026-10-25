@@ -13,7 +13,7 @@ test('published contract covers every route with explicit PAT or Google/App Chec
     ),
   ].map((m) => [m[1], m[2]]);
   endpoints.push(['get', '/me'], ['post', '/invitations/:id/accept']);
-  assert.equal(endpoints.length, 47);
+  assert.equal(endpoints.length, 49);
   for (const [method, url] of endpoints) {
     const op =
       spec.paths['/api/v1' + url.replace(/:([a-zA-Z]+)/g, '{$1}')][method];

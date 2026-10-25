@@ -74,3 +74,19 @@ test('visible fields use full names and omit the legacy serial number', () => {
     'Enquiry date',
   );
 });
+
+test('renamed header labels are detected without changing legacy workbook aliases', () => {
+  assert.equal(
+    detectHeaderRow(
+      [
+        [],
+        [],
+        ['Project contact', 'Industry'],
+        ['Synthetic contact', 'Building'],
+      ],
+      ['Project contact', 'Industry'],
+    ),
+    2,
+  );
+  assert.equal(detectHeaderRow([[], ['Ｃｏｎｔａｃｔ']], ['Contact']), 1);
+});

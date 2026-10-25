@@ -1,3 +1,4 @@
+import AIPersonalizationSettings from './AIPersonalizationSettings';
 import aboutStoryIllustration from '../../../../assets/salesdrone-guide-illustrations/04-the-story-behind-each-row.png';
 import DeveloperSettings from './DeveloperSettings';
 import { APP_VERSION } from '../lib/version';
@@ -86,6 +87,13 @@ export default function SettingsPage({
             label: 'Dropdown choices',
             icon: ListFilter,
             description: 'Manage shared choices for your team.',
+          },
+          {
+            id: 'ai',
+            label: 'Personalize AI',
+            icon: SlidersHorizontal,
+            description:
+              'Guide the focus, tone and language of workspace insights.',
           },
           {
             id: 'scoring',
@@ -241,9 +249,14 @@ export default function SettingsPage({
         <div className="settings-content">
           <div className="settings-section-header">
             <span className="eyebrow">
-              {['fields', 'choices', 'access', 'scoring', 'developer'].includes(
-                currentSection.id,
-              )
+              {[
+                'fields',
+                'choices',
+                'access',
+                'scoring',
+                'developer',
+                'ai',
+              ].includes(currentSection.id)
                 ? 'WORKSPACE SETTINGS'
                 : 'YOUR SETTINGS'}
             </span>
@@ -526,6 +539,9 @@ export default function SettingsPage({
                 </p>
               ) : null}
             </section>
+          ) : null}
+          {isAdmin && section === 'ai' ? (
+            <AIPersonalizationSettings request={request} />
           ) : null}
           {isAdmin && section === 'scoring' ? (
             <ScoringSettings request={request} />

@@ -1,4 +1,8 @@
-import { defaultFieldOptions, FieldOptions } from '../lib/field-options';
+import {
+  defaultFieldOptions,
+  FieldOptions,
+  labelFor,
+} from '../lib/field-options';
 import { useState } from 'react';
 import { Filter, Plus, X } from 'lucide-react';
 import { ColumnFilter, filterColumns } from '../lib/lead-fields';
@@ -12,7 +16,9 @@ export default function LeadFilters({
   onApply: (filters: ColumnFilter[]) => void;
 }) {
   const columns = [
-    ...filterColumns.filter(([key]) => !config.hiddenFields.includes(key)),
+    ...filterColumns
+      .filter(([key]) => !config.hiddenFields.includes(key))
+      .map(([key, label]) => [key, labelFor(config, key, label)] as const),
     ...config.customFields
       .filter((f) => !f.deleted)
       .map((f) => [f.id, f.label]),

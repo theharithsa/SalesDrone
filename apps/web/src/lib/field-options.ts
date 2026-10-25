@@ -1,3 +1,5 @@
+import standardFieldLabels from '../../../../functions/src/lead-labels.json';
+export { standardFieldLabels };
 import { stages, outcomes } from './types';
 export const defaultFieldValues = {
   source: [
@@ -40,6 +42,7 @@ export const optionalLeadFields = {
   initialDiscussion: 'Initial discussion',
 };
 export type FieldOptions = {
+  labels?: Record<string, string>;
   customFields: CustomField[];
   hiddenFields: string[];
   version: number;
@@ -47,6 +50,7 @@ export type FieldOptions = {
 };
 export const defaultFieldOptions: FieldOptions = {
   version: 1,
+  labels: standardFieldLabels,
   customFields: [],
   hiddenFields: [],
   values: defaultFieldValues,
@@ -63,3 +67,12 @@ export const fieldLabels: Record<FieldKey, string> = {
 };
 export const withCurrent = (values: string[], current?: string) =>
   current && !values.includes(current) ? [current, ...values] : values;
+
+export function labelFor(config: FieldOptions, key: string, fallback?: string) {
+  return (
+    config.labels?.[key] ||
+    (standardFieldLabels as Record<string, string>)[key] ||
+    fallback ||
+    key
+  );
+}

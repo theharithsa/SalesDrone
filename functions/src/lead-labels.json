@@ -1,0 +1,23 @@
+{
+  "source": "Enquiry source",
+  "name": "Customer name",
+  "phone": "Phone number",
+  "email": "Email",
+  "company": "Company name",
+  "location": "City / location",
+  "zone": "Sector",
+  "enquiryDate": "Enquiry date",
+  "legacyStatus": "Enquiry status",
+  "initialDiscussion": "Initial discussion",
+  "countryCode": "Country code",
+  "stage": "Sales stage",
+  "comments": "Other initial comment",
+  "outcome": "Call outcome",
+  "disposition": "Call disposition",
+  "assignedToUid": "Assigned user ID",
+  "lastCallOutcome": "Last call outcome",
+  "lastContactAt": "Last contacted",
+  "doNotContact": "Do not contact",
+  "needsReview": "Needs review",
+  "latestComment": "Latest comment"
+}

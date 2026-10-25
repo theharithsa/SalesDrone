@@ -1,3 +1,4 @@
+import { readAISettings } from './ai-settings.js';
 import { readFieldOptions } from './field-options.js';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
@@ -327,15 +328,27 @@ export async function dashboardBrief({
         'SCOPE_CHANGED',
         'Workspace access changed; refresh',
       );
+    const preferences = await readAISettings(tx);
+    const fingerprint = hash(
+      JSON.stringify([
+        snapshot.fingerprint,
+        preferences.version,
+        preferences.instructions || preferences.defaultInstructions,
+      ]),
+    );
     const old = await tx.get(p);
     if (
-      old?.fingerprint === snapshot.fingerprint &&
+      old?.fingerprint === fingerprint &&
       old.memberVersion === member.version &&
       old.status === 'Ready' &&
       old.expiresAt > now()
     )
       return { cached: old };
-    if (old?.status === 'Processing' && old.leaseUntil > now())
+    if (
+      old?.status === 'Processing' &&
+      old.fingerprint === fingerprint &&
+      old.leaseUntil > now()
+    )
       return { cached: { status: 'Processing' } };
     const budgetPath = `users/${member.uid}/aiBudgets/${now().slice(0, 16).replaceAll(':', '-')}`;
     const budget = await tx.get(budgetPath);
@@ -350,14 +363,21 @@ export async function dashboardBrief({
       status: 'Processing',
       lease,
       leaseUntil: new Date(Date.parse(now()) + 120000).toISOString(),
-      fingerprint: snapshot.fingerprint,
+      fingerprint,
       memberVersion: member.version,
     });
-    return {};
+    return {
+      fingerprint,
+      settingsVersion: preferences.version,
+      instructions: preferences.instructions || preferences.defaultInstructions,
+    };
   });
   if (claim.cached) return claim.cached;
   try {
-    const raw = await summarize(snapshot.aiContext);
+    const raw = await summarize({
+      ...snapshot.aiContext,
+      workspaceGuidance: claim.instructions,
+    });
     const brief = verifyBrief(raw, snapshot.aiContext);
     return await store.run(async (tx) => {
       const current = await requireMember(tx, member, 'leads:read'),
@@ -368,9 +388,16 @@ export async function dashboardBrief({
           'SCOPE_CHANGED',
           'Workspace access changed; refresh',
         );
+      const preferences = await readAISettings(tx);
+      if (preferences.version !== claim.settingsVersion)
+        throw new AppError(
+          409,
+          'AI_SETTINGS_CHANGED',
+          'AI instructions changed. Get insights again.',
+        );
       const value = {
         status: 'Ready',
-        fingerprint: snapshot.fingerprint,
+        fingerprint: claim.fingerprint,
         memberVersion: member.version,
         brief,
         asOf: snapshot.asOf,

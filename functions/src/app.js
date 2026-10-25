@@ -1,4 +1,9 @@
 import {
+  AI_SETTINGS_PATH,
+  AISettingsPatch,
+  readAISettings,
+} from './ai-settings.js';
+import {
   PAT_ROUTES,
   TOKEN_SCOPES,
   TokenInput,
@@ -621,6 +626,31 @@ export function createApp({
           revokedAt: now(),
         });
       return { ok: true };
+    });
+  });
+  route('get', '/ai-settings', 'members:write', async (req) => {
+    assertAdmin(req.member);
+    return readAISettings(store);
+  });
+  route('patch', '/ai-settings', 'members:write', (req) => {
+    const input = parse(AISettingsPatch, req.body);
+    return mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      const current = await readAISettings(tx);
+      assertVersion(current, input.expectedVersion);
+      if (current.instructions === input.instructions) return current;
+      tx.set(AI_SETTINGS_PATH, {
+        version: current.version + 1,
+        instructions: input.instructions,
+        updatedAt: now(),
+        updatedByUid: member.uid,
+      });
+      return {
+        ...current,
+        version: current.version + 1,
+        instructions: input.instructions,
+        usingDefault: !input.instructions,
+      };
     });
   });
   route('get', '/field-options', 'leads:read', () => readFieldOptions(store));

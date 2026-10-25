@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { FieldOptions, FieldKey, fieldLabels } from '../lib/field-options';
+import {
+  FieldOptions,
+  FieldKey,
+  fieldLabels,
+  labelFor,
+} from '../lib/field-options';
 import { ErrorMessage } from '../components/UI';
 export default function FieldOptionsEditor({
   config,
@@ -100,7 +105,7 @@ export default function FieldOptionsEditor({
             {(Object.entries(fieldLabels) as [FieldKey, string][]).map(
               ([key, label]) => (
                 <option key={key} value={key}>
-                  {label}
+                  {labelFor(config, key, label)}
                 </option>
               ),
             )}

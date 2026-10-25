@@ -1,3 +1,4 @@
+import { AISettingsPatch } from '../functions/src/ai-settings.js';
 import {
   TokenInput,
   TOKEN_SCOPES,
@@ -114,6 +115,17 @@ schemas.DashboardBrief = {
   },
 };
 schemas.LeadFilters = z.toJSONSchema(LeadFilters, { io: 'input' });
+schemas.AISettingsPatch = z.toJSONSchema(AISettingsPatch, { io: 'input' });
+schemas.AISettings = {
+  type: 'object',
+  required: ['version', 'instructions', 'defaultInstructions', 'usingDefault'],
+  properties: {
+    version: { type: 'integer', minimum: 1 },
+    instructions: { type: 'string', maxLength: 4000 },
+    defaultInstructions: { type: 'string' },
+    usingDefault: { type: 'boolean' },
+  },
+};
 schemas.FieldOptionsPatch = z.toJSONSchema(FieldOptionsPatch, { io: 'input' });
 schemas.FieldOptions = {
   type: 'object',
@@ -121,6 +133,7 @@ schemas.FieldOptions = {
   properties: {
     version: { type: 'integer', minimum: 1 },
     values: schemas.FieldOptionsPatch.properties.values,
+    labels: schemas.FieldOptionsPatch.properties.labels,
     customFields: schemas.FieldOptionsPatch.properties.customFields,
     hiddenFields: schemas.FieldOptionsPatch.properties.hiddenFields,
   },
@@ -428,6 +441,7 @@ const responseFor = (method, url) => {
         },
       },
     };
+  if (url === '/ai-settings') return ref('AISettings');
   if (url === '/scoring-settings') return ref('ScoringConfig');
   if (url === '/lead-scores')
     return {
@@ -492,48 +506,50 @@ endpoints.push(
 const bodyFor = (m, u) =>
   u === '/personal-access-tokens' && m === 'post'
     ? 'TokenInput'
-    : u === '/scoring-settings'
-      ? 'ScoringPatch'
-      : u.endsWith('/score/refresh') || u === '/dashboard/insights'
-        ? 'EmptyInput'
-        : u === '/field-options'
-          ? 'FieldOptionsPatch'
-          : u.endsWith('/assignment')
-            ? 'AssignmentPatch'
-            : u === '/notifications/:id'
-              ? 'NotificationPatch'
-              : u === '/me'
-                ? 'Preferences'
-                : u.endsWith('/automatic-reminder')
-                  ? 'AutomaticReminderAction'
-                  : u === '/leads'
-                    ? 'LeadInput'
-                    : u === '/leads/:id'
-                      ? 'LeadPatch'
-                      : u.endsWith('/activities')
-                        ? 'ActivityInput'
-                        : u === '/tasks'
-                          ? 'TaskInput'
-                          : u === '/tasks/:id'
-                            ? m === 'delete'
-                              ? 'TaskDelete'
-                              : 'TaskPatch'
-                            : u === '/invitations'
-                              ? 'GrantInput'
-                              : u === '/members/:uid'
-                                ? 'MemberPatch'
-                                : u === '/devices'
-                                  ? 'DeviceInput'
-                                  : u === '/imports/preview'
-                                    ? 'ImportInput'
-                                    : null;
+    : u === '/ai-settings'
+      ? 'AISettingsPatch'
+      : u === '/scoring-settings'
+        ? 'ScoringPatch'
+        : u.endsWith('/score/refresh') || u === '/dashboard/insights'
+          ? 'EmptyInput'
+          : u === '/field-options'
+            ? 'FieldOptionsPatch'
+            : u.endsWith('/assignment')
+              ? 'AssignmentPatch'
+              : u === '/notifications/:id'
+                ? 'NotificationPatch'
+                : u === '/me'
+                  ? 'Preferences'
+                  : u.endsWith('/automatic-reminder')
+                    ? 'AutomaticReminderAction'
+                    : u === '/leads'
+                      ? 'LeadInput'
+                      : u === '/leads/:id'
+                        ? 'LeadPatch'
+                        : u.endsWith('/activities')
+                          ? 'ActivityInput'
+                          : u === '/tasks'
+                            ? 'TaskInput'
+                            : u === '/tasks/:id'
+                              ? m === 'delete'
+                                ? 'TaskDelete'
+                                : 'TaskPatch'
+                              : u === '/invitations'
+                                ? 'GrantInput'
+                                : u === '/members/:uid'
+                                  ? 'MemberPatch'
+                                  : u === '/devices'
+                                    ? 'DeviceInput'
+                                    : u === '/imports/preview'
+                                      ? 'ImportInput'
+                                      : null;
 const paths = {};
 for (const e of endpoints) {
   const url = '/api/v1' + e.url.replace(/:([a-zA-Z]+)/g, '{$1}');
   const operation = {
     operationId: e.method + e.url.replace(/[^a-zA-Z]/g, '_'),
     summary: e.method.toUpperCase() + ' ' + e.url,
-    description: `Requires: ${e.capability}. ${PAT_ROUTES[e.method + ' ' + e.url] ? 'Personal access token scope: ' + PAT_ROUTES[e.method + ' ' + e.url] + '.' : 'Google sign-in and App Check required; personal access tokens are not accepted.'} Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.${e.url === '/leads/:id/activities' && e.method === 'post' ? ' Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.' : ''}${e.url === '/personal-access-tokens' && e.method === 'post' ? ' Admin-only. Do not send Idempotency-Key. Token is shown once; list and delete metadata never include the credential or its hash.' : ''}`,
+    description: `Requires: ${e.capability}.${e.url === '/ai-settings' ? ' Admin-only workspace AI preferences; blank instructions restore defaults. Changes invalidate summary caches and stale generation cannot publish.' : ''} ${PAT_ROUTES[e.method + ' ' + e.url] ? 'Personal access token scope: ' + PAT_ROUTES[e.method + ' ' + e.url] + '.' : 'Google sign-in and App Check required; personal access tokens are not accepted.'} Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.${e.url === '/leads/:id/activities' && e.method === 'post' ? ' Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.' : ''}${e.url === '/personal-access-tokens' && e.method === 'post' ? ' Admin-only. Do not send Idempotency-Key. Token is shown once; list and delete metadata never include the credential or its hash.' : ''}`,
     tags: [e.url.split('/')[1]],
     security: PAT_ROUTES[e.method + ' ' + e.url]
       ? [{ personalAccessToken: [] }, { firebaseIdToken: [], appCheck: [] }]
@@ -584,6 +600,7 @@ for (const e of endpoints) {
     e.url !== '/summary' &&
     ![
       '/lead-scores',
+      '/ai-settings',
       '/scoring-settings',
       '/dashboard',
       '/field-options',
@@ -725,8 +742,14 @@ for (const e of endpoints) {
   for (const response of Object.values(operation.responses)) {
     response.headers = { ...operation.responses[200].headers };
   }
-  operation.responses[401].headers['WWW-Authenticate'] = {schema:{type:'string'},description:'Bearer authentication challenge'};
-  operation.responses[429].headers['Retry-After'] = {schema:{type:'string',const:'60'},description:'Wait at least 60 seconds before retrying'};
+  operation.responses[401].headers['WWW-Authenticate'] = {
+    schema: { type: 'string' },
+    description: 'Bearer authentication challenge',
+  };
+  operation.responses[429].headers['Retry-After'] = {
+    schema: { type: 'string', const: '60' },
+    description: 'Wait at least 60 seconds before retrying',
+  };
   paths[url] ??= {};
   paths[url][e.method] = operation;
 }
@@ -734,7 +757,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.9.0',
+    version: '1.10.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

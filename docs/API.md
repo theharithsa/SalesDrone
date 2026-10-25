@@ -1,13 +1,13 @@
 # SalesDrone API integration guide
 
-Application release **v1.1.5**, OpenAPI contract **1.9.0**. All application operations
+Application release **v1.2.0**, OpenAPI contract **1.10.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
 - [Download OpenAPI 3.1 JSON](https://sales-drone-avinya.firebaseapp.com/openapi.json)
 - [Public source contract](openapi.json)
 
-The portal documents all **47 supported operations**, including GET (read), POST
+The portal documents all **49 supported operations**, including GET (read), POST
 (create or an explicit action), PATCH (update) and DELETE (removal/revocation).
 It does not advertise unsupported PUT or permanent lead erasure. Try it out performs
 real operations against the signed-in credential's workspace. Use synthetic test
@@ -176,3 +176,9 @@ secret manager, verify a read request, then revoke the old token in Settings. To
 are immutable: changing scopes or expiry requires a replacement. Revocation is
 irreversible; if a credential is exposed, revoke it immediately and issue another.
 Do not submit tokens to public GitHub issues. See [SECURITY.md](../SECURITY.md).
+
+## Workspace personalization
+
+GET and PATCH `/api/v1/ai-settings` are Admin-only Google/App Check operations, not PAT operations. The response includes `version`, `instructions`, `defaultInstructions` and `usingDefault`. PATCH accepts `{ "expectedVersion": 1, "instructions": "Focus on overdue callbacks; use concise bullets." }`; an empty instruction string restores default guidance. Unknown fields/oversized input return 400, insufficient access returns 403, and stale versions return 409. Settings changes invalidate cached AI insights, but do not trigger generation.
+
+`GET /api/v1/field-options` includes `labels`, keyed by stable built-in field ID. Admin PATCH may include a partial `labels` object, for example `{ "name": "Project contact", "zone": "Industry" }`, along with the existing `expectedVersion` and `values` payload. Missing labels retain their current names. Unknown IDs, blank/oversized labels and normalized duplicate built-in/custom names are rejected. Labels do not rename API payload keys, change types or migrate lead records.

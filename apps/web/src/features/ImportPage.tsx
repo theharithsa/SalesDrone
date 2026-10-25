@@ -1,5 +1,9 @@
 import { isCommentHeader, mapImportRows } from '../lib/import-mapping';
-import { defaultFieldOptions, FieldOptions } from '../lib/field-options';
+import {
+  defaultFieldOptions,
+  FieldOptions,
+  labelFor,
+} from '../lib/field-options';
 import {
   worksheetColumns,
   legacyImportColumns,
@@ -74,7 +78,9 @@ export default function ImportPage({
   request,
   onImported,
   choices = defaultFieldOptions.values,
+  config = defaultFieldOptions,
 }: {
+  config?: FieldOptions;
   demo: boolean;
   choices?: FieldOptions['values'];
   request: (
@@ -114,6 +120,8 @@ export default function ImportPage({
           String(
             headers.findIndex(
               (h) =>
+                h.trim().toLowerCase() ===
+                  labelFor(config, key, header).toLowerCase() ||
                 h.trim().toLowerCase() === header.toLowerCase() ||
                 legacyImportColumns.some(
                   ([legacyKey, label]) =>
@@ -171,7 +179,7 @@ export default function ImportPage({
       if (file.name.toLowerCase().endsWith('.csv')) {
         const rows = csvParse(await file.text());
         setSheets([{ name: 'CSV', rows }]);
-        setHeaderRow(detectHeaderRow(rows));
+        setHeaderRow(detectHeaderRow(rows, Object.values(config.labels || {})));
         setBusy(false);
       } else if (file.name.toLowerCase().endsWith('.xlsx')) {
         worker.current?.terminate();
@@ -193,7 +201,12 @@ export default function ImportPage({
           else {
             setSheets(e.data.sheets);
             setSheetIndex(0);
-            setHeaderRow(detectHeaderRow(e.data.sheets[0]?.rows || []));
+            setHeaderRow(
+              detectHeaderRow(
+                e.data.sheets[0]?.rows || [],
+                Object.values(config.labels || {}),
+              ),
+            );
           }
           w.terminate();
         };
@@ -427,7 +440,7 @@ export default function ImportPage({
           <div className="mapping-grid">
             {Object.entries(columns).map(([label, key]) => (
               <label key={key}>
-                {label}
+                {labelFor(config, key, label)}
                 <select
                   value={mapping[key] ?? '-1'}
                   onChange={(e) =>
