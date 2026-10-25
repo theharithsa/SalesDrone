@@ -68,3 +68,5 @@ Adjacent owners:
 - [salesdrone-interface](../salesdrone-interface/SKILL.md)
 - [salesdrone-api-integrations](../salesdrone-api-integrations/SKILL.md)
 - [salesdrone-release](../salesdrone-release/SKILL.md)
+
+For complete workflows and FAQs maintain docs/product-guide.json; docs:product generates PRODUCT-GUIDE.md and docs:build publishes product.html with escaped content and search. Follow [product documentation](../salesdrone-product-guide/SKILL.md) for UI screenshot refresh, affected-screen review and curated release-version evidence. The overview is not a substitute for the handbook or per-control settings reference.

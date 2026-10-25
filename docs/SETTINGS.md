@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v1.5.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v1.6.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -40,7 +40,7 @@ Permissions are enforced server-side, including direct links and API requests.
 
 Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch.
 
-Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local. On desktop, lead blade width is adjusted directly in Leads using its left edge or expand/restore control. That width is remembered only in the current browser, separately from account preferences; double-click the edge to reset it.
+Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local. On desktop, lead blade width is adjusted directly in Leads using its left edge (double-click resets it); expand opens a dedicated lead page. That width is remembered only in the current browser, separately from account preferences; double-click the edge to reset it.
 
 ### Display timezone
 

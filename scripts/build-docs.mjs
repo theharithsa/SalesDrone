@@ -1,3 +1,4 @@
+import { renderProductGuide } from './product-guide.mjs';
 import { renderSettings } from './settings-reference.mjs';
 import { TOKEN_SCOPES } from '../functions/src/api-scopes.js';
 // Curated public build: never copy docs/, arbitrary captures or workspace files.
@@ -12,6 +13,8 @@ const manifest = JSON.parse(
 const screenshots = [
   'dashboard-demo.jpg',
   'journey-demo.jpg',
+  'lead-overlay-demo.jpg',
+  'lead-workspace-demo.jpg',
   'notifications-demo.jpg',
   'mobile-demo.jpg',
   'api-portal-demo.jpg',
@@ -136,3 +139,12 @@ const settings = renderSettings(
 await writeFile(out + '/settings.html', settings.html);
 if ((await readFile('docs/SETTINGS.md', 'utf8')) !== settings.markdown)
   throw Error('Stale settings reference: npm run docs:settings');
+
+const product = renderProductGuide(
+  JSON.parse(await readFile('docs/product-guide.json', 'utf8')),
+  pkg.version,
+);
+await writeFile(out + '/product.html', product.html);
+await copyFile('site/product.css', out + '/product.css');
+if ((await readFile('docs/PRODUCT-GUIDE.md', 'utf8')) !== product.markdown)
+  throw Error('Stale product handbook: npm run docs:product');

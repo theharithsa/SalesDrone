@@ -102,7 +102,7 @@ jobs:
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only hosting --non-interactive
       - name: Check published version
         id: published
-        run: node --input-type=module -e "const r=await fetch('https://sales-drone-avinya.firebaseapp.com/version.json',{cache:'no-store'});const v=await r.json();if(v.commit!==process.env.GITHUB_SHA)throw Error('Published commit mismatch');console.log('Published v'+v.version+' '+v.commit)"
+        run: node scripts/check-published.mjs
       - name: Collect deployment metadata
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         run: node scripts/collect-deployment.mjs

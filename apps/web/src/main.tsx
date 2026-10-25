@@ -44,3 +44,5 @@ if ('serviceWorker' in navigator)
       .register('/firebase-messaging-sw.js')
       .catch(() => {}),
   );
+
+import './lead-workspace.css';

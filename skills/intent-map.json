@@ -119,5 +119,12 @@
     "dropdown choices",
     "settings",
     "custom fields"
+  ],
+  "salesdrone-product-guide": [
+    "product handbook",
+    "user manual",
+    "feature walkthrough",
+    "faq",
+    "refresh screenshots"
   ]
 }

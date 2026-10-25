@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone product guide"
+  short_description: "Maintain workflows, FAQs and current demo screenshots"
+  default_prompt: "Use $salesdrone-product-guide to update the SalesDrone product handbook and affected synthetic screenshots from the current UI."

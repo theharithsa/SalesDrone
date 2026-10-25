@@ -145,7 +145,8 @@
       "related": [
         "salesdrone-release",
         "salesdrone-interface",
-        "salesdrone-api-integrations"
+        "salesdrone-api-integrations",
+        "salesdrone-product-guide"
       ],
       "apiOperations": []
     },
@@ -338,6 +339,24 @@
         "PATCH /api/v1/members/{uid}",
         "POST /api/v1/invitations/{id}/accept"
       ]
+    },
+    {
+      "id": "salesdrone-product-guide",
+      "path": "skills/salesdrone-product-guide/SKILL.md",
+      "description": "Write SalesDrone module workflows, feature options, troubleshooting and FAQs; refresh reviewed synthetic screenshots after UI changes. Use for the user handbook and visual documentation, not API contract ownership or release authorization.",
+      "matchTerms": [
+        "product handbook",
+        "user manual",
+        "feature walkthrough",
+        "faq",
+        "refresh screenshots"
+      ],
+      "related": [
+        "salesdrone-documentation",
+        "salesdrone-interface",
+        "salesdrone-release-readiness"
+      ],
+      "apiOperations": []
     },
     {
       "id": "salesdrone-release",

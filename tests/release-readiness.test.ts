@@ -215,3 +215,26 @@ test('published settings and API changes require matching reference and permissi
     'functions/test/observability.test.js',
   ]);
 });
+
+test('changed UI screenshots need current reviewed release evidence', async () => {
+  const { validateScreenshotEvidence } = await import(
+    '../scripts/readiness-policy.mjs'
+  );
+  const plan = { version: '1.6.0', screenshots: ['screen.jpg'] };
+  const entry = {
+    file: 'screen.jpg',
+    version: '1.6.0',
+    mode: 'synthetic-demo',
+    viewport: '1200 × 900',
+    review: 'Fictional records reviewed',
+    sha256: 'a'.repeat(64),
+  };
+  assert.doesNotThrow(() => validateScreenshotEvidence(plan, [entry]));
+  assert.throws(() =>
+    validateScreenshotEvidence(plan, [{ ...entry, version: '1.5.1' }]),
+  );
+  assert.throws(() =>
+    validateScreenshotEvidence(plan, [{ ...entry, mode: 'production' }]),
+  );
+  assert.throws(() => validateScreenshotEvidence(plan, []));
+});

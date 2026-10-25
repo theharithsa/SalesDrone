@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **1.5.1** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **1.6.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -144,4 +144,6 @@ Vite with VITE_USE_EMULATORS=true and RUM disabled. Use synthetic accounts/data 
 Never attach production data or telemetry credentials to a rehearsal. See SETUP.md
 for Firebase setup and SECURITY.md for deployment trust boundaries.
 
-Release readiness is the cross-module completion owner. Shared settings catalogs generate the full reference, and skill-tree.json routes prompts to the 19 module skills. CI validates impact plans and retains post-deployment/telemetry acceptance separately from manual and tenant-query evidence. See RELEASE.md.
+Release readiness is the cross-module completion owner. Shared settings catalogs generate the full reference, and skill-tree.json routes prompts to the 20 module skills. CI validates impact plans and retains post-deployment/telemetry acceptance separately from manual and tenant-query evidence. See RELEASE.md.
+
+Browser lead routing uses /leads/{id} with history state and current API authorization. Desktop quick inspection is fixed above the unchanged table; full pages separate paginated conversations, recipient-private tasks and loaded-activity review. Product handbook JSON generates both Markdown and searchable public HTML. Changed-screen captures carry reviewed hashes and release versions; readiness validates those declared in the release plan.

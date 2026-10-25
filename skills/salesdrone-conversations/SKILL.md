@@ -62,3 +62,5 @@ Adjacent owners:
 - [salesdrone-automatic-reminders](../salesdrone-automatic-reminders/SKILL.md)
 - [salesdrone-tasks-reminders](../salesdrone-tasks-reminders/SKILL.md)
 - [salesdrone-lead-journey](../salesdrone-lead-journey/SKILL.md)
+
+The full lead page presents revision-preserving paginated history as readable comment cards in Comments; Review filters loaded Pending/Failed/NeedsReview analyses. Keep source labels, honest unknown imported dates, preserved line breaks and existing correction/reminder policy. Do not imply a complete historical review before older pages are loaded.

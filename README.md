@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.5.1 · MIT**
+**Part of Avinya Enterprises · v1.6.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -123,4 +123,10 @@ Filtered Excel reports are available directly in Leads, with a column picker and
 
 Read the [complete settings guide](docs/SETTINGS.md) or its [published version](https://theharithsa.github.io/SalesDrone/settings.html) for every control, default, permission and environment boundary. Agent routing: [skill-tree.json](skill-tree.json) / [skill-tree.md](skill-tree.md). Every feature release follows the [completion and deployment checks](skills/salesdrone-release-readiness/SKILL.md).
 
-The [lead blade](docs/LEAD-BLADE.md) can be resized on desktop. Wider blades use a horizontal journey, and stage/assignment controls stay above the scrolling details. Keyboard resizing and reduced-motion preferences are supported.
+The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changing the table. Open full lead page for Comments, Tasks and Review tabs at a bookmarkable URL. Wider journeys run horizontally; stage/assignment stay at the top. Keyboard resizing, aligned fluid navigation and reduced-motion preferences are supported.
+
+## Product handbook
+
+Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
+
+![Lead workspace with Comments, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg)

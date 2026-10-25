@@ -72,3 +72,5 @@ Adjacent owners:
 Read for detailed behavior:
 
 - [docs/RELEASE.md](../../docs/RELEASE.md)
+
+The initial published-version check retries boundedly for Hosting propagation, using exact version and commit via check-published.mjs. Pages postchecks verify both settings.html and the complete product.html handbook. Do not bypass persistent mismatches.

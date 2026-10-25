@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v1.5.1**, OpenAPI contract **1.12.0**. All application operations
+Application release **v1.6.0**, OpenAPI contract **1.12.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -189,4 +189,6 @@ POST /api/v1/leads/export returns paged projected report data (not a binary file
 
 GET /api/v1/workspace-settings returns version, exportsEnabled and assignedOnly to active members (PAT configuration:read). PATCH requires Admin role, members:write, Google/App Check and expectedVersion; PAT writes are denied. assignedOnly defaults true and caps non-admin scope across all surfaces. exportsEnabled defaults true. Individual assigned scope is preserved when the workspace cap is disabled.
 
-The v1.5.1 lead blade layout reuses existing stage/assignment/journey operations and permissions. Resizing is a local presentation preference, not a new API or workspace grant. Stage updates need leads:edit; assignment writes retain assignments:write and expectedVersion.
+The v1.6.0 lead blade layout reuses existing stage/assignment/journey operations and permissions. Resizing is a local presentation preference, not a new API or workspace grant. Stage updates need leads:edit; assignment writes retain assignments:write and expectedVersion.
+
+The /leads/{id} browser route and Comments/Tasks/Review tabs are presentation surfaces. Existing scoped lead/activity/task endpoints remain authoritative; Review filters loaded analysis states. Lead Tasks pages GET /tasks?leadId=... with optional state, limit and cursor and never expands recipient-private access.

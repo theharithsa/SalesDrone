@@ -10,6 +10,17 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.6.0] - 2026-10-25
+
+### Changed
+- Replace desktop inline lead details with a resizable overlay that leaves table geometry and columns unchanged.
+- Add linkable full lead pages with readable comment cards, recipient-private paginated Tasks and actionable loaded-activity Review tabs.
+- Add smooth desktop menu collapse, consistent icon cells and Documentation above Settings.
+- Publish a searchable module-by-module product handbook with workflows, feature options, permissions, FAQs, service behavior and settings/API links.
+- Add a product-guide skill and current-release screenshot verification; refresh affected public demo captures.
+- Preserve existing API contract, task privacy, revision/history policy and safe observability.
+
 ## [1.5.1] - 2026-10-25
 
 ### Changed

@@ -68,3 +68,5 @@ Neither structural check proves behavioral quality: verify playbooks against cur
 source/tests when using or changing them.
 
 - [salesdrone-release-readiness](salesdrone-release-readiness/SKILL.md): cross-module feature completion and honest pre/post-deployment checks.
+
+- [Product handbook and screenshot maintenance](salesdrone-product-guide/SKILL.md): current workflows, FAQs and reviewed captures after UI changes.

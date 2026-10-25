@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { readFile, readdir, access } from 'node:fs/promises';
 import {
   validateReleasePlan,
+  validateScreenshotEvidence,
   validateChangeCoverage,
 } from './readiness-policy.mjs';
 const read = async (p) => JSON.parse(await readFile(p, 'utf8'));
@@ -18,6 +19,10 @@ for (const p of paths) {
     throw Error('Nonportable release evidence path');
   await access(p);
 }
+validateScreenshotEvidence(
+  plan,
+  await read('site/assets/screenshots/manifest.json'),
+);
 validateReleasePlan(plan, {
   version,
   contractVersion: spec.info.version,

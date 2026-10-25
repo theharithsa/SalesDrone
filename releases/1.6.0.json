@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "version": "1.6.0",
+  "summary": "Add non-disruptive lead overlays, routed workspaces, fluid navigation and a complete searchable product handbook.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-conversations",
+    "salesdrone-tasks-reminders",
+    "salesdrone-documentation",
+    "salesdrone-product-guide",
+    "salesdrone-release-readiness",
+    "salesdrone-release"
+  ],
+  "documentation": [
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SETTINGS.md",
+    "docs/LEAD-BLADE.md",
+    "docs/API.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Presentation and handbook use existing scoped lead/activity/task operations; the lead Tasks tab adds paginated client retrieval by leadId without widening recipient access.",
+    "contractVersion": "1.12.0",
+    "permissions": "Keep leads:edit for stage updates and the existing Admin assignment UI with server assignments:write checks. Read-only members receive no new directory access.",
+    "tests": [
+      "functions/test/app.test.js",
+      "functions/test/notifications.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse the existing safe application instrumentation and release OTLP/event verification. Resizing must not send per-pointer events, alter domain records or call Gemini.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Reuse the existing safe application instrumentation and release OTLP/event verification. Resizing must not send per-pointer events, alter domain records or call Gemini.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Reuse the existing safe application instrumentation and release OTLP/event verification. Resizing must not send per-pointer events, alter domain records or call Gemini.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Reuse the existing safe application instrumentation and release OTLP/event verification. Resizing must not send per-pointer events, alter domain records or call Gemini.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Reuse the existing safe application instrumentation and release OTLP/event verification. Resizing must not send per-pointer events, alter domain records or call Gemini.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic overlay table geometry before/after, deep-link and Back navigation, Comments/Tasks/Review, task actions, sidebar icons and collapse, themes, current public screenshots and handbook search/links. No customer edits.",
+  "screenshots": [
+    "journey-demo.jpg",
+    "lead-overlay-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "dashboard-demo.jpg",
+    "notifications-demo.jpg",
+    "developer-settings-demo.jpg"
+  ]
+}

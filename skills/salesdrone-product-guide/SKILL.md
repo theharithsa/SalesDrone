@@ -1,0 +1,35 @@
+---
+name: salesdrone-product-guide
+description: "Write SalesDrone module workflows, feature options, troubleshooting and FAQs; refresh reviewed synthetic screenshots after UI changes. Use for the user handbook and visual documentation, not API contract ownership or release authorization."
+---
+
+# Product handbook and screenshot maintenance
+
+Read [SHARED.md](../SHARED.md) and the affected module skill before writing. The handbook teaches current product behavior; the overview introduces it, the settings guide explains every control and technical documentation supports maintainers. Do not substitute one for the other.
+
+## Source and outputs
+
+- [docs/product-guide.json](../../docs/product-guide.json): audience, ordered steps, explanations/limits and troubleshooting for each product module.
+- [scripts/product-guide.mjs](../../scripts/product-guide.mjs): escaped HTML and Markdown renderer, stable unique module anchors and local text search.
+- [docs/PRODUCT-GUIDE.md](../../docs/PRODUCT-GUIDE.md): generated repository handbook.
+- [scripts/build-docs.mjs](../../scripts/build-docs.mjs): explicit public asset allowlist and product.html build.
+- [site/assets/screenshots/manifest.json](../../site/assets/screenshots/manifest.json): reviewed captures with hash, measured viewport and release version.
+
+## Workflow
+
+1. Trace each described option to the actual form, capability and HTTP schema. Distinguish call outcomes from sales stage, current-stage funnels from history, private tasks from team assignment and AI suggestions from verified facts. Explain defaults, permissions, empty/error/loading states, pagination and recovery.
+2. For UI changes list every affected public screenshot, including README embeds and overview images. Capture those screens again with the approved browser tool using isolated synthetic demo data or a fresh public-schema-only Swagger tab. Disable RUM in local rehearsals. Never capture real leads, imports, tokens or signed-in customer details.
+3. Measure actual viewport dimensions and inspect each image before copying it to the curated path. Record sha256, capture date, measured viewport, mode, current app version and a short privacy/visual review. Reuse canonical filenames so README and guide references update together. Do not label desktop screenshots as mobile or an old capture as current.
+4. Add new images explicitly to build-docs; never recursively publish docs/, workbooks or capture directories. Keep release plan screenshots listing affected filenames. Validate their manifest version before publication. Unchanged screenshots can retain honest historical metadata; replace any image whose visible design or controls changed.
+5. Run docs:product, docs:settings, skills:tree, docs:check and docs:build. Inspect the generated handbook in a browser: search a feature, clear search, follow module anchors, open FAQs and settings/API links. Check that navigation labels match the real app and Documentation remains above Settings.
+6. Update the owning module skill, README links, changelog and version impact plan. After authorized release check product.html and Settings reference versions independently of the application. Publication permission comes from the user, not this skill.
+
+## Primary API ownership
+
+No module-specific HTTP endpoints. Reuse domain contracts and the API integrations skill. The handbook must not invent CRUD routes or imply a shared task endpoint can expose another recipient’s reminders.
+
+## Verification and limits
+
+[tests/product-guide.test.ts](../../tests/product-guide.test.ts) exercises escaping and duplicate/incomplete anchors. Browser rehearsal proves interactions and screenshots; generated text checks do not prove the product works. If a physical-device test or tenant query was not performed, report that boundary.
+
+Adjacent owners: [documentation](../salesdrone-documentation/SKILL.md), [interface](../salesdrone-interface/SKILL.md), [release readiness](../salesdrone-release-readiness/SKILL.md).

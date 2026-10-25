@@ -50,3 +50,13 @@ export function checkSettingsPage(html, version) {
   )
     throw Error('Public settings reference is missing or stale');
 }
+
+export function checkProductPage(html, version) {
+  if (
+    !html.includes(`name="salesdrone-version" content="${version}"`) ||
+    !html.includes('id="lead-workspace"') ||
+    !html.includes('id="api"') ||
+    !html.includes('Handbook modules')
+  )
+    throw Error('Public product handbook is missing or stale');
+}

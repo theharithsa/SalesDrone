@@ -15,7 +15,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-data-platform](skills/salesdrone-data-platform/SKILL.md) — firestore, index, transaction, cursor.
   Related: salesdrone-release, salesdrone-leads, salesdrone-imports, salesdrone-tasks-reminders, salesdrone-observability.
 - [salesdrone-documentation](skills/salesdrone-documentation/SKILL.md) — readme, documentation, settings guide, screenshots.
-  Related: salesdrone-release, salesdrone-interface, salesdrone-api-integrations.
+  Related: salesdrone-release, salesdrone-interface, salesdrone-api-integrations, salesdrone-product-guide.
 - [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping.
   Related: salesdrone-release, salesdrone-leads, salesdrone-conversations, salesdrone-workspace-settings, salesdrone-notifications.
 - [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation.
@@ -32,6 +32,8 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-data-platform, salesdrone-api-integrations.
 - [salesdrone-people-permissions](skills/salesdrone-people-permissions/SKILL.md) — people access, permissions, assign lead, member role, assigned only.
   Related: salesdrone-release, salesdrone-authentication, salesdrone-leads, salesdrone-notifications, salesdrone-api-integrations.
+- [salesdrone-product-guide](skills/salesdrone-product-guide/SKILL.md) — product handbook, user manual, feature walkthrough, faq, refresh screenshots.
+  Related: salesdrone-documentation, salesdrone-interface, salesdrone-release-readiness.
 - [salesdrone-release](skills/salesdrone-release/SKILL.md) — deploy, release, version, changelog, rollback.
   Related: salesdrone-data-platform, salesdrone-observability, salesdrone-documentation, salesdrone-api-integrations.
 - [salesdrone-release-readiness](skills/salesdrone-release-readiness/SKILL.md) — pre-deployment, post-deployment, release checklist, feature completeness, release readiness.

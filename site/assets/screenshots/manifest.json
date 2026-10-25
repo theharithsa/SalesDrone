@@ -2,34 +2,37 @@
   {
     "file": "dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "dd21ccaf9eb9dcbf506e1d2dfc5e4873ee0a5c74a0c4a5f23b8ef9c1d9d21cbc",
-    "capturedAt": "2026-10-24T19:49:53.016Z",
-    "viewport": "1440 × 900",
-    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+    "sha256": "1974b5bc0b587446c1e534257144be4df1d14f96376d355b1b8803eeb7bf3d3e",
+    "capturedAt": "2026-10-25T16:49:37.086654+00:00",
+    "viewport": "1828 \u00d7 1028 CSS pixels",
+    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo.",
+    "version": "1.6.0"
   },
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f4a7041e41e2d3bf443e30af7043070ade4d5f95512cdbfe44dfac04b560fae7",
-    "capturedAt": "2026-10-24T19:49:53.101Z",
-    "viewport": "1440 × 900",
-    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+    "sha256": "ff59b0951458641b6681e93ff8725d7eb7a9283914d2eea110bb025711d5f2c6",
+    "capturedAt": "2026-10-25T16:49:37.151651+00:00",
+    "viewport": "1828 \u00d7 1028 CSS pixels",
+    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo.",
+    "version": "1.6.0"
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
     "sha256": "3cd0eeb01a9dc671dccdce91eafc0aeb5b088acf2ecae75c8b557548f96cfee4",
     "capturedAt": "2026-10-24T19:49:53.161Z",
-    "viewport": "390 × 844",
+    "viewport": "390 \u00d7 844",
     "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
   },
   {
     "file": "notifications-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2735c9905f0bcbe39fc17bb5055e2579bdbfc656be14ae8be9068fadc5239151",
-    "capturedAt": "2026-10-24T19:49:53.256Z",
-    "viewport": "1440 × 900",
-    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+    "sha256": "d6b243dec4f4e29d1ba1c101281cd994c3ebad59b3860062d9f7157300a11882",
+    "capturedAt": "2026-10-25T16:49:37.106289+00:00",
+    "viewport": "1828 \u00d7 1028 CSS pixels",
+    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo.",
+    "version": "1.6.0"
   },
   {
     "file": "api-portal-demo.jpg",
@@ -37,14 +40,33 @@
     "review": "Public schemas only; fresh unauthorized Swagger tab, no request responses or credentials.",
     "sha256": "6f81bdbb552dfdaf1140c816ba0951ea5a2e232bb0bbbd180904d16d4effe479",
     "capturedAt": "2026-10-24T20:30:59.283Z",
-    "viewport": "1440 × 900"
+    "viewport": "1440 \u00d7 900"
   },
   {
     "file": "developer-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "review": "Isolated demo-salesdrone emulator with fictional Demo Admin and revoked synthetic credential metadata; raw credential hidden.",
-    "sha256": "87a4d22e30317f44b4d478e3dc37f10084e68ae69431c472218b4a74b0261f50",
-    "capturedAt": "2026-10-24T20:30:59.308Z",
-    "viewport": "1440 × 900"
+    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual SettingsPage in an isolated synthetic administrator fixture; no live API requests or tokens.",
+    "sha256": "ad7f4b3fefc040233eb233eadb17c54034b8667ba759814c9ea623543b90bfd2",
+    "capturedAt": "2026-10-25T16:49:37.294148+00:00",
+    "viewport": "1828 \u00d7 1028 CSS pixels",
+    "version": "1.6.0"
+  },
+  {
+    "file": "lead-overlay-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "93b0580cfcf50f6a35edcfd31523ae21ff6a1e65609b5508459a2b083cd40d9f",
+    "capturedAt": "2026-10-25T16:49:37.188313+00:00",
+    "viewport": "1828 \u00d7 1028 CSS pixels",
+    "version": "1.6.0",
+    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo."
+  },
+  {
+    "file": "lead-workspace-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "ff59b0951458641b6681e93ff8725d7eb7a9283914d2eea110bb025711d5f2c6",
+    "capturedAt": "2026-10-25T16:49:37.250782+00:00",
+    "viewport": "1828 \u00d7 1028 CSS pixels",
+    "version": "1.6.0",
+    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo."
   }
 ]

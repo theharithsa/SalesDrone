@@ -6,7 +6,7 @@ import {
   type CSSProperties,
   type PointerEvent,
 } from 'react';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Maximize2 } from 'lucide-react';
 import {
   BLADE_WIDTH_KEY,
   DEFAULT_BLADE_WIDTH,
@@ -27,7 +27,13 @@ export default function LeadBlade({
   toolbar,
   workflow,
   children,
+  fullPage = false,
+  onExpand,
+  onClose,
 }: {
+  fullPage?: boolean;
+  onExpand: () => void;
+  onClose: () => void;
   toolbar: ReactNode;
   workflow: ReactNode;
   children: ReactNode;
@@ -59,6 +65,14 @@ export default function LeadBlade({
     } catch {}
   }
   useLayoutEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    root.current?.focus({ preventScroll: true });
+    return () => {
+      if (previous?.isConnected) previous.focus({ preventScroll: true });
+    };
+  }, []);
+  useLayoutEffect(() => {
+    if (fullPage) return;
     const node = root.current,
       parent = node?.parentElement;
     if (!node || !parent) return;
@@ -108,7 +122,7 @@ export default function LeadBlade({
       if (frame.current !== undefined) cancelAnimationFrame(frame.current);
       document.documentElement.classList.remove('resizing-lead-blade');
     };
-  }, []);
+  }, [fullPage]);
   function finish(event: PointerEvent<HTMLDivElement>, cancel = false) {
     const active = drag.current;
     if (!active || active.pointerId !== event.pointerId) return;
@@ -133,12 +147,26 @@ export default function LeadBlade({
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
   }
-  const expanded = width >= bounds.max - 1;
   return (
     <aside
       ref={root}
-      className={'lead-detail lead-blade' + (resizing ? ' is-resizing' : '')}
+      className={
+        'lead-detail lead-blade' +
+        (fullPage ? ' full-lead-page' : '') +
+        (resizing ? ' is-resizing' : '')
+      }
       aria-label="Lead details"
+      tabIndex={-1}
+      onKeyDown={(e) => {
+        if (
+          e.key === 'Escape' &&
+          !fullPage &&
+          !(e.target instanceof HTMLSelectElement)
+        ) {
+          e.stopPropagation();
+          onClose();
+        }
+      }}
       style={
         {
           '--blade-width': `${width}px`,
@@ -222,18 +250,16 @@ export default function LeadBlade({
       <header className="blade-header">
         <div className="detail-top">
           {toolbar}
-          <button
-            className="icon-button blade-expand"
-            aria-label={
-              expanded ? 'Restore lead details width' : 'Expand lead details'
-            }
-            title={expanded ? 'Restore width' : 'Expand blade'}
-            onClick={() =>
-              persist(apply(expanded ? DEFAULT_BLADE_WIDTH : bounds.max))
-            }
-          >
-            {expanded ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
-          </button>
+          {!fullPage ? (
+            <button
+              className="icon-button blade-expand"
+              aria-label="Open full lead page"
+              title="Open full lead page"
+              onClick={onExpand}
+            >
+              <Maximize2 size={17} />
+            </button>
+          ) : null}
         </div>
         <div className="blade-workflow">{workflow}</div>
       </header>

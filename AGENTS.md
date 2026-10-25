@@ -68,7 +68,7 @@ A funnel is a current stage distribution, not evidence of historic conversion.
 Run npm test, npm run check, npm run build, npm run api:docs and real Auth/Firestore
 emulator integration for backend changes. Verify UI interactions through the approved
 browser tool, with synthetic data and measured viewport sizes. Capture screenshots
-for the README using demo data only. Production checks should avoid customer edits.
+for the README using demo data only. After UI changes follow skills/salesdrone-product-guide/SKILL.md, refresh affected public captures and declare their filenames in releases/<version>.json; reviewed manifest hashes and versions are required. Production checks should avoid customer edits.
 Use `npm run security:scan` before committing, and inspect staged paths for secrets,
 workbooks, logs, generated caches and private screenshots. Only curated assets from
 site/ are published to GitHub Pages; docs/ contains engineering references; local production captures and evidence are excluded from Git.

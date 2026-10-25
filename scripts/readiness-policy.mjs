@@ -103,3 +103,18 @@ export function validateChangeCoverage(plan, changed) {
       'API changes need docs, generated-contract source and behavior/permission tests',
     );
 }
+
+export function validateScreenshotEvidence(plan, manifest) {
+  for (const file of plan.screenshots || []) {
+    const entry = manifest.find((item) => item.file === file);
+    if (
+      !entry ||
+      entry.version !== plan.version ||
+      !entry.viewport ||
+      !entry.review ||
+      !/^[a-f0-9]{64}$/.test(entry.sha256) ||
+      !['synthetic-demo', 'public-contract'].includes(entry.mode)
+    )
+      throw Error('Missing current reviewed screenshot: ' + file);
+  }
+}

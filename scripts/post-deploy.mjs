@@ -5,6 +5,7 @@ import {
   checkContract,
   checkFunctions,
   checkSettingsPage,
+  checkProductPage,
 } from './post-deploy-checks.mjs';
 const docs = process.argv.includes('--docs'),
   out = docs ? 'docs-verification.json' : 'release-verification.json',
@@ -47,6 +48,21 @@ try {
         await new Promise((resolve) => setTimeout(resolve, 5000));
       }
       if (!good) throw Error('Stale Pages guide');
+    });
+    await check('public-product-handbook', async () => {
+      for (let n = 0; n < 6; n++) {
+        try {
+          const r = await get(
+            'https://theharithsa.github.io/SalesDrone/product.html',
+          );
+          if (r.ok) {
+            checkProductPage(await r.text(), expected.version);
+            return;
+          }
+        } catch {}
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
+      throw Error('Stale product handbook');
     });
   } else {
     await check('live-version', async () => {
