@@ -14,6 +14,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.6.4] - 2026-10-26
+
+### Changed
+- Keep the private lead task list in Tasks only; remove the duplicate from All.
+- Replace small lead suppression/archive links with readable icon buttons, responsive sizing and theme-aware emphasis. Preserve existing action semantics and permissions.
+- Update the handbook, owner skills and reviewed demo captures.
+
 ## [1.6.3] - 2026-10-26
 
 ### Changed

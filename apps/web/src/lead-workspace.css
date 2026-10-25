@@ -550,3 +550,43 @@
   min-width: 0;
   grid-column: 1 / -1 !important;
 }
+
+/* Lead lifecycle controls are full-size actions, not low-contrast footnotes. */
+.detail-admin-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.detail-admin-actions .button {
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.5;
+  min-height: 46px;
+  max-width: 100%;
+  white-space: normal;
+  gap: 8px;
+  padding: 12px 16px;
+  justify-content: center;
+}
+.detail-admin-actions .button svg {
+  flex-shrink: 0;
+}
+.detail-admin-actions .lead-contact-action {
+  color: var(--book-danger-text, #9e293b);
+  border-color: color-mix(in srgb, currentColor 45%, var(--line));
+  background: var(--panel);
+}
+:root[data-color-scheme='dark'] .detail-admin-actions .lead-contact-action {
+  color: var(--book-danger-text, #ffb4ba);
+}
+@media (hover: hover) and (pointer: fine) {
+  .detail-admin-actions .lead-contact-action:hover {
+    background: color-mix(in srgb, currentColor 8%, var(--panel));
+  }
+}
+@media (max-width: 600px) {
+  .detail-admin-actions .button {
+    width: 100%;
+  }
+}

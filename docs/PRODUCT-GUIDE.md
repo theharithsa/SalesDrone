@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.6.3
+Version 1.6.4
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -100,7 +100,7 @@ Members who can read the lead
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.
 
-4. All opens first and includes every loaded activity, review information and your private linked tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for your linked work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.
+4. All opens first and includes every loaded activity and review information. Your private linked tasks appear only in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for your linked work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.
 
 5. Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission.
 
@@ -111,6 +111,8 @@ Tasks is recipient-private. Its status filter includes Pending, Completed and Ca
 Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.
 
 The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers.
+
+Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.
 
 ### Questions
 

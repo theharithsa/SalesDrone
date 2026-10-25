@@ -20,11 +20,11 @@
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ca31c3595a3a2f1682f7ffb35c25ea81ead9e5a92e1c372a906bcef02a1f111b",
-    "capturedAt": "2026-10-25T18:50:19.769071+00:00",
+    "sha256": "fcfd1373f68a934ec58c0a609c98a203d2fcdd0e7de366cb25458ed7aed94e0c",
+    "capturedAt": "2026-10-25T19:18:11.571992+00:00",
     "viewport": "390 \u00d7 844 CSS pixels, actual application iframe",
-    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 390 x 844 CSS pixel frame; not physical hardware.",
-    "version": "1.6.2"
+    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production data. All has no duplicate task list; lifecycle actions use full-size icon buttons. Measured 390 x 844 CSS pixel frame, browser check not physical hardware.",
+    "version": "1.6.4"
   },
   {
     "file": "notifications-demo.jpg",
@@ -64,11 +64,11 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2907587887738ffd0d0dbb8b37b18168807c9d1f4ff0630f4a56d503895e358a",
-    "capturedAt": "2026-10-25T18:50:19.902683+00:00",
+    "sha256": "f4c03d9728e5532aff7b2472969c1c4fedbfeb323fc42098d5537a0d0ebbf807",
+    "capturedAt": "2026-10-25T19:18:11.610489+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "version": "1.6.2",
-    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport."
+    "version": "1.6.4",
+    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production data. All has no duplicate task list; lifecycle actions use full-size icon buttons. Measured 1828 x 1028 CSS pixel desktop viewport."
   },
   {
     "file": "book-mode-light.jpg",
@@ -82,11 +82,11 @@
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "eb0c270342e052cdeb9cea88ade23c53836ed102e4f346aedcfb65efb49ed8e6",
-    "capturedAt": "2026-10-25T19:02:02.373535+00:00",
+    "sha256": "547377f8890b427f222294925a6764c452ec0fc739815eb0b8940ac8e0ac7291",
+    "capturedAt": "2026-10-25T19:18:11.678081+00:00",
     "viewport": "1828 x 1028 CSS pixel desktop viewport",
-    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode day/night appearance and reading text/settings.",
-    "version": "1.6.3"
+    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production data. All has no duplicate task list; lifecycle actions use full-size icon buttons. Measured 1828 x 1028 CSS pixel desktop viewport.",
+    "version": "1.6.4"
   },
   {
     "file": "book-mode-mobile.jpg",

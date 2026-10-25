@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "version": "1.6.4",
+  "summary": "Remove duplicate tasks from All and make lead lifecycle actions readable responsive buttons.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-leads",
+    "salesdrone-conversations"
+  ],
+  "documentation": [
+    "docs/PRODUCT-GUIDE.md",
+    "docs/LEAD-BLADE.md",
+    "docs/API.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Presentation only: Tasks retains its existing private read API and suppression/archive retain their existing handlers. No endpoint or schema changes.",
+    "contractVersion": "1.13.0",
+    "permissions": "Existing leads:edit visibility/loading guards and server-side suppression/archive policy; no delete capability or task access expansion.",
+    "tests": [
+      "functions/test/app.test.js",
+      "tests/lead-workspace.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse existing safe RUM/API signals, committed suppression/archive outbox and release events. Removing duplicated task rendering adds no new business event or customer payload.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Reuse existing safe RUM/API signals, committed suppression/archive outbox and release events. Removing duplicated task rendering adds no new business event or customer payload.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Reuse existing safe RUM/API signals, committed suppression/archive outbox and release events. Removing duplicated task rendering adds no new business event or customer payload.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Reuse existing safe RUM/API signals, committed suppression/archive outbox and release events. Removing duplicated task rendering adds no new business event or customer payload.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Reuse existing safe RUM/API signals, committed suppression/archive outbox and release events. Removing duplicated task rendering adds no new business event or customer payload.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic All has no task list; Tasks still lists recipient-private work. Review desktop/mobile full-size action buttons in normal light/dark and Book mode, visible focus and responsive wrapping. No live customer mutations or permanent-delete action.",
+  "screenshots": [
+    "lead-workspace-demo.jpg",
+    "book-mode-dark.jpg",
+    "mobile-demo.jpg"
+  ]
+}

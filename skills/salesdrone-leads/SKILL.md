@@ -76,3 +76,5 @@ Adjacent owners:
 - [salesdrone-lead-journey](../salesdrone-lead-journey/SKILL.md)
 - [salesdrone-imports](../salesdrone-imports/SKILL.md)
 - [salesdrone-notifications](../salesdrone-notifications/SKILL.md)
+
+Lead lifecycle actions use full-size labelled buttons with Archive and do-not-contact icons, responsive wrapping and existing capability/loading guards. Preserve the distinct archive/suppression contracts: do not invent a permanent Delete lead action or rename suppression as deletion. Reuse existing handlers and backend policy.

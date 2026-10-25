@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.6.3 · MIT**
+**Part of Avinya Enterprises · v1.6.4 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -45,7 +45,7 @@ The notification bell opens an overlay without losing your place. Assignment and
 <details>
 <summary>Mobile lead view</summary>
 
-<img src="site/assets/screenshots/mobile-demo.jpg?sha=ca31c3595a3a" alt="A fictional lead’s journey on mobile" width="320">
+<img src="site/assets/screenshots/mobile-demo.jpg?sha=fcfd1373f68a" alt="A fictional lead’s journey on mobile" width="320">
 
 </details>
 
@@ -129,11 +129,11 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=290758788773)
+![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=f4c03d9728e5)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
-The full lead page opens in **All**: loaded activity, review information and your private tasks. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
+The full lead page opens in **All**: loaded activity and review information. Your private task list stays in **Tasks**. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
 
 **v1.6.2** standardized Dynatrace CloudEvents delivery and added a sunrise/sunset theme control. [Book mode is available in v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
 

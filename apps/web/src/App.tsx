@@ -46,6 +46,8 @@ import {
 } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import {
+  Archive,
+  Ban,
   LayoutDashboard,
   UsersRound,
   ListTodo,
@@ -2551,8 +2553,7 @@ export default function App() {
                           ) : null}
                         </div>
                       ) : null}
-                      {routeLeadId &&
-                      (leadTab === 'tasks' || leadTab === 'all') ? (
+                      {routeLeadId && leadTab === 'tasks' ? (
                         <section>
                           <LeadTaskTab
                             refreshKey={dashboardRefreshKey}
@@ -2569,7 +2570,9 @@ export default function App() {
                       <div className="detail-section detail-admin-actions">
                         {selected.needsReview ? (
                           <button
-                            className="text-button"
+                            className="button"
+                            type="button"
+                            disabled={mutationBusy || detailBusy}
                             onClick={() =>
                               void leadAction({ needsReview: false })
                             }
@@ -2578,7 +2581,9 @@ export default function App() {
                           </button>
                         ) : null}
                         <button
-                          className="text-button danger"
+                          className="button lead-contact-action"
+                          type="button"
+                          disabled={mutationBusy || detailBusy}
                           onClick={() => {
                             if (selected.doNotContact)
                               void leadAction({
@@ -2597,12 +2602,15 @@ export default function App() {
                             }
                           }}
                         >
+                          <Ban size={18} aria-hidden="true" />
                           {selected.doNotContact
                             ? 'Remove do-not-contact flag'
                             : 'Mark as do not contact'}
                         </button>
                         <button
-                          className="text-button muted"
+                          className="button lead-archive-action"
+                          type="button"
+                          disabled={mutationBusy || detailBusy}
                           onClick={async () => {
                             try {
                               await request(
@@ -2620,7 +2628,7 @@ export default function App() {
                             }
                           }}
                         >
-                          Archive lead
+                          <Archive size={18} aria-hidden="true" /> Archive lead
                         </button>
                       </div>
                     ) : null}

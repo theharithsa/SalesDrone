@@ -197,7 +197,7 @@ Inline comment entry uses the existing POST lead activities operation, including
 
 ### Lead activity views
 
-All, Comments and Calls are presentation filters over the same authorized, paginated GET `/api/v1/leads/{id}/activities` result. Comments selects note entries (including imported discussions), Calls selects call entries, and All preserves all types and review metadata in source order. All also reuses recipient-private GET `/api/v1/tasks?leadId=...`; it grants no access to another member’s tasks. No new endpoint, scope or API contract version is introduced. Earlier activity remains necessary to inspect unloaded history.
+All, Comments and Calls are presentation filters over the same authorized, paginated GET `/api/v1/leads/{id}/activities` result. Comments selects note entries (including imported discussions), Calls selects call entries, and All preserves all types and review metadata in source order. The Tasks tab uses recipient-private GET `/api/v1/tasks?leadId=...`; the task list is not repeated in All, and grants no access to another member’s tasks. No new endpoint, scope or API contract version is introduced. Earlier activity remains necessary to inspect unloaded history.
 
 ## Preferences: Book mode (contract 1.13.0)
 
