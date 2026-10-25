@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v1.1.4**, OpenAPI contract **1.9.0**. All application operations
+Application release **v1.1.5**, OpenAPI contract **1.9.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)

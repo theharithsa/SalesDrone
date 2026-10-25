@@ -36,7 +36,7 @@ and the route handler in [app.js](../../functions/src/app.js) when changing an A
 
 Browser presentation/in-memory demo state; authenticated data flows only through lib/api.ts. Demo fixtures contain synthetic records, not production snapshots.
 
-- Preserve Google Sans headings, Manrope body, Caveat first names only in expanded lead detail, normal table names and monospace phone numbers.
+- Preserve Google Sans headings, Manrope body, Google Sans first names in expanded lead detail, normal table names and monospace phone numbers.
 - Keep SalesDrone and Avinya marks, blue accent, top-right theme toggle and bottom sidebar collapse control above Settings. Profile images come from verified identity.
 - Mobile uses bottom navigation and a Settings section selector. Controls need touch/keyboard accessibility, visible focus, Escape behavior and overlay focus restoration.
 - Use apple-design when available. Respect reduced motion; do not block input behind decorative animation or infer historical funnel conversion.

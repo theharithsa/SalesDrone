@@ -4,6 +4,8 @@ SalesDrone displays six responsive views: pipeline stage composition, 14-day per
 
 ## AI workspace brief
 
+Dashboard AI summaries are on demand. Opening the page, navigating back or refreshing charts does not request Gemini. Choose **Generate AI summary** (or **Update AI summary**) to request one; duplicate clicks are guarded while it runs. The summary retains its own snapshot time when charts refresh. Server caching and rate limits still apply.
+
 `POST /api/v1/dashboard/insights` uses Gemini server-side to produce a headline and up to four suggestions about permitted pipeline counts and the signed-in user's open tasks. It receives aggregate facts, up to 25 task titles/dates and authorized lead IDs/scores, without structured customer names, phones or emails. Free text can contain information entered by a user. Input is treated as untrusted data; the model has no tools and cannot contact leads or create tasks.
 
 Each insight must reference an input task/lead or an exact supplied numeric fact. IDs and fact values are validated; the generated prose remains an AI suggestion and should be reviewed. Blocked leads are identified in the input and excluded from priority recommendations. This feature does not replace the existing automatic reminder worker.

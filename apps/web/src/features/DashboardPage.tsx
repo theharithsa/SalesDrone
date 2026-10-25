@@ -396,35 +396,28 @@ export default function DashboardPage({
       loadEpoch.current++;
     };
   }, [load, refreshKey]);
-  useEffect(() => {
-    if (!snapshot || demo) return;
-    let alive = true;
-    setBrief(null);
-    setBriefBusy(true);
-    setBriefError('');
-    request('/dashboard/insights', 'POST', {})
-      .then((r) => {
-        if (alive) setBrief(r);
-      })
-      .catch((e) => {
-        if (alive) setBriefError(e.message);
-      })
-      .finally(() => {
-        if (alive) setBriefBusy(false);
-      });
-    return () => {
-      alive = false;
-    };
-  }, [snapshot, request, demo]);
+  const briefInFlight = useRef(false);
+  const briefEpoch = useRef(0);
+  useEffect(
+    () => () => {
+      briefEpoch.current++;
+    },
+    [],
+  );
   async function refreshBrief() {
+    if (demo || briefInFlight.current) return;
+    briefInFlight.current = true;
+    const epoch = ++briefEpoch.current;
     setBriefBusy(true);
     setBriefError('');
     try {
-      setBrief(await request('/dashboard/insights', 'POST', {}));
+      const result = await request('/dashboard/insights', 'POST', {});
+      if (epoch === briefEpoch.current) setBrief(result);
     } catch (e) {
-      setBriefError((e as Error).message);
+      if (epoch === briefEpoch.current) setBriefError((e as Error).message);
     } finally {
-      setBriefBusy(false);
+      briefInFlight.current = false;
+      if (epoch === briefEpoch.current) setBriefBusy(false);
     }
   }
   async function open(action: () => Promise<void>) {
@@ -479,11 +472,11 @@ export default function DashboardPage({
               <span className="eyebrow">
                 <Sparkles size={13} />
                 {demo
-                  ? 'DEMO WORKSPACE BRIEF'
+                  ? 'DEMO WORKSPACE SNAPSHOT'
                   : b
-                    ? 'GEMINI · YOUR WORKSPACE BRIEF'
+                    ? 'GEMINI · YOUR WORKSPACE SUMMARY'
                     : briefBusy
-                      ? 'PREPARING AI BRIEF'
+                      ? 'PREPARING AI SUMMARY'
                       : 'WORKSPACE SNAPSHOT'}
               </span>
               <h2>
@@ -500,29 +493,40 @@ export default function DashboardPage({
               <div className="brief-source-line">
                 {demo
                   ? 'Sample data · no AI request'
-                  : snapshot.asOf
-                    ? 'Snapshot ' + displayDate(snapshot.asOf, timezone)
+                  : brief?.asOf || snapshot.asOf
+                    ? (b ? 'Summary snapshot ' : 'Snapshot ') +
+                      displayDate(brief?.asOf || snapshot.asOf, timezone)
                     : ''}
                 {!demo ? (
                   <button
-                    className="text-button"
+                    className="button primary"
                     disabled={briefBusy}
                     onClick={() => void refreshBrief()}
                   >
-                    <RefreshCw size={14} />
-                    Refresh AI brief
+                    <Sparkles size={15} />
+                    {briefBusy
+                      ? 'Generating summary…'
+                      : b
+                        ? 'Update AI summary'
+                        : 'Generate AI summary'}
                   </button>
                 ) : null}
               </div>
+              {!demo && !b && !briefBusy ? (
+                <p className="field-hint">
+                  Generate a summary when you need one. Opening or refreshing
+                  this dashboard does not run AI.
+                </p>
+              ) : null}
               {briefError ? (
                 <p className="brief-error" role="status">
-                  AI brief unavailable: {briefError}. Your charts remain
+                  AI summary unavailable: {briefError}. Your charts remain
                   available.
                 </p>
               ) : null}
               {brief?.status === 'Processing' ? (
                 <p className="field-hint">
-                  A brief is being prepared in another session. Refresh in a
+                  A summary is being prepared in another session. Try again in a
                   moment.
                 </p>
               ) : null}

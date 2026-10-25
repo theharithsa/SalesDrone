@@ -1,5 +1,4 @@
-/* Avinya's supplied PNG uses #0054a6. The SVG keeps that PNG intact and
-   isolates its printed ink with an sRGB colour filter for a theme-aware mask. */
+/* Brand colours and responsive presentation of the supplied Avinya artwork. */
 :root {
   --brand-blue: #0054a6;
   --brand-blue-hover: #004487;
@@ -63,19 +62,6 @@
   flex-direction: column;
   gap: 3px;
 }
-.enterprise-wordmark strong {
-  font-family: var(--heading-font);
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-.enterprise-wordmark > span {
-  font-size: 9px;
-  line-height: 1.1;
-  font-weight: 650;
-  letter-spacing: 0.16em;
-}
 .enterprise-brand-workspace {
   border-inline-start: 1px solid var(--line);
   padding-inline-start: 18px;
@@ -84,12 +70,6 @@
 .enterprise-brand-workspace .enterprise-mark {
   width: 34px;
   height: 34px;
-}
-.enterprise-brand-workspace .enterprise-wordmark strong {
-  font-size: 18px;
-}
-.enterprise-brand-workspace .enterprise-wordmark > span {
-  font-size: 8px;
 }
 .login-top-actions {
   gap: 24px;
@@ -228,4 +208,53 @@ summary:focus-visible {
     width: 36px;
     height: 36px;
   }
+}
+
+/* Display the exact lettering and colours in the supplied transparent artwork.
+   Two clipped views retain the original pixels while fitting a horizontal header. */
+.enterprise-brand .enterprise-mark {
+  position: relative;
+  overflow: hidden;
+  background: none;
+  mask: none;
+  -webkit-mask: none;
+}
+.enterprise-brand .enterprise-mark img {
+  position: absolute;
+  max-width: none;
+  width: 226.244%;
+  height: auto;
+  left: -60.181%;
+  top: 0;
+}
+.enterprise-brand .enterprise-wordmark {
+  position: relative;
+  width: 134px;
+  height: auto;
+  aspect-ratio: 403 / 127;
+  overflow: hidden;
+}
+.enterprise-brand .enterprise-wordmark img {
+  position: absolute;
+  max-width: none;
+  width: 124.069%;
+  height: auto;
+  left: -10.918%;
+  top: -198.425%;
+}
+.enterprise-brand-workspace .enterprise-wordmark {
+  width: 112px;
+}
+:root[data-theme='dark'] .enterprise-brand img {
+  filter: var(--enterprise-white-filter);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='system'] .enterprise-brand img {
+    filter: var(--enterprise-white-filter);
+  }
+}
+
+.enterprise-filters {
+  position: absolute;
+  pointer-events: none;
 }

@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **1.1.4** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **1.1.5** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -8,7 +8,7 @@ Enterprises. Code is MIT-licensed; third-party notices and trademarks remain sep
 | Layer       | Implementation                                                                             |
 | ----------- | ------------------------------------------------------------------------------------------ |
 | UI          | React 19, TypeScript 5, Vite 7, Lucide icons, Radix Dialog, responsive CSS                 |
-| Fonts       | Manrope body; Google Sans headings; Caveat first names in lead details; monospace contacts |
+| Fonts       | Manrope body; Google Sans headings; Google Sans first names in lead details; monospace contacts |
 | API         | Node.js 22, Express 5, Zod 4, Firebase Admin SDK                                           |
 | Identity    | Firebase Auth Google provider, App Check, server memberships/capabilities                  |
 | Persistence | Firestore Standard, transactionally consistent writes and service-owned outboxes           |

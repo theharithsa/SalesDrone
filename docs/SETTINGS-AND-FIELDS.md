@@ -2,7 +2,7 @@
 
 ## Interface
 
-- Login’s “Good conversations.” and the first word of expanded lead names use Caveat. The underlying full name stays unchanged; the display styling does not claim to parse surnames across cultures.
+- Login’s “Good conversations.” uses Caveat. As of v1.1.5, expanded lead first names use Google Sans. The underlying full name stays unchanged; the display styling does not claim to parse surnames across cultures.
 - Headings use Google Sans. Body copy remains Manrope. Phone numbers use the device monospace stack.
 - Google Sans 5.3.2 and Caveat 5.3.0 font assets are self-hosted from Fontsource packages. Their SIL Open Font Licenses ship under `/licenses/`; no Google Fonts request is needed. Google’s font source: https://github.com/googlefonts/googlesans.
 - Labels spell out Enquiry source/date and Phone number. Serial numbers are absent from forms, lead tables, filters and new templates. Legacy workbook headers and stored serial values remain compatible internally; original customer data is not erased.

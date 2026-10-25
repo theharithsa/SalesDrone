@@ -39,7 +39,7 @@ Coordinate shared-file changes and keep one integrated release owner.
 
 Use apple-design guidance. Keep responsive touch controls, keyboard focus, Escape,
 light/dark contrast and reduced-motion behavior. Preserve Google Sans headings,
-Manrope body, Caveat first names only in lead details, and monospace phone numbers.
+Manrope body, Google Sans first names in lead details, and monospace phone numbers.
 A funnel is a current stage distribution, not evidence of historic conversion.
 
 ## Versions and releases

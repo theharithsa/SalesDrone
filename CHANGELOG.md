@@ -4,6 +4,14 @@ Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
 
+
+## [1.1.5] - 2026-10-25
+
+### Changed
+- Use the supplied Avinya artwork and its original lettering/colours in light mode, with a white ink rendering in dark mode. Preserve the SalesDrone logo and responsive header.
+- Generate dashboard AI summaries only when requested; prevent duplicate clicks, preserve existing summaries on chart refresh, and show the summary snapshot time.
+- Use Google Sans for lead first names in expanded details and update the module guidance.
+
 ## [1.1.4] - 2026-10-25
 
 ### Changed
