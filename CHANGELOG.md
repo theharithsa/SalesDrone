@@ -9,6 +9,16 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.5.1] - 2026-10-25
+
+### Changed
+- Make the desktop lead blade draggable from its left edge, with keyboard resizing, expand/restore and locally remembered width.
+- Show the configured lead journey horizontally in wider blades while preserving actual stage-history semantics.
+- Move stage and assignment above lead details/score into a header that remains visible while the blade body scrolls.
+- Add a contained 180 ms desktop entrance and a mobile fade, respecting reduced motion and keeping pointer resizing immediate.
+- Update feature/settings documentation, permission notes, module skills and release verification coverage.
+
 ## [1.5.0] - 2026-10-25
 
 ### Changed

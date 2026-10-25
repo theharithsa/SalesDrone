@@ -34,6 +34,8 @@ leadTransitions keyed from lead identity/version, with the current lead and conf
 - Custom/retired stage names must remain readable; stage order changes do not rewrite prior events.
 - Authorize journey reads against the current lead and preserve bounded pagination/version ordering.
 
+The journey responds to the LeadBlade container: wider desktop blades (500px+) use a horizontal path with internal overflow for long/custom stages; compact/mobile views remain vertical. CSS reflow must not request history again or imply prior-stage completion. Only the current stage is highlighted. Keep recorded history distinct, and verify orientation with the actual container width rather than viewport width.
+
 ## Change and diagnosis
 
 If duplicate or missing transitions appear, inspect transitionId and expectedVersion/replay handling. Test old leads with no history, custom stages, backwards moves and a denied mutation.

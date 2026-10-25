@@ -8,6 +8,7 @@ import './settings-refresh.css';
 import './brand.css';
 import './lead-refinements.css';
 import './intelligence.css';
+import './lead-blade.css';
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { error: boolean }

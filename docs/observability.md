@@ -96,3 +96,5 @@ The RUM identifyUser call accepts the approved member email. Local lifecycle tes
 ## Per-release instrumentation probes
 
 The deployment workflow forwards synthetic SDK-generated OTLP traces, metrics and logs under salesdrone-deployment-check, without reading customer data. It decodes partial-success responses and requires zero rejected records for every signal. Separate deployment BizEvent and CUSTOM_DEPLOYMENT marker receipts must be accepted. monitoring.json records only signal status/rejection counts and safe release IDs. This verifies ingest acceptance, not tenant searchability, live user behavior, worker health or native RUM-to-trace navigation.
+
+Lead blade resizing is local presentation only. Do not export pointer coordinates, lead names, per-drag logs or fabricated business events; stage/assignment mutations retain the existing server-confirmed instrumentation. Release verification still checks OTLP and deployment-event acceptance.

@@ -48,6 +48,8 @@ Lead export uses the shared focus-managed Modal, native checkboxes, progress/can
 
 Manage fields and AvinyaIntelligence use separate expanded states; selecting a child opens its group without resetting edits. Shared settings-sections.json controls section identity, group and Admin filtering; keep mobile optgroups and deep links consistent. Read settings documentation through the in-app guide link.
 
+[LeadBlade.tsx](../../apps/web/src/components/LeadBlade.tsx) owns desktop left-edge pointer capture, frame-batched resizing, keyboard separator controls and expand/restore. [lead-blade.ts](../../apps/web/src/lib/lead-blade.ts) clamps widths to preserve list space and rejects malformed saved preferences. Width is browser-local and contains no lead/user data. Stage/assignment belong above the independently scrolling desktop body. Use [lead-blade.css](../../apps/web/src/lead-blade.css): contained transform/opacity entrance only, no animated widths, no per-pointer telemetry and reduced-motion fallback. Test geometry plus actual drag, keyboard, persistence and scroll positions; mobile stays full-page without a resize handle.
+
 ## Change and diagnosis
 
 Use the approved browser tool with synthetic demo data. Measure desktop/mobile viewport and horizontal overflow; check both themes, long names/labels, empty/error/loading states and keyboard focus. Do not claim physical-device testing from a resized viewport.

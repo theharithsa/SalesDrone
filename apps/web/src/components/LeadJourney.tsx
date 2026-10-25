@@ -72,7 +72,11 @@ export default function LeadJourney({
         <h3>LEAD JOURNEY</h3>
         <GitBranch size={17} />
       </div>
-      <ol className="lead-stage-path" aria-label="Configured sales stages">
+      <ol
+        className="lead-stage-path"
+        tabIndex={0}
+        aria-label="Configured sales stages"
+      >
         {labels.map((label) => (
           <li
             key={label}

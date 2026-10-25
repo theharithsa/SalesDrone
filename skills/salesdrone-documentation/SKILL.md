@@ -45,6 +45,8 @@ Document the Reports & lead access settings, selected-column filtered XLSX workf
 
 Every release regenerates docs/SETTINGS.md and publishes settings.html from the shared section/control catalogs, including every control’s default, scope, permissions, API, effect and example. The public API count comes from OpenAPI, not a hardcoded number. docs:check rejects stale settings and skill-tree outputs. No recursive publication of engineering docs or private evidence.
 
+Document the local-only lead blade width, pointer/keyboard controls, reset, 500px journey reflow and mobile/reduced-motion behavior in LEAD-BLADE.md. The appearance guide points to this gesture preference without presenting it as a server-side account setting. Use synthetic captures and state measured viewport limits.
+
 ## Change and diagnosis
 
 Check all local Markdown targets, image loading, anchor order and generated numbering. Run docs:build; inspect the actual public guide and README after publish, not only a local preview.

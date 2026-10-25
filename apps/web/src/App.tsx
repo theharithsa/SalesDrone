@@ -1,3 +1,5 @@
+import Assignment from './components/Assignment';
+import LeadBlade from './components/LeadBlade';
 import LeadReportExport from './features/LeadReportExport';
 import NotificationsPage from './features/NotificationsPage';
 import { setRumIdentity, rumPage } from './lib/rum';
@@ -1779,28 +1781,79 @@ export default function App() {
                   </section>
                 </div>
                 {selected ? (
-                  <aside className="lead-detail" aria-label="Lead details">
-                    <div className="detail-top">
-                      <button
-                        className="text-button"
-                        onClick={() => {
-                          detailEpoch.current++;
-                          setSelected(null);
-                        }}
-                      >
-                        <ChevronLeft size={16} />
-                        <span>Back to leads</span>
-                      </button>
-                      {can('leads:edit') ? (
+                  <LeadBlade
+                    toolbar={
+                      <>
                         <button
-                          className="button detail-edit-button"
-                          aria-label="Edit lead"
-                          onClick={() => setModal('edit')}
+                          className="text-button"
+                          onClick={() => {
+                            detailEpoch.current++;
+                            setSelected(null);
+                          }}
                         >
-                          <Pencil size={16} /> Edit lead
+                          <ChevronLeft size={16} />
+                          <span>Back to leads</span>
                         </button>
-                      ) : null}
-                    </div>
+                        {can('leads:edit') ? (
+                          <button
+                            className="button detail-edit-button"
+                            aria-label="Edit lead"
+                            onClick={() => setModal('edit')}
+                          >
+                            <Pencil size={16} /> Edit lead
+                          </button>
+                        ) : null}
+                      </>
+                    }
+                    workflow={
+                      <>
+                        <div className="detail-section">
+                          <h3>LEAD STAGE</h3>
+                          {can('leads:edit') ? (
+                            <select
+                              aria-label="Update lead stage"
+                              value={selected.stage}
+                              disabled={mutationBusy || detailBusy}
+                              onChange={(e) =>
+                                void leadAction({ stage: e.target.value })
+                              }
+                            >
+                              {withCurrent(
+                                fieldOptions.values.stage,
+                                selected.stage,
+                              ).map((s) => (
+                                <option key={s}>{s}</option>
+                              ))}
+                            </select>
+                          ) : (
+                            <Badge stage={selected.stage} />
+                          )}
+                        </div>
+                        {admin ? (
+                          <Assignment
+                            key={selected.id}
+                            compact
+                            lead={selected}
+                            request={request}
+                            onSaved={refresh}
+                          />
+                        ) : (
+                          <div className="assignment-control">
+                            <h3>ASSIGNED TO</h3>
+                            <span>
+                              {selected.assignedToUid ===
+                                session?.identity.uid ||
+                              (demo && selected.assignedToUid === 'demo')
+                                ? 'You'
+                                : selected.assignedToUid
+                                  ? 'Assigned member'
+                                  : 'Unassigned'}
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    }
+                  >
                     <div className="detail-profile">
                       <Avatar name={selected.name} />
                       <h2>
@@ -1999,35 +2052,6 @@ export default function App() {
                         </p>
                       ) : null}
                     </div>
-                    <div className="detail-section">
-                      <h3>LEAD STAGE</h3>
-                      {can('leads:edit') ? (
-                        <select
-                          aria-label="Update lead stage"
-                          value={selected.stage}
-                          disabled={mutationBusy || detailBusy}
-                          onChange={(e) =>
-                            void leadAction({ stage: e.target.value })
-                          }
-                        >
-                          {withCurrent(
-                            fieldOptions.values.stage,
-                            selected.stage,
-                          ).map((s) => (
-                            <option key={s}>{s}</option>
-                          ))}
-                        </select>
-                      ) : (
-                        <Badge stage={selected.stage} />
-                      )}
-                    </div>
-                    {admin ? (
-                      <Assignment
-                        lead={selected}
-                        request={request}
-                        onSaved={refresh}
-                      />
-                    ) : null}
                     {leadTasks.length ? (
                       <div className="detail-section">
                         <h3>YOUR UPCOMING FOLLOW-UPS</h3>
@@ -2213,7 +2237,7 @@ export default function App() {
                         </button>
                       </div>
                     ) : null}
-                  </aside>
+                  </LeadBlade>
                 ) : null}
               </div>
             ) : null}
@@ -2928,79 +2952,6 @@ function TaskRow({
           </div>
         </details>
       ) : null}
-    </div>
-  );
-}
-function Assignment({
-  lead,
-  request,
-  onSaved,
-}: {
-  lead: Lead;
-  request: (p: string, m?: string, b?: any, k?: string) => Promise<any>;
-  onSaved: () => Promise<void>;
-}) {
-  const [members, setMembers] = useState<Entity[]>([]),
-    [loadingMembers, setLoadingMembers] = useState(true),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
-  useEffect(() => {
-    let active = true;
-    setLoadingMembers(true);
-    request('/members?limit=100')
-      .then((r) => {
-        if (active) {
-          setMembers(r.items);
-          setLoadingMembers(false);
-        }
-      })
-      .catch((e) => {
-        if (active) setError(e.message);
-      });
-    return () => {
-      active = false;
-    };
-  }, [request]);
-  return (
-    <div className="detail-section">
-      <h3>ASSIGNED TO</h3>
-      <select
-        value={lead.assignedToUid || ''}
-        disabled={busy || loadingMembers}
-        aria-label="Assign lead"
-        onChange={async (e) => {
-          setBusy(true);
-          setError('');
-          try {
-            await request('/leads/' + lead.id + '/assignment', 'PATCH', {
-              assignedToUid: e.target.value || null,
-              expectedVersion: lead.version,
-            });
-            await onSaved();
-          } catch (e) {
-            setError((e as Error).message);
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {loadingMembers && lead.assignedToUid ? (
-          <option value={lead.assignedToUid}>Loading assignee…</option>
-        ) : null}
-        <option value="">Unassigned</option>
-        {members
-          .filter((m) => m.active && m.capabilities.includes('leads:read'))
-          .map((m) => (
-            <option key={m.id} value={m.uid}>
-              {m.name || m.email}
-            </option>
-          ))}
-      </select>
-      <p className="field-hint">
-        Reassignment cancels pending lead tasks. Set the next reminder for the
-        new owner.
-      </p>
-      <ErrorMessage error={error} />
     </div>
   );
 }
