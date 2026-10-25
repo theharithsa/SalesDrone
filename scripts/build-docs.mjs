@@ -30,6 +30,8 @@ function stamp(html) {
 }
 const screenshots = [
   'dashboard-demo.jpg',
+  'leads-demo.jpg',
+  'mobile-leads-demo.jpg',
   'journey-demo.jpg',
   'lead-overlay-demo.jpg',
   'lead-workspace-demo.jpg',

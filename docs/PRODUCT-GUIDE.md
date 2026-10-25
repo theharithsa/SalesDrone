@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.6.5
+Version 1.6.6
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -64,9 +64,9 @@ Members; actions depend on capability
 
 1. Open Leads and select New enquiry. Complete the required name and contact information and any workspace-specific fields. Save once and wait for confirmation.
 
-2. Choose a search field, enter the text and run search. Combine stage/source shortcuts with Filter any column for company, city, sector, name, dates or supported custom fields.
+2. Enter text and run search. Open Filters to choose the search field, stage or source; choose Filter any column for company, city, sector, name, dates or supported custom fields.
 
-3. Click a customer name for quick inspection. On desktop the lead opens above the page as an overlay; the table keeps its original columns and width. Close it using Back to leads or Escape while focused inside the overlay.
+3. Click a customer name for quick inspection. On desktop it opens above the unchanged table. At widths up to 1000 CSS pixels it opens the dedicated lead page directly, without an offset sheet. Use Back to leads; desktop overlays also close with Escape.
 
 4. Drag the overlay’s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.
 
@@ -79,6 +79,8 @@ Administrators can customize labels and supported field options under Manage fie
 Non-admin lead visibility follows workspace Reports & lead access policy and membership scope. Administrators can require assigned-only access. Filtering and exporting do not grant access to additional records.
 
 Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion.
+
+Search stays visible. Filters opens the search-field/stage/source controls and custom-column filter builder, with an active-condition count. Controls stack on narrow screens; stage shortcuts scroll within their row. Opening and closing the disclosure does not clear active conditions.
 
 ### Questions
 
@@ -94,7 +96,7 @@ A newer version may exist, or your access changed. Refresh and reapply the inten
 
 Members who can read the lead
 
-1. In the lead overlay, select Open full lead page. The URL becomes /leads/{leadId}; you can bookmark it or use normal browser Back navigation.
+1. On desktop, select Open full lead page in the inspection overlay. On phones and narrow tablets, opening a lead goes directly to this page. The URL is /leads/{leadId}; bookmarks still require current authorization.
 
 2. Use the stage and assignment controls at the top. Assignment editing is an administrator action. Read-only users see status rather than gaining access to the people directory.
 
@@ -113,6 +115,8 @@ Review shows contact review/suppression information and automatic follow-ups wit
 The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers.
 
 Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.
+
+Mobile typography uses a 28px page-title role, 22px lead identity, 17px body/form text and 15px supporting text at default browser settings. Existing font families are retained. Stage/assignment controls reflow to available width and the journey scrolls horizontally, without widening the document. Browser text preferences and zoom may change the visual sizes.
 
 ### Questions
 
@@ -375,6 +379,8 @@ The mode applies across dashboard, leads, tasks, forms, notifications and settin
 The saved preference belongs to your account, not the team. Existing clients that omit bookMode preserve the stored value. Demo/guest changes use a guarded local fallback; a live account uses its own server preference, default off.
 
 This is a visual reading style. It does not add offline access, physical e-ink behaviour or a separate read-only view. You can continue editing and following up on leads. Reduced motion disables the celestial toggle animation.
+
+Book mode uses the same responsive type-size roles as the standard interface. Its serif family is preserved; the mode does not enlarge every passage indiscriminately.
 
 ### Questions
 

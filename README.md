@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.6.5 · MIT**
+**Part of Avinya Enterprises · v1.6.6 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -34,7 +34,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard funnel is a snapshot of current counts: selecting a stage opens its filtered leads. Its widths do not claim conversion rates or an invented history.
 
-![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=23034f4ee3b6)
+![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=72f094ef7d7f)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -45,7 +45,7 @@ The notification bell opens an overlay without losing your place. Assignment and
 <details>
 <summary>Mobile lead view</summary>
 
-<img src="site/assets/screenshots/mobile-demo.jpg?sha=fcfd1373f68a" alt="A fictional lead’s journey on mobile" width="320">
+<img src="site/assets/screenshots/mobile-demo.jpg?sha=165a8d351c93" alt="A fictional lead’s journey on mobile" width="320">
 
 </details>
 
@@ -129,7 +129,7 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=f4c03d9728e5)
+![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=ba771403c328)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
@@ -141,6 +141,10 @@ The full lead page opens in **All**: loaded activity and review information. You
 
 Open **Settings → Appearance & time**, enable **Book mode**, and save. Warm paper and serif fonts throughout the UI work with Light, Dark and System; the sunrise/sunset switch keeps your reading style. This is personal to your account.
 
-![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=abac4c7e009e)
+![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=78f551cd5da4)
 
 Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).
+
+Mobile layout and typography follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Apple HIG while retaining our fonts. Open Filters for advanced search options; opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
+
+![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=1067908a5915)

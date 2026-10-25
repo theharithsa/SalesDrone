@@ -72,3 +72,5 @@ source/tests when using or changing them.
 - [Product handbook and screenshot maintenance](salesdrone-product-guide/SKILL.md): current workflows, FAQs and reviewed captures after UI changes.
 
 [Book mode](salesdrone-book-mode/SKILL.md) owns the complete serif reading style and paper palettes; workspace settings retains primary ownership of /me preferences.
+
+Design references shared with other agents: [Wondel Design & UX installation and licence](WONDEL-SOURCE.md). SalesDrone-specific principles remain in [interface](salesdrone-interface/SKILL.md) and [DESIGN-SYSTEM.md](../docs/DESIGN-SYSTEM.md).

@@ -3,6 +3,14 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+## [1.6.6] - 2026-10-26
+
+### Changed
+- Apply a semantic responsive type scale based on Apple HIG, preserving all existing fonts and Book mode.
+- Fix mobile lead selection to open the full page; remove the offset-sheet layout, reflow assignment controls and compact identity/journey.
+- Group secondary lead filters behind a native disclosure with active counts.
+- Document typography/layout principles, refresh synthetic captures and install nine pinned Wondel Design & UX skills through shared .agents discovery.
+
 ## [1.6.5] - 2026-10-26
 
 ### Changed

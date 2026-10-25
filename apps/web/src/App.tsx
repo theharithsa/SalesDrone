@@ -959,9 +959,37 @@ export default function App() {
       if (epoch === detailEpoch.current) setDetailBusy(false);
     }
   }
+  async function inspectLead(lead: Lead) {
+    if (window.matchMedia('(max-width: 1000px)').matches && lead?.id) {
+      detailEpoch.current++;
+      setSelected(null);
+      setDetailBusy(true);
+      setPage('leads');
+      setLeadTab('all');
+      const nextPath = '/leads/' + encodeURIComponent(lead.id);
+      if (window.location.pathname !== nextPath)
+        window.history.pushState({}, '', nextPath);
+      setRouteLeadId(lead.id);
+      window.scrollTo(0, 0);
+      // Reopening the current route does not rerun its effect. Refresh it directly.
+      if (routeLeadId === lead.id) return chooseLead(lead);
+      return;
+    }
+    return chooseLead(lead);
+  }
   async function editLeadFromList(lead: Lead) {
     const fresh = await chooseLead(lead);
-    if (fresh) setModal('edit');
+    if (fresh) {
+      if (window.matchMedia('(max-width: 1000px)').matches) {
+        window.history.pushState(
+          {},
+          '',
+          '/leads/' + encodeURIComponent(fresh.id),
+        );
+        setRouteLeadId(fresh.id);
+      }
+      setModal('edit');
+    }
   }
   async function openTask(t: Task) {
     setFocusedTask(t);
@@ -1544,7 +1572,7 @@ export default function App() {
                   const lead = await request('/leads/' + n.leadId);
                   if (epoch !== generation.current || !isCurrent()) return;
                   go('leads');
-                  await chooseLead(lead);
+                  await inspectLead(lead);
                 } else {
                   const task = await request('/tasks/' + n.taskId);
                   if (epoch !== generation.current || !isCurrent()) return;
@@ -1689,7 +1717,7 @@ export default function App() {
                   const lead = await request('/leads/' + id);
                   if (epoch !== generation.current) return;
                   go('leads');
-                  await chooseLead(lead);
+                  await inspectLead(lead);
                 }}
                 onTask={async (id) => {
                   const epoch = generation.current;
@@ -1761,7 +1789,7 @@ export default function App() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="leads-toolbar">
+                  <div className="lead-search-row">
                     <form
                       className="search-field"
                       onSubmit={(e) => {
@@ -1773,9 +1801,7 @@ export default function App() {
                       <input
                         aria-label="Search leads"
                         placeholder={
-                          demo
-                            ? 'Search sample leads…'
-                            : 'Search name, company, city, sector or contact…'
+                          demo ? 'Search sample leads…' : 'Search leads…'
                         }
                         value={searchDraft}
                         onChange={(e) => {
@@ -1791,64 +1817,79 @@ export default function App() {
                         <ArrowRight size={15} />
                       </button>
                     </form>
-                    <select
-                      aria-label="Search field"
-                      value={searchField}
-                      onChange={(e) => setSearchField(e.target.value)}
-                    >
-                      <option value="name">
-                        {labelFor(fieldOptions, 'name')}
-                      </option>
-                      <option value="company">
-                        {labelFor(fieldOptions, 'company')}
-                      </option>
-                      <option value="phone">
-                        {labelFor(fieldOptions, 'phone')}
-                      </option>
-                      <option value="email">
-                        {labelFor(fieldOptions, 'email')}
-                      </option>
-                      <option value="location">
-                        {labelFor(fieldOptions, 'location')}
-                      </option>
-                      <option value="zone">
-                        {labelFor(fieldOptions, 'zone')}
-                      </option>
-                    </select>
-                    <select
-                      aria-label="Filter stage"
-                      value={stage}
-                      onChange={(e) => setStage(e.target.value)}
-                    >
-                      <option value="">
-                        All {labelFor(fieldOptions, 'stage').toLowerCase()}
-                      </option>
-                      {withCurrent(
-                        fieldOptions.values.stage,
-                        selected?.stage,
-                      ).map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
-                    <select
-                      aria-label="Filter source"
-                      value={source}
-                      onChange={(e) => setSource(e.target.value)}
-                    >
-                      <option value="">
-                        All {labelFor(fieldOptions, 'source').toLowerCase()}
-                      </option>
-                      {sourceOptions.map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
                   </div>
-                  <LeadFilters
-                    config={fieldOptions}
-                    key={session?.identity.uid || 'demo'}
-                    applied={columnFilters}
-                    onApply={setColumnFilters}
-                  />
+                  <details className="lead-filters-disclosure">
+                    <summary>
+                      <Filter size={16} /> Filters
+                      {columnFilters.length || stage || source ? (
+                        <span className="filter-count">
+                          {columnFilters.length +
+                            Number(!!stage) +
+                            Number(!!source)}{' '}
+                          active
+                        </span>
+                      ) : null}
+                    </summary>
+                    <div className="leads-toolbar">
+                      <select
+                        aria-label="Search field"
+                        value={searchField}
+                        onChange={(e) => setSearchField(e.target.value)}
+                      >
+                        <option value="name">
+                          {labelFor(fieldOptions, 'name')}
+                        </option>
+                        <option value="company">
+                          {labelFor(fieldOptions, 'company')}
+                        </option>
+                        <option value="phone">
+                          {labelFor(fieldOptions, 'phone')}
+                        </option>
+                        <option value="email">
+                          {labelFor(fieldOptions, 'email')}
+                        </option>
+                        <option value="location">
+                          {labelFor(fieldOptions, 'location')}
+                        </option>
+                        <option value="zone">
+                          {labelFor(fieldOptions, 'zone')}
+                        </option>
+                      </select>
+                      <select
+                        aria-label="Filter stage"
+                        value={stage}
+                        onChange={(e) => setStage(e.target.value)}
+                      >
+                        <option value="">
+                          All {labelFor(fieldOptions, 'stage').toLowerCase()}
+                        </option>
+                        {withCurrent(
+                          fieldOptions.values.stage,
+                          selected?.stage,
+                        ).map((s) => (
+                          <option key={s}>{s}</option>
+                        ))}
+                      </select>
+                      <select
+                        aria-label="Filter source"
+                        value={source}
+                        onChange={(e) => setSource(e.target.value)}
+                      >
+                        <option value="">
+                          All {labelFor(fieldOptions, 'source').toLowerCase()}
+                        </option>
+                        {sourceOptions.map((s) => (
+                          <option key={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <LeadFilters
+                      config={fieldOptions}
+                      key={session?.identity.uid || 'demo'}
+                      applied={columnFilters}
+                      onApply={setColumnFilters}
+                    />
+                  </details>
                   <div
                     className="stage-tabs"
                     role="group"
@@ -1873,7 +1914,7 @@ export default function App() {
                         scores={leadScores}
                         leads={visibleLeads}
                         selectedId={selected?.id || null}
-                        onSelect={chooseLead}
+                        onSelect={inspectLead}
                         onEdit={
                           can('leads:edit')
                             ? (lead) => void editLeadFromList(lead)
@@ -2759,7 +2800,7 @@ export default function App() {
                       )
                         return;
                       go('leads');
-                      await chooseLead(lead);
+                      await inspectLead(lead);
                     } else {
                       const task = await request('/tasks/' + n.taskId);
                       if (

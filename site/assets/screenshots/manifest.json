@@ -2,38 +2,38 @@
   {
     "file": "dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "6667587487caffef6b338b89845abf2ed2cea78b556de98e887a67885e9d88e4",
-    "capturedAt": "2026-10-25T18:50:19.689545+00:00",
-    "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport.",
-    "version": "1.6.2"
+    "sha256": "76b6dd5c0a2b9c1c7ca2e8007400524d9f012d6f2fdd08938bf7c7380056ce36",
+    "capturedAt": "2026-10-25T22:08:21.203155+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
   },
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "23034f4ee3b67b412b7557d67c84289c06ebc3e218ca0adbe9c28c885dcc5c31",
-    "capturedAt": "2026-10-25T18:50:19.718092+00:00",
-    "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport.",
-    "version": "1.6.2"
+    "sha256": "72f094ef7d7fd8f31d597ed5aec86e83c3da9528dbee47b28cd4965c8b67b047",
+    "capturedAt": "2026-10-25T22:08:21.178348+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "fcfd1373f68a934ec58c0a609c98a203d2fcdd0e7de366cb25458ed7aed94e0c",
-    "capturedAt": "2026-10-25T19:18:11.571992+00:00",
-    "viewport": "390 \u00d7 844 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production data. All has no duplicate task list; lifecycle actions use full-size icon buttons. Measured 390 x 844 CSS pixel frame, browser check not physical hardware.",
-    "version": "1.6.4"
+    "sha256": "165a8d351c93423b2d0016d5d6e67a3847c520924eb632446eb45fcfc128d0d2",
+    "capturedAt": "2026-10-25T22:08:21.254070+00:00",
+    "viewport": "390 x 844 CSS pixels, actual application iframe",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
   },
   {
     "file": "notifications-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1455bbe8cf8f64cc546cb9726ad82f5a312610cc854af5db14d3f110a74a33a0",
-    "capturedAt": "2026-10-25T18:50:19.814267+00:00",
-    "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport.",
-    "version": "1.6.2"
+    "sha256": "85e1413f940a36002de8c251ac5f2fa46f1b18d3e579bcecb2608148175003a5",
+    "capturedAt": "2026-10-25T22:08:21.272509+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
   },
   {
     "file": "api-portal-demo.jpg",
@@ -46,64 +46,82 @@
   {
     "file": "developer-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual SettingsPage in an isolated synthetic administrator fixture; no live API requests or tokens.",
-    "sha256": "ad7f4b3fefc040233eb233eadb17c54034b8667ba759814c9ea623543b90bfd2",
-    "capturedAt": "2026-10-25T16:49:37.294148+00:00",
-    "viewport": "1828 \u00d7 1028 CSS pixels",
-    "version": "1.6.0"
+    "review": "Reviewed actual SettingsPage/DeveloperSettings in an isolated synthetic administrator fixture. No live API requests, credentials, tokens or production records; fixture explicitly labelled in capture.",
+    "sha256": "393e8d822d031247ec56f36a36333d3a624bfe8b9d0b9949916ef61d280566b8",
+    "capturedAt": "2026-10-25T22:08:21.433284+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "version": "1.6.6"
   },
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5a0a8dc817d6af9fc11a747e6559ca5656c9aaf1bfa2b3c46d61c6fde4204a34",
-    "capturedAt": "2026-10-25T18:50:19.863398+00:00",
-    "viewport": "1828 \u00d7 1028 CSS pixels",
-    "version": "1.6.2",
-    "review": "Reviewed current actual guest demo with fictional example.com/555 contacts only. Sunrise/sunset control; no production records. Measured 1828 x 1028 CSS pixel desktop viewport."
+    "sha256": "e05bc1b20b98359fec3712649966feeac6b44d70ce217d8eafcb03f5d362319a",
+    "capturedAt": "2026-10-25T22:08:21.300511+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "version": "1.6.6",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
   },
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f4c03d9728e5532aff7b2472969c1c4fedbfeb323fc42098d5537a0d0ebbf807",
-    "capturedAt": "2026-10-25T19:18:11.610489+00:00",
-    "viewport": "1828 \u00d7 1028 CSS pixels",
-    "version": "1.6.4",
-    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production data. All has no duplicate task list; lifecycle actions use full-size icon buttons. Measured 1828 x 1028 CSS pixel desktop viewport."
+    "sha256": "ba771403c32841345798494c5f5ac450d5108200d52e57612747c909e1e404bd",
+    "capturedAt": "2026-10-25T22:08:21.318159+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "version": "1.6.6",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
   },
   {
     "file": "book-mode-light.jpg",
     "mode": "synthetic-demo",
-    "sha256": "abac4c7e009e79ed80175321b8fea5ec278091cb6e81366f43752ace3a684683",
-    "capturedAt": "2026-10-25T19:55:32.749774+00:00",
+    "sha256": "78f551cd5da4ebd6382bb6216b57e4c16d92a1e90ff3b006c1961b03732c0005",
+    "capturedAt": "2026-10-25T22:08:21.339869+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
-    "version": "1.6.5"
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
   },
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5e40924c4859f6a7fd33acc2e8903ade9510435979f5864d6e83478acaf8535d",
-    "capturedAt": "2026-10-25T19:55:32.768324+00:00",
+    "sha256": "ad5714bc95cc0655127a69ad6aa53cb9804358e8ffbc3745451b29d4cf33b97e",
+    "capturedAt": "2026-10-25T22:08:21.360053+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
-    "version": "1.6.5"
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
   },
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "24a897b7fff2fb6b8791039a9bd66ffad9b78d18842ee5ebbd98d352fecc83c9",
-    "capturedAt": "2026-10-25T19:55:32.817248+00:00",
+    "sha256": "53f1f3d1de30ab992c2d5c37f3e829e598851231672bee413a8d6d8b79073402",
+    "capturedAt": "2026-10-25T22:08:21.397811+00:00",
     "viewport": "390 x 844 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
-    "version": "1.6.5"
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
   },
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f70adaaf1941c43ccfa15d70bb608eac9c8e1e9d209116ab6067ed7d4c6585cf",
-    "capturedAt": "2026-10-25T19:55:32.826427+00:00",
+    "sha256": "efe63f64e5115ebad67e44999ef84974b3bf9dcd804aa8533233d3768c24d1de",
+    "capturedAt": "2026-10-25T22:08:21.415159+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
-    "version": "1.6.5"
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
+    "version": "1.6.6"
+  },
+  {
+    "file": "leads-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "74e443b38421afa91fc3bf854dd673926258e69bbe431b105689222732c9258a",
+    "capturedAt": "2026-10-25T22:08:21.226813+00:00",
+    "version": "1.6.6",
+    "viewport": "1828 x 1028 CSS pixels",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
+  },
+  {
+    "file": "mobile-leads-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "1067908a59151bbf73499d65b3a0d4f85e9e19891be70732b6dde7b3bb2fb2fc",
+    "capturedAt": "2026-10-25T22:08:21.464518+00:00",
+    "version": "1.6.6",
+    "viewport": "390 x 844 CSS pixels, actual application iframe",
+    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
   }
 ]

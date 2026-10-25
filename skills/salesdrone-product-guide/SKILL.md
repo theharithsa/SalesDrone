@@ -35,3 +35,5 @@ No module-specific HTTP endpoints. Reuse domain contracts and the API integratio
 Adjacent owners: [documentation](../salesdrone-documentation/SKILL.md), [interface](../salesdrone-interface/SKILL.md), [release readiness](../salesdrone-release-readiness/SKILL.md).
 
 For visual preference features include how to enable, save, combine with theme and disable; distinguish personal from workspace scope and visual styling from offline/hardware behaviour. Book mode uses separate reviewed day, night, mobile and settings captures so standard screenshots can remain accurate with Book mode off. Keep explicit public asset allowlists; never publish a fixture directory.
+
+When showing narrow-screen screenshots in the handbook, constrain the figure to its measured capture width rather than stretching a phone image across the desktop article. Update the screenshot allowlist and release manifest for new list/detail captures, record isolated administrator fixtures explicitly, and link typography guidance to the project design system. Do not equate enlarged root text fixtures with native Dynamic Type or physical-device verification.

@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v1.6.5**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v1.6.6**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -48,7 +48,7 @@ Saved appearance applies to your account; the browser also remembers a local fal
 
 A personal reading style with warm paper surfaces and serif fonts throughout headings, navigation, tables, forms, buttons and chart labels. Dark mode uses charcoal paper. Phone numbers remain monospace. This is a visual style, not physical e-ink or an offline reader.
 
-Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback.
+Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Responsive type-size roles match the standard UI while keeping the Book serif family; this is a web adaptation, not native Dynamic Type.
 
 **Example:** Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace.
 

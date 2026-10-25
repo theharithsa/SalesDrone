@@ -23,7 +23,7 @@
         ],
         [
           "Does this application call leads automatically?",
-          "No. Phone and email links open your device\u2019s handler. Call logging, reminders and AI analysis help you record and plan outreach; they do not place calls."
+          "No. Phone and email links open your device’s handler. Call logging, reminders and AI analysis help you record and plan outreach; they do not place calls."
         ]
       ]
     },
@@ -58,16 +58,17 @@
       "audience": "Members; actions depend on capability",
       "steps": [
         "Open Leads and select New enquiry. Complete the required name and contact information and any workspace-specific fields. Save once and wait for confirmation.",
-        "Choose a search field, enter the text and run search. Combine stage/source shortcuts with Filter any column for company, city, sector, name, dates or supported custom fields.",
-        "Click a customer name for quick inspection. On desktop the lead opens above the page as an overlay; the table keeps its original columns and width. Close it using Back to leads or Escape while focused inside the overlay.",
-        "Drag the overlay\u2019s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.",
+        "Enter text and run search. Open Filters to choose the search field, stage or source; choose Filter any column for company, city, sector, name, dates or supported custom fields.",
+        "Click a customer name for quick inspection. On desktop it opens above the unchanged table. At widths up to 1000 CSS pixels it opens the dedicated lead page directly, without an offset sheet. Use Back to leads; desktop overlays also close with Escape.",
+        "Drag the overlay’s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.",
         "Choose Edit in the table or Edit lead inside the overlay to update an existing enquiry. Save against the current version; reload if another change caused a conflict."
       ],
       "details": [
         "The source worksheet naming is made readable in the application: Enquiry source, Customer name, Phone number, Company name, City / location, Sector, Enquiry date and Enquiry status. Sales stage is separate from original imported status. Serial number is not a required application field.",
         "Administrators can customize labels and supported field options under Manage fields. Labels change presentation; stable internal field IDs keep imports and API integrations consistent. Retired fields preserve existing data rather than erasing history.",
         "Non-admin lead visibility follows workspace Reports & lead access policy and membership scope. Administrators can require assigned-only access. Filtering and exporting do not grant access to additional records.",
-        "Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion."
+        "Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion.",
+        "Search stays visible. Filters opens the search-field/stage/source controls and custom-column filter builder, with an active-condition count. Controls stack on narrow screens; stage shortcuts scroll within their row. Opening and closing the disclosure does not clear active conditions."
       ],
       "faq": [
         [
@@ -85,7 +86,7 @@
       "title": "Full lead page: All, Comments, Calls, Tasks and Review",
       "audience": "Members who can read the lead",
       "steps": [
-        "In the lead overlay, select Open full lead page. The URL becomes /leads/{leadId}; you can bookmark it or use normal browser Back navigation.",
+        "On desktop, select Open full lead page in the inspection overlay. On phones and narrow tablets, opening a lead goes directly to this page. The URL is /leads/{leadId}; bookmarks still require current authorization.",
         "Use the stage and assignment controls at the top. Assignment editing is an administrator action. Read-only users see status rather than gaining access to the people directory.",
         "Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.",
         "All opens first and includes every loaded activity and review information. Your private linked tasks appear only in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for your linked work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.",
@@ -93,10 +94,11 @@
       ],
       "details": [
         "Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.",
-        "Tasks is recipient-private. Its status filter includes Pending, Completed and Cancelled, with All statuses as the starting view. Select a card to view, edit, complete, reschedule or delete using the existing task dialog. Refresh tasks after a change; Load more tasks retrieves another page. Administrators do not automatically gain access to another person\u2019s private tasks.",
+        "Tasks is recipient-private. Its status filter includes Pending, Completed and Cancelled, with All statuses as the starting view. Select a card to view, edit, complete, reschedule or delete using the existing task dialog. Refresh tasks after a change; Load more tasks retrieves another page. Administrators do not automatically gain access to another person’s private tasks.",
         "Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.",
         "The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers.",
-        "Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks."
+        "Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.",
+        "Mobile typography uses a 28px page-title role, 22px lead identity, 17px body/form text and 15px supporting text at default browser settings. Existing font families are retained. Stage/assignment controls reflow to available width and the journey scrolls horizontally, without widening the document. Browser text preferences and zoom may change the visual sizes."
       ],
       "faq": [
         [
@@ -105,7 +107,7 @@
         ],
         [
           "Why are there fewer tasks than I expected?",
-          "The tab shows your tasks linked to this lead, subject to current access. It does not show another recipient\u2019s private reminders. Check the status filter and Load more tasks."
+          "The tab shows your tasks linked to this lead, subject to current access. It does not show another recipient’s private reminders. Check the status filter and Load more tasks."
         ]
       ]
     },
@@ -120,7 +122,7 @@
         "Use Earlier activity to retrieve older pages. Imported discussions show their source column; an unknown original conversation date is explicitly described as unknown."
       ],
       "details": [
-        "Call outcomes and lead sales stage are different concepts. No answer records an attempt; Qualified describes the relationship\u2019s sales stage. Change the stage only when the underlying relationship warrants it.",
+        "Call outcomes and lead sales stage are different concepts. No answer records an attempt; Qualified describes the relationship’s sales stage. Change the stage only when the underlying relationship warrants it.",
         "Corrections preserve previous revisions and invalidate stale analysis so an old interpretation cannot silently schedule new work. Imported historical discussions do not automatically create fresh callbacks.",
         "Notes can contain customer context; keep them out of support screenshots and public documentation. Application telemetry excludes comment content and task titles.",
         "Inline drafts stay in memory while you switch All, Comments, Calls, Tasks and Review for the same lead. Failed posts retain text; retrying an unchanged uncertain write reuses its original identity. Blank and in-flight posts are disabled. Drafts are cleared when you leave that lead, change account or reload; customer notes are not stored in browser storage."
@@ -153,7 +155,7 @@
       ],
       "faq": [
         [
-          "I wrote \u201cfollow up soon\u201d; why is there no task?",
+          "I wrote “follow up soon”; why is there no task?",
           "The timing may be ambiguous. Open Review and use Set date manually, or add a clear future date/time. Also check that automatic reminders are enabled."
         ],
         [
@@ -184,7 +186,7 @@
         ],
         [
           "Can an administrator edit my reminders?",
-          "Task recipient privacy remains in force. Administrator status alone does not grant editing rights to another person\u2019s private tasks."
+          "Task recipient privacy remains in force. Administrator status alone does not grant editing rights to another person’s private tasks."
         ]
       ]
     },
@@ -226,7 +228,7 @@
         "After initial setup, capture new enquiries through New enquiry. Import remains useful for later batches with careful preview."
       ],
       "details": [
-        "A spreadsheet\u2019s display formatting can hide phone-number or date problems. Preview the parsed values; do not assume Excel cell formatting survives as domain data. Blank comment cells are skipped, repeated nonblank discussion text is preserved as separate source entries.",
+        "A spreadsheet’s display formatting can hide phone-number or date problems. Preview the parsed values; do not assume Excel cell formatting survives as domain data. Blank comment cells are skipped, repeated nonblank discussion text is preserved as separate source entries.",
         "Imports are bounded/chunked and use replay protection. Source discussions are historical context, not new AI reminder requests. Do not fabricate discussion dates from import time.",
         "Keep source workbooks private. A CSV or workbook upload is business data; documentation examples and screenshots use fictional records only.",
         "If browser storage is blocked, keep the import page open: the current preview/run remains available in memory, but automatic resume after a reload cannot be remembered. The app shows this limitation instead of failing the preview."
@@ -254,7 +256,7 @@
       ],
       "details": [
         "An export follows the active filters and current authorization; it is not an unrestricted database download. The server rechecks current access while report pages are read. Policy/account changes cancel pending work.",
-        "Workbook generation runs in a browser worker. Large result sets are bounded by the reports API; completion time depends on result size and the device. The export does not reveal private task data or another member\u2019s inbox.",
+        "Workbook generation runs in a browser worker. Large result sets are bounded by the reports API; completion time depends on result size and the device. The export does not reveal private task data or another member’s inbox.",
         "Exporting a sheet does not create a live two-way Excel connection. Later edits in the workbook do not update SalesDrone unless entered or imported through an authorized workflow."
       ],
       "faq": [
@@ -273,7 +275,7 @@
       "title": "AvinyaIntelligence and lead scoring",
       "audience": "Members; configuration requires administrator",
       "steps": [
-        "Open a lead\u2019s Lead details & score section and read its score, evidence coverage and factor breakdown together.",
+        "Open a lead’s Lead details & score section and read its score, evidence coverage and factor breakdown together.",
         "Use refresh scoring when permitted and needed. Add factual business context through comments; do not invent evidence to raise a score.",
         "Administrators configure Fit, Intent and Red-flag factors, weights and activation under Settings > AvinyaIntelligence > Lead scoring.",
         "Customize insight instructions and manual/automatic mode under the Insights child section. Leave instructions blank to use the application default."
@@ -281,7 +283,7 @@
       "details": [
         "Fit factors include business/account profile, project capacity, geography, commercial credit and licensing. Intent can include bids, RFQs, samples, credit applications and inbound urgency. Red flags include uneconomic delivery distance, reported payment risk, unsuitable small volume and disputes.",
         "Evidence extraction uses reported information, while score calculation is deterministic from configured factors. Unknown facts are not automatically negative. Scores help prioritize sales work and do not independently verify credit, licensing, distance or safety claims.",
-        "Configuration changes can cause background refresh work. A model response is not a source of truth about a prospect\u2019s creditworthiness or commercial eligibility. Review evidence and use professional judgement."
+        "Configuration changes can cause background refresh work. A model response is not a source of truth about a prospect’s creditworthiness or commercial eligibility. Review evidence and use professional judgement."
       ],
       "faq": [
         [
@@ -301,8 +303,8 @@
       "steps": [
         "Open Settings. On desktop use the left section navigation; on mobile choose a section from the dropdown.",
         "Expand Manage fields to choose Lead fields or Dropdown choices. Expand AvinyaIntelligence to choose Insights or Lead scoring.",
-        "Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members\u2019 workflow.",
-        "Open the complete Settings reference from this handbook for each control\u2019s default, scope, permission, API, effect, example and limitation."
+        "Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members’ workflow.",
+        "Open the complete Settings reference from this handbook for each control’s default, scope, permission, API, effect, example and limitation."
       ],
       "details": [
         "Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.",
@@ -335,7 +337,8 @@
       "details": [
         "The mode applies across dashboard, leads, tasks, forms, notifications and settings. All UI text uses a local serif font, including headings, navigation, tables, forms, buttons and chart labels; phone numbers remain monospace. Status distinctions remain readable. Page borders are restrained and no page-turn animation covers working data.",
         "The saved preference belongs to your account, not the team. Existing clients that omit bookMode preserve the stored value. Demo/guest changes use a guarded local fallback; a live account uses its own server preference, default off.",
-        "This is a visual reading style. It does not add offline access, physical e-ink behaviour or a separate read-only view. You can continue editing and following up on leads. Reduced motion disables the celestial toggle animation."
+        "This is a visual reading style. It does not add offline access, physical e-ink behaviour or a separate read-only view. You can continue editing and following up on leads. Reduced motion disables the celestial toggle animation.",
+        "Book mode uses the same responsive type-size roles as the standard interface. Its serif family is preserved; the mode does not enlarge every passage indiscriminately."
       ],
       "faq": [
         [
@@ -343,7 +346,7 @@
           "No. They are independent; dark Book mode uses charcoal paper and warm ink."
         ],
         [
-          "Will this change my colleagues\u2019 screens?",
+          "Will this change my colleagues’ screens?",
           "No. Book mode is a personal preference."
         ],
         [
@@ -358,14 +361,14 @@
       "audience": "Administrators",
       "steps": [
         "Open Settings > People & permissions. Invite or approve the intended Google account; verify its email carefully.",
-        "Set the role, capabilities and supported lead scope appropriate to the person\u2019s work. Review active status and current ownership before granting access.",
+        "Set the role, capabilities and supported lead scope appropriate to the person’s work. Review active status and current ownership before granting access.",
         "Assign a lead using the top-of-lead assignment control. The recipient receives an eligible assignment notification; pending old-owner outreach is cancelled.",
         "Deactivate or adjust membership when responsibility changes. Recheck access with the affected user rather than assuming a cached page reflects current permission."
       ],
       "details": [
         "The two bootstrap administrator identities remain protected. Routine sign-in does not approve membership. Server policy is authoritative for every read, write, inference input and export; hiding a button alone is not an access boundary.",
         "Role labels and capabilities are related but not interchangeable. A task remains private to its recipient. Assigned-only policy can further restrict non-admin lead access even when other capabilities are present.",
-        "Only grant access needed for the person\u2019s responsibility. Do not share Google sessions or personal API tokens across employees."
+        "Only grant access needed for the person’s responsibility. Do not share Google sessions or personal API tokens across employees."
       ],
       "faq": [
         [
@@ -390,13 +393,13 @@
       ],
       "details": [
         "The API supports documented reads and writes for leads, activities, tasks and other permitted resources. It does not offer arbitrary Firestore access. Archive and soft delete have explicit semantics; they are not equivalent to permanent erasure.",
-        "Token routes enforce supported scopes and the owner\u2019s current active administrator membership. Expired or revoked tokens stop working. Compound operations can need more than one scope. Check the Swagger contract rather than inferring an endpoint from the UI.",
+        "Token routes enforce supported scopes and the owner’s current active administrator membership. Expired or revoked tokens stop working. Compound operations can need more than one scope. Check the Swagger contract rather than inferring an endpoint from the UI.",
         "Never put a token in a public repository, browser URL, client-side JavaScript, screenshot or support ticket. Browser sign-in/App Check and Personal Access Tokens are separate authentication paths."
       ],
       "faq": [
         [
           "Why does my token get 403?",
-          "Check its scopes, expiration, revocation and the token owner\u2019s current administrator membership. A valid secret does not bypass domain policy."
+          "Check its scopes, expiration, revocation and the token owner’s current administrator membership. A valid secret does not bypass domain policy."
         ],
         [
           "Can an integration permanently delete leads?",
