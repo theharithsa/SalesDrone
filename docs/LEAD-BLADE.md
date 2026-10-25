@@ -11,3 +11,5 @@ Tasks queries GET /tasks with leadId and optional state, limit and cursor. It on
 Review filters loaded activities with Pending, Failed and NeedsReview automatic-reminder states, alongside contact review/suppression information. It is not a global approval system. Earlier activity must be loaded to check older entries. Existing reminder Edit/Undo/Retry/manual-date actions retain their revision and owner checks.
 
 The main navigation uses consistent 20px icon cells and smooth explicit desktop collapse/expansion, with reduced-motion fallback. Documentation above Settings opens the complete public handbook. No pointer positions, customer contents or invented business events are emitted for these presentation changes.
+
+Full-page identity uses an inline first/family name with natural wrapping. Avatar, company and badge occupy independent grid cells; narrow containers put the badge below the name. Long unbroken and non-Latin names must remain readable without horizontal overflow.

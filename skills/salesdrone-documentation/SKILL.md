@@ -70,3 +70,5 @@ Adjacent owners:
 - [salesdrone-release](../salesdrone-release/SKILL.md)
 
 For complete workflows and FAQs maintain docs/product-guide.json; docs:product generates PRODUCT-GUIDE.md and docs:build publishes product.html with escaped content and search. Follow [product documentation](../salesdrone-product-guide/SKILL.md) for UI screenshot refresh, affected-screen review and curated release-version evidence. The overview is not a substitute for the handbook or per-control settings reference.
+
+When full-page identity layout changes, refresh both journey-demo.jpg and lead-workspace-demo.jpg from the actual synthetic app, with current-release manifest hashes. Check the handbook screenshot and README embed together.

@@ -11,11 +11,11 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ff59b0951458641b6681e93ff8725d7eb7a9283914d2eea110bb025711d5f2c6",
-    "capturedAt": "2026-10-25T16:49:37.151651+00:00",
+    "sha256": "aca8f556b73f0d8d56011b3d9d42db308be563c2ef33cf565fc1db547a196eb0",
+    "capturedAt": "2026-10-25T17:05:47.027184+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo.",
-    "version": "1.6.0"
+    "review": "Actual guest demo, fictional example.com/555 contacts; reviewed horizontal full-page name, company below, independent stage badge and no viewport overflow.",
+    "version": "1.6.1"
   },
   {
     "file": "mobile-demo.jpg",
@@ -63,10 +63,10 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ff59b0951458641b6681e93ff8725d7eb7a9283914d2eea110bb025711d5f2c6",
-    "capturedAt": "2026-10-25T16:49:37.250782+00:00",
+    "sha256": "aca8f556b73f0d8d56011b3d9d42db308be563c2ef33cf565fc1db547a196eb0",
+    "capturedAt": "2026-10-25T17:05:47.027617+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "version": "1.6.0",
-    "review": "Reviewed current UI with fictional demo leads and example.com/555 contacts only; no production data. Actual application guest demo."
+    "version": "1.6.1",
+    "review": "Actual guest demo, fictional example.com/555 contacts; reviewed horizontal full-page name, company below, independent stage badge and no viewport overflow."
   }
 ]

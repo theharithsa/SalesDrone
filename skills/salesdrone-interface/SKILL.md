@@ -74,3 +74,5 @@ Adjacent owners:
 - [salesdrone-workspace-settings](../salesdrone-workspace-settings/SKILL.md)
 - [salesdrone-notifications](../salesdrone-notifications/SKILL.md)
 - [salesdrone-dashboard](../salesdrone-dashboard/SKILL.md)
+
+Full-page identity overrides the compact blade’s stacked name: use inline name spans inside a wrapping block heading. Keep avatar, company and badge in independent grid cells. Container-width changes move the badge below the name; test long unbroken/multi-part/non-Latin names at narrow widths without clipping or table changes.

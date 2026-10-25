@@ -11,6 +11,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.6.1] - 2026-10-25
+
+### Changed
+- Keep first and last names horizontal on full lead pages; long names wrap without displacing company or stage.
+- Adapt the identity header to narrow containers and refresh the handbook/README demo captures.
+
 ## [1.6.0] - 2026-10-25
 
 ### Changed
