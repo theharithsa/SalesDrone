@@ -74,10 +74,22 @@ export const displayDate = (v: string, tz?: string) =>
           ? { hour: 'numeric', minute: '2-digit', timeZone: tz }
           : {}),
       }).format(new Date(v.includes('T') ? v : v + 'T12:00:00'));
-export const initials = (s: string) =>
-  s
-    .split(' ')
-    .map((v) => v[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+export const initials = (s: string) => {
+  const words = s.trim().split(/\s+/).filter(Boolean);
+  const chosen = words.length > 1 ? [words[0], words[words.length - 1]] : words;
+  const segmenter =
+    typeof Intl.Segmenter === 'function'
+      ? new Intl.Segmenter(undefined, { granularity: 'grapheme' })
+      : null;
+  return (
+    chosen
+      .map((word) =>
+        segmenter
+          ? segmenter.segment(word)[Symbol.iterator]().next().value?.segment ||
+            ''
+          : Array.from(word)[0] || '',
+      )
+      .join('')
+      .toLocaleUpperCase() || '?'
+  );
+};

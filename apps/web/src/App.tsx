@@ -1,3 +1,5 @@
+import { readStored, writeStored, removeStored } from './lib/browser-storage';
+import InlineCommentComposer from './components/InlineCommentComposer';
 import LeadTaskTab from './components/LeadTaskTab';
 import { leadPathId, reviewActivities } from './lib/lead-workspace';
 import Assignment from './components/Assignment';
@@ -188,9 +190,12 @@ export default function App() {
     [nextCursor, setNextCursor] = useState<string | null>(null),
     [menu, setMenu] = useState(false),
     [sidebarCollapsed, setSidebarCollapsed] = useState(
-      () => localStorage.getItem('salesdrone.sidebarCollapsed') === 'true',
+      () =>
+        readStored('localStorage', 'salesdrone.sidebarCollapsed') === 'true',
     ),
-    [detailBusy, setDetailBusy] = useState(false),
+    [detailBusy, setDetailBusy] = useState(
+      !!leadPathId(window.location.pathname),
+    ),
     [mutationBusy, setMutationBusy] = useState(false);
   const [focusedTask, setFocusedTask] = useState<Task | null>(null),
     [leadTasks, setLeadTasks] = useState<Task[]>([]),
@@ -247,6 +252,11 @@ export default function App() {
   const generation = useRef(0);
   const listEpoch = useRef(0);
   const detailEpoch = useRef(0);
+  const selectedIdRef = useRef(selected?.id);
+  selectedIdRef.current = selected?.id;
+  const timelineMoreLock = useRef(false);
+  const timelineMoreRequest = useRef(0);
+  const [timelineMoreBusy, setTimelineMoreBusy] = useState(false);
   const demoRef = useRef<Data>(demoData());
   const guestRef = useRef(guest);
   guestRef.current = guest;
@@ -274,7 +284,7 @@ export default function App() {
       setData(blank);
       setSelected(null);
       setTimeline([]);
-      sessionStorage.removeItem('salesdrone.import');
+      removeStored('sessionStorage', 'salesdrone.import');
       if (result.mode === 'demo') demoRef.current = demoData();
     } catch (e) {
       if (g === generation.current) {
@@ -810,7 +820,7 @@ export default function App() {
     const currentGeneration = generation.current;
     const currentDetail = detailEpoch.current;
     await loadRef.current();
-    if (selected)
+    if (selected && selectedIdRef.current === selected.id)
       try {
         const [l, a, t] = await Promise.all([
           request('/leads/' + selected.id),
@@ -826,8 +836,20 @@ export default function App() {
         setTimeline(a.items);
         setLeadTasks(t.items);
         setTimelineCursor(a.nextCursor);
-      } catch {
-        setSelected(null);
+      } catch (e) {
+        if (
+          currentGeneration === generation.current &&
+          currentDetail === detailEpoch.current &&
+          selectedIdRef.current === selected?.id
+        ) {
+          if (e instanceof ApiError && [401, 403, 404].includes(e.status)) {
+            selectedIdRef.current = undefined;
+            setSelected(null);
+            setTimeline([]);
+            setLeadTasks([]);
+          }
+          setError((e as Error).message);
+        }
       }
   }
   const pendingAutomatic = timeline.some(
@@ -871,7 +893,15 @@ export default function App() {
     };
   }, [demo, selected?.id, pendingAutomatic, request]);
   async function chooseLead(lead: Lead) {
+    if (!lead?.id) {
+      setError('This lead is unavailable. Return to Leads and refresh.');
+      return;
+    }
     const epoch = ++detailEpoch.current;
+    selectedIdRef.current = lead.id;
+    timelineMoreRequest.current++;
+    timelineMoreLock.current = false;
+    setTimelineMoreBusy(false);
     setSelected(lead);
     setLeadTab('comments');
     if (window.matchMedia('(max-width: 767px)').matches) window.scrollTo(0, 0);
@@ -918,16 +948,28 @@ export default function App() {
     const id = params.get('task');
     if (leadId) {
       let alive = true;
+      setDetailBusy(true);
+      if (routeLeadId && selectedIdRef.current !== routeLeadId) {
+        detailEpoch.current++;
+        selectedIdRef.current = undefined;
+        setSelected(null);
+        setTimeline([]);
+        setLeadTasks([]);
+      }
       request('/leads/' + encodeURIComponent(leadId))
         .then((l) => {
           if (alive && identityEpoch === generation.current) {
             setPage('leads');
-            void chooseLead(l);
+            return chooseLead(l);
           }
         })
         .catch((e) => {
           if (alive && identityEpoch === generation.current)
             setError(e.message);
+        })
+        .finally(() => {
+          if (alive && identityEpoch === generation.current)
+            setDetailBusy(false);
         });
       return () => {
         alive = false;
@@ -952,6 +994,7 @@ export default function App() {
   useEffect(() => {
     const sync = () => {
       const id = leadPathId(window.location.pathname);
+      detailEpoch.current++;
       setRouteLeadId(id);
       setLeadTab('comments');
       if (id) setPage('leads');
@@ -968,6 +1011,10 @@ export default function App() {
   }, []);
   function closeLead() {
     detailEpoch.current++;
+    selectedIdRef.current = undefined;
+    timelineMoreRequest.current++;
+    timelineMoreLock.current = false;
+    setTimelineMoreBusy(false);
     setSelected(null);
     if (routeLeadId) {
       window.history.pushState({}, '', '/leads');
@@ -994,6 +1041,7 @@ export default function App() {
     listEpoch.current++;
     detailEpoch.current++;
     setPage(p);
+    selectedIdRef.current = undefined;
     setRouteLeadId(null);
     setSelected(null);
     setMenu(false);
@@ -1044,7 +1092,7 @@ export default function App() {
       setColumnFilters([]);
       setSession(null);
       demoRef.current = demoData();
-      sessionStorage.removeItem('salesdrone.import');
+      removeStored('sessionStorage', 'salesdrone.import');
       await signOut(auth);
     }
   }
@@ -1337,7 +1385,8 @@ export default function App() {
             aria-expanded={!sidebarCollapsed}
             onClick={() => {
               setSidebarCollapsed(!sidebarCollapsed);
-              localStorage.setItem(
+              writeStored(
+                'localStorage',
                 'salesdrone.sidebarCollapsed',
                 String(!sidebarCollapsed),
               );
@@ -1462,16 +1511,16 @@ export default function App() {
               onChanged={() =>
                 window.dispatchEvent(new Event('salesdrone:inbox'))
               }
-              onOpen={async (n) => {
+              onOpen={async (n, isCurrent) => {
                 const epoch = generation.current;
                 if (n.kind?.startsWith('lead_')) {
                   const lead = await request('/leads/' + n.leadId);
-                  if (epoch !== generation.current) return;
+                  if (epoch !== generation.current || !isCurrent()) return;
                   go('leads');
                   await chooseLead(lead);
                 } else {
                   const task = await request('/tasks/' + n.taskId);
-                  if (epoch !== generation.current) return;
+                  if (epoch !== generation.current || !isCurrent()) return;
                   setFocusedTask(task);
                   setModal('taskdetail');
                 }
@@ -1634,10 +1683,7 @@ export default function App() {
                       : '')
                 }
               >
-                <div
-                  className="page-body leads-main"
-                  hidden={!!routeLeadId && !!selected}
-                >
+                <div className="page-body leads-main" hidden={!!routeLeadId}>
                   <div className="page-title">
                     <div>
                       <span className="eyebrow">
@@ -1852,6 +1898,21 @@ export default function App() {
                     </div>
                   </section>
                 </div>
+                {routeLeadId && !selected ? (
+                  <div className="lead-route-state">
+                    {detailBusy ? (
+                      <Loading />
+                    ) : (
+                      <Empty title="This lead is unavailable.">
+                        It may have been archived, or your access may have
+                        changed.
+                      </Empty>
+                    )}
+                    <button className="button" onClick={() => go('leads')}>
+                      Return to leads
+                    </button>
+                  </div>
+                ) : null}
                 {selected ? (
                   <LeadBlade
                     fullPage={!!routeLeadId}
@@ -1987,7 +2048,7 @@ export default function App() {
                             <Bell size={15} /> Remind me
                           </button>
                         ) : null}
-                        {can('activities:write') ? (
+                        {!routeLeadId && can('activities:write') ? (
                           <button
                             className="button"
                             aria-label="Add comment"
@@ -2156,15 +2217,11 @@ export default function App() {
                           {can('activities:write') ? (
                             <>
                               <button
-                                className="button primary"
-                                onClick={() => setModal('note')}
-                              >
-                                <FileText size={16} /> Add comment
-                              </button>
-                              <button
                                 className="button"
                                 disabled={
-                                  selected.doNotContact || selected.needsReview
+                                  selected.doNotContact ||
+                                  selected.needsReview ||
+                                  detailBusy
                                 }
                                 onClick={() => setModal('call')}
                               >
@@ -2285,6 +2342,25 @@ export default function App() {
                         ) : null}
                       </>
                     ) : null}
+                    {routeLeadId && can('activities:write') ? (
+                      <div
+                        className="lead-composer-region"
+                        hidden={leadTab !== 'comments'}
+                      >
+                        <InlineCommentComposer
+                          key={
+                            (session?.identity.uid || 'demo') +
+                            ':' +
+                            selected.id
+                          }
+                          leadId={selected.id}
+                          version={selected.version}
+                          request={request}
+                          onSaved={refresh}
+                          disabled={detailBusy}
+                        />
+                      </div>
+                    ) : null}
                     {!routeLeadId || leadTab !== 'tasks' ? (
                       <div
                         className={
@@ -2299,7 +2375,9 @@ export default function App() {
                         id={
                           routeLeadId && leadTab === 'comments'
                             ? 'lead-panel-comments'
-                            : routeLeadId && leadTab === 'review' ? 'lead-review-entries' : undefined
+                            : routeLeadId && leadTab === 'review'
+                              ? 'lead-review-entries'
+                              : undefined
                         }
                         aria-labelledby={
                           routeLeadId && leadTab === 'comments'
@@ -2317,7 +2395,11 @@ export default function App() {
                             {routeLeadId && leadTab === 'review'
                               ? reviewActivities(timeline).length
                               : timeline.length}{' '}
-                            entries
+                            {(routeLeadId && leadTab === 'review'
+                              ? reviewActivities(timeline).length
+                              : timeline.length) === 1
+                              ? 'entry'
+                              : 'entries'}
                           </span>
                         </div>
                         {detailBusy ? (
@@ -2411,7 +2493,14 @@ export default function App() {
                         {timelineCursor ? (
                           <button
                             className="text-button"
+                            disabled={timelineMoreBusy}
                             onClick={async () => {
+                              if (timelineMoreLock.current) return;
+                              timelineMoreLock.current = true;
+                              setTimelineMoreBusy(true);
+                              const token = ++timelineMoreRequest.current;
+                              const epoch = detailEpoch.current,
+                                current = generation.current;
                               try {
                                 const a = await request(
                                   '/leads/' +
@@ -2419,10 +2508,31 @@ export default function App() {
                                     '/activities?cursor=' +
                                     encodeURIComponent(timelineCursor),
                                 );
-                                setTimeline((t) => [...t, ...a.items]);
+                                if (
+                                  epoch !== detailEpoch.current ||
+                                  current !== generation.current
+                                )
+                                  return;
+                                setTimeline((t) => [
+                                  ...new Map(
+                                    [...t, ...a.items].map((item) => [
+                                      item.id,
+                                      item,
+                                    ]),
+                                  ).values(),
+                                ]);
                                 setTimelineCursor(a.nextCursor);
                               } catch (e) {
-                                setError((e as Error).message);
+                                if (
+                                  epoch === detailEpoch.current &&
+                                  current === generation.current
+                                )
+                                  setError((e as Error).message);
+                              } finally {
+                                if (token === timelineMoreRequest.current) {
+                                  timelineMoreLock.current = false;
+                                  setTimelineMoreBusy(false);
+                                }
                               }
                             }}
                           >
@@ -2608,14 +2718,23 @@ export default function App() {
                   }}
                   onOpen={async (n) => {
                     const identityEpoch = generation.current;
+                    const navigationEpoch = listEpoch.current;
                     if (n.kind?.startsWith('lead_')) {
                       const lead = await request('/leads/' + n.leadId);
-                      if (identityEpoch !== generation.current) return;
+                      if (
+                        identityEpoch !== generation.current ||
+                        navigationEpoch !== listEpoch.current
+                      )
+                        return;
                       go('leads');
                       await chooseLead(lead);
                     } else {
                       const task = await request('/tasks/' + n.taskId);
-                      if (identityEpoch !== generation.current) return;
+                      if (
+                        identityEpoch !== generation.current ||
+                        navigationEpoch !== listEpoch.current
+                      )
+                        return;
                       setFocusedTask(task);
                       setModal('taskdetail');
                     }

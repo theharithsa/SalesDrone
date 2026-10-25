@@ -1,14 +1,20 @@
 {
   "schemaVersion": 1,
   "version": "1.6.1",
-  "summary": "Keep full-page lead names horizontal with responsive wrapping and stable company/badge alignment.",
+  "summary": "Same-version UI maintenance: inline left-aligned conversations, safe drafts/retries and scoped asynchronous recovery across the shell.",
   "modules": [
     "salesdrone-interface",
-    "salesdrone-documentation"
+    "salesdrone-conversations",
+    "salesdrone-notifications",
+    "salesdrone-tasks-reminders",
+    "salesdrone-imports",
+    "salesdrone-authentication",
+    "salesdrone-documentation",
+    "salesdrone-release"
   ],
   "documentation": [
+    "docs/UI-STABILITY.md",
     "docs/PRODUCT-GUIDE.md",
-    "docs/SETTINGS.md",
     "docs/LEAD-BLADE.md",
     "docs/API.md",
     "docs/observability.md"
@@ -16,7 +22,7 @@
   "settingsSections": [],
   "api": {
     "status": "unchanged",
-    "reason": "CSS-only full-page name layout fix; no endpoint, permission, query or data changes.",
+    "reason": "Inline notes reuse versioned activity POST with existing policy and idempotency. Other fixes are presentation, request lifecycle and optional browser storage; no endpoint/schema/scope expansion.",
     "contractVersion": "1.12.0",
     "permissions": "Keep leads:edit for stage updates and the existing Admin assignment UI with server assignments:write checks. Read-only members receive no new directory access.",
     "tests": [
@@ -27,7 +33,7 @@
   "observability": {
     "metrics": {
       "status": "existing",
-      "reason": "Reuse existing safe instrumentation and deployment probes. CSS name wrapping adds no domain writes, API requests, AI calls or customer content telemetry.",
+      "reason": "Reuse safe RUM/API signals, committed activity outbox and deployment probes. No comment/draft content or per-keystroke telemetry. Same-version deployment is identified by commit and run.",
       "tests": [
         "functions/test/observability.test.js",
         "tests/release-readiness.test.ts"
@@ -35,7 +41,7 @@
     },
     "traces": {
       "status": "existing",
-      "reason": "Reuse existing safe instrumentation and deployment probes. CSS name wrapping adds no domain writes, API requests, AI calls or customer content telemetry.",
+      "reason": "Reuse safe RUM/API signals, committed activity outbox and deployment probes. No comment/draft content or per-keystroke telemetry. Same-version deployment is identified by commit and run.",
       "tests": [
         "functions/test/observability.test.js",
         "tests/release-readiness.test.ts"
@@ -43,7 +49,7 @@
     },
     "logs": {
       "status": "existing",
-      "reason": "Reuse existing safe instrumentation and deployment probes. CSS name wrapping adds no domain writes, API requests, AI calls or customer content telemetry.",
+      "reason": "Reuse safe RUM/API signals, committed activity outbox and deployment probes. No comment/draft content or per-keystroke telemetry. Same-version deployment is identified by commit and run.",
       "tests": [
         "functions/test/observability.test.js",
         "tests/release-readiness.test.ts"
@@ -51,7 +57,7 @@
     },
     "businessEvents": {
       "status": "existing",
-      "reason": "Reuse existing safe instrumentation and deployment probes. CSS name wrapping adds no domain writes, API requests, AI calls or customer content telemetry.",
+      "reason": "Reuse safe RUM/API signals, committed activity outbox and deployment probes. No comment/draft content or per-keystroke telemetry. Same-version deployment is identified by commit and run.",
       "tests": [
         "functions/test/observability.test.js",
         "tests/release-readiness.test.ts"
@@ -59,7 +65,7 @@
     },
     "deploymentEvents": {
       "status": "existing",
-      "reason": "Reuse existing safe instrumentation and deployment probes. CSS name wrapping adds no domain writes, API requests, AI calls or customer content telemetry.",
+      "reason": "Reuse safe RUM/API signals, committed activity outbox and deployment probes. No comment/draft content or per-keystroke telemetry. Same-version deployment is identified by commit and run.",
       "tests": [
         "functions/test/observability.test.js",
         "tests/release-readiness.test.ts"
@@ -84,9 +90,10 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Use actual name/avatar/badge components at measured 1100, 600 and 360px container widths with short, multi-part, unbroken and non-Latin names. Verify full-page demo and refreshed screenshots.",
+  "manualVerification": "Actual demo posting/draft tabs, keyboard/overlay focus, unchanged table geometry, task edit, notification read/unread, responsive Settings at 390/768/1024 CSS pixels, failure/slow-write fixtures and long content. Physical devices and production customer writes excluded.",
   "screenshots": [
     "journey-demo.jpg",
-    "lead-workspace-demo.jpg"
+    "lead-workspace-demo.jpg",
+    "mobile-demo.jpg"
   ]
 }

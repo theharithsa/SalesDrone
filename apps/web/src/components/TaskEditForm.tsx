@@ -14,10 +14,10 @@ export default function TaskEditForm({
   onSave: (data: any) => Promise<void>;
   onCancel: () => void;
 }) {
-  const submit = useSubmit(async (data) => {
+  const submit = useSubmit(async (data, _key, isCurrent) => {
     const { localDueAt, ...fields } = data;
     await onSave({ ...fields, dueAt: localInstant(localDueAt) });
-    onCancel();
+    if (isCurrent()) onCancel();
   });
   return (
     <form
@@ -30,7 +30,7 @@ export default function TaskEditForm({
           localDueAt: String(d.get('dueAt')),
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           kind: String(d.get('kind')),
-          state:String(d.get('state')),
+          state: String(d.get('state')),
         });
       }}
     >
@@ -61,7 +61,14 @@ export default function TaskEditForm({
             <option value="administrative">Administrative</option>
           </select>
         </label>
-        <label>Status<select name="state" defaultValue={task.state}>{['Pending','Completed','Cancelled'].map(value=><option key={value}>{value}</option>)}</select></label>
+        <label>
+          Status
+          <select name="state" defaultValue={task.state}>
+            {['Pending', 'Completed', 'Cancelled'].map((value) => (
+              <option key={value}>{value}</option>
+            ))}
+          </select>
+        </label>
       </div>
       <p className="field-hint">
         Entered in {Intl.DateTimeFormat().resolvedOptions().timeZone}. Your lead

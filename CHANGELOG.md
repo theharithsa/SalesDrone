@@ -14,6 +14,12 @@ API contract versions are independent from application versions.
 
 ## [1.6.1] - 2026-10-25
 
+### Maintenance update — same version at the user’s request
+- Left-align lead conversation cards and add an inline comment composer with tab-persistent drafts, blank/duplicate submission guards and safe idempotent retries.
+- Guard stale activity pagination, route transitions, refresh failures, notification reloads and dismissed form completions.
+- Improve long labels, Unicode avatar initials and blocked-storage fallbacks; verify desktop, phone and tablet browser layouts.
+- Refresh documentation and screenshots; preserve the original v1.6.1 tag and identify this maintenance deployment by commit/run.
+
 ### Changed
 - Keep first and last names horizontal on full lead pages; long names wrap without displacing company or stage.
 - Adapt the identity header to narrow containers and refresh the handbook/README demo captures.

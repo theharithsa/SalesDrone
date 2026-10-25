@@ -9,9 +9,9 @@ export default function TaskDeleteForm({
   onDelete: () => Promise<void>;
   onCancel: () => void;
 }) {
-  const submit = useSubmit(async () => {
+  const submit = useSubmit(async (_data, _key, isCurrent) => {
     await onDelete();
-    onCancel();
+    if (isCurrent()) onCancel();
   });
   return (
     <form

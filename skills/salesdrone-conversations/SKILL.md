@@ -64,3 +64,5 @@ Adjacent owners:
 - [salesdrone-lead-journey](../salesdrone-lead-journey/SKILL.md)
 
 The full lead page presents revision-preserving paginated history as readable comment cards in Comments; Review filters loaded Pending/Failed/NeedsReview analyses. Keep source labels, honest unknown imported dates, preserved line breaks and existing correction/reminder policy. Do not imply a complete historical review before older pages are loaded.
+
+The full-page Comments tab posts inline via the existing activity contract; compact inspection retains NoteForm. comment-attempt.ts preserves exact key/version/payload for unchanged uncertain retries, resets on confirmed version conflicts and never writes blank input. Clear drafts only after a confirmed post; distinguish refresh failure from write failure and guard callbacks after unmount. Drafts survive tab switches, not leaving the lead or reloading. Paginated history is deduplicated and guarded by current detail/session epoch.

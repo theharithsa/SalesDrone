@@ -72,3 +72,7 @@ Adjacent owners:
 For complete workflows and FAQs maintain docs/product-guide.json; docs:product generates PRODUCT-GUIDE.md and docs:build publishes product.html with escaped content and search. Follow [product documentation](../salesdrone-product-guide/SKILL.md) for UI screenshot refresh, affected-screen review and curated release-version evidence. The overview is not a substitute for the handbook or per-control settings reference.
 
 When full-page identity layout changes, refresh both journey-demo.jpg and lead-workspace-demo.jpg from the actual synthetic app, with current-release manifest hashes. Check the handbook screenshot and README embed together.
+
+Same-version maintenance remains visible in changelog/commit history. Document inline comment drafts, uncertain retries, left-aligned history and blocked-storage recovery; refresh affected desktop/mobile screenshots and retain explicit browser-only testing limits.
+
+Public guide builds stamp the exact source commit and hash-version reviewed screenshot URLs. Post-deploy guide checks require commit as well as version, including same-version maintenance, so stale Pages HTML cannot satisfy the release gate.

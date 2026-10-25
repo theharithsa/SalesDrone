@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { renderProductGuide } from './product-guide.mjs';
 import { renderSettings } from './settings-reference.mjs';
 import { TOKEN_SCOPES } from '../functions/src/api-scopes.js';
@@ -6,10 +7,27 @@ import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const pkg = JSON.parse(await readFile('package.json', 'utf8')),
   out = 'site/.build';
+const sourceCommit =
+  process.env.GITHUB_SHA ||
+  execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+if (!/^[a-f0-9]{40}$/.test(sourceCommit))
+  throw Error('Invalid documentation source commit');
 await mkdir(out, { recursive: true });
 const manifest = JSON.parse(
   await readFile('site/assets/screenshots/manifest.json', 'utf8'),
 );
+function stamp(html) {
+  return html
+    .replace(
+      '<head>',
+      '<head><meta name="salesdrone-commit" content="' + sourceCommit + '">',
+    )
+    .replace(/assets\/screenshots\/([a-z0-9-]+\.jpg)/g, (_match, name) => {
+      const item = manifest.find((r) => r.file === name);
+      if (!item) throw Error('Unreviewed screenshot reference');
+      return 'assets/screenshots/' + name + '?sha=' + item.sha256.slice(0, 12);
+    });
+}
 const screenshots = [
   'dashboard-demo.jpg',
   'journey-demo.jpg',
@@ -119,7 +137,7 @@ const html = template
       ),
     ),
   );
-await writeFile(out + '/index.html', html);
+await writeFile(out + '/index.html', stamp(html));
 await copyFile('site/guide.css', out + '/guide.css');
 await writeFile(out + '/.nojekyll', '');
 console.log(
@@ -136,7 +154,7 @@ const settings = renderSettings(
   TOKEN_SCOPES,
   pkg.version,
 );
-await writeFile(out + '/settings.html', settings.html);
+await writeFile(out + '/settings.html', stamp(settings.html));
 if ((await readFile('docs/SETTINGS.md', 'utf8')) !== settings.markdown)
   throw Error('Stale settings reference: npm run docs:settings');
 
@@ -144,7 +162,7 @@ const product = renderProductGuide(
   JSON.parse(await readFile('docs/product-guide.json', 'utf8')),
   pkg.version,
 );
-await writeFile(out + '/product.html', product.html);
+await writeFile(out + '/product.html', stamp(product.html));
 await copyFile('site/product.css', out + '/product.css');
 if ((await readFile('docs/PRODUCT-GUIDE.md', 'utf8')) !== product.markdown)
   throw Error('Stale product handbook: npm run docs:product');

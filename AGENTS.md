@@ -72,3 +72,5 @@ for the README using demo data only. After UI changes follow skills/salesdrone-p
 Use `npm run security:scan` before committing, and inspect staged paths for secrets,
 workbooks, logs, generated caches and private screenshots. Only curated assets from
 site/ are published to GitHub Pages; docs/ contains engineering references; local production captures and evidence are excluded from Git.
+
+An explicit human request to keep the displayed version may authorize one maintenance deployment. Record the exact prior commit and instruction in releases/maintenance.json; preserve existing tags and distinguish the deployment by commit/run. Do not infer future same-version authorization from that record.

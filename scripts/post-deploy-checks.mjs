@@ -41,9 +41,11 @@ export function checkFunctions(metadata, expected) {
   )
     throw Error('Function revisions are incomplete or inactive');
 }
-export function checkSettingsPage(html, version) {
+export function checkSettingsPage(html, version, commit) {
   if (
     !html.includes(`name="salesdrone-version" content="${version}"`) ||
+    (commit &&
+      !html.includes(`name="salesdrone-commit" content="${commit}"`)) ||
     !html.includes('Manage fields') ||
     !html.includes('id="fields"') ||
     !html.includes('id="choices"')
@@ -51,9 +53,11 @@ export function checkSettingsPage(html, version) {
     throw Error('Public settings reference is missing or stale');
 }
 
-export function checkProductPage(html, version) {
+export function checkProductPage(html, version, commit) {
   if (
     !html.includes(`name="salesdrone-version" content="${version}"`) ||
+    (commit &&
+      !html.includes(`name="salesdrone-commit" content="${commit}"`)) ||
     !html.includes('id="lead-workspace"') ||
     !html.includes('id="api"') ||
     !html.includes('Handbook modules')

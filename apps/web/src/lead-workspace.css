@@ -359,17 +359,39 @@
 .full-lead-page .blade-body > .detail-admin-actions {
   grid-column: 1 / -1;
 }
-@media(min-width:1001px) {
- .app-shell:not(.sidebar-collapsed) .sidebar {width:248px;}
- .app-shell:not(.sidebar-collapsed) .main-shell {margin-left:248px;}
- .sidebar .quick-search {white-space:nowrap;}
- .sidebar .quick-search span {overflow:hidden;text-overflow:ellipsis;}
- .sidebar .quick-search > svg {flex-shrink:0;}
- .full-lead-page .lead-journey {padding:18px 24px;}
- .full-lead-page .lead-journey .lead-stage-path {margin:10px 0;}
+@media (min-width: 1001px) {
+  .app-shell:not(.sidebar-collapsed) .sidebar {
+    width: 248px;
+  }
+  .app-shell:not(.sidebar-collapsed) .main-shell {
+    margin-left: 248px;
+  }
+  .sidebar .quick-search {
+    white-space: nowrap;
+  }
+  .sidebar .quick-search span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sidebar .quick-search > svg {
+    flex-shrink: 0;
+  }
+  .full-lead-page .lead-journey {
+    padding: 18px 24px;
+  }
+  .full-lead-page .lead-journey .lead-stage-path {
+    margin: 10px 0;
+  }
 }
-.sidebar .nav-item {grid-template-columns:20px minmax(0,1fr);font-size:14px;}
-.sidebar .nav-item > small {position:absolute;right:12px;top:13px;}
+.sidebar .nav-item {
+  grid-template-columns: 20px minmax(0, 1fr);
+  font-size: 14px;
+}
+.sidebar .nav-item > small {
+  position: absolute;
+  right: 12px;
+  top: 13px;
+}
 /* Full-page identity reads as one name; only available space introduces wrapping. */
 .full-lead-page .detail-profile {
   display: grid;
@@ -405,7 +427,9 @@
   font-size: 1em;
   line-height: inherit;
 }
-.full-lead-page .detail-profile .lead-family-name { letter-spacing: .015em; }
+.full-lead-page .detail-profile .lead-family-name {
+  letter-spacing: 0.015em;
+}
 .full-lead-page .detail-profile p {
   grid-column: 2;
   grid-row: 2;
@@ -419,6 +443,100 @@
   justify-self: start;
 }
 @container lead-blade (min-width: 600px) {
-  .full-lead-page .detail-profile { grid-template-columns: 56px minmax(0, 1fr) auto; }
-  .full-lead-page .detail-profile > .badge { grid-column: 3; grid-row: 1 / span 2; }
+  .full-lead-page .detail-profile {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+  }
+  .full-lead-page .detail-profile > .badge {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+}
+/* Conversation content anchors to the same left edge as its heading and composer. */
+.conversation-workspace .timeline {
+  margin: 20px 0;
+  max-width: 1100px;
+  width: 100%;
+}
+.lead-composer-region {
+  grid-column: 1 / -1 !important;
+  padding: 24px 24px 0;
+}
+.lead-composer-region[hidden] {
+  display: none !important;
+}
+.inline-comment-composer {
+  max-width: 1100px;
+  display: grid;
+  gap: 10px;
+}
+.inline-comment-composer > label {
+  font-weight: 650;
+  font-size: 15px;
+}
+.inline-comment-composer textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 120px;
+  max-height: 45dvh;
+  resize: vertical;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.6;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+.inline-comment-composer .field-hint {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+.composer-status:empty {
+  display: none;
+}
+.composer-status {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.composer-footer > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.full-lead-page .detail-profile > .badge {
+  max-width: 18rem;
+  max-width: min(18rem, 100%);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.full-lead-page .detail-profile h2 {
+  font-size: clamp(1.4rem, 2.4cqi, 2rem);
+}
+.task-work-card > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .lead-composer-region {
+    padding: 18px 14px 0;
+  }
+  .inline-comment-composer .composer-footer {
+    gap: 10px;
+  }
+  .full-lead-page .detail-profile {
+    padding: 20px 14px;
+    column-gap: 12px;
+  }
+}
+.lead-route-state {
+  grid-column: 1 / -1;
+  max-width: 700px;
+  margin: 48px auto;
+  padding: 24px;
 }

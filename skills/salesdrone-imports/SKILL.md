@@ -68,3 +68,5 @@ Adjacent owners:
 Read for detailed behavior:
 
 - [docs/WORKBOOK-ALIGNMENT.md](../../docs/WORKBOOK-ALIGNMENT.md)
+
+Browser session storage is optional for rendering and in-page import progress. Use browser-storage helpers, show that automatic reload recovery is unavailable when writes fail, and keep the current preview/job accessible. Storage failure must not turn a successful preview into an apparently failed server operation.

@@ -12,6 +12,7 @@ const docs = process.argv.includes('--docs'),
   expected = JSON.parse(await readFile('functions/src/release.json', 'utf8'));
 if (docs) {
   expected.version = JSON.parse(await readFile('package.json', 'utf8')).version;
+  expected.commit = process.env.GITHUB_SHA || expected.commit;
 }
 const results = [];
 async function check(id, fn) {
@@ -40,7 +41,11 @@ try {
             'https://theharithsa.github.io/SalesDrone/settings.html',
           );
           if (r.ok) {
-            checkSettingsPage(await r.text(), expected.version);
+            checkSettingsPage(
+              await r.text(),
+              expected.version,
+              expected.commit,
+            );
             good = true;
             break;
           }
@@ -56,7 +61,7 @@ try {
             'https://theharithsa.github.io/SalesDrone/product.html',
           );
           if (r.ok) {
-            checkProductPage(await r.text(), expected.version);
+            checkProductPage(await r.text(), expected.version, expected.commit);
             return;
           }
         } catch {}

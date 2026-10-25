@@ -11,19 +11,20 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "aca8f556b73f0d8d56011b3d9d42db308be563c2ef33cf565fc1db547a196eb0",
-    "capturedAt": "2026-10-25T17:05:47.027184+00:00",
+    "sha256": "13eb01a1eb21aa848e30eff7b47eecc7aec521da234d259fd919a5776178ac41",
+    "capturedAt": "2026-10-25T18:06:56.857613+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Actual guest demo, fictional example.com/555 contacts; reviewed horizontal full-page name, company below, independent stage badge and no viewport overflow.",
+    "review": "Reviewed synthetic guest demo only, with fictional example.com/555 contacts. Inline entry and left-aligned timeline; no production data. Actual desktop application.",
     "version": "1.6.1"
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "3cd0eeb01a9dc671dccdce91eafc0aeb5b088acf2ecae75c8b557548f96cfee4",
-    "capturedAt": "2026-10-24T19:49:53.161Z",
-    "viewport": "390 \u00d7 844",
-    "review": "Guest demo only; example.com emails and fictional 555 phone numbers."
+    "sha256": "656240307365cb2d24944c538a68c850d75fedaceac2c106a95a92ca1977cc8d",
+    "capturedAt": "2026-10-25T18:06:56.914609+00:00",
+    "viewport": "390 \u00d7 844 CSS pixels, actual application iframe",
+    "review": "Reviewed synthetic guest demo only, with fictional example.com/555 contacts. Inline entry and left-aligned timeline; no production data. Cropped to the measured responsive frame; browser check, not physical hardware.",
+    "version": "1.6.1"
   },
   {
     "file": "notifications-demo.jpg",
@@ -63,10 +64,10 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "aca8f556b73f0d8d56011b3d9d42db308be563c2ef33cf565fc1db547a196eb0",
-    "capturedAt": "2026-10-25T17:05:47.027617+00:00",
+    "sha256": "b63e1f4b948aa53c38e194c27c358bae2b2738ff2a9b6125790385b228faed36",
+    "capturedAt": "2026-10-25T18:06:56.990400+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
     "version": "1.6.1",
-    "review": "Actual guest demo, fictional example.com/555 contacts; reviewed horizontal full-page name, company below, independent stage badge and no viewport overflow."
+    "review": "Reviewed synthetic guest demo only, with fictional example.com/555 contacts. Inline entry and left-aligned timeline; no production data. Actual desktop application."
   }
 ]

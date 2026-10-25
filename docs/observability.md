@@ -100,3 +100,5 @@ The deployment workflow forwards synthetic SDK-generated OTLP traces, metrics an
 Lead blade resizing is local presentation only. Do not export pointer coordinates, lead names, per-drag logs or fabricated business events; stage/assignment mutations retain the existing server-confirmed instrumentation. Release verification still checks OTLP and deployment-event acceptance.
 
 Lead workspace navigation reuses safe RUM navigation and existing API instrumentation. Overlay resize, tab switches and sidebar collapse do not create canonical domain events or send comment contents. Release probes continue to verify logs, traces, metrics, deployment BizEvent and marker receipts separately from tenant searchability.
+
+The explicit same-version v1.6.1 maintenance deployment is identified by commit SHA and workflow run, preserving the original release tag. Composer typing sends no inference request or telemetry content; the existing sanitized activity API instrumentation and committed event outbox remain authoritative.

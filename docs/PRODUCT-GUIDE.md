@@ -100,7 +100,7 @@ Members who can read the lead
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.
 
-4. Choose Comments for conversation history, Tasks for your lead-linked work, or Review for issues that need attention. Arrow keys move between the tabs; Home/End select the first/last tab.
+4. Choose Comments for the left-aligned discussion history and inline Write a comment field, Tasks for your linked work, or Review for issues needing attention. Arrow keys move between tabs; Home/End select the first/last tab.
 
 5. Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission.
 
@@ -128,7 +128,7 @@ Members with activities:write for changes
 
 1. Open a lead and choose Log call. Select the actual outcome, add discussion notes and any supported disposition or follow-up fields, then save.
 
-2. For a general update choose Add comment. Write the context and a concrete next action, for example “Call next Tuesday at 10 am.” Each save creates a separate entry.
+2. On the full lead page, type directly into Write a comment in the Comments tab and choose Post comment. In the quick-inspection overlay, Add comment still opens the compact dialog. Each successful post creates a separate entry.
 
 3. Check the entry in Comments. If you made a mistake, choose Correct entry and submit a correction; the original revision remains part of the record.
 
@@ -139,6 +139,8 @@ Call outcomes and lead sales stage are different concepts. No answer records an 
 Corrections preserve previous revisions and invalidate stale analysis so an old interpretation cannot silently schedule new work. Imported historical discussions do not automatically create fresh callbacks.
 
 Notes can contain customer context; keep them out of support screenshots and public documentation. Application telemetry excludes comment content and task titles.
+
+Inline drafts stay in memory while you switch Comments, Tasks and Review for the same lead. Failed posts retain text; retrying an unchanged uncertain write reuses its original identity. Blank and in-flight posts are disabled. Drafts are cleared when you leave that lead, change account or reload; customer notes are not stored in browser storage.
 
 ### Questions
 
@@ -253,6 +255,8 @@ A spreadsheet’s display formatting can hide phone-number or date problems. Pre
 Imports are bounded/chunked and use replay protection. Source discussions are historical context, not new AI reminder requests. Do not fabricate discussion dates from import time.
 
 Keep source workbooks private. A CSV or workbook upload is business data; documentation examples and screenshots use fictional records only.
+
+If browser storage is blocked, keep the import page open: the current preview/run remains available in memory, but automatic resume after a reload cannot be remembered. The app shows this limitation instead of failing the preview.
 
 ### Questions
 

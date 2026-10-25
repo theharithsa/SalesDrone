@@ -13,3 +13,5 @@ Review filters loaded activities with Pending, Failed and NeedsReview automatic-
 The main navigation uses consistent 20px icon cells and smooth explicit desktop collapse/expansion, with reduced-motion fallback. Documentation above Settings opens the complete public handbook. No pointer positions, customer contents or invented business events are emitted for these presentation changes.
 
 Full-page identity uses an inline first/family name with natural wrapping. Avatar, company and badge occupy independent grid cells; narrow containers put the badge below the name. Long unbroken and non-Latin names must remain readable without horizontal overflow.
+
+Full-page Comments starts with an inline Write a comment field, followed by left-aligned cards. Drafts survive tab switches for the same lead, but are memory-only and disappear when leaving the lead/account or reloading. Successful posts clear the field; failed posts retain it. Posting uses existing version/idempotency policy. Stale pagination and late form callbacks must not replace the active lead or close another dialog.

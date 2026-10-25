@@ -192,3 +192,5 @@ GET /api/v1/workspace-settings returns version, exportsEnabled and assignedOnly 
 The v1.6.1 lead blade layout reuses existing stage/assignment/journey operations and permissions. Resizing is a local presentation preference, not a new API or workspace grant. Stage updates need leads:edit; assignment writes retain assignments:write and expectedVersion.
 
 The /leads/{id} browser route and Comments/Tasks/Review tabs are presentation surfaces. Existing scoped lead/activity/task endpoints remain authoritative; Review filters loaded analysis states. Lead Tasks pages GET /tasks?leadId=... with optional state, limit and cursor and never expands recipient-private access.
+
+Inline comment entry uses the existing POST lead activities operation, including expectedVersion, activities:write and Idempotency-Key. Uncertain retries retain the same payload/version/key; editing text starts a new attempt. No permission or API contract expansion is introduced by the UI maintenance.

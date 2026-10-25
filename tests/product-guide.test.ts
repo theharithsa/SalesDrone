@@ -44,3 +44,17 @@ test('published product handbook must match release metadata and required workfl
   assert.throws(() => checkProductPage(html, '1.5.1'));
   assert.throws(() => checkProductPage('<html/>', '1.6.0'));
 });
+
+test('same-version documentation still has to match the deployed source commit', async () => {
+  const { checkProductPage, checkSettingsPage } = await import(
+    '../scripts/post-deploy-checks.mjs'
+  );
+  const stamp =
+    '<meta name="salesdrone-version" content="1.6.1"><meta name="salesdrone-commit" content="new-sha">';
+  const product = stamp + 'Handbook modules id="lead-workspace" id="api"';
+  const settings = stamp + 'Manage fields id="fields" id="choices"';
+  assert.doesNotThrow(() => checkProductPage(product, '1.6.1', 'new-sha'));
+  assert.throws(() => checkProductPage(product, '1.6.1', 'old-sha'));
+  assert.doesNotThrow(() => checkSettingsPage(settings, '1.6.1', 'new-sha'));
+  assert.throws(() => checkSettingsPage(settings, '1.6.1', 'old-sha'));
+});

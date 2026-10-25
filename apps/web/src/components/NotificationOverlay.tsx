@@ -18,7 +18,7 @@ export default function NotificationOverlay({
   trigger: ReactNode;
   request: (p: string, m?: string, b?: any) => Promise<any>;
   timezone: string;
-  onOpen: (item: Entity) => Promise<void>;
+  onOpen: (item: Entity, isCurrent: () => boolean) => Promise<void>;
   onChanged: () => void;
 }) {
   const [items, setItems] = useState<Entity[]>([]),
@@ -31,6 +31,8 @@ export default function NotificationOverlay({
     if (!open) return;
     const epoch = ++generation.current;
     let alive = true;
+    setItems([]);
+    setCursor(null);
     setBusy(true);
     setError('');
     navigating.current = false;
@@ -71,7 +73,9 @@ export default function NotificationOverlay({
     }
   }
   async function read(n: Entity, value: boolean) {
+    const epoch = generation.current;
     await request('/notifications/' + n.id, 'PATCH', { read: value });
+    if (epoch !== generation.current) return;
     setItems((old) =>
       old.map((item) =>
         item.id === n.id
@@ -82,7 +86,13 @@ export default function NotificationOverlay({
     onChanged();
   }
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(value) => {
+        if (!value) generation.current++;
+        onOpenChange(value);
+      }}
+    >
       <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="notification-scrim" />
@@ -118,7 +128,9 @@ export default function NotificationOverlay({
               onMore={() => void more()}
               onRead={read}
               onOpen={async (n) => {
-                await onOpen(n);
+                const epoch = generation.current;
+                await onOpen(n, () => epoch === generation.current);
+                if (epoch !== generation.current) return;
                 navigating.current = true;
                 onOpenChange(false);
                 if (!n.readAt) {

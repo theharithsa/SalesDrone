@@ -1,0 +1,8 @@
+{
+  "version": "1.6.1",
+  "baseCommit": "db86d36140cd67e9bbeb707d773fba2bd6b7cf65",
+  "authorizedByUser": true,
+  "date": "2026-10-25",
+  "instruction": "Keep the same version no changes.",
+  "reason": "User-requested UI stability sweep, left-aligned conversations and inline comment entry without changing the displayed application version. Preserve the original release tag; distinguish the maintenance deployment by commit and workflow run."
+}

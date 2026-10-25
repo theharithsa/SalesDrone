@@ -74,3 +74,7 @@ Read for detailed behavior:
 - [docs/RELEASE.md](../../docs/RELEASE.md)
 
 The initial published-version check retries boundedly for Hosting propagation, using exact version and commit via check-published.mjs. Pages postchecks verify both settings.html and the complete product.html handbook. Do not bypass persistent mismatches.
+
+Explicit human instructions may authorize a single same-version maintenance push. releases/maintenance.json pins the exact prior commit, version, date, instruction and reason; maintenance-policy rejects reuse for a later base. Default releases still require a SemVer advance. github-release verifies descendant status and preserves the original tag/notes instead of overwriting them; commit/run identify the maintenance deployment. The file alone never authorizes another agent to skip versioning.
+
+Public guide builds stamp the exact source commit and hash-version reviewed screenshot URLs. Post-deploy guide checks require commit as well as version, including same-version maintenance, so stale Pages HTML cannot satisfy the release gate.

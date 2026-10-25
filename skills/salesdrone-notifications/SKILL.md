@@ -68,3 +68,5 @@ Adjacent owners:
 - [salesdrone-leads](../salesdrone-leads/SKILL.md)
 - [salesdrone-authentication](../salesdrone-authentication/SKILL.md)
 - [salesdrone-interface](../salesdrone-interface/SKILL.md)
+
+Opening or reloading the overlay clears prior cached rows before fetching; generation guards prevent read/navigation completions from acting on a different open/account context. Preserve focus return to the bell and read/unread semantics; clearing UI cache must not modify server read state.

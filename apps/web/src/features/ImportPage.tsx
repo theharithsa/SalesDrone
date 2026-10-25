@@ -1,3 +1,4 @@
+import { readStored, writeStored, removeStored } from '../lib/browser-storage';
 import { isCommentHeader, mapImportRows } from '../lib/import-mapping';
 import {
   defaultFieldOptions,
@@ -253,7 +254,10 @@ export default function ImportPage({
         crypto.randomUUID(),
       );
       setJob(result);
-      sessionStorage.setItem('salesdrone.import', result.id);
+      if (!writeStored('sessionStorage', 'salesdrone.import', result.id))
+        setError(
+          'Preview is ready. Browser storage is unavailable; keep this page open to finish the import.',
+        );
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -275,12 +279,14 @@ export default function ImportPage({
         );
         setJob(current);
       }
-      sessionStorage.removeItem('salesdrone.import');
+      removeStored('sessionStorage', 'salesdrone.import');
       onImported();
     } catch (e) {
       setError(
         (e as Error).message +
-          ' Your progress is saved. Choose Resume import to continue.',
+          (readStored('sessionStorage', 'salesdrone.import')
+            ? ' Your progress is saved. Choose Resume import to continue.'
+            : ' Keep this page open and retry this import to continue; automatic resume after reload requires browser storage.'),
       );
     } finally {
       setBusy(false);
@@ -290,7 +296,7 @@ export default function ImportPage({
     setBusy(true);
     setError('');
     try {
-      const id = sessionStorage.getItem('salesdrone.import');
+      const id = readStored('sessionStorage', 'salesdrone.import');
       if (id) setJob(await request('/imports/' + id));
     } catch (e) {
       setError((e as Error).message);
@@ -359,7 +365,7 @@ export default function ImportPage({
               }}
             />
           </label>
-          {!demo && sessionStorage.getItem('salesdrone.import') ? (
+          {!demo && readStored('sessionStorage', 'salesdrone.import') ? (
             <button className="text-button" onClick={resume} disabled={busy}>
               Resume previous import
             </button>

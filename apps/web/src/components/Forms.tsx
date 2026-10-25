@@ -30,8 +30,9 @@ export function LeadForm({
   const [again, setAgain] = useState(false),
     [allowDuplicate, setAllowDuplicate] = useState(false),
     [reset, setReset] = useState(0);
-  const submit = useSubmit(async (data, key) => {
+  const submit = useSubmit(async (data, key, isCurrent) => {
     await onSave(data, key);
+    if (!isCurrent()) return;
     if (!again) onCancel();
     else setReset((n) => n + 1);
   });
@@ -312,7 +313,7 @@ export function CallForm({
 }) {
   const [followUp, setFollowUp] = useState(false);
   const [disposition, setDisposition] = useState('None');
-  const submit = useSubmit(async (d, k) => {
+  const submit = useSubmit(async (d, k, isCurrent) => {
     if (d.followUp?.localDueAt) {
       d.followUp.dueAt = localInstant(d.followUp.localDueAt);
       delete d.followUp.localDueAt;
@@ -322,7 +323,7 @@ export function CallForm({
       delete d.localDueAt;
     }
     await onSave(d, k);
-    onCancel();
+    if (isCurrent()) onCancel();
   });
   return (
     <form
@@ -463,7 +464,7 @@ export function TaskForm({
   onSave: (data: any, key: string) => Promise<void>;
   onCancel: () => void;
 }) {
-  const submit = useSubmit(async (d, k) => {
+  const submit = useSubmit(async (d, k, isCurrent) => {
     if (d.followUp?.localDueAt) {
       d.followUp.dueAt = localInstant(d.followUp.localDueAt);
       delete d.followUp.localDueAt;
@@ -473,7 +474,7 @@ export function TaskForm({
       delete d.localDueAt;
     }
     await onSave(d, k);
-    onCancel();
+    if (isCurrent()) onCancel();
   });
   return (
     <form
@@ -539,7 +540,7 @@ export function NoteForm({
   onSave: (data: any, key: string) => Promise<void>;
   onCancel: () => void;
 }) {
-  const submit = useSubmit(async (d, k) => {
+  const submit = useSubmit(async (d, k, isCurrent) => {
     if (d.followUp?.localDueAt) {
       d.followUp.dueAt = localInstant(d.followUp.localDueAt);
       delete d.followUp.localDueAt;
@@ -549,7 +550,7 @@ export function NoteForm({
       delete d.localDueAt;
     }
     await onSave(d, k);
-    onCancel();
+    if (isCurrent()) onCancel();
   });
   return (
     <form
@@ -595,12 +596,12 @@ export function RescheduleForm({
   onSave: (data: any, key: string) => Promise<void>;
   onCancel: () => void;
 }) {
-  const submit = useSubmit(async (d, k) => {
+  const submit = useSubmit(async (d, k, isCurrent) => {
     await onSave(
       { dueAt: localInstant(d.dueAt), expectedVersion: task.version },
       k,
     );
-    onCancel();
+    if (isCurrent()) onCancel();
   });
   const value = new Date(task.dueAt);
   const local = new Date(value.getTime() - value.getTimezoneOffset() * 60000)
@@ -646,12 +647,12 @@ export function CorrectionForm({
   onSave: (data: any, key: string) => Promise<void>;
   onCancel: () => void;
 }) {
-  const submit = useSubmit(async (d, k) => {
+  const submit = useSubmit(async (d, k, isCurrent) => {
     await onSave(
       { ...d, type: activity.type, expectedRevision: activity.revision },
       k,
     );
-    onCancel();
+    if (isCurrent()) onCancel();
   });
   return (
     <form

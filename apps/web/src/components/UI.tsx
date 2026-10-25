@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, LoaderCircle, ArrowUpRight } from 'lucide-react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useRef, useEffect } from 'react';
 import { initials } from '../lib/types';
 export function Brand({ full = false }: { full?: boolean }) {
   return (
@@ -134,12 +134,18 @@ export function ErrorMessage({ error }: { error: string }) {
 export function SaveButton({
   busy,
   label = 'Save changes',
+  disabled = false,
 }: {
   busy: boolean;
   label?: string;
+  disabled?: boolean;
 }) {
   return (
-    <button className="button primary" disabled={busy} type="submit">
+    <button
+      className="button primary"
+      disabled={busy || disabled}
+      type="submit"
+    >
       {busy ? (
         <>
           <LoaderCircle size={16} className="spin" /> Saving…
@@ -150,24 +156,39 @@ export function SaveButton({
     </button>
   );
 }
-export function useSubmit(action: (data: any, key: string) => Promise<void>) {
+export function useSubmit(
+  action: (data: any, key: string, isCurrent: () => boolean) => Promise<void>,
+) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState('');
   const [key, setKey] = useState(() => crypto.randomUUID());
+  const lock = useRef(false),
+    alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
   return {
     busy,
     error,
     run: async (data: any) => {
-      if (busy) return;
+      if (lock.current) return;
+      lock.current = true;
       setBusy(true);
       setError('');
       try {
-        await action(data, key);
-        setKey(crypto.randomUUID());
+        await action(data, key, () => alive.current);
+        if (alive.current) setKey(crypto.randomUUID());
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Could not save. Try again.');
+        if (alive.current)
+          setError(
+            e instanceof Error ? e.message : 'Could not save. Try again.',
+          );
       } finally {
-        setBusy(false);
+        lock.current = false;
+        if (alive.current) setBusy(false);
       }
     },
   };

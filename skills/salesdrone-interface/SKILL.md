@@ -76,3 +76,5 @@ Adjacent owners:
 - [salesdrone-dashboard](../salesdrone-dashboard/SKILL.md)
 
 Full-page identity overrides the compact blade’s stacked name: use inline name spans inside a wrapping block heading. Keep avatar, company and badge in independent grid cells. Container-width changes move the badge below the name; test long unbroken/multi-part/non-Latin names at narrow widths without clipping or table changes.
+
+InlineCommentComposer is mounted per lead/account and hidden rather than unmounted on tab switches. Keep draft memory-only, no autofocus on navigation, 16px textarea text, left-aligned timeline, visible loading/error recovery and disabled blank/in-flight posts. Guard selected identity and detail epochs for refresh/pagination/Back navigation. Use browser-storage helpers for noncritical preferences and sign-in cleanup. Avatar initials must handle grapheme clusters and missing names.
