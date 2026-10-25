@@ -15,13 +15,18 @@ if (existing.status === 0) {
     const record = JSON.parse(
       await readFile('releases/maintenance.json', 'utf8'),
     );
+    // A new explicit instruction authorizes this deployment's immediate base,
+    // which may itself be a maintenance commit. The original tag stays immutable.
+    const head = call(['api', `repos/${repo}/commits/${sha}`]);
+    if (head.status) throw Error('Could not verify maintenance commit parent');
+    const parent = JSON.parse(head.stdout).parents?.[0]?.sha;
     authorizeMaintenance(record, {
       version: pkg.version,
-      baseCommit: value.object.sha,
+      baseCommit: parent,
     });
     const comparison = call([
       'api',
-      `repos/${repo}/compare/${record.baseCommit}...${sha}`,
+      `repos/${repo}/compare/${value.object.sha}...${sha}`,
     ]);
     if (comparison.status || JSON.parse(comparison.stdout).status !== 'ahead')
       throw Error('Maintenance commit must descend from the original release');

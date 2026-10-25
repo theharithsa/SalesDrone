@@ -90,7 +90,7 @@ Clear other filters, check spelling and the selected search field, then confirm 
 
 A newer version may exist, or your access changed. Refresh and reapply the intended change. Do not repeatedly resubmit an outdated version.
 
-## Full lead page: Comments, Tasks and Review
+## Full lead page: All, Comments, Calls, Tasks and Review
 
 Members who can read the lead
 
@@ -100,11 +100,11 @@ Members who can read the lead
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.
 
-4. Choose Comments for the left-aligned discussion history and inline Write a comment field, Tasks for your linked work, or Review for issues needing attention. Arrow keys move between tabs; Home/End select the first/last tab.
+4. All opens first and includes every loaded activity, review information and your private linked tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for your linked work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.
 
 5. Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission.
 
-Comments are separate chronological entries with type, timestamp, original import column where known, preserved line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.
+Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.
 
 Tasks is recipient-private. Its status filter includes Pending, Completed and Cancelled, with All statuses as the starting view. Select a card to view, edit, complete, reschedule or delete using the existing task dialog. Refresh tasks after a change; Load more tasks retrieves another page. Administrators do not automatically gain access to another person’s private tasks.
 

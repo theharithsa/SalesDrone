@@ -82,17 +82,17 @@
     },
     {
       "id": "lead-workspace",
-      "title": "Full lead page: Comments, Tasks and Review",
+      "title": "Full lead page: All, Comments, Calls, Tasks and Review",
       "audience": "Members who can read the lead",
       "steps": [
         "In the lead overlay, select Open full lead page. The URL becomes /leads/{leadId}; you can bookmark it or use normal browser Back navigation.",
         "Use the stage and assignment controls at the top. Assignment editing is an administrator action. Read-only users see status rather than gaining access to the people directory.",
         "Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.",
-        "Choose Comments for the left-aligned discussion history and inline Write a comment field, Tasks for your linked work, or Review for issues needing attention. Arrow keys move between tabs; Home/End select the first/last tab.",
+        "All opens first and includes every loaded activity, review information and your private linked tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for your linked work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.",
         "Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission."
       ],
       "details": [
-        "Comments are separate chronological entries with type, timestamp, original import column where known, preserved line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.",
+        "Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.",
         "Tasks is recipient-private. Its status filter includes Pending, Completed and Cancelled, with All statuses as the starting view. Select a card to view, edit, complete, reschedule or delete using the existing task dialog. Refresh tasks after a change; Load more tasks retrieves another page. Administrators do not automatically gain access to another person\u2019s private tasks.",
         "Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.",
         "The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers."

@@ -48,3 +48,7 @@ All changes are exercised with fictional guest-demo data or actual components in
 - Browser fixtures are temporary and excluded from the release. Current guide screenshots are reviewed synthetic captures with measured viewport/hash metadata.
 
 See [product handbook](PRODUCT-GUIDE.md), [lead workspace](LEAD-BLADE.md), [API](API.md) and [observability](observability.md). Actual post-deployment evidence is retained by GitHub Actions, separately from this review. Documentation now verifies source commit as well as version so same-version maintenance cannot pass against stale pages; changed screenshot URLs use reviewed content hashes to avoid stale browser cache.
+
+## Follow-up maintenance: activity tabs
+
+All is now the default view, retaining every loaded activity together with review information and recipient-private tasks. Comments filters only note entries (including imported discussion comments), Calls only call entries; Tasks and Review remain focused views. Filtering preserves source order and review state without duplicating cards. Empty filtered views keep Earlier activity available. The inline draft remains mounted across all five tabs, and All/Comments share the same input. Tab keyboard navigation wraps over five items; narrow screens scroll only the tab strip. No API, permission or telemetry expansion is needed. The original release tag remains immutable and the new explicit maintenance authorization is bound to its own immediate base.

@@ -102,3 +102,5 @@ Lead blade resizing is local presentation only. Do not export pointer coordinate
 Lead workspace navigation reuses safe RUM navigation and existing API instrumentation. Overlay resize, tab switches and sidebar collapse do not create canonical domain events or send comment contents. Release probes continue to verify logs, traces, metrics, deployment BizEvent and marker receipts separately from tenant searchability.
 
 The explicit same-version v1.6.1 maintenance deployment is identified by commit SHA and workflow run, preserving the original release tag. Composer typing sends no inference request or telemetry content; the existing sanitized activity API instrumentation and committed event outbox remain authoritative.
+
+Lead All/Comments/Calls tabs reuse existing safe navigation and API telemetry. Local filtering creates no canonical business event or new trace/log/metric payload. Review details, call comments and unsaved drafts remain excluded. Same-version maintenance deployment signals retain exact commit/run identifiers.

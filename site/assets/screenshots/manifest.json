@@ -11,19 +11,19 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "13eb01a1eb21aa848e30eff7b47eecc7aec521da234d259fd919a5776178ac41",
-    "capturedAt": "2026-10-25T18:06:56.857613+00:00",
+    "sha256": "2a2a96cae01aac4bd618e3840ed14bcc34451d40a36145d4ba37cca242187830",
+    "capturedAt": "2026-10-25T18:26:12.219272+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
-    "review": "Reviewed synthetic guest demo only, with fictional example.com/555 contacts. Inline entry and left-aligned timeline; no production data. Actual desktop application.",
+    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production records. Updated All/Comments/Calls tabs and filtered history. Measured desktop 1828 x 1028 CSS pixel viewport.",
     "version": "1.6.1"
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "656240307365cb2d24944c538a68c850d75fedaceac2c106a95a92ca1977cc8d",
-    "capturedAt": "2026-10-25T18:06:56.914609+00:00",
+    "sha256": "d1512d03491988239bec92f76a5a38ca87eb62fcc59d02a65e4afceb985a4b21",
+    "capturedAt": "2026-10-25T18:26:12.460685+00:00",
     "viewport": "390 \u00d7 844 CSS pixels, actual application iframe",
-    "review": "Reviewed synthetic guest demo only, with fictional example.com/555 contacts. Inline entry and left-aligned timeline; no production data. Cropped to the measured responsive frame; browser check, not physical hardware.",
+    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production records. Updated All/Comments/Calls tabs and filtered history. Measured 390 x 844 CSS pixel application frame; browser breakpoint check, not physical hardware.",
     "version": "1.6.1"
   },
   {
@@ -64,10 +64,10 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "b63e1f4b948aa53c38e194c27c358bae2b2738ff2a9b6125790385b228faed36",
-    "capturedAt": "2026-10-25T18:06:56.990400+00:00",
+    "sha256": "837623c6b26e1a4d2f68f68e216f076be39b475ff23d1a90154935685eaa7512",
+    "capturedAt": "2026-10-25T18:26:12.726780+00:00",
     "viewport": "1828 \u00d7 1028 CSS pixels",
     "version": "1.6.1",
-    "review": "Reviewed synthetic guest demo only, with fictional example.com/555 contacts. Inline entry and left-aligned timeline; no production data. Actual desktop application."
+    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production records. Updated All/Comments/Calls tabs and filtered history. Measured desktop 1828 x 1028 CSS pixel viewport."
   }
 ]

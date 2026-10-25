@@ -1,8 +1,8 @@
 {
   "version": "1.6.1",
-  "baseCommit": "db86d36140cd67e9bbeb707d773fba2bd6b7cf65",
+  "baseCommit": "b035f8854a9fdbb4d98a9b8f55d63432f2e1c24f",
   "authorizedByUser": true,
   "date": "2026-10-25",
-  "instruction": "Keep the same version no changes.",
-  "reason": "User-requested UI stability sweep, left-aligned conversations and inline comment entry without changing the displayed application version. Preserve the original release tag; distinguish the maintenance deployment by commit and workflow run."
+  "instruction": "Keep the same version number.",
+  "reason": "User explicitly requests separate Calls and Comments tabs and an All view including review, with version unchanged. Preserve the original v1.6.1 tag; identify this maintenance by commit and run."
 }

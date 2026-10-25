@@ -1,15 +1,10 @@
 {
   "schemaVersion": 1,
   "version": "1.6.1",
-  "summary": "Same-version UI maintenance: inline left-aligned conversations, safe drafts/retries and scoped asynchronous recovery across the shell.",
+  "summary": "Explicit same-version maintenance: separate All, Comments and Calls lead views with review information and private tasks in All.",
   "modules": [
     "salesdrone-interface",
     "salesdrone-conversations",
-    "salesdrone-notifications",
-    "salesdrone-tasks-reminders",
-    "salesdrone-imports",
-    "salesdrone-authentication",
-    "salesdrone-documentation",
     "salesdrone-release"
   ],
   "documentation": [
@@ -22,7 +17,7 @@
   "settingsSections": [],
   "api": {
     "status": "unchanged",
-    "reason": "Inline notes reuse versioned activity POST with existing policy and idempotency. Other fixes are presentation, request lifecycle and optional browser storage; no endpoint/schema/scope expansion.",
+    "reason": "Activity tabs filter existing authorized loaded activities locally. All reuses existing recipient-private task API and review UI. No endpoint, schema, permission or scope changes.",
     "contractVersion": "1.12.0",
     "permissions": "Keep leads:edit for stage updates and the existing Admin assignment UI with server assignments:write checks. Read-only members receive no new directory access.",
     "tests": [
@@ -90,7 +85,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Actual demo posting/draft tabs, keyboard/overlay focus, unchanged table geometry, task edit, notification read/unread, responsive Settings at 390/768/1024 CSS pixels, failure/slow-write fixtures and long content. Physical devices and production customer writes excluded.",
+  "manualVerification": "Verify default All, Comments note-only, Calls call-only, review information, private tasks, draft retention, five-tab keyboard wrapping and narrow responsive layout with synthetic data. Physical devices excluded.",
   "screenshots": [
     "journey-demo.jpg",
     "lead-workspace-demo.jpg",

@@ -14,6 +14,11 @@ API contract versions are independent from application versions.
 
 ## [1.6.1] - 2026-10-25
 
+### Lead activity tabs (same-version maintenance)
+
+- Default All view includes loaded activity, review information and your private lead tasks. Comments shows notes/imported discussions; new Calls tab shows logged calls only. Five-tab keyboard navigation, empty-state pagination and inline drafts remain available.
+- Refresh the product guide, demo captures and module skills. Preserve the original release tag; bind this explicitly requested maintenance to its immediate base commit.
+
 ### Maintenance update — same version at the user’s request
 - Left-align lead conversation cards and add an inline comment composer with tab-persistent drafts, blank/duplicate submission guards and safe idempotent retries.
 - Guard stale activity pagination, route transitions, refresh failures, notification reloads and dismissed form completions.

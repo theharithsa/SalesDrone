@@ -163,6 +163,9 @@
 }
 .lead-work-tabs {
   display: flex;
+  overflow-x: auto;
+  min-width: 0;
+  scrollbar-width: thin;
   gap: 8px;
   padding: 0 24px;
   border-bottom: 1px solid var(--line);
@@ -172,6 +175,8 @@
   z-index: 4;
 }
 .lead-work-tabs button {
+  flex-shrink: 0;
+  white-space: nowrap;
   border: 0;
   border-bottom: 3px solid transparent;
   background: none;
@@ -539,4 +544,9 @@
   max-width: 700px;
   margin: 48px auto;
   padding: 24px;
+}
+
+.lead-work-panel {
+  min-width: 0;
+  grid-column: 1 / -1 !important;
 }

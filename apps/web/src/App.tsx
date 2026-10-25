@@ -1,7 +1,13 @@
 import { readStored, writeStored, removeStored } from './lib/browser-storage';
 import InlineCommentComposer from './components/InlineCommentComposer';
 import LeadTaskTab from './components/LeadTaskTab';
-import { leadPathId, reviewActivities } from './lib/lead-workspace';
+import {
+  leadPathId,
+  reviewActivities,
+  filterLeadActivities,
+  leadWorkspaceTabs,
+  type LeadWorkspaceTab,
+} from './lib/lead-workspace';
 import Assignment from './components/Assignment';
 import LeadBlade from './components/LeadBlade';
 import LeadReportExport from './features/LeadReportExport';
@@ -161,9 +167,7 @@ export default function App() {
     [routeLeadId, setRouteLeadId] = useState(() =>
       leadPathId(window.location.pathname),
     ),
-    [leadTab, setLeadTab] = useState<'comments' | 'tasks' | 'review'>(
-      'comments',
-    ),
+    [leadTab, setLeadTab] = useState<LeadWorkspaceTab>('all'),
     [timeline, setTimeline] = useState<Entity[]>([]),
     [timelineCursor, setTimelineCursor] = useState<string | null>(null),
     [modal, setModal] = useState<
@@ -903,7 +907,7 @@ export default function App() {
     timelineMoreLock.current = false;
     setTimelineMoreBusy(false);
     setSelected(lead);
-    setLeadTab('comments');
+    setLeadTab('all');
     if (window.matchMedia('(max-width: 767px)').matches) window.scrollTo(0, 0);
     setLeadTasks([]);
     setTimeline([]);
@@ -996,7 +1000,7 @@ export default function App() {
       const id = leadPathId(window.location.pathname);
       detailEpoch.current++;
       setRouteLeadId(id);
-      setLeadTab('comments');
+      setLeadTab('all');
       if (id) setPage('leads');
       else {
         detailEpoch.current++;
@@ -1029,7 +1033,7 @@ export default function App() {
       '/leads/' + encodeURIComponent(selected.id),
     );
     setRouteLeadId(selected.id);
-    setLeadTab('comments');
+    setLeadTab('all');
     window.scrollTo(0, 0);
   }
   function go(p: Page) {
@@ -2243,304 +2247,303 @@ export default function App() {
                           role="tablist"
                           aria-label="Lead workspace"
                         >
-                          {(['comments', 'tasks', 'review'] as const).map(
-                            (tab, index) => (
-                              <button
-                                key={tab}
-                                id={'lead-tab-' + tab}
-                                role="tab"
-                                aria-selected={leadTab === tab}
-                                aria-controls={'lead-panel-' + tab}
-                                tabIndex={leadTab === tab ? 0 : -1}
-                                onKeyDown={(e) => {
-                                  const tabs = [
-                                    'comments',
-                                    'tasks',
-                                    'review',
-                                  ] as const;
-                                  const next =
-                                    e.key === 'ArrowRight'
-                                      ? (index + 1) % 3
-                                      : e.key === 'ArrowLeft'
-                                        ? (index + 2) % 3
-                                        : e.key === 'Home'
-                                          ? 0
-                                          : e.key === 'End'
-                                            ? 2
-                                            : -1;
-                                  if (next >= 0) {
-                                    e.preventDefault();
-                                    setLeadTab(tabs[next]);
-                                    document
-                                      .getElementById('lead-tab-' + tabs[next])
-                                      ?.focus();
-                                  }
-                                }}
-                                onClick={() => setLeadTab(tab)}
-                              >
-                                {tab === 'comments'
-                                  ? 'Comments'
-                                  : tab === 'tasks'
-                                    ? 'Tasks'
-                                    : 'Review'}
-                                {tab === 'review' &&
-                                (selected.needsReview ||
-                                  reviewActivities(timeline).length > 0)
-                                  ? ' •'
-                                  : ''}
-                              </button>
-                            ),
-                          )}
+                          {leadWorkspaceTabs.map((tab, index) => (
+                            <button
+                              key={tab}
+                              id={'lead-tab-' + tab}
+                              role="tab"
+                              aria-selected={leadTab === tab}
+                              aria-controls={'lead-panel-' + tab}
+                              tabIndex={leadTab === tab ? 0 : -1}
+                              onKeyDown={(e) => {
+                                const tabs = leadWorkspaceTabs;
+                                const next =
+                                  e.key === 'ArrowRight'
+                                    ? (index + 1) % tabs.length
+                                    : e.key === 'ArrowLeft'
+                                      ? (index + tabs.length - 1) % tabs.length
+                                      : e.key === 'Home'
+                                        ? 0
+                                        : e.key === 'End'
+                                          ? tabs.length - 1
+                                          : -1;
+                                if (next >= 0) {
+                                  e.preventDefault();
+                                  setLeadTab(tabs[next]);
+                                  document
+                                    .getElementById('lead-tab-' + tabs[next])
+                                    ?.focus();
+                                }
+                              }}
+                              onClick={() => setLeadTab(tab)}
+                            >
+                              {tab === 'all'
+                                ? 'All'
+                                : tab === 'calls'
+                                  ? 'Calls'
+                                  : tab === 'comments'
+                                    ? 'Comments'
+                                    : tab === 'tasks'
+                                      ? 'Tasks'
+                                      : 'Review'}
+                              {tab === 'review' &&
+                              (selected.needsReview ||
+                                reviewActivities(timeline).length > 0)
+                                ? ' •'
+                                : ''}
+                            </button>
+                          ))}
                         </div>
-                        {leadTab === 'tasks' ? (
-                          <section
-                            role="tabpanel"
-                            id="lead-panel-tasks"
-                            aria-labelledby="lead-tab-tasks"
-                            tabIndex={0}
-                          >
-                            <LeadTaskTab
-                              refreshKey={dashboardRefreshKey}
-                              key={selected.id}
-                              leadId={selected.id}
-                              request={request}
-                              timezone={timezone}
-                              onOpen={openTask}
-                            />
-                          </section>
-                        ) : null}
-                        {leadTab === 'review' ? (
-                          <section
-                            className="lead-review-intro"
-                            role="tabpanel"
-                            id="lead-panel-review"
-                            aria-owns="lead-review-entries"
-                            aria-labelledby="lead-tab-review"
-                            tabIndex={0}
-                          >
-                            <h3>Needs attention</h3>
-                            <p>
-                              {selected.needsReview
-                                ? 'Contact details need review before outreach. Check and edit the details, then clear the review flag below.'
-                                : 'Contact details have no review flag.'}
-                            </p>
-                            {selected.doNotContact ? (
-                              <p>
-                                Do not contact:{' '}
-                                {selected.suppressionReason ||
-                                  'Outreach is paused.'}
-                              </p>
-                            ) : null}
-                            <p>
-                              Follow-ups needing a date, failed analysis and
-                              pending checks appear below. Load earlier activity
-                              to inspect older entries. Tasks belong to their
-                              recipient; this view does not expose another
-                              member’s private reminders.
-                            </p>
-                          </section>
-                        ) : null}
                       </>
                     ) : null}
-                    {routeLeadId && can('activities:write') ? (
-                      <div
-                        className="lead-composer-region"
-                        hidden={leadTab !== 'comments'}
-                      >
-                        <InlineCommentComposer
-                          key={
-                            (session?.identity.uid || 'demo') +
-                            ':' +
-                            selected.id
-                          }
-                          leadId={selected.id}
-                          version={selected.version}
-                          request={request}
-                          onSaved={refresh}
-                          disabled={detailBusy}
-                        />
-                      </div>
-                    ) : null}
-                    {!routeLeadId || leadTab !== 'tasks' ? (
-                      <div
-                        className={
-                          'detail-section lead-conversations ' +
-                          (routeLeadId ? 'conversation-workspace' : '')
-                        }
-                        role={
-                          routeLeadId && leadTab === 'comments'
-                            ? 'tabpanel'
-                            : undefined
-                        }
-                        id={
-                          routeLeadId && leadTab === 'comments'
-                            ? 'lead-panel-comments'
-                            : routeLeadId && leadTab === 'review'
-                              ? 'lead-review-entries'
-                              : undefined
-                        }
-                        aria-labelledby={
-                          routeLeadId && leadTab === 'comments'
-                            ? 'lead-tab-comments'
-                            : undefined
-                        }
-                      >
-                        <div className="detail-section-title">
-                          <h3>
-                            {routeLeadId && leadTab === 'review'
-                              ? 'FOLLOW-UP REVIEW'
-                              : 'COMMENTS & CALL HISTORY'}
-                          </h3>
-                          <span>
-                            {routeLeadId && leadTab === 'review'
-                              ? reviewActivities(timeline).length
-                              : timeline.length}{' '}
-                            {(routeLeadId && leadTab === 'review'
-                              ? reviewActivities(timeline).length
-                              : timeline.length) === 1
-                              ? 'entry'
-                              : 'entries'}
-                          </span>
-                        </div>
-                        {detailBusy ? (
-                          <Loading />
-                        ) : (routeLeadId && leadTab === 'review'
-                            ? reviewActivities(timeline)
-                            : timeline
-                          ).length ? (
-                          <div className="timeline">
-                            {(routeLeadId && leadTab === 'review'
-                              ? reviewActivities(timeline)
-                              : timeline
-                            ).map((a) => (
-                              <div key={a.id} className="timeline-item">
-                                <span
-                                  className={
-                                    'timeline-icon ' +
-                                    (a.type === 'call' ? 'call' : '')
-                                  }
-                                >
-                                  {a.type === 'call' ? (
-                                    <Phone size={13} />
-                                  ) : (
-                                    <FileText size={13} />
-                                  )}
-                                </span>
-                                <div>
-                                  <strong>
-                                    {a.type === 'call'
-                                      ? a.outcome
-                                      : a.type === 'note'
-                                        ? a.sourceColumn || 'Comment'
-                                        : 'Lead updated'}
-                                  </strong>
-                                  <time>
-                                    {a.imported
-                                      ? 'Imported history · original date not recorded'
-                                      : displayDate(a.createdAt, timezone)}
-                                  </time>
-                                  <p className="comment-body">{a.notes}</p>
-                                  <AutomaticReminder
-                                    key={a.id + '_' + a.revision}
-                                    activity={a}
-                                    timezone={timezone}
-                                    canManage={
-                                      !demo &&
-                                      can('tasks:write') &&
-                                      a.autoReminder?.ownerUid ===
-                                        session?.member?.uid
-                                    }
-                                    onAction={async (body) => {
-                                      await request(
-                                        '/activities/' +
-                                          a.id +
-                                          '/automatic-reminder',
-                                        'PATCH',
-                                        body,
-                                      );
-                                      await refresh();
-                                    }}
-                                  />
-                                  {['call', 'note'].includes(a.type) &&
-                                  a.revision &&
-                                  can('activities:write') ? (
-                                    <button
-                                      className="text-button correction-button"
-                                      onClick={() => {
-                                        setSelectedActivity(a);
-                                        setModal('correction');
-                                      }}
-                                    >
-                                      Correct entry
-                                    </button>
-                                  ) : null}
-                                  {a.disposition && a.disposition !== 'None' ? (
-                                    <span className="timeline-disposition">
-                                      {a.disposition}
-                                    </span>
-                                  ) : null}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="field-hint">
-                            {routeLeadId && leadTab === 'review'
-                              ? 'No follow-ups need review in the loaded activity. Use Earlier activity to check older entries.'
-                              : 'No activity yet. Start with a conversation or a note.'}
+                    <div
+                      className="lead-work-panel"
+                      role={routeLeadId ? 'tabpanel' : undefined}
+                      id={routeLeadId ? 'lead-panel-' + leadTab : undefined}
+                      aria-labelledby={
+                        routeLeadId ? 'lead-tab-' + leadTab : undefined
+                      }
+                      tabIndex={routeLeadId ? 0 : undefined}
+                    >
+                      {routeLeadId &&
+                      (leadTab === 'review' ||
+                        (leadTab === 'all' &&
+                          (selected.needsReview ||
+                            selected.doNotContact ||
+                            reviewActivities(timeline).length > 0))) ? (
+                        <section className="lead-review-intro">
+                          <h3>Needs attention</h3>
+                          <p>
+                            {selected.needsReview
+                              ? 'Contact details need review before outreach. Check and edit the details, then clear the review flag below.'
+                              : 'Contact details have no review flag.'}
                           </p>
-                        )}
-                        {timelineCursor ? (
-                          <button
-                            className="text-button"
-                            disabled={timelineMoreBusy}
-                            onClick={async () => {
-                              if (timelineMoreLock.current) return;
-                              timelineMoreLock.current = true;
-                              setTimelineMoreBusy(true);
-                              const token = ++timelineMoreRequest.current;
-                              const epoch = detailEpoch.current,
-                                current = generation.current;
-                              try {
-                                const a = await request(
-                                  '/leads/' +
-                                    selected.id +
-                                    '/activities?cursor=' +
-                                    encodeURIComponent(timelineCursor),
-                                );
-                                if (
-                                  epoch !== detailEpoch.current ||
-                                  current !== generation.current
-                                )
-                                  return;
-                                setTimeline((t) => [
-                                  ...new Map(
-                                    [...t, ...a.items].map((item) => [
-                                      item.id,
-                                      item,
-                                    ]),
-                                  ).values(),
-                                ]);
-                                setTimelineCursor(a.nextCursor);
-                              } catch (e) {
-                                if (
-                                  epoch === detailEpoch.current &&
-                                  current === generation.current
-                                )
-                                  setError((e as Error).message);
-                              } finally {
-                                if (token === timelineMoreRequest.current) {
-                                  timelineMoreLock.current = false;
-                                  setTimelineMoreBusy(false);
+                          {selected.doNotContact ? (
+                            <p>
+                              Do not contact:{' '}
+                              {selected.suppressionReason ||
+                                'Outreach is paused.'}
+                            </p>
+                          ) : null}
+                          <p>
+                            Follow-ups needing a date, failed analysis and
+                            pending checks appear below. Load earlier activity
+                            to inspect older entries. Tasks belong to their
+                            recipient; this view does not expose another
+                            member’s private reminders.
+                          </p>
+                        </section>
+                      ) : null}
+                      {routeLeadId && can('activities:write') ? (
+                        <div
+                          className="lead-composer-region"
+                          id="lead-inline-composer"
+                          hidden={leadTab !== 'comments' && leadTab !== 'all'}
+                        >
+                          <InlineCommentComposer
+                            key={
+                              (session?.identity.uid || 'demo') +
+                              ':' +
+                              selected.id
+                            }
+                            leadId={selected.id}
+                            version={selected.version}
+                            request={request}
+                            onSaved={refresh}
+                            disabled={detailBusy}
+                          />
+                        </div>
+                      ) : null}
+                      {!routeLeadId || leadTab !== 'tasks' ? (
+                        <div
+                          className={
+                            'detail-section lead-conversations ' +
+                            (routeLeadId ? 'conversation-workspace' : '')
+                          }
+                        >
+                          <div className="detail-section-title">
+                            <h3>
+                              {routeLeadId && leadTab === 'review'
+                                ? 'FOLLOW-UP REVIEW'
+                                : routeLeadId && leadTab === 'calls'
+                                  ? 'CALL HISTORY'
+                                  : routeLeadId && leadTab === 'comments'
+                                    ? 'COMMENTS'
+                                    : 'ALL ACTIVITY'}
+                            </h3>
+                            <span>
+                              {
+                                filterLeadActivities(
+                                  timeline,
+                                  routeLeadId ? leadTab : 'all',
+                                ).length
+                              }{' '}
+                              {filterLeadActivities(
+                                timeline,
+                                routeLeadId ? leadTab : 'all',
+                              ).length === 1
+                                ? 'entry'
+                                : 'entries'}
+                            </span>
+                          </div>
+                          {detailBusy ? (
+                            <Loading />
+                          ) : filterLeadActivities(
+                              timeline,
+                              routeLeadId ? leadTab : 'all',
+                            ).length ? (
+                            <div className="timeline">
+                              {filterLeadActivities(
+                                timeline,
+                                routeLeadId ? leadTab : 'all',
+                              ).map((a) => (
+                                <div key={a.id} className="timeline-item">
+                                  <span
+                                    className={
+                                      'timeline-icon ' +
+                                      (a.type === 'call' ? 'call' : '')
+                                    }
+                                  >
+                                    {a.type === 'call' ? (
+                                      <Phone size={13} />
+                                    ) : (
+                                      <FileText size={13} />
+                                    )}
+                                  </span>
+                                  <div>
+                                    <strong>
+                                      {a.type === 'call'
+                                        ? a.outcome
+                                        : a.type === 'note'
+                                          ? a.sourceColumn || 'Comment'
+                                          : 'Lead updated'}
+                                    </strong>
+                                    <time>
+                                      {a.imported
+                                        ? 'Imported history · original date not recorded'
+                                        : displayDate(a.createdAt, timezone)}
+                                    </time>
+                                    <p className="comment-body">{a.notes}</p>
+                                    <AutomaticReminder
+                                      key={a.id + '_' + a.revision}
+                                      activity={a}
+                                      timezone={timezone}
+                                      canManage={
+                                        !demo &&
+                                        can('tasks:write') &&
+                                        a.autoReminder?.ownerUid ===
+                                          session?.member?.uid
+                                      }
+                                      onAction={async (body) => {
+                                        await request(
+                                          '/activities/' +
+                                            a.id +
+                                            '/automatic-reminder',
+                                          'PATCH',
+                                          body,
+                                        );
+                                        await refresh();
+                                      }}
+                                    />
+                                    {['call', 'note'].includes(a.type) &&
+                                    a.revision &&
+                                    can('activities:write') ? (
+                                      <button
+                                        className="text-button correction-button"
+                                        onClick={() => {
+                                          setSelectedActivity(a);
+                                          setModal('correction');
+                                        }}
+                                      >
+                                        Correct entry
+                                      </button>
+                                    ) : null}
+                                    {a.disposition &&
+                                    a.disposition !== 'None' ? (
+                                      <span className="timeline-disposition">
+                                        {a.disposition}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="field-hint">
+                              {routeLeadId && leadTab === 'review'
+                                ? 'No follow-ups need review in the loaded activity. Use Earlier activity to check older entries.'
+                                : routeLeadId && leadTab === 'calls'
+                                  ? 'No calls in the loaded activity. Log a call or load earlier activity.'
+                                  : routeLeadId && leadTab === 'comments'
+                                    ? 'No comments in the loaded activity. Write a comment or load earlier activity.'
+                                    : 'No activity yet. Start with a conversation or a note.'}
+                            </p>
+                          )}
+                          {timelineCursor ? (
+                            <button
+                              className="text-button"
+                              disabled={timelineMoreBusy}
+                              onClick={async () => {
+                                if (timelineMoreLock.current) return;
+                                timelineMoreLock.current = true;
+                                setTimelineMoreBusy(true);
+                                const token = ++timelineMoreRequest.current;
+                                const epoch = detailEpoch.current,
+                                  current = generation.current;
+                                try {
+                                  const a = await request(
+                                    '/leads/' +
+                                      selected.id +
+                                      '/activities?cursor=' +
+                                      encodeURIComponent(timelineCursor),
+                                  );
+                                  if (
+                                    epoch !== detailEpoch.current ||
+                                    current !== generation.current
+                                  )
+                                    return;
+                                  setTimeline((t) => [
+                                    ...new Map(
+                                      [...t, ...a.items].map((item) => [
+                                        item.id,
+                                        item,
+                                      ]),
+                                    ).values(),
+                                  ]);
+                                  setTimelineCursor(a.nextCursor);
+                                } catch (e) {
+                                  if (
+                                    epoch === detailEpoch.current &&
+                                    current === generation.current
+                                  )
+                                    setError((e as Error).message);
+                                } finally {
+                                  if (token === timelineMoreRequest.current) {
+                                    timelineMoreLock.current = false;
+                                    setTimelineMoreBusy(false);
+                                  }
                                 }
-                              }
-                            }}
-                          >
-                            Earlier activity
-                          </button>
-                        ) : null}
-                      </div>
-                    ) : null}
+                              }}
+                            >
+                              Earlier activity
+                            </button>
+                          ) : null}
+                        </div>
+                      ) : null}
+                      {routeLeadId &&
+                      (leadTab === 'tasks' || leadTab === 'all') ? (
+                        <section>
+                          <LeadTaskTab
+                            refreshKey={dashboardRefreshKey}
+                            key={selected.id}
+                            leadId={selected.id}
+                            request={request}
+                            timezone={timezone}
+                            onOpen={openTask}
+                          />
+                        </section>
+                      ) : null}
+                    </div>
                     {can('leads:edit') ? (
                       <div className="detail-section detail-admin-actions">
                         {selected.needsReview ? (

@@ -14,3 +14,23 @@ export function reviewActivities(items: Entity[]) {
     ['Pending', 'Failed', 'NeedsReview'].includes(a.autoReminder?.status),
   );
 }
+
+export const leadWorkspaceTabs = [
+  'all',
+  'comments',
+  'calls',
+  'tasks',
+  'review',
+] as const;
+export type LeadWorkspaceTab = (typeof leadWorkspaceTabs)[number];
+/** Filter only the authorized loaded page(s); never imply unrequested history is complete. */
+export function filterLeadActivities(
+  items: Entity[],
+  tab: LeadWorkspaceTab,
+): Entity[] {
+  if (tab === 'comments') return items.filter((a) => a.type === 'note');
+  if (tab === 'calls') return items.filter((a) => a.type === 'call');
+  if (tab === 'review') return reviewActivities(items);
+  if (tab === 'tasks') return [];
+  return items;
+}

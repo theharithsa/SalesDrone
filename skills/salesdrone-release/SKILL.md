@@ -78,3 +78,5 @@ The initial published-version check retries boundedly for Hosting propagation, u
 Explicit human instructions may authorize a single same-version maintenance push. releases/maintenance.json pins the exact prior commit, version, date, instruction and reason; maintenance-policy rejects reuse for a later base. Default releases still require a SemVer advance. github-release verifies descendant status and preserves the original tag/notes instead of overwriting them; commit/run identify the maintenance deployment. The file alone never authorizes another agent to skip versioning.
 
 Public guide builds stamp the exact source commit and hash-version reviewed screenshot URLs. Post-deploy guide checks require commit as well as version, including same-version maintenance, so stale Pages HTML cannot satisfy the release gate.
+
+For a later explicitly authorized maintenance push, bind the record to that push’s immediate parent, not the immutable original tag. github-release checks the current commit parent and verifies descent from the original tag before preserving it; an earlier maintenance record cannot authorize a subsequent push.
