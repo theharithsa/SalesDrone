@@ -52,7 +52,7 @@ comments, task titles, request bodies, authorization headers and Gemini content.
 Session Replay is disabled by the integration; private UI content is marked for
 masking and action names are normalized. RUM still observes standard browser
 performance/network/session data according to the tenant's privacy/consent settings.
-The integration does not silently change tenant-wide consent, IP or retention policy.
+The integration does not silently change tenant-wide consent, IP or retention policy. By explicit application-owner choice, approved live members’ verified emails are used only as browser RUM user tags; backend telemetry remains pseudonymous. Demo users stay anonymous, and sign-out/account switching ends the former RUM session.
 
 Business events describe committed server transactions and use a durable outbox.
 Ingestion is at least once; deduplicate by event.id before aggregating. Application

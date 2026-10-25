@@ -1,4 +1,9 @@
 export const TOKEN_SCOPES = [
+  [
+    'leads:export',
+    'Export filtered lead report pages when enabled',
+    'leads:read',
+  ],
   ['leads:read', 'Read leads and stage history', 'leads:read'],
   ['leads:create', 'Create enquiries', 'leads:create'],
   ['leads:edit', 'Update lead details', 'leads:edit'],
@@ -33,6 +38,8 @@ export const TOKEN_SCOPES = [
   ],
 ].map(([id, description, capability]) => ({ id, description, capability }));
 export const PAT_ROUTES = {
+  'post /leads/export': 'leads:export',
+  'get /workspace-settings': 'configuration:read',
   'get /leads': 'leads:read',
   'get /leads/:id': 'leads:read',
   'get /leads/:id/journey': 'leads:read',

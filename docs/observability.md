@@ -34,9 +34,7 @@ are not auto-instrumented, preventing recursion. Firestore spans describe the SD
 boundary, not Google's managed database internals. Scheduled jobs start genuine
 worker traces; the original request context is continued/linked only when persisted.
 
-Browser RUM identifies pseudonymously, normalizes operation/route names, marks
-private content for masking and disables Session Replay. No contact names, emails,
-notes or form values are manually added. Tenant consent, IP-masking, retention and
+Browser RUM tags approved live workspace members with their verified Google email, as explicitly approved by the application owner. Demo/unapproved users remain anonymous. Account switches and sign-out end the previous session. Backend actor IDs remain hashed; lead contact details, notes and form values are never deliberately added. RUM normalizes operation/route names, masks private content and disables Session Replay. The late script-ready event retries identity application after bounded polling expires. A DOM diagnostic exposes only the identity mode, never the email value. Tenant consent, IP-masking, retention and
 server-side RUM settings remain tenant-controlled. Local/emulator sessions do not
 load RUM. Browser observations never certify a database commit. RUM-to-backend
 navigation requires compatible tenant linking/configuration and is verified separately.
@@ -90,3 +88,7 @@ SLOs, dashboards or alert policies merely by emitting telemetry.
 Release-specific deployment evidence is retained in GitHub Actions artifacts. Do not silently promote
 HTTP acceptance to tenant searchability or assert cross-signal linkage from a custom
 trace-id field alone.
+
+## Email tagging verification
+
+The RUM identifyUser call accepts the approved member email. Local lifecycle tests cover late readiness, stale login cancellation, account switches and sign-out. Tenant query credentials were checked during this release and returned HTTP 401; searchable email-tagged sessions remain unverified. Do not treat a successful browser API call as proof of tenant-side visibility. New sessions must use the updated app; historical hashed sessions are not relabelled.

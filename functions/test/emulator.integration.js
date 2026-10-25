@@ -183,6 +183,28 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     (await req('get', '/dashboard').expect(200)).body.insightMode,
     'manual',
   );
+  const controls = (await req('get', '/workspace-settings').expect(200)).body;
+  assert.equal(controls.assignedOnly, true);
+  const report = (
+    await req('post', '/leads/export', {
+      columns: ['name', 'phone'],
+      filters: [],
+      limit: 1,
+    }).expect(200)
+  ).body;
+  assert.equal(report.rows.length, 1);
+  assert.equal(report.rows[0].values.length, 2);
+  await req('patch', '/workspace-settings', {
+    expectedVersion: controls.version,
+    exportsEnabled: false,
+    assignedOnly: true,
+  }).expect(200);
+  await req('post', '/leads/export', { columns: ['name'] }).expect(403);
+  await req('patch', '/workspace-settings', {
+    expectedVersion: controls.version + 1,
+    exportsEnabled: true,
+    assignedOnly: true,
+  }).expect(200);
   const aiPreferences = (await req('get', '/ai-settings').expect(200)).body;
   assert.equal(aiPreferences.usingDefault, true);
   await req('patch', '/ai-settings', {

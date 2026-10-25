@@ -1,4 +1,10 @@
 import {
+  WORKSPACE_SETTINGS_PATH,
+  WorkspaceSettingsPatch,
+  readWorkspaceSettings,
+} from './workspace-settings.js';
+import { LeadExportInput, exportColumns, exportRows } from './lead-reports.js';
+import {
   AI_SETTINGS_PATH,
   AISettingsPatch,
   readAISettings,
@@ -66,6 +72,8 @@ import {
   hash,
   googleIdentity,
   resolveIdentity,
+  effectiveMember,
+  sameAccess,
   requireMember,
   scopeFilters,
   leadAccess,
@@ -358,7 +366,8 @@ export function createApp({
   }
   router.get('/me', async (req, res, next) => {
     try {
-      const m = await resolveIdentity(store, req.identity);
+      const rawMember = await resolveIdentity(store, req.identity);
+      const m = await effectiveMember(store, rawMember);
       const invitation = !m
         ? await store.get(path('invitations', hash(req.identity.email)))
         : null;
@@ -367,6 +376,7 @@ export function createApp({
         identity: req.identity,
         mode: m ? 'live' : 'demo',
         member: m,
+        workspaceSettings: m ? await readWorkspaceSettings(store) : undefined,
         preferences: {
           timezone: 'Asia/Kolkata',
           appearance: 'system',
@@ -500,6 +510,7 @@ export function createApp({
         req.member.uid,
         req.member.version,
         'columnFilters',
+        req.exportBinding || null,
         base,
         filters,
       ]),
@@ -627,6 +638,115 @@ export function createApp({
         });
       return { ok: true };
     });
+  });
+  route('get', '/workspace-settings', 'leads:read', () =>
+    readWorkspaceSettings(store),
+  );
+  route('patch', '/workspace-settings', 'members:write', (req) => {
+    const input = parse(WorkspaceSettingsPatch, req.body);
+    return mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      const current = await readWorkspaceSettings(tx);
+      assertVersion(current, input.expectedVersion);
+      if (
+        current.exportsEnabled === input.exportsEnabled &&
+        current.assignedOnly === input.assignedOnly
+      )
+        return current;
+      const next = {
+        version: current.version + 1,
+        exportsEnabled: input.exportsEnabled,
+        assignedOnly: input.assignedOnly,
+      };
+      tx.set(WORKSPACE_SETTINGS_PATH, {
+        ...next,
+        updatedAt: now(),
+        updatedByUid: member.uid,
+      });
+      return next;
+    });
+  });
+  route('post', '/leads/export', 'leads:read', async (req) => {
+    const input = parse(LeadExportInput, req.body);
+    const settings = await readWorkspaceSettings(store);
+    if (!settings.exportsEnabled)
+      throw new AppError(
+        403,
+        'EXPORT_DISABLED',
+        'Lead exports are disabled by your administrator',
+      );
+    await store.run(async (tx) => {
+      await requireMember(tx, req.identity, 'leads:read');
+      const p = path(
+        'rateLimits',
+        hash('leadExport:' + req.member.uid + ':' + now().slice(0, 16)),
+      );
+      const rate = await tx.get(p);
+      if ((rate?.count || 0) >= 120)
+        throw new AppError(
+          429,
+          'RATE_LIMIT',
+          'Too many report pages. Try again in a minute.',
+        );
+      tx.set(p, {
+        count: (rate?.count || 0) + 1,
+        expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+      });
+    });
+    const config = await readFieldOptions(store);
+    const selected = exportColumns(input.columns, config);
+    const { columns, filters, cursor, limit, ...rest } = input;
+    const result = await filteredLeads({
+      ...req,
+      query: {
+        ...rest,
+        filters: JSON.stringify(filters),
+        limit: String(limit),
+        ...(cursor ? { cursor } : {}),
+      },
+      exportBinding: ['report', settings.version, config.version, columns],
+    });
+    const current = await requireMember(store, req.identity, 'leads:read');
+    const latest = await readWorkspaceSettings(store);
+    if (!latest.exportsEnabled)
+      throw new AppError(
+        403,
+        'EXPORT_DISABLED',
+        'Lead exports are disabled by your administrator',
+      );
+    if (!sameAccess(current, req.member) || latest.version !== settings.version)
+      throw new AppError(
+        409,
+        'SCOPE_CHANGED',
+        'Workspace access changed; restart your report',
+      );
+    const id = uid();
+    await store.run(async (tx) => {
+      const member = await requireMember(tx, req.identity, 'leads:read');
+      if (!sameAccess(member, current))
+        throw new AppError(
+          409,
+          'SCOPE_CHANGED',
+          'Workspace access changed; restart your report',
+        );
+      tx.set(path('auditEvents', id), {
+        id,
+        actorUid: member.uid,
+        action: 'POST /leads/export',
+        rowCount: result.items.length,
+        columnCount: columns.length,
+        createdAt: now(),
+        requestId: req.requestId,
+      });
+    });
+    return {
+      columns: selected,
+      rows: exportRows(result.items, selected),
+      nextCursor: result.nextCursor,
+      scanLimited: result.scanLimited,
+      policyVersion: settings.version,
+      asOf: now(),
+    };
   });
   route('get', '/ai-settings', 'members:write', async (req) => {
     assertAdmin(req.member);

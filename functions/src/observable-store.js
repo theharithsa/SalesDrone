@@ -18,7 +18,9 @@ function domain(p, data) {
   if (p.startsWith(ROOT + '/')) {
     const d = parts[2];
     if (d === 'settings')
-      return ['fields', 'scoring'].includes(parts[3]) ? 'settings' : null;
+      return ['fields', 'scoring', 'ai', 'workspace'].includes(parts[3])
+        ? 'settings'
+        : null;
     if (d === 'leadScores' && !['Ready', 'Failed'].includes(data?.status))
       return null;
     return domains.has(d) ? d : null;

@@ -1,3 +1,5 @@
+import { WorkspaceSettingsPatch } from '../functions/src/workspace-settings.js';
+import { LeadExportInput } from '../functions/src/lead-reports.js';
 import { AISettingsPatch } from '../functions/src/ai-settings.js';
 import {
   TokenInput,
@@ -121,6 +123,50 @@ schemas.DashboardBrief = {
   },
 };
 schemas.LeadFilters = z.toJSONSchema(LeadFilters, { io: 'input' });
+schemas.WorkspaceSettingsPatch = z.toJSONSchema(WorkspaceSettingsPatch, {
+  io: 'input',
+});
+schemas.LeadExportInput = z.toJSONSchema(LeadExportInput, { io: 'input' });
+schemas.LeadExportInput.properties.columns.uniqueItems = true;
+schemas.WorkspaceSettings = {
+  type: 'object',
+  required: ['version', 'exportsEnabled', 'assignedOnly'],
+  properties: {
+    version: { type: 'integer', minimum: 1 },
+    exportsEnabled: { type: 'boolean' },
+    assignedOnly: { type: 'boolean' },
+  },
+};
+schemas.LeadExportPage = {
+  type: 'object',
+  required: ['columns', 'rows', 'nextCursor', 'policyVersion', 'asOf'],
+  properties: {
+    columns: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['key', 'label'],
+        properties: { key: { type: 'string' }, label: { type: 'string' } },
+      },
+    },
+    rows: {
+      type: 'array',
+      maxItems: 100,
+      items: {
+        type: 'object',
+        required: ['id', 'values'],
+        properties: {
+          id: { type: 'string' },
+          values: { type: 'array', items: { type: ['string', 'number'] } },
+        },
+      },
+    },
+    nextCursor: { type: ['string', 'null'] },
+    scanLimited: { type: 'boolean' },
+    policyVersion: { type: 'integer' },
+    asOf: { type: 'string', format: 'date-time' },
+  },
+};
 schemas.AISettingsPatch = z.toJSONSchema(AISettingsPatch, { io: 'input' });
 schemas.AISettings = {
   type: 'object',
@@ -454,6 +500,8 @@ const responseFor = (method, url) => {
         },
       },
     };
+  if (url === '/workspace-settings') return ref('WorkspaceSettings');
+  if (url === '/leads/export') return ref('LeadExportPage');
   if (url === '/ai-settings') return ref('AISettings');
   if (url === '/scoring-settings') return ref('ScoringConfig');
   if (url === '/lead-scores')
@@ -517,52 +565,56 @@ endpoints.push(
   },
 );
 const bodyFor = (m, u) =>
-  u === '/personal-access-tokens' && m === 'post'
-    ? 'TokenInput'
-    : u === '/ai-settings'
-      ? 'AISettingsPatch'
-      : u === '/scoring-settings'
-        ? 'ScoringPatch'
-        : u.endsWith('/score/refresh') || u === '/dashboard/insights'
-          ? 'EmptyInput'
-          : u === '/field-options'
-            ? 'FieldOptionsPatch'
-            : u.endsWith('/assignment')
-              ? 'AssignmentPatch'
-              : u === '/notifications/:id'
-                ? 'NotificationPatch'
-                : u === '/me'
-                  ? 'Preferences'
-                  : u.endsWith('/automatic-reminder')
-                    ? 'AutomaticReminderAction'
-                    : u === '/leads'
-                      ? 'LeadInput'
-                      : u === '/leads/:id'
-                        ? 'LeadPatch'
-                        : u.endsWith('/activities')
-                          ? 'ActivityInput'
-                          : u === '/tasks'
-                            ? 'TaskInput'
-                            : u === '/tasks/:id'
-                              ? m === 'delete'
-                                ? 'TaskDelete'
-                                : 'TaskPatch'
-                              : u === '/invitations'
-                                ? 'GrantInput'
-                                : u === '/members/:uid'
-                                  ? 'MemberPatch'
-                                  : u === '/devices'
-                                    ? 'DeviceInput'
-                                    : u === '/imports/preview'
-                                      ? 'ImportInput'
-                                      : null;
+  u === '/workspace-settings'
+    ? 'WorkspaceSettingsPatch'
+    : u === '/leads/export'
+      ? 'LeadExportInput'
+      : u === '/personal-access-tokens' && m === 'post'
+        ? 'TokenInput'
+        : u === '/ai-settings'
+          ? 'AISettingsPatch'
+          : u === '/scoring-settings'
+            ? 'ScoringPatch'
+            : u.endsWith('/score/refresh') || u === '/dashboard/insights'
+              ? 'EmptyInput'
+              : u === '/field-options'
+                ? 'FieldOptionsPatch'
+                : u.endsWith('/assignment')
+                  ? 'AssignmentPatch'
+                  : u === '/notifications/:id'
+                    ? 'NotificationPatch'
+                    : u === '/me'
+                      ? 'Preferences'
+                      : u.endsWith('/automatic-reminder')
+                        ? 'AutomaticReminderAction'
+                        : u === '/leads'
+                          ? 'LeadInput'
+                          : u === '/leads/:id'
+                            ? 'LeadPatch'
+                            : u.endsWith('/activities')
+                              ? 'ActivityInput'
+                              : u === '/tasks'
+                                ? 'TaskInput'
+                                : u === '/tasks/:id'
+                                  ? m === 'delete'
+                                    ? 'TaskDelete'
+                                    : 'TaskPatch'
+                                  : u === '/invitations'
+                                    ? 'GrantInput'
+                                    : u === '/members/:uid'
+                                      ? 'MemberPatch'
+                                      : u === '/devices'
+                                        ? 'DeviceInput'
+                                        : u === '/imports/preview'
+                                          ? 'ImportInput'
+                                          : null;
 const paths = {};
 for (const e of endpoints) {
   const url = '/api/v1' + e.url.replace(/:([a-zA-Z]+)/g, '{$1}');
   const operation = {
     operationId: e.method + e.url.replace(/[^a-zA-Z]/g, '_'),
     summary: e.method.toUpperCase() + ' ' + e.url,
-    description: `Requires: ${e.capability}.${e.url === '/ai-settings' ? ' Admin-only workspace AI preferences; blank instructions restore defaults. Changes invalidate summary caches and stale generation cannot publish.' : ''} ${PAT_ROUTES[e.method + ' ' + e.url] ? 'Personal access token scope: ' + PAT_ROUTES[e.method + ' ' + e.url] + '.' : 'Google sign-in and App Check required; personal access tokens are not accepted.'} Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.${e.url === '/leads/:id/activities' && e.method === 'post' ? ' Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.' : ''}${e.url === '/personal-access-tokens' && e.method === 'post' ? ' Admin-only. Do not send Idempotency-Key. Token is shown once; list and delete metadata never include the credential or its hash.' : ''}`,
+    description: `Requires: ${e.capability}.${e.url === '/ai-settings' ? ' Admin-only workspace AI preferences; blank instructions restore defaults. Changes invalidate summary caches and stale generation cannot publish.' : ''} ${PAT_ROUTES[e.method + ' ' + e.url] ? 'Personal access token scope: ' + PAT_ROUTES[e.method + ' ' + e.url] + '.' : 'Google sign-in and App Check required; personal access tokens are not accepted.'} Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.${e.url === '/leads/export' ? ' Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot.' : ''}${e.url === '/workspace-settings' ? ' PATCH requires Admin role and members:write. assignedOnly defaults true and caps non-admin scope; false restores each member’s configured scope. exportsEnabled defaults true. Reads are allowed to active workspace members.' : ''}${e.url === '/leads/:id/activities' && e.method === 'post' ? ' Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.' : ''}${e.url === '/personal-access-tokens' && e.method === 'post' ? ' Admin-only. Do not send Idempotency-Key. Token is shown once; list and delete metadata never include the credential or its hash.' : ''}`,
     tags: [e.url.split('/')[1]],
     security: PAT_ROUTES[e.method + ' ' + e.url]
       ? [{ personalAccessToken: [] }, { firebaseIdToken: [], appCheck: [] }]
@@ -614,6 +666,7 @@ for (const e of endpoints) {
     ![
       '/lead-scores',
       '/ai-settings',
+      '/workspace-settings',
       '/scoring-settings',
       '/dashboard',
       '/field-options',
@@ -770,7 +823,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.11.0',
+    version: '1.12.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

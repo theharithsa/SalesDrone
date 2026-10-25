@@ -45,6 +45,8 @@ personalAccessTokens (hashes, scopes, expiry/revocation metadata), rateLimits, r
 
 GET dashboard exposes only the safe manual/automatic insightMode enum. Private AI guidance remains on Admin Google/App Check ai-settings endpoints; never expand PAT configuration access to guidance.
 
+Report data uses POST /api/v1/leads/export with leads:export, an explicit scope separate from leads:read. The response is paged projected JSON, not XLSX; integrations follow signed cursors. Workspace export disable applies to PATs too. GET workspace-settings accepts configuration:read; PATCH remains Google/App Check Admin-only. See generated schemas and reports-policy.test.js when changing this surface.
+
 ## Change and diagnosis
 
 Test expiry/revoke, disabled/deleted/downgraded owner, tasks-only access, cross-owner cursors and revoke-between-admission-and-commit. For Swagger failure separate CSP/asset/version mismatch from API authorization errors.

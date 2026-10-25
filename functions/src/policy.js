@@ -1,3 +1,4 @@
+import { readWorkspaceSettings } from './workspace-settings.js';
 import { TOKEN_SCOPES } from './api-scopes.js';
 import { createHash } from 'node:crypto';
 import { AppError, PRESETS } from './contracts.js';
@@ -58,8 +59,27 @@ export async function resolveIdentity(store, identity) {
     return member?.active ? member : null;
   });
 }
+export async function effectiveMember(store, member) {
+  if (!member) return null;
+  const config = await readWorkspaceSettings(store);
+  return {
+    ...member,
+    scope:
+      member.role !== 'Admin' && config.assignedOnly
+        ? 'assigned'
+        : member.scope,
+    accessPolicyVersion: config.version,
+  };
+}
+export const sameAccess = (a, b) =>
+  a.version === b.version &&
+  a.scope === b.scope &&
+  (a.accessPolicyVersion || 1) === (b.accessPolicyVersion || 1);
 export async function requireMember(store, identity, capability) {
-  const m = await store.get(path('members', identity.uid));
+  const m = await effectiveMember(
+    store,
+    await store.get(path('members', identity.uid)),
+  );
   if (!m?.active)
     throw new AppError(
       403,

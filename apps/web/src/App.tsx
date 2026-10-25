@@ -1,3 +1,4 @@
+import LeadReportExport from './features/LeadReportExport';
 import NotificationsPage from './features/NotificationsPage';
 import { setRumIdentity, rumPage } from './lib/rum';
 import NotificationOverlay from './components/NotificationOverlay';
@@ -221,8 +222,12 @@ export default function App() {
   const demo = guest || session?.mode === 'demo';
   const active = guest || !!session;
   useEffect(
-    () => setRumIdentity(session?.identity.uid || null),
-    [session?.identity.uid],
+    () =>
+      setRumIdentity(
+        !demo && session?.mode === 'live' ? session.identity.uid : null,
+        !demo && session?.mode === 'live' ? session.identity.email : null,
+      ),
+    [session?.identity.uid, session?.identity.email, session?.mode, demo],
   );
   useEffect(() => {
     rumPage('/' + page);
@@ -297,7 +302,10 @@ export default function App() {
         if (!current || current.identity.uid !== next.identity.uid) return;
         if (
           next.mode !== current.mode ||
-          next.member?.version !== current.member?.version
+          next.member?.version !== current.member?.version ||
+          next.member?.accessPolicyVersion !==
+            current.member?.accessPolicyVersion ||
+          next.member?.scope !== current.member?.scope
         ) {
           generation.current++;
           setData(blank);
@@ -1381,7 +1389,9 @@ export default function App() {
               key={
                 (session?.identity.uid || 'demo') +
                 ':' +
-                (session?.member?.version || 0)
+                (session?.member?.version || 0) +
+                ':' +
+                (session?.member?.accessPolicyVersion || 1)
               }
               open={inboxOpen}
               onOpenChange={setInboxOpen}
@@ -1511,7 +1521,9 @@ export default function App() {
                 key={
                   (session?.identity.uid || 'demo') +
                   ':' +
-                  (session?.member?.version || 0)
+                  (session?.member?.version || 0) +
+                  ':' +
+                  (session?.member?.accessPolicyVersion || 1)
                 }
                 request={request}
                 demo={!!demo}
@@ -1568,6 +1580,22 @@ export default function App() {
                       </p>
                     </div>
                     <div className="title-actions">
+                      {demo ||
+                      session?.workspaceSettings?.exportsEnabled !== false ? (
+                        <LeadReportExport
+                          request={request}
+                          config={fieldOptions}
+                          criteria={{
+                            filters: columnFilters,
+                            ...(stage ? { stage } : {}),
+                            ...(source ? { source } : {}),
+                            ...(search ? { search, field: searchField } : {}),
+                          }}
+                          demo={demo}
+                          demoLeads={visibleLeads}
+                          key={session?.member?.accessPolicyVersion || 'demo'}
+                        />
+                      ) : null}
                       {admin ? (
                         <button
                           className="button"
@@ -2331,6 +2359,7 @@ export default function App() {
             ) : null}
             {page === 'settings' || page === 'members' ? (
               <SettingsPage
+                onWorkspacePolicyChanged={() => void resolveSession()}
                 initialSection={page === 'members' ? 'access' : undefined}
                 session={session}
                 demo={demo}

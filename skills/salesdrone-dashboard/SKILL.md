@@ -40,6 +40,8 @@ Scoped current lead/activity aggregates, current user’s outstanding tasks, use
 - Workspace AI guidance is read server-side and changes the cache fingerprint; recheck its version before publishing an in-flight summary. Never let preferences override grounding, permissions or blocked-lead rules.
 - Charts remain usable when briefs fail; stale cache or unavailable inference must not hide deterministic data. Never infer creditworthiness from a score.
 
+Workspace accessPolicyVersion and effective scope participate in brief source fingerprints and publication rechecks. A policy change while Gemini runs must reject the old brief, including when membership.version is unchanged.
+
 ## Change and diagnosis
 
 Compare deterministic API aggregates to filters/membership before debugging chart geometry. Test no data, custom stage order, backlog, inaccessible tasks and invalid AI citations; verify a stage click opens matching leads.

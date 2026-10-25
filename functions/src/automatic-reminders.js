@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { path, canReadLead } from './policy.js';
+import { path, canReadLead, effectiveMember } from './policy.js';
 import { makeTask, queueTask } from './tasks.js';
 export const AUTO_DEFAULTS = {
   automaticReminders: true,
@@ -132,7 +132,14 @@ export function resolveExtraction(
       message: 'Reminder scheduled from this note.',
     };
   }
-  if (/\b(?:UTC|GMT|IST|PST|PDT|EST|EDT|CST|CDT|MST|MDT|CET|CEST|BST|AEST|AEDT)\b|\b[A-Za-z_]+\/[A-Za-z_]+\b|[+-]\d{2}:\d{2}/.test(x.evidence)) return review('This instruction specifies a timezone. Set the date manually to confirm it.');
+  if (
+    /\b(?:UTC|GMT|IST|PST|PDT|EST|EDT|CST|CDT|MST|MDT|CET|CEST|BST|AEST|AEDT)\b|\b[A-Za-z_]+\/[A-Za-z_]+\b|[+-]\d{2}:\d{2}/.test(
+      x.evidence,
+    )
+  )
+    return review(
+      'This instruction specifies a timezone. Set the date manually to confirm it.',
+    );
   const base = localParts(referenceAt, timezone).date;
   let d = new Date(base + 'T12:00:00Z');
   if (x.timing === 'days' && x.days !== null)
@@ -243,7 +250,7 @@ export async function enqueueAnalysis(
 async function eligible(tx, job) {
   const [activity, member, lead, prefs] = await Promise.all([
     tx.get(path('activities', job.activityId)),
-    tx.get(path('members', job.ownerUid)),
+    tx.get(path('members', job.ownerUid)).then((m) => effectiveMember(tx, m)),
     tx.get(path('leads', job.leadId)),
     tx.get(`users/${job.ownerUid}`),
   ]);

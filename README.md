@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.3.0 · MIT**
+**Part of Avinya Enterprises · v1.4.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -118,3 +118,5 @@ The initial release was **v1.0.0**. Subsequent changes use `npm run release -- p
 Application code is released under the [MIT licence](LICENSE), copyright Avinya Enterprises. Brand names and logos remain their owners’ marks. Font and dependency licences are documented in [third-party notices](THIRD-PARTY-NOTICES.md).
 
 The About story, README and public guide include original generated illustrations made using the [Ian Xiaohei illustration workflow](https://github.com/tojileon/ian-xiaohei-illustrations-en). Their [review manifest](assets/salesdrone-guide-illustrations/QA.md) accompanies the source images. Product screenshots use synthetic demo data; the API portal image shows only public schemas.
+
+Filtered Excel reports are available directly in Leads, with a column picker and the same applied filters across all matching pages. Admins control report availability and non-admin assigned-only access under Settings → Reports & lead access. See [report behavior and limits](docs/REPORTS.md).

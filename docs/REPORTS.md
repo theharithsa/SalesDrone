@@ -1,0 +1,13 @@
+# Filtered lead reports
+
+Open Leads, apply stage/source/search and column conditions, then choose **Export Excel**. Select report columns (including active custom fields and renamed built-in labels) and download .xlsx. All matching permitted leads are included across pages, not only the current table page. Clear and select columns in the desired order. The workbook contains Leads with a frozen/filterable header and Report details with the applied filters and generation time. Phone prefixes are preserved; source text is written as strings rather than executable formulas.
+
+Settings → Reports & lead access lets an Admin enable or disable exports for the whole workspace, including Admins and API tokens. The default is enabled. This controls the report feature; authorized users can still read/copy data within their existing lead permissions. Disabled or hidden/retired fields cannot be newly selected. Demo exports contain synthetic data only.
+
+The browser follows POST /api/v1/leads/export pages, with up to 100 matches and 1,000 scanned permitted leads per request. Empty sparse pages can still have a nextCursor. Cursors bind user, membership, effective scope, filters, selected column order and field/workspace configuration. Each page rechecks current permission and export availability; changed configuration invalidates the report. PATs need leads:export. Limit: 120 pages per member per minute. No report contents are stored server-side; audit records contain only actor, counts, operation and time.
+
+The browser stops with an error above 10,000 matching rows or 1,000 scan pages; it never silently downloads a partial report. Narrow the filters for larger workspaces. Closing the dialog cancels preparation. Reports reflect values read during pagination, not a cross-page transactional snapshot; concurrent edits can change membership in a report. The latest/initial comment columns are lead summaries, not the full conversation timeline.
+
+## Assigned-only access
+
+The same settings section defaults **Non-admins see assigned leads only** to on. This caps every non-admin's configured scope at assigned, including existing all-scope members. Admins retain their existing scope. Turning it off restores each member's configured scope; assigned members remain assigned. APIs enforce this for lists, direct lookups, reports, dashboard input, tasks, notifications and reminder eligibility. Policy changes invalidate stale cursors and in-flight dashboard insights. The browser rechecks on focus and every minute, clearing stale data on a changed policy version; new API requests apply the policy immediately.

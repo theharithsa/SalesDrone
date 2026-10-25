@@ -38,6 +38,8 @@ noteAnalyses leased/revision-bound jobs, activities inference state, tasks and r
 
 Settings → AvinyaIntelligence → Automatic reminders remains a personal preference. Moving the navigation does not grant workspace-level control or change note extraction behavior.
 
+Raw owner memberships must pass through effectiveMember before eligibility checks. The workspace assignedOnly cap applies to existing all-scope non-admin owners, including previously queued analyses.
+
 ## Change and diagnosis
 
 For “call in 5 minutes,” trace saved activity → noteAnalyses enqueue/status/lease → extraction validation → task commit → task query visibility → delivery. Separate inference delay from due-time alert delay. Reproduce with injected extractor + fixed clock before a controlled live test.

@@ -7,6 +7,16 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.4.0] - 2026-10-25
+
+### Changed
+- Add filtered, selected-column Excel reports from Leads, including all matching pages and custom field labels.
+- Add admin Reports & lead access controls for export availability and workspace-wide assigned-only access for non-admins (default on).
+- Apply current policy to APIs, report cursors, dashboard inference and reminder/notification workers; invalidate stale client data.
+- Use explicitly approved live-member emails as Dynatrace RUM user tags, retain anonymous demo users and hashed backend actors, and handle late RUM script readiness.
+- Publish versioned report/settings APIs, scoped token access, documentation and updated module skills.
+
 ## [1.3.0] - 2026-10-25
 
 ### Changed

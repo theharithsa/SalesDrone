@@ -27,6 +27,11 @@ export type Task = Entity & {
 export type Session = {
   identity: { uid: string; email: string; name: string; photoURL?: string };
   mode: 'live' | 'demo';
+  workspaceSettings?: {
+    version: number;
+    exportsEnabled: boolean;
+    assignedOnly: boolean;
+  };
   member: Entity | null;
   preferences: {
     timezone: string;

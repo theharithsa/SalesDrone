@@ -41,6 +41,8 @@ Curated site/.build output, reviewed screenshot hash manifest and original illus
 
 Describe both insight modes in the public guide: manual is the default, automatic hides the action and requests once per dashboard visit. Keep AvinyaIntelligence settings paths and the current lead typography consistent with the app.
 
+Document the Reports & lead access settings, selected-column filtered XLSX workflow and reports API limits. Public screenshots/exports must remain synthetic. Distinguish approved RUM email tags from still-pseudonymous backend actors and report tenant query limitations.
+
 ## Change and diagnosis
 
 Check all local Markdown targets, image loading, anchor order and generated numbering. Run docs:build; inspect the actual public guide and README after publish, not only a local preview.

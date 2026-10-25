@@ -40,6 +40,8 @@ workspaces/avinyatech/{members,invitations,adminBindings,auditEvents}; user iden
 - Assigned/all scope applies to direct lookup, filtered lists, cursors, activities, tasks, scoring, dashboards and inbox context. Hidden UI controls are not authorization.
 - Role downgrade, membership suspension and Auth owner disable/delete must also invalidate applicable PAT and worker access.
 
+The workspace assignedOnly policy caps non-admin members at assigned scope by default without overwriting their configured membership. Use effectiveMember/requireMember for APIs and raw member reads in reminder/notification workers. /me exposes accessPolicyVersion; sessions clear stale lead data on policy changes. Bind long-lived caches and in-flight publications to scope plus policy version as well as member version. Test policy toggles, existing all-scope SDRs, direct links, reports and stale deliveries in reports-policy.test.js.
+
 ## Change and diagnosis
 
 Reproduce cross-user assigned/all and viewer writes, expired/revoked grants, and concurrent version edits. If an old task or notification remains visible after transfer, inspect its recipient and assignment revision rather than broadening access.

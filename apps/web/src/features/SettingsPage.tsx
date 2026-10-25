@@ -1,3 +1,4 @@
+import WorkspacePolicySettings from './WorkspacePolicySettings';
 import AIPersonalizationSettings from './AIPersonalizationSettings';
 import aboutStoryIllustration from '../../../../assets/salesdrone-guide-illustrations/04-the-story-behind-each-row.png';
 import DeveloperSettings from './DeveloperSettings';
@@ -38,8 +39,10 @@ export default function SettingsPage({
   fieldOptions,
   onFieldOptions,
   initialSection,
+  onWorkspacePolicyChanged,
 }: {
   initialSection?: string;
+  onWorkspacePolicyChanged?: () => void;
   session: Session | null;
   fieldOptions: FieldOptions;
   onFieldOptions: (options: FieldOptions) => void;
@@ -77,6 +80,12 @@ export default function SettingsPage({
     },
     ...(isAdmin
       ? [
+          {
+            id: 'workspace',
+            label: 'Reports & lead access',
+            icon: ShieldCheck,
+            description: 'Control Excel exports and access to assigned leads.',
+          },
           {
             id: 'fields',
             label: 'Lead fields',
@@ -147,7 +156,7 @@ export default function SettingsPage({
     ['profile', 'appearance', 'notifications'].includes(item.id),
   );
   const workspaceSections = sections.filter((item) =>
-    ['fields', 'choices', 'developer', 'access'].includes(item.id),
+    ['workspace', 'fields', 'choices', 'developer', 'access'].includes(item.id),
   );
   const chooseSection = (id: string) => {
     setSection(id);
@@ -335,6 +344,12 @@ export default function SettingsPage({
             <p className="success-message" role="status">
               {message}
             </p>
+          ) : null}
+          {isAdmin && section === 'workspace' ? (
+            <WorkspacePolicySettings
+              request={request}
+              onChanged={onWorkspacePolicyChanged || onRefresh}
+            />
           ) : null}
           {isAdmin && section === 'fields' ? (
             <LeadFieldManager

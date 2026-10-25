@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v1.3.0**, OpenAPI contract **1.11.0**. All application operations
+Application release **v1.4.0**, OpenAPI contract **1.12.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -182,3 +182,9 @@ Do not submit tokens to public GitHub issues. See [SECURITY.md](../SECURITY.md).
 GET and PATCH `/api/v1/ai-settings` are Admin-only Google/App Check operations, not PAT operations. The response includes `version`, `instructions`, `defaultInstructions` and `usingDefault`. PATCH accepts `{ "expectedVersion": 1, "instructions": "Focus on overdue callbacks; use concise bullets." }`; an empty instruction string restores default guidance. Unknown fields/oversized input return 400, insufficient access returns 403, and stale versions return 409. Settings changes invalidate cached AI insights, but do not trigger generation.
 
 `GET /api/v1/field-options` includes `labels`, keyed by stable built-in field ID. Admin PATCH may include a partial `labels` object, for example `{ "name": "Project contact", "zone": "Industry" }`, along with the existing `expectedVersion` and `values` payload. Missing labels retain their current names. Unknown IDs, blank/oversized labels and normalized duplicate built-in/custom names are rejected. Labels do not rename API payload keys, change types or migrate lead records.
+
+## Filtered reports and workspace controls
+
+POST /api/v1/leads/export returns paged projected report data (not a binary file). Google/App Check members need leads:read; PATs require the separate leads:export scope. The workspace must enable exports. The strict body supports columns, filters, stage, source, search, field, cursor and limit (1–100). Follow nextCursor even on empty sparse pages. Cursors bind policy/config versions and column order. Rate: 120 pages/member/minute. Selected field values are never included in audit telemetry. See [Reports](REPORTS.md) for browser XLSX limits.
+
+GET /api/v1/workspace-settings returns version, exportsEnabled and assignedOnly to active members (PAT configuration:read). PATCH requires Admin role, members:write, Google/App Check and expectedVersion; PAT writes are denied. assignedOnly defaults true and caps non-admin scope across all surfaces. exportsEnabled defaults true. Individual assigned scope is preserved when the workspace cap is disabled.

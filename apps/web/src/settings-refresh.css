@@ -1192,3 +1192,62 @@ input[type='tel'] {
   line-height: 1.6;
   color: var(--muted);
 }
+
+.report-setting-option {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 0;
+}
+.report-setting-option input,
+.report-column-grid input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  accent-color: var(--accent);
+}
+.report-setting-option span {
+  min-width: 0;
+}
+.report-setting-option strong,
+.report-setting-option small {
+  display: block;
+}
+.report-setting-option small {
+  margin-top: 0.4rem;
+  line-height: 1.6;
+  color: var(--muted);
+  font-weight: 400;
+}
+.report-columns {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.report-column-actions {
+  display: flex;
+  gap: 1rem;
+  margin: 0.75rem 0;
+}
+.report-column-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  max-height: 40dvh;
+  overflow: auto;
+  padding: 0.3rem;
+}
+.report-column-grid label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .report-column-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

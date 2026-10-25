@@ -24,6 +24,7 @@ Form or scoped API → field and contact validation → member/lead policy → a
 ## Primary API ownership
 
 - GET /api/v1/leads
+- POST /api/v1/leads/export
 - POST /api/v1/leads
 - GET /api/v1/leads/{id}
 - PATCH /api/v1/leads/{id}
@@ -42,6 +43,12 @@ leads, dedupeKeys, requests, leadTransitions, activities, tasks, reminderDeliver
 - Use expectedVersion and idempotency semantics; reauthorize request replays and protect contact-key ownership on edits.
 - Do-not-contact and needsReview suppress outreach, while administrative tasks can remain. Assignment changes invalidate old inference and delivery eligibility.
 - Filter server-side with validated custom definitions and identical demo semantics. Preserve bounded scans and cursor bindings; do not fetch the whole workspace to filter in the browser.
+
+## Filtered Excel reports
+
+[lead-reports.js](../../functions/src/lead-reports.js) projects selected available columns; [LeadReportExport.tsx](../../apps/web/src/features/LeadReportExport.tsx) follows signed report pages and [report-workbook.ts](../../apps/web/src/features/report-workbook.ts) builds XLSX in a worker. The report uses every applied lead filter, not just loaded rows. Preserve column order/renamed labels, phone strings, plain string cells for formula-like content and the filter-context sheet. Conversation timelines are not included.
+
+Require enabled workspace exports and leads:read; PATs need the separate leads:export scope. Recheck current access and settings per page, bind cursors to filters/columns/config/policy and audit counts only. Sparse pages can be empty with nextCursor; continue to null. Cancel rather than silently truncate beyond 10,000 matching rows or 1,000 scan pages. Do not promise a transactional snapshot across pages. Test with reports-policy.test.js and report-workbook.test.ts.
 
 ## Change and diagnosis
 

@@ -2,7 +2,13 @@ import { readAISettings } from './ai-settings.js';
 import { readFieldOptions } from './field-options.js';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
-import { path, hash, scopeFilters, requireMember } from './policy.js';
+import {
+  path,
+  hash,
+  scopeFilters,
+  requireMember,
+  sameAccess,
+} from './policy.js';
 import { AppError } from './contracts.js';
 import { readScoring, scoreView } from './scoring.js';
 import { localParts } from './automatic-reminders.js';
@@ -217,6 +223,8 @@ export async function dashboardSnapshot(
     JSON.stringify([
       member.uid,
       member.version,
+      member.scope,
+      member.accessPolicyVersion || 1,
       config.version,
       leads.map((l) => [l.id, l.version]),
       tasks.map((t) => [t.id, t.version]),
@@ -322,7 +330,7 @@ export async function dashboardBrief({
     lease = randomUUID();
   const claim = await store.run(async (tx) => {
     const current = await requireMember(tx, member, 'leads:read');
-    if (current.version !== member.version)
+    if (!sameAccess(current, member))
       throw new AppError(
         409,
         'SCOPE_CHANGED',
@@ -382,7 +390,7 @@ export async function dashboardBrief({
     return await store.run(async (tx) => {
       const current = await requireMember(tx, member, 'leads:read'),
         old = await tx.get(p);
-      if (current.version !== member.version || old?.lease !== lease)
+      if (!sameAccess(current, member) || old?.lease !== lease)
         throw new AppError(
           409,
           'SCOPE_CHANGED',

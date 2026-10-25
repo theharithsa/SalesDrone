@@ -27,6 +27,8 @@ Admin field edit or personal preference → schema/ownership/version validation 
 
 ## Primary API ownership
 
+- GET /api/v1/workspace-settings
+- PATCH /api/v1/workspace-settings
 - GET /api/v1/ai-settings
 - PATCH /api/v1/ai-settings
 - PATCH /api/v1/me
@@ -49,6 +51,8 @@ workspaces/avinyatech/settings/fields; users/{uid} preferences; persisted lead c
 - Desktop settings use section navigation; mobile uses a section selector. Preserve profile photo fallback, readable fonts and accessible labels.
 
 AvinyaIntelligence is an expandable settings group containing Dashboard insights (Admin), Automatic reminders (personal), and Lead scoring (Admin). Use matching optgroups in the mobile selector. Dashboard preferences support manual/automatic insightMode; omitted mode in older PATCH clients preserves the saved value, and missing records default to manual.
+
+Settings → Reports & lead access owns [workspace-settings.js](../../functions/src/workspace-settings.js) and [WorkspacePolicySettings.tsx](../../apps/web/src/features/WorkspacePolicySettings.tsx). Admin Google/App Check writes require members:write and expectedVersion; active members can read the safe booleans. Defaults are exportsEnabled=true and assignedOnly=true. No-op saves retain the version. Saving must refresh /me so controls update immediately. Disabling assignedOnly restores configured member scopes, never promotes an assigned member to all. Verify reports-policy.test.js and the emulator integration.
 
 ## Change and diagnosis
 

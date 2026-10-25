@@ -44,6 +44,8 @@ Browser presentation/in-memory demo state; authenticated data flows only through
 
 Settings groups AvinyaIntelligence in an accessible aria-expanded accordion with indented children on desktop and a native optgroup on mobile. Keep existing section deep links and permission-filtered children; avoid horizontal overflow from long group labels.
 
+Lead export uses the shared focus-managed Modal, native checkboxes, progress/cancel states and a worker-built XLSX. Controls must wrap on mobile and stay readable in both themes; close/account-policy changes cancel pending work.
+
 ## Change and diagnosis
 
 Use the approved browser tool with synthetic demo data. Measure desktop/mobile viewport and horizontal overflow; check both themes, long names/labels, empty/error/loading states and keyboard focus. Do not claim physical-device testing from a resized viewport.

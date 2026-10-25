@@ -39,6 +39,8 @@ telemetryOutbox committed CloudEvents; safe service/version/request context; pri
 - Exporter failure must not roll back customer operations. Preserve bounded retries, leases, stable event IDs and rejected/pending work for repair.
 - HTTP 202/201 proves ingest acceptance only, not tenant searchability, retention or native RUM-to-trace navigation. Verify each claim at its actual boundary.
 
+Approved live workspace members now use their verified email as the RUM user tag, per the application owner's explicit privacy choice. Demo/unapproved users remain anonymous; backend telemetry still hashes UIDs and excludes emails. createRumIdentity handles account switches/sign-out and the late salesdrone:rum-ready event after bounded polling. A DOM diagnostic exposes only email/pseudonymous/anonymous mode, never the tag value. Test rum-identity.test.ts. An API call returning without error is not proof of tenant ingestion/searchability; query credentials can differ from ingest credentials.
+
 ## Change and diagnosis
 
 Inspect sanitized status/counts and correlation IDs. Test concurrent trace isolation, malformed parent contexts, redirected ingestion endpoints, failed exports and outbox retries. Use dt-obs if available for an instrumentation task; this skill does not require it to exist.

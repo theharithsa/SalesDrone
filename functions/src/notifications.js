@@ -1,4 +1,4 @@
-import { path, canReadLead } from './policy.js';
+import { path, canReadLead, effectiveMember } from './policy.js';
 export const isLeadNotification = (n) =>
   ['lead_created', 'lead_assigned'].includes(n.kind);
 // Write the inbox item and push outbox in the same transaction as the lead.
@@ -53,7 +53,10 @@ export async function notificationVisible(db, member, notification) {
 // Rechecked while claiming a delivery and immediately before each external send.
 export async function deliveryContext(db, job) {
   if (isLeadNotification(job)) {
-    const member = await db.get(path('members', job.recipientUid));
+    const member = await effectiveMember(
+      db,
+      await db.get(path('members', job.recipientUid)),
+    );
     if (
       !member?.active ||
       !member.capabilities.includes('leads:read') ||
@@ -70,7 +73,12 @@ export async function deliveryContext(db, job) {
     };
   }
   const task = await db.get(path('tasks', job.taskId));
-  const member = task ? await db.get(path('members', task.recipientUid)) : null;
+  const member = task
+    ? await effectiveMember(
+        db,
+        await db.get(path('members', task.recipientUid)),
+      )
+    : null;
   const lead = task?.leadId ? await db.get(path('leads', task.leadId)) : null;
   if (
     task?.state !== 'Pending' ||

@@ -1,3 +1,4 @@
+import { createRumIdentity } from './rum-identity';
 import { APP_VERSION } from './version';
 type Rum = {
   disableSessionReplay?: () => void;
@@ -16,9 +17,7 @@ type Rum = {
   ) => void;
 };
 const rum = () => (window as Window & { dtrum?: Rum }).dtrum;
-let identityEpoch = 0,
-  currentIdentity = '',
-  lastPage = '';
+let lastPage = '';
 export const safePage = (path: string) => {
   const p = path.split('?')[0].split('/').filter(Boolean)[0] || 'login';
   return [
@@ -50,6 +49,8 @@ export const safeOperation = (path: string, method: string) => {
     'lead-scores',
     'scoring-settings',
     'field-options',
+    'workspace-settings',
+    'ai-settings',
     'activities',
     'summary',
   ].includes(kind)
@@ -93,52 +94,34 @@ function anonymousId() {
     return 'browser:session';
   }
 }
-export function setRumIdentity(uid: string | null) {
-  const epoch = ++identityEpoch;
-  let cancelled = false,
-    timer: ReturnType<typeof setTimeout> | undefined,
-    attempt = 0;
-  const ready = async () => {
-    const value = uid
-      ? 'user:' +
-        Array.from(
-          new Uint8Array(
-            await crypto.subtle.digest(
-              'SHA-256',
-              new TextEncoder().encode('salesdrone:' + uid),
-            ),
-          ),
-        )
-          .map((v) => v.toString(16).padStart(2, '0'))
-          .join('')
-          .slice(0, 32)
-      : anonymousId();
-    if (cancelled || epoch !== identityEpoch) return;
-    const apply = () => {
-      if (cancelled || epoch !== identityEpoch) return;
-      const r = rum();
-      if (!r) {
-        if (++attempt < 16) timer = setTimeout(apply, 500);
-        return;
-      }
-      try {
-        r.disableSessionReplay?.();
-        r.setAutomaticActionDetection?.(false);
-        r.enableManualPageDetection?.();
-        if (currentIdentity && currentIdentity !== value) r.endSession?.();
-        r.identifyUser?.(value);
-        currentIdentity = value;
-        rumPage(location.pathname);
-      } catch {}
-    };
-    apply();
-  };
-  void ready().catch(() => {});
-  return () => {
-    cancelled = true;
-    clearTimeout(timer);
-  };
-}
+export const setRumIdentity = createRumIdentity({
+  agent: rum,
+  anonymous: anonymousId,
+  hash: async (uid) =>
+    'user:' +
+    Array.from(
+      new Uint8Array(
+        await crypto.subtle.digest(
+          'SHA-256',
+          new TextEncoder().encode('salesdrone:' + uid),
+        ),
+      ),
+    )
+      .map((v) => v.toString(16).padStart(2, '0'))
+      .join('')
+      .slice(0, 32),
+  onReady: (mode) => {
+    document.documentElement.dataset.salesdroneRumIdentity = mode;
+    lastPage = '';
+    rumPage(location.pathname);
+  },
+  listen: (apply) => {
+    window.addEventListener('salesdrone:rum-ready', apply);
+    return () => window.removeEventListener('salesdrone:rum-ready', apply);
+  },
+  schedule: (apply) => setTimeout(apply, 500),
+  clear: (timer) => clearTimeout(timer as ReturnType<typeof setTimeout>),
+});
 export function rumPage(path: string) {
   const name = safePage(path),
     r = rum();

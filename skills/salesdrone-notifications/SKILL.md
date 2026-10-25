@@ -43,6 +43,8 @@ users/{uid}/notifications and devices; reminderDeliveries and deviceDeliveries; 
 - Request browser permission in an intentional user action; VAPID public key is not a private server credential. Device tokens are private. Unregister/sign-out must not leave another user’s device active.
 - Bell opens a focus-managed overlay without navigation. Preserve Escape/outside click, trigger-focus return and authorized deep links. Keep legacy notification URL support.
 
+deliveryContext resolves the current effective member scope before old task/assignment deliveries are sent. Disabling cross-owner access must suppress stale deliveries even if membership.version did not change.
+
 ## Change and diagnosis
 
 Test both foreground and background on a supported browser, permission denied, inactive device, failed-device retry, ownership transfer and unread state. API test acceptance alone is not proof that an OS notification appeared.
