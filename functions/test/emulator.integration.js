@@ -125,6 +125,32 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   );
   const ownUser = (await auth.verifyIdToken(token)).uid;
   assert.equal((await db.doc('users/' + ownUser).get()).data().bookMode, true);
+  const settingAudits = (
+    await db
+      .collection('workspaces/avinyatech/auditEvents')
+      .where('action', '==', 'PATCH /me')
+      .limit(20)
+      .get()
+  ).docs.map((d) => d.data());
+  const appearanceAudit = settingAudits.find((a) =>
+    a.settingsChanges?.some(
+      (c) => c.section === 'appearance' && c.keys.includes('bookMode'),
+    ),
+  );
+  assert.ok(appearanceAudit);
+  const auditOutbox = (
+    await db.collection('workspaces/avinyatech/telemetryOutbox').get()
+  ).docs.map((d) => d.data());
+  assert.ok(
+    auditOutbox.some(
+      (row) =>
+        row.event.type ===
+          'com.avinyatech.salesdrone.settings.audit.committed' &&
+        row.event.data['audit.id'] === appearanceAudit.id,
+    ),
+  );
+  assert.ok(!JSON.stringify(auditOutbox.map((r) => r.event)).includes(ownUser));
+
   await req('patch', '/me', {
     timezone: 'Asia/Kolkata',
     appearance: 'system',

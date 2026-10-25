@@ -468,7 +468,7 @@ export default function SettingsPage({
                       <span>
                         <strong>Book mode</strong>
                         <small>
-                          Warm paper, quiet colours and serif reading text.
+                          Warm paper, quiet colours and serif fonts throughout the workspace.
                           Works with Light, Dark or System.
                         </small>
                       </span>

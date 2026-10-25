@@ -202,3 +202,7 @@ All, Comments and Calls are presentation filters over the same authorized, pagin
 ## Preferences: Book mode (contract 1.13.0)
 
 GET /api/v1/me returns preferences.bookMode (false for missing records). PATCH /api/v1/me accepts optional boolean bookMode together with the existing required timezone and appearance. Omitting bookMode preserves the stored value; false explicitly disables it. This additive field changes no role or capability. Only the verified active Google/App Check caller can update their own preferences; Personal Access Tokens cannot use this route, and uid/owner fields are rejected. No new endpoint, token scope or lead access is introduced. Book mode is independent from light/dark/system. Tests: book-mode.test.js and the real Auth/Firestore emulator scenario cover persistence, old-client omission, isolation, invalid payloads and denied access.
+
+## Settings audit side effects
+
+Saved net changes through existing configuration/preferences, member/invitation, token and device routes atomically attach settingsChanges metadata to the existing server audit and enqueue safe Dynatrace audit events. Invitation acceptance participates as well. These internal side effects change no request/response schema, role, PAT scope or API version. Failed/denied/no-op/replayed changes do not emit duplicate success changes. No audit-read endpoint is introduced; direct client Firestore access remains denied. See [coverage, data exclusions and delivery semantics](SETTINGS-AUDIT.md).

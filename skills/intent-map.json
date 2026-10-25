@@ -53,8 +53,6 @@
     "theme",
     "responsive",
     "navigation",
-    "book mode",
-    "reading style",
     "sunrise sunset"
   ],
   "salesdrone-lead-journey": [
@@ -87,7 +85,10 @@
     "trace",
     "metric",
     "logs",
-    "bizevent"
+    "bizevent",
+    "settings audit",
+    "audit logs",
+    "audit delivery"
   ],
   "salesdrone-people-permissions": [
     "people access",
@@ -130,5 +131,12 @@
     "feature walkthrough",
     "faq",
     "refresh screenshots"
+  ],
+  "salesdrone-book-mode": [
+    "book mode",
+    "kindle mode",
+    "serif workspace",
+    "reading mode",
+    "paper palette"
   ]
 }

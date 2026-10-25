@@ -68,3 +68,5 @@ Adjacent owners:
 - [salesdrone-leads](../salesdrone-leads/SKILL.md)
 - [salesdrone-notifications](../salesdrone-notifications/SKILL.md)
 - [salesdrone-api-integrations](../salesdrone-api-integrations/SKILL.md)
+
+Role/scope/capability changes, invitation grants/revocation and the direct invitation acceptance transaction participate in settings-audit.js. Acceptance must preserve matching verified identity and atomic member/invitation/audit/outbox writes; no raw invitation email or target UID goes to Dynatrace. Replay must not grant again or emit another audit change.

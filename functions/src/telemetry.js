@@ -27,6 +27,9 @@ import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-proto';
 import { APP_VERSION, BUILD_COMMIT } from './version.js';
 import { tenantOrigin } from './telemetry-outbox.js';
 const safeKeys = new Set([
+  'audit.id',
+  'settings.section',
+  'settings.changed_count',
   'operation',
   'outcome',
   'error.type',

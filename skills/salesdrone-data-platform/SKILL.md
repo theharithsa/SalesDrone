@@ -64,3 +64,5 @@ Adjacent owners:
 - [salesdrone-tasks-reminders](../salesdrone-tasks-reminders/SKILL.md)
 - [salesdrone-observability](../salesdrone-observability/SKILL.md)
 - [salesdrone-release](../salesdrone-release/SKILL.md)
+
+Settings audit snapshots are requested immediately before each first tracked write, before memory-adapter mutation and before buffered Firestore flush. Keep snapshot read failures transactional and observe the final net write. Do not move audit/outbox writes outside the transaction or depend on OTel enabled state. Real emulator tests verify the adapter boundary.

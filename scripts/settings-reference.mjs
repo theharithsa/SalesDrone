@@ -70,6 +70,16 @@ export function renderSettings(catalog, sections, scopes, version) {
     }
     body += '</article>';
   }
+  if (catalog.auditPolicy) {
+    md +=
+      '## Settings audit trail\n\n' +
+      catalog.auditPolicy +
+      '\n\nSee [settings audit coverage and delivery](SETTINGS-AUDIT.md).\n\n';
+    body +=
+      '<article id="audit"><h2>Settings audit trail</h2><p>' +
+      escape(catalog.auditPolicy) +
+      '</p><p><a href="https://github.com/theharithsa/SalesDrone/blob/main/docs/SETTINGS-AUDIT.md">Audit coverage, delivery and verification</a></p></article>';
+  }
   md += '## Operator environment configuration\n\n';
   body +=
     '<article id="environment"><h2>Operator environment configuration</h2>';
@@ -80,6 +90,6 @@ export function renderSettings(catalog, sections, scopes, version) {
   body += '</article>';
   md +=
     'See [setup](SETUP.md), [API contracts](API.md), [reports](REPORTS.md), [intelligence](INTELLIGENCE.md), [security](../SECURITY.md) and [release checks](RELEASE.md) for detailed procedures. This file is generated from settings-reference.json and the shared UI section catalog; run npm run docs:settings after changes.\n';
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="salesdrone-version" content="${escape(version)}"><title>SalesDrone settings guide</title><link rel="stylesheet" href="guide.css"><style>main{max-width:1100px;margin:auto;padding:32px}article{padding:32px 0;border-bottom:1px solid var(--line)}details{margin:14px 0;padding:16px}summary{font-weight:650;cursor:pointer}code{overflow-wrap:anywhere}nav{display:flex;flex-wrap:wrap;gap:12px}p{max-width:85ch}details p{font-size:1rem;color:var(--muted)}h2{font-size:clamp(1.4rem,4vw,2rem)}@media(prefers-color-scheme:dark){:root{background:#171c28;color:#eef1f7;--muted:#bdc9d6;--blue:#8cc8ff;--line:#39465c}body{background:#171c28;color:#eef1f7}h1,h2,h3,summary{color:#eef1f7}nav a{color:#b8dafb}}</style></head><body><main><a href="index.html#settings">← Product guide</a><h1>Customize SalesDrone</h1><p>Every setting explained · v${escape(version)}. Workspace settings need Admin access; personal preferences affect only you. Use Manage fields for lead definitions and dropdown choices.</p><nav aria-label="Settings guide">${sections.map((s) => `<a href="#${escape(s.id)}">${escape(s.label)}</a>`).join('')}<a href="#environment">Operator environment</a></nav>${body}<p><a href="https://github.com/theharithsa/SalesDrone/blob/main/docs/SETUP.md">Operator setup</a> · <a href="https://sales-drone-avinya.firebaseapp.com/api/docs">Swagger API portal</a></p></main></body></html>`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="salesdrone-version" content="${escape(version)}"><title>SalesDrone settings guide</title><link rel="stylesheet" href="guide.css"><style>main{max-width:1100px;margin:auto;padding:32px}article{padding:32px 0;border-bottom:1px solid var(--line)}details{margin:14px 0;padding:16px}summary{font-weight:650;cursor:pointer}code{overflow-wrap:anywhere}nav{display:flex;flex-wrap:wrap;gap:12px}p{max-width:85ch}details p{font-size:1rem;color:var(--muted)}h2{font-size:clamp(1.4rem,4vw,2rem)}@media(prefers-color-scheme:dark){:root{background:#171c28;color:#eef1f7;--muted:#bdc9d6;--blue:#8cc8ff;--line:#39465c}body{background:#171c28;color:#eef1f7}h1,h2,h3,summary{color:#eef1f7}nav a{color:#b8dafb}}</style></head><body><main><a href="index.html#settings">← Product guide</a><h1>Customize SalesDrone</h1><p>Every setting explained · v${escape(version)}. Workspace settings need Admin access; personal preferences affect only you. Use Manage fields for lead definitions and dropdown choices.</p><nav aria-label="Settings guide">${sections.map((s) => `<a href="#${escape(s.id)}">${escape(s.label)}</a>`).join('')}${catalog.auditPolicy ? '<a href="#audit">Settings audit trail</a>' : ''}<a href="#environment">Operator environment</a></nav>${body}<p><a href="https://github.com/theharithsa/SalesDrone/blob/main/docs/SETUP.md">Operator setup</a> · <a href="https://sales-drone-avinya.firebaseapp.com/api/docs">Swagger API portal</a></p></main></body></html>`;
   return { markdown: md, html };
 }

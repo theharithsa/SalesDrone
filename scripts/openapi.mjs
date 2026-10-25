@@ -818,6 +818,31 @@ for (const e of endpoints) {
     schema: { type: 'string', const: '60' },
     description: 'Wait at least 60 seconds before retrying',
   };
+  const auditRoutes = new Set([
+    'PATCH /me',
+    'PATCH /workspace-settings',
+    'PATCH /ai-settings',
+    'PATCH /field-options',
+    'PATCH /scoring-settings',
+    'PATCH /members/:uid',
+    'POST /invitations',
+    'DELETE /invitations/:id',
+    'POST /invitations/:id/accept',
+    'POST /personal-access-tokens',
+    'DELETE /personal-access-tokens/:id',
+    'POST /devices',
+    'DELETE /devices/:id',
+  ]);
+  if (auditRoutes.has(e.method.toUpperCase() + ' ' + e.url)) {
+    operation.description +=
+      ' Saved net configuration changes create an atomic server-side audit and privacy-safe Dynatrace outbox event. No values are exported; unchanged/failed/denied/replayed saves do not create duplicate success changes. No audit-read endpoint or token scope is granted.';
+    operation['x-settings-audit'] = {
+      eventType: 'com.avinyatech.salesdrone.settings.audit.committed',
+      atomic: true,
+      valuesExported: false,
+      auditReadScopeAdded: false,
+    };
+  }
   paths[url] ??= {};
   paths[url][e.method] = operation;
 }

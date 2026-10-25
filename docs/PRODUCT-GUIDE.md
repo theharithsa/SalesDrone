@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.6.4
+Version 1.6.5
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -364,13 +364,13 @@ Every active member; personal preference
 
 1. Open Settings > Appearance & time. On mobile, choose that section from the section selector.
 
-2. Enable Book mode and select Save changes. The workspace uses warm paper surfaces, ink-like text and serif reading passages.
+2. Enable Book mode and select Save changes. The workspace uses warm paper surfaces, ink-like text and serif fonts throughout the UI, with monospace phone numbers.
 
 3. Choose Light, Dark or System as usual. The top-right sunrise/sunset control changes day/night while preserving Book mode.
 
 4. Return to Appearance & time, disable Book mode and save to restore the standard workspace.
 
-The mode applies across dashboard, leads, tasks, forms, notifications and settings. Lead comments and narrative descriptions use a local serif font; headings, phone numbers, table controls and status distinctions remain readable. Page borders are restrained and no page-turn animation covers working data.
+The mode applies across dashboard, leads, tasks, forms, notifications and settings. All UI text uses a local serif font, including headings, navigation, tables, forms, buttons and chart labels; phone numbers remain monospace. Status distinctions remain readable. Page borders are restrained and no page-turn animation covers working data.
 
 The saved preference belongs to your account, not the team. Existing clients that omit bookMode preserve the stored value. Demo/guest changes use a guarded local fallback; a live account uses its own server preference, default off.
 
@@ -479,3 +479,31 @@ No. It proves the current test path worked. Future delivery still checks task st
 **What should I do if AI is unavailable?**
 
 Keep using manual tasks, notes and filters. Review failed analysis cards and retry when available; do not duplicate a task blindly.
+
+## Settings audit trail and delivery
+
+Members saving settings; authorized operators investigating delivery
+
+1. Save personal or administrator settings normally. Existing permissions and version/conflict checks still apply.
+
+2. Successful net changes produce a server-side audit with actor, timestamp, action and changed control keys. Unchanged or failed/denied saves do not create a setting-change event.
+
+3. The same transaction queues the safe settings audit event for Dynatrace. The exporter retries transient failures independently of your saved setting.
+
+4. Authorized operators can inspect audit/outbox metadata and Dynatrace events/logs. There is no new in-app audit browser or token scope.
+
+Coverage includes appearance/Book mode/timezone, reminders, reports/access, fields/dropdowns, AI configuration, people/invitations, tokens and device registration. Exported actor/subject and custom definition IDs are hashed; changed values, prompts, labels and credentials are excluded.
+
+A large edit can create several bounded event chunks under one audit ID. Deduplicate event.id and count audit.id appropriately; events and delivery logs are not independent user saves.
+
+Demo/guest edits, read-only profile controls, OS permissions and local sidebar preferences are not live server settings changes. Send test retains action telemetry. Transport acceptance does not prove tenant searchability.
+
+### Questions
+
+**Does an exporter failure undo my saved setting?**
+
+No. The local audit and event queue commit with the setting. Delivery is retried or retained for operator repair.
+
+**Can my API token download all audit logs?**
+
+No audit endpoint or Personal Access Token scope is introduced. Server/operator authorization remains required.

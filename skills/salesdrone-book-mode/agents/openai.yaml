@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Book mode"
+  short_description: "Maintain Book mode fonts, palettes and preferences"
+  default_prompt: "Use $salesdrone-book-mode to improve the requested reading experience, preserve preference and audit boundaries, and verify responsive behavior."

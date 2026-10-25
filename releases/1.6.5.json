@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "version": "1.6.5",
+  "summary": "Complete serif Book mode with a dedicated module skill, plus durable per-setting audits and safe Dynatrace event/log delivery.",
+  "modules": [
+    "salesdrone-book-mode",
+    "salesdrone-interface",
+    "salesdrone-workspace-settings",
+    "salesdrone-observability",
+    "salesdrone-people-permissions",
+    "salesdrone-data-platform",
+    "salesdrone-api-integrations"
+  ],
+  "documentation": [
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/BOOK-MODE-PLAN.md",
+    "docs/SETTINGS-AUDIT.md",
+    "docs/API.md",
+    "docs/observability.md",
+    "docs/BUSINESS-EVENTS.md",
+    "docs/TECHNICAL.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Existing setting/member/invitation/token/device mutations gain internal atomic audit side effects, documented in OpenAPI x-settings-audit. Request/response and token scopes unchanged; no audit viewer/read API.",
+    "contractVersion": "1.13.0",
+    "permissions": "Preserve Google/App Check, self-owned preferences and Admin configuration policies. Direct audit/outbox access remains server/operator-only with deny-all client rules.",
+    "tests": [
+      "functions/test/settings-audit.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Durable auditEvents.settingsChanges and atomic settings.audit.committed event chunks, safe hashed metadata, delivered-audit logs, existing genuine trace context/delivery counters and deployment reports. No setting values or credentials exported.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Durable auditEvents.settingsChanges and atomic settings.audit.committed event chunks, safe hashed metadata, delivered-audit logs, existing genuine trace context/delivery counters and deployment reports. No setting values or credentials exported.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Durable auditEvents.settingsChanges and atomic settings.audit.committed event chunks, safe hashed metadata, delivered-audit logs, existing genuine trace context/delivery counters and deployment reports. No setting values or credentials exported.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Durable auditEvents.settingsChanges and atomic settings.audit.committed event chunks, safe hashed metadata, delivered-audit logs, existing genuine trace context/delivery counters and deployment reports. No setting values or credentials exported.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Durable auditEvents.settingsChanges and atomic settings.audit.committed event chunks, safe hashed metadata, delivered-audit logs, existing genuine trace context/delivery counters and deployment reports. No setting values or credentials exported.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic Book mode computed fonts for headings, navigation, forms, tables, dialogs, chart labels and monospace phones; normal-mode restoration and 390px overflow. Emulator checks actual audit/outbox persistence. Synthetic live audit probe accepted without customer changes; tenant searchability remains separate.",
+  "screenshots": [
+    "book-mode-light.jpg",
+    "book-mode-dark.jpg",
+    "book-mode-mobile.jpg",
+    "book-settings-demo.jpg"
+  ]
+}

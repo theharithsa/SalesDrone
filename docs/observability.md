@@ -112,3 +112,7 @@ See [the business event catalog, diagnostics and DQL templates](BUSINESS-EVENTS.
 Book mode (v1.6.3) is a self-owned cosmetic preference. Reuse existing safe PATCH /me request spans/logs/metrics and release BizEvents. Do not emit a lead/business conversion or capture text, palette values or per-keystroke events for a style change; preference records remain excluded from the business-domain outbox.
 
 The v1.6.4 lifecycle-button and task-tab layout correction reuses existing suppression/archive request telemetry and committed events. Do not create conversion events for cosmetic button changes, expose customer text or change private task scopes.
+
+## Durable per-setting audit (v1.6.5)
+
+[Settings audit coverage](SETTINGS-AUDIT.md) now includes personal preferences, closing their previous export gap. Atomic auditEvents.settingsChanges and settings.audit.committed outbox records are produced even when OTel is unavailable. Only committed net changes emit events, with hashed identities/control keys and no values. Large definitions use 40-key chunks. Accepted export emits settings.audit.delivered logs using the existing genuine trace, delivery counter and retry diagnostics. No new metric dimensions, request body logging, audit-read API or token permissions. Demo and OS-only changes remain excluded. The earlier statement that preference records produce no events is superseded for this explicit audit stream; generic preference document summaries remain excluded.

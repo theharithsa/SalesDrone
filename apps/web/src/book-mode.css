@@ -175,3 +175,24 @@
     flex-basis: 36px;
   }
 }
+
+/* A complete serif UI in Book mode; phones retain their explicit monospace rule. */
+:root[data-reading-mode='book'] {
+  font-family: var(--reading-font);
+  --heading-font: var(--reading-font);
+  --script-font: var(--reading-font);
+}
+:root[data-reading-mode='book'] body,
+:root[data-reading-mode='book'] body *,
+:root[data-reading-mode='book'] #root,
+:root[data-reading-mode='book'] #root * {
+  font-family: var(--reading-font);
+}
+:root[data-reading-mode='book'] .phone-number,
+:root[data-reading-mode='book'] .phone-number *,
+:root[data-reading-mode='book'] input[type='tel'],
+:root[data-reading-mode='book'] #root .phone-number,
+:root[data-reading-mode='book'] #root .phone-number *,
+:root[data-reading-mode='book'] #root input[type='tel'] {
+  font-family: var(--mono-font) !important;
+}

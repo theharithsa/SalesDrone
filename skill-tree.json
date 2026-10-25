@@ -68,6 +68,26 @@
       ]
     },
     {
+      "id": "salesdrone-book-mode",
+      "path": "skills/salesdrone-book-mode/SKILL.md",
+      "description": "Maintain SalesDrone Book mode typography, paper palettes, personal preference and responsive reading UI. Use for Book mode or Kindle-style requests; general shell work belongs to interface.",
+      "matchTerms": [
+        "book mode",
+        "kindle mode",
+        "serif workspace",
+        "reading mode",
+        "paper palette"
+      ],
+      "related": [
+        "salesdrone-workspace-settings",
+        "salesdrone-observability",
+        "salesdrone-product-guide",
+        "salesdrone-release-readiness",
+        "salesdrone-release"
+      ],
+      "apiOperations": []
+    },
+    {
       "id": "salesdrone-conversations",
       "path": "skills/salesdrone-conversations/SKILL.md",
       "description": "Maintain SalesDrone lead notes, call outcomes, discussion imports and revision-preserving corrections. Use for timeline/call changes; reminder extraction is owned by automatic-reminders.",
@@ -185,8 +205,6 @@
         "theme",
         "responsive",
         "navigation",
-        "book mode",
-        "reading style",
         "sunrise sunset"
       ],
       "related": [
@@ -194,7 +212,8 @@
         "salesdrone-authentication",
         "salesdrone-workspace-settings",
         "salesdrone-notifications",
-        "salesdrone-dashboard"
+        "salesdrone-dashboard",
+        "salesdrone-book-mode"
       ],
       "apiOperations": []
     },
@@ -307,7 +326,10 @@
         "trace",
         "metric",
         "logs",
-        "bizevent"
+        "bizevent",
+        "settings audit",
+        "audit logs",
+        "audit delivery"
       ],
       "related": [
         "salesdrone-release",
@@ -438,7 +460,8 @@
         "salesdrone-leads",
         "salesdrone-lead-scoring",
         "salesdrone-people-permissions",
-        "salesdrone-api-integrations"
+        "salesdrone-api-integrations",
+        "salesdrone-book-mode"
       ],
       "apiOperations": [
         "GET /api/v1/workspace-settings",

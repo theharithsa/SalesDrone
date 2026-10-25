@@ -1,4 +1,8 @@
 import {
+  settingsAuditTransaction,
+  queueSettingsAudits,
+} from './settings-audit.js';
+import {
   WORKSPACE_SETTINGS_PATH,
   WorkspaceSettingsPatch,
   readWorkspaceSettings,
@@ -285,13 +289,15 @@ export function createApp({
           'RATE_LIMIT',
           'Too many changes. Try again in a minute.',
         );
-      const result = await fn(tx, member);
+      const tracking = settingsAuditTransaction(tx);
+      const result = await fn(tracking.tx, member);
+      const settingsChanges = await tracking.changes();
       tx.set(ratePath, {
         count: (rate?.count || 0) + 1,
         expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
       });
       const id = uid();
-      tx.set(path('auditEvents', id), {
+      const audit = {
         id,
         actorUid: member.uid,
         authentication: req.identity.personalAccess
@@ -303,7 +309,10 @@ export function createApp({
         action: req.method + ' ' + req.route.path,
         requestId: req.requestId,
         createdAt: now(),
-      });
+        ...(settingsChanges.length ? { settingsChanges } : {}),
+      };
+      tx.set(path('auditEvents', id), audit);
+      queueSettingsAudits(tx, audit, settingsChanges, telemetry()?.capture());
       if (idempotent)
         tx.set(requestPath, { fingerprint, result, createdAt: now() });
       return result;
@@ -405,7 +414,9 @@ export function createApp({
           'INVITATION',
           'Invitation does not match this identity',
         );
-      await store.run(async (tx) => {
+      await store.run(async (rawTx) => {
+        const tracking = settingsAuditTransaction(rawTx),
+          tx = tracking.tx;
         const p = path('invitations', req.params.id);
         const inv = await tx.get(p);
         const existing = await tx.get(path('members', req.identity.uid));
@@ -428,12 +439,22 @@ export function createApp({
         });
         tx.set(p, { ...inv, active: false, acceptedUid: req.identity.uid });
         const id = uid();
-        tx.set(path('auditEvents', id), {
+        const settingsChanges = await tracking.changes();
+        const audit = {
           id,
           actorUid: req.identity.uid,
           action: 'invitation.accept',
           createdAt: now(),
-        });
+          requestId: req.requestId,
+          settingsChanges,
+        };
+        rawTx.set(path('auditEvents', id), audit);
+        queueSettingsAudits(
+          rawTx,
+          audit,
+          settingsChanges,
+          telemetry()?.capture(),
+        );
       });
       res.json({ ok: true });
     } catch (e) {

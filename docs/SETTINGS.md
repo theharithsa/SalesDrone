@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v1.6.4**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v1.6.5**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -46,7 +46,7 @@ Saved appearance applies to your account; the browser also remembers a local fal
 
 **Default:** Off.
 
-A personal reading style with warm paper surfaces, ink colours and serif notes/descriptions. Dark mode uses charcoal paper. Headings, table controls, status colours and monospace phone numbers stay clear. This is a visual style, not a physical e-ink or offline reader.
+A personal reading style with warm paper surfaces and serif fonts throughout headings, navigation, tables, forms, buttons and chart labels. Dark mode uses charcoal paper. Phone numbers remain monospace. This is a visual style, not physical e-ink or an offline reader.
 
 Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback.
 
@@ -495,6 +495,12 @@ Current API requests, token checks and worker delivery eligibility use active me
 Explains why SalesDrone exists and shows the application version.
 
 Refresh after a release to load current assets. This page does not change business data.
+
+## Settings audit trail
+
+Saved live changes are recorded with actor, timestamp, action and changed control keys, and queued atomically for Dynatrace. Exported identities are hashed and values, prompts, labels and credentials are excluded. Unchanged saves, failed/denied writes, read-only controls, OS-resolved changes and local demo preferences are not reported as setting changes. Send test retains action telemetry. No audit viewer or audit API scope is added; authorized operators inspect the server-side records. See the settings audit guide for coverage, retries and limits.
+
+See [settings audit coverage and delivery](SETTINGS-AUDIT.md).
 
 ## Operator environment configuration
 

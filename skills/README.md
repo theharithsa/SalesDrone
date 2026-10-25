@@ -70,3 +70,5 @@ source/tests when using or changing them.
 - [salesdrone-release-readiness](salesdrone-release-readiness/SKILL.md): cross-module feature completion and honest pre/post-deployment checks.
 
 - [Product handbook and screenshot maintenance](salesdrone-product-guide/SKILL.md): current workflows, FAQs and reviewed captures after UI changes.
+
+[Book mode](salesdrone-book-mode/SKILL.md) owns the complete serif reading style and paper palettes; workspace settings retains primary ownership of /me preferences.

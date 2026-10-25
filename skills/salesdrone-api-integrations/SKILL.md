@@ -75,3 +75,5 @@ Adjacent owners:
 Read for detailed behavior:
 
 - [docs/API.md](../../docs/API.md)
+
+Configuration/token routes document x-settings-audit metadata in OpenAPI. This internal side effect grants no audit-read endpoint or PAT scope. Token lifecycle audits include safe changed-key names only, never secret/hash/name values, and one-time issuance/revocation semantics remain unchanged.

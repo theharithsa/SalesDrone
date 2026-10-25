@@ -15,6 +15,7 @@ BizEvents were already configured before v1.6.2. Business transactions atomicall
 | personalAccessTokens.committed | Token lifecycle metadata; no secret/hash/name |
 | imports.committed | Import progress writes; not imported row contents |
 | leadScores.committed | Ready/Failed score results, without AI evidence |
+| settings.audit.committed | Durable per-setting net changes; see [settings audit](SETTINGS-AUDIT.md) |
 | settings.committed | Allowlisted workspace configuration writes |
 | notifications.committed / devices.committed | Private inbox/device lifecycle counts; no message/device tokens |
 | deployment.succeeded / deployment.failed | GitHub automation-confirmed deployment outcome |

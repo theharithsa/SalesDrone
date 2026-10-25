@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.6.4 · MIT**
+**Part of Avinya Enterprises · v1.6.5 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -139,6 +139,8 @@ The full lead page opens in **All**: loaded activity and review information. You
 
 ## Read in Book mode
 
-Open **Settings → Appearance & time**, enable **Book mode**, and save. Warm paper and serif reading passages work with Light, Dark and System; the sunrise/sunset switch keeps your reading style. This is personal to your account.
+Open **Settings → Appearance & time**, enable **Book mode**, and save. Warm paper and serif fonts throughout the UI work with Light, Dark and System; the sunrise/sunset switch keeps your reading style. This is personal to your account.
 
-![Book mode with fictional lead data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=c040dc083c2c)
+![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=abac4c7e009e)
+
+Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).

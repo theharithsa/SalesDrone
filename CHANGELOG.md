@@ -3,17 +3,13 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+## [1.6.5] - 2026-10-26
 
-
-
-
-
-
-
-
-
-
-
+### Changed
+- Apply serif fonts throughout Book mode, including controls, tables, headings and chart labels; keep phone numbers monospace and standard-mode fonts intact.
+- Add a dedicated Book mode module skill and prompt routing.
+- Record durable per-setting audits and privacy-safe Dynatrace audit events/logs, including personal preferences and invitation acceptance. Preserve atomicity, no-op/replay safety, bounded delivery and existing access rules.
+- Update the complete settings/handbook/API docs, audit coverage guide, release evidence and demo captures.
 
 ## [1.6.4] - 2026-10-26
 

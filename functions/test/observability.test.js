@@ -15,14 +15,13 @@ import { path } from '../src/policy.js';
 import { createApp } from '../src/app.js';
 const attr = (values) =>
   Object.fromEntries(
-    values.map((a) => [
-      a.key,
-      a.value.stringValue ??
-        a.value.intValue?.toNumber?.() ??
-        a.value.intValue ??
-        a.value.doubleValue ??
-        a.value.boolValue,
-    ]),
+    values.map((a) => {
+      const key = Object.keys(a.value).find((k) =>
+        ['stringValue', 'intValue', 'doubleValue', 'boolValue'].includes(k),
+      );
+      const value = a.value[key];
+      return [a.key, value?.toNumber?.() ?? value];
+    }),
   );
 test('independent protobuf receiver verifies concurrent request traces, correlated logs, delta metrics, commit events and resilient export', async () => {
   const schemas = protobuf.parse(
@@ -149,6 +148,11 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
         notes:
           'PRIVATE NOTE: secret_contact@example.invalid must never be exported.',
       })
+      .expect(200);
+    await request(app)
+      .patch('/api/v1/me')
+      .set('Authorization', 'Bearer alice')
+      .send({ timezone: 'Asia/Kolkata', appearance: 'dark', bookMode: true })
       .expect(200);
     const before = (await base.query(path('leads'), { limit: 100 })).length;
     await assert.rejects(
@@ -297,6 +301,23 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
           ['outcome', 'http.status_class'].includes(k),
         ),
       ),
+    );
+    const deliveredAuditLogs = received
+      .filter((r) => r.path.endsWith('logs'))
+      .flatMap((r) =>
+        r.decoded.resourceLogs.flatMap((rs) =>
+          rs.scopeLogs.flatMap((s) => s.logRecords),
+        ),
+      );
+    assert.ok(
+      deliveredAuditLogs.some(
+        (l) =>
+          l.body.stringValue === 'settings.audit.delivered' &&
+          attr(l.attributes)['settings.section'] === 'appearance' &&
+          attr(l.attributes)['settings.changed_count'] === 2 &&
+          attr(l.attributes)['actor.id'] === actorId('alice'),
+      ),
+      'Decoded audit delivery log preserves numeric counts and the hashed actor',
     );
     assert.ok(
       deliveryMetric.sum.dataPoints.some(

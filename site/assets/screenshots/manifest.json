@@ -73,37 +73,37 @@
   {
     "file": "book-mode-light.jpg",
     "mode": "synthetic-demo",
-    "sha256": "c040dc083c2c30a58e19d1e094bc3f39cbabf8da8659f73017ef7a4720b06938",
-    "capturedAt": "2026-10-25T19:02:02.116482+00:00",
-    "viewport": "1828 x 1028 CSS pixel desktop viewport",
-    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode day/night appearance and reading text/settings.",
-    "version": "1.6.3"
+    "sha256": "abac4c7e009e79ed80175321b8fea5ec278091cb6e81366f43752ace3a684683",
+    "capturedAt": "2026-10-25T19:55:32.749774+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
+    "version": "1.6.5"
   },
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "547377f8890b427f222294925a6764c452ec0fc739815eb0b8940ac8e0ac7291",
-    "capturedAt": "2026-10-25T19:18:11.678081+00:00",
-    "viewport": "1828 x 1028 CSS pixel desktop viewport",
-    "review": "Reviewed actual synthetic guest demo only: fictional example.com/555 contacts, no production data. All has no duplicate task list; lifecycle actions use full-size icon buttons. Measured 1828 x 1028 CSS pixel desktop viewport.",
-    "version": "1.6.4"
+    "sha256": "5e40924c4859f6a7fd33acc2e8903ade9510435979f5864d6e83478acaf8535d",
+    "capturedAt": "2026-10-25T19:55:32.768324+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
+    "version": "1.6.5"
   },
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "0e7b80e0c0cdc7c272aec49984853a317768c73c9407ceea2b5aef39c4748ff2",
-    "capturedAt": "2026-10-25T19:02:02.512495+00:00",
-    "viewport": "390 x 844 CSS pixel actual application frame",
-    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode mobile comment entry; browser breakpoint check, not physical hardware.",
-    "version": "1.6.3"
+    "sha256": "24a897b7fff2fb6b8791039a9bd66ffad9b78d18842ee5ebbd98d352fecc83c9",
+    "capturedAt": "2026-10-25T19:55:32.817248+00:00",
+    "viewport": "390 x 844 CSS pixels, actual application iframe",
+    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
+    "version": "1.6.5"
   },
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "654fab7967efe2da76865f2be60c9ae279c800e4abdce628d1bbded8aed5f08f",
-    "capturedAt": "2026-10-25T19:02:02.567435+00:00",
-    "viewport": "1828 x 1028 CSS pixel desktop viewport",
-    "review": "Reviewed current actual synthetic guest demo with fictional example.com/555 contacts; no production data. Book mode day/night appearance and reading text/settings.",
-    "version": "1.6.3"
+    "sha256": "f70adaaf1941c43ccfa15d70bb608eac9c8e1e9d209116ab6067ed7d4c6585cf",
+    "capturedAt": "2026-10-25T19:55:32.826427+00:00",
+    "viewport": "1828 x 1028 CSS pixels",
+    "review": "Reviewed actual synthetic guest demo only; fictional example.com/555 contacts, no production data. Full serif Book mode with monospace phones; desktop and phone browser layouts, not physical hardware.",
+    "version": "1.6.5"
   }
 ]

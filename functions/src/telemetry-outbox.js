@@ -1,3 +1,4 @@
+import { settingsAuditLogFields } from './settings-audit.js';
 import { randomUUID } from 'node:crypto';
 import { path } from './policy.js';
 export function tenantOrigin(value, { allowLocalTest = false } = {}) {
@@ -130,6 +131,15 @@ export async function deliverTelemetry({
               ? 'rejected'
               : 'retried';
           stats[result]++;
+          const auditFields = accepted
+            ? settingsAuditLogFields(claimed.event)
+            : null;
+          if (auditFields)
+            telemetry?.log('settings.audit.delivered', {
+              ...auditFields,
+              'event.id': claimed.id,
+              'http.status_code': status,
+            });
           telemetry?.businessDelivery?.(result, status);
           telemetry?.log('telemetry.delivery', {
             outcome: result,
