@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.6.6
+Version 1.6.7
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -41,6 +41,8 @@ Members with access to the underlying leads
 2. Use Get insights to request a grounded outreach brief in manual mode. If automatic insights are enabled by an administrator, the button is hidden and the brief is requested when you visit the dashboard.
 
 3. Read the current-stage funnel and other charts together with the task list. Use Leads filters to examine the records behind a pattern.
+
+4. Use Chart day below the outreach chart to select a date. Its summary and highlighted point update from the already loaded data; this does not request AI insights.
 
 Graphs describe currently accessible records and aggregates. The funnel counts leads in each current stage; it does not prove those leads passed through every earlier stage or measure historical conversion.
 
@@ -263,6 +265,8 @@ Imports are bounded/chunked and use replay protection. Source discussions are hi
 Keep source workbooks private. A CSV or workbook upload is business data; documentation examples and screenshots use fictional records only.
 
 If browser storage is blocked, keep the import page open: the current preview/run remains available in memory, but automatic resume after a reload cannot be remembered. The app shows this limitation instead of failing the preview.
+
+After selecting a file, Choose another workbook remains in a compact row above mapping. Use it to replace the file before validation; a preview is not a committed import.
 
 ### Questions
 
@@ -513,3 +517,29 @@ No. The local audit and event queue commit with the setting. Delivery is retried
 **Can my API token download all audit logs?**
 
 No audit endpoint or Personal Access Token scope is introduced. Server/operator authorization remains required.
+
+## Screen layouts, typography and accessibility
+
+Everyone
+
+1. Resize or rotate your window: charts and forms adapt to available content width, while main content has a bounded reading width on large screens.
+
+2. On middle-width screens the desktop sidebar stays readable; use Collapse menu to gain space. At short heights scroll the sidebar to reach account actions.
+
+3. Use browser zoom or your browser default-text preference as needed. The application keeps native zoom available; there is no separate in-app text-size setting.
+
+Body and editable text use a shared 17px default on every size, with 15px supporting/table text and 13px metadata. Existing font families are unchanged; Book mode uses its serif families. Sizes scale with browser text preferences.
+
+On narrow screens a lead opens its dedicated page. On larger screens inspection overlays the table; expand opens the full page. Local table, stage and tab scrolling is intentional.
+
+Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.
+
+### Questions
+
+**Does changing window size change permissions?**
+
+No. Layout never grants access or changes assigned-lead scope, API permissions or report filters.
+
+**Is this certified native Apple typography?**
+
+No. It is a responsive web adaptation of Apple typography principles using the existing fonts. Browser review does not certify physical devices or native Dynamic Type.

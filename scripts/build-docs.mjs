@@ -29,6 +29,10 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'login-demo.jpg',
+  'laptop-demo.jpg',
+  'tablet-demo.jpg',
+  'import-demo.jpg',
   'dashboard-demo.jpg',
   'leads-demo.jpg',
   'mobile-leads-demo.jpg',

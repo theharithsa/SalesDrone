@@ -100,7 +100,7 @@
 .comment-column-picker > .field-hint {
   margin: 16px 0 0;
 }
-@media (max-width: 767px) {
+@media (max-width: 767.99px) {
   .comment-column-picker {
     padding: 16px;
   }

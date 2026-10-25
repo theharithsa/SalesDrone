@@ -341,7 +341,9 @@ export default function ImportPage({
           </div>
         ))}
       </div>
-      <section className="panel">
+      <section
+        className={'panel' + (sheets.length ? ' import-file-summary' : '')}
+      >
         <div className="upload-area">
           <FileSpreadsheet size={36} strokeWidth={1.4} />
           <h2>Your enquiries, ready to move.</h2>
@@ -352,7 +354,12 @@ export default function ImportPage({
           <label
             className={'button primary ' + (demo || busy ? 'disabled' : '')}
           >
-            <Upload size={16} /> {busy ? 'Processing…' : 'Choose a workbook'}
+            <Upload size={16} />{' '}
+            {busy
+              ? 'Processing…'
+              : sheets.length
+                ? 'Choose another workbook'
+                : 'Choose a workbook'}
             <input
               type="file"
               accept=".xlsx,.csv"

@@ -2,38 +2,42 @@
   {
     "file": "dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "76b6dd5c0a2b9c1c7ca2e8007400524d9f012d6f2fdd08938bf7c7380056ce36",
-    "capturedAt": "2026-10-25T22:08:21.203155+00:00",
+    "sha256": "bbf301fa1c609d4395d25d29a3dd830cd287d0c9ceaac56289076c3ff8c6cd35",
+    "capturedAt": "2026-10-25T23:11:11.555471+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "72f094ef7d7fd8f31d597ed5aec86e83c3da9528dbee47b28cd4965c8b67b047",
-    "capturedAt": "2026-10-25T22:08:21.178348+00:00",
+    "sha256": "f61f9814123c4bb8cfec69b78fa89891b2079d1fa11314deeac61d4a93645fe4",
+    "capturedAt": "2026-10-25T23:11:13.802462+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "165a8d351c93423b2d0016d5d6e67a3847c520924eb632446eb45fcfc128d0d2",
-    "capturedAt": "2026-10-25T22:08:21.254070+00:00",
-    "viewport": "390 x 844 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "sha256": "663413bd5f13399c4979e5f224427f8fcaaf1a49c17be5d73e4a20b6104a55ad",
+    "capturedAt": "2026-10-25T23:15:11.594894+00:00",
+    "viewport": "390 x 844 CSS pixels, application iframe",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "390 x 844"
   },
   {
     "file": "notifications-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "85e1413f940a36002de8c251ac5f2fa46f1b18d3e579bcecb2608148175003a5",
-    "capturedAt": "2026-10-25T22:08:21.272509+00:00",
+    "sha256": "2b636df2ae5db8195530ddfdf357510eb49e3236a3b5f2e9bca6b434778b6ef0",
+    "capturedAt": "2026-10-25T23:11:14.735132+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "1829 x 1029"
   },
   {
     "file": "api-portal-demo.jpg",
@@ -46,82 +50,131 @@
   {
     "file": "developer-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "review": "Reviewed actual SettingsPage/DeveloperSettings in an isolated synthetic administrator fixture. No live API requests, credentials, tokens or production records; fixture explicitly labelled in capture.",
-    "sha256": "393e8d822d031247ec56f36a36333d3a624bfe8b9d0b9949916ef61d280566b8",
-    "capturedAt": "2026-10-25T22:08:21.433284+00:00",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification. Isolated real SettingsPage with synthetic admin and stub requests; no token generated.",
+    "sha256": "652b2bd7860d4f41d860bbdea05f5fa5a27acba64f4ee7c891e8b406e616ddd1",
+    "capturedAt": "2026-10-25T23:14:50.193244+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "version": "1.6.6"
+    "version": "1.6.7",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "e05bc1b20b98359fec3712649966feeac6b44d70ce217d8eafcb03f5d362319a",
-    "capturedAt": "2026-10-25T22:08:21.300511+00:00",
+    "sha256": "18b1f40272427ccdf4730e2d8870c74eb52f0e9a32e8f2399d25b2afae58d66f",
+    "capturedAt": "2026-10-25T23:11:12.814183+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "version": "1.6.6",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
+    "version": "1.6.7",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ba771403c32841345798494c5f5ac450d5108200d52e57612747c909e1e404bd",
-    "capturedAt": "2026-10-25T22:08:21.318159+00:00",
+    "sha256": "f61f9814123c4bb8cfec69b78fa89891b2079d1fa11314deeac61d4a93645fe4",
+    "capturedAt": "2026-10-25T23:11:13.402653+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "version": "1.6.6",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
+    "version": "1.6.7",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "book-mode-light.jpg",
     "mode": "synthetic-demo",
-    "sha256": "78f551cd5da4ebd6382bb6216b57e4c16d92a1e90ff3b006c1961b03732c0005",
-    "capturedAt": "2026-10-25T22:08:21.339869+00:00",
+    "sha256": "84cb48cc990979ce9d33077da717f14c8f280d0ebe2fc41b02edca5d64c79d26",
+    "capturedAt": "2026-10-25T23:14:32.393069+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ad5714bc95cc0655127a69ad6aa53cb9804358e8ffbc3745451b29d4cf33b97e",
-    "capturedAt": "2026-10-25T22:08:21.360053+00:00",
+    "sha256": "3d61cd1785b6049c197ec180c760a5b9e02c5d05b51d9e649f54354f36e2257a",
+    "capturedAt": "2026-10-25T23:14:32.972144+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "53f1f3d1de30ab992c2d5c37f3e829e598851231672bee413a8d6d8b79073402",
-    "capturedAt": "2026-10-25T22:08:21.397811+00:00",
-    "viewport": "390 x 844 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "sha256": "7300e84807c01b60b166f043b66b0f464968f39b2e15a0194a943bc209e4b00b",
+    "capturedAt": "2026-10-25T23:15:13.986748+00:00",
+    "viewport": "390 x 844 CSS pixels, application iframe",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "390 x 844"
   },
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "efe63f64e5115ebad67e44999ef84974b3bf9dcd804aa8533233d3768c24d1de",
-    "capturedAt": "2026-10-25T22:08:21.415159+00:00",
+    "sha256": "804e3e7a54b877d7581421092bfaeb418a4ae6a5049b038b229ff505db4b2565",
+    "capturedAt": "2026-10-25T23:14:31.850363+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware.",
-    "version": "1.6.6"
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "version": "1.6.7",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "74e443b38421afa91fc3bf854dd673926258e69bbe431b105689222732c9258a",
-    "capturedAt": "2026-10-25T22:08:21.226813+00:00",
-    "version": "1.6.6",
+    "sha256": "31b610e0469cfd5d4d80595431ecc575445ab788335c5a34e23ddfc929212d54",
+    "capturedAt": "2026-10-25T23:11:12.159629+00:00",
+    "version": "1.6.7",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "capturePixels": "1807 x 1016"
   },
   {
     "file": "mobile-leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1067908a59151bbf73499d65b3a0d4f85e9e19891be70732b6dde7b3bb2fb2fc",
-    "capturedAt": "2026-10-25T22:08:21.464518+00:00",
-    "version": "1.6.6",
-    "viewport": "390 x 844 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only, fictional example.com/555 contacts and no production data. Responsive semantic type sizes, unchanged fonts and current layout. Browser breakpoint check, not physical hardware."
+    "sha256": "5b6893049d86f6eca8073f1772305a7637e4ab520a4b0ce0e7d56301a0d7a39d",
+    "capturedAt": "2026-10-25T23:15:12.143059+00:00",
+    "version": "1.6.7",
+    "viewport": "390 x 844 CSS pixels, application iframe",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "capturePixels": "390 x 844"
+  },
+  {
+    "file": "import-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "3c85ce6cb67e50a460a8fb58beee647edba016681221d143a262f0cece6ebfb7",
+    "capturedAt": "2026-10-25T23:17:44.613986+00:00",
+    "version": "1.6.7",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "viewport": "1280 x 900 CSS pixels, isolated real ImportPage with stub requests; fictional CSV, no commit",
+    "capturePixels": "1280 x 900"
+  },
+  {
+    "file": "laptop-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "42bcf3f8a521b8270095ed15e1aeb53d470012be47d9d6006d2a8373c9c3c006",
+    "capturedAt": "2026-10-25T23:15:12.742614+00:00",
+    "version": "1.6.7",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "viewport": "1280 x 900 CSS pixels, application iframe",
+    "capturePixels": "1280 x 900"
+  },
+  {
+    "file": "login-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "2f41884b8144b71d2206a60901d75f89d271cd737f395b7433ee2cfd81359526",
+    "capturedAt": "2026-10-25T22:56:32.703791+00:00",
+    "version": "1.6.7",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "viewport": "1828 x 1028 CSS pixels",
+    "capturePixels": "1829 x 1029"
+  },
+  {
+    "file": "tablet-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "eb0967c1a05824200c3693ce93b0ed07108789bec29493963ab707f9d28548b8",
+    "capturedAt": "2026-10-25T23:15:13.136914+00:00",
+    "version": "1.6.7",
+    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "viewport": "900 x 900 CSS pixels, application iframe",
+    "capturePixels": "900 x 900"
   }
 ]

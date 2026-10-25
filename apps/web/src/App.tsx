@@ -237,10 +237,10 @@ export default function App() {
     };
   }, []);
   const [compact, setCompact] = useState(
-    () => window.matchMedia('(max-width: 767px)').matches,
+    () => window.matchMedia('(max-width: 767.99px)').matches,
   );
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 767px)');
+    const media = window.matchMedia('(max-width: 767.99px)');
     const change = () => setCompact(media.matches);
     media.addEventListener('change', change);
     return () => media.removeEventListener('change', change);
@@ -931,7 +931,7 @@ export default function App() {
     setTimelineMoreBusy(false);
     setSelected(lead);
     setLeadTab('all');
-    if (window.matchMedia('(max-width: 767px)').matches) window.scrollTo(0, 0);
+    if (window.matchMedia('(max-width: 767.99px)').matches) window.scrollTo(0, 0);
     setLeadTasks([]);
     setTimeline([]);
     setTimelineCursor(null);
@@ -960,7 +960,7 @@ export default function App() {
     }
   }
   async function inspectLead(lead: Lead) {
-    if (window.matchMedia('(max-width: 1000px)').matches && lead?.id) {
+    if (window.matchMedia('(max-width: 1000.99px)').matches && lead?.id) {
       detailEpoch.current++;
       setSelected(null);
       setDetailBusy(true);
@@ -980,7 +980,7 @@ export default function App() {
   async function editLeadFromList(lead: Lead) {
     const fresh = await chooseLead(lead);
     if (fresh) {
-      if (window.matchMedia('(max-width: 1000px)').matches) {
+      if (window.matchMedia('(max-width: 1000.99px)').matches) {
         window.history.pushState(
           {},
           '',

@@ -44,7 +44,7 @@
           "label": "Book mode",
           "default": "Off",
           "description": "A personal reading style with warm paper surfaces and serif fonts throughout headings, navigation, tables, forms, buttons and chart labels. Dark mode uses charcoal paper. Phone numbers remain monospace. This is a visual style, not physical e-ink or an offline reader.",
-          "effect": "Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Responsive type-size roles match the standard UI while keeping the Book serif family; this is a web adaptation, not native Dynamic Type.",
+          "effect": "Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Responsive type-size roles match the standard UI while keeping the Book serif family; this is a web adaptation, not native Dynamic Type. Shared typography roles and responsive layouts apply across phones, tablets, laptops and desktops; font families remain serif in Book mode.",
           "example": "Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace."
         },
         {

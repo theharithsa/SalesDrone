@@ -164,7 +164,7 @@
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
-@media (max-width: 480px) {
+@media (max-width: 480.99px) {
   .book-mode-control {
     padding: 16px 12px;
     gap: 12px;

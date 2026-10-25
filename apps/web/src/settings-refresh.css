@@ -670,13 +670,13 @@ input[type='tel'] {
     padding: 12px 0 0;
   }
 }
-@media (max-width: 1100px) {
+@media (max-width: 1100.99px) {
   .settings-layout {
     grid-template-columns: 210px minmax(0, 1fr);
     gap: 22px;
   }
 }
-@media (max-width: 900px) {
+@media (max-width: 900.99px) {
   .settings-layout {
     display: block;
     margin-top: 22px;
@@ -698,7 +698,7 @@ input[type='tel'] {
     padding: 22px;
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 480.99px) {
   .settings-content > .panel {
     padding: 18px;
   }
@@ -734,7 +734,7 @@ input[type='tel'] {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 767.99px) {
   .desktop-only {
     display: none !important;
   }
@@ -799,7 +799,7 @@ input[type='tel'] {
 .inbox-load-more {
   margin: 20px;
 }
-@media (max-width: 480px) {
+@media (max-width: 480.99px) {
   .notification-row {
     padding: 18px 14px;
     gap: 10px;
@@ -979,7 +979,7 @@ input[type='tel'] {
   flex-wrap: wrap;
   gap: 16px;
 }
-@media (max-width: 640px) {
+@media (max-width: 640.99px) {
   .token-form-row,
   .token-scope-grid,
   .token-dates {
@@ -1047,7 +1047,7 @@ input[type='tel'] {
 .about-salesdrone .brand-attribution a {
   font-size: 14px;
 }
-@media (max-width: 640px) {
+@media (max-width: 640.99px) {
   .about-mission {
     padding: 18px;
   }
@@ -1246,7 +1246,7 @@ input[type='tel'] {
   min-height: 44px;
   overflow-wrap: anywhere;
 }
-@media (max-width: 480px) {
+@media (max-width: 480.99px) {
   .report-column-grid {
     grid-template-columns: minmax(0, 1fr);
   }

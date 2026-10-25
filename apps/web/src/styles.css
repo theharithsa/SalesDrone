@@ -2050,7 +2050,7 @@ td:first-child {
     display: table-cell;
   }
 }
-@media (max-width: 1200px) {
+@media (max-width: 1200.99px) {
   .sidebar {
     width: 195px;
     padding-left: 12px;
@@ -2155,7 +2155,7 @@ td:first-child {
     left: calc(50% + 80px);
   }
 }
-@media (max-width: 1000px) {
+@media (max-width: 1000.99px) {
   .today-grid {
     grid-template-columns: 1fr;
   }
@@ -2214,7 +2214,7 @@ td:first-child {
     flex-direction: column;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 767.99px) {
   :root {
     font-size: 15px;
   }
@@ -2790,7 +2790,7 @@ td:first-child {
     font-size: 0.75rem;
   }
 }
-@media (max-width: 360px) {
+@media (max-width: 360.99px) {
   .page-body {
     padding: 22px 15px;
   }
@@ -2894,7 +2894,7 @@ td:first-child {
     color: #211a36;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 767.99px) {
   .sidebar[inert] {
     visibility: hidden;
   }
@@ -2933,7 +2933,7 @@ td:first-child {
   font-size: 0.63rem;
   min-height: 24px;
 }
-@media (max-width: 767px) {
+@media (max-width: 767.99px) {
   .icon-button {
     min-width: 44px;
     min-height: 44px;
@@ -3114,7 +3114,7 @@ td:first-child {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-@media (max-width: 767px) {
+@media (max-width: 767.99px) {
   .lead-filter-row {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
   }

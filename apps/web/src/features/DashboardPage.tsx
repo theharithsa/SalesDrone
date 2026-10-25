@@ -32,51 +32,53 @@ function Ring({ data, label }: { data: any[]; label: string }) {
   let used = 0;
   return (
     <div className="ring-chart">
-      <svg
-        viewBox="0 0 180 180"
-        role="img"
-        aria-label={label + ': ' + total + ' leads'}
-      >
-        <circle
-          cx="90"
-          cy="90"
-          r={r}
-          className="chart-track"
-          fill="none"
-          strokeWidth="21"
-        />
-        {data.map((d, i) => {
-          const length = total ? (d.value / total) * c : 0,
-            offset = -used;
-          used += length;
-          return (
-            <circle
-              key={d.label}
-              cx="90"
-              cy="90"
-              r={r}
-              fill="none"
-              stroke={
-                d.label.includes('risk') ? '#ce7568' : colors[i % colors.length]
-              }
-              strokeWidth="21"
-              strokeDasharray={`${Math.max(0, length - 2)} ${c}`}
-              strokeDashoffset={offset}
-              transform="rotate(-90 90 90)"
-            >
-              <title>
-                {d.label}: {d.value}
-              </title>
-            </circle>
-          );
-        })}
-        <text x="90" y="88" textAnchor="middle" className="ring-total">
-          {total}
-        </text>
-        <text x="90" y="109" textAnchor="middle" className="ring-caption">
-          LEADS
-        </text>
-      </svg>
+      <div className="ring-visual">
+        <svg
+          viewBox="0 0 180 180"
+          role="img"
+          aria-label={label + ': ' + total + ' leads'}
+        >
+          <circle
+            cx="90"
+            cy="90"
+            r={r}
+            className="chart-track"
+            fill="none"
+            strokeWidth="21"
+          />
+          {data.map((d, i) => {
+            const length = total ? (d.value / total) * c : 0,
+              offset = -used;
+            used += length;
+            return (
+              <circle
+                key={d.label}
+                cx="90"
+                cy="90"
+                r={r}
+                fill="none"
+                stroke={
+                  d.label.includes('risk')
+                    ? '#ce7568'
+                    : colors[i % colors.length]
+                }
+                strokeWidth="21"
+                strokeDasharray={`${Math.max(0, length - 2)} ${c}`}
+                strokeDashoffset={offset}
+                transform="rotate(-90 90 90)"
+              >
+                <title>
+                  {d.label}: {d.value}
+                </title>
+              </circle>
+            );
+          })}
+        </svg>
+        <div className="ring-center" aria-hidden="true">
+          <strong>{total}</strong>
+          <span>Leads</span>
+        </div>
+      </div>
       <div className="chart-legend">
         {data.map((d, i) => (
           <div key={d.label}>
@@ -143,7 +145,11 @@ function Trend({ data }: { data: any[] }) {
       y: 168 - (d[metric] / max) * 130,
     })),
     line = points.map((p) => `${p.x},${p.y}`).join(' '),
-    selected = data[active ?? data.length - 1];
+    selectedIndex = Math.min(
+      active ?? Math.max(0, data.length - 1),
+      Math.max(0, data.length - 1),
+    ),
+    selected = data[selectedIndex];
   return (
     <>
       <div className="chart-switch" role="group" aria-label="Trend metric">
@@ -160,94 +166,109 @@ function Trend({ data }: { data: any[] }) {
           Leads added
         </button>
       </div>
-      <svg
-        className="trend-chart"
-        viewBox="0 0 620 210"
-        role="img"
-        aria-label={
-          metric === 'calls'
-            ? 'Your calls over the last 14 days'
-            : 'Leads added to the visible pipeline over 14 days'
-        }
-      >
-        <defs>
-          <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2b93dd" stopOpacity=".32" />
-            <stop offset="100%" stopColor="#2b93dd" stopOpacity=".02" />
-          </linearGradient>
-        </defs>
-        {[0, 0.5, 1].map((v) => (
-          <g key={v}>
-            <line
-              x1="30"
-              y1={168 - v * 130}
-              x2="590"
-              y2={168 - v * 130}
-              className="chart-grid-line"
-            />
-            <text
-              x="16"
-              y={172 - v * 130}
-              className="chart-axis"
-              textAnchor="end"
-            >
-              {Math.round(max * v)}
-            </text>
-          </g>
-        ))}
-        {points.length ? (
-          <>
-            <polygon
-              points={`30,168 ${line} 590,168`}
-              fill={`url(#${gradient})`}
-            />
-            <polyline
-              points={line}
-              fill="none"
-              stroke="#2b93dd"
-              strokeWidth="3.5"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-            {points.map((p, i) => (
-              <g key={i}>
-                <circle
-                  cx={p.x}
-                  cy={p.y}
-                  r={active === i ? 6 : 4}
-                  fill="#2b93dd"
-                />
-                <circle
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`${data[i].date}: ${data[i][metric]} ${metric === 'calls' ? 'calls' : 'leads added'}`}
-                  cx={p.x}
-                  cy={p.y}
-                  r="13"
-                  fill="transparent"
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                  onClick={() => setActive(i)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setActive(i);
-                    }
-                  }}
-                />
-              </g>
-            ))}
-          </>
-        ) : null}
-        <text x="30" y="198" className="chart-axis">
-          {data[0]?.date.slice(5)}
-        </text>
-        <text x="590" y="198" className="chart-axis" textAnchor="end">
-          {data.at(-1)?.date.slice(5)}
-        </text>
-      </svg>
+      <div className="trend-plot">
+        <div className="trend-y-labels" aria-hidden="true">
+          {[1, 0.5, 0].map((v) => (
+            <span key={v}>{Math.round(max * v)}</span>
+          ))}
+        </div>
+        <svg
+          className="trend-chart"
+          viewBox="0 0 620 210"
+          role="img"
+          aria-label={
+            metric === 'calls'
+              ? 'Your calls over the last 14 days'
+              : 'Leads added to the visible pipeline over 14 days'
+          }
+        >
+          <defs>
+            <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#2b93dd" stopOpacity=".32" />
+              <stop offset="100%" stopColor="#2b93dd" stopOpacity=".02" />
+            </linearGradient>
+          </defs>
+          {[0, 0.5, 1].map((v) => (
+            <g key={v}>
+              <line
+                x1="30"
+                y1={168 - v * 130}
+                x2="590"
+                y2={168 - v * 130}
+                className="chart-grid-line"
+              />
+            </g>
+          ))}
+          {points.length ? (
+            <>
+              <polygon
+                points={`30,168 ${line} 590,168`}
+                fill={`url(#${gradient})`}
+              />
+              <polyline
+                points={line}
+                fill="none"
+                stroke="#2b93dd"
+                strokeWidth="3.5"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+              {points.map((p, i) => (
+                <g key={i}>
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={selectedIndex === i ? 6 : 4}
+                    fill="#2b93dd"
+                  />
+                  <circle
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${data[i].date}: ${data[i][metric]} ${metric === 'calls' ? 'calls' : 'leads added'}`}
+                    cx={p.x}
+                    cy={p.y}
+                    r="13"
+                    fill="transparent"
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setActive(i);
+                      }
+                    }}
+                  />
+                </g>
+              ))}
+            </>
+          ) : null}
+        </svg>
+      </div>
+      <div className="trend-dates" aria-hidden="true">
+        <span>{data[0]?.date.slice(5)}</span>
+        <span>{data.at(-1)?.date.slice(5)}</span>
+      </div>
       <div className="trend-caption">
-        <span>{selected?.date}</span>
+        <label className="trend-day-picker">
+          <span>Day</span>
+          <select
+            aria-label="Chart day"
+            disabled={!data.length}
+            value={selectedIndex}
+            onChange={(e) => setActive(Number(e.target.value))}
+          >
+            {data.length ? (
+              data.map((day, index) => (
+                <option value={index} key={day.date}>
+                  {day.date}
+                </option>
+              ))
+            ) : (
+              <option value={0}>No recorded days</option>
+            )}
+          </select>
+        </label>
         <strong>
           {selected?.[metric] || 0} {metric === 'calls' ? 'calls' : 'added'}
         </strong>

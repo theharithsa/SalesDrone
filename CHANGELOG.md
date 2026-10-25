@@ -3,6 +3,15 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+
+## [1.6.7] - 2026-10-26
+
+- Apply shared typography across phones, tablets, laptops and desktops while preserving font families.
+- Use content-width dashboard, Settings and dialog grids; fix fractional breakpoint gaps and narrow login overflow.
+- Keep chart labels readable outside SVG scaling and add a native day selector for outreach history.
+- Improve middle-width and short-window navigation, member rows, compact import file replacement and table spacing.
+- Refresh multi-size screenshots, handbook, design rules, module skills and release evidence.
+
 ## [1.6.6] - 2026-10-26
 
 ### Changed
