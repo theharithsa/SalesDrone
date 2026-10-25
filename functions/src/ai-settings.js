@@ -7,6 +7,7 @@ export const AISettingsPatch = z
   .object({
     expectedVersion: z.number().int().positive(),
     instructions: z.string().trim().max(4000),
+    insightMode: z.enum(['manual', 'automatic']).optional(),
   })
   .strict();
 export async function readAISettings(store) {
@@ -14,6 +15,7 @@ export async function readAISettings(store) {
   return {
     version: record?.version || 1,
     instructions: record?.instructions || '',
+    insightMode: record?.insightMode === 'automatic' ? 'automatic' : 'manual',
     defaultInstructions: DEFAULT_AI_INSTRUCTIONS,
     usingDefault: !record?.instructions,
   };

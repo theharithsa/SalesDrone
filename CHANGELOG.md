@@ -6,6 +6,15 @@ API contract versions are independent from application versions.
 
 
 
+
+## [1.3.0] - 2026-10-25
+
+### Changed
+- Add workspace-selectable manual or automatic dashboard insights. Automatic mode hides the button, reuses caches and requests once per dashboard visit.
+- Group Dashboard insights, Automatic reminders and Lead scoring under expandable AvinyaIntelligence settings, with a grouped mobile selector.
+- Preserve existing AI guidance and older clients; expose only the safe mode to dashboard readers.
+- Require meaningful affected-module skill updates on every published change through CI.
+
 ## [1.2.0] - 2026-10-25
 
 ### Changed

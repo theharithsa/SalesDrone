@@ -43,6 +43,8 @@ personalAccessTokens (hashes, scopes, expiry/revocation metadata), rateLimits, r
 - Keep /api/v1 contracts and separate OpenAPI contract version. Add validation, errors, pagination, concurrency, audit and meaningful access tests for each new domain endpoint.
 - Swagger stays self-hosted and same-origin with nonpersistent authorization, restrictive CSP and no RUM/third-party scripts. Generate schema from scripts/openapi.mjs; do not hand-edit generated copies.
 
+GET dashboard exposes only the safe manual/automatic insightMode enum. Private AI guidance remains on Admin Google/App Check ai-settings endpoints; never expand PAT configuration access to guidance.
+
 ## Change and diagnosis
 
 Test expiry/revoke, disabled/deleted/downgraded owner, tasks-only access, cross-owner cursors and revoke-between-admission-and-commit. For Swagger failure separate CSP/asset/version mismatch from API authorization errors.

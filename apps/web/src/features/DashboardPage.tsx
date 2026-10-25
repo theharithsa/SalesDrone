@@ -404,7 +404,7 @@ export default function DashboardPage({
     },
     [],
   );
-  async function refreshBrief() {
+  const refreshBrief = useCallback(async () => {
     if (demo || briefInFlight.current) return;
     briefInFlight.current = true;
     const epoch = ++briefEpoch.current;
@@ -419,7 +419,18 @@ export default function DashboardPage({
       briefInFlight.current = false;
       if (epoch === briefEpoch.current) setBriefBusy(false);
     }
-  }
+  }, [request, demo]);
+  const autoRequested = useRef(false);
+  const automaticInsights = !demo && snapshot?.insightMode === 'automatic';
+  useEffect(() => {
+    if (!automaticInsights) {
+      autoRequested.current = false;
+      return;
+    }
+    if (autoRequested.current) return;
+    autoRequested.current = true;
+    void refreshBrief();
+  }, [automaticInsights, refreshBrief]);
   async function open(action: () => Promise<void>) {
     try {
       await action();
@@ -480,7 +491,7 @@ export default function DashboardPage({
                         ? 'WORKING ON IT'
                         : 'YOUR SNAPSHOT'}
                 </span>
-                {!demo ? (
+                {!demo && !automaticInsights ? (
                   <button
                     className="insights-action"
                     disabled={briefBusy}
@@ -514,7 +525,7 @@ export default function DashboardPage({
                       displayDate(brief?.asOf || snapshot.asOf, timezone)
                     : ''}
               </div>
-              {!demo && !b && !briefBusy ? (
+              {!demo && !automaticInsights && !b && !briefBusy ? (
                 <p className="field-hint">
                   Insights are ready when you need them.
                 </p>
@@ -522,13 +533,17 @@ export default function DashboardPage({
               {briefError ? (
                 <p className="brief-error" role="status">
                   AI summary unavailable: {briefError}. Your charts remain
-                  available.
+                  available.{' '}
+                  {automaticInsights
+                    ? 'Reopen the dashboard to try again.'
+                    : ''}
                 </p>
               ) : null}
               {brief?.status === 'Processing' ? (
                 <p className="field-hint">
-                  A summary is being prepared in another session. Try again in a
-                  moment.
+                  {automaticInsights
+                    ? 'Insights are being prepared in another session. Reopen the dashboard shortly.'
+                    : 'A summary is being prepared in another session. Try again in a moment.'}
                 </p>
               ) : null}
             </div>

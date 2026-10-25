@@ -39,6 +39,8 @@ Curated site/.build output, reviewed screenshot hash manifest and original illus
 - Use image generation for requested raster artwork and preserve source/prompt/QA and licence attribution. Reuse canonical asset paths instead of duplicating uncontrolled copies.
 - Only explicit curated files go into Pages; do not broaden build-docs to recursively publish docs or arbitrary captures. Badge/README links must be real and meaningful.
 
+Describe both insight modes in the public guide: manual is the default, automatic hides the action and requests once per dashboard visit. Keep AvinyaIntelligence settings paths and the current lead typography consistent with the app.
+
 ## Change and diagnosis
 
 Check all local Markdown targets, image loading, anchor order and generated numbering. Run docs:build; inspect the actual public guide and README after publish, not only a local preview.

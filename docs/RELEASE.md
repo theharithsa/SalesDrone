@@ -56,3 +56,5 @@ backward. Restore compatible function/config versions when required, preserve sc
 and outbox identities, and verify indexes/auth/suppression/reminder recovery. Disable
 monitoring or pause its exporter only as an explicit operational measure; retain
 pending/rejected events for later repair. Do not weaken access policy to verify a fix.
+
+Every published change must update an affected `skills/salesdrone-*/SKILL.md`. CI compares `BASE_SHA` with HEAD and rejects changes without an added or modified module playbook; deleted skills and catalog-only updates do not count. Describe changed behavior, verification or operating guidance, rather than adding an empty version note.

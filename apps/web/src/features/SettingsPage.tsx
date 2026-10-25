@@ -22,6 +22,7 @@ import {
   ListFilter,
   Info,
   ChevronRight,
+  Sparkles,
   CodeXml,
 } from 'lucide-react';
 import { Session, Entity } from '../lib/types';
@@ -90,7 +91,7 @@ export default function SettingsPage({
           },
           {
             id: 'ai',
-            label: 'Personalize AI',
+            label: 'Dashboard insights',
             icon: SlidersHorizontal,
             description:
               'Guide the focus, tone and language of workspace insights.',
@@ -123,12 +124,47 @@ export default function SettingsPage({
       description: 'Our story, our mission and the people we build for.',
     },
   ];
-  const [section, setSection] = useState(
-    initialSection ||
+  const aiIds = ['ai', 'reminders', 'scoring'];
+  const aiSections = sections
+    .filter((item) => aiIds.includes(item.id))
+    .sort((a, b) => aiIds.indexOf(a.id) - aiIds.indexOf(b.id));
+  const [section, setSection] = useState(() => {
+    const desired =
+      initialSection ||
       new URLSearchParams(window.location.search).get('section') ||
-      'profile',
+      'profile';
+    return sections.some((item) => item.id === desired) ? desired : 'profile';
+  });
+  const [aiExpanded, setAIExpanded] = useState(() =>
+    aiIds.includes(
+      initialSection ||
+        new URLSearchParams(window.location.search).get('section') ||
+        '',
+    ),
   );
   const currentSection = sections.find((s) => s.id === section) || sections[0];
+  const personalSections = sections.filter((item) =>
+    ['profile', 'appearance', 'notifications'].includes(item.id),
+  );
+  const workspaceSections = sections.filter((item) =>
+    ['fields', 'choices', 'developer', 'access'].includes(item.id),
+  );
+  const chooseSection = (id: string) => {
+    setSection(id);
+    setMessage('');
+    if (aiIds.includes(id)) setAIExpanded(true);
+  };
+  const navButton = (item: (typeof sections)[number]) => (
+    <button
+      key={item.id}
+      aria-current={currentSection.id === item.id ? 'page' : undefined}
+      onClick={() => chooseSection(item.id)}
+    >
+      <item.icon size={18} />
+      <span>{item.label}</span>
+      <ChevronRight size={15} />
+    </button>
+  );
   const preferences = session?.preferences || {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     appearance: 'system',
@@ -210,55 +246,87 @@ export default function SettingsPage({
           <select
             value={currentSection.id}
             onChange={(e) => {
-              setSection(e.target.value);
-              setMessage('');
+              chooseSection(e.target.value);
             }}
           >
-            {sections.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.label}
-              </option>
-            ))}
+            <optgroup label="Personal">
+              {personalSections.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </optgroup>
+            {workspaceSections.length ? (
+              <optgroup label="Workspace · Admin">
+                {workspaceSections.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.label}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
+            <optgroup label="AvinyaIntelligence">
+              {aiSections.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Product">
+              <option value="about">About SalesDrone</option>
+            </optgroup>
           </select>
         </label>
         <nav className="settings-navigation" aria-label="Settings sections">
           <span className="eyebrow">PERSONAL</span>
-          {sections.map((item, index) => (
-            <div key={item.id}>
-              {isAdmin && item.id === 'fields' ? (
-                <span className="eyebrow">WORKSPACE · ADMIN</span>
-              ) : item.id === 'about' ? (
-                <span className="eyebrow">PRODUCT</span>
-              ) : null}
-              <button
-                aria-current={
-                  currentSection.id === item.id ? 'page' : undefined
-                }
-                onClick={() => {
-                  setSection(item.id);
-                  setMessage('');
-                }}
-              >
-                <item.icon size={18} />
-                <span>{item.label}</span>
-                <ChevronRight size={15} />
-              </button>
+          {personalSections.map(navButton)}
+          {workspaceSections.length ? (
+            <>
+              <span className="eyebrow">WORKSPACE · ADMIN</span>
+              {workspaceSections.map(navButton)}
+            </>
+          ) : null}
+          <div
+            className={
+              'settings-ai-group' +
+              (aiIds.includes(currentSection.id) ? ' is-active' : '')
+            }
+          >
+            <button
+              type="button"
+              className="settings-ai-toggle"
+              aria-expanded={aiExpanded}
+              aria-controls="settings-ai-children"
+              onClick={() => setAIExpanded((v) => !v)}
+            >
+              <Sparkles size={18} />
+              <span>AvinyaIntelligence</span>
+              <ChevronRight
+                size={15}
+                className={aiExpanded ? 'expanded' : ''}
+              />
+            </button>
+            <div
+              id="settings-ai-children"
+              className="settings-ai-children"
+              hidden={!aiExpanded}
+            >
+              {aiSections.map(navButton)}
             </div>
-          ))}
+          </div>
+          <span className="eyebrow">PRODUCT</span>
+          {sections.filter((item) => item.id === 'about').map(navButton)}
         </nav>
         <div className="settings-content">
           <div className="settings-section-header">
             <span className="eyebrow">
-              {[
-                'fields',
-                'choices',
-                'access',
-                'scoring',
-                'developer',
-                'ai',
-              ].includes(currentSection.id)
-                ? 'WORKSPACE SETTINGS'
-                : 'YOUR SETTINGS'}
+              {aiIds.includes(currentSection.id)
+                ? 'AVINYAINTELLIGENCE'
+                : workspaceSections.some(
+                      (item) => item.id === currentSection.id,
+                    )
+                  ? 'WORKSPACE SETTINGS'
+                  : 'YOUR SETTINGS'}
             </span>
             <h2>{currentSection.label}</h2>
             <p>{currentSection.description}</p>

@@ -14,7 +14,7 @@ Do not spawn agents unless the human explicitly asks for delegation.
 
 Use the matching [module skill](skills/README.md) and its [shared contract](skills/SHARED.md)
 for domain work. Canonical skills live in skills/; .agents/skills provides project
-discovery. Update module ownership when APIs change and run npm run skills:check.
+discovery. For every published change, update the affected module SKILL.md as well. Keep behavior, ownership, tests and deployment guidance current; do not add empty version notes. Update module ownership when APIs change and run npm run skills:check. CI requires a module skill update against BASE_SHA.
 These are logical module boundaries, not permission to deploy or spawn agents.
 Coordinate shared-file changes and keep one integrated release owner.
 

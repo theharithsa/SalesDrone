@@ -11,7 +11,7 @@ this map is an immutable schema or a standalone microservice.
 
 ## Responsibility and entry points
 
-Scoped dashboardSnapshot/summary → deterministic charts → user-requested dashboardBrief via Gemini → verifyBrief → private cached suggestion with source context.
+Scoped dashboardSnapshot/summary → deterministic charts → mode-controlled dashboardBrief via Gemini → verifyBrief → private cached suggestion with source context.
 
 - [functions/src/dashboard.js](../../functions/src/dashboard.js)
 - [functions/src/intelligence-gemini.js](../../functions/src/intelligence-gemini.js)
@@ -36,7 +36,7 @@ Scoped current lead/activity aggregates, current user’s outstanding tasks, use
 - A funnel shows current stage counts, not historical conversion rates; it can widen. Include configured zero-count and custom stages.
 - Charts use custom SVG/HTML/CSS, not Recharts. Keep count-derived geometry, meaningful labels, keyboard stage filtering and reduced-motion equivalents.
 - AI receives permitted aggregates and the user’s own task context only. Verify cited IDs/numeric facts and reject invented evidence.
-- Use a compact Get insights action in the card header, with a mobile touch target and no full-width primary CTA. Generate AI summaries only from an explicit button action; dashboard mount, chart refresh and navigation must never POST insights. Keep duplicate-click protection and label the summary with its own snapshot time.
+- Use a compact Get insights action in the card header, with a mobile touch target and no full-width primary CTA. Default to manual generation. In automatic mode, request once after the dashboard mode loads and hide the action. Chart refreshes must not repeat generation; demo never requests inference. Keep errors visible without retry loops. Keep duplicate-click protection and label the summary with its own snapshot time.
 - Workspace AI guidance is read server-side and changes the cache fingerprint; recheck its version before publishing an in-flight summary. Never let preferences override grounding, permissions or blocked-lead rules.
 - Charts remain usable when briefs fail; stale cache or unavailable inference must not hide deterministic data. Never infer creditworthiness from a score.
 

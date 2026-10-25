@@ -40,6 +40,8 @@ settings/scoring, settings/score-worker lease and scan cursor, leadScores keyed 
 - Separate extraction-rule hash from weight changes: reweight without unnecessary Gemini calls; stale source/rule versions need fresh evidence.
 - Bound scans and respect worker lease, current scope, disabled settings and source-date uncertainty. Unknown imported event dates must not become fresh intent.
 
+Configuration is under Settings → AvinyaIntelligence → Lead scoring, visible to Admins only. Dashboard insight generation mode does not disable background scoring.
+
 ## Change and diagnosis
 
 Inspect rule hash, source/lead version, worker cursor/lease and verified signal states before changing weights. Test quote mismatch, contradictions, unknown-only data, weight-only changes, stale caches and assigned-only reads.

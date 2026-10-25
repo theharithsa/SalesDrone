@@ -36,6 +36,8 @@ noteAnalyses leased/revision-bound jobs, activities inference state, tasks and r
 - Claim bounded jobs, perform inference outside transactions, then revalidate revision/owner/access before commit. Worker replay must not schedule twice.
 - Keep Gemini key in Secret Manager; no notes, prompts or responses in telemetry or public fixtures. Model identifiers are config: inspect actual current binding before changing one.
 
+Settings → AvinyaIntelligence → Automatic reminders remains a personal preference. Moving the navigation does not grant workspace-level control or change note extraction behavior.
+
 ## Change and diagnosis
 
 For “call in 5 minutes,” trace saved activity → noteAnalyses enqueue/status/lease → extraction validation → task commit → task query visibility → delivery. Separate inference delay from due-time alert delay. Reproduce with injected extractor + fixed clock before a controlled live test.

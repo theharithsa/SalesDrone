@@ -293,3 +293,78 @@ test('built-in labels rename safely, preserve stable lead keys and reject unknow
     )
     .expect(403);
 });
+
+test('workspace insight mode defaults to manual, validates changes and exposes only the safe mode to dashboard readers', async () => {
+  const s = await setup();
+  assert.equal((await readAISettings(s.store)).insightMode, 'manual');
+  for (const insightMode of ['sometimes', true])
+    await s
+      .call('patch', '/ai-settings', {
+        expectedVersion: 1,
+        instructions: '',
+        insightMode,
+      })
+      .expect(400);
+  await s
+    .call(
+      'patch',
+      '/ai-settings',
+      { expectedVersion: 1, instructions: '', insightMode: 'automatic' },
+      'rep',
+    )
+    .expect(403);
+  const saved = (
+    await s
+      .call('patch', '/ai-settings', {
+        expectedVersion: 1,
+        instructions: '',
+        insightMode: 'automatic',
+      })
+      .expect(200)
+  ).body;
+  assert.equal(saved.version, 2);
+  assert.equal(saved.insightMode, 'automatic');
+  const unchanged = (
+    await s
+      .call('patch', '/ai-settings', {
+        expectedVersion: 2,
+        instructions: '',
+        insightMode: 'automatic',
+      })
+      .expect(200)
+  ).body;
+  assert.equal(unchanged.version, 2);
+  const legacy = (
+    await s
+      .call('patch', '/ai-settings', {
+        expectedVersion: 2,
+        instructions: 'Private workspace guidance',
+      })
+      .expect(200)
+  ).body;
+  assert.equal(legacy.insightMode, 'automatic');
+  await s
+    .call('patch', '/ai-settings', {
+      expectedVersion: 2,
+      instructions: '',
+      insightMode: 'manual',
+    })
+    .expect(409);
+  const dashboard = (await s.call('get', '/dashboard', null, 'rep').expect(200))
+    .body;
+  assert.equal(dashboard.insightMode, 'automatic');
+  assert.equal(dashboard.instructions, undefined);
+  assert.ok(!JSON.stringify(dashboard).includes('Private workspace guidance'));
+  assert.equal(s.inputs.length, 0);
+  const manual = (
+    await s
+      .call('patch', '/ai-settings', {
+        expectedVersion: 3,
+        instructions: legacy.instructions,
+        insightMode: 'manual',
+      })
+      .expect(200)
+  ).body;
+  assert.equal(manual.insightMode, 'manual');
+  assert.equal(manual.version, 4);
+});

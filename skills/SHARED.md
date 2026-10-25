@@ -89,6 +89,8 @@ integrated release, one owner runs `npm run release -- patch|minor|major`, updat
 synchronized version references and the dated changelog, and pushes the reviewed
 commit. The main workflow validates, waits for indexes, deploys the shared Functions
 codebase and Hosting, publishes curated Pages and emits deployment telemetry.
+Every published change must update the affected module SKILL.md. CI checks added/modified module playbooks against BASE_SHA; catalog-only edits do not satisfy this policy. Keep instructions substantive and consistent with the shipped behavior.
+
 No per-module force deploy, IAM expansion or separate release tags by default.
 
 Confirm the CI run's individual jobs, the published app `version.json` and intended

@@ -638,10 +638,16 @@ export function createApp({
       assertAdmin(member);
       const current = await readAISettings(tx);
       assertVersion(current, input.expectedVersion);
-      if (current.instructions === input.instructions) return current;
+      const insightMode = input.insightMode ?? current.insightMode;
+      if (
+        current.instructions === input.instructions &&
+        current.insightMode === insightMode
+      )
+        return current;
       tx.set(AI_SETTINGS_PATH, {
         version: current.version + 1,
         instructions: input.instructions,
+        insightMode,
         updatedAt: now(),
         updatedByUid: member.uid,
       });
@@ -649,6 +655,7 @@ export function createApp({
         ...current,
         version: current.version + 1,
         instructions: input.instructions,
+        insightMode,
         usingDefault: !input.instructions,
       };
     });
@@ -1811,7 +1818,8 @@ export function createApp({
       req.member,
       now(),
     );
-    return snapshot;
+    const { insightMode } = await readAISettings(store);
+    return { ...snapshot, insightMode };
   });
   route('post', '/dashboard/insights', 'leads:read', async (req) => {
     parse(z.object({}).strict(), req.body);

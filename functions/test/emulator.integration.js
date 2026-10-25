@@ -179,10 +179,15 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   const dashboard = (await req('get', '/dashboard').expect(200)).body;
   assert.ok(dashboard.coverage.totalLeads >= 1);
   assert.equal(dashboard.aiContext, undefined);
+  assert.equal(
+    (await req('get', '/dashboard').expect(200)).body.insightMode,
+    'manual',
+  );
   const aiPreferences = (await req('get', '/ai-settings').expect(200)).body;
   assert.equal(aiPreferences.usingDefault, true);
   await req('patch', '/ai-settings', {
     expectedVersion: aiPreferences.version,
+    insightMode: 'automatic',
     instructions: 'Emulator guidance: focus on callbacks.',
   }).expect(200);
   assert.equal(

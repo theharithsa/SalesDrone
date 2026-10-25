@@ -4,7 +4,7 @@ SalesDrone displays six responsive views: pipeline stage composition, 14-day per
 
 ## AI workspace brief
 
-Dashboard AI summaries are on demand. Opening the page, navigating back or refreshing charts does not request Gemini. Choose **Get insights** (or **Refresh insights**) to request one; duplicate clicks are guarded while it runs. The summary retains its own snapshot time when charts refresh. Server caching and rate limits still apply.
+Dashboard AI summaries default to on demand: choose **Get insights** (or **Refresh insights**). Admins can select **When the dashboard opens** under Settings → AvinyaIntelligence → Dashboard insights. Automatic mode hides the button and makes one request per dashboard visit; chart refreshes do not request another summary. Errors stay visible without automatic retry loops. Recent matching results reuse the server cache. Duplicate requests are guarded while running. The summary retains its own snapshot time when charts refresh. Server caching and rate limits still apply.
 
 `POST /api/v1/dashboard/insights` uses Gemini server-side to produce a headline and up to four suggestions about permitted pipeline counts and the signed-in user's open tasks. It receives aggregate facts, up to 25 task titles/dates and authorized lead IDs/scores, without structured customer names, phones or emails. Free text can contain information entered by a user. Input is treated as untrusted data; the model has no tools and cannot contact leads or create tasks.
 
@@ -43,7 +43,7 @@ The scheduled `leadIntelligence` function runs every minute, scans a cursor page
 
 ## Settings and API
 
-Admin Settings contains Lead scoring and the actual People & access controls. Existing protected bootstrap admins and permission rules remain in place. Mobile Settings uses the existing section dropdown. Sidebar collapse now sits directly above Settings with a text label when expanded.
+AvinyaIntelligence contains Dashboard insights, Automatic reminders and Lead scoring; workspace configuration is Admin-only while reminder preferences stay personal. Admin Settings also contains People & access controls. Existing protected bootstrap admins and permission rules remain in place. Mobile Settings uses the existing section dropdown. Sidebar collapse now sits directly above Settings with a text label when expanded.
 
 OpenAPI 1.7.0 adds seven operations (43 total): GET/PATCH scoring-settings; GET lead-scores (at most 100 IDs, all scope checked); GET lead detail score; POST score refresh; GET dashboard; POST dashboard insights. Writes use expectedVersion where configuration is edited. Scores and briefs are service-side derived records; direct Firestore client access remains denied.
 
@@ -51,6 +51,6 @@ Both `api` and `leadIntelligence` explicitly bind Secret Manager's existing `GEM
 
 ## Admin personalization
 
-Settings → Personalize AI lets an Admin set up to 4,000 characters of workspace guidance for dashboard focus, tone and language. Blank instructions use the displayed default. GET/PATCH /api/v1/ai-settings require Google/App Check, members:write and the Admin role; PATs cannot read or change them. PATCH uses expectedVersion and records only safe audit metadata.
+Settings → AvinyaIntelligence → Dashboard insights lets an Admin set up to 4,000 characters of workspace guidance for dashboard focus, tone and language. Blank instructions use the displayed default. GET/PATCH /api/v1/ai-settings require Google/App Check, members:write and the Admin role; PATs cannot read or change them. PATCH uses expectedVersion and records only safe audit metadata.
 
-Guidance is supplied separately from task/lead text under fixed grounding and output rules. It cannot expand access, bypass blocked-lead rules, fabricate references or run tools. It applies only to dashboard insights; automatic reminders and scoring retain their own contracts. Each cached brief includes the guidance version in its fingerprint. A changed version rejects an older in-flight generation; the next user-triggered request uses current instructions. Saving settings itself does not call Gemini.
+Guidance is supplied separately from task/lead text under fixed grounding and output rules. It cannot expand access, bypass blocked-lead rules, fabricate references or run tools. It applies only to dashboard insights; automatic reminders and scoring retain their own contracts. Each cached brief includes the guidance version in its fingerprint. A changed version rejects an older in-flight generation; the next request uses current instructions. Saving settings itself does not call Gemini.

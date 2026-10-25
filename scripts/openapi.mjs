@@ -88,6 +88,12 @@ schemas.Dashboard = {
   ],
   properties: {
     asOf: { type: 'string' },
+    insightMode: {
+      type: 'string',
+      enum: ['manual', 'automatic'],
+      description:
+        'Workspace dashboard mode only; custom AI instructions are not exposed.',
+    },
     timezone: { type: 'string' },
     facts: { type: 'object', additionalProperties: { type: 'number' } },
     coverage: { type: 'object' },
@@ -118,10 +124,17 @@ schemas.LeadFilters = z.toJSONSchema(LeadFilters, { io: 'input' });
 schemas.AISettingsPatch = z.toJSONSchema(AISettingsPatch, { io: 'input' });
 schemas.AISettings = {
   type: 'object',
-  required: ['version', 'instructions', 'defaultInstructions', 'usingDefault'],
+  required: [
+    'version',
+    'instructions',
+    'defaultInstructions',
+    'usingDefault',
+    'insightMode',
+  ],
   properties: {
     version: { type: 'integer', minimum: 1 },
     instructions: { type: 'string', maxLength: 4000 },
+    insightMode: { type: 'string', enum: ['manual', 'automatic'] },
     defaultInstructions: { type: 'string' },
     usingDefault: { type: 'boolean' },
   },
@@ -757,7 +770,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.10.0',
+    version: '1.11.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

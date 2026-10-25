@@ -1,3 +1,5 @@
+import { spawnSync } from 'node:child_process';
+import { assertSkillUpdate } from './skill-release-policy.mjs';
 // Repository skill integrity and complete primary API ownership; no dependencies.
 import { readFile, readdir, stat, realpath } from 'node:fs/promises';
 import { dirname, resolve, basename, relative } from 'node:path';
@@ -107,3 +109,28 @@ if (
 console.log(
   `Validated ${folders.length} module skills, metadata, links, project discovery and ${owners.size} API operation owners.`,
 );
+
+const base = process.env.BASE_SHA;
+if (base && !/^0+$/.test(base)) {
+  if (!/^[a-f0-9]{40}$/.test(base))
+    fail('Invalid BASE_SHA for skill release checks');
+  const changed = (filter) => {
+    const result = spawnSync(
+      'git',
+      [
+        'diff',
+        '--name-only',
+        ...(filter ? ['--diff-filter=AMR'] : []),
+        base,
+        'HEAD',
+        '--',
+      ],
+      { cwd: root, encoding: 'utf8' },
+    );
+    if (result.status)
+      fail('Cannot inspect skill changes; fetch full Git history');
+    return result.stdout.split('\n').filter(Boolean);
+  };
+  assertSkillUpdate(changed(false), changed(true));
+  console.log('Release skill update requirement passed.');
+}

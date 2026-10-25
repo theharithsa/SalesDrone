@@ -48,6 +48,8 @@ workspaces/avinyatech/settings/fields; users/{uid} preferences; persisted lead c
 - Apply the same configured options in forms, calls, imports, filters, journey and demo behavior. Use full “Enquiry” labels and omit serial number UI.
 - Desktop settings use section navigation; mobile uses a section selector. Preserve profile photo fallback, readable fonts and accessible labels.
 
+AvinyaIntelligence is an expandable settings group containing Dashboard insights (Admin), Automatic reminders (personal), and Lead scoring (Admin). Use matching optgroups in the mobile selector. Dashboard preferences support manual/automatic insightMode; omitted mode in older PATCH clients preserves the saved value, and missing records default to manual.
+
 ## Change and diagnosis
 
 Test current versus retired values, duplicate choices, type changes, essential-field removal, stale versions and optional hidden fields. If a dropdown differs across screens, inspect shared adapters before hardcoding another list.

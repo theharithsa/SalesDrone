@@ -3,6 +3,7 @@ import { ErrorMessage } from '../components/UI';
 type Config = {
   version: number;
   instructions: string;
+  insightMode: 'manual' | 'automatic';
   defaultInstructions: string;
   usingDefault: boolean;
 };
@@ -13,6 +14,7 @@ export default function AIPersonalizationSettings({
 }) {
   const [config, setConfig] = useState<Config | null>(null),
     [text, setText] = useState(''),
+    [mode, setMode] = useState<'manual' | 'automatic'>('manual'),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [message, setMessage] = useState('');
@@ -23,6 +25,7 @@ export default function AIPersonalizationSettings({
         if (active) {
           setConfig(c);
           setText(c.instructions);
+          setMode(c.insightMode || 'manual');
         }
       })
       .catch((e) => {
@@ -37,8 +40,7 @@ export default function AIPersonalizationSettings({
       <h3>Shape your workspace insights</h3>
       <p>
         Guide the focus, tone and language of dashboard insights for your team.
-        Insights still use the current user’s permitted data and only run when
-        requested.
+        Insights always use the current user’s permitted data.
       </p>
       <ErrorMessage error={error} />
       {error && config ? (
@@ -52,12 +54,13 @@ export default function AIPersonalizationSettings({
               .then((c) => {
                 setConfig(c);
                 setText(c.instructions);
-                setMessage('Saved instructions reloaded.');
+                setMode(c.insightMode || 'manual');
+                setMessage('Saved preferences reloaded.');
               })
               .catch((e) => setError(e.message));
           }}
         >
-          Reload saved instructions
+          Reload saved preferences
         </button>
       ) : null}
       {config ? (
@@ -71,13 +74,13 @@ export default function AIPersonalizationSettings({
               const next = await request('/ai-settings', 'PATCH', {
                 expectedVersion: config.version,
                 instructions: text,
+                insightMode: mode,
               });
               setConfig(next);
               setText(next.instructions);
+              setMode(next.insightMode);
               setMessage(
-                next.usingDefault
-                  ? 'Default AI guidance restored.'
-                  : 'AI instructions saved. Get insights to apply them.',
+                'AvinyaIntelligence preferences saved. The insight mode applies the next time the dashboard opens.',
               );
             } catch (e) {
               setError((e as Error).message);
@@ -86,6 +89,41 @@ export default function AIPersonalizationSettings({
             }
           }}
         >
+          <fieldset className="insight-mode-choices" disabled={busy}>
+            <legend>When to get insights</legend>
+            <label className={mode === 'manual' ? 'selected' : ''}>
+              <input
+                type="radio"
+                name="insightMode"
+                value="manual"
+                checked={mode === 'manual'}
+                onChange={() => setMode('manual')}
+              />
+              <span>
+                <strong>When I ask</strong>
+                <small>
+                  Show Get insights on the dashboard. Nothing is generated on
+                  page load.
+                </small>
+              </span>
+            </label>
+            <label className={mode === 'automatic' ? 'selected' : ''}>
+              <input
+                type="radio"
+                name="insightMode"
+                value="automatic"
+                checked={mode === 'automatic'}
+                onChange={() => setMode('automatic')}
+              />
+              <span>
+                <strong>When the dashboard opens</strong>
+                <small>
+                  Prepare insights automatically and hide the button. This can
+                  use more AI requests; recent matching insights are reused.
+                </small>
+              </span>
+            </label>
+          </fieldset>
           <label>
             Instructions for insights
             <textarea
@@ -128,9 +166,13 @@ export default function AIPersonalizationSettings({
             </button>
             <button
               className="button primary"
-              disabled={busy || text.trim() === config.instructions}
+              disabled={
+                busy ||
+                (text.trim() === config.instructions &&
+                  mode === (config.insightMode || 'manual'))
+              }
             >
-              {busy ? 'Saving…' : 'Save instructions'}
+              {busy ? 'Saving…' : 'Save preferences'}
             </button>
           </div>
         </form>
@@ -145,6 +187,7 @@ export default function AIPersonalizationSettings({
               .then((c) => {
                 setConfig(c);
                 setText(c.instructions);
+                setMode(c.insightMode || 'manual');
               })
               .catch((e) => setError(e.message));
           }}
