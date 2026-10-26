@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Lead attachments"
+  short_description: "Manage private lead uploads and downloads"
+  default_prompt: "Use $salesdrone-attachments to inspect private lead files, permissions, upload/download behavior, cleanup and regression evidence."

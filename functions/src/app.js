@@ -1,4 +1,15 @@
 import {
+  AttachmentInput,
+  AttachmentDelete,
+  attachmentView,
+  attachmentAccess,
+  reserveAttachment,
+  putAttachment,
+  removeAttachment,
+  MAX_FILE_BYTES,
+} from './attachments.js';
+import { BulkLeadInput, planBulkLeads } from './bulk-leads.js';
+import {
   settingsAuditTransaction,
   queueSettingsAudits,
 } from './settings-audit.js';
@@ -131,6 +142,7 @@ export function createApp({
   verifyAppCheck,
   verifyPersonalTokenOwner = null,
   sendTest = async () => {},
+  files = null,
   extractScore = null,
   summarizeDashboard = null,
   now = () => new Date().toISOString(),
@@ -212,6 +224,13 @@ export function createApp({
               'This operation requires Google sign-in and App Check',
             );
           req.identity.personalAccess.requiredScopes = [scope];
+          if (
+            (url === '/leads/batch' || url === '/leads/batch/preview') &&
+            Object.hasOwn(req.body || {}, 'assignedToUid')
+          )
+            req.identity.personalAccess.requiredScopes.push(
+              'assignments:write',
+            );
           if (url === '/leads/:id/activities' && method === 'post') {
             if (req.body?.stage)
               req.identity.personalAccess.requiredScopes.push('leads:edit');
@@ -245,7 +264,8 @@ export function createApp({
               'FILTER',
               'Unknown or invalid query parameter: ' + key,
             );
-        const result = await handler(req);
+        const result = await handler(req, res);
+        if (res.headersSent) return;
         res.json(result ?? { ok: true });
       } catch (e) {
         next(e);
@@ -255,7 +275,9 @@ export function createApp({
     const key = req.headers['idempotency-key'];
     if (idempotent && (!key || !/^[a-f0-9-]{36}$/i.test(key)))
       throw new AppError(400, 'IDEMPOTENCY', 'Supply a UUID Idempotency-Key');
-    const fingerprint = hash(JSON.stringify([req.method, req.path, req.body]));
+    const fingerprint = idempotent
+      ? hash(JSON.stringify([req.method, req.path, req.body]))
+      : null;
     return store.run(async (tx) => {
       const member = await requireMember(tx, req.identity, capability);
       const requestPath = path('requests', hash(member.uid + ':' + key));
@@ -267,6 +289,9 @@ export function createApp({
             'IDEMPOTENCY_CONFLICT',
             'This key was already used for a different request',
           );
+        if (req.path === '/leads/batch')
+          for (const item of req.body.items)
+            await leadAccess(tx, member, item.id);
         const resource = req.params.id;
         if (req.path.startsWith('/leads/') && resource)
           await leadAccess(tx, member, resource);
@@ -913,6 +938,144 @@ export function createApp({
         await appendDiscussions(tx, prepared.record, m, now());
         return prepared.record;
       },
+      { idempotent: true },
+    );
+  });
+  const requireFiles = () => {
+    if (!files)
+      throw new AppError(
+        503,
+        'STORAGE_UNAVAILABLE',
+        'File storage is unavailable',
+      );
+    return files;
+  };
+  const contentRoute = '/leads/:id/attachments/:attachmentId/content';
+  router.put(
+    contentRoute,
+    async (req, res, next) => {
+      try {
+        const m = await requireMember(store, req.identity, 'leads:edit');
+        await leadAccess(store, m, req.params.id);
+        if (!req.is('application/octet-stream'))
+          throw new AppError(
+            415,
+            'FILE_TYPE',
+            'Upload binary file contents as application/octet-stream',
+          );
+        next();
+      } catch (e) {
+        next(e);
+      }
+    },
+    express.raw({ type: 'application/octet-stream', limit: MAX_FILE_BYTES }),
+  );
+  route('post', '/leads/:id/attachments', 'leads:edit', (req) => {
+    requireFiles();
+    const input = parse(AttachmentInput, req.body);
+    return mutate(
+      req,
+      'leads:edit',
+      (tx, m) => reserveAttachment(tx, m, req.params.id, input, uid(), now()),
+      { idempotent: true },
+    );
+  });
+  route(
+    'put',
+    '/leads/:id/attachments/:attachmentId/content',
+    'leads:edit',
+    (req) =>
+      putAttachment({
+        store,
+        identity: req.identity,
+        leadId: req.params.id,
+        id: req.params.attachmentId,
+        bytes: req.body,
+        files: requireFiles(),
+        now,
+        commit: (fn) => mutate(req, 'leads:edit', fn),
+      }),
+  );
+  route('get', '/leads/:id/attachments', 'leads:read', async (req) => {
+    await leadAccess(store, req.member, req.params.id);
+    const result = await list(req, 'leadAttachments', [
+      ['leadId', '==', req.params.id],
+      ['state', '==', 'Ready'],
+    ]);
+    const m = await requireMember(store, req.identity, 'leads:read');
+    await leadAccess(store, m, req.params.id);
+    return { ...result, items: result.items.map(attachmentView) };
+  });
+  route(
+    'get',
+    '/leads/:id/attachments/:attachmentId/content',
+    'leads:read',
+    async (req, res) => {
+      const { record } = await attachmentAccess(
+        store,
+        req.member,
+        req.params.id,
+        req.params.attachmentId,
+      );
+      if (record.state !== 'Ready')
+        throw new AppError(
+          409,
+          'UPLOAD_PENDING',
+          'This upload is not complete',
+        );
+      const bytes = await requireFiles().read(record.objectPath);
+      const current = await requireMember(store, req.identity, 'leads:read');
+      const latest = await attachmentAccess(
+        store,
+        current,
+        req.params.id,
+        req.params.attachmentId,
+      );
+      if (latest.record.state !== 'Ready')
+        throw new AppError(404, 'NOT_FOUND', 'Attachment is unavailable');
+      res.set({
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(record.name).replace(/'/g, '%27')}`,
+        'Content-Length': String(bytes.length),
+      });
+      res.send(bytes);
+    },
+  );
+  route(
+    'delete',
+    '/leads/:id/attachments/:attachmentId',
+    'leads:edit',
+    (req) => {
+      const input = parse(AttachmentDelete, req.body);
+      return mutate(req, 'leads:edit', (tx, m) =>
+        removeAttachment(
+          tx,
+          m,
+          req.params.id,
+          req.params.attachmentId,
+          input.expectedVersion,
+          now(),
+        ),
+      );
+    },
+  );
+  route('post', '/leads/batch/preview', 'leads:edit', (req) => {
+    const input = parse(BulkLeadInput, req.body);
+    return store.run(async (tx) =>
+      planBulkLeads(
+        tx,
+        await requireMember(tx, req.identity, 'leads:edit'),
+        input,
+        now(),
+      ),
+    );
+  });
+  route('post', '/leads/batch', 'leads:edit', (req) => {
+    const input = parse(BulkLeadInput, req.body);
+    return mutate(
+      req,
+      'leads:edit',
+      (tx, m) => planBulkLeads(tx, m, input, now(), true),
       { idempotent: true },
     );
   });

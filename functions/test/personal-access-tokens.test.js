@@ -377,7 +377,7 @@ test('per-token authenticated request limit is enforced without App Check bypass
 test('scope map is explicit, bounded and all defined scopes are used', () => {
   assert.equal(new Set(Object.values(PAT_ROUTES)).size, TOKEN_SCOPES.length);
   assert.ok(
-    Object.keys(PAT_ROUTES).every((k) => /^(get|post|patch|delete) \//.test(k)),
+    Object.keys(PAT_ROUTES).every((k) => /^(get|post|put|patch|delete) \//.test(k)),
   );
   assert.ok(
     !Object.keys(PAT_ROUTES).some(

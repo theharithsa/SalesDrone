@@ -3,6 +3,16 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+
+## [1.9.0] - 2026-10-26
+
+### Changed
+- Add loaded-only selection and atomic batch edits for up to 25 leads, with preview, current-version validation, scoped tokens and reassignment side effects.
+- Add private Firebase Storage attachments in a Files tab, with type/size/quota checks, progress/retry/cancel, forced downloads and confirmed removal.
+- Preserve current membership/lead scope across Storage I/O; add immutable retry and bounded pending/deletion cleanup without permanent download links.
+- Extend OpenAPI to 1.16.0 with seven operations and explicit bulk/file token scopes.
+- Add Storage rules/emulator/deployment gates, safe dependency spans/committed events, attachment skill, module cases, docs and demo captures.
+
 ## [1.8.0] - 2026-10-26
 
 ### Changed

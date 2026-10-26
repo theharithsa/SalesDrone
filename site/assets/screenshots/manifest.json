@@ -12,22 +12,22 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "13f75c08e055469af99344daee334b1d82da4481489e5393e21ca34ffa1eec09",
-    "capturedAt": "2026-10-26T04:20:57.552050+00:00",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "version": "1.8.0",
-    "capturePixels": "1280 x 900"
+    "version": "1.9.0",
+    "sha256": "6eb4693fad760f6db515c78040cebc275497729838b7b58043d8ff33355756b2",
+    "capturedAt": "2026-10-26T09:50:26.707542+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "256b90193096520a7e5896d0cbb8b15cdbd74cf526496dc86817fc384b4b65a8",
-    "capturedAt": "2026-10-26T04:21:01.617575+00:00",
-    "viewport": "390 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "version": "1.8.0",
-    "capturePixels": "390 x 900"
+    "version": "1.9.0",
+    "sha256": "e13abe5d6f62d06acac9ca36eed93b1ddfdf673fb18e5a2e45f8e75efcba8c20",
+    "capturedAt": "2026-10-26T09:50:27.855501+00:00",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "390 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "notifications-demo.jpg",
@@ -42,40 +42,42 @@
   {
     "file": "api-portal-demo.jpg",
     "mode": "public-contract",
-    "review": "Public schemas only; fresh unauthorized Swagger tab, no request responses or credentials.",
-    "sha256": "6f81bdbb552dfdaf1140c816ba0951ea5a2e232bb0bbbd180904d16d4effe479",
-    "capturedAt": "2026-10-24T20:30:59.283Z",
-    "viewport": "1440 \u00d7 900"
+    "version": "1.9.0",
+    "sha256": "1761c6df0c5dd5f98f48337e49c75505e880cb2378f33a957ca9a1a76d98bc08",
+    "capturedAt": "2026-10-26T09:50:29.931177+00:00",
+    "viewport": "1828 x 1028 CSS pixel browser",
+    "capturePixels": "1807 x 1016",
+    "review": "Public API contract 1.16.0 only; no authorization, requests, responses or credentials."
   },
   {
     "file": "developer-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification. Isolated real SettingsPage with synthetic admin and stub requests; no token generated.",
-    "sha256": "652b2bd7860d4f41d860bbdea05f5fa5a27acba64f4ee7c891e8b406e616ddd1",
-    "capturedAt": "2026-10-25T23:14:50.193244+00:00",
-    "viewport": "1828 x 1028 CSS pixels",
-    "version": "1.6.7",
-    "capturePixels": "1807 x 1016"
+    "version": "1.9.0",
+    "sha256": "54b6d3056d2c8c8381908163268740cad79c5b283e046ecad344fce551158b19",
+    "capturedAt": "2026-10-26T09:50:29.313490+00:00",
+    "viewport": "1828 x 1028 CSS pixel browser; native crop to permission choices",
+    "capturePixels": "1463 x 900",
+    "review": "Clearly labelled isolated real DeveloperSettings with fictional admin and stub requests; no server calls or token creation."
   },
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "e1b940d16df1a2d315b374c0b4ecaf7ee61a4572601c12cb1f21a0208a50e5a2",
-    "capturedAt": "2026-10-26T04:20:58.878182+00:00",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "version": "1.8.0",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "capturePixels": "1280 x 900"
+    "version": "1.9.0",
+    "sha256": "235d1b4d66edb9d94942d4749257a4ae5e454d7ae846ae4594895d62bc4a0820",
+    "capturedAt": "2026-10-26T09:50:27.284766+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "13f75c08e055469af99344daee334b1d82da4481489e5393e21ca34ffa1eec09",
-    "capturedAt": "2026-10-26T04:20:58.213514+00:00",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "version": "1.8.0",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "capturePixels": "1280 x 900"
+    "version": "1.9.0",
+    "sha256": "6eb4693fad760f6db515c78040cebc275497729838b7b58043d8ff33355756b2",
+    "capturedAt": "2026-10-26T09:50:26.068894+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "book-mode-light.jpg",
@@ -100,12 +102,12 @@
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5e5194f353950de16bbb11b9b8d72ba7c50699f390f683354765e01bad0c45b9",
-    "capturedAt": "2026-10-26T04:21:03.043945+00:00",
-    "viewport": "390 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "version": "1.8.0",
-    "capturePixels": "390 x 900"
+    "version": "1.9.0",
+    "sha256": "d75ed9c9e9be1a1b32d69a707e199c1a48dba94cd573bcf7eba1f46636f41462",
+    "capturedAt": "2026-10-26T09:50:28.690672+00:00",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "390 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "book-settings-demo.jpg",
@@ -120,22 +122,22 @@
   {
     "file": "leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "854af73d122ac4cca6e4c6ac7e1cba3bda1448c2225adf7ec5b4e2bb294dacdd",
-    "capturedAt": "2026-10-26T04:20:59.570718+00:00",
-    "version": "1.8.0",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "capturePixels": "1280 x 900"
+    "version": "1.9.0",
+    "sha256": "e5ea4b9465c5d06309b898b9467c55ac2d6431e290c96be61a9fd34aa0b6d975",
+    "capturedAt": "2026-10-26T09:50:23.344278+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "mobile-leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "34171617a7cf84fa82ed8b0627d66002845b3e308ba8d04e76202a4a783ded74",
-    "capturedAt": "2026-10-26T04:21:00.927737+00:00",
-    "version": "1.8.0",
-    "viewport": "390 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "capturePixels": "390 x 900"
+    "version": "1.9.0",
+    "sha256": "f7857e3c1f070f68dfbae4d6b208a487644884386996d2e3b1d5f47b830af733",
+    "capturedAt": "2026-10-26T09:50:25.383485+00:00",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "390 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "import-demo.jpg",
@@ -150,12 +152,12 @@
   {
     "file": "laptop-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "854af73d122ac4cca6e4c6ac7e1cba3bda1448c2225adf7ec5b4e2bb294dacdd",
-    "capturedAt": "2026-10-26T04:21:00.246361+00:00",
-    "version": "1.8.0",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "capturePixels": "1280 x 900"
+    "version": "1.9.0",
+    "sha256": "e5ea4b9465c5d06309b898b9467c55ac2d6431e290c96be61a9fd34aa0b6d975",
+    "capturedAt": "2026-10-26T09:50:23.982915+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "login-demo.jpg",
@@ -170,12 +172,12 @@
   {
     "file": "tablet-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "37964e20fb41abd08909b8d343f63f07cfcf9f54e5026591168c94387d582b76",
-    "capturedAt": "2026-10-26T04:21:02.307975+00:00",
-    "version": "1.8.0",
-    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
-    "viewport": "1024 x 900 CSS pixels, actual application iframe; default 100% display scale",
-    "capturePixels": "1024 x 900"
+    "version": "1.9.0",
+    "sha256": "b3a8baaef1b4fa158ceffa697af94ed66cebeb5975ba6cc17ecccafb52db0d41",
+    "capturedAt": "2026-10-26T09:50:24.725864+00:00",
+    "viewport": "1024 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1024 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   },
   {
     "file": "activity-demo.jpg",
@@ -216,5 +218,45 @@
     "viewport": "Isolated real ScoreBadge/LeadBlade synthetic fixture, 1280 CSS pixel wide crop",
     "capturePixels": "1280 x 514",
     "review": "Explicitly labelled fictional score states and assignee with stub requests; no server calls or customer data. Numeric labels, null versus zero and reported risk reviewed. Not a score assigned to a real/demo lead."
+  },
+  {
+    "file": "batch-edit-demo.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.9.0",
+    "sha256": "d62de03a4a86af0ad38cfa003e2ddf8cc4332fb74172050a5330bc4a3283bf4a",
+    "capturedAt": "2026-10-26T09:50:21.075665+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
+  },
+  {
+    "file": "batch-edit-mobile.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.9.0",
+    "sha256": "65eb62c2c2351597543577761fe23a11728cf46169bdab442b94bcdb6d2d2e28",
+    "capturedAt": "2026-10-26T09:50:21.538124+00:00",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "390 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
+  },
+  {
+    "file": "lead-files-demo.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.9.0",
+    "sha256": "9544cf8cbc6514c84c090fcec6c5c27844f02f0c9594832e38506e618a7d8d22",
+    "capturedAt": "2026-10-26T09:50:22.094081+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
+  },
+  {
+    "file": "lead-files-mobile.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.9.0",
+    "sha256": "b18585a58075ec8290f7e835a063b742f765e72102b79cccf49189c4e127d1f1",
+    "capturedAt": "2026-10-26T09:50:22.657675+00:00",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; standard 100% display scale",
+    "capturePixels": "390 x 900",
+    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
   }
 ]

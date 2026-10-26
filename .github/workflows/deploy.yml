@@ -94,6 +94,9 @@ jobs:
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only firestore --non-interactive
       - name: Wait for indexes
         run: node scripts/wait-indexes.mjs
+      - name: Deploy private Storage rules
+        id: storage
+        run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only storage --non-interactive
       - name: Deploy Cloud Functions
         id: functions
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only functions:salesdrone --non-interactive
@@ -104,6 +107,8 @@ jobs:
         id: published
         run: node scripts/check-published.mjs
       - name: Collect deployment metadata
+        env:
+          STORAGE_DEPLOYMENT_OUTCOME: ${{ steps.storage.outcome }}
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         run: node scripts/collect-deployment.mjs
       - name: Verify deployed contract and protected boundaries

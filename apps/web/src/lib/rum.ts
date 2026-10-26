@@ -35,6 +35,8 @@ export const safePage = (path: string) => {
 };
 export const safeOperation = (path: string, method: string) => {
   const p = path.split('?')[0];
+  if (p === '/leads/batch' || p === '/leads/batch/preview')
+    return `${method === 'POST' ? 'POST' : 'OTHER'} ${p}`;
   const kind = p.split('/').filter(Boolean)[0];
   const root = [
     'me',
@@ -62,6 +64,8 @@ export const safeOperation = (path: string, method: string) => {
     .slice(2)
     .map((v) =>
       [
+        'attachments',
+        'content',
         'activities',
         'corrections',
         'automatic-reminder',
@@ -80,7 +84,7 @@ export const safeOperation = (path: string, method: string) => {
         ? v
         : ':id',
     );
-  return `${['GET', 'POST', 'PATCH', 'DELETE'].includes(method) ? method : 'OTHER'} /${root}${p.split('/').filter(Boolean).length > 1 ? '/:id' : ''}${tail.length ? '/' + tail.join('/') : ''}`;
+  return `${['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method) ? method : 'OTHER'} /${root}${p.split('/').filter(Boolean).length > 1 ? '/:id' : ''}${tail.length ? '/' + tail.join('/') : ''}`;
 };
 function anonymousId() {
   try {

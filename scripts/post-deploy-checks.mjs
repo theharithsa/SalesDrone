@@ -64,3 +64,14 @@ export function checkProductPage(html, version, commit) {
   )
     throw Error('Public product handbook is missing or stale');
 }
+
+export function checkStorage(metadata) {
+  const s = metadata.storage;
+  if (
+    s?.bucket !== 'sales-drone-avinya.firebasestorage.app' ||
+    s.state !== 'verified' ||
+    s.deploymentOutcome !== 'success' ||
+    s.publicAccessPrevention !== 'enforced'
+  )
+    throw Error('Private Storage configuration is unverified');
+}

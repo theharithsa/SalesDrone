@@ -57,3 +57,5 @@ import '@fontsource-variable/lora';
 import './typography.css';
 
 import './lead-overview.css';
+
+import './lead-files.css';

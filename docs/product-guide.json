@@ -86,6 +86,32 @@
       ]
     },
     {
+      "id": "batch-edit",
+      "title": "Batch edit existing leads",
+      "audience": "Members with lead-edit access; assignment permission for reassignment",
+      "steps": [
+        "Filter Leads to the records you need, then tick individual selection boxes or Select loaded leads. A batch contains at most 25 explicitly selected loaded records; this does not select every record matching server filters.",
+        "Choose Batch edit. Pick shared fields and values; Add another field for additional changes. Leave unchanged retains each lead value. Clear value removes an optional value; required-field validation still applies.",
+        "Choose an assignee only when permitted. Reassignment cancels pending tasks and alerts the new owner. Names, phone/email and discussion history are edited individually inside a lead.",
+        "Select Preview changes and inspect the before/after rows. Apply reviewed changes commits all selected updates together. A stale, archived or inaccessible lead rejects the whole batch; refresh and preview again."
+      ],
+      "details": [
+        "Selection resets when the loaded lead IDs or versions change. Additional pages are not silently included. At most 25 leads are written per atomic transaction. No-op rows retain their versions.",
+        "After a connection failure, the outcome can be uncertain. Retry the same reviewed action safely or refresh to inspect the result; the API reuses the same idempotency key. Never assume the batch failed solely because a response was lost."
+      ],
+      "faq": [
+        [
+          "Can I batch replace phone numbers or old comments?",
+          "No. Shared contact values would create duplicate identities, and conversations need their own timelines. Open the individual lead to edit contact details or add/correct a conversation."
+        ],
+        [
+          "Why did nothing update?",
+          "One selected record may have changed, been archived or moved out of your scope, or a value may not match current field definitions. The API applies no partial batch. Refresh and preview using current versions."
+        ]
+      ],
+      "screenshot": "batch-edit-demo.jpg"
+    },
+    {
       "id": "lead-workspace",
       "title": "Full lead page: All, Comments, Calls, Tasks and Review",
       "audience": "Members who can read the lead",
@@ -104,7 +130,8 @@
         "Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.",
         "Mobile typography uses a 28px page-title role, 22px lead identity, 17px body/form text and 15px supporting text at default browser settings. Existing font families are retained. Stage/assignment controls reflow to available width and the journey scrolls horizontally, without widening the document. Browser text preferences and zoom may change the visual sizes.",
         "Log call and Remind me appear once above the tabs. Expanding Lead details & score shows a single labelled Lead information list, including email. Available phone/email links follow contact review and do-not-contact guards. The quick-inspection overlay has its own compact actions; those are not repeated on the full page.",
-        "The lead header groups the person, a small score ring, current sales stage and assignee. It reflows by available content width. The journey is a compact horizontally scrollable path; About this journey and Recorded stage changes expand separately. The ring shows a known score out of 100; a dashed ring means Unscored, which is different from a known zero. Reported risks retain an explicit warning label; a score is not a verified commercial guarantee."
+        "The lead header groups the person, a small score ring, current sales stage and assignee. It reflows by available content width. The journey is a compact horizontally scrollable path; About this journey and Recorded stage changes expand separately. The ring shows a known score out of 100; a dashed ring means Unscored, which is different from a known zero. Reported risks retain an explicit warning label; a score is not a verified commercial guarantee.",
+        "Files is a separate tab for private lead attachments. It is not part of All activity; comments/calls and tasks keep their existing tabs. Existing Ready files stay with a lead when it is reassigned, while pending uploads are invalidated by assignment changes."
       ],
       "faq": [
         [
@@ -116,6 +143,38 @@
           "The tab shows your tasks linked to this lead, subject to current access. It does not show another recipient’s private reminders. Check the status filter and Load more tasks."
         ]
       ]
+    },
+    {
+      "id": "lead-files",
+      "title": "Lead files and attachments",
+      "audience": "Lead readers; editors for upload and removal",
+      "steps": [
+        "Open a lead in its full page and select Files, or use Files in the desktop quick inspector. Choose Upload file, then select a supported photo or document. Files are private to people who currently have access to this lead.",
+        "Wait for upload progress and File uploaded. A failed upload offers Retry upload or Discard pending upload; Cancel upload stops the transfer. Keep the tab open until completion.",
+        "Choose Download to save a file to your device. There is no permanent public sharing link. Refresh files retrieves current metadata; Load more files follows the next page.",
+        "Choose Remove, then Confirm removal. The file becomes unavailable in SalesDrone immediately. Removal has no in-app restore button; underlying Storage cleanup happens later."
+      ],
+      "details": [
+        "Limits: 8 MiB per file and 50 active/pending files per lead. Supported: JPEG, PNG, GIF, WebP, PDF, DOC/DOCX, XLS/XLSX, PPT/PPTX, UTF-8 text and CSV. Executables, HTML and SVG are excluded. File extension, declared type, size and signature are checked. Files are stored, not malware-scanned or sent to AI.",
+        "Pending reservations expire after one hour. Cleanup grants an additional hour before deleting expired pending bytes, protecting against late uploads. Explicit removal hides access immediately and waits an hour for physical deletion. Failed cleanup retries.",
+        "Existing completed files follow the lead after reassignment. New/current authorized owners may download them; former assigned-only owners lose access. Only the reserving user can finish a pending upload, and assignment changes invalidate it.",
+        "Demo uploads stay in page memory and never go to Firebase. Leaving the Files tab clears demo files; demo upload success proves the interface only."
+      ],
+      "faq": [
+        [
+          "Why did an upload stop after reassignment?",
+          "The API rechecks current membership, assignment and permissions after storing private bytes and before publishing the file. Start a new upload with current access; abandoned bytes are cleaned up."
+        ],
+        [
+          "Can I share a file URL with another person?",
+          "Downloads require current Google/App Check authorization or an explicitly scoped active Personal Access Token. SalesDrone does not issue a durable public URL."
+        ],
+        [
+          "Why is Upload file unavailable?",
+          "Your role may be read-only, or a transfer/pending retry is active. Readers can download permitted completed files; editors can upload/remove them."
+        ]
+      ],
+      "screenshot": "lead-files-demo.jpg"
     },
     {
       "id": "conversations",

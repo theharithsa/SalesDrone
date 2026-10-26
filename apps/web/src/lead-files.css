@@ -1,0 +1,254 @@
+.batch-toolbar,
+.lead-files-heading,
+.file-actions,
+.file-progress,
+.pending-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.batch-toolbar {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.batch-toolbar label,
+.mobile-lead-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.lead-select-cell {
+  width: 44px;
+  min-width: 44px !important;
+  text-align: center;
+}
+.lead-select-cell input,
+.batch-toolbar input,
+.mobile-lead-select input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.mobile-lead-select {
+  padding: 0 16px;
+  font-size: 14px;
+}
+.batch-edit-fields {
+  display: grid;
+  gap: 16px;
+}
+.batch-edit-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto auto;
+  gap: 12px;
+  align-items: end;
+}
+.batch-edit-row label,
+.batch-edit-fields > label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.batch-preview {
+  max-height: 280px;
+  overflow: auto;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.batch-preview summary {
+  padding: 10px 0;
+  cursor: pointer;
+}
+.batch-preview dl > div {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 10px;
+}
+.batch-preview dt {
+  color: var(--muted);
+}
+.batch-preview dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.lead-files {
+  padding: 20px;
+}
+.lead-files h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+}
+.lead-files-heading {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.lead-files-heading input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.lead-files-heading label {
+  cursor: pointer;
+  min-height: 44px;
+}
+.lead-files-heading label:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.lead-file-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.lead-file-list > li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+}
+.file-description {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 180px;
+  overflow-wrap: anywhere;
+}
+.file-description strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.file-description span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.file-actions {
+  gap: 8px;
+}
+.file-actions .button {
+  font-size: 14px;
+  min-height: 40px;
+}
+.file-remove-confirm {
+  flex-basis: 100%;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}
+.file-remove-confirm p {
+  font-size: 15px;
+}
+.file-remove-confirm .button {
+  margin-right: 8px;
+}
+.file-progress {
+  padding: 12px;
+  background: var(--accent-soft);
+  border-radius: 10px;
+}
+.file-progress progress {
+  flex: 1;
+  min-width: 100px;
+  accent-color: var(--accent);
+}
+.pending-file {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.lead-work-tabs {
+  overflow-x: auto;
+  flex-wrap: nowrap !important;
+}
+.lead-work-tabs button {
+  white-space: nowrap;
+}
+@media (max-width: 767px) {
+  .batch-edit-row {
+    grid-template-columns: 1fr;
+  }
+  .batch-preview dl > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .lead-files {
+    padding: 14px;
+  }
+  .file-actions {
+    width: 100%;
+  }
+  .file-actions .button {
+    min-height: 44px;
+    flex: 1;
+  }
+  .batch-toolbar {
+    gap: 8px;
+  }
+  .batch-toolbar label {
+    flex-basis: 100%;
+  }
+}
+
+.batch-assignment {
+  display: grid;
+  gap: 6px;
+}
+
+.lead-selection-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 28px;
+  cursor: pointer;
+}
+.worksheet-lead-card {
+  position: relative;
+}
+.mobile-lead-select {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 44px;
+  height: 44px;
+  z-index: 1;
+  padding: 0;
+  justify-content: center;
+}
+.worksheet-lead-card:has(.mobile-lead-select) .worksheet-card-open > strong {
+  padding-right: 44px;
+}
+
+@media (max-width: 767px) {
+  .full-lead-page .lead-work-tabs {
+    padding-inline: 12px;
+    gap: 0;
+    scrollbar-width: thin;
+  }
+  .full-lead-page .lead-work-tabs button {
+    padding-inline: 10px;
+    min-width: 44px;
+  }
+}
+
+.lead-files-heading label.button {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+@media (max-width: 767px) {
+  .full-lead-page .lead-work-tabs button {
+    padding-inline: 8px;
+  }
+}

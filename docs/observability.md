@@ -122,3 +122,7 @@ Personal font changes reuse the appearance section of the transactional settings
 ## Desktop display scale audit
 
 Display-scale saves reuse the personal appearance audit and atomic settings.audit.committed outbox. The new exported key is displayScale; values, names, screen text and customer records are excluded. No-op, invalid and denied writes emit no committed change. Existing request traces, metrics and safe logs cover the API without new cosmetic events. The release workflow reports version 1.8.0, commit and deployment outcomes through the existing deployment signals; HTTP acceptance still does not prove tenant-searchable data. Tests: functions/test/display-scale.test.js, settings-audit.test.js and emulator.integration.js.
+
+## Batch leads and private files
+
+Atomic batch updates reuse committed lead, journey, activity and assignment notification signals. Attachment metadata commits use the leadAttachments domain in the existing safe outbox, with count-only dimensions. Storage upload/download/delete have explicit dependency spans; no object paths, names, checksums or bytes are attributes. Frontend RUM operation templates now distinguish fixed batch paths and attachment/content routes, including PUT. Cleanup logs export removed/failed counts and failures never break reminder dispatch. Storage Rules and bucket public-access prevention keep direct access closed. Deployment events include v1.9.0/SHA and Storage deployment is part of the main pipeline. Unit privacy tests inspect events; HTTP receipts remain separate from tenant searchability.

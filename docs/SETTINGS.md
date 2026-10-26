@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v1.8.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v1.9.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -396,7 +396,7 @@ Names are metadata, not secrets or unique identifiers.
 
 **Default:** Explicit selection required.
 
-Select only needed data operations. Scopes intersect the current owner’s capabilities and effective lead scope. Read leads and Export leads are separate.
+Select only needed data operations. Scopes intersect the current owner’s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write.
 
 Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route’s scope. See the generated scope catalog below.
 
@@ -434,6 +434,9 @@ Authorization stays in tab memory. Clear it when finished, especially on shared 
 
 ### API token scope catalog
 
+- **attachments:read** — List and download permitted lead files.
+- **attachments:write** — Upload and remove permitted lead files.
+- **leads:bulk-edit** — Preview and apply atomic batch lead edits.
 - **leads:export** — Export filtered lead report pages when enabled.
 - **leads:read** — Read leads and stage history.
 - **leads:create** — Create enquiries.
@@ -472,7 +475,7 @@ The invitation binds to the verified identity that accepts it. Merely signing in
 
 **Default:** Viewer or SDR chosen for each grant.
 
-Viewer can read leads. SDR can also create/edit leads, record activity and manage tasks. Administrative capabilities are reserved for protected administrators.
+Viewer can read leads. SDR can also create/edit leads, record activity and manage tasks. Administrative capabilities are reserved for protected administrators. Lead editors may batch edit permitted records and upload/remove their lead files; readers may list/download permitted Ready files. Effective assigned-only policy applies to files as well.
 
 This screen does not promote other users to Admin or edit protected bootstrap admins.
 

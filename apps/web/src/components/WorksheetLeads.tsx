@@ -12,7 +12,11 @@ export default function WorksheetLeads({
   onSelect,
   config = defaultFieldOptions,
   scores = {},
+  checkedIds,
+  onToggle,
 }: {
+  checkedIds?: Set<string>;
+  onToggle?: (id: string) => void;
   scores?: Record<string, any>;
   leads: Lead[];
   selectedId: string | null;
@@ -49,6 +53,11 @@ export default function WorksheetLeads({
         <table className="worksheet-leads-table">
           <thead>
             <tr>
+              {checkedIds && (
+                <th className="lead-select-cell">
+                  <span className="sr-only">Select lead</span>
+                </th>
+              )}
               {columns.map(([field, label]) => (
                 <th key={field} data-field={field}>
                   {label}
@@ -78,6 +87,21 @@ export default function WorksheetLeads({
                   }
                 }}
               >
+                {checkedIds && (
+                  <td
+                    className="lead-select-cell"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <label className="lead-selection-control">
+                      <input
+                        type="checkbox"
+                        aria-label={'Select ' + (lead.name || 'unnamed lead')}
+                        checked={checkedIds.has(lead.id)}
+                        onChange={() => onToggle?.(lead.id)}
+                      />
+                    </label>
+                  </td>
+                )}
                 {columns.map(([field]) => (
                   <td key={field} data-field={field}>
                     {field === 'leadScore' ? (
@@ -119,6 +143,17 @@ export default function WorksheetLeads({
               (selectedId === lead.id ? 'selected' : '')
             }
           >
+            {checkedIds && (
+              <label className="mobile-lead-select">
+                <input
+                  type="checkbox"
+                  aria-label={'Select ' + (lead.name || 'lead')}
+                  checked={checkedIds.has(lead.id)}
+                  onChange={() => onToggle?.(lead.id)}
+                />
+                <span className="sr-only">Select lead</span>
+              </label>
+            )}
             <button
               className="worksheet-card-open"
               aria-label={'Open ' + (lead.name || 'lead')}

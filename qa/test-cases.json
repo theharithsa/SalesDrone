@@ -261,7 +261,8 @@
         "functions/test/app.test.js",
         "functions/test/custom-fields-and-tasks.test.js",
         "functions/test/workbook-and-filters.test.js",
-        "tests/import-mapping.test.ts"
+        "tests/import-mapping.test.ts",
+        "functions/test/bulk-and-files.test.js"
       ],
       "manualCases": [
         {
@@ -278,6 +279,11 @@
           "id": "LEADS-03",
           "expected": "Filter each supported column; hidden-name rows remain keyboard accessible.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "LEADS-BATCH-01",
+          "fixture": "Synthetic demo leads only",
+          "expected": "Select loaded leads, choose shared fields, inspect before/after, apply once. Stale/out-of-scope/archived rows reject all; changing filters clears selection. Network retry reuses reviewed idempotency key."
         }
       ]
     },
@@ -465,6 +471,26 @@
           "id": "WORKSPACE-SETTINGS-03",
           "expected": "Old PATCH clients preserve omitted choices; denied/no-op saves emit no false audit.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-attachments",
+      "ownerSkill": "skills/salesdrone-attachments/SKILL.md",
+      "automatedTests": [
+        "functions/test/bulk-and-files.test.js",
+        "functions/test/emulator.integration.js"
+      ],
+      "manualCases": [
+        {
+          "id": "ATTACHMENTS-01",
+          "fixture": "Fictional text/PDF/image only; guest memory or demo-salesdrone emulator",
+          "expected": "Files tab accepts allowed files, progress/retry/cancel and forced download work; removal requires confirmation and refresh does not reveal deleted content."
+        },
+        {
+          "id": "ATTACHMENTS-02",
+          "fixture": "Synthetic emulator members/lead/files; no production customer writes",
+          "expected": "Unapproved/unassigned/revoked callers cannot list, upload or download; direct Storage reads are denied. Expired pending and deleting files clean up with grace and retry."
         }
       ]
     }

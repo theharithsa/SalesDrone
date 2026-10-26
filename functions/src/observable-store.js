@@ -3,6 +3,7 @@ import { hash, path, ROOT } from './policy.js';
 import { APP_VERSION, BUILD_COMMIT } from './version.js';
 const domains = new Set([
   'leads',
+  'leadAttachments',
   'activities',
   'activityRevisions',
   'leadTransitions',

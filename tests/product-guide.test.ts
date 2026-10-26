@@ -58,3 +58,27 @@ test('same-version documentation still has to match the deployed source commit',
   assert.doesNotThrow(() => checkSettingsPage(settings, '1.6.1', 'new-sha'));
   assert.throws(() => checkSettingsPage(settings, '1.6.1', 'old-sha'));
 });
+
+test('handbook screenshots accept curated names and reject path or script injection', () => {
+  const { html, markdown } = renderProductGuide(
+    {
+      title: 'Guide',
+      modules: [{ ...module, screenshot: 'lead-files-demo.jpg' }],
+    },
+    '1.9.0',
+  );
+  assert.ok(html.includes('assets/screenshots/lead-files-demo.jpg'));
+  assert.ok(markdown.includes('site/assets/screenshots/lead-files-demo.jpg'));
+  for (const screenshot of [
+    '../../private.jpg',
+    'https://example.invalid/file.jpg',
+    'x.jpg" onerror="alert(1)',
+    42,
+  ])
+    assert.throws(() =>
+      renderProductGuide(
+        { title: 'Guide', modules: [{ ...module, screenshot }] },
+        '1.9.0',
+      ),
+    );
+});

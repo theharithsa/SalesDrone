@@ -91,3 +91,7 @@ FontStyle is an optional allowlisted personal preference (standard/inter/source-
 ## v1.8 operating notes
 
 Appearance & time includes Desktop display zoom numeric85/90/100/110/125. Draft changes apply after Save; default 100, omitted PATCH preserves. Persist per member through /me, isolate guest fallback and apply only fine-pointer/min1001px desktop. Document reset100 and touch/narrow 100 behavior. Test functions/test/display-scale.test.js and tests/appearance.test.ts.
+
+## v1.9 operating notes
+
+Explain the new PAT scopes in Developer settings and leads:edit file/batch capabilities in People & permissions. No attachment toggle or global setting is introduced; limits are a documented versioned contract. Existing tokens require explicit new scopes; current owner capabilities and assigned-only policy still apply.

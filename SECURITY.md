@@ -96,3 +96,20 @@ blocks subsequent authorization checks, not already-completed operations. A lost
 creation response cannot recover the secret: revoke its metadata entry and reissue.
 Rotate before expiry and revoke exposed tokens promptly. Treat the token owner as
 the integration's data controller; no client Firestore access is granted by a PAT.
+
+## Lead attachments and batch updates
+
+Attachments use authenticated API transfer into private Firebase Storage. Client
+rules deny every direct request; bucket public-access prevention is enforced. No
+permanent download URLs are issued. Current membership and lead scope are checked
+after Storage I/O too. Downloads force attachment disposition, octet-stream,
+no-store and nosniff; uploaded documents are never rendered or sent to Gemini.
+Type signatures and quotas are admission checks, not malware scanning.
+
+Removal hides metadata immediately and queues retryable physical cleanup. Pending
+reservations expire after an hour and receive an additional cleanup grace period.
+Bucket soft-delete retention is independent from application access. File names,
+bytes, object paths and checksums are excluded from telemetry. Integration tokens
+need explicit attachments scopes; existing tokens gain no file access implicitly.
+Bulk edits require explicit selected IDs, optimistic versions and current policy
+for every lead, with no partial transaction on conflict.

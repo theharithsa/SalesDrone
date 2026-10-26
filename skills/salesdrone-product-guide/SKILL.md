@@ -49,3 +49,7 @@ Document personal font styles under Appearance & time, draft preview/save timing
 ## v1.8 operating notes
 
 For the compact lead overview and display scale, update lead-workspace and screen-layouts handbook modules, Appearance control reference and affected synthetic captures. Explain score unknown versus zero, risk labels, journey disclosures and scale reset/touch limits. Testing guide/catalog are agent handoff references, not evidence every manual case passed.
+
+## v1.9 operating notes
+
+Document loaded-only batch selection, shared fields/clearing, preview, atomic conflicts, assignment side effects and network retry semantics. Add the Files workflow with supported types, limits, current authorization, progress/retry/cancel, removal confirmation and expiry/cleanup. Explain that guest files clear on leaving the Files tab, no public link is issued, attachments are not AI inputs, and existing conversations remain individual records. Refresh table/mobile/lead-tab captures and add batch/files examples using synthetic files only.

@@ -1,3 +1,8 @@
+import { BulkLeadInput } from '../functions/src/bulk-leads.js';
+import {
+  AttachmentInput,
+  AttachmentDelete,
+} from '../functions/src/attachments.js';
 import { WorkspaceSettingsPatch } from '../functions/src/workspace-settings.js';
 import { LeadExportInput } from '../functions/src/lead-reports.js';
 import { AISettingsPatch } from '../functions/src/ai-settings.js';
@@ -48,6 +53,46 @@ schemas.ImportInput.properties.rows.items.properties = {
     items: { $ref: '#/components/schemas/ImportComment' },
     description:
       'Each nonempty selected spreadsheet cell becomes a separate historical note. Other keys are standard lead fields.',
+  },
+};
+schemas.BulkLeadInput = z.toJSONSchema(BulkLeadInput, { io: 'input' });
+schemas.AttachmentInput = z.toJSONSchema(AttachmentInput, { io: 'input' });
+schemas.AttachmentDelete = z.toJSONSchema(AttachmentDelete, { io: 'input' });
+schemas.Attachment = {
+  type: 'object',
+  required: ['id', 'leadId', 'name', 'size', 'contentType', 'state', 'version'],
+  properties: {
+    id: { type: 'string' },
+    leadId: { type: 'string' },
+    name: { type: 'string' },
+    size: { type: 'integer', maximum: 8388608 },
+    contentType: { type: 'string' },
+    state: { type: 'string', enum: ['Pending', 'Ready'] },
+    version: { type: 'integer' },
+    createdAt: { type: 'string', format: 'date-time' },
+    createdByUid: { type: 'string' },
+  },
+};
+schemas.BulkLeadResult = {
+  type: 'object',
+  required: ['count', 'changedCount', 'items'],
+  properties: {
+    count: { type: 'integer', maximum: 25 },
+    changedCount: { type: 'integer' },
+    items: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          name: { type: 'string' },
+          version: { type: 'integer' },
+          changed: { type: 'boolean' },
+          before: { type: 'object' },
+          after: { type: 'object' },
+        },
+      },
+    },
   },
 };
 schemas.ScoringPatch = z.toJSONSchema(ScoringPatch, { io: 'input' });
@@ -506,6 +551,13 @@ const responseFor = (method, url) => {
         },
       },
     };
+  if (url.startsWith('/leads/batch')) return ref('BulkLeadResult');
+  if (url.includes('/attachments'))
+    return method === 'delete'
+      ? ref('Ok')
+      : url.endsWith('/attachments') && method === 'get'
+        ? pageOf('Attachment')
+        : ref('Attachment');
   if (url === '/workspace-settings') return ref('WorkspaceSettings');
   if (url === '/leads/export') return ref('LeadExportPage');
   if (url === '/ai-settings') return ref('AISettings');
@@ -552,7 +604,7 @@ const source = await readFile(
 );
 const endpoints = [
   ...source.matchAll(
-    /route\(\s*['"](get|post|patch|delete)['"]\s*,\s*['"]([^'"]+)['"]\s*,\s*([^,]+),/g,
+    /route\(\s*['"](get|post|put|patch|delete)['"]\s*,\s*['"]([^'"]+)['"]\s*,\s*([^,]+),/g,
   ),
 ].map((m) => ({
   method: m[1],
@@ -571,49 +623,55 @@ endpoints.push(
   },
 );
 const bodyFor = (m, u) =>
-  u === '/workspace-settings'
-    ? 'WorkspaceSettingsPatch'
-    : u === '/leads/export'
-      ? 'LeadExportInput'
-      : u === '/personal-access-tokens' && m === 'post'
-        ? 'TokenInput'
-        : u === '/ai-settings'
-          ? 'AISettingsPatch'
-          : u === '/scoring-settings'
-            ? 'ScoringPatch'
-            : u.endsWith('/score/refresh') || u === '/dashboard/insights'
-              ? 'EmptyInput'
-              : u === '/field-options'
-                ? 'FieldOptionsPatch'
-                : u.endsWith('/assignment')
-                  ? 'AssignmentPatch'
-                  : u === '/notifications/:id'
-                    ? 'NotificationPatch'
-                    : u === '/me'
-                      ? 'Preferences'
-                      : u.endsWith('/automatic-reminder')
-                        ? 'AutomaticReminderAction'
-                        : u === '/leads'
-                          ? 'LeadInput'
-                          : u === '/leads/:id'
-                            ? 'LeadPatch'
-                            : u.endsWith('/activities')
-                              ? 'ActivityInput'
-                              : u === '/tasks'
-                                ? 'TaskInput'
-                                : u === '/tasks/:id'
-                                  ? m === 'delete'
-                                    ? 'TaskDelete'
-                                    : 'TaskPatch'
-                                  : u === '/invitations'
-                                    ? 'GrantInput'
-                                    : u === '/members/:uid'
-                                      ? 'MemberPatch'
-                                      : u === '/devices'
-                                        ? 'DeviceInput'
-                                        : u === '/imports/preview'
-                                          ? 'ImportInput'
-                                          : null;
+  u.startsWith('/leads/batch')
+    ? 'BulkLeadInput'
+    : u === '/leads/:id/attachments' && m === 'post'
+      ? 'AttachmentInput'
+      : u === '/leads/:id/attachments/:attachmentId' && m === 'delete'
+        ? 'AttachmentDelete'
+        : u === '/workspace-settings'
+          ? 'WorkspaceSettingsPatch'
+          : u === '/leads/export'
+            ? 'LeadExportInput'
+            : u === '/personal-access-tokens' && m === 'post'
+              ? 'TokenInput'
+              : u === '/ai-settings'
+                ? 'AISettingsPatch'
+                : u === '/scoring-settings'
+                  ? 'ScoringPatch'
+                  : u.endsWith('/score/refresh') || u === '/dashboard/insights'
+                    ? 'EmptyInput'
+                    : u === '/field-options'
+                      ? 'FieldOptionsPatch'
+                      : u.endsWith('/assignment')
+                        ? 'AssignmentPatch'
+                        : u === '/notifications/:id'
+                          ? 'NotificationPatch'
+                          : u === '/me'
+                            ? 'Preferences'
+                            : u.endsWith('/automatic-reminder')
+                              ? 'AutomaticReminderAction'
+                              : u === '/leads'
+                                ? 'LeadInput'
+                                : u === '/leads/:id'
+                                  ? 'LeadPatch'
+                                  : u.endsWith('/activities')
+                                    ? 'ActivityInput'
+                                    : u === '/tasks'
+                                      ? 'TaskInput'
+                                      : u === '/tasks/:id'
+                                        ? m === 'delete'
+                                          ? 'TaskDelete'
+                                          : 'TaskPatch'
+                                        : u === '/invitations'
+                                          ? 'GrantInput'
+                                          : u === '/members/:uid'
+                                            ? 'MemberPatch'
+                                            : u === '/devices'
+                                              ? 'DeviceInput'
+                                              : u === '/imports/preview'
+                                                ? 'ImportInput'
+                                                : null;
 const paths = {};
 for (const e of endpoints) {
   const url = '/api/v1' + e.url.replace(/:([a-zA-Z]+)/g, '{$1}');
@@ -755,6 +813,7 @@ for (const e of endpoints) {
     !e.url.endsWith('/archive') &&
     e.url !== '/dashboard/insights' &&
     e.url !== '/personal-access-tokens' &&
+    e.url !== '/leads/batch/preview' &&
     !e.url.endsWith('/score/refresh')
   )
     operation.parameters.push({
@@ -822,6 +881,60 @@ for (const e of endpoints) {
     schema: { type: 'string', const: '60' },
     description: 'Wait at least 60 seconds before retrying',
   };
+
+  if (e.url.startsWith('/leads/batch'))
+    operation.description +=
+      ' Explicit selection of 1–25 unique lead IDs and expected versions. Preview writes nothing; apply is atomic and requires a UUID Idempotency-Key. Current access, all versions, field definitions and assignee are rechecked at commit. Identity/contact/discussion/suppression fields are excluded. Assignment changes cancel pending tasks and notify new owners; PAT reassignment also requires assignments:write.';
+  if (e.url.includes('/attachments'))
+    operation.description +=
+      ' Private lead files in Firebase Storage. 8 MiB per file, 50 active/pending per lead. Metadata reservation requires UUID Idempotency-Key; PUT uploads application/octet-stream after type/size checks. Same bytes can be retried for one hour. Only the reserver can complete an upload. No public download URL is issued; current membership, token and lead scope are rechecked for downloads. Removal hides access immediately and schedules physical cleanup; abandoned pending uploads expire.';
+  if (e.url.endsWith('/attachments') && e.method === 'get')
+    operation.parameters.push(
+      {
+        in: 'query',
+        name: 'limit',
+        schema: { type: 'integer', minimum: 1, maximum: 100, default: 30 },
+      },
+      { in: 'query', name: 'cursor', schema: { type: 'string' } },
+    );
+  if (e.url.endsWith('/content') && e.method === 'put')
+    operation.requestBody = {
+      required: true,
+      content: {
+        'application/octet-stream': {
+          schema: { type: 'string', format: 'binary', maxLength: 8388608 },
+        },
+      },
+    };
+  if (e.url.endsWith('/content') && e.method === 'get')
+    operation.responses[200] = {
+      description:
+        'Authenticated forced file download; Cache-Control no-store and nosniff. No redirect or permanent URL.',
+      headers: { 'Content-Disposition': { schema: { type: 'string' } } },
+      content: {
+        'application/octet-stream': {
+          schema: { type: 'string', format: 'binary' },
+        },
+      },
+    };
+
+  if (e.url.includes('/attachments'))
+    for (const [status, description] of [
+      [413, 'File exceeds 8 MiB'],
+      [415, 'Binary upload requires application/octet-stream'],
+    ])
+      operation.responses[status] = {
+        ...operation.responses[400],
+        description,
+      };
+  if (e.url.startsWith('/leads/batch')) {
+    operation.description +=
+      ' Batch task cancellation is bounded to 200 pending tasks and serialized old/new/task data to 2 MiB; reduce selection if rejected.';
+    operation.responses[413] = {
+      ...operation.responses[400],
+      description: 'Batch stored-data budget exceeded; select fewer leads',
+    };
+  }
   const auditRoutes = new Set([
     'PATCH /me',
     'PATCH /workspace-settings',
@@ -854,9 +967,9 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.15.0',
+    version: '1.16.0',
     description:
-      'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
+      'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
   servers: [{ url: '/' }],
   paths,

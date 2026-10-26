@@ -79,3 +79,7 @@ Font preference changes add fontStyle to normalized personal defaults and appear
 ## v1.8 operating notes
 
 Desktop displayScale changes export only the changed key in personal appearance settings audits. Preserve atomic audit/outbox, no-op/denial suppression and existing safe request traces/metrics/logs. Do not emit cosmetic navigation events or values. Verify deployment receipts separately from tenant visibility.
+
+## v1.9 operating notes
+
+Attachment metadata joins observableStore as the low-cardinality leadAttachments domain. Committed events contain safe counts/actor/context only, never filenames, bytes, checksums or bucket paths. Bulk lead writes reuse atomic leads/journey/activity/recipient events. Firebase Storage network calls have named dependency spans (storage.upload/download/delete); no object attributes. Request methods include PUT. RUM uses fixed batch/attachment/content templates, never names. Cleanup emits removed/failed counts; delivery uses the existing committed outbox and deployment receipts remain separate from tenant searchability.

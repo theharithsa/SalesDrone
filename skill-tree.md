@@ -4,6 +4,8 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 
 - [salesdrone-api-integrations](skills/salesdrone-api-integrations/SKILL.md) — swagger, openapi, personal access token, api key, api scopes.
   Related: salesdrone-release, salesdrone-authentication, salesdrone-people-permissions, salesdrone-data-platform.
+- [salesdrone-attachments](skills/salesdrone-attachments/SKILL.md) — attachments, upload lead files, lead photos, Firebase Storage, file download, Files tab.
+  Related: salesdrone-testing, salesdrone-observability, salesdrone-release-readiness, salesdrone-release.
 - [salesdrone-authentication](skills/salesdrone-authentication/SKILL.md) — google login, sign in, authentication, app check.
   Related: salesdrone-release, salesdrone-people-permissions, salesdrone-api-integrations, salesdrone-interface.
 - [salesdrone-automatic-reminders](skills/salesdrone-automatic-reminders/SKILL.md) — automatic reminder, note to task, gemini follow-up.
@@ -26,8 +28,8 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-leads, salesdrone-workspace-settings, salesdrone-dashboard.
 - [salesdrone-lead-scoring](skills/salesdrone-lead-scoring/SKILL.md) — lead score, scoring factor, qualification.
   Related: salesdrone-release, salesdrone-dashboard, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-people-permissions.
-- [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report.
-  Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications.
+- [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report, batch edit, bulk edit, select leads.
+  Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications, salesdrone-attachments.
 - [salesdrone-notifications](skills/salesdrone-notifications/SKILL.md) — push notification, notification bell, read unread, fcm.
   Related: salesdrone-release, salesdrone-tasks-reminders, salesdrone-leads, salesdrone-authentication, salesdrone-interface.
 - [salesdrone-observability](skills/salesdrone-observability/SKILL.md) — dynatrace, rum, telemetry, trace, metric, logs, bizevent, settings audit, audit logs, audit delivery.

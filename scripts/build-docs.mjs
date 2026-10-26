@@ -29,6 +29,10 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'batch-edit-demo.jpg',
+  'batch-edit-mobile.jpg',
+  'lead-files-demo.jpg',
+  'lead-files-mobile.jpg',
   'display-scale-demo.jpg',
   'score-ring-demo.jpg',
   'activity-demo.jpg',

@@ -4,6 +4,7 @@ import {
   checkProtectedResponse,
   checkContract,
   checkFunctions,
+  checkStorage,
   checkSettingsPage,
   checkProductPage,
 } from './post-deploy-checks.mjs';
@@ -92,6 +93,7 @@ try {
       'workspace-settings',
       'field-options',
       'personal-access-tokens',
+      'leads/postdeploy-placeholder/attachments',
     ])
       await check('unauthenticated-denial:' + resource, async () => {
         const r = await get(
@@ -107,6 +109,14 @@ try {
           expected,
         );
       });
+    await check('private-storage', async () => {
+      checkStorage(JSON.parse(await readFile('deployment.json', 'utf8')));
+      const r = await get(
+        'https://firebasestorage.googleapis.com/v0/b/sales-drone-avinya.firebasestorage.app/o?prefix=workspaces%2Favinyatech%2Flead-files%2F',
+      );
+      if (r.status !== 403) throw Error('Direct Storage access is not denied');
+      await r.body?.cancel();
+    });
     await check('function-revisions', async () =>
       checkFunctions(
         JSON.parse(await readFile('deployment.json', 'utf8')),

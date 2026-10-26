@@ -107,3 +107,98 @@ export async function revokeThisDevice() {
     localStorage.removeItem('salesdrone.device');
   }
 }
+
+export async function uploadFileBytes(
+  path: string,
+  file: File,
+  onProgress: (value: number) => void,
+  signal: AbortSignal,
+): Promise<any> {
+  const user = auth.currentUser;
+  if (!user) throw new ApiError(401, 'SIGN_IN', 'Sign in to continue');
+  const [token, check] = await Promise.all([user.getIdToken(), attestation()]);
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const end = beginRumRequest(path, 'PUT');
+    const abort = () => xhr.abort();
+    signal.addEventListener('abort', abort, { once: true });
+    const finish = () => signal.removeEventListener('abort', abort);
+    xhr.open('PUT', '/api/v1' + path);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    if (check) xhr.setRequestHeader('X-Firebase-AppCheck', check);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable)
+        onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => {
+      finish();
+      end(
+        xhr.status < 400 ? 'response_ok' : 'response_error',
+        xhr.getResponseHeader('X-Request-Id') || undefined,
+      );
+      let data;
+      try {
+        data = JSON.parse(xhr.responseText);
+      } catch {
+        reject(Error('The file API is unavailable.'));
+        return;
+      }
+      if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+      else
+        reject(
+          new ApiError(
+            xhr.status,
+            data.error?.code || 'UPLOAD',
+            data.error?.message || 'Upload failed',
+          ),
+        );
+    };
+    xhr.onerror = () => {
+      finish();
+      end('network_error');
+      reject(Error('Upload interrupted. Retry the same file.'));
+    };
+    xhr.onabort = () => {
+      finish();
+      end('network_error');
+      reject(new DOMException('Upload cancelled', 'AbortError'));
+    };
+    if (signal.aborted) {
+      finish();
+      reject(new DOMException('Upload cancelled', 'AbortError'));
+    } else xhr.send(file);
+  });
+}
+export async function downloadFileBytes(path: string): Promise<Blob> {
+  const user = auth.currentUser;
+  if (!user) throw Error('Sign in to continue');
+  const [token, check] = await Promise.all([user.getIdToken(), attestation()]);
+  const end = beginRumRequest(path, 'GET');
+  let response: Response;
+  try {
+    response = await fetch('/api/v1' + path, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        ...(check ? { 'X-Firebase-AppCheck': check } : {}),
+      },
+      cache: 'no-store',
+    });
+  } catch (e) {
+    end('network_error');
+    throw e;
+  }
+  end(
+    response.ok ? 'response_ok' : 'response_error',
+    response.headers.get('X-Request-Id') || undefined,
+  );
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new ApiError(
+      response.status,
+      data?.error?.code || 'DOWNLOAD',
+      data?.error?.message || 'Download failed',
+    );
+  }
+  return response.blob();
+}

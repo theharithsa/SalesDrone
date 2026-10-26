@@ -13,7 +13,7 @@
     "check": "npm run check -w apps/web",
     "api:docs": "node scripts/openapi.mjs",
     "emulators": "firebase emulators:start --project demo-salesdrone",
-    "test:emulator": "firebase emulators:exec --project demo-salesdrone --only firestore,auth 'npm run test:emulator -w functions'",
+    "test:emulator": "firebase emulators:exec --project demo-salesdrone --only firestore,auth,storage 'npm run test:emulator -w functions'",
     "release": "node scripts/release.mjs",
     "release:check": "node scripts/check-release.mjs",
     "security:scan": "node scripts/check-secrets.mjs",
@@ -41,5 +41,5 @@
       "uuid": "^11.1.1"
     }
   },
-  "version": "1.8.0"
+  "version": "1.9.0"
 }

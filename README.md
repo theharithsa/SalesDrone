@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.8.0 · MIT**
+**Part of Avinya Enterprises · v1.9.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -167,8 +167,18 @@ Open Settings → Appearance & time to preview and save Standard, Inter, Source 
 
 ## Repeatable testing
 
-The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.json) cover 22 modules. Run `npm run qa -- quick` for local checks or `npm run qa -- release` with Java 21 for the emulator and build gates. The [testing skill](skills/salesdrone-testing/SKILL.md) gives future agents browser recipes, privacy rules and an evidence handoff. CLI success is separate from visual and production verification.
+The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.json) cover 23 modules. Run `npm run qa -- quick` for local checks or `npm run qa -- release` with Java 21 for the emulator and build gates. The [testing skill](skills/salesdrone-testing/SKILL.md) gives future agents browser recipes, privacy rules and an evidence handoff. CLI success is separate from visual and production verification.
 
 Personal desktop display zoom lives in Settings → Appearance & time. The compact lead header keeps identity, score, stage and assignment together; rings distinguish a known zero from missing evidence.
 
 ![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/lead-workspace-demo.jpg)
+
+Batch edit up to 25 explicitly selected leads with a before/after review and atomic version checks. Lead pages now include a Files tab for private Firebase Storage attachments, with upload progress, retry and forced downloads. See [file architecture](docs/ATTACHMENTS.md) and [the product handbook](docs/PRODUCT-GUIDE.md).
+
+### Review a batch. Keep its files with the lead.
+
+Select loaded leads, preview shared changes and apply the reviewed batch. Open a lead’s Files tab for private Firebase Storage attachments.
+
+![Batch edit preview with fictional leads](site/assets/screenshots/batch-edit-demo.jpg)
+
+![Private lead Files tab with a fictional document](site/assets/screenshots/lead-files-demo.jpg)

@@ -67,6 +67,7 @@ const data = {
   'deployment.region': metadata.region,
   'deployment.hosting': metadata.hosting,
   'deployment.functions': JSON.stringify(metadata.functions),
+  'deployment.storage': JSON.stringify(metadata.storage || {}),
   'changelog.url': metadata.changelogUrl,
 };
 const biz = await send(

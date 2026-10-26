@@ -41,6 +41,7 @@ const safeKeys = new Set([
   'event.id',
   'worker',
   'examined',
+  'removed',
   'delivered',
   'retried',
   'rejected',
@@ -279,6 +280,7 @@ export function createTelemetry({
               'http.request.method': [
                 'GET',
                 'POST',
+                'PUT',
                 'PATCH',
                 'DELETE',
               ].includes(req.method)
@@ -297,7 +299,7 @@ export function createTelemetry({
                 if (done) return;
                 done = true;
                 const route = req.route?.path || 'unmatched',
-                  method = ['GET', 'POST', 'PATCH', 'DELETE'].includes(
+                  method = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(
                     req.method,
                   )
                     ? req.method

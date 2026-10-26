@@ -238,3 +238,54 @@ test('changed UI screenshots need current reviewed release evidence', async () =
   );
   assert.throws(() => validateScreenshotEvidence(plan, []));
 });
+
+test('private Storage release verification rejects public, failed or unverified configuration', async () => {
+  const { checkStorage } = await import('../scripts/post-deploy-checks.mjs');
+  const storage = {
+    bucket: 'sales-drone-avinya.firebasestorage.app',
+    state: 'verified',
+    deploymentOutcome: 'success',
+    publicAccessPrevention: 'enforced',
+  };
+  assert.doesNotThrow(() => checkStorage({ storage }));
+  for (const s of [
+    undefined,
+    { ...storage, publicAccessPrevention: 'inherited' },
+    { ...storage, state: 'unverified' },
+    { ...storage, deploymentOutcome: 'failure' },
+  ])
+    assert.throws(() => checkStorage({ storage: s }));
+});
+
+test('Storage release receipts normalize both gcloud and JSON API formats without object data', async () => {
+  const { storageDeployment, attachmentBucket } = await import(
+    '../scripts/storage-deployment.mjs'
+  );
+  const { checkStorage } = await import('../scripts/post-deploy-checks.mjs');
+  for (const raw of [
+    {
+      name: attachmentBucket,
+      public_access_prevention: 'enforced',
+      location: 'ASIA-SOUTH2',
+    },
+    {
+      name: attachmentBucket,
+      iamConfiguration: { publicAccessPrevention: 'enforced' },
+      location: 'ASIA-SOUTH2',
+    },
+  ])
+    assert.doesNotThrow(() =>
+      checkStorage({ storage: storageDeployment(raw, 'success') }),
+    );
+  assert.throws(() =>
+    checkStorage({
+      storage: storageDeployment(
+        { name: 'wrong-bucket', public_access_prevention: 'enforced' },
+        'success',
+      ),
+    }),
+  );
+  assert.throws(() =>
+    checkStorage({ storage: storageDeployment(null, 'success') }),
+  );
+});

@@ -1,3 +1,5 @@
+import { cleanupAttachments } from '../src/attachments.js';
+import { firebaseFiles } from '../src/file-storage.js';
 import { path } from '../src/policy.js';
 import { observableStore } from '../src/observable-store.js';
 import { test } from 'node:test';
@@ -71,6 +73,7 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   }));
   let lastBriefingInput;
   const app = createApp({
+    files: firebaseFiles(undefined, 'demo-salesdrone.firebasestorage.app'),
     store,
     verifyToken: (t) => auth.verifyIdToken(t, true),
     verifyPersonalTokenOwner: async (uid) => {
@@ -754,6 +757,87 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   assert.ok(
     securityEvents.some(
       (e) => e.event?.data?.['record.domain'] === 'personalAccessTokens',
+    ),
+  );
+  const fileLead = (
+    await req(
+      'post',
+      '/leads',
+      {
+        name: 'Fictional Storage fixture',
+        phone: '+12025550999',
+        enquiryDate: '2026-10-26',
+      },
+      randomUUID(),
+    ).expect(200)
+  ).body;
+  const bulk = {
+    items: [{ id: fileLead.id, expectedVersion: fileLead.version }],
+    changes: { company: 'Synthetic batch fixture' },
+  };
+  await req('post', '/leads/batch/preview', bulk).expect(200);
+  await req('post', '/leads/batch', bulk, randomUUID()).expect(200);
+  assert.equal(
+    (await store.get(path('leads', fileLead.id))).company,
+    'Synthetic batch fixture',
+  );
+  const fileBytes = Buffer.from('Fictional emulator file contents');
+  const base = '/leads/' + fileLead.id + '/attachments';
+  const pending = (
+    await req(
+      'post',
+      base,
+      {
+        name: 'fictional.txt',
+        contentType: 'text/plain',
+        size: fileBytes.length,
+      },
+      randomUUID(),
+    ).expect(200)
+  ).body;
+  const ready = (
+    await req('put', base + '/' + pending.id + '/content')
+      .set('Content-Type', 'application/octet-stream')
+      .send(fileBytes)
+      .expect(200)
+  ).body;
+  assert.equal(ready.state, 'Ready');
+  assert.deepEqual(
+    (await req('get', base + '/' + ready.id + '/content').expect(200)).body,
+    fileBytes,
+  );
+  assert.equal((await req('get', base).expect(200)).body.items[0].id, ready.id);
+  const objectPath =
+    'workspaces/avinyatech/lead-files/' + fileLead.id + '/' + ready.id;
+  const directStorage = await fetch(
+    'http://' +
+      process.env.FIREBASE_STORAGE_EMULATOR_HOST +
+      '/v0/b/demo-salesdrone.firebasestorage.app/o/' +
+      encodeURIComponent(objectPath) +
+      '?alt=media',
+  );
+  assert.equal(
+    directStorage.status,
+    403,
+    'Direct unauthenticated Storage access must remain denied',
+  );
+  await req('delete', base + '/' + ready.id, {
+    expectedVersion: ready.version,
+  }).expect(200);
+  await req('get', base + '/' + ready.id + '/content').expect(404);
+  const cleanup = await cleanupAttachments({
+    store,
+    files: firebaseFiles(undefined, 'demo-salesdrone.firebasestorage.app'),
+    now: () => new Date(Date.now() + 7200000).toISOString(),
+  });
+  assert.equal(cleanup.removed, 1);
+  assert.equal(
+    (await store.get(path('leadAttachments', ready.id))).state,
+    'Deleted',
+  );
+  await assert.rejects(() =>
+    firebaseFiles(undefined, 'demo-salesdrone.firebasestorage.app').read(
+      objectPath,
     ),
   );
   await db.terminate();

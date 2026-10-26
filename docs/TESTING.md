@@ -1,6 +1,6 @@
 # SalesDrone testing guide
 
-The project already has Node unit/API tests in functions/test and tests/, real Auth/Firestore integration in functions/test/emulator.integration.js, and GitHub pre/post-deployment checks. The dedicated [testing skill](../skills/salesdrone-testing/SKILL.md) and [module case catalog](../qa/test-cases.json) let a testing agent select and run them without reconstructing the conversation.
+The project already has Node unit/API tests in functions/test and tests/, real Auth/Firestore/Storage integration in functions/test/emulator.integration.js, and GitHub pre/post-deployment checks. The dedicated [testing skill](../skills/salesdrone-testing/SKILL.md) and [module case catalog](../qa/test-cases.json) let a testing agent select and run them without reconstructing the conversation.
 
 ## Scripts
 
@@ -26,3 +26,5 @@ After authorized deployment, inspect workflow artifacts for exact live version/S
 Current observed layout evidence is recorded in [the v1.8.0 review](UI-REVIEW-1.8.0.md).
 
 ![Labelled fictional score states, using actual components and no server calls.](../site/assets/screenshots/score-ring-demo.jpg)
+
+Batch/file regression entrypoint: functions/test/bulk-and-files.test.js. Real emulator tests now include a binary round trip through Firebase Admin Storage and direct-client denial. Use an isolated temporary emulator config when default ports are in use; preserve unrelated running projects. Never use customer files as fixtures.

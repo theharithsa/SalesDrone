@@ -82,3 +82,7 @@ Public guide builds stamp the exact source commit and hash-version reviewed scre
 For a later explicitly authorized maintenance push, bind the record to that push’s immediate parent, not the immutable original tag. github-release checks the current commit parent and verifies descent from the original tag before preserving it; an earlier maintenance record cannot authorize a subsequent push.
 
 Deployment BizEvents use application/cloudevent+json; CUSTOM_DEPLOYMENT markers remain application/json. Keep provider fields aligned and validate both transport paths using deployment-bizevents.test.ts. HTTP acceptance remains separate from tenant searchability.
+
+## v1.9 operating notes
+
+Private lead attachments add storage.rules and Firebase Storage to the emulator suite and main deployment workflow. Deploy deny-all Storage rules and wait for attachment indexes before API/Hosting. Existing api/reminders function exports own upload and bounded cleanup; do not create an untracked sixth function. Verify bucket public-access prevention, runtime object permissions, API contract 1.16 and no permanent download links. No service-account credentials belong in source.

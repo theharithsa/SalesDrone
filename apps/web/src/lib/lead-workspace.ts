@@ -20,6 +20,7 @@ export const leadWorkspaceTabs = [
   'comments',
   'calls',
   'tasks',
+  'files',
   'review',
 ] as const;
 export type LeadWorkspaceTab = (typeof leadWorkspaceTabs)[number];
@@ -31,6 +32,6 @@ export function filterLeadActivities(
   if (tab === 'comments') return items.filter((a) => a.type === 'note');
   if (tab === 'calls') return items.filter((a) => a.type === 'call');
   if (tab === 'review') return reviewActivities(items);
-  if (tab === 'tasks') return [];
+  if (tab === 'tasks' || tab === 'files') return [];
   return items;
 }

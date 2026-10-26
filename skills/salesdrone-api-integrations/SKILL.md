@@ -83,3 +83,7 @@ Contract1.14.0 adds optional Preferences.fontStyle to GET/PATCH /me with an allo
 ## v1.8 operating notes
 
 Contract1.15 adds optional numeric Preferences.displayScale enum 85/90/100/110/125 with missing default 100 and omission preservation. Existing self-owned active-member Google/AppCheck /me only; no PAT route/scope expansion. Test invalid/string values, unapproved access, identity isolation and no-op audits.
+
+## v1.9 operating notes
+
+Contract 1.16 adds seven operations: batch preview/apply and private attachment reservation, binary PUT, paginated list, forced binary GET and versioned removal. New PAT scopes are leads:bulk-edit, attachments:read and attachments:write. Batch reassignment additionally requires assignments:write. Existing token scopes gain no implicit access to the new endpoints. Swagger must generate PUT and binary request/response bodies with pagination, validation, errors, idempotency and capability requirements.

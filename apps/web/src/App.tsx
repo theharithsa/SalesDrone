@@ -1,3 +1,4 @@
+import LeadFiles from './features/LeadFiles';
 import { normalizeDisplayScale } from './lib/display-scale';
 import { normalizeFontStyle } from './lib/fonts';
 import { resolveVisualPreferences } from './lib/appearance';
@@ -31,7 +32,7 @@ import {
   labelFor,
 } from './lib/field-options';
 import LeadFilters from './components/LeadFilters';
-import WorksheetLeads from './components/WorksheetLeads';
+import LeadBatchEditor from './features/LeadBatchEditor';
 import {
   ColumnFilter,
   matchesColumnFilters,
@@ -72,6 +73,7 @@ import {
   ArrowRight,
   RefreshCw,
   FileText,
+  Paperclip,
   BookOpen,
   ShieldCheck,
   PanelLeftClose,
@@ -520,6 +522,59 @@ export default function App() {
       const collection = parts[0],
         id = parts[1];
       let result: any = { ok: true };
+      if (collection === 'leads' && id === 'batch' && method === 'POST') {
+        if (!body.items?.length || body.items.length > 25)
+          throw Error('Select 1–25 leads.');
+        if (
+          !Object.keys(body.changes || {}).length &&
+          body.assignedToUid === undefined
+        )
+          throw Error('Choose at least one change.');
+        const rows = body.items.map((item: any) => {
+          const l = d.leads.find((l) => l.id === item.id);
+          if (!l || l.version !== item.expectedVersion)
+            throw Error('A selected lead changed. Refresh and preview again.');
+          const changes = {
+            ...body.changes,
+            ...(body.assignedToUid !== undefined
+              ? { assignedToUid: body.assignedToUid }
+              : {}),
+          };
+          return {
+            id: l.id,
+            name: l.name,
+            version: l.version + 1,
+            changed:
+              JSON.stringify(
+                Object.fromEntries(
+                  Object.keys(changes).map((k) => [k, l[k] ?? null]),
+                ),
+              ) !== JSON.stringify(changes),
+            before: Object.fromEntries(
+              Object.keys(changes).map((k) => [k, l[k] ?? null]),
+            ),
+            after: changes,
+          };
+        });
+        if (parts[2] !== 'preview') {
+          d = {
+            ...d,
+            leads: d.leads.map((l) => {
+              const row = rows.find((r: any) => r.id === l.id);
+              return row?.changed
+                ? { ...l, ...row.after, version: l.version + 1 }
+                : l;
+            }),
+          };
+          demoRef.current = d;
+          setData(d);
+        }
+        return {
+          count: rows.length,
+          changedCount: rows.filter((r: any) => r.changed).length,
+          items: rows,
+        };
+      }
       if (method === 'GET') {
         if (parts[2] === 'activities')
           return {
@@ -1921,7 +1976,11 @@ export default function App() {
                     {loading && !visibleLeads.length ? (
                       <Loading />
                     ) : visibleLeads.length ? (
-                      <WorksheetLeads
+                      <LeadBatchEditor
+                        canEdit={!!can('leads:edit')}
+                        canAssign={!!can('assignments:write')}
+                        request={request}
+                        onDone={() => void load()}
                         config={fieldOptions}
                         scores={leadScores}
                         leads={visibleLeads}
@@ -2004,6 +2063,18 @@ export default function App() {
                           <ChevronLeft size={16} />
                           <span>Back to leads</span>
                         </button>
+                        {!routeLeadId && (
+                          <button
+                            className="button detail-files-button"
+                            onClick={() => {
+                              expandLead();
+                              setLeadTab('files');
+                            }}
+                          >
+                            <Paperclip size={16} />
+                            Files
+                          </button>
+                        )}
                         {can('leads:edit') ? (
                           <button
                             className="button detail-edit-button"
@@ -2349,7 +2420,9 @@ export default function App() {
                                     ? 'Comments'
                                     : tab === 'tasks'
                                       ? 'Tasks'
-                                      : 'Review'}
+                                      : tab === 'files'
+                                        ? 'Files'
+                                        : 'Review'}
                               {tab === 'review' &&
                               (selected.needsReview ||
                                 reviewActivities(timeline).length > 0)
@@ -2418,7 +2491,8 @@ export default function App() {
                           />
                         </div>
                       ) : null}
-                      {!routeLeadId || leadTab !== 'tasks' ? (
+                      {!routeLeadId ||
+                      (leadTab !== 'tasks' && leadTab !== 'files') ? (
                         <div
                           className={
                             'detail-section lead-conversations ' +
@@ -2593,6 +2667,15 @@ export default function App() {
                             </button>
                           ) : null}
                         </div>
+                      ) : null}
+                      {routeLeadId && leadTab === 'files' ? (
+                        <LeadFiles
+                          key={'files:' + selected.id}
+                          leadId={selected.id}
+                          request={request}
+                          demo={demo}
+                          canEdit={!!can('leads:edit')}
+                        />
                       ) : null}
                       {routeLeadId && leadTab === 'tasks' ? (
                         <section>

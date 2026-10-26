@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "version": "1.9.0",
+  "summary": "Atomic selected-lead batch edits and private Firebase Storage lead attachments with current permissions, immutable retry, cleanup and release privacy checks.",
+  "modules": [
+    "salesdrone-leads",
+    "salesdrone-attachments",
+    "salesdrone-interface",
+    "salesdrone-api-integrations",
+    "salesdrone-workspace-settings",
+    "salesdrone-observability",
+    "salesdrone-testing",
+    "salesdrone-product-guide",
+    "salesdrone-release"
+  ],
+  "documentation": [
+    "docs/API.md",
+    "docs/ATTACHMENTS.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/TECHNICAL.md",
+    "docs/TESTING.md",
+    "docs/observability.md",
+    "SECURITY.md",
+    "docs/RELEASE.md",
+    "docs/UI-REVIEW-1.9.0.md"
+  ],
+  "settingsSections": [
+    "developer",
+    "access"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Contract1.16 adds atomic batch preview/apply and private file reservation/binary upload/list/download/versioned removal with explicit scopes, limits, idempotency and permission checks.",
+    "contractVersion": "1.16.0",
+    "permissions": "Current active membership and effective lead scope on every route and after Storage I/O. Read files needs leads:read; file/batch writes need leads:edit; reassignment additionally needs assignments:write. PATs need new explicit bulk/file scopes. Direct Storage clients remain denied.",
+    "tests": [
+      "functions/test/bulk-and-files.test.js",
+      "functions/test/api-portal.test.js",
+      "functions/test/personal-access-tokens.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Bulk writes reuse atomic lead/journey/activity/recipient signals; attachment metadata adds the safe leadAttachments domain. Explicit Storage dependency spans and cleanup removed/failed logs omit names, bytes, checksums and paths. Existing request metrics include PUT. Deployment events include Storage privacy/configuration metadata and exact version/SHA; acceptance is distinct from tenant visibility.",
+      "tests": [
+        "functions/test/bulk-and-files.test.js",
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Bulk writes reuse atomic lead/journey/activity/recipient signals; attachment metadata adds the safe leadAttachments domain. Explicit Storage dependency spans and cleanup removed/failed logs omit names, bytes, checksums and paths. Existing request metrics include PUT. Deployment events include Storage privacy/configuration metadata and exact version/SHA; acceptance is distinct from tenant visibility.",
+      "tests": [
+        "functions/test/bulk-and-files.test.js",
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Bulk writes reuse atomic lead/journey/activity/recipient signals; attachment metadata adds the safe leadAttachments domain. Explicit Storage dependency spans and cleanup removed/failed logs omit names, bytes, checksums and paths. Existing request metrics include PUT. Deployment events include Storage privacy/configuration metadata and exact version/SHA; acceptance is distinct from tenant visibility.",
+      "tests": [
+        "functions/test/bulk-and-files.test.js",
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Bulk writes reuse atomic lead/journey/activity/recipient signals; attachment metadata adds the safe leadAttachments domain. Explicit Storage dependency spans and cleanup removed/failed logs omit names, bytes, checksums and paths. Existing request metrics include PUT. Deployment events include Storage privacy/configuration metadata and exact version/SHA; acceptance is distinct from tenant visibility.",
+      "tests": [
+        "functions/test/bulk-and-files.test.js",
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Bulk writes reuse atomic lead/journey/activity/recipient signals; attachment metadata adds the safe leadAttachments domain. Explicit Storage dependency spans and cleanup removed/failed logs omit names, bytes, checksums and paths. Existing request metrics include PUT. Deployment events include Storage privacy/configuration metadata and exact version/SHA; acceptance is distinct from tenant visibility.",
+      "tests": [
+        "functions/test/bulk-and-files.test.js",
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts",
+    "private-storage"
+  ],
+  "manualVerification": "Use fictional guest leads and files for batch preview/apply, changed-input reset, selection clearing, Files navigation, upload, confirmation/removal and responsive layout. Byte-for-byte Storage upload/download/cleanup and anonymous direct-access denial are checked in real Auth/Firestore/Storage emulators. Check phone/tablet/laptop/wide screens, dark and Book mode without customer data. Browser download-event receipt may be unavailable in IAB; distinguish UI initiation from emulator byte round-trip and production identity/Storage verification. CI checks exact live version/contract/revisions, private Storage configuration and safe Dynatrace receipts.",
+  "screenshots": [
+    "batch-edit-demo.jpg",
+    "batch-edit-mobile.jpg",
+    "lead-files-demo.jpg",
+    "lead-files-mobile.jpg",
+    "leads-demo.jpg",
+    "laptop-demo.jpg",
+    "tablet-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "journey-demo.jpg",
+    "lead-overlay-demo.jpg",
+    "mobile-demo.jpg",
+    "book-mode-mobile.jpg",
+    "developer-settings-demo.jpg",
+    "api-portal-demo.jpg"
+  ]
+}

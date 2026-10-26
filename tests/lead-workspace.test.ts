@@ -49,6 +49,7 @@ test('lead views separate notes and calls while All retains every activity and r
   assert.deepEqual(ids('calls'), ['c']);
   assert.deepEqual(ids('review'), ['n', 'c']);
   assert.deepEqual(ids('tasks'), []);
+  assert.deepEqual(ids('files'), []);
   assert.deepEqual(filterLeadActivities([], 'calls'), []);
   assert.deepEqual(
     items.map((a) => a.id),

@@ -1,3 +1,5 @@
+import { firebaseFiles } from './file-storage.js';
+import { cleanupAttachments } from './attachments.js';
 import { createTelemetry } from './telemetry.js';
 import { observableStore } from './observable-store.js';
 import { deliverTelemetry } from './telemetry-outbox.js';
@@ -73,6 +75,7 @@ const store = observableStore(
   () => observability,
 );
 const handler = createApp({
+  files: firebaseFiles(dependency),
   store,
   telemetry: () => observability,
   extractScore: (input) =>
@@ -171,6 +174,17 @@ export const reminders = onSchedule(
           dependency('fcm.delivery', () => getMessaging().send(message)),
       });
       console.info(JSON.stringify({ event: 'reminder_dispatch', ...stats }));
+      try {
+        const cleanup = await cleanupAttachments({
+          store,
+          files: firebaseFiles(dependency),
+        });
+        console.info(
+          JSON.stringify({ event: 'attachment_cleanup', ...cleanup }),
+        );
+      } catch {
+        console.warn(JSON.stringify({ event: 'attachment_cleanup_failed' }));
+      }
       return stats;
     }),
 );

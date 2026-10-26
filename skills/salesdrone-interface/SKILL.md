@@ -106,3 +106,7 @@ The root data-font-style uses normalized allowlisted values. typography.css load
 ## v1.8 operating notes
 
 Compact lead overview: one toolbar, identity/score/stage/owner grid, content-width reflow and compact horizontal journey. Personal desktop displayScale enum 85/90/100/110/125 defaults100, fine-pointer/min1001px only; never force scaling on touch/narrow layouts or disable browser zoom. Use lib/display-scale.ts for DOM-to-layout resize coordinates. Test all scales, modal/focus/keyboard/drag, long names, fonts and Book palettes.
+
+## v1.9 operating notes
+
+The lead table and mobile cards have optional labelled batch-selection checkboxes, separate from opening details. Keep row click/keyboard handlers from swallowing checkbox input. The bulk toolbar shows loaded-only selection/count and preserves readable columns through local scrolling. Files is an independent workspace tab; exclude it from activity filters/composer/tasks. Tab strip scrolls horizontally without clipping the document. File and batch dialogs must work at mobile/tablet/desktop and saved display scales; retain focus, Escape and Book fonts.

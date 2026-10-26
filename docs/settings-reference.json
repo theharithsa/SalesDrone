@@ -371,7 +371,7 @@
           "id": "tokenScopes",
           "label": "Permission scopes",
           "default": "Explicit selection required",
-          "description": "Select only needed data operations. Scopes intersect the current owner\u2019s capabilities and effective lead scope. Read leads and Export leads are separate.",
+          "description": "Select only needed data operations. Scopes intersect the current owner\u2019s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write.",
           "effect": "Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route\u2019s scope. See the generated scope catalog below.",
           "example": ""
         },
@@ -427,7 +427,7 @@
           "id": "memberRole",
           "label": "Role",
           "default": "Viewer or SDR chosen for each grant",
-          "description": "Viewer can read leads. SDR can also create/edit leads, record activity and manage tasks. Administrative capabilities are reserved for protected administrators.",
+          "description": "Viewer can read leads. SDR can also create/edit leads, record activity and manage tasks. Administrative capabilities are reserved for protected administrators. Lead editors may batch edit permitted records and upload/remove their lead files; readers may list/download permitted Ready files. Effective assigned-only policy applies to files as well.",
           "effect": "This screen does not promote other users to Admin or edit protected bootstrap admins.",
           "example": ""
         },

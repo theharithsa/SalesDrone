@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.8.0
+Version 1.9.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -100,6 +100,34 @@ Clear other filters, check spelling and the selected search field, then confirm 
 
 A newer version may exist, or your access changed. Refresh and reapply the intended change. Do not repeatedly resubmit an outdated version.
 
+## Batch edit existing leads
+
+Members with lead-edit access; assignment permission for reassignment
+
+1. Filter Leads to the records you need, then tick individual selection boxes or Select loaded leads. A batch contains at most 25 explicitly selected loaded records; this does not select every record matching server filters.
+
+2. Choose Batch edit. Pick shared fields and values; Add another field for additional changes. Leave unchanged retains each lead value. Clear value removes an optional value; required-field validation still applies.
+
+3. Choose an assignee only when permitted. Reassignment cancels pending tasks and alerts the new owner. Names, phone/email and discussion history are edited individually inside a lead.
+
+4. Select Preview changes and inspect the before/after rows. Apply reviewed changes commits all selected updates together. A stale, archived or inaccessible lead rejects the whole batch; refresh and preview again.
+
+Selection resets when the loaded lead IDs or versions change. Additional pages are not silently included. At most 25 leads are written per atomic transaction. No-op rows retain their versions.
+
+After a connection failure, the outcome can be uncertain. Retry the same reviewed action safely or refresh to inspect the result; the API reuses the same idempotency key. Never assume the batch failed solely because a response was lost.
+
+![Batch edit existing leads — synthetic demo only](../site/assets/screenshots/batch-edit-demo.jpg)
+
+### Questions
+
+**Can I batch replace phone numbers or old comments?**
+
+No. Shared contact values would create duplicate identities, and conversations need their own timelines. Open the individual lead to edit contact details or add/correct a conversation.
+
+**Why did nothing update?**
+
+One selected record may have changed, been archived or moved out of your scope, or a value may not match current field definitions. The API applies no partial batch. Refresh and preview using current versions.
+
 ## Full lead page: All, Comments, Calls, Tasks and Review
 
 Members who can read the lead
@@ -130,6 +158,8 @@ Log call and Remind me appear once above the tabs. Expanding Lead details & scor
 
 The lead header groups the person, a small score ring, current sales stage and assignee. It reflows by available content width. The journey is a compact horizontally scrollable path; About this journey and Recorded stage changes expand separately. The ring shows a known score out of 100; a dashed ring means Unscored, which is different from a known zero. Reported risks retain an explicit warning label; a score is not a verified commercial guarantee.
 
+Files is a separate tab for private lead attachments. It is not part of All activity; comments/calls and tasks keep their existing tabs. Existing Ready files stay with a lead when it is reassigned, while pending uploads are invalidated by assignment changes.
+
 ### Questions
 
 **Can another person open my bookmarked lead page?**
@@ -139,6 +169,42 @@ Only if their current workspace membership and scope allow reading that lead. UR
 **Why are there fewer tasks than I expected?**
 
 The tab shows your tasks linked to this lead, subject to current access. It does not show another recipient’s private reminders. Check the status filter and Load more tasks.
+
+## Lead files and attachments
+
+Lead readers; editors for upload and removal
+
+1. Open a lead in its full page and select Files, or use Files in the desktop quick inspector. Choose Upload file, then select a supported photo or document. Files are private to people who currently have access to this lead.
+
+2. Wait for upload progress and File uploaded. A failed upload offers Retry upload or Discard pending upload; Cancel upload stops the transfer. Keep the tab open until completion.
+
+3. Choose Download to save a file to your device. There is no permanent public sharing link. Refresh files retrieves current metadata; Load more files follows the next page.
+
+4. Choose Remove, then Confirm removal. The file becomes unavailable in SalesDrone immediately. Removal has no in-app restore button; underlying Storage cleanup happens later.
+
+Limits: 8 MiB per file and 50 active/pending files per lead. Supported: JPEG, PNG, GIF, WebP, PDF, DOC/DOCX, XLS/XLSX, PPT/PPTX, UTF-8 text and CSV. Executables, HTML and SVG are excluded. File extension, declared type, size and signature are checked. Files are stored, not malware-scanned or sent to AI.
+
+Pending reservations expire after one hour. Cleanup grants an additional hour before deleting expired pending bytes, protecting against late uploads. Explicit removal hides access immediately and waits an hour for physical deletion. Failed cleanup retries.
+
+Existing completed files follow the lead after reassignment. New/current authorized owners may download them; former assigned-only owners lose access. Only the reserving user can finish a pending upload, and assignment changes invalidate it.
+
+Demo uploads stay in page memory and never go to Firebase. Leaving the Files tab clears demo files; demo upload success proves the interface only.
+
+![Lead files and attachments — synthetic demo only](../site/assets/screenshots/lead-files-demo.jpg)
+
+### Questions
+
+**Why did an upload stop after reassignment?**
+
+The API rechecks current membership, assignment and permissions after storing private bytes and before publishing the file. Start a new upload with current access; abandoned bytes are cleaned up.
+
+**Can I share a file URL with another person?**
+
+Downloads require current Google/App Check authorization or an explicitly scoped active Personal Access Token. SalesDrone does not issue a durable public URL.
+
+**Why is Upload file unavailable?**
+
+Your role may be read-only, or a transfer/pending retry is active. Readers can download permitted completed files; editors can upload/remove them.
 
 ## Call logs, comments and corrections
 

@@ -1,4 +1,11 @@
 export const TOKEN_SCOPES = [
+  ['attachments:read', 'List and download permitted lead files', 'leads:read'],
+  ['attachments:write', 'Upload and remove permitted lead files', 'leads:edit'],
+  [
+    'leads:bulk-edit',
+    'Preview and apply atomic batch lead edits',
+    'leads:edit',
+  ],
   [
     'leads:export',
     'Export filtered lead report pages when enabled',
@@ -38,6 +45,13 @@ export const TOKEN_SCOPES = [
   ],
 ].map(([id, description, capability]) => ({ id, description, capability }));
 export const PAT_ROUTES = {
+  'post /leads/:id/attachments': 'attachments:write',
+  'put /leads/:id/attachments/:attachmentId/content': 'attachments:write',
+  'get /leads/:id/attachments': 'attachments:read',
+  'get /leads/:id/attachments/:attachmentId/content': 'attachments:read',
+  'delete /leads/:id/attachments/:attachmentId': 'attachments:write',
+  'post /leads/batch/preview': 'leads:bulk-edit',
+  'post /leads/batch': 'leads:bulk-edit',
   'post /leads/export': 'leads:export',
   'get /workspace-settings': 'configuration:read',
   'get /leads': 'leads:read',

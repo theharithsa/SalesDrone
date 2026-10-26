@@ -26,6 +26,8 @@ Form or scoped API → field and contact validation → member/lead policy → a
 - GET /api/v1/leads
 - POST /api/v1/leads/export
 - POST /api/v1/leads
+- POST /api/v1/leads/batch/preview
+- POST /api/v1/leads/batch
 - GET /api/v1/leads/{id}
 - PATCH /api/v1/leads/{id}
 - POST /api/v1/leads/{id}/archive
@@ -86,3 +88,11 @@ WorksheetLeads has no onEdit prop, row Edit button, mobile card Edit button or A
 ## v1.8 operating notes
 
 Lead identity is rendered once in LeadBlade identity slot with the shared header score. Stage and assignment stay adjacent and reflow by content width. Maintain one edit action, one call/reminder action set and one contact list; no table-row Edit controls. Test full route and overlay at all saved display scales.
+
+## Atomic batch edits
+
+[bulk-leads.js](../../functions/src/bulk-leads.js) plans 1–25 explicit unique lead IDs with expected versions. Preview writes nothing; apply runs one transaction and requires a UUID idempotency key. Recheck every lead on replay, including after reassignment. A stale, archived or inaccessible record rejects the whole batch. Allow shared stage/source/company/job-title/city/sector/status/tags/custom-field updates; exclude identity/contact, conversation, suppression and import-repair fields. Merge and validate custom fields using current definitions. No-op rows keep versions and emit no lead writes. Stage changes use recordStage. Assignment requires assignments:write, validates the current target, increments assignmentRevision, cancels pending tasks and creates recipient notifications. Read all plans before writing.
+
+PATs require the separate leads:bulk-edit scope; reassignment also needs assignments:write. [LeadBatchEditor.tsx](../../apps/web/src/features/LeadBatchEditor.tsx) owns explicit selection, preview and frozen input/key. Selection covers loaded records only and resets when their IDs/versions change. Never imply all filtered rows are selected. An uncertain network response can be retried with the same key; do not claim zero changes when the outcome is unknown. Contacts and history remain individual edits. Use [attachment service](../salesdrone-attachments/SKILL.md) for files and [bulk-and-files.test.js](../../functions/test/bulk-and-files.test.js) for atomicity/policy regression tests.
+
+Batch resource budgets also cap aggregate cancellation at 200 pending tasks and serialized old/new/task data at 2 MiB. Exceeding either rejects the whole batch; select fewer leads.

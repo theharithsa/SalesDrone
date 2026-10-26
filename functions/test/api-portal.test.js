@@ -9,11 +9,11 @@ test('published contract covers every route with explicit PAT or Google/App Chec
     source = await read('functions/src/app.js');
   const endpoints = [
     ...source.matchAll(
-      /route\(\s*['"](get|post|patch|delete)['"]\s*,\s*['"]([^'"]+)['"]/g,
+      /route\(\s*['"](get|post|put|patch|delete)['"]\s*,\s*['"]([^'"]+)['"]/g,
     ),
   ].map((m) => [m[1], m[2]]);
   endpoints.push(['get', '/me'], ['post', '/invitations/:id/accept']);
-  assert.equal(endpoints.length, 52);
+  assert.equal(endpoints.length, 59);
   for (const [method, url] of endpoints) {
     const op =
       spec.paths['/api/v1' + url.replace(/:([a-zA-Z]+)/g, '{$1}')][method];
@@ -47,7 +47,7 @@ test('published contract covers every route with explicit PAT or Google/App Chec
   );
   assert.deepEqual(
     new Set(Object.values(spec.paths).flatMap((p) => Object.keys(p))),
-    new Set(['get', 'post', 'patch', 'delete']),
+    new Set(['get', 'post', 'put', 'patch', 'delete']),
   );
 });
 test('credential portal is self-hosted, nonpersistent and restricted to its own origin', async () => {

@@ -19,7 +19,7 @@ git push origin main
 
 The main push runs the deployment workflow. PRs run verification only. GitHub Actions
 pins actions to immutable commits, uses Node 22/Java 21, checks source/versions and
-contracts, runs domain tests and the real Auth/Firestore emulator integration, and
+contracts, runs domain tests and the real Auth/Firestore/Storage emulator integration, and
 builds production assets. The production job uses Google OIDC federation, deploys
 rules/indexes and waits READY, deploys the salesdrone function codebase, then Hosting.
 Every build stamps version, commit and timestamp. The workflow collects allowlisted
@@ -65,8 +65,18 @@ Every release uses the [readiness skill](../skills/salesdrone-release-readiness/
 
 Update every changed setting in settings-reference.json and regenerate SETTINGS.md. The shared UI section catalog plus token scopes generates the public settings.html reference. Update module skills, intent routing and skill-tree outputs. CI rejects stale generated docs, missing ownership, incomplete impact plans and missing module skill updates.
 
-Pre-deployment: behavior/negative authorization tests, types, real Auth/Firestore emulator integration, generated API diff, settings/skill routing consistency, security scan, production and curated docs builds. Post-deployment: exact version/SHA, matching OpenAPI, four protected unauthenticated endpoints returning 401 with current version, five ACTIVE function revisions, and the current settings guide on Pages. These checks never authenticate to or export customer data.
+Pre-deployment: behavior/negative authorization tests, types, real Auth/Firestore/Storage emulator integration, generated API diff, settings/skill routing consistency, security scan, production and curated docs builds. Post-deployment: exact version/SHA, matching OpenAPI, protected unauthenticated endpoints including attachment listing returning 401 with current version, five ACTIVE function revisions, and the current settings guide on Pages. These checks never authenticate to or export customer data.
 
 Dynatrace reporting sends release BizEvent and deployment marker plus synthetic SDK-generated metrics, traces and logs. Each signal must be accepted with zero partial rejections. release-verification.json, monitoring.json, deployment.json and docs-verification.json are sanitized Actions artifacts retained for 30 days. An impact plan is intent, not evidence. HTTP acceptance is not searchable tenant data or native trace linkage. Record manual browser checks and query-access limitations honestly.
 
 If a post-check or telemetry export fails after Hosting succeeds, the application may already be deployed. Inspect the exact failing result; do not blindly redeploy, roll back business records or overwrite a release tag. A failed post-check reports the deployment outcome as failed and blocks the versioned GitHub release step.
+
+## Private Storage release checks
+
+The v1.9 workflow deploys deny-all Storage rules after index readiness and before
+Functions/Hosting. Deployment metadata records only bucket configuration, deployment
+outcome and function revisions. The postcheck requires public-access prevention
+`enforced` and anonymous direct-Storage listing denial. Deploy dependent attachment
+indexes before enabling list/cleanup code. Keep cleanup in the existing reminders
+worker and retain compatible metadata states during rollback. Never make a bucket
+public or create a permanent URL to diagnose an access failure.

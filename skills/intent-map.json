@@ -85,7 +85,10 @@
     "edit lead",
     "create lead",
     "excel export",
-    "filtered report"
+    "filtered report",
+    "batch edit",
+    "bulk edit",
+    "select leads"
   ],
   "salesdrone-notifications": [
     "push notification",
@@ -164,5 +167,13 @@
     "QA handoff",
     "test runner",
     "test agent"
+  ],
+  "salesdrone-attachments": [
+    "attachments",
+    "upload lead files",
+    "lead photos",
+    "Firebase Storage",
+    "file download",
+    "Files tab"
   ]
 }
