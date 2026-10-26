@@ -1,12 +1,10 @@
 {
   "schemaVersion": 1,
   "version": "1.6.7",
-  "summary": "Apply consistent typography and available-width layouts across phones, tablets, laptops and wide desktops, preserving existing fonts.",
+  "summary": "Same-version maintenance: align customer names without whole-app zoom, remove duplicated full-lead actions/contact summaries, and replace the sidebar reminder banner with a menu item.",
   "modules": [
     "salesdrone-interface",
-    "salesdrone-dashboard",
-    "salesdrone-imports",
-    "salesdrone-book-mode",
+    "salesdrone-leads",
     "salesdrone-product-guide"
   ],
   "documentation": [
@@ -15,9 +13,7 @@
     "docs/PRODUCT-GUIDE.md",
     "docs/SETTINGS.md"
   ],
-  "settingsSections": [
-    "appearance"
-  ],
+  "settingsSections": [],
   "api": {
     "status": "unchanged",
     "reason": "Presentation and local chart selection only; existing import, lead, aggregate and preference contracts remain unchanged. No cosmetic endpoint or PAT scope.",
@@ -82,24 +78,18 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Synthetic browser review at 17 requested widths from 320 through 2560 CSS pixels, including fractional boundaries; 600/768/900/1080px heights; login, dashboard/day selector, lead overlay/full page/tabs, tasks, inbox, isolated real admin settings and import mapping. Both palettes and Book mode, larger default-text fixture, sidebar collapse/scroll and dialog columns. No physical-device, native Dynamic Type, actual browser zoom or tenant-search certification. See docs/UI-REVIEW-1.6.7.md.",
+  "manualVerification": "Synthetic name alignment across 320/390/768/1024/1280/1440/1920px requested widths at normal CSS scale; long/unbroken/missing/non-Latin names. Expand full lead details and verify exactly one Log call, Remind me and contact information list; open/cancel forms, inspect menu shortcut and mobile navigation. No whole-app zoom workaround, customer edits, physical-device or tenant-search claim. See docs/UI-REVIEW-1.6.7.md.",
   "screenshots": [
     "dashboard-demo.jpg",
-    "journey-demo.jpg",
-    "mobile-demo.jpg",
-    "notifications-demo.jpg",
-    "developer-settings-demo.jpg",
+    "leads-demo.jpg",
     "lead-overlay-demo.jpg",
     "lead-workspace-demo.jpg",
+    "journey-demo.jpg",
+    "notifications-demo.jpg",
+    "book-settings-demo.jpg",
     "book-mode-light.jpg",
     "book-mode-dark.jpg",
-    "book-mode-mobile.jpg",
-    "book-settings-demo.jpg",
-    "leads-demo.jpg",
-    "mobile-leads-demo.jpg",
-    "import-demo.jpg",
     "laptop-demo.jpg",
-    "login-demo.jpg",
     "tablet-demo.jpg"
   ]
 }

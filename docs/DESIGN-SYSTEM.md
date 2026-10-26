@@ -74,6 +74,12 @@ sources; their suggestions cannot override a user’s typography/branding choice
 
 Main content is centered with a 1600px maximum and fluid 16–32px gutters; Settings has a 1480px maximum. Dashboard charts become one column at a 52rem content-container width, with two KPI columns; below 30rem the ring legend stacks. Settings forms collapse at a 42rem content width. The shared `.dialog` form has two columns only above a 38rem surface width. Import mapping collapses at 44rem. Container thresholds scale with text preferences. Media maximums end at .99px before the next integer minimum to avoid fractional-width gaps. Keep CSS and JavaScript lead-routing thresholds aligned.
 
-At 768–1100px the expanded sidebar is 224px; collapsed navigation remains 72px. Below 961px height its optional message collapses to the reminder action. At very short heights the sidebar scrolls, including account controls. Fixed icon cells keep navigation aligned.
+At 768–1100px the expanded sidebar is 224px; collapsed navigation remains 72px. The reminder shortcut is a normal capability-gated menu row; do not reintroduce the promotional banner. At very short heights the sidebar scrolls, including account controls. Fixed icon cells keep navigation aligned.
 
 Chart axes, dates and ring totals are HTML text with shared roles rather than shrinking SVG lettering. The native Chart day selector provides a 44px alternative to small data points and changes only the selected local day. Table data retains 44px actions with compact row padding; long comments have a 72-character measure. After choosing an import workbook, a compact replacement chooser leaves mapping visible. Login columns use minmax(0, ...) and wrapping text to avoid min-content overflow at 320px.
+
+## Table alignment and lead content ownership
+
+Customer-name buttons fill their column and align text to start, including wrapped, unbroken, missing and non-Latin names. Reserve a 14rem minimum name-column width; additional columns scroll locally. Never use whole-app CSS zoom or transforms to compensate for alignment.
+
+The inspection overlay owns its compact actions; the dedicated lead page owns its action row above the tabs. Do not mount both on a full page. Contact values appear once in the labelled Lead information list, including email and permitted phone/email links. Avoid a second icon summary repeating those fields. Custom fields remain in Additional information.

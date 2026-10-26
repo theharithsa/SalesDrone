@@ -78,3 +78,5 @@ Adjacent owners:
 - [salesdrone-notifications](../salesdrone-notifications/SKILL.md)
 
 Lead lifecycle actions use full-size labelled buttons with Archive and do-not-contact icons, responsive wrapping and existing capability/loading guards. Preserve the distinct archive/suppression contracts: do not invent a permanent Delete lead action or rename suppression as deletion. Reuse existing handlers and backend policy.
+
+Table customer names share start alignment across short, wrapped, missing and non-Latin values; worksheet-name-button fills its data-field=name column. Keep normal table fonts and local horizontal scrolling instead of whole-app zoom. In the lead context render one labelled information list, preserving configured field labels/visibility, original phone fallback, custom retired values and safe permitted tel/mailto links. Full-page and quick-inspection actions have mutually exclusive ownership so expanded details do not duplicate call/reminder controls. Browser-check counts with the disclosure expanded, not only its initial closed state.

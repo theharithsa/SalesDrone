@@ -2,20 +2,20 @@
   {
     "file": "dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "bbf301fa1c609d4395d25d29a3dd830cd287d0c9ceaac56289076c3ff8c6cd35",
-    "capturedAt": "2026-10-25T23:11:11.555471+00:00",
+    "sha256": "90b2580ca9b559917bfbbb471e493c680e5dc4312ebd7ce11431c63c501b703b",
+    "capturedAt": "2026-10-26T02:17:21.263171+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "version": "1.6.7",
     "capturePixels": "1807 x 1016"
   },
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f61f9814123c4bb8cfec69b78fa89891b2079d1fa11314deeac61d4a93645fe4",
-    "capturedAt": "2026-10-25T23:11:13.802462+00:00",
+    "sha256": "62c7d1caec53326c5cb5e1b3607cf32146e5334f4016cc0d1f06c8e6c7e352c9",
+    "capturedAt": "2026-10-26T02:17:23.408354+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "version": "1.6.7",
     "capturePixels": "1807 x 1016"
   },
@@ -32,10 +32,10 @@
   {
     "file": "notifications-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2b636df2ae5db8195530ddfdf357510eb49e3236a3b5f2e9bca6b434778b6ef0",
-    "capturedAt": "2026-10-25T23:11:14.735132+00:00",
+    "sha256": "99fdd911be1df64e8ce534f6a5ad5ab9629786418f903a9db5c5a4df3fb993f1",
+    "capturedAt": "2026-10-26T02:15:49.263117+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "version": "1.6.7",
     "capturePixels": "1829 x 1029"
   },
@@ -60,40 +60,40 @@
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "18b1f40272427ccdf4730e2d8870c74eb52f0e9a32e8f2399d25b2afae58d66f",
-    "capturedAt": "2026-10-25T23:11:12.814183+00:00",
+    "sha256": "0c762ede4f85a4ddceb7b433959d308366f9a11452b3812e67af12f18c64a73d",
+    "capturedAt": "2026-10-26T02:17:22.422060+00:00",
     "viewport": "1828 x 1028 CSS pixels",
     "version": "1.6.7",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "capturePixels": "1807 x 1016"
   },
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f61f9814123c4bb8cfec69b78fa89891b2079d1fa11314deeac61d4a93645fe4",
-    "capturedAt": "2026-10-25T23:11:13.402653+00:00",
+    "sha256": "62c7d1caec53326c5cb5e1b3607cf32146e5334f4016cc0d1f06c8e6c7e352c9",
+    "capturedAt": "2026-10-26T02:17:23.203822+00:00",
     "viewport": "1828 x 1028 CSS pixels",
     "version": "1.6.7",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "capturePixels": "1807 x 1016"
   },
   {
     "file": "book-mode-light.jpg",
     "mode": "synthetic-demo",
-    "sha256": "84cb48cc990979ce9d33077da717f14c8f280d0ebe2fc41b02edca5d64c79d26",
-    "capturedAt": "2026-10-25T23:14:32.393069+00:00",
+    "sha256": "1925a770f7f5c9352258e73f4303c11fd8940e688a7496dade995a24dcb47761",
+    "capturedAt": "2026-10-26T02:16:24.293486+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "version": "1.6.7",
     "capturePixels": "1807 x 1016"
   },
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "3d61cd1785b6049c197ec180c760a5b9e02c5d05b51d9e649f54354f36e2257a",
-    "capturedAt": "2026-10-25T23:14:32.972144+00:00",
+    "sha256": "80e6bf41aeb0afd0b82210d35d84692dee74a0adc6a119f408822aa922e07ef1",
+    "capturedAt": "2026-10-26T02:16:24.872676+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "version": "1.6.7",
     "capturePixels": "1807 x 1016"
   },
@@ -110,21 +110,21 @@
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "804e3e7a54b877d7581421092bfaeb418a4ae6a5049b038b229ff505db4b2565",
-    "capturedAt": "2026-10-25T23:14:31.850363+00:00",
+    "sha256": "b259b6c0fc0fc698ea10fc2369806c70110cfd32d7be9f65a68eda429fff9702",
+    "capturedAt": "2026-10-26T02:16:23.747822+00:00",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "version": "1.6.7",
     "capturePixels": "1807 x 1016"
   },
   {
     "file": "leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "31b610e0469cfd5d4d80595431ecc575445ab788335c5a34e23ddfc929212d54",
-    "capturedAt": "2026-10-25T23:11:12.159629+00:00",
+    "sha256": "5babb92fe5095a43001b13dc028457c6740dcf31b8cd773fbcd5aa1dc2818fb7",
+    "capturedAt": "2026-10-26T02:17:21.775827+00:00",
     "version": "1.6.7",
     "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "capturePixels": "1807 x 1016"
   },
   {
@@ -150,10 +150,10 @@
   {
     "file": "laptop-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "42bcf3f8a521b8270095ed15e1aeb53d470012be47d9d6006d2a8373c9c3c006",
-    "capturedAt": "2026-10-25T23:15:12.742614+00:00",
+    "sha256": "071c307fd54d02d7126bcbad59fa59f25f534946bf23ffe3d817b304383eaea4",
+    "capturedAt": "2026-10-26T02:20:35.426525+00:00",
     "version": "1.6.7",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
     "viewport": "1280 x 900 CSS pixels, application iframe",
     "capturePixels": "1280 x 900"
   },
@@ -170,11 +170,11 @@
   {
     "file": "tablet-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "eb0967c1a05824200c3693ce93b0ed07108789bec29493963ab707f9d28548b8",
-    "capturedAt": "2026-10-25T23:15:13.136914+00:00",
+    "sha256": "df95e0993898070592f2b038a750d47a9a57976e1097191b50382df6d2195131",
+    "capturedAt": "2026-10-26T02:18:31.716909+00:00",
     "version": "1.6.7",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
-    "viewport": "900 x 900 CSS pixels, application iframe",
-    "capturePixels": "900 x 900"
+    "review": "Reviewed actual synthetic demo only. v1.6.7 authorized maintenance: regular reminder menu, start-aligned table names and one full-lead action/contact set. No customer data or credentials; no physical-device certification.",
+    "viewport": "1024 x 900 CSS pixels, application iframe",
+    "capturePixels": "1024 x 900"
   }
 ]

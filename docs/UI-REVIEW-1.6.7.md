@@ -19,3 +19,13 @@ Interaction checks included chart-day selection (changing to the first day updat
 Unit tests: 100 backend and 42 root tests passed locally. Type checking passed. Build, generated documentation, skill checks and release gates run before publication; the GitHub workflow retains separate deployment/postcheck and Dynatrace receipt artifacts. A release plan is not proof of a successful deployment. HTTP ingestion acceptance is not tenant searchability.
 
 Reviewed captures include phone, tablet, laptop and desktop surfaces; their versions, viewport dimensions and hashes are in the [public screenshot manifest](../site/assets/screenshots/manifest.json). Only synthetic app data, isolated component fixtures and public schemas are allowed. Temporary review entrypoints are removed before production build.
+
+## Same-version maintenance: alignment and duplicate content
+
+User explicitly authorized keeping v1.6.7. releases/maintenance.json binds that authorization to the exact initial release commit; the original tag is preserved.
+
+The follow-up review checks customer-name start alignment at normal app CSS scale (zoom 1, no global scaling workaround) across 320/390/768/1024/1280/1440/1920px requested widths. Synthetic long, unbroken, one-character, missing and non-Latin names share the same button left edge; wrapping keeps start alignment. Local table scrolling is intentional. These CSS-layout checks do not certify physical-device/browser-zoom combinations.
+
+With full lead details expanded, the observed DOM contains exactly one Log call, one Remind me, one Lead information heading and one phone value in the labelled detail list. The sidebar has no reminder banner and has one Set a reminder menu button. The call/reminder actions were opened and cancelled without saving. The menu shortcut retains capability filtering and closes mobile navigation before opening its form.
+
+API, PAT scopes, suppression rules, contact review guards and backend observability are unchanged. Only synthetic browser data is used in public captures. Deployment evidence is distinguished by commit/run rather than a new displayed version.

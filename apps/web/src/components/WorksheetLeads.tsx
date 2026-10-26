@@ -53,7 +53,9 @@ export default function WorksheetLeads({
           <thead>
             <tr>
               {columns.map(([field, label]) => (
-                <th key={field}>{label}</th>
+                <th key={field} data-field={field}>
+                  {label}
+                </th>
               ))}
               {onEdit ? <th className="worksheet-actions">Actions</th> : null}
             </tr>
@@ -66,12 +68,12 @@ export default function WorksheetLeads({
                 onClick={() => onSelect(lead)}
               >
                 {columns.map(([field]) => (
-                  <td key={field}>
+                  <td key={field} data-field={field}>
                     {field === 'leadScore' ? (
                       <ScoreBadge score={scores[lead.id]} />
                     ) : field === 'name' ? (
                       <button
-                        className="text-button"
+                        className="text-button worksheet-name-button"
                         onClick={(e) => {
                           e.stopPropagation();
                           onSelect(lead);

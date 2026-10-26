@@ -6,6 +6,14 @@ API contract versions are independent from application versions.
 
 ## [1.6.7] - 2026-10-26
 
+### Authorized maintenance
+- Align wrapped and missing customer names to the same table-column edge at normal app scale; preserve readable fonts and browser zoom.
+- Show one call/reminder action set on the full lead page and one labelled contact-detail list, retaining permitted phone/email links.
+- Replace the sidebar reminder banner with a capability-gated navigation row.
+- Preserve the original v1.6.7 release tag; identify this deployment by its commit and workflow run.
+
+### Initial release
+
 - Apply shared typography across phones, tablets, laptops and desktops while preserving font families.
 - Use content-width dashboard, Settings and dialog grids; fix fractional breakpoint gaps and narrow login overflow.
 - Keep chart labels readable outside SVG scaling and add a native day selector for outreach history.

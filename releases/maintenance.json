@@ -1,8 +1,8 @@
 {
-  "version": "1.6.1",
-  "baseCommit": "b035f8854a9fdbb4d98a9b8f55d63432f2e1c24f",
+  "version": "1.6.7",
+  "baseCommit": "83a5f7e04118180649f31ef4cd5b3dc7c2c0f091",
   "authorizedByUser": true,
-  "date": "2026-10-25",
-  "instruction": "Keep the same version number.",
-  "reason": "User explicitly requests separate Calls and Comments tabs and an All view including review, with version unchanged. Preserve the original v1.6.1 tag; identify this maintenance by commit and run."
+  "date": "2026-10-26",
+  "instruction": "Keep the version 1.6.7",
+  "reason": "User requests name alignment at normal zoom, removal of duplicated lead actions/contact summaries and a sidebar reminder menu item. Keep the original version tag and identify this maintenance deployment by commit/run."
 }

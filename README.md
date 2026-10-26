@@ -34,7 +34,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard funnel is a snapshot of current counts: selecting a stage opens its filtered leads. Its widths do not claim conversion rates or an invented history.
 
-![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=f61f9814123c)
+![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=62c7d1caec53)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -129,7 +129,7 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=f61f9814123c)
+![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=62c7d1caec53)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
@@ -141,7 +141,7 @@ The full lead page opens in **All**: loaded activity and review information. You
 
 Open **Settings → Appearance & time**, enable **Book mode**, and save. Warm paper and serif fonts throughout the UI work with Light, Dark and System; the sunrise/sunset switch keeps your reading style. This is personal to your account.
 
-![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=84cb48cc9909)
+![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=1925a770f7f5)
 
 Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).
 
@@ -153,6 +153,8 @@ Layouts and typography across phones, tablets, laptops and desktops follow the [
 
 Shared 17px body text, readable chart labels and content-width form/chart layouts preserve the existing fonts. The [v1.6.7 review](docs/UI-REVIEW-1.6.7.md) records 17 requested widths from 320 to 2560px, short-window checks and the limits of browser-only verification.
 
-![Laptop dashboard with synthetic data, readable labels and a day selector.](site/assets/screenshots/laptop-demo.jpg?sha=42bcf3f8a521)
+![Laptop dashboard with synthetic data, readable labels and a day selector.](site/assets/screenshots/laptop-demo.jpg?sha=071c307fd54d)
 
 [Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Synthetic import mapping](site/assets/screenshots/import-demo.jpg)
+
+The v1.6.7 maintenance update aligns wrapped customer names without scaling the app, removes duplicate lead actions/contact summaries, and makes Set a reminder a regular sidebar menu item. The original release tag is retained; the deployment commit and workflow identify the maintenance build.

@@ -22,6 +22,8 @@ Navigation includes Today, Leads, Tasks, Notifications, Documentation and Settin
 
 Use the bottom sidebar control to collapse or expand desktop navigation. Icons retain the same alignment and accessible labels. On narrow screens, use the menu or bottom navigation. The top-right appearance control switches theme; Settings also offers system appearance. Reduced-motion preferences reduce movement.
 
+Set a reminder is a regular sidebar menu shortcut when you have task-writing permission. It opens the manual reminder form without a promotional banner; on phones it is available in the navigation menu.
+
 ### Questions
 
 **Why do I see sample data after Google login?**
@@ -84,6 +86,8 @@ Do not contact pauses eligible outreach; a review flag means the contact should 
 
 Search stays visible. Filters opens the search-field/stage/source controls and custom-column filter builder, with an active-condition count. Controls stack on narrow screens; stage shortcuts scroll within their row. Opening and closing the disclosure does not clear active conditions.
 
+Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment.
+
 ### Questions
 
 **Why does a filter show no results?**
@@ -119,6 +123,8 @@ The full-page identity header reads first and last names horizontally. Long name
 Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.
 
 Mobile typography uses a 28px page-title role, 22px lead identity, 17px body/form text and 15px supporting text at default browser settings. Existing font families are retained. Stage/assignment controls reflow to available width and the journey scrolls horizontally, without widening the document. Browser text preferences and zoom may change the visual sizes.
+
+Log call and Remind me appear once above the tabs. Expanding Lead details & score shows a single labelled Lead information list, including email. Available phone/email links follow contact review and do-not-contact guards. The quick-inspection overlay has its own compact actions; those are not repeated on the full page.
 
 ### Questions
 

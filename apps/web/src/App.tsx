@@ -60,9 +60,6 @@ import {
   ChevronRight,
   ChevronLeft,
   Phone,
-  Mail,
-  MapPin,
-  Building2,
   MoreHorizontal,
   Upload,
   LogOut,
@@ -931,7 +928,8 @@ export default function App() {
     setTimelineMoreBusy(false);
     setSelected(lead);
     setLeadTab('all');
-    if (window.matchMedia('(max-width: 767.99px)').matches) window.scrollTo(0, 0);
+    if (window.matchMedia('(max-width: 767.99px)').matches)
+      window.scrollTo(0, 0);
     setLeadTasks([]);
     setTimeline([]);
     setTimelineCursor(null);
@@ -1421,16 +1419,20 @@ export default function App() {
           </>
         ) : null}
         <div className="sidebar-bottom">
-          <div className="sidebar-tip">
-            <span className="tiny-spark">↗</span>
-            <strong>A next step for every lead.</strong>
-            <p>Small follow-ups build lasting relationships.</p>
-            {can('tasks:write') ? (
-              <button onClick={() => setModal('task')}>
-                Set a reminder <ArrowRight size={13} />
-              </button>
-            ) : null}
-          </div>
+          {can('tasks:write') ? (
+            <button
+              className="nav-item"
+              aria-label="Set a reminder"
+              title="Set a reminder"
+              onClick={() => {
+                setMenu(false);
+                setModal('task');
+              }}
+            >
+              <Bell size={19} />
+              <span>Set a reminder</span>
+            </button>
+          ) : null}
           <button
             className="nav-item sidebar-collapse-control desktop-only"
             aria-label={
@@ -2093,44 +2095,45 @@ export default function App() {
                           Contact needs review before outreach.
                         </div>
                       ) : null}
-                      <div className="detail-actions">
-                        {can('activities:write') ? (
-                          <button
-                            className="button primary"
-                            disabled={
-                              selected.doNotContact ||
-                              selected.needsReview ||
-                              detailBusy
-                            }
-                            onClick={() => setModal('call')}
-                          >
-                            <Phone size={15} /> Log call
-                          </button>
-                        ) : null}
-                        {can('tasks:write') ? (
-                          <button
-                            className="button"
-                            onClick={() => setModal('task')}
-                            disabled={detailBusy}
-                          >
-                            <Bell size={15} /> Remind me
-                          </button>
-                        ) : null}
-                        {!routeLeadId && can('activities:write') ? (
-                          <button
-                            className="button"
-                            aria-label="Add comment"
-                            onClick={() => setModal('note')}
-                            disabled={detailBusy}
-                          >
-                            <FileText size={18} /> Add comment
-                          </button>
-                        ) : null}
-                      </div>
+                      {!routeLeadId ? (
+                        <div className="detail-actions">
+                          {can('activities:write') ? (
+                            <button
+                              className="button primary"
+                              disabled={
+                                selected.doNotContact ||
+                                selected.needsReview ||
+                                detailBusy
+                              }
+                              onClick={() => setModal('call')}
+                            >
+                              <Phone size={15} /> Log call
+                            </button>
+                          ) : null}
+                          {can('tasks:write') ? (
+                            <button
+                              className="button"
+                              onClick={() => setModal('task')}
+                              disabled={detailBusy}
+                            >
+                              <Bell size={15} /> Remind me
+                            </button>
+                          ) : null}
+                          {can('activities:write') ? (
+                            <button
+                              className="button"
+                              aria-label="Add comment"
+                              onClick={() => setModal('note')}
+                              disabled={detailBusy}
+                            >
+                              <FileText size={18} /> Add comment
+                            </button>
+                          ) : null}
+                        </div>
+                      ) : null}
                       <div className="detail-section contact-info">
-                        <h3>ENQUIRY DETAILS</h3>
-                        <details className="worksheet-details" open>
-                          <summary>Lead information</summary>
+                        <div className="worksheet-details">
+                          <h3>LEAD INFORMATION</h3>
                           <dl>
                             {worksheetColumns
                               .filter(
@@ -2161,17 +2164,45 @@ export default function App() {
                                     ) : field === 'enquiryDate' ? (
                                       displayDate(selected.enquiryDate)
                                     ) : field === 'phone' ? (
-                                      selected.phone ||
-                                      selected.originalPhone ||
-                                      'Not recorded'
+                                      !demo &&
+                                      selected.phone &&
+                                      !selected.doNotContact &&
+                                      !selected.needsReview ? (
+                                        <a href={'tel:' + selected.phone}>
+                                          {selected.phone}
+                                        </a>
+                                      ) : (
+                                        selected.phone ||
+                                        selected.originalPhone ||
+                                        'Not recorded'
+                                      )
                                     ) : (
                                       String(selected[field] || 'Not recorded')
                                     )}
                                   </dd>
                                 </div>
                               ))}
+                            {!fieldOptions.hiddenFields.includes('email') ? (
+                              <div>
+                                <dt>
+                                  {labelFor(fieldOptions, 'email', 'Email')}
+                                </dt>
+                                <dd>
+                                  {!demo &&
+                                  selected.email &&
+                                  !selected.doNotContact &&
+                                  !selected.needsReview ? (
+                                    <a href={'mailto:' + selected.email}>
+                                      {selected.email}
+                                    </a>
+                                  ) : (
+                                    selected.email || 'Not recorded'
+                                  )}
+                                </dd>
+                              </div>
+                            ) : null}
                           </dl>
-                        </details>
+                        </div>
                         {fieldOptions.customFields.some(
                           (f) =>
                             !f.deleted ||
@@ -2207,56 +2238,6 @@ export default function App() {
                                 ))}
                             </dl>
                           </details>
-                        ) : null}
-                        <div>
-                          <Phone size={15} />
-                          {!demo &&
-                          selected.phone &&
-                          !selected.doNotContact &&
-                          !selected.needsReview ? (
-                            <a
-                              className="phone-number"
-                              href={'tel:' + selected.phone}
-                            >
-                              {selected.phone}
-                            </a>
-                          ) : (
-                            <span className="phone-number">
-                              {selected.phone || 'No phone number'}
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <Mail size={15} />
-                          {!demo &&
-                          selected.email &&
-                          !selected.doNotContact &&
-                          !selected.needsReview ? (
-                            <a href={'mailto:' + selected.email}>
-                              {selected.email}
-                            </a>
-                          ) : (
-                            <span>{selected.email || 'No email address'}</span>
-                          )}
-                        </div>
-                        <div>
-                          <MapPin size={15} />
-                          <span>
-                            {selected.location || 'Location not added'}
-                            {selected.zone ? ' · ' + selected.zone : ''}
-                          </span>
-                        </div>
-                        <div>
-                          <Building2 size={15} />
-                          <span>
-                            {selected.source} ·{' '}
-                            {displayDate(selected.enquiryDate)}
-                          </span>
-                        </div>
-                        {selected.legacyStatus ? (
-                          <p className="field-hint">
-                            Original status: {selected.legacyStatus}
-                          </p>
                         ) : null}
                       </div>
                     </details>

@@ -1276,25 +1276,6 @@ textarea {
 .sidebar-attribution {
   color: var(--muted);
 }
-@media (max-height: 960.99px) {
-  .sidebar-tip {
-    padding: 10px 14px;
-    margin-bottom: 12px;
-  }
-  .sidebar-tip > .tiny-spark,
-  .sidebar-tip > strong,
-  .sidebar-tip > p {
-    display: none;
-  }
-  .sidebar-tip button {
-    margin: 0;
-    min-height: 44px;
-    font-size: var(--type-callout);
-  }
-  .sidebar-tip:not(:has(button)) {
-    display: none;
-  }
-}
 .sidebar-profile small {
   font-size: var(--type-caption);
   line-height: 1.45;
@@ -1306,4 +1287,25 @@ textarea {
   .main-shell {
     margin-left: 224px;
   }
+}
+
+/* Align every name to the column edge, including wrapped/missing names. */
+.worksheet-leads-table [data-field='name'] {
+  min-width: 14rem;
+  text-align: start;
+}
+.worksheet-leads-table .worksheet-name-button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.contact-info > .worksheet-details {
+  display: block;
+  margin-top: 0;
+  font-size: inherit;
 }
