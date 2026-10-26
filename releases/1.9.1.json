@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "version": "1.9.1",
+  "summary": "Preserve the requested Files tab when expanding the same lead from its inspector.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-attachments"
+  ],
+  "documentation": [
+    "docs/ATTACHMENTS.md",
+    "docs/UI-REVIEW-1.9.0.md",
+    "README.md",
+    "docs/TECHNICAL.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Client navigation correction only; existing contract 1.16 and permissions remain unchanged.",
+    "contractVersion": "1.16.0",
+    "permissions": "Current active membership and effective lead scope on every route and after Storage I/O. Read files needs leads:read; file/batch writes need leads:edit; reassignment additionally needs assignments:write. PATs need new explicit bulk/file scopes. Direct Storage clients remain denied.",
+    "tests": [
+      "tests/lead-workspace.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Client navigation fix uses existing RUM navigation and API telemetry; no new domain mutation or event. Deployment retains exact version/SHA and existing Storage privacy checks.",
+      "tests": [
+        "tests/lead-workspace.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Client navigation fix uses existing RUM navigation and API telemetry; no new domain mutation or event. Deployment retains exact version/SHA and existing Storage privacy checks.",
+      "tests": [
+        "tests/lead-workspace.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Client navigation fix uses existing RUM navigation and API telemetry; no new domain mutation or event. Deployment retains exact version/SHA and existing Storage privacy checks.",
+      "tests": [
+        "tests/lead-workspace.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Client navigation fix uses existing RUM navigation and API telemetry; no new domain mutation or event. Deployment retains exact version/SHA and existing Storage privacy checks.",
+      "tests": [
+        "tests/lead-workspace.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Client navigation fix uses existing RUM navigation and API telemetry; no new domain mutation or event. Deployment retains exact version/SHA and existing Storage privacy checks.",
+      "tests": [
+        "tests/lead-workspace.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts",
+    "private-storage"
+  ],
+  "manualVerification": "Expand a synthetic lead through the inspector Files shortcut; wait for data load and verify Files remains selected. Open a different lead and verify All. Actual byte transfers and authorization retain v1.9 emulator coverage. CI runs full pre/post gates; no authenticated customer upload.",
+  "screenshots": [
+    "lead-files-demo.jpg"
+  ]
+}

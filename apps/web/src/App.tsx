@@ -10,6 +10,7 @@ import {
   reviewActivities,
   filterLeadActivities,
   leadWorkspaceTabs,
+  tabAfterLeadLoad,
   type LeadWorkspaceTab,
 } from './lib/lead-workspace';
 import Assignment from './components/Assignment';
@@ -278,6 +279,8 @@ export default function App() {
   const generation = useRef(0);
   const listEpoch = useRef(0);
   const detailEpoch = useRef(0);
+  const leadTabRef = useRef(leadTab);
+  leadTabRef.current = leadTab;
   const selectedIdRef = useRef(selected?.id);
   selectedIdRef.current = selected?.id;
   const timelineMoreLock = useRef(false);
@@ -995,7 +998,7 @@ export default function App() {
       clearInterval(timer);
     };
   }, [demo, selected?.id, pendingAutomatic, request]);
-  async function chooseLead(lead: Lead) {
+  async function chooseLead(lead: Lead, initialTab: LeadWorkspaceTab = 'all') {
     if (!lead?.id) {
       setError('This lead is unavailable. Return to Leads and refresh.');
       return;
@@ -1006,7 +1009,7 @@ export default function App() {
     timelineMoreLock.current = false;
     setTimelineMoreBusy(false);
     setSelected(lead);
-    setLeadTab('all');
+    setLeadTab(initialTab);
     if (window.matchMedia('(max-width: 767.99px)').matches)
       window.scrollTo(0, 0);
     setLeadTasks([]);
@@ -1078,7 +1081,10 @@ export default function App() {
         .then((l) => {
           if (alive && identityEpoch === generation.current) {
             setPage('leads');
-            return chooseLead(l);
+            return chooseLead(
+              l,
+              tabAfterLeadLoad(leadTabRef.current, selectedIdRef.current, l.id),
+            );
           }
         })
         .catch((e) => {

@@ -38,3 +38,7 @@ List only Ready files with signed, scope-bound pagination. Never expose objectPa
 [bulk-and-files.test.js](../../functions/test/bulk-and-files.test.js) covers authorization, byte validation, immutable retries, revocation, quota and safe events. [emulator.integration.js](../../functions/test/emulator.integration.js) exercises real Auth/Firestore/Storage and direct-client denial. Use [testing](../salesdrone-testing/SKILL.md), [observability](../salesdrone-observability/SKILL.md), [release readiness](../salesdrone-release-readiness/SKILL.md) and [release](../salesdrone-release/SKILL.md). Deploy Storage rules and ready indexes before Functions/Hosting. Runtime SA needs object access to this bucket; never create service-account keys. Verify bucket public-access prevention and retain source for forward-version rollback.
 
 The desktop inspector has a visible Files shortcut that opens the full lead Files tab. On narrow layouts the six workspace tabs fit using compact inline padding while retaining 44px minimum targets and optional local scrolling. Do not hide Files behind an unlabeled expand icon.
+
+When expanding the inspector into the full lead route, preserve the requested Files
+tab through asynchronous lead loading. New/different leads start at All. Verify the
+shortcut after the data request finishes, not just immediately after navigation.

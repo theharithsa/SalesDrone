@@ -5,6 +5,7 @@ import {
   reviewActivities,
   filterLeadActivities,
   leadWorkspaceTabs,
+  tabAfterLeadLoad,
 } from '../apps/web/src/lib/lead-workspace.ts';
 test('lead route accepts a single encoded identifier and rejects invalid paths', () => {
   assert.equal(leadPathId('/leads/demo-0'), 'demo-0');
@@ -55,4 +56,11 @@ test('lead views separate notes and calls while All retains every activity and r
     items.map((a) => a.id),
     ['n', 'c', 's', 'i'],
   );
+});
+
+test('same-lead route loading preserves the requested Files tab and another lead starts at All', () => {
+  assert.equal(tabAfterLeadLoad('files', 'lead-a', 'lead-a'), 'files');
+  assert.equal(tabAfterLeadLoad('comments', 'lead-a', 'lead-a'), 'comments');
+  assert.equal(tabAfterLeadLoad('files', 'lead-a', 'lead-b'), 'all');
+  assert.equal(tabAfterLeadLoad('files', undefined, 'lead-a'), 'all');
 });

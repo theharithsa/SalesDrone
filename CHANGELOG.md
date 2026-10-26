@@ -4,6 +4,12 @@ Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
 
+
+## [1.9.1] - 2026-10-26
+
+### Changed
+- Preserve the selected Files tab when the lead inspector expands into its full page; avoid resetting navigation during the same lead’s asynchronous load.
+
 ## [1.9.0] - 2026-10-26
 
 ### Changed

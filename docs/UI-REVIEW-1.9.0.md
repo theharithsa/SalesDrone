@@ -9,7 +9,7 @@ No production lead, attachment, reminder or token was created for this review.
 - Selected two loaded leads, previewed changes and applied a shared stage change.
   Selection cleared after refresh. Editing a previewed value disabled Apply until
   preview ran again. The mobile dialog scrolled without document overflow.
-- Files opened from the inspection shortcut and full-page tab. Uploaded a fictional
+- The full-page Files tab opened. The later production review found that the inspector shortcut reset to All after asynchronous loading; this is corrected and separately verified in v1.9.1. Uploaded a fictional
   text file, observed its row and download initiation, tested Keep file and confirmed
   removal in the memory-only demo. Leaving Files clears guest attachments by design.
 - Files layout measured zero document overflow at 390, 768, 1024, 1280 and 1920 CSS
@@ -25,3 +25,11 @@ initiation was observed; a native saved-file receipt was unavailable. Actual byt
 round-trip, anonymous direct-Storage denial and physical cleanup were verified in
 Auth/Firestore/Storage emulators. This is browser layout evidence, not physical-device
 certification or proof of an authenticated production upload.
+
+## v1.9.1 navigation regression
+
+Reproduced the inspector Files reset after the lead’s asynchronous load. The fix
+preserves the requested tab for the same lead. In a clean guest browser session,
+Files stayed selected after loading, a fictional upload appeared, and opening
+a different lead’s full page selected All. The reviewed Files screenshot is
+refreshed; other v1.9 captures remain historical evidence for unchanged layouts.

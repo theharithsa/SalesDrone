@@ -110,3 +110,7 @@ Compact lead overview: one toolbar, identity/score/stage/owner grid, content-wid
 ## v1.9 operating notes
 
 The lead table and mobile cards have optional labelled batch-selection checkboxes, separate from opening details. Keep row click/keyboard handlers from swallowing checkbox input. The bulk toolbar shows loaded-only selection/count and preserves readable columns through local scrolling. Files is an independent workspace tab; exclude it from activity filters/composer/tasks. Tab strip scrolls horizontally without clipping the document. File and batch dialogs must work at mobile/tablet/desktop and saved display scales; retain focus, Escape and Book fonts.
+
+When expanding the inspector into the full lead route, preserve the requested Files
+tab through asynchronous lead loading. New/different leads start at All. Verify the
+shortcut after the data request finishes, not just immediately after navigation.

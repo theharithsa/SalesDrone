@@ -25,3 +25,6 @@ The Files tab uses a separate binary transport with Auth/App Check, progress, ab
 ## Verification and operations
 
 Use the attachment skill and testing catalog. Unit tests cover validation, scope, version/replay, revoke-during-upload, cleanup grace and privacy. The actual Auth/Firestore/Storage emulator exercises upload/download bytes and denies anonymous direct Storage access. CI deploys private Storage rules and ready indexes before Functions/Hosting. Production release checks must distinguish these tested boundaries from an authenticated customer upload; use no customer data as a deployment probe.
+
+The inspector’s Files shortcut expands the same lead and preserves Files through
+its asynchronous reload. Opening a different lead starts at All activity.

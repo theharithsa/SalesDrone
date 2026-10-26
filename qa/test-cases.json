@@ -479,7 +479,8 @@
       "ownerSkill": "skills/salesdrone-attachments/SKILL.md",
       "automatedTests": [
         "functions/test/bulk-and-files.test.js",
-        "functions/test/emulator.integration.js"
+        "functions/test/emulator.integration.js",
+        "tests/lead-workspace.test.ts"
       ],
       "manualCases": [
         {
@@ -491,6 +492,17 @@
           "id": "ATTACHMENTS-02",
           "fixture": "Synthetic emulator members/lead/files; no production customer writes",
           "expected": "Unapproved/unassigned/revoked callers cannot list, upload or download; direct Storage reads are denied. Expired pending and deleting files clean up with grace and retry."
+        },
+        {
+          "id": "ATTACHMENTS-NAV-02",
+          "expected": "Inspector Files opens the same full-page lead and Files remains selected after asynchronous reload; another lead starts at All.",
+          "steps": [
+            "Open a synthetic lead from the desktop table.",
+            "Choose Files in the inspector toolbar.",
+            "Wait for lead data to load; verify Files is selected and upload controls are visible.",
+            "Go back and open a different lead; verify All is selected."
+          ],
+          "fixture": "synthetic guest application only; no production lead or file writes"
         }
       ]
     }

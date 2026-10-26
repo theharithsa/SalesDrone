@@ -35,3 +35,12 @@ export function filterLeadActivities(
   if (tab === 'tasks' || tab === 'files') return [];
   return items;
 }
+
+/** Preserve the requested tab when an inspector expands or reloads the same lead. */
+export function tabAfterLeadLoad(
+  tab: LeadWorkspaceTab,
+  selectedId: string | undefined,
+  loadedId: string,
+): LeadWorkspaceTab {
+  return selectedId === loadedId ? tab : 'all';
+}

@@ -242,12 +242,12 @@
   {
     "file": "lead-files-demo.jpg",
     "mode": "synthetic-demo",
-    "version": "1.9.0",
-    "sha256": "9544cf8cbc6514c84c090fcec6c5c27844f02f0c9594832e38506e618a7d8d22",
-    "capturedAt": "2026-10-26T09:50:22.094081+00:00",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe; standard 100% display scale",
-    "capturePixels": "1280 x 900",
-    "review": "Reviewed actual fictional guest application only; no customer data, credentials or production mutations. Browser layout review, not physical-device certification."
+    "version": "1.9.1",
+    "sha256": "de89d80570fb7e273b21df6ccd335535278f6235c57c895124d77dc8839348a6",
+    "capturedAt": "2026-10-26T10:13:59.533719+00:00",
+    "viewport": "1828 x 1028 CSS pixel browser, actual synthetic guest app, standard 100% display scale; Book mode enabled",
+    "capturePixels": "1829 x 1029",
+    "review": "Reviewed fictional guest app and generated text file only. Files shortcut remains selected after asynchronous loading; different lead opens All. No customer data, credentials or production mutations. Not physical-device certification."
   },
   {
     "file": "lead-files-mobile.jpg",
