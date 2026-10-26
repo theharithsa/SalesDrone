@@ -29,3 +29,11 @@ The follow-up review checks customer-name start alignment at normal app CSS scal
 With full lead details expanded, the observed DOM contains exactly one Log call, one Remind me, one Lead information heading and one phone value in the labelled detail list. The sidebar has no reminder banner and has one Set a reminder menu button. The call/reminder actions were opened and cancelled without saving. The menu shortcut retains capability filtering and closes mobile navigation before opening its form.
 
 API, PAT scopes, suppression rules, contact review guards and backend observability are unchanged. Only synthetic browser data is used in public captures. Deployment evidence is distinguished by commit/run rather than a new displayed version.
+
+## Same-version maintenance: compact desktop and detail-first editing
+
+A further explicit user request keeps v1.6.7 and binds maintenance to parent ee92a973aded44965c8089eeb12ea1f362a7ce02. Fine-pointer desktop density reduces spacing and shell width while preserving 17px reading/form text, using 14px table data and 13px headers. Row/card Edit controls and the Actions column are removed. Open a lead to edit it.
+
+Synthetic measurements at requested 1280px: fully visible lead data columns increased from 5 to 8; at1440px from 7 to all 9. The baseline count excludes the former sticky Actions column. Typical row height fell from 60.7px to 48.7px. Configured customer data can change these counts; they are measured fictional-fixture results, not a guarantee for every custom schema. No whole-app scaling was applied.
+
+Review covers390/768/1024/1280/1440/1920px layouts, expanded/collapsed navigation, mobile cards, full lead and overlay editing, configured-hidden-name keyboard access, both palettes and Book mode. Browser source viewports may round fractional CSS pixels. API/permission/audit contracts and the original release tag remain unchanged. Deployment checks and tenant ingestion receipts are recorded separately by commit/run.

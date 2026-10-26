@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "1.6.7",
-  "summary": "Same-version maintenance: align customer names without whole-app zoom, remove duplicated full-lead actions/contact summaries, and replace the sidebar reminder banner with a menu item.",
+  "summary": "Same-version maintenance: compact fine-pointer desktop shell, filters and lead table to show more columns; remove row/card editing and retain editing inside opened lead details.",
   "modules": [
     "salesdrone-interface",
     "salesdrone-leads",
@@ -16,7 +16,7 @@
   "settingsSections": [],
   "api": {
     "status": "unchanged",
-    "reason": "Presentation and local chart selection only; existing import, lead, aggregate and preference contracts remain unchanged. No cosmetic endpoint or PAT scope.",
+    "reason": "Presentation and edit-entry navigation only. Existing lead reads/updates, optimistic versions, memberships, assigned scope and PAT scopes are unchanged; no new endpoint.",
     "contractVersion": "1.13.0",
     "permissions": "Preserve Google/App Check, membership, assigned-lead scope and existing PAT authorization.",
     "tests": [
@@ -78,7 +78,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Synthetic name alignment across 320/390/768/1024/1280/1440/1920px requested widths at normal CSS scale; long/unbroken/missing/non-Latin names. Expand full lead details and verify exactly one Log call, Remind me and contact information list; open/cancel forms, inspect menu shortcut and mobile navigation. No whole-app zoom workaround, customer edits, physical-device or tenant-search claim. See docs/UI-REVIEW-1.6.7.md.",
+  "manualVerification": "Synthetic before/after column and row measurements at1280/1440/1920px; checks390/768/1024/1280/1440/1920px, expanded/collapsed sidebar, hidden-name row keyboard access, mobile cards and opened-lead Edit/cancel, both palettes and Book mode. Reading/forms17px and desktop table14px; no whole-app scaling, customer edits, physical-device or tenant-search claim. See docs/UI-REVIEW-1.6.7.md.",
   "screenshots": [
     "dashboard-demo.jpg",
     "leads-demo.jpg",
@@ -90,6 +90,7 @@
     "book-mode-light.jpg",
     "book-mode-dark.jpg",
     "laptop-demo.jpg",
-    "tablet-demo.jpg"
+    "tablet-demo.jpg",
+    "mobile-leads-demo.jpg"
   ]
 }

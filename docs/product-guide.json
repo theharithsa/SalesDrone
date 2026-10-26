@@ -63,7 +63,7 @@
         "Enter text and run search. Open Filters to choose the search field, stage or source; choose Filter any column for company, city, sector, name, dates or supported custom fields.",
         "Click a customer name for quick inspection. On desktop it opens above the unchanged table. At widths up to 1000 CSS pixels it opens the dedicated lead page directly, without an offset sheet. Use Back to leads; desktop overlays also close with Escape.",
         "Drag the overlay’s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.",
-        "Choose Edit in the table or Edit lead inside the overlay to update an existing enquiry. Save against the current version; reload if another change caused a conflict."
+        "Open a lead, then choose Edit lead inside its details or full page to update an existing enquiry. Save against the current version; reload if another change caused a conflict."
       ],
       "details": [
         "The source worksheet naming is made readable in the application: Enquiry source, Customer name, Phone number, Company name, City / location, Sector, Enquiry date and Enquiry status. Sales stage is separate from original imported status. Serial number is not a required application field.",
@@ -71,7 +71,8 @@
         "Non-admin lead visibility follows workspace Reports & lead access policy and membership scope. Administrators can require assigned-only access. Filtering and exporting do not grant access to additional records.",
         "Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion.",
         "Search stays visible. Filters opens the search-field/stage/source controls and custom-column filter builder, with an active-condition count. Controls stack on narrow screens; stage shortcuts scroll within their row. Opening and closing the disclosure does not clear active conditions.",
-        "Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment."
+        "Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment.",
+        "The list has no row-level Edit controls or Actions column. Open the customer name (or the mobile lead card), then choose Edit lead. When the customer-name column is hidden by configuration, the desktop row remains keyboard-focusable: press Enter or Space to open its details."
       ],
       "faq": [
         [
@@ -479,9 +480,10 @@
         "Use browser zoom or your browser default-text preference as needed. The application keeps native zoom available; there is no separate in-app text-size setting."
       ],
       "details": [
-        "Body and editable text use a shared 17px default on every size, with 15px supporting/table text and 13px metadata. Existing font families are unchanged; Book mode uses its serif families. Sizes scale with browser text preferences.",
+        "Body and editable text use a shared 17px default on every size, with 15px supporting text, 14px compact desktop table data (15px in touch layouts), and 13px metadata. Existing font families are unchanged; Book mode uses its serif families. Sizes scale with browser text preferences.",
         "On narrow screens a lead opens its dedicated page. On larger screens inspection overlays the table; expand opens the full page. Local table, stage and tab scrolling is intentional.",
-        "Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available."
+        "Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.",
+        "Desktop layouts with a fine pointer use a narrower 216px expanded sidebar, a 64px top bar, 20px page gutters and tighter controls/cards. Lead tables use 14px data, 13px headers and 32px name-button targets inside approximately 49px rows; normal reading/form text remains 17px. Touch and narrow layouts retain larger targets. Additional/custom columns may still need horizontal scrolling."
       ],
       "faq": [
         [

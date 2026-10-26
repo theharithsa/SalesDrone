@@ -1,8 +1,8 @@
 {
   "version": "1.6.7",
-  "baseCommit": "83a5f7e04118180649f31ef4cd5b3dc7c2c0f091",
+  "baseCommit": "ee92a973aded44965c8089eeb12ea1f362a7ce02",
   "authorizedByUser": true,
   "date": "2026-10-26",
-  "instruction": "Keep the version 1.6.7",
-  "reason": "User requests name alignment at normal zoom, removal of duplicated lead actions/contact summaries and a sidebar reminder menu item. Keep the original version tag and identify this maintenance deployment by commit/run."
+  "instruction": "The overall UI still feels too large at 100% zoom. Make the desktop layout more compact while keeping text readable. Remove row edit controls. Keep version 1.6.7.",
+  "reason": "User explicitly authorizes another v1.6.7 maintenance deployment for desktop density and editing only from opened lead details. Preserve the original release tag; identify this deployment by commit/run."
 }

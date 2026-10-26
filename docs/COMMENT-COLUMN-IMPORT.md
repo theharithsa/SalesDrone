@@ -8,9 +8,9 @@ API 1.6.0 (36 operations) documents `rows[].importComments` for POST `/api/v1/im
 
 Lead names stay in the normal font in tables, cards, tasks and ordinary fields. Only the expanded lead heading uses a Google Sans first word above Google Sans lettering for the remaining name, visually uppercased. The underlying full name is unchanged; this is display styling, not surname parsing or a contact-schema change.
 
-Authorized users have explicit Edit actions in desktop lead rows, mobile lead cards and the expanded detail header. Row editing loads the current record before opening the form; existing permission and optimistic-version checks still apply. Numbered history inputs have been removed; adding comments uses the timeline comment flow.
+Authorized users open a lead from its name or mobile card, then choose Edit lead in the opened details. The v1.6.7 desktop density maintenance removes row/card Edit controls and the Actions column. Existing permission and optimistic-version checks still apply. Numbered history inputs have been removed; adding comments uses the timeline comment flow.
 
-## Verification
+## Historical verification
 
 - 60 tests pass: 54 API/domain and six TypeScript date/header/filter/mapping tests.
 - Cases cover arbitrary/multiple comment columns, blank/repeated cells, source ordering, malformed and oversized cells, atomic import, replay, 40-column batches, legacy 25-row preview recovery, and the existing 1,000-row resume workflow.
@@ -21,6 +21,6 @@ Authorized users have explicit Edit actions in desktop lead rows, mobile lead ca
 
 Screenshots under `screenshots/comment-import/` use synthetic local data only.
 
-Production release verified: the API update and Hosting deployment completed successfully. Hosting serves the latest main asset and comment-selection import module. The public contract is 1.6.0. The authenticated live Leads page has explicit row Edit actions, ordinary name text and no discussion/follow-up headers. These checks were read-only; production lead values and comment history were not rewritten.
+Historical production release evidence (superseded UI): the API update and Hosting deployment completed successfully. Hosting serves the latest main asset and comment-selection import module. The public contract is 1.6.0. The authenticated live Leads page has explicit row Edit actions, ordinary name text and no discussion/follow-up headers. These checks were read-only; production lead values and comment history were not rewritten.
 
 Typography update (v1.1.5, 25 October 2026): browser computed styles now confirm Google Sans on the expanded first name. Caveat remains on the login slogan; saved names and import behavior are unchanged.

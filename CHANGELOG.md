@@ -6,6 +6,12 @@ API contract versions are independent from application versions.
 
 ## [1.6.7] - 2026-10-26
 
+### Desktop density maintenance
+- Compact desktop navigation, top bar, page gutters, lead filters and dashboard cards while preserving readable text and existing fonts.
+- Fit more lead columns with 14px table data, tighter padding and shorter rows on fine-pointer desktops; retain larger touch targets elsewhere.
+- Remove row/card Edit controls and the Actions column. Edit after opening a lead; keep keyboard access when the name column is hidden.
+- Update screenshots, product guidance and module skills; keep v1.6.7 under the explicit maintenance authorization.
+
 ### Authorized maintenance
 - Align wrapped and missing customer names to the same table-column edge at normal app scale; preserve readable fonts and browser zoom.
 - Show one call/reminder action set on the full lead page and one labelled contact-detail list, retaining permitted phone/email links.

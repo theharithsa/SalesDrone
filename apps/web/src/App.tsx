@@ -975,20 +975,6 @@ export default function App() {
     }
     return chooseLead(lead);
   }
-  async function editLeadFromList(lead: Lead) {
-    const fresh = await chooseLead(lead);
-    if (fresh) {
-      if (window.matchMedia('(max-width: 1000.99px)').matches) {
-        window.history.pushState(
-          {},
-          '',
-          '/leads/' + encodeURIComponent(fresh.id),
-        );
-        setRouteLeadId(fresh.id);
-      }
-      setModal('edit');
-    }
-  }
   async function openTask(t: Task) {
     setFocusedTask(t);
     setModal('taskdetail');
@@ -1917,11 +1903,6 @@ export default function App() {
                         leads={visibleLeads}
                         selectedId={selected?.id || null}
                         onSelect={inspectLead}
-                        onEdit={
-                          can('leads:edit')
-                            ? (lead) => void editLeadFromList(lead)
-                            : undefined
-                        }
                       />
                     ) : (
                       <Empty

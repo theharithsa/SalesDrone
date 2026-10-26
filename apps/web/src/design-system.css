@@ -1309,3 +1309,106 @@ textarea {
   margin-top: 0;
   font-size: inherit;
 }
+
+/* Desktop density uses available space rather than whole-app scaling. */
+@media (min-width: 1001px) and (pointer: fine) {
+  .app-shell:not(.sidebar-collapsed) > .sidebar {
+    width: 216px;
+    padding: 24px 12px 12px;
+  }
+  .app-shell:not(.sidebar-collapsed) > .main-shell {
+    margin-left: 216px;
+  }
+  .app-shell .topbar {
+    min-height: 64px;
+    padding: 8px 20px;
+  }
+  .app-shell .sidebar .quick-search {
+    margin: 24px 4px 20px;
+    min-height: 36px;
+    font-size: 0.8125rem;
+  }
+  .app-shell .sidebar .nav-item {
+    min-height: 40px;
+    padding-block: 8px;
+    font-size: 0.875rem;
+  }
+  .app-shell .page-body {
+    max-width: 1760px;
+    padding: 20px;
+  }
+  .app-shell .page-title {
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .app-shell .page-title h1 {
+    font-size: 1.75rem;
+  }
+  .app-shell .page-title p {
+    font-size: 0.9375rem;
+    margin-top: 8px;
+  }
+  .app-shell .title-actions .button,
+  .app-shell .dashboard-title-actions .button {
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 0.9375rem;
+  }
+  .app-shell .leads-main .search-field {
+    min-height: 40px;
+  }
+  .app-shell .leads-main .search-field input,
+  .app-shell .leads-main select {
+    min-height: 40px;
+    font-size: 1rem;
+  }
+  .app-shell .lead-filters-disclosure > summary,
+  .app-shell .stage-tabs button {
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 0.9375rem;
+  }
+  .app-shell .lead-search-row,
+  .app-shell .lead-filters-disclosure,
+  .app-shell .stage-tabs {
+    margin-block: 12px;
+  }
+  .app-shell .worksheet-leads-table {
+    min-width: 1000px;
+  }
+  .app-shell .worksheet-leads-table th,
+  .app-shell .worksheet-leads-table td {
+    padding: 8px;
+    max-width: 176px;
+  }
+  .app-shell .worksheet-leads-table td,
+  .app-shell .worksheet-cell,
+  .app-shell .worksheet-leads-table .worksheet-name-button {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  .app-shell .worksheet-leads-table [data-field='name'] {
+    min-width: 11rem;
+  }
+  .app-shell .worksheet-leads-table .worksheet-name-button {
+    min-height: 32px;
+  }
+  .app-shell .worksheet-cell {
+    max-width: 10rem;
+  }
+  .app-shell .worksheet-leads-table .score-badge {
+    font-size: 0.8125rem;
+  }
+  .app-shell .dashboard-brief {
+    padding: 24px;
+    gap: 20px;
+  }
+  .app-shell .dashboard-charts,
+  .app-shell .dashboard-bottom {
+    gap: 20px;
+  }
+  .app-shell .chart-panel,
+  .app-shell .insight-card {
+    padding: 20px;
+  }
+}

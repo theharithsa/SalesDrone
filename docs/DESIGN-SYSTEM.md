@@ -37,8 +37,7 @@ Search is immediately available. Filters groups search-field, stage, source and
 custom-column conditions behind one native disclosure, with an active-condition
 count. Filtering, export scope and permissions are unchanged. On phones these
 controls stack at full width rather than truncating long labels into half columns.
-Stage shortcuts scroll locally without widening the document. Lead cards retain
-normal name typography, contact information and Edit.
+Stage shortcuts scroll locally without widening the document. Lead cards retain normal name typography and contact information. Open a lead before choosing Edit lead; list rows/cards have no Edit action.
 
 At widths below 1001 CSS pixels, opening a lead navigates to `/leads/{id}`. The
 original list is hidden, with no desktop-sheet offset. At larger widths the table
@@ -74,12 +73,18 @@ sources; their suggestions cannot override a user’s typography/branding choice
 
 Main content is centered with a 1600px maximum and fluid 16–32px gutters; Settings has a 1480px maximum. Dashboard charts become one column at a 52rem content-container width, with two KPI columns; below 30rem the ring legend stacks. Settings forms collapse at a 42rem content width. The shared `.dialog` form has two columns only above a 38rem surface width. Import mapping collapses at 44rem. Container thresholds scale with text preferences. Media maximums end at .99px before the next integer minimum to avoid fractional-width gaps. Keep CSS and JavaScript lead-routing thresholds aligned.
 
-At 768–1100px the expanded sidebar is 224px; collapsed navigation remains 72px. The reminder shortcut is a normal capability-gated menu row; do not reintroduce the promotional banner. At very short heights the sidebar scrolls, including account controls. Fixed icon cells keep navigation aligned.
+At 768–1100px the expanded sidebar is 224px; collapsed navigation remains 80px. The reminder shortcut is a normal capability-gated menu row; do not reintroduce the promotional banner. At very short heights the sidebar scrolls, including account controls. Fixed icon cells keep navigation aligned.
 
 Chart axes, dates and ring totals are HTML text with shared roles rather than shrinking SVG lettering. The native Chart day selector provides a 44px alternative to small data points and changes only the selected local day. Table data retains 44px actions with compact row padding; long comments have a 72-character measure. After choosing an import workbook, a compact replacement chooser leaves mapping visible. Login columns use minmax(0, ...) and wrapping text to avoid min-content overflow at 320px.
 
 ## Table alignment and lead content ownership
 
-Customer-name buttons fill their column and align text to start, including wrapped, unbroken, missing and non-Latin names. Reserve a 14rem minimum name-column width; additional columns scroll locally. Never use whole-app CSS zoom or transforms to compensate for alignment.
+Customer-name buttons fill their column and align text to start, including wrapped, unbroken, missing and non-Latin names. Reserve a 14rem default name-column width (11rem in compact fine-pointer desktop layouts); additional columns scroll locally. Never use whole-app CSS zoom or transforms to compensate for alignment.
 
 The inspection overlay owns its compact actions; the dedicated lead page owns its action row above the tabs. Do not mount both on a full page. Contact values appear once in the labelled Lead information list, including email and permitted phone/email links. Avoid a second icon summary repeating those fields. Custom fields remain in Additional information.
+
+## Compact desktop density
+
+At widths of at least 1001px with a fine pointer, the authenticated/demo app shell uses a 216px expanded sidebar, 64px top bar and 20px page gutters. Sidebar rows are 40px; title actions/stage filters are 36px. Reading text and forms remain17px; page descriptions/actions use15px and dense lead data14px with13px headers. Font families do not change. Phones, coarse-pointer layouts and form controls retain their existing touch sizing. The table name button has a 32px target inside an approximately 49px row on fine-pointer desktop; touch tables retain 44px name targets.
+
+Table cells use 8px padding, an 11rem minimum name column and bounded secondary values with native title text/full lead detail for long values. Additional or unusually wide/custom columns scroll locally rather than shrinking text further. Remove row/card editing and the sticky Actions column; one Edit lead action is available after opening a lead. If configuration hides the name column, native table rows become keyboard-focusable and Enter/Space opens details. Do not introduce global CSS zoom, transforms or a reduced root font size to achieve density.

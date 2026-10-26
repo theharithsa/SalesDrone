@@ -1,5 +1,4 @@
 import { ScoreBadge } from './LeadScore';
-import { Pencil } from 'lucide-react';
 import { Lead, displayDate } from '../lib/types';
 import {
   defaultFieldOptions,
@@ -11,7 +10,6 @@ export default function WorksheetLeads({
   leads,
   selectedId,
   onSelect,
-  onEdit,
   config = defaultFieldOptions,
   scores = {},
 }: {
@@ -19,7 +17,6 @@ export default function WorksheetLeads({
   leads: Lead[];
   selectedId: string | null;
   onSelect: (lead: Lead) => void;
-  onEdit?: (lead: Lead) => void;
   config?: FieldOptions;
 }) {
   const columns: (readonly [string, string])[] = [
@@ -57,7 +54,6 @@ export default function WorksheetLeads({
                   {label}
                 </th>
               ))}
-              {onEdit ? <th className="worksheet-actions">Actions</th> : null}
             </tr>
           </thead>
           <tbody>
@@ -66,6 +62,21 @@ export default function WorksheetLeads({
                 key={lead.id}
                 className={selectedId === lead.id ? 'selected' : ''}
                 onClick={() => onSelect(lead)}
+                tabIndex={config.hiddenFields.includes('name') ? 0 : undefined}
+                aria-label={
+                  config.hiddenFields.includes('name')
+                    ? 'Open lead details'
+                    : undefined
+                }
+                onKeyDown={(event) => {
+                  if (
+                    event.target === event.currentTarget &&
+                    (event.key === 'Enter' || event.key === ' ')
+                  ) {
+                    event.preventDefault();
+                    onSelect(lead);
+                  }
+                }}
               >
                 {columns.map(([field]) => (
                   <td key={field} data-field={field}>
@@ -94,20 +105,6 @@ export default function WorksheetLeads({
                     )}
                   </td>
                 ))}
-                {onEdit ? (
-                  <td className="worksheet-actions">
-                    <button
-                      className="text-button"
-                      aria-label={'Edit ' + (lead.name || 'lead')}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(lead);
-                      }}
-                    >
-                      <Pencil size={15} /> Edit
-                    </button>
-                  </td>
-                ) : null}
               </tr>
             ))}
           </tbody>
@@ -139,15 +136,6 @@ export default function WorksheetLeads({
                 {lead.legacyStatus || lead.stage}
               </small>
             </button>
-            {onEdit ? (
-              <button
-                className="text-button worksheet-card-edit"
-                aria-label={'Edit ' + (lead.name || 'lead')}
-                onClick={() => onEdit(lead)}
-              >
-                <Pencil size={15} /> Edit lead
-              </button>
-            ) : null}
           </article>
         ))}
       </div>
