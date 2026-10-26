@@ -91,6 +91,7 @@ export function Modal({
   description,
   children,
   wide = false,
+  returnFocusRef,
 }: {
   open: boolean;
   onClose: () => void;
@@ -98,6 +99,7 @@ export function Modal({
   description?: string;
   children: ReactNode;
   wide?: boolean;
+  returnFocusRef?: { current: HTMLElement | null };
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
@@ -106,6 +108,14 @@ export function Modal({
         <Dialog.Content
           className={'dialog ' + (wide ? 'wide' : '')}
           onPointerDownOutside={(e) => e.preventDefault()}
+          onCloseAutoFocus={
+            returnFocusRef
+              ? (event) => {
+                  event.preventDefault();
+                  returnFocusRef.current?.focus();
+                }
+              : undefined
+          }
         >
           <div className="dialog-heading">
             <div>

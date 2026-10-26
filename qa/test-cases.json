@@ -233,6 +233,16 @@
           "id": "INTERFACE-MATERIAL-05",
           "expected": "New enquiry, call, reminder and edit-task forms have labelled outlined fields, required date validation, working keyboard selection, and spaced actions. Custom dropdown popup is tested where base-select is supported; native fallback remains usable elsewhere.",
           "fixture": "development-only fictional admin form preview; no record writes; light/dark/Book and long fields"
+        },
+        {
+          "id": "MOBILE-2.0.1-01",
+          "fixture": "npm run review:mobile; isolated local synthetic Chromium and labelled admin preview, no customer records",
+          "expected": "All primary modules fit mobile widths; lead section fills grid content box; filter Apply closes while Cancel/Escape retains criteria and restores focus; 12px control curves; compact logo/nav; five saved zoom levels apply without overflow or undersized tap targets."
+        },
+        {
+          "id": "THEME-CONTROL-2.0.1",
+          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320\u20131920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
+          "fixture": "isolated synthetic browser; node scripts/review-theme.mjs; no account writes"
         }
       ]
     },
@@ -317,6 +327,11 @@
           "id": "LEADS-INFINITE-01",
           "fixture": "96 synthetic guest leads; demo-salesdrone for network/race checks; no customer writes",
           "expected": "Bottom proximity loads 30/60/90/96 sample rows, then stops. Live cursor pages retain filters/access and continue through sparse results. At most one append is in flight; failed loads wait for Retry. Filter/navigation changes reject stale responses. Keyboard fallback and mobile work; appending preserves selection without selecting new rows; demo export includes all matching rows."
+        },
+        {
+          "id": "LEADS-LEADING-SELECTION-2.0.1",
+          "expected": "At 320/390/600/767px, checkbox target is left of the name and names share a start edge. Select/deselect without opening the lead. Verify target size and placement through all five saved zoom values, plus desktop table selection, dark and Book layouts. Workspace header omits Avinya logo beside the theme control.",
+          "fixture": "isolated synthetic demo; review:mobile; no customer writes"
         }
       ]
     },
@@ -345,7 +360,10 @@
       "ownerSkill": "skills/salesdrone-observability/SKILL.md",
       "automatedTests": [
         "functions/test/app.test.js",
-        "functions/test/observability.test.js"
+        "functions/test/observability.test.js",
+        "functions/test/telemetry-health.test.js",
+        "tests/ci-events.test.ts",
+        "tests/rum-runtime.test.ts"
       ],
       "manualCases": [
         {
@@ -357,6 +375,11 @@
           "id": "OBSERVABILITY-02",
           "expected": "Separate HTTP signal acceptance from tenant searchability and RUM identity mode.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "OBS-RELEASE-2.0.1",
+          "expected": "Verify exact PR merge/run/version and MCP environment, projected release and actual CI case events, native trace/log IDs, process/queue/CI metric samples. Distinguish transport acceptance, tenant search and native RUM linkage; do not write customer fixtures or assume catalog/manual cases ran.",
+          "fixture": "trusted main CI plus read-only Dynatrace MCP; no customer modifications"
         }
       ]
     },
@@ -458,6 +481,11 @@
           "id": "TASKS-REMINDERS-02",
           "expected": "Suppressed contacts and revoked access prevent invalid outreach delivery.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "TASKS-MOBILE-2.0.1",
+          "expected": "Compact title/New and status picker on phones; list fills content width; title, context, due date and menu align at 320 through 1920px and fractional 768px boundary. Completion symbol is smaller than the compensated target. Check all five saved zoom values, short windows, large text, light/dark/Book themes, long titles, all statuses and empty lists. Row menu supports Escape/focus/outside dismissal, edit/reschedule/delete dialogs and synthetic completion/cancellation without exposing another recipient task.",
+          "fixture": "isolated synthetic guest demo; review:mobile; no customer data or real delivery"
         }
       ]
     },

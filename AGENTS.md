@@ -86,3 +86,9 @@ and publication. The local-first hold is resolved for this release. Follow the
 normal release gates; no approval bypasses failures. MATERIAL-3-REVIEW.md records
 measured browser evidence and limitations. Do not restamp historical screenshots;
 use newly captured synthetic images with reviewed hashes and dimensions.
+
+All changes must go through a GitHub pull request before merging into main, per
+the human's standing instruction. Push the working branch, open and attach its
+PR, wait for required verification, then merge through the PR. Never push commits
+directly to main or bypass failed checks. Production still deploys from the
+resulting main commit via the normal workflow.

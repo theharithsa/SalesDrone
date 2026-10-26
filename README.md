@@ -1,5 +1,8 @@
 # SalesDrone by AvinyaTech
 
+> v2.0.1 includes mobile refinements and observability completion.
+> See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
+
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
 filled forms, a resizable lead inspector and automatic lead-list pagination.
 See the [product handbook](docs/PRODUCT-GUIDE.md), [settings reference](docs/SETTINGS.md)
@@ -39,7 +42,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard funnel is a snapshot of current counts: selecting a stage opens its filtered leads. Its widths do not claim conversion rates or an invented history.
 
-![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=3934038da18b)
+![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=0b6e353a7a40)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -50,7 +53,7 @@ The notification bell opens an overlay without losing your place. Assignment and
 <details>
 <summary>Mobile lead view</summary>
 
-<img src="site/assets/screenshots/mobile-demo.jpg?sha=8ca3faafdfbe" alt="A fictional lead’s journey on mobile" width="320">
+<img src="site/assets/screenshots/mobile-demo.jpg?sha=c5584d620424" alt="A fictional lead’s journey on mobile" width="320">
 
 </details>
 
@@ -134,7 +137,7 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=3934038da18b)
+![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=85f6447a44a9)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
@@ -146,19 +149,19 @@ The full lead page opens in **All**: loaded activity and review information. You
 
 Open **Settings → Appearance & time**, enable **Book mode**, and save. Warm paper and serif fonts throughout the UI work with Light, Dark and System; the sunrise/sunset switch keeps your reading style. This is personal to your account.
 
-![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=224e8995b58a)
+![Book mode lead workspace with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=f26289ab4678)
 
 Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).
 
 Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Material 3 while retaining personal font and Book mode preferences. Open Filters for advanced search options; opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
 
-![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=c7f39e7e1d89)
+![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=2eb9af3bd249)
 
 ## Reviewed across screen sizes
 
 Material 3 type roles use 16px body text, compact table labels and content-width forms while preserving personal font choices. The [v2.0 review](docs/MATERIAL-3-REVIEW.md) records measured layouts from 360 to 1920px, real infinite-scroll behavior, form checks and browser-only verification limits.
 
-![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=d2942e724c6a)
+![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=d5e20f3ceaba)
 
 [Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Synthetic import preview](site/assets/screenshots/import-demo.jpg)
 
@@ -168,7 +171,7 @@ The v1.6.7 maintenance updates align wrapped customer names, remove duplicate le
 
 Open Settings → Appearance & time to preview and save Standard, Inter, Source Sans 3 or Lora. The choice is personal; Book mode keeps its serif styling. Activity cards now use a clearer, more compact type hierarchy. Fonts are self-hosted, with licences retained. See the [font and activity guide](docs/FONT-CHOICES.md).
 
-![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=d8164c539cd6)
+![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=85f6447a44a9)
 
 ## Repeatable testing
 
@@ -184,6 +187,14 @@ Batch edit up to 25 explicitly selected leads with a before/after review and ato
 
 Select loaded leads, preview shared changes and apply the reviewed batch. Open a lead’s Files tab for private Firebase Storage attachments.
 
-![Batch edit preview with fictional leads](site/assets/screenshots/batch-edit-demo.jpg)
+![Batch edit dialog with fictional lead selections; no changes applied](site/assets/screenshots/batch-edit-demo.jpg)
 
-![Private lead Files tab with a fictional document](site/assets/screenshots/lead-files-demo.jpg)
+![Fictional lead Files tab in its empty state](site/assets/screenshots/lead-files-demo.jpg)
+
+### Clearer tasks and observable releases
+
+Tasks use compact phone controls and one menu for secondary actions. CI records actual
+check/testcase results separately from server-committed business events; see the
+[Observability agent](skills/salesdrone-observability/SKILL.md) and [release procedure](docs/RELEASE.md).
+
+![Task collection with fictional reminders](site/assets/screenshots/tasks-demo.jpg)

@@ -1,7 +1,7 @@
 import LeadFiles from './features/LeadFiles';
 import InfiniteLeadLoader from './components/InfiniteLeadLoader';
 import { appendUniqueRows } from './lib/lead-pagination';
-import { normalizeDisplayScale } from './lib/display-scale';
+import { normalizeDisplayScale, scaleFromCSS } from './lib/display-scale';
 import { normalizeFontStyle } from './lib/fonts';
 import { resolveVisualPreferences } from './lib/appearance';
 import { readStored, writeStored, removeStored } from './lib/browser-storage';
@@ -24,7 +24,6 @@ import NotificationOverlay from './components/NotificationOverlay';
 import LeadJourney from './components/LeadJourney';
 import { APP_VERSION } from './lib/version';
 import LeadScore, { ScoreBadge } from './components/LeadScore';
-import EnterpriseBrand from './components/EnterpriseBrand';
 import ThemeToggle from './components/ThemeToggle';
 import TaskEditForm from './components/TaskEditForm';
 import TaskDeleteForm from './components/TaskDeleteForm';
@@ -35,6 +34,7 @@ import {
   labelFor,
 } from './lib/field-options';
 import LeadFilters from './components/LeadFilters';
+import MobileLeadFilters from './components/MobileLeadFilters';
 import LeadBatchEditor from './features/LeadBatchEditor';
 import {
   ColumnFilter,
@@ -202,6 +202,7 @@ export default function App() {
     [demoLeadLimit, setDemoLeadLimit] = useState(30),
     [listLoadError, setListLoadError] = useState(false),
     [menu, setMenu] = useState(false),
+    [leadMoreOpen, setLeadMoreOpen] = useState(false),
     [sidebarCollapsed, setSidebarCollapsed] = useState(
       () =>
         readStored('localStorage', 'salesdrone.sidebarCollapsed') === 'true',
@@ -281,6 +282,17 @@ export default function App() {
   }, [page]);
   const admin = !demo && session?.member?.role === 'Admin';
   const generation = useRef(0);
+  const leadActionsRoot = useRef<HTMLDivElement>(null);
+  const leadMoreTrigger = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!leadMoreOpen) return;
+    const outside = (event: PointerEvent) => {
+      if (!leadActionsRoot.current?.contains(event.target as Node))
+        setLeadMoreOpen(false);
+    };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, [leadMoreOpen]);
   const listEpoch = useRef(0);
   const pendingList = useRef<number | null>(null);
   const detailEpoch = useRef(0);
@@ -1376,7 +1388,6 @@ export default function App() {
               onChange={(next) => void changeTheme(next)}
               busy={themeBusy}
             />
-            <EnterpriseBrand />
           </div>
         </div>
         <div className="login-content">
@@ -1744,7 +1755,6 @@ export default function App() {
               onChange={(next) => void changeTheme(next)}
               busy={themeBusy}
             />
-            <EnterpriseBrand workspace />
           </div>
         </header>
         {demo ? (
@@ -1880,8 +1890,20 @@ export default function App() {
                       </span>
                       <h1>
                         Leads
-                        <span className="heading-count">
-                          {summary.total ?? data.leads.length}
+                        <span
+                          className="heading-count"
+                          aria-label={`${summary.total ?? data.leads.length} leads within your access`}
+                          title={`${summary.total ?? data.leads.length} leads`}
+                        >
+                          <span className="lead-count-full">
+                            {summary.total ?? data.leads.length}
+                          </span>
+                          <span className="lead-count-short" aria-hidden="true">
+                            {new Intl.NumberFormat('en', {
+                              notation: 'compact',
+                              maximumFractionDigits: 0,
+                            }).format(summary.total ?? data.leads.length)}
+                          </span>
                         </span>
                       </h1>
                       <p>
@@ -1889,37 +1911,99 @@ export default function App() {
                         step forward.
                       </p>
                     </div>
-                    <div className="title-actions">
+                    <div className="title-actions lead-collection-actions">
                       {demo ||
-                      session?.workspaceSettings?.exportsEnabled !== false ? (
-                        <LeadReportExport
-                          request={request}
-                          config={fieldOptions}
-                          criteria={{
-                            filters: columnFilters,
-                            ...(stage ? { stage } : {}),
-                            ...(source ? { source } : {}),
-                            ...(search ? { search, field: searchField } : {}),
+                      session?.workspaceSettings?.exportsEnabled !== false ||
+                      admin ? (
+                        <div
+                          className="lead-secondary-actions"
+                          ref={leadActionsRoot}
+                          onBlur={(event) => {
+                            if (
+                              !event.currentTarget.contains(
+                                event.relatedTarget as Node,
+                              )
+                            )
+                              setLeadMoreOpen(false);
                           }}
-                          demo={demo}
-                          demoLeads={filteredDemoLeads}
-                          key={session?.member?.accessPolicyVersion || 'demo'}
-                        />
-                      ) : null}
-                      {admin ? (
-                        <button
-                          className="button"
-                          onClick={() => go('imports')}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Escape') {
+                              setLeadMoreOpen(false);
+                              leadMoreTrigger.current?.focus();
+                              event.stopPropagation();
+                            }
+                          }}
                         >
-                          <Upload size={16} /> Import
-                        </button>
+                          <button
+                            type="button"
+                            ref={leadMoreTrigger}
+                            className="icon-button lead-more-button"
+                            aria-label="More lead actions"
+                            title="More lead actions"
+                            aria-expanded={leadMoreOpen}
+                            aria-controls="lead-extra-actions"
+                            onClick={() => setLeadMoreOpen(!leadMoreOpen)}
+                          >
+                            <MoreHorizontal size={20} />
+                          </button>
+                          <div
+                            id="lead-extra-actions"
+                            className={
+                              'lead-action-popover' +
+                              (leadMoreOpen ? ' open' : '')
+                            }
+                            onClick={(event) => {
+                              if (
+                                (event.target as HTMLElement).closest('button')
+                              )
+                                setLeadMoreOpen(false);
+                            }}
+                          >
+                            {demo ||
+                            session?.workspaceSettings?.exportsEnabled !==
+                              false ? (
+                              <LeadReportExport
+                                menuTriggerRef={leadMoreTrigger}
+                                request={request}
+                                config={fieldOptions}
+                                criteria={{
+                                  filters: columnFilters,
+                                  ...(stage ? { stage } : {}),
+                                  ...(source ? { source } : {}),
+                                  ...(search
+                                    ? { search, field: searchField }
+                                    : {}),
+                                }}
+                                demo={demo}
+                                demoLeads={filteredDemoLeads}
+                                key={
+                                  session?.member?.accessPolicyVersion || 'demo'
+                                }
+                              />
+                            ) : null}
+                            {admin ? (
+                              <button
+                                className="button"
+                                onClick={() => go('imports')}
+                              >
+                                <Upload size={16} /> Import
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
                       ) : null}
                       {can('leads:create') ? (
                         <button
-                          className="button primary"
+                          className="button primary lead-create-button"
+                          aria-label="New enquiry"
+                          title="New enquiry"
                           onClick={() => setModal('lead')}
                         >
-                          <Plus size={16} /> New enquiry
+                          <Plus size={18} />
+                          <span className="lead-create-label-desktop">
+                            New enquiry
+                          </span>
+                          <span className="lead-create-label-mobile">New</span>
                         </button>
                       ) : null}
                     </div>
@@ -1935,9 +2019,7 @@ export default function App() {
                       <Search size={17} />
                       <input
                         aria-label="Search leads"
-                        placeholder={
-                          demo ? 'Search sample leads…' : 'Search leads…'
-                        }
+                        placeholder="Search leads…"
                         value={searchDraft}
                         onChange={(e) => {
                           setSearchDraft(e.target.value);
@@ -1953,6 +2035,23 @@ export default function App() {
                       </button>
                     </form>
                   </div>
+                  <MobileLeadFilters
+                    key={session?.identity.uid || 'demo'}
+                    config={fieldOptions}
+                    sources={sourceOptions}
+                    applied={{
+                      searchField,
+                      stage,
+                      source,
+                      filters: columnFilters,
+                    }}
+                    onApply={(values) => {
+                      setSearchField(values.searchField);
+                      setStage(values.stage);
+                      setSource(values.source);
+                      setColumnFilters(values.filters);
+                    }}
+                  />
                   <details className="lead-filters-disclosure">
                     <summary>
                       <Filter size={16} /> Filters
@@ -2025,6 +2124,22 @@ export default function App() {
                       onApply={setColumnFilters}
                     />
                   </details>
+                  <div className="mobile-lead-list-bar">
+                    <label>
+                      <span className="sr-only">Quick stage filter</span>
+                      <select
+                        aria-label="Quick stage filter"
+                        value={stage}
+                        onChange={(event) => setStage(event.target.value)}
+                      >
+                        <option value="">All stages</option>
+                        {fieldOptions.values.stage.map((value) => (
+                          <option key={value}>{value}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <span aria-live="polite">{visibleLeads.length} loaded</span>
+                  </div>
                   <div
                     className="stage-tabs"
                     role="group"
@@ -2858,44 +2973,67 @@ export default function App() {
               </div>
             ) : null}
             {page === 'tasks' ? (
-              <div className="page-body">
+              <div className="page-body tasks-page">
                 <div className="page-title">
                   <div>
-                    <span className="eyebrow">NOTHING SLIPS THROUGH</span>
                     <h1>Tasks</h1>
                     <p>Your follow-ups, organised by what needs attention.</p>
                   </div>
                   {can('tasks:write') ? (
                     <button
-                      className="button primary"
+                      className="button primary task-create-button"
+                      aria-label="Add reminder"
+                      title="Add reminder"
                       onClick={() => setModal('task')}
                     >
-                      <Plus size={16} /> Add reminder
+                      <Plus size={18} />
+                      <span className="task-create-label-desktop">
+                        Add reminder
+                      </span>
+                      <span className="task-create-label-mobile">New</span>
                     </button>
                   ) : null}
                 </div>
-                <div className="stage-tabs">
-                  {['Pending', 'Completed', 'Cancelled'].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setTaskFilter(s)}
-                      className={taskFilter === s ? 'active' : ''}
+                <div className="task-list-toolbar">
+                  <div
+                    className="stage-tabs task-status-tabs"
+                    role="group"
+                    aria-label="Task status"
+                  >
+                    {['Pending', 'Completed', 'Cancelled'].map((s) => (
+                      <button
+                        key={s}
+                        aria-pressed={taskFilter === s}
+                        onClick={() => setTaskFilter(s)}
+                        className={taskFilter === s ? 'active' : ''}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <label className="task-status-picker">
+                    <span className="sr-only">Task status</span>
+                    <select
+                      aria-label="Task status"
+                      value={taskFilter}
+                      onChange={(event) => setTaskFilter(event.target.value)}
                     >
-                      {s}
-                    </button>
-                  ))}
+                      {['Pending', 'Completed', 'Cancelled'].map((s) => (
+                        <option key={s}>{s}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <span className="task-loaded-count" aria-live="polite">
+                    {visibleTasks.length} loaded
+                  </span>
                 </div>
-                <section className="panel">
-                  <div className="section-heading">
-                    <div>
-                      <h2>
-                        {taskFilter === 'Pending'
-                          ? 'Your next steps'
-                          : taskFilter + ' tasks'}
-                      </h2>
-                      <p>Times shown in {timezone}.</p>
-                    </div>
-                    <span className="count-pill">{visibleTasks.length}</span>
+                <section
+                  className="panel tasks-panel"
+                  aria-label={`${taskFilter} tasks`}
+                >
+                  <div className="task-list-context">
+                    <Clock size={14} aria-hidden="true" />
+                    <span>Times in {timezone}</span>
                   </div>
                   {loading && !visibleTasks.length ? (
                     <Loading />
@@ -3514,25 +3652,46 @@ function TaskRow({
   onDelete?: () => void;
   disabled: boolean;
 }) {
+  const menuRef = useRef<HTMLDetailsElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const outside = (event: PointerEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node))
+        menuRef.current.open = false;
+    };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, [menuOpen]);
   const overdue =
     task.state === 'Pending' && Date.parse(task.dueAt) < Date.now();
   return (
-    <div className="task-row">
+    <div className="task-row" data-state={task.state}>
       <button
         className={
           'task-check ' + (task.state === 'Completed' ? 'complete' : '')
         }
-        aria-label={'Complete ' + task.title}
+        aria-label={
+          (task.state === 'Completed'
+            ? 'Completed: '
+            : task.state === 'Cancelled'
+              ? 'Cancelled: '
+              : 'Complete ') + task.title
+        }
         disabled={disabled || task.state !== 'Pending'}
         onClick={onComplete}
       >
-        {task.state === 'Completed' ? <Check size={13} /> : null}
+        <span className="task-check-symbol" aria-hidden="true">
+          {task.state === 'Completed' ? (
+            <Check size={14} />
+          ) : task.state === 'Cancelled' ? (
+            <X size={14} />
+          ) : null}
+        </span>
       </button>
-      <div className="task-body">
-        <button onClick={onOpen} className="task-title">
-          {task.title}
-        </button>
-        <span>
+      <button className="task-body" onClick={onOpen} aria-label={task.title}>
+        <span className="task-title">{task.title}</span>
+        <span className="task-context">
           {lead ? (
             <LeadName name={lead.name} />
           ) : task.leadId ? (
@@ -3547,57 +3706,106 @@ function TaskRow({
             </>
           ) : null}
         </span>
-      </div>
+      </button>
       <div className="task-time">
         <span className={overdue ? 'overdue' : ''}>
           {overdue ? <span className="overdue-dot" /> : <Clock size={12} />}{' '}
-          {displayDate(task.dueAt, timezone)}
+          <time dateTime={task.dueAt}>{displayDate(task.dueAt, timezone)}</time>
         </span>
         {overdue ? (
           <small>Overdue</small>
-        ) : (
-          <small>{task.state === 'Pending' ? 'Upcoming' : task.state}</small>
-        )}
+        ) : task.state !== 'Pending' ? (
+          <small>{task.state}</small>
+        ) : null}
       </div>
-      {onEdit || onDelete ? (
-        <div className="task-row-tools">
-          {onEdit ? (
-            <button
-              className="text-button"
-              onClick={onEdit}
-              disabled={disabled}
-            >
-              Edit
-            </button>
-          ) : null}
-          {onDelete ? (
-            <button
-              className="text-button danger"
-              onClick={onDelete}
-              disabled={disabled}
-            >
-              Delete
-            </button>
-          ) : null}
-        </div>
-      ) : null}
-      {task.state === 'Pending' ? (
-        <details className="task-menu">
+      {task.state === 'Pending' || onEdit || onDelete ? (
+        <details
+          ref={menuRef}
+          className="task-menu"
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector('summary')?.focus();
+              event.stopPropagation();
+            }
+          }}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node))
+              event.currentTarget.open = false;
+          }}
+          onToggle={(event) => {
+            const details = event.currentTarget;
+            setMenuOpen(details.open);
+            if (!details.open) return;
+            const menu = details.querySelector(
+              ':scope > div',
+            ) as HTMLElement | null;
+            const trigger = details.querySelector('summary');
+            if (!menu || !trigger) return;
+            details.dataset.placement = 'below';
+            const anchor = trigger.getBoundingClientRect();
+            const top = Math.max(
+              0,
+              document.querySelector('.topbar')?.getBoundingClientRect()
+                .bottom || 0,
+            );
+            const navigation = document
+              .querySelector('.bottom-nav')
+              ?.getBoundingClientRect();
+            const bottom =
+              navigation && navigation.height
+                ? navigation.top
+                : window.innerHeight;
+            const above = Math.max(0, anchor.top - top - 8);
+            const below = Math.max(0, bottom - anchor.bottom - 8);
+            const placeAbove =
+              menu.scrollHeight *
+                scaleFromCSS(getComputedStyle(document.documentElement).zoom) >
+                below && above > below;
+            details.dataset.placement = placeAbove ? 'above' : 'below';
+            menu.style.setProperty(
+              '--task-menu-room',
+              Math.max(
+                1,
+                (placeAbove ? above : below) /
+                  scaleFromCSS(getComputedStyle(document.documentElement).zoom),
+              ) + 'px',
+            );
+          }}
+          onClick={(event) => {
+            if ((event.target as HTMLElement).closest('button')) {
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector('summary')?.focus();
+            }
+          }}
+        >
           <summary aria-label={'Actions for ' + task.title}>
             <MoreHorizontal size={18} />
           </summary>
           <div>
-            <button onClick={onSnooze} disabled={disabled}>
-              Snooze 1 hour
-            </button>
-            {onReschedule ? (
-              <button onClick={onReschedule} disabled={disabled}>
-                Reschedule
-              </button>
+            {onEdit ? (
+              <button onClick={onEdit} disabled={disabled}>Edit task</button>
             ) : null}
-            {onCancel ? (
-              <button onClick={onCancel} disabled={disabled}>
-                Cancel task
+            {task.state === 'Pending' ? (
+              <>
+                <button onClick={onSnooze} disabled={disabled}>
+                  Snooze 1 hour
+                </button>
+                {onReschedule ? (
+                  <button onClick={onReschedule} disabled={disabled}>
+                    Reschedule
+                  </button>
+                ) : null}
+                {onCancel ? (
+                  <button onClick={onCancel} disabled={disabled}>
+                    Cancel task
+                  </button>
+                ) : null}
+              </>
+            ) : null}
+            {onDelete ? (
+              <button className="danger" onClick={onDelete} disabled={disabled}>
+                Delete task
               </button>
             ) : null}
           </div>

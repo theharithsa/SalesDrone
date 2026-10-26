@@ -45,7 +45,7 @@ schemas.Preferences.properties.bookMode.description =
 schemas.Preferences.properties.fontStyle.description =
   'Personal interface font: standard (default), inter, source-sans or lora. Omission preserves the saved value. Book mode keeps its own serif family; no authorization change. Google sign-in/App Check only; PAT writes denied.';
 schemas.Preferences.properties.displayScale.description =
-  'Personal desktop display zoom percentage: 85, 90, 100 (default), 110 or 125. Omission preserves the saved value. Only applies on fine-pointer desktop layouts; touch/narrow layouts remain 100%. Browser zoom is unrestricted. Self-service Google/App Check only; PAT writes denied.';
+  'Personal display zoom percentage: 85, 90, 100 (default), 110 or 125. Omission preserves the saved value. The current UI applies it on phones, tablets and desktops after saving, retaining usable touch targets. Browser zoom is unrestricted. Self-service Google/App Check only; PAT writes denied.';
 schemas.ImportInput.properties.rows.items.properties = {
   importComments: {
     type: 'array',

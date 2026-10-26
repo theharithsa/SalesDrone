@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "version": "2.0.1",
+  "summary": "Local mobile correction: full-width lead cards, draft filter dialog, rounded controls, compact branding/navigation and saved zoom on phones with touch-size compensation. Tasks now shares the compact mobile hierarchy, with aligned list rows and consolidated secondary actions. Shared theme control is a compact sun/moon pill with a solid active indicator. Mobile lead selection now leads each card; workspace header omits the Avinya logo beside the theme control.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-leads",
+    "salesdrone-workspace-settings",
+    "salesdrone-testing",
+    "salesdrone-product-guide",
+    "salesdrone-api-integrations",
+    "salesdrone-book-mode",
+    "salesdrone-tasks-reminders",
+    "salesdrone-observability",
+    "salesdrone-release",
+    "salesdrone-dashboard"
+  ],
+  "documentation": [
+    "docs/MOBILE-2.0.1-REVIEW.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/API.md",
+    "docs/TESTING.md",
+    "docs/observability.md",
+    "docs/OBSERVABILITY-PLAN.md",
+    "docs/RELEASE.md",
+    "docs/BUSINESS-EVENTS.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "No route, schema, scope or value change. Existing displayScale description now explains mobile frontend application; filtering still uses the same scoped query.",
+    "contractVersion": "1.16.0",
+    "permissions": "Existing self-only Google/App Check /me policy, active membership, assigned lead scope and denied PAT preference writes remain unchanged.",
+    "tests": [
+      "functions/test/display-scale.test.js",
+      "functions/test/api-portal.test.js",
+      "tests/display-scale.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Extend existing SDK/outbox contracts with bounded runtime/SDK/export/flush/queue health and numeric committed lifecycle counts; trusted-main CI reports actual check/testcase outcomes with safe events, traces/logs and metrics. HTTP receipts, tenant queries and RUM navigation remain independent evidence.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/telemetry-health.test.js",
+        "tests/ci-events.test.ts",
+        "tests/rum-runtime.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Extend existing SDK/outbox contracts with bounded runtime/SDK/export/flush/queue health and numeric committed lifecycle counts; trusted-main CI reports actual check/testcase outcomes with safe events, traces/logs and metrics. HTTP receipts, tenant queries and RUM navigation remain independent evidence.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/telemetry-health.test.js",
+        "tests/ci-events.test.ts",
+        "tests/rum-runtime.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Extend existing SDK/outbox contracts with bounded runtime/SDK/export/flush/queue health and numeric committed lifecycle counts; trusted-main CI reports actual check/testcase outcomes with safe events, traces/logs and metrics. HTTP receipts, tenant queries and RUM navigation remain independent evidence.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/telemetry-health.test.js",
+        "tests/ci-events.test.ts",
+        "tests/rum-runtime.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Extend existing SDK/outbox contracts with bounded runtime/SDK/export/flush/queue health and numeric committed lifecycle counts; trusted-main CI reports actual check/testcase outcomes with safe events, traces/logs and metrics. HTTP receipts, tenant queries and RUM navigation remain independent evidence.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/telemetry-health.test.js",
+        "tests/ci-events.test.ts",
+        "tests/rum-runtime.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Extend existing SDK/outbox contracts with bounded runtime/SDK/export/flush/queue health and numeric committed lifecycle counts; trusted-main CI reports actual check/testcase outcomes with safe events, traces/logs and metrics. HTTP receipts, tenant queries and RUM navigation remain independent evidence.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/telemetry-health.test.js",
+        "tests/ci-events.test.ts",
+        "tests/rum-runtime.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts",
+    "private-storage"
+  ],
+  "manualVerification": "Local synthetic Chromium regression passes 135 recorded viewport/interaction checks plus contained assertions, including task header/status/list geometry, menu/dialog/status behavior, five saved zoom values and dark/Book task palettes. An additional 14 task stress checks cover long titles, short windows, enlarged root text and fractional iframe widths. Task-scale return navigation to Settings is programmatic because the touch harness was intermittent at 125%; this does not certify that navigation. No physical phone, Safari/IME, live task persistence/delivery or tenant query is claimed. Public task captures and publication remain pending user review. Theme control: 46 focused Chromium checks pass for login/workspace, pointer and keyboard, System/local persistence, reduced motion, five stored scale fixtures and Book palettes; these fixtures do not certify account persistence. Leading selection/header update: integrated mobile review now passes 149 checks, including independent checkbox behavior, common name alignment, leading targets at 320/390/600/767px and all five actual saved zoom values at 320/390px. Workspace header has no Avinya logo; desktop selection is retained. User authorized integrated observability completion and publication through a PR. Fresh synthetic screenshot review is required before merging. After merge verify exact main SHA/version, five functions, OTLP receipts and MCP queries for deployment/CI/domain events, logs, traces and metrics; record any RUM/native-link limits. All 28 declared public captures were freshly recorded in an isolated synthetic Chromium session and visually/privacy reviewed with measured dimensions, hashes and current version. Real Auth/Firestore/Storage emulator checks passed. Pre-deployment OTLP traces/logs/metrics returned 200 with zero rejections; this is explicitly a synthetic transport preflight, not deployment proof.",
+  "screenshots": [
+    "dashboard-demo.jpg",
+    "journey-demo.jpg",
+    "mobile-demo.jpg",
+    "notifications-demo.jpg",
+    "api-portal-demo.jpg",
+    "developer-settings-demo.jpg",
+    "lead-overlay-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "book-mode-light.jpg",
+    "book-mode-dark.jpg",
+    "book-mode-mobile.jpg",
+    "book-settings-demo.jpg",
+    "leads-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "import-demo.jpg",
+    "laptop-demo.jpg",
+    "login-demo.jpg",
+    "tablet-demo.jpg",
+    "activity-demo.jpg",
+    "font-settings-demo.jpg",
+    "display-scale-demo.jpg",
+    "score-ring-demo.jpg",
+    "batch-edit-demo.jpg",
+    "batch-edit-mobile.jpg",
+    "lead-files-demo.jpg",
+    "lead-files-mobile.jpg",
+    "tasks-demo.jpg",
+    "mobile-tasks-demo.jpg"
+  ],
+  "pendingDesignApproval": false
+}

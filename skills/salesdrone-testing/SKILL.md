@@ -64,3 +64,55 @@ signed-in production browser profiles. Keep captures/evidence in test-results un
 privacy/visual review, then curate filenames and hashes. Chromium viewport checks
 are not physical device tests. Disconnect CDP and stop only the browser/server you
 started when finished. CI now runs design:forms and production fixture exclusion.
+
+### Mobile sweep beyond overflow
+
+Run npm run review:mobile with design:dev and an existing isolated Chromium/CDP
+session on 9337. It uses trusted touch actions, checks actual grid content width,
+filter Apply/Cancel/Reset and focus, every lead tab, all main modules, admin settings
+and forms. All zoom percentages are saved through the actual guest form, including
+minimum icon targets. Never equate no root overflow with a full-width layout.
+Use a fresh nonpersonal profile; test evidence/screenshots remain in test-results
+until visual/privacy review. Physical device, Safari/IME and live writes are separate.
+
+### Header regression additions
+
+review:mobile checks a compact header, hidden phone intro/chip strip, presence of
+the quick stage picker and list start position using synthetic data. Test More
+Escape/outside/action dismissal and Export's focus return. Check container-driven icon
+labels and roomier text labels, including saved zoom; desktop actions must remain visible. A count marked
+loaded is not a promise of the total number matching a sparse cursor scan.
+
+### Task list regression
+
+TASKS-MOBILE-2.0.1 checks compact header/status picker below 768px, full content
+width, aligned title/date/menu, small completion symbols with full touch targets,
+all status states and empty results. review:mobile exercises menu Escape/focus,
+outside dismissal and edit/reschedule/delete dialogs, plus completion/cancellation
+in synthetic memory. Cover fractional card breakpoint, desktop/wide widths, all
+five saved zooms and standard/Book day/night. Real emulator delivery is separate.
+
+### Theme control regression
+
+Run `node scripts/review-theme.mjs` with design:dev and isolated Chromium/CDP 9337.
+Check trusted pointer and keyboard toggle, resolved System appearance changes,
+local persistence, bounded geometry/touch sizes across widths/scales, Book palettes
+and reduced-motion transition removal. Local-storage preference fixtures are not
+server persistence tests. Login and workspace use the same component.
+
+### Leading lead checkbox and logo removal
+
+review:mobile verifies mobile checkbox target right <= name left, common name
+edges, independent select/deselect without record opening, and all five saved zoom
+values. It also asserts the workspace header has no enterprise-brand element.
+review-theme checks that absence across its header width/scale matrix.
+
+### CI execution telemetry
+
+ci-checks.mjs runs fixed preflight/unit/API/type/form/contract/emulator/build checks,
+stops at a failure and records unexecuted work as not-run. The second Node test
+reporter records actual leaf outcomes, hashed IDs and measured timestamps/duration
+without test names, error text or output. CI artifacts are the execution evidence;
+qa/test-cases.json remains a recipe catalog. The trusted main observe job reports
+workflow/check/testcase events and reporting spans/logs/metrics. PR jobs receive no
+telemetry or production secret. See the Observability operations runbook.

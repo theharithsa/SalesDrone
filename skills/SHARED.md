@@ -111,3 +111,9 @@ permission and stale-work implications; tests actually run; affected exports/ass
 remaining verification limits; and one concrete end-to-end scenario. Distinguish
 local evidence from production evidence. Only the user or current task instructions
 can authorize delegation; the catalog is preparation for possible future agents.
+
+All changes must go through a GitHub pull request before merging into main, per
+the human's standing instruction. Push the working branch, open and attach its
+PR, wait for required verification, then merge through the PR. Never push commits
+directly to main or bypass failed checks. Production still deploys from the
+resulting main commit via the normal workflow.

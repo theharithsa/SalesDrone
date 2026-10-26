@@ -65,3 +65,25 @@ form measurements, screenshots and explicit limits. Earlier pending notes descri
 the initial review stage; current release evidence supersedes them. CI independently
 runs form-render and production review-fixture exclusion checks. Never attach a
 personal signed-in browser profile for these synthetic rehearsals.
+
+## Mobile 2.0.1 local regression
+
+`npm run review:mobile` requires the local design server and an already-installed
+isolated Chromium on localhost CDP 9337. It performs trusted touch clicks on the
+actual synthetic app, checks full-width lead cards (not only absence of overflow),
+filter draft/apply/cancel/reset/focus, six record tabs, forms, all settings sections,
+exports/imports, notifications and public Swagger. All five zoom values are saved
+through the real guest preference flow. Outputs are ignored test-results/mobile*
+files; do not publish these as production screenshots or physical-device evidence.
+
+TASKS-MOBILE-2.0.1 extends review:mobile with content-width/row alignment assertions,
+compact status/header checks, completion-symbol versus touch-target measurements,
+all task states, Escape/outside menu dismissal and edit/reschedule/delete dialogs.
+Saved zoom and theme sweeps include Tasks; mutations are synthetic in-memory only.
+
+`node scripts/review-theme.mjs` runs the focused THEME-CONTROL-2.0.1 browser
+regression against the isolated localhost CDP browser. It checks pointer/keyboard
+actions, System changes, guest-local persistence, reduced motion, narrow/wide
+header geometry and stored zoom/Book fixtures. Phone targets must remain >=44px;
+fine-pointer controls follow the existing personal display scale. It does not
+prove signed-in account persistence or physical-device/Safari behavior.

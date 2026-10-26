@@ -1,0 +1,30 @@
+// Shared bounded labels for CI metrics/events. Never use test, run or commit IDs as dimensions.
+export const CI_CHECKS = [
+  'metadata',
+  'security',
+  'docs-check',
+  'readiness',
+  'skills',
+  'version',
+  'functions',
+  'web',
+  'types',
+  'forms',
+  'contracts',
+  'contract-diff',
+  'emulator',
+  'audit',
+  'docs',
+  'build',
+  'fixture',
+  'deploy-job',
+  'docs-job',
+  'workflow',
+];
+export const CI_STATUSES = [
+  'passed',
+  'failed',
+  'skipped',
+  'not-run',
+  'cancelled',
+];

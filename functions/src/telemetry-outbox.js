@@ -47,6 +47,30 @@ export async function deliverTelemetry({
   );
   const jobs = [...sending, ...pending].slice(0, 20),
     stats = { examined: jobs.length, delivered: 0, retried: 0, rejected: 0 };
+  if (telemetry?.outboxHealth && store.count) {
+    try {
+      const states = ['Pending', 'Sending', 'Rejected'];
+      const counts = Object.fromEntries(
+        await Promise.all(
+          states.map(async (state) => [
+            state,
+            await store.count(queue, [['status', '==', state]]),
+          ]),
+        ),
+      );
+      const due = [...pending, ...sending]
+        .map((j) => Date.parse(j.nextAttemptAt))
+        .filter(Number.isFinite);
+      telemetry.outboxHealth(
+        counts,
+        due.length
+          ? Math.max(0, (Date.parse(now()) - Math.min(...due)) / 1000)
+          : 0,
+      );
+    } catch {
+      telemetry.log('telemetry.health.failed', { outcome: 'failure' });
+    }
+  }
   for (let i = 0; i < jobs.length; i += 4)
     await Promise.all(
       jobs.slice(i, i + 4).map(async (job) => {

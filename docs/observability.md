@@ -135,3 +135,100 @@ tab selection invents a backend business event. The separate fictional admin rev
 entry has no RUM tag or API transport. No deployment event is sent for local work.
 After design approval the existing workflow must report the real version/SHA and
 verify delivery independently of tenant searchability.
+
+### Local mobile patch 2.0.1
+
+Mobile filter drafts do not create business events or server writes. Apply changes
+only the existing lead query. Saved display zoom reuses PATCH /me and its committed
+preference-key audit/outbox; no new telemetry field, email policy or event type is
+introduced. Client page identities and authenticated API traces/logs/metrics are
+unchanged. Deployment events are reserved for a later authorized publication.
+
+The local task-list refinement reuses existing task API metrics, traces, sanitized
+logs and server-committed task events. Header/status/menu presentation introduces
+no API, permission or new event. Demo completion/cancellation is in-memory only;
+no deployment signal or live task-delivery claim is made during local review.
+
+The local theme-button redesign changes only the shared control's presentation.
+Existing personal appearance saves retain their current API/audit/outbox path;
+login/demo changes remain local. No new metric, trace attribute, log payload or
+business event is introduced.
+
+Leading mobile lead checkboxes and workspace logo removal are presentation-only.
+They keep existing batch selection/open navigation, API permissions and safe RUM
+behavior; they introduce no server write, business event or telemetry payload.
+
+## v2.0.1 instrumentation and CI completion
+
+See [the completed gap analysis](OBSERVABILITY-PLAN.md) and the repository
+[Observability agent](../skills/salesdrone-observability/SKILL.md). Follow
+[its operations runbook](../skills/salesdrone-observability/references/operations.md)
+for PR-first release, bounded MCP validation and recovery. Current Classic token
+transport is supported by the official [OTLP API](https://docs.dynatrace.com/docs/ingest-from/opentelemetry-classic/otlp-api)
+and [authentication reference](https://docs.dynatrace.com/docs/dynatrace-api/basics/dynatrace-api-authentication).
+
+New contracts (in addition to the existing request/worker/delivery signals):
+
+| Instrument | Type / unit | Bounded dimensions / meaning |
+| --- | --- | --- |
+| salesdrone.runtime.memory | Gauge / By | kind=rss,heapUsed,heapTotal,external; process memory |
+| salesdrone.runtime.cpu | Delta observable counter / s | mode=user,system; process CPU, not VM utilization |
+| salesdrone.runtime.event_loop_utilization | Gauge / 1 | utilization since previous collection in this process |
+| salesdrone.telemetry.exports | Delta observable counter / batch | signal=traces,logs,metrics; outcome=success,failure; SDK callback result |
+| salesdrone.telemetry.flushes | Counter / flush | outcome=success,failure,timeout; recorded after bounded flush for subsequent export |
+| otel.sdk.processor.span.* / log.* | SDK self-observability | queue capacity/size, processed and queue_full drops; bounded SDK component/type/error labels |
+| salesdrone.outbox.records | Gauge / record | state=Pending,Sending,Rejected; exact aggregate sampled before drain |
+| salesdrone.outbox.oldest_due_age | Gauge / s | age of earliest due Pending/expired Sending work observed at drain start |
+| salesdrone.ci.results | Counter / result | check, outcome, kind=case/check; no IDs as metric labels |
+| salesdrone.ci.duration | Histogram / s | same dimensions; measured source duration, not report processing time |
+
+Each warm process has a random service.instance.id resource to prevent merging
+independent delta streams. Cardinality is bounded by deployed runtime instances,
+not users or requests. Process/runtime metrics are not infrastructure monitoring.
+The explicit MeterProvider is shared with SDK batch processors for supported queue
+self-observability; it is not a second SDK. Shutdown flushes/stops both providers.
+
+Exporter callbacks are observed once, normalized to safe error categories, and
+produce a sanitized platform diagnostic on failure. Customer data/error messages
+and exporter URLs/credentials are never diagnostic attributes. A callback success
+is not independent partial-acceptance validation; deployment probes decode the
+actual OTLP response, and tenant queries check visibility. Exporter diagnostic
+counters can be delivered only after the exporter recovers. No durable OTLP queue
+is promised; business outcomes retain their separate durable outbox.
+
+Existing domain CloudEvents now include optional numeric known-transition fields:
+records.completed/cancelled/reopened/soft_deleted on tasks, and
+records.archived/suppressed/unsuppressed/stage_changed/assignment_changed on leads.
+These require a read-before-write snapshot and count final document transitions
+once within the domain transaction. Failed transactions cannot emit them. They do
+not export old/new values, add historic facts or create additional event totals.
+
+Trusted main CI emits `com.avinyatech.salesdrone.github-actions.ci.workflow.completed`,
+`.ci.check.completed`, and `.ci.testcase.completed` CloudEvents. `ci.kind`, `ci.check`,
+`ci.status`, `ci.duration.ms`, and hashed `ci.case.id` describe actual execution.
+Source test names/errors/output and fixture contents are excluded. A skipped/todo
+case stays skipped; checks after a failure remain not-run. Case events and step
+summaries are different aggregation levels; do not add them together.
+CI spans/logs describe processing the retained execution report, not fabricated
+historic test spans. Actual source completion time/duration are event metadata.
+All carry automation-confirmed authority, stable event/transaction IDs, release,
+commit and GitHub run metadata; native app commits retain server-confirmed authority.
+
+PR verification receives no ingestion or deploy secret. A separate always-run main
+observe job downloads safe artifacts after verify/deploy/documentation settle and
+reports all their outcomes. HTTP 202 is required per CI event. On network loss,
+retry the same event ID; on 400/401/403 stop and diagnose. Artifacts preserve safe
+results/receipts for 30 days. Reporting failure never rolls back an app deployment.
+A reporting-only retry preserves source verification attempt IDs. Test catalogs,
+manual cases and browser/physical tests are never silently labelled executed.
+
+RUM storage denial now retains a distinct random per-page fallback instead of a
+shared browser:session tag. Request actions close exactly once even when property
+recording throws. Existing approved live-email policy, account switch/sign-out,
+manual route names, first-party propagation and Replay exclusion remain unchanged.
+No browser OTel gateway, new credential, scope, API or tenant setting is introduced.
+
+The connected MCP was verified as bos01241 / indiacs.apps.dynatrace.com and found
+existing SalesDrone 2.0.0 logs. Release-specific 2.0.1 transport, tenant search and
+native RUM linkage evidence are recorded after deployment; this section alone is
+implementation guidance, not a verification certificate.

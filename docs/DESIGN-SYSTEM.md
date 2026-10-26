@@ -18,7 +18,7 @@ This does not claim native platform behavior, Material certification or Dynamic 
 - `material/settings.css`: personal/admin settings, imports and reports.
 - `material/login.css`: authentication presentation.
 
-ThemeToggle retains its component-scoped motion stylesheet. The previous global
+ThemeToggle owns its component-scoped two-icon pill and indicator transition. The previous global
 stylesheets remain unimported for historical references during review. Do not add
 another global refresh/override file or mix the v1 cascade into this entry.
 
@@ -38,8 +38,8 @@ Use Google Sans headings and Manrope body; alternate fonts change the same roles
 | Metadata | 12 / 18 | Dates, table context and secondary identifiers |
 
 Compact tables use 13px cells and 14px identity actions, keeping rows scannable.
-Do not shrink the entire app by default. Personal desktop scale remains 85–125%;
-touch and narrow layouts retain 100%. Phone text inputs stay 16px. Monospace contact
+Do not shrink the entire app by default. Personal display scale is 85–125% on all viewport sizes, applied after saving.
+Touch targets compensate at smaller scales rather than forcing mobile to 100%. Phone text inputs stay 16px. Monospace contact
 numbers are deliberate. Book mode uses serif roles, preserving monospace identifiers.
 
 ## Colour, shape and motion
@@ -50,7 +50,7 @@ related areas. Error and tertiary pairs express semantic states with text labels
 Four palettes cover day/night and Book day/night. Text role pairs require >=4.5:1.
 Legacy variable names are aliases to these roles for functional component compatibility.
 
-Spacing uses a 4px grid. Rounded chips are 8px, filled form fields 4px top corners, cards 20px and dialogs
+Spacing uses a 4px grid. Rounded chips are 8px, filled form fields and dropdowns 12px corners, cards 20px and dialogs
 28px. Filled primary, tonal, outlined and text buttons carry distinct emphasis.
 Desktop actions have 40px visible containers; phone/coarse-pointer actions are 48px.
 Focus rings are visible, 3px with offset. Reduced motion disables transitions; normal
@@ -61,7 +61,7 @@ state changes use 160ms and entrances 240–260ms. Dragging follows the pointer 
 - >=1200px: 232px drawer or user-collapsed 88px rail; lead conversation/details panes.
 - 600–1199px: labelled 88px navigation rail. Lead inspection opens a dedicated record
   below 1001px; details stack after activity below that width.
-- <600px: modal navigation drawer, 80px bottom navigation and full-width content.
+- <600px: modal navigation drawer, 64px bottom navigation (plus safe-area inset at 100% zoom) and full-width content.
 - Lead tables switch to cards below 768px. Additional columns scroll locally.
 - Settings navigation becomes a section dropdown below 900px.
 
@@ -113,3 +113,58 @@ wrap the action group onto another row when necessary.
 At lead container widths <=560px, the header actions become icon-only on one row;
 labels return above that width. Accessible names and hover titles remain. The rule
 follows the actual resizable blade/full-page width, independently of the viewport.
+
+## Mobile layout regression contract (local 2.0.1)
+
+The actual `.leads-table` section is the grid item and spans all columns. Test its
+width against the grid content box; no page overflow alone does not prove the
+layout fills available space. Phone cards align identity, company and score while
+keeping selection away from the name. The native search input has no nested box.
+
+Below 768px, filters use a Radix dialog with separate drafts, explicit Apply/Cancel
+and draft Reset; desktop retains the disclosure. Escape/Cancel must preserve
+applied filters and restore trigger focus. Reset is not a server mutation.
+
+Dropdowns/filled fields use 12px rounded corners. Material supports a shape scale,
+not a single universal radius; see the [official Material shape guidance](https://developer.android.com/develop/ui/compose/designsystems/material3#shapes).
+The sign-in landing page and workspace header omit the Avinya Enterprises logo.
+SalesDrone branding and the sidebar textual attribution remain. Brand text is an
+explicit two-line aligned block.
+
+Saved zoom now applies to phones as well. Use zoom-aware viewport dimensions for
+fixed drawers/dialogs and compensate minimum touch sizes at <100% scale. Verify
+all five values through actual Save changes, not root CSS injection. Browser/pinch
+zoom remains available. These changes are a local patch pending review/publication.
+
+### Task collection hierarchy (local 2.0.1)
+
+Tasks uses the same compact phone title/New composition as Leads. Below 768px a
+status picker replaces the three status buttons; desktop keeps labelled status
+buttons and Add reminder. The loaded count describes the current page collection,
+not a workspace total. Timezone context appears once above the list.
+
+Task rows use a grid: completion target, flexible identity and an anchored action
+menu. Dates sit under the identity on phones and in a separate column on desktop.
+The completion circle is 22px inside a compensated 48px phone target; never enlarge
+the visible circle to the entire target. Titles and lead/company text wrap. Edit,
+delete and pending-only scheduling actions share one menu, including for completed
+and cancelled tasks. Escape, outside pointer and focus leaving dismiss it.
+
+### Shared theme control (local 2.0.1)
+
+The quick theme control is one native button with a 64px sun/moon pill inside its
+44px desktop or compensated 48px phone hit area. A solid primary/on-primary circle
+marks the resolved current mode; the action label names the opposite mode. The
+indicator travels 28px in 160ms, with no transition under reduced motion.
+Semantic surface/outline pairs adapt to standard and Book palettes. System remains
+a Settings choice; the quick action chooses explicit Light or Dark. Busy saves
+disable the button and expose aria-busy; existing save/rollback policy is retained.
+
+The mobile bottom-navigation selection fills the rounded button behind both icon
+and label. Use the button's active background, not a separately positioned icon
+pill; preserve the compact bar height and compensated touch target.
+
+The outreach chart's Day select uses a rounded filled surface, vertically centered
+value and reserved right padding for the shared chevron. Keep the full date on one
+line; allow the caption metrics to wrap independently. Retain the native select,
+Chart day name, keyboard focus and existing local day-selection behavior.

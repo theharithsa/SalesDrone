@@ -17,7 +17,7 @@ Read [SHARED.md](../SHARED.md). This is a visual mode of the existing editable a
 
 ## Invariants
 
-Book mode is optional boolean bookMode, default false, independent of appearance=System/Light/Dark. The sunrise/sunset control preserves it. Older PATCH clients that omit bookMode preserve the saved choice. Live identities use their server preference; guest/demo/unapproved identities use guarded local fallback and cannot inherit live data.
+Book mode is optional boolean bookMode, default false, independent of appearance=System/Light/Dark. The compact sun/moon theme pill preserves it. Older PATCH clients that omit bookMode preserve the saved choice. Live identities use their server preference; guest/demo/unapproved identities use guarded local fallback and cannot inherit live data.
 
 All visible text uses the local serif reading stack in Book mode: headings, identity, navigation, buttons, forms, tables, chart labels and narrative text. Phone numbers and telephone inputs, including descendants of phone cells, remain monospace. Keep the SalesDrone/Avinya artwork and standard-mode fonts intact. Avoid blanket !important rules that override phone semantics or icon rendering; account for portals outside the app root and SVG chart text.
 
@@ -44,3 +44,10 @@ Interface font selection is orthogonal to Book mode. Store the selected font but
 ## Material 3 v2 local-review guidance
 
 Material v2 owns day/night paper palettes in material/tokens.css and uses the same geometry as Standard. Do not re-import the legacy book-mode.css override cascade. Serif body/headings and the existing monospace identifier exception remain. Check every field/control and personal font restoration in both palettes.
+
+### Mobile layout and scale
+
+Book mode inherits rounded controls, full-width lead cards, compact navigation and
+mobile display zoom without a separate geometry override. Preserve serif roles and
+paper/night colours. Review both palettes at narrow widths and restore 100% after
+zoom rehearsal; do not replace saved personal preferences with a global small font.

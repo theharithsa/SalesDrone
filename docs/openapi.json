@@ -21596,7 +21596,7 @@
                 "const": 125
               }
             ],
-            "description": "Personal desktop display zoom percentage: 85, 90, 100 (default), 110 or 125. Omission preserves the saved value. Only applies on fine-pointer desktop layouts; touch/narrow layouts remain 100%. Browser zoom is unrestricted. Self-service Google/App Check only; PAT writes denied."
+            "description": "Personal display zoom percentage: 85, 90, 100 (default), 110 or 125. Omission preserves the saved value. The current UI applies it on phones, tablets and desktops after saving, retaining usable touch targets. Browser zoom is unrestricted. Self-service Google/App Check only; PAT writes denied."
           },
           "automaticReminders": {
             "type": "boolean"

@@ -76,3 +76,8 @@ Chart reading uses HTML y-axis/date labels and a centered HTML ring total; retai
 ## Material 3 v2 local-review guidance
 
 Material v2 places metric cards before the briefing, uses horizontal stage cards and one chart hierarchy. Current-stage counts are still snapshots, not historic conversion. Manual/automatic AI generation policy is unchanged. Review the redesigned chart labels, small-screen scrolling and both palettes before approval.
+
+The outreach chart's Day select uses a rounded filled surface, vertically centered
+value and reserved right padding for the shared chevron. Keep the full date on one
+line; allow the caption metrics to wrap independently. Retain the native select,
+Chart day name, keyboard focus and existing local day-selection behavior.

@@ -43,7 +43,7 @@ The v2 surface uses Material colour pairs, 16px body/forms, 14px labels/supporti
 Google Sans headings and Manrope text; personal font choices remap the same roles.
 Caveat remains on sign-in conversation lettering. Phone identifiers stay monospace.
 Book mode remaps palette/type roles without changing geometry. No default global
-zoom reduction: retain the explicit personal desktop scale setting and touch limits.
+zoom reduction: retain the explicit personal scale setting with usable touch targets.
 
 Desktop uses a 232px drawer or 88px collapsed rail. Medium screens use the labelled
 rail; <600px uses a modal drawer and bottom navigation. Settings uses a section
@@ -115,3 +115,55 @@ iframe and scroll ancestors. Keep loading/end states, keyboard fallback, explici
 retry on error and one automatic attempt per cursor. Disconnect on unmount and
 disable while busy; App owns request locking and stale-response guards. The demo
 contains 96 fictional rows so local scrolling can be checked beyond 12 records.
+
+## Mobile 2.0.1 regression contract
+
+The actual grid item `.leads-table` must span all columns; measuring only root
+overflow missed a narrowed list. Assert section/content-box width and card/name
+alignment. Mobile filters use MobileLeadFilters with draft Apply/Cancel/Reset and
+trigger focus restoration; desktop disclosure is retained. Fields/dropdowns use
+12px corners. Login and the workspace header omit the enterprise image; the sidebar keeps
+textual attribution. Phone header/nav are 56/64px at 100%, plus safe areas. Zoom applies on mobile
+as well; compensate touch targets and fixed viewport sizing at smaller scales.
+Do not restore the older desktop-only clamp. Fonts and access policy stay unchanged.
+This patch is local pending review, distinct from the approved/published v2.0.0.
+
+### Collection header hierarchy
+
+Keep mobile title/New on one row, intro copy hidden, and secondary export/import
+actions behind the named More disclosure. Desktop keeps visible secondary actions.
+Use one mobile stage picker instead of the stage-chip strip; search/filter targets
+stay usable. Overflow closes on outside pointer, Escape and action selection.
+Export focus returns to More on mobile and its own button on desktop. Compact
+counts preserve an exact accessible name; tiny layouts can omit the count badge.
+
+### Task collection alignment
+
+Tasks shares the compact mobile title/New and picker hierarchy with Leads; keep
+desktop Add reminder/status buttons. TaskRow owns a grid for completion, identity,
+date and menu; the 22px symbol sits inside a compensated touch target. No separate
+Edit/Delete row. Long names/titles wrap, dates align under identity below 768px and
+the list fills the content box. Fonts, themes and personal scale remain shared.
+
+### Local 2.0.1 theme control
+
+ThemeToggle uses one native button with sun/moon icons and a solid indicator for
+the resolved current mode. The named action switches to the opposite explicit
+mode, preserving System following in Settings and Book mode. Keep the existing
+changeTheme persistence/error/busy path, keyboard focus and compensated touch
+target. The indicator moves 28px in 160ms, disabled under reduced motion. Use
+semantic Material colour pairs rather than gradient day/night palettes. Refresh
+affected login/workspace public captures after approval; local captures do not
+replace or relabel published v2.0 images. No API or new audit/event is introduced.
+
+### Mobile selection and header branding
+
+The workspace header omits EnterpriseBrand on every width; preserve SalesDrone
+branding and the sidebar attribution. Mobile lead articles use a leading selection
+column rather than an absolutely positioned trailing checkbox. The name no longer
+reserves trailing selection space. Without a selection control, the open action
+spans the row. Keep checkbox and open actions independent and keyboard-accessible.
+
+The mobile bottom-navigation selection fills the rounded button behind both icon
+and label. Use the button's active background, not a separately positioned icon
+pill; preserve the compact bar height and compensated touch target.

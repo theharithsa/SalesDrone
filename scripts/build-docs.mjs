@@ -29,6 +29,8 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'tasks-demo.jpg',
+  'mobile-tasks-demo.jpg',
   'batch-edit-demo.jpg',
   'batch-edit-mobile.jpg',
   'lead-files-demo.jpg',

@@ -147,16 +147,19 @@
   --body-font: 'Lora Variable', Georgia, serif;
   --heading-font: var(--body-font);
 }
-@media (min-width: 1001px) and (pointer: fine) {
-  @supports (zoom: 1) {
-    :root {
-      zoom: var(--interface-scale, 1);
-    }
+@supports (zoom: 1) {
+  :root {
+    zoom: var(--interface-scale, 1);
   }
 }
 
 @media (max-width: 599.99px), (pointer: coarse) {
   :root {
-    --md-touch-target: 48px;
+    --interface-small-scale: min(1, var(--interface-scale, 1));
+    --md-touch-target: max(48px, calc(48px / var(--interface-scale, 1)));
+    --mobile-nav-height: calc(64px / var(--interface-small-scale));
+    --mobile-safe-bottom: calc(
+      env(safe-area-inset-bottom) / var(--interface-scale, 1)
+    );
   }
 }

@@ -3,9 +3,9 @@
 select {
   -webkit-appearance: none;
   appearance: none;
-  min-height: 48px;
+  min-height: max(var(--md-touch-target, 0px), 48px);
   padding: 12px 44px 12px 16px;
-  border-radius: 4px;
+  border-radius: 12px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='m7 10 5 5 5-5' stroke='%23434750' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
@@ -32,7 +32,7 @@ select:disabled {
     margin-block: 4px;
     padding: 8px 0;
     border: 0;
-    border-radius: 4px;
+    border-radius: 12px;
     background: var(--md-sys-color-surface-container);
     color: var(--text);
     box-shadow: 0 4px 12px #0003;
@@ -43,7 +43,7 @@ select:disabled {
   }
   select option {
     padding: 12px 16px;
-    min-height: 48px;
+    min-height: max(var(--md-touch-target, 0px), 48px);
     gap: 12px;
     white-space: normal;
     overflow-wrap: anywhere;
@@ -91,10 +91,10 @@ select:disabled {
 .material-field > input:not([type='checkbox']):not([type='radio']),
 .material-field > select,
 .material-field > textarea {
-  min-height: 56px;
+  min-height: max(var(--md-touch-target, 0px), 56px);
   padding: 24px 16px 8px;
   border: 0;
-  border-radius: 4px 4px 0 0;
+  border-radius: 12px;
   background-color: var(--field-surface);
   line-height: 24px;
 }

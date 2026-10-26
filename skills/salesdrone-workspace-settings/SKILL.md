@@ -90,7 +90,7 @@ FontStyle is an optional allowlisted personal preference (standard/inter/source-
 
 ## v1.8 operating notes
 
-Appearance & time includes Desktop display zoom numeric85/90/100/110/125. Draft changes apply after Save; default 100, omitted PATCH preserves. Persist per member through /me, isolate guest fallback and apply only fine-pointer/min1001px desktop. Document reset100 and touch/narrow 100 behavior. Test functions/test/display-scale.test.js and tests/appearance.test.ts.
+Appearance & time includes Display zoom numeric85/90/100/110/125. Draft changes apply after Save; default 100, omitted PATCH preserves. Persist per member through /me and isolate guest fallback. From app 2.0.1, apply it on phones/tablets as well, compensate touch sizes and document reset100. Test functions/test/display-scale.test.js and tests/appearance.test.ts.
 
 ## v1.9 operating notes
 
@@ -99,3 +99,23 @@ Explain the new PAT scopes in Developer settings and leads:edit file/batch capab
 ## Material 3 v2 local-review guidance
 
 Material v2 uses shared section cards and a settings dropdown below 900px. The local AdminReview entry renders real components with fictional state, never live API access. SettingsPage previewOnly blocks push registration; the ordinary app does not pass it. Existing field IDs, stored preferences and API policy are unchanged.
+
+### Mobile display scale (local 2.0.1)
+
+Display zoom now applies after Save on phones, tablets and desktops; it is no longer
+clamped to 100% on touch/narrow layouts. Retain the same allowlisted numeric values
+and personal GET/PATCH /me policy. Smaller zoom compensates tap targets; fixed
+viewport dimensions also account for scale. Update UI help, settings reference,
+API description and product guide together. Test all five through real Save rather
+than CSS injection. Existing committed key-only preference audits remain unchanged.
+
+### Local 2.0.1 theme control
+
+ThemeToggle uses one native button with sun/moon icons and a solid indicator for
+the resolved current mode. The named action switches to the opposite explicit
+mode, preserving System following in Settings and Book mode. Keep the existing
+changeTheme persistence/error/busy path, keyboard focus and compensated touch
+target. The indicator moves 28px in 160ms, disabled under reduced motion. Use
+semantic Material colour pairs rather than gradient day/night palettes. Refresh
+affected login/workspace public captures after approval; local captures do not
+replace or relabel published v2.0 images. No API or new audit/event is introduced.

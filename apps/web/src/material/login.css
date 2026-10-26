@@ -1,5 +1,5 @@
 .login-page {
-  min-height: 100dvh;
+  min-height: calc(100dvh / var(--interface-scale, 1));
   display: flex;
   flex-direction: column;
   padding: 32px 40px;
@@ -112,7 +112,7 @@
 .login-card .google-button,
 .login-card .demo-button {
   width: 100%;
-  min-height: 48px;
+  min-height: max(var(--md-touch-target, 0px), 48px);
   justify-content: center;
 }
 .google-button svg {

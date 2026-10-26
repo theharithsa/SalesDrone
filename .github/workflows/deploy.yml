@@ -29,26 +29,22 @@ jobs:
           distribution: temurin
           java-version: '21'
       - run: npm ci
-      - run: npm run build:metadata
-      - run: npm run security:scan
-      - run: npm run docs:check
-      - run: npm run release:readiness
-      - run: npm run skills:check
-      - run: npm run release:check
-        if: github.event_name != 'workflow_dispatch'
-      - run: npm test
-      - run: npm run check
-      - run: npm run design:forms
-      - run: npm run api:docs
-      - run: git diff --exit-code -- docs/openapi.json apps/web/public/openapi.json
-      - run: npm run test:emulator
-      - run: npm audit --omit=dev --audit-level=high
-      - run: npm run docs:build
-      - run: npm run build
+      - name: Execute checks and retain per-test metadata
+        run: node scripts/ci-checks.mjs
         env:
           VITE_USE_EMULATORS: 'false'
           VITE_ENABLE_RUM: 'false'
-      - run: node scripts/check-design-build.mjs
+      - name: Archive safe verification results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: salesdrone-ci-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/ci-checks.json
+            test-results/cases-*.ndjson
+          if-no-files-found: warn
+          retention-days: 30
+
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: verify
@@ -173,4 +169,47 @@ jobs:
         with:
           name: salesdrone-docs-verification-${{ github.run_id }}-${{ github.run_attempt }}
           path: docs-verification.json
+          retention-days: 30
+
+  observe:
+    # Never execute PR-controlled code with ingestion or deployment credentials.
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: [verify, deploy, documentation]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Download available verification evidence
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: salesdrone-ci-${{ github.run_id }}-*
+          path: test-results
+          merge-multiple: true
+      - name: Stamp reporting resource identity
+        run: npm run build:metadata
+      - name: Report workflow, checks and executed test cases
+        env:
+          DYNATRACE_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
+          DYNATRACE_TENANT_URL: ${{ vars.DYNATRACE_TENANT_URL }}
+          CI_VERIFY_RESULT: ${{ needs.verify.result }}
+          CI_DEPLOY_RESULT: ${{ needs.deploy.result }}
+          CI_DOCS_RESULT: ${{ needs.documentation.result }}
+        run: node scripts/notify-ci.mjs
+      - name: Archive CI signal receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: salesdrone-ci-monitoring-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/ci-monitoring.json
           retention-days: 30
