@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v1.6.7**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v1.7.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -41,6 +41,16 @@ Permissions are enforced server-side, including direct links and API requests.
 Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch. The quick switch animates a small sunrise/sunset horizon; reduced-motion users receive an immediate state change. It never covers the workspace.
 
 Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local. On desktop, lead blade width is adjusted directly in Leads using its left edge (double-click resets it); expand opens a dedicated lead page. That width is remembered only in the current browser, separately from account preferences; double-click the edge to reset it.
+
+### Interface font
+
+**Default:** Standard (Google Sans headings and Manrope text).
+
+Choose Standard, Inter, Source Sans 3 or Lora for your own interface. A sample previews the draft selection; the workspace changes after a successful Save changes. Font files are self-hosted, with no runtime Google Fonts request.
+
+Saved on your own account through PATCH /me and returned by GET /me. Older clients that omit fontStyle preserve it. Book mode uses its own serif stack and restores your selected font when disabled. Branding, phone numbers and technical code retain their established fonts. Other users are unaffected. Demo choices are a guarded browser-local fallback.
+
+**Example:** Choose Inter for a compact interface or Lora for an editorial serif style, inspect the sample, then save. Standard restores the original pairing.
 
 ### Book mode
 

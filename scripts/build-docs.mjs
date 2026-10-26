@@ -29,6 +29,8 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'activity-demo.jpg',
+  'font-settings-demo.jpg',
   'login-demo.jpg',
   'laptop-demo.jpg',
   'tablet-demo.jpg',

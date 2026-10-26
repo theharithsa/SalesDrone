@@ -110,12 +110,12 @@
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "0715e3103a0c4903a2642db44a0f5efe88eb7ea9c21d56db6d31974871004a45",
-    "capturedAt": "2026-10-26T02:44:20.466771+00:00",
-    "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
-    "version": "1.6.7",
-    "capturePixels": "1829 x 1029"
+    "sha256": "30fa5780be0da9d30cc986e7d75117c3be5a2b6c742764983c8f37175ba51951",
+    "capturedAt": "2026-10-26T03:21:23.929028+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe",
+    "review": "Reviewed actual synthetic guest demo only. No customer data, production changes or credentials. Personal font selector and compact, complete activity text; browser layout check, not physical-device certification.",
+    "version": "1.7.0",
+    "capturePixels": "1280 x 900"
   },
   {
     "file": "leads-demo.jpg",
@@ -176,5 +176,25 @@
     "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
     "viewport": "1024 x 900 CSS pixels, application iframe",
     "capturePixels": "1024 x 900"
+  },
+  {
+    "file": "activity-demo.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.7.0",
+    "sha256": "cdd2836b92a22aef7e564e60629d1b2bd11202f57212ed7d13883517def790f5",
+    "capturedAt": "2026-10-26T03:21:23.041073+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; native screenshot cropped to the activity region",
+    "review": "Reviewed actual synthetic guest demo only. No customer data, production changes or credentials. Personal font selector and compact, complete activity text; browser layout check, not physical-device certification.",
+    "capturePixels": "993 x 435"
+  },
+  {
+    "file": "font-settings-demo.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.7.0",
+    "sha256": "601af6004dced9b809a50b41c3f3be6272b586cf64cf7e7d42d6d3af37ae9674",
+    "capturedAt": "2026-10-26T03:21:23.466377+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe",
+    "review": "Reviewed actual synthetic guest demo only. No customer data, production changes or credentials. Personal font selector and compact, complete activity text; browser layout check, not physical-device certification.",
+    "capturePixels": "1280 x 900"
   }
 ]

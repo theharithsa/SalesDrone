@@ -4,6 +4,16 @@ Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
 
+
+## [1.7.0] - 2026-10-26
+
+### Changed
+- Add personal Standard, Inter, Source Sans 3 and Lora interface fonts with a draft preview, self-hosted assets and retained licences.
+- Keep Standard as the default, preserve Book-mode serif styling and isolate guest/live preferences.
+- Tighten activity-card typography and spacing: 15px desktop comments, 16px narrow/touch comments, 13px metadata, complete wrapping text.
+- Extend the self-service preferences contract to 1.14.0 with strict font validation, omission preservation and key-only committed setting audits.
+- Update product/settings/API documentation, module skills, screenshots and preference security/persistence tests.
+
 ## [1.6.7] - 2026-10-26
 
 ### Desktop density maintenance

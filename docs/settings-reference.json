@@ -40,6 +40,14 @@
           "example": ""
         },
         {
+          "id": "fontStyle",
+          "label": "Interface font",
+          "default": "Standard (Google Sans headings and Manrope text)",
+          "description": "Choose Standard, Inter, Source Sans 3 or Lora for your own interface. A sample previews the draft selection; the workspace changes after a successful Save changes. Font files are self-hosted, with no runtime Google Fonts request.",
+          "effect": "Saved on your own account through PATCH /me and returned by GET /me. Older clients that omit fontStyle preserve it. Book mode uses its own serif stack and restores your selected font when disabled. Branding, phone numbers and technical code retain their established fonts. Other users are unaffected. Demo choices are a guarded browser-local fallback.",
+          "example": "Choose Inter for a compact interface or Lora for an editorial serif style, inspect the sample, then save. Standard restores the original pairing."
+        },
+        {
           "id": "bookMode",
           "label": "Book mode",
           "default": "Off",

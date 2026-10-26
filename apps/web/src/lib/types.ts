@@ -37,6 +37,7 @@ export type Session = {
     timezone: string;
     appearance: 'light' | 'dark' | 'system';
     bookMode?: boolean;
+    fontStyle?: 'standard' | 'inter' | 'source-sans' | 'lora';
     automaticReminders?: boolean;
     reminderTime?: string;
     nextWeekRule?: 'seven_days' | 'next_monday';

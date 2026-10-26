@@ -10,7 +10,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-conversations, salesdrone-tasks-reminders, salesdrone-notifications, salesdrone-workspace-settings.
 - [salesdrone-book-mode](skills/salesdrone-book-mode/SKILL.md) — book mode, kindle mode, serif workspace, reading mode, paper palette.
   Related: salesdrone-workspace-settings, salesdrone-observability, salesdrone-product-guide, salesdrone-release-readiness, salesdrone-release.
-- [salesdrone-conversations](skills/salesdrone-conversations/SKILL.md) — call comment, lead note, timeline comment, call outcome.
+- [salesdrone-conversations](skills/salesdrone-conversations/SKILL.md) — call comment, lead note, timeline comment, call outcome, activity text size, comment typography.
   Related: salesdrone-release, salesdrone-leads, salesdrone-imports, salesdrone-automatic-reminders, salesdrone-tasks-reminders, salesdrone-lead-journey.
 - [salesdrone-dashboard](skills/salesdrone-dashboard/SKILL.md) — dashboard, insights, funnel graph.
   Related: salesdrone-release, salesdrone-lead-scoring, salesdrone-leads, salesdrone-lead-journey, salesdrone-interface.
@@ -42,5 +42,5 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release.
 - [salesdrone-tasks-reminders](skills/salesdrone-tasks-reminders/SKILL.md) — edit task, delete task, manual reminder, snooze.
   Related: salesdrone-release, salesdrone-automatic-reminders, salesdrone-notifications, salesdrone-people-permissions.
-- [salesdrone-workspace-settings](skills/salesdrone-workspace-settings/SKILL.md) — manage fields, lead fields, dropdown choices, settings, custom fields, book mode preference.
+- [salesdrone-workspace-settings](skills/salesdrone-workspace-settings/SKILL.md) — manage fields, lead fields, dropdown choices, settings, custom fields, book mode preference, interface font, font preference, font style.
   Related: salesdrone-release, salesdrone-imports, salesdrone-leads, salesdrone-lead-scoring, salesdrone-people-permissions, salesdrone-api-integrations, salesdrone-book-mode.

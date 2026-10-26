@@ -50,3 +50,8 @@ import './lead-workspace.css';
 import './book-mode.css';
 
 import './design-system.css';
+
+import '@fontsource-variable/inter';
+import '@fontsource-variable/source-sans-3';
+import '@fontsource-variable/lora';
+import './typography.css';

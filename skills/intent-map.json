@@ -21,7 +21,9 @@
     "call comment",
     "lead note",
     "timeline comment",
-    "call outcome"
+    "call outcome",
+    "activity text size",
+    "comment typography"
   ],
   "salesdrone-dashboard": [
     "dashboard",
@@ -134,7 +136,10 @@
     "dropdown choices",
     "settings",
     "custom fields",
-    "book mode preference"
+    "book mode preference",
+    "interface font",
+    "font preference",
+    "font style"
   ],
   "salesdrone-product-guide": [
     "product handbook",

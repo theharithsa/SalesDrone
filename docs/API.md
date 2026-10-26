@@ -206,3 +206,9 @@ GET /api/v1/me returns preferences.bookMode (false for missing records). PATCH /
 ## Settings audit side effects
 
 Saved net changes through existing configuration/preferences, member/invitation, token and device routes atomically attach settingsChanges metadata to the existing server audit and enqueue safe Dynatrace audit events. Invitation acceptance participates as well. These internal side effects change no request/response schema, role, PAT scope or API version. Failed/denied/no-op/replayed changes do not emit duplicate success changes. No audit-read endpoint is introduced; direct client Firestore access remains denied. See [coverage, data exclusions and delivery semantics](SETTINGS-AUDIT.md).
+
+## Personal interface font (contract 1.14.0)
+
+`GET /api/v1/me` returns `preferences.fontStyle`, default `standard`. `PATCH /api/v1/me` accepts optional `fontStyle`: `standard`, `inter`, `source-sans`, or `lora`, alongside the existing required `appearance` and `timezone`. Omission preserves the stored value; invalid/null values and arbitrary font URLs are rejected with 400.
+
+Example body: `{"timezone":"Asia/Kolkata","appearance":"system","fontStyle":"inter"}`. This remains an active-member, self-service Google JWT + App Check operation. Unapproved identities and PAT writes are denied; no new token scope is added. Book mode is independent and does not overwrite fontStyle. Successful net changes commit an appearance audit with the changed key `fontStyle`; values are excluded from exported telemetry. See [font behavior](FONT-CHOICES.md).

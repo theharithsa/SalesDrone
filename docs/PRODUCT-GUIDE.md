@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.6.7
+Version 1.7.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -157,6 +157,8 @@ Corrections preserve previous revisions and invalidate stale analysis so an old 
 Notes can contain customer context; keep them out of support screenshots and public documentation. Application telemetry excludes comment content and task titles.
 
 Inline drafts stay in memory while you switch All, Comments, Calls, Tasks and Review for the same lead. Failed posts retain text; retrying an unchanged uncertain write reuses its original identity. Blank and in-flight posts are disabled. Drafts are cleared when you leave that lead, change account or reload; customer notes are not stored in browser storage.
+
+Activity cards use a compact reading hierarchy: 15px entry titles and desktop comment text, 16px comment text on narrow/touch layouts, and 13px timestamps. Padding and spacing are reduced without clipping notes or hiding earlier activity. Newlines and full text are preserved. The same sizes apply in Book mode and every chosen interface font.
 
 ### Questions
 
@@ -536,6 +538,8 @@ Everyone
 
 3. Use browser zoom or your browser default-text preference as needed. The application keeps native zoom available; there is no separate in-app text-size setting.
 
+4. To choose your own font, open Settings > Appearance & time > Interface font. Select Standard, Inter, Source Sans 3 or Lora, inspect the sample and save. This changes only your own interface.
+
 Body and editable text use a shared 17px default on every size, with 15px supporting text, 14px compact desktop table data (15px in touch layouts), and 13px metadata. Existing font families are unchanged; Book mode uses its serif families. Sizes scale with browser text preferences.
 
 On narrow screens a lead opens its dedicated page. On larger screens inspection overlays the table; expand opens the full page. Local table, stage and tab scrolling is intentional.
@@ -543,6 +547,8 @@ On narrow screens a lead opens its dedicated page. On larger screens inspection 
 Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.
 
 Desktop layouts with a fine pointer use a narrower 216px expanded sidebar, a 64px top bar, 20px page gutters and tighter controls/cards. Lead tables use 14px data, 13px headers and 32px name-button targets inside approximately 49px rows; normal reading/form text remains 17px. Touch and narrow layouts retain larger targets. Additional/custom columns may still need horizontal scrolling.
+
+Standard keeps the current Google Sans/Manrope pairing. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode keeps its reading font and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
 
 ### Questions
 

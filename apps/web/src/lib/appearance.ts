@@ -1,7 +1,8 @@
+import { normalizeFontStyle } from './fonts.ts';
 import type { Session } from './types';
 type VisualPreferences = Pick<
   Session['preferences'],
-  'appearance' | 'bookMode'
+  'appearance' | 'bookMode' | 'fontStyle'
 >;
 /** Live identity preferences win; demo/unapproved identities use the guest style. */
 export function resolveVisualPreferences(
@@ -13,5 +14,6 @@ export function resolveVisualPreferences(
   return {
     appearance: selected.appearance,
     bookMode: selected.bookMode === true,
+    fontStyle: normalizeFontStyle(selected.fontStyle),
   };
 }

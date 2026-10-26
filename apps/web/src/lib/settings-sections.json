@@ -9,7 +9,7 @@
   {
     "id": "appearance",
     "label": "Appearance & time",
-    "description": "Choose your theme and display timezone.",
+    "description": "Choose your theme, interface font and display timezone.",
     "group": "personal",
     "admin": false
   },

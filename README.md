@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.6.7 · MIT**
+**Part of Avinya Enterprises · v1.7.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -158,3 +158,9 @@ Shared 17px body text, readable chart labels and content-width form/chart layout
 [Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Synthetic import mapping](site/assets/screenshots/import-demo.jpg)
 
 The v1.6.7 maintenance updates align wrapped customer names, remove duplicate lead actions/contact summaries, and make Set a reminder a regular sidebar menu item. Desktop spacing is now more compact: the synthetic 1280px review shows 8 data columns instead of 5. Open a lead to edit; the list has no Actions column. The original release tag is retained; the deployment commit and workflow identify the maintenance build.
+
+## Choose your reading style
+
+Open Settings → Appearance & time to preview and save Standard, Inter, Source Sans 3 or Lora. The choice is personal; Book mode keeps its serif styling. Activity cards now use a clearer, more compact type hierarchy. Fonts are self-hosted, with licences retained. See the [font and activity guide](docs/FONT-CHOICES.md).
+
+![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=cdd2836b92a2)

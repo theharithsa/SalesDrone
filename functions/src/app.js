@@ -390,6 +390,7 @@ export function createApp({
           timezone: 'Asia/Kolkata',
           appearance: 'system',
           bookMode: false,
+          fontStyle: 'standard',
           ...AUTO_DEFAULTS,
           ...prefs,
         },
@@ -467,6 +468,7 @@ export function createApp({
     return mutate(req, null, async (tx) => {
       const prefs = {
         bookMode: false,
+        fontStyle: 'standard',
         ...AUTO_DEFAULTS,
         ...(await tx.get(`users/${req.identity.uid}`)),
         ...input,

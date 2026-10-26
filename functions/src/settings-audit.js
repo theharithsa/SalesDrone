@@ -12,10 +12,11 @@ const personalDefaults = {
   timezone: 'Asia/Kolkata',
   appearance: 'system',
   bookMode: false,
+  fontStyle: 'standard',
   ...AUTO_DEFAULTS,
 };
 const definitions = {
-  appearance: ['appearance', 'bookMode', 'timezone'],
+  appearance: ['appearance', 'bookMode', 'fontStyle', 'timezone'],
   reminders: [
     'automaticReminders',
     'reminderTime',

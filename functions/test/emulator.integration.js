@@ -114,6 +114,7 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     timezone: 'Asia/Kolkata',
     appearance: 'light',
     bookMode: true,
+    fontStyle: 'source-sans',
   }).expect(200);
   await req('patch', '/me', {
     timezone: 'Asia/Kolkata',
@@ -125,6 +126,14 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   );
   const ownUser = (await auth.verifyIdToken(token)).uid;
   assert.equal((await db.doc('users/' + ownUser).get()).data().bookMode, true);
+  assert.equal(
+    (await db.doc('users/' + ownUser).get()).data().fontStyle,
+    'source-sans',
+  );
+  assert.equal(
+    (await req('get', '/me').expect(200)).body.preferences.fontStyle,
+    'source-sans',
+  );
   const settingAudits = (
     await db
       .collection('workspaces/avinyatech/auditEvents')
@@ -138,6 +147,9 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     ),
   );
   assert.ok(appearanceAudit);
+  assert.ok(
+    appearanceAudit.settingsChanges.some((c) => c.keys.includes('fontStyle')),
+  );
   const auditOutbox = (
     await db.collection('workspaces/avinyatech/telemetryOutbox').get()
   ).docs.map((d) => d.data());

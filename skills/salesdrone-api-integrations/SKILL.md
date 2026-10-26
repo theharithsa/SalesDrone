@@ -77,3 +77,5 @@ Read for detailed behavior:
 - [docs/API.md](../../docs/API.md)
 
 Configuration/token routes document x-settings-audit metadata in OpenAPI. This internal side effect grants no audit-read endpoint or PAT scope. Token lifecycle audits include safe changed-key names only, never secret/hash/name values, and one-time issuance/revocation semantics remain unchanged.
+
+Contract1.14.0 adds optional Preferences.fontStyle to GET/PATCH /me with an allowlisted enum and omission preservation. This is Google/App Check self-service, excluded from PAT writes; no new PAT scope. Keep strict request validation, response defaults, generated schema/portal and examples aligned. Font choices do not grant API data access.

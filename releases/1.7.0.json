@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "version": "1.7.0",
+  "summary": "Add personal allowlisted self-hosted interface fonts and compact, readable activity typography with private saved preferences and committed audit keys.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-workspace-settings",
+    "salesdrone-book-mode",
+    "salesdrone-conversations",
+    "salesdrone-api-integrations",
+    "salesdrone-observability",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "docs/FONT-CHOICES.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SETTINGS.md",
+    "docs/API.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Add optional Preferences.fontStyle enum to existing GET/PATCH /me with Standard default and omission preservation; no new endpoint or PAT scope.",
+    "contractVersion": "1.14.0",
+    "permissions": "Active-member Google JWT and App Check self-service only. PAT/unapproved/cross-account preference writes remain denied.",
+    "tests": [
+      "functions/test/font-style.test.js",
+      "functions/test/book-mode.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Font preference saves add only the fontStyle key to appearance audit metadata, using the existing atomic settings.audit.committed outbox and safe request/exporter signals. Values, previews and comments are excluded; no-op/denied changes do not emit a committed change. Deployment events include this exact version/commit.",
+      "tests": [
+        "functions/test/font-style.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Font preference saves add only the fontStyle key to appearance audit metadata, using the existing atomic settings.audit.committed outbox and safe request/exporter signals. Values, previews and comments are excluded; no-op/denied changes do not emit a committed change. Deployment events include this exact version/commit.",
+      "tests": [
+        "functions/test/font-style.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Font preference saves add only the fontStyle key to appearance audit metadata, using the existing atomic settings.audit.committed outbox and safe request/exporter signals. Values, previews and comments are excluded; no-op/denied changes do not emit a committed change. Deployment events include this exact version/commit.",
+      "tests": [
+        "functions/test/font-style.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Font preference saves add only the fontStyle key to appearance audit metadata, using the existing atomic settings.audit.committed outbox and safe request/exporter signals. Values, previews and comments are excluded; no-op/denied changes do not emit a committed change. Deployment events include this exact version/commit.",
+      "tests": [
+        "functions/test/font-style.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Font preference saves add only the fontStyle key to appearance audit metadata, using the existing atomic settings.audit.committed outbox and safe request/exporter signals. Values, previews and comments are excluded; no-op/denied changes do not emit a committed change. Deployment events include this exact version/commit.",
+      "tests": [
+        "functions/test/font-style.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Preview-before-save, all four font families at390/768/1280/1920px, Book-mode precedence/restoration, branding/monospace protection, full multi-line/unbroken comments, All/Comments/Calls filtering and15px desktop/16px narrow activity text. Backend tests verify default/persistence/isolation, strict values, old-client merge and key-only no-op audits. Real Auth/Firestore emulator runs in CI (local Java unavailable). Browser checks are synthetic, not physical-device or tenant-search certification.",
+  "screenshots": [
+    "activity-demo.jpg",
+    "font-settings-demo.jpg",
+    "book-settings-demo.jpg"
+  ]
+}

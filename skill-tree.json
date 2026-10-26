@@ -95,7 +95,9 @@
         "call comment",
         "lead note",
         "timeline comment",
-        "call outcome"
+        "call outcome",
+        "activity text size",
+        "comment typography"
       ],
       "related": [
         "salesdrone-release",
@@ -463,7 +465,10 @@
         "dropdown choices",
         "settings",
         "custom fields",
-        "book mode preference"
+        "book mode preference",
+        "interface font",
+        "font preference",
+        "font style"
       ],
       "related": [
         "salesdrone-release",

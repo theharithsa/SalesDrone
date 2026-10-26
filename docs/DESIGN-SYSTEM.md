@@ -3,9 +3,9 @@
 The project design skill is [salesdrone-interface](../skills/salesdrone-interface/SKILL.md).
 This is a responsive web adaptation of [Apple’s official typography guidance](https://developer.apple.com/design/human-interface-guidelines/typography), reviewed 2026-10-26. It is not a claim of native Dynamic Type support or platform certification.
 
-## Typography without replacing fonts
+## Default fonts and semantic typography
 
-Keep Google Sans headings/lead first names, Manrope body and monospace phone numbers.
+Standard keeps Google Sans headings/lead first names, Manrope body and monospace phone numbers. Personal alternative families are documented below.
 Book mode keeps its serif stack and monospace phone exception. No font files or
 families change for the typography correction.
 
@@ -88,3 +88,9 @@ The inspection overlay owns its compact actions; the dedicated lead page owns it
 At widths of at least 1001px with a fine pointer, the authenticated/demo app shell uses a 216px expanded sidebar, 64px top bar and 20px page gutters. Sidebar rows are 40px; title actions/stage filters are 36px. Reading text and forms remain17px; page descriptions/actions use15px and dense lead data14px with13px headers. Font families do not change. Phones, coarse-pointer layouts and form controls retain their existing touch sizing. The table name button has a 32px target inside an approximately 49px row on fine-pointer desktop; touch tables retain 44px name targets.
 
 Table cells use 8px padding, an 11rem minimum name column and bounded secondary values with native title text/full lead detail for long values. Additional or unusually wide/custom columns scroll locally rather than shrinking text further. Remove row/card editing and the sticky Actions column; one Edit lead action is available after opening a lead. If configuration hides the name column, native table rows become keyboard-focusable and Enter/Space opens details. Do not introduce global CSS zoom, transforms or a reduced root font size to achieve density.
+
+## Personal interface families and activity roles
+
+The fontStyle preference defaults to Standard and supports Inter, Source Sans 3 and Lora. typography.css loads after design-system.css; its allowlisted root selectors apply only outside Book mode. Preserve brand font variables and monospace exceptions. Keep native font selection, a draft sample and save-before-apply semantics. No font URLs/uploads or runtime Google CDN. See FONT-CHOICES.md for licensing, persistence and precedence.
+
+Activity text is intentionally smaller than the general body: 15px desktop,16px narrow/touch,1.5 leading; entry title15px and metadata13px. Use12–16px card padding and12px list gaps. Preserve complete notes and line breaks, wrapping long text with no clamping. General reading/forms and existing desktop table density keep their own roles. Test every family and Book mode at phone, tablet, laptop and wide desktop widths.

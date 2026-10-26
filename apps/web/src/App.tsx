@@ -1,3 +1,4 @@
+import { normalizeFontStyle } from './lib/fonts';
 import { resolveVisualPreferences } from './lib/appearance';
 import { readStored, writeStored, removeStored } from './lib/browser-storage';
 import InlineCommentComposer from './components/InlineCommentComposer';
@@ -219,6 +220,9 @@ export default function App() {
   const [guestBookMode, setGuestBookMode] = useState(
     () => readStored('localStorage', 'salesdrone.guestBookMode') === 'true',
   );
+  const [guestFontStyle, setGuestFontStyle] = useState(() =>
+    normalizeFontStyle(readStored('localStorage', 'salesdrone.guestFontStyle')),
+  );
   const [inboxOpen, setInboxOpen] = useState(false);
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [leadScores, setLeadScores] = useState<Record<string, any>>({});
@@ -357,15 +361,20 @@ export default function App() {
       window.removeEventListener('focus', recheck);
     };
   }, [session, demo]);
-  const { appearance, bookMode } = resolveVisualPreferences(
+  const { appearance, bookMode, fontStyle } = resolveVisualPreferences(
     session?.preferences || null,
     demo,
-    { appearance: guestAppearance, bookMode: guestBookMode },
+    {
+      appearance: guestAppearance,
+      bookMode: guestBookMode,
+      fontStyle: guestFontStyle,
+    },
   );
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
       document.documentElement.dataset.theme = appearance;
+      document.documentElement.dataset.fontStyle = fontStyle;
       const dark =
         appearance === 'dark' || (appearance === 'system' && media.matches);
       document.documentElement.dataset.colorScheme = dark ? 'dark' : 'light';
@@ -393,7 +402,7 @@ export default function App() {
     } catch {}
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
-  }, [appearance, bookMode]);
+  }, [appearance, bookMode, fontStyle]);
   async function changeTheme(next: 'light' | 'dark') {
     if (demo || !session) {
       setGuestAppearance(next);
@@ -2793,7 +2802,7 @@ export default function App() {
                 onWorkspacePolicyChanged={() => void resolveSession()}
                 initialSection={page === 'members' ? 'access' : undefined}
                 session={session}
-                guestPreferences={{ appearance, bookMode, timezone }}
+                guestPreferences={{ appearance, bookMode, fontStyle, timezone }}
                 demo={demo}
                 devices={data.devices}
                 fieldOptions={fieldOptions}
@@ -2807,6 +2816,12 @@ export default function App() {
                   else {
                     setGuestAppearance(p.appearance);
                     setGuestBookMode(p.bookMode === true);
+                    setGuestFontStyle(normalizeFontStyle(p.fontStyle));
+                    writeStored(
+                      'localStorage',
+                      'salesdrone.guestFontStyle',
+                      normalizeFontStyle(p.fontStyle),
+                    );
                     writeStored(
                       'localStorage',
                       'salesdrone.guestBookMode',

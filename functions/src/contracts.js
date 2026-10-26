@@ -198,6 +198,7 @@ export const Preferences = z
     timezone: text(100),
     appearance: z.enum(['system', 'light', 'dark']),
     bookMode: z.boolean().optional(),
+    fontStyle: z.enum(['standard', 'inter', 'source-sans', 'lora']).optional(),
     automaticReminders: z.boolean().optional(),
     reminderTime: z
       .string()

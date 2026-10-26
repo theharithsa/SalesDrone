@@ -1,0 +1,147 @@
+/* Font choices are allowlisted, self-hosted and personal. Book mode wins. */
+:root:not([data-reading-mode='book'])[data-font-style='inter'] {
+  font-family: 'Inter Variable', Arial, sans-serif;
+  --heading-font: 'Inter Variable', Arial, sans-serif;
+}
+:root:not([data-reading-mode='book'])[data-font-style='source-sans'] {
+  font-family: 'Source Sans 3 Variable', Arial, sans-serif;
+  --heading-font: 'Source Sans 3 Variable', Arial, sans-serif;
+}
+:root:not([data-reading-mode='book'])[data-font-style='lora'] {
+  font-family: 'Lora Variable', Georgia, serif;
+  --heading-font: 'Lora Variable', Georgia, serif;
+}
+:root:not([data-reading-mode='book']) .brand {
+  --heading-font: 'Google Sans Variable', 'Manrope Variable', sans-serif;
+}
+.interface-font-settings {
+  margin: 24px 0;
+  min-width: 0;
+}
+.interface-font-settings h3 {
+  margin-bottom: 12px;
+}
+.interface-font-preview {
+  padding: 16px;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  overflow-wrap: anywhere;
+}
+.interface-font-preview strong {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.interface-font-preview p {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+.interface-font-preview small {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+[data-preview-font='standard'] {
+  --preview-font: 'Manrope Variable', Arial, sans-serif;
+}
+[data-preview-font='inter'] {
+  --preview-font: 'Inter Variable', Arial, sans-serif;
+}
+[data-preview-font='source-sans'] {
+  --preview-font: 'Source Sans 3 Variable', Arial, sans-serif;
+}
+[data-preview-font='lora'] {
+  --preview-font: 'Lora Variable', Georgia, serif;
+}
+:root:not([data-reading-mode='book']) .interface-font-preview,
+:root:not([data-reading-mode='book']) .interface-font-preview * {
+  font-family: var(--preview-font);
+}
+/* Timeline hierarchy is independent of the larger general reading role. */
+.lead-conversations .timeline {
+  gap: 12px;
+  margin-block: 12px;
+}
+.lead-conversations .timeline-item {
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+}
+.lead-conversations .timeline-icon {
+  width: 28px;
+  height: 28px;
+}
+.lead-conversations .timeline-item > div {
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+.lead-conversations .timeline-item > div > strong {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+.lead-conversations .timeline-item time {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+.lead-conversations .comment-body,
+:root[data-reading-mode='book'] #root .lead-conversations .comment-body {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  margin: 10px 0;
+  max-width: 72ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1000.99px), (pointer: coarse) {
+  .lead-conversations .comment-body,
+  :root[data-reading-mode='book'] #root .lead-conversations .comment-body {
+    font-size: 1rem;
+  }
+  .lead-conversations .timeline-item > div {
+    padding: 12px;
+  }
+}
+@media (min-width: 1001px) and (pointer: fine) {
+  .lead-conversations .timeline-item .text-button {
+    min-height: 32px;
+    font-size: 0.8125rem;
+  }
+}
+:root:not([data-reading-mode='book']) .brand {
+  font-family: 'Manrope Variable', Arial, sans-serif;
+}
+:root:not([data-reading-mode='book']) :is(code, pre, kbd, samp) {
+  font-family: var(--mono-font);
+}
+
+.lead-conversations .timeline {
+  display: grid;
+  max-width: 100%;
+}
+.lead-conversations .timeline-item {
+  display: grid;
+  padding: 0;
+  border: 0;
+}
+.lead-conversations .timeline-item::before {
+  display: none;
+}
+.lead-conversations .timeline-icon {
+  position: static;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+.lead-conversations .timeline-item > div {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  min-width: 0;
+}
+:root:not([data-reading-mode='book'])
+  .interface-font-preview[data-preview-font='standard']
+  strong {
+  font-family: 'Google Sans Variable', 'Manrope Variable', sans-serif;
+}

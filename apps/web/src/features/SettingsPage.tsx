@@ -1,3 +1,4 @@
+import { interfaceFonts, normalizeFontStyle } from '../lib/fonts';
 import settingsSections from '../lib/settings-sections.json';
 import WorkspacePolicySettings from './WorkspacePolicySettings';
 import AIPersonalizationSettings from './AIPersonalizationSettings';
@@ -133,6 +134,13 @@ export default function SettingsPage({
     bookMode: false,
     ...guestPreferences,
   };
+  const [fontStyle, setFontStyle] = useState(() =>
+    normalizeFontStyle(preferences.fontStyle),
+  );
+  useEffect(
+    () => setFontStyle(normalizeFontStyle(preferences.fontStyle)),
+    [preferences.fontStyle],
+  );
   const [bookMode, setBookMode] = useState(preferences.bookMode === true);
   useEffect(
     () => setBookMode(preferences.bookMode === true),
@@ -163,6 +171,7 @@ export default function SettingsPage({
     const settings = {
       ...data,
       bookMode,
+      fontStyle,
       automaticReminders,
       reminderTime,
       nextWeekRule,
@@ -461,6 +470,45 @@ export default function SettingsPage({
                         );
                       })}
                     </div>
+                    <section
+                      className="interface-font-settings"
+                      aria-labelledby="interface-font-heading"
+                    >
+                      <h3 id="interface-font-heading">Interface font</h3>
+                      <label>
+                        Font style
+                        <select
+                          value={fontStyle}
+                          onChange={(e) =>
+                            setFontStyle(normalizeFontStyle(e.target.value))
+                          }
+                          aria-describedby="interface-font-help"
+                        >
+                          {interfaceFonts.map((font) => (
+                            <option key={font.id} value={font.id}>
+                              {font.label} — {font.description}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <div
+                        className="interface-font-preview"
+                        data-preview-font={fontStyle}
+                      >
+                        <strong>A conversation worth following up</strong>
+                        <p>
+                          Call next Tuesday to discuss the proposal. Keep every
+                          next step clear.
+                        </p>
+                        <small>Customer activity · 10:30 am · 0123456789</small>
+                      </div>
+                      <p id="interface-font-help" className="field-hint">
+                        Preview only until you save. Personal to your account.
+                        Branding and phone-number fonts stay consistent. Book
+                        mode uses its own serif font; your choice returns when
+                        Book mode is off.
+                      </p>
+                    </section>
                     <label className="book-mode-control">
                       <span className="book-mode-emblem" aria-hidden="true">
                         <BookOpen size={24} />
@@ -468,8 +516,8 @@ export default function SettingsPage({
                       <span>
                         <strong>Book mode</strong>
                         <small>
-                          Warm paper, quiet colours and serif fonts throughout the workspace.
-                          Works with Light, Dark or System.
+                          Warm paper, quiet colours and serif fonts throughout
+                          the workspace. Works with Light, Dark or System.
                         </small>
                       </span>
                       <input
@@ -483,7 +531,7 @@ export default function SettingsPage({
                     </label>
                     <p id="book-mode-help" className="field-hint">
                       Personal to you. Choose Save changes to apply; turning it
-                      off restores the standard workspace.
+                      off restores your selected interface font.
                     </p>
                     <label className="timezone-field">
                       Display timezone
