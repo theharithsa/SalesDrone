@@ -444,9 +444,17 @@
   margin-right: auto;
 }
 .trend-day-picker select {
-  min-height: max(var(--md-touch-target, 0px), 36px);
-  padding: 6px 10px;
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: max(var(--md-touch-target, 0px), 44px);
+  min-width: calc(10ch + 60px);
+  max-width: 100%;
+  padding: 10px 44px 10px 14px;
+  border: 0;
+  border-radius: 12px;
+  background-color: var(--md-sys-color-surface-container-high);
+  font-size: 0.875rem;
+  white-space: nowrap;
   width: auto;
 }
 .dashboard-bottom-grid {

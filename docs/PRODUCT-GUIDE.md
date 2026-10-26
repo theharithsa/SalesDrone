@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.0.0
+Version 2.0.1
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -84,13 +84,15 @@ Non-admin lead visibility follows workspace Reports & lead access policy and mem
 
 Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion.
 
-Search stays visible. Filters opens the search-field/stage/source controls and custom-column filter builder, with an active-condition count. Controls stack on narrow screens; stage shortcuts scroll within their row. Opening and closing the disclosure does not clear active conditions.
+Search stays visible. On mobile, Filters opens a dialog for search field, stage, source and column conditions. Apply filters commits the draft and closes the dialog; Cancel or Escape keeps the existing filters. Reset clears the draft until applied. Desktop retains the inline disclosure. Stage shortcuts scroll within their row.
 
 Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment.
 
 The list has no row-level Edit controls or Actions column. Open the customer name (or the mobile lead card), then choose Edit lead. When the customer-name column is hidden by configuration, the desktop row remains keyboard-focusable: press Enter or Space to open its details.
 
 Infinite scrolling loads the next page automatically as you approach the bottom of the lead list. The initial live page requests up to 30 leads; sparse filtered scans may contain fewer results with another cursor. Loading continues until the API returns no cursor. Load more leads remains available as a keyboard/browser fallback; failures pause automatic loading and show Retry loading leads. Changing filters starts a fresh list. Demo mode uses 96 fictional leads, revealed 30 at a time.
+
+On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and the filter icon share a row. All stages provides a compact quick stage picker; desktop retains its action buttons and stage shortcuts. Small screens shorten action labels, and large mobile counts use compact notation.
 
 ### Questions
 
@@ -161,6 +163,8 @@ Log call and Remind me appear once above the tabs. Expanding Lead details & scor
 The lead header groups the person, a small score ring, current sales stage and assignee. It reflows by available content width. The journey is a compact horizontally scrollable path; About this journey and Recorded stage changes expand separately. The ring shows a known score out of 100; a dashed ring means Unscored, which is different from a known zero. Reported risks retain an explicit warning label; a score is not a verified commercial guarantee.
 
 Files is a separate tab for private lead attachments. It is not part of All activity; comments/calls and tasks keep their existing tabs. Existing Ready files stay with a lead when it is reassigned, while pending uploads are invalidated by assignment changes.
+
+On phones, use the checkbox on the left of a lead to select it for batch editing. Selecting does not open the record; use the adjacent name/card to open it.
 
 ### Questions
 
@@ -272,19 +276,21 @@ Use Edit on the card or edit the task. Check your timezone and default-time pref
 
 Task recipients
 
-1. Open Tasks to review your work, or use Remind me on a lead to create a linked follow-up. Set the title, date/time and task kind.
+1. Open Tasks to review your work. Choose New on phones or Add reminder on desktop, or use Remind me on a lead for a linked follow-up. Set the title, date/time and task kind.
 
-2. Select a task to see its details. Edit the task to change supported fields, reschedule to another valid time, or complete work after it is actually done.
+2. Select a task title to see its details. Open its Actions menu for Edit task or Delete task; pending tasks also offer Snooze 1 hour, Reschedule and Cancel task. Use the circle beside a pending task to complete work after it is actually done.
 
 3. Delete only when the task is no longer needed. The application uses soft deletion and prevents old scheduled jobs from reviving the task.
 
-4. Check pending, completed and cancelled work using the available filters. On the full lead page the Tasks tab narrows the same private task service to that lead.
+4. Choose Pending, Completed or Cancelled using the phone status picker or desktop status buttons. The loaded count describes the rows currently loaded, and the list header shows the display timezone. On the full lead page the Tasks tab narrows the same private task service to that lead.
 
 Times are stored as instants with IANA timezone context. Invalid or ambiguous local times, including daylight-saving edge cases, may need correction. The form tells you which timezone it uses.
 
 Each edit changes the task version and invalidates old delivery work. A due task may create an inbox notification and send to eligible registered devices. A task being due does not guarantee an operating-system banner appears immediately.
 
 Lead-linked outreach can be cancelled or suppressed by reassignment, review, do-not-contact, archiving or lost access. A private reminder is not a shared team assignment.
+
+![Tasks, reminders and completion — synthetic demo only](../site/assets/screenshots/tasks-demo.jpg)
 
 ### Questions
 
@@ -434,7 +440,7 @@ Reports & lead access controls exports and assigned-only visibility for non-admi
 
 The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.
 
-The top-right theme switch uses a sunrise/sunset horizon. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.
+The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.
 
 ### Questions
 
@@ -454,7 +460,7 @@ Every active member; personal preference
 
 2. Enable Book mode and select Save changes. The workspace uses warm paper surfaces, ink-like text and serif fonts throughout the UI, with monospace phone numbers.
 
-3. Choose Light, Dark or System as usual. The top-right sunrise/sunset control changes day/night while preserving Book mode.
+3. Choose Light, Dark or System as usual. The top-right light/dark control changes day/night while preserving Book mode.
 
 4. Return to Appearance & time, disable Book mode and save to restore the standard workspace.
 
@@ -462,7 +468,7 @@ The mode applies across dashboard, leads, tasks, forms, notifications and settin
 
 The saved preference belongs to your account, not the team. Existing clients that omit bookMode preserve the stored value. Demo/guest changes use a guarded local fallback; a live account uses its own server preference, default off.
 
-This is a visual reading style. It does not add offline access, physical e-ink behaviour or a separate read-only view. You can continue editing and following up on leads. Reduced motion disables the celestial toggle animation.
+This is a visual reading style. It does not add offline access, physical e-ink behaviour or a separate read-only view. You can continue editing and following up on leads. Reduced motion disables the theme indicator transition.
 
 Book mode uses the same responsive type-size roles as the standard interface. Its serif family is preserved; the mode does not enlarge every passage indiscriminately.
 
@@ -610,17 +616,17 @@ Everyone
 
 4. To choose your own font, open Settings > Appearance & time > Interface font. Select Standard, Inter, Source Sans 3 or Lora, inspect the sample and save. This changes only your own interface.
 
-Body and editable text use a shared 17px default on every size, with 15px supporting text, 14px compact desktop table data (15px in touch layouts), and 13px metadata. Existing font families are unchanged; Book mode uses its serif families. Sizes scale with browser text preferences.
+Body and editable text use a 16px default, with 14px supporting text, 13px desktop table data and 12px metadata. Phone lead cards use 16px names with secondary details grouped below. Existing font families are unchanged; Book mode uses its serif families. Sizes scale with browser text preferences.
 
 On narrow screens a lead opens its dedicated page. On larger screens inspection overlays the table; expand opens the full page. Local table, stage and tab scrolling is intentional.
 
 Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.
 
-Desktop layouts with a fine pointer use a narrower 216px expanded sidebar, a 64px top bar, 20px page gutters and tighter controls/cards. Lead tables use 14px data, 13px headers and 32px name-button targets inside approximately 49px rows; normal reading/form text remains 17px. Touch and narrow layouts retain larger targets. Additional/custom columns may still need horizontal scrolling.
-
 Standard keeps the current Google Sans/Manrope pairing. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode keeps its reading font and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
 
-Settings > Appearance & time > Desktop display zoom offers 85%, 90%, 100%, 110% or 125%. Save changes to apply it to your personal fine-pointer desktop layout; narrow/touch screens remain at 100%. Browser zoom still works. Return to 100% to reset. It changes visual density, not permissions, lead data or other users. The lead header and journey reflow instead of using extra vertical bands.
+Settings > Appearance & time > Display zoom offers 85%, 90%, 100%, 110% or 125%. Save changes applies it on phones, tablets and desktops. Touch targets stay usable when making the content smaller. Browser and pinch zoom remain available; choose 100% to reset. This is personal and does not change permissions or lead data.
+
+Phone screens use a compact 56px header and 64px bottom navigation at 100% zoom, plus device safe-area padding. The workspace header has no Avinya logo beside the theme control. The sign-in landing page shows SalesDrone branding and the theme control; sidebar attribution remains. Larger saved zoom can increase control size.
 
 ### Questions
 

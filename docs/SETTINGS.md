@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.0.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.0.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -38,7 +38,7 @@ Permissions are enforced server-side, including direct links and API requests.
 
 **Default:** System.
 
-Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch. The quick switch animates a small sunrise/sunset horizon; reduced-motion users receive an immediate state change. It never covers the workspace.
+Choose System, Light or Dark. System follows the device preference. The top-right theme control offers a quick switch. The quick switch shows sun and moon icons in a compact pill; a solid indicator marks the active mode. Tap or use Enter/Space to switch. Reduced motion removes the indicator transition.
 
 Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local. On desktop, lead blade width is adjusted directly in Leads using its left edge (double-click resets it); expand opens a dedicated lead page. That width is remembered only in the current browser, separately from account preferences; double-click the edge to reset it.
 
@@ -52,15 +52,15 @@ Saved on your own account through PATCH /me and returned by GET /me. Older clien
 
 **Example:** Choose Inter for a compact interface or Lora for an editorial serif style, inspect the sample, then save. Standard restores the original pairing.
 
-### Desktop display zoom
+### Display zoom
 
 **Default:** 100% (Standard).
 
-Choose 85%, 90%, 100%, 110% or 125% for your own desktop workspace. The change applies after Save changes on a desktop wider than 1000 CSS pixels with a fine pointer (mouse or trackpad). Narrow and touch layouts remain at 100% even when a different desktop preference is saved.
+Choose 85%, 90%, 100%, 110% or 125% for your own workspace on phones, tablets and desktops. Save changes applies the preference on the current device and future signed-in sessions. Default is 100%. Smaller zoom preserves usable touch targets; it does not disable browser or pinch zoom.
 
 Stored on your account through GET/PATCH /me; other members are unaffected. Choose 100% to reset. Browser zoom and pinch zoom remain available. Older clients preserve an omitted displayScale; missing or unsupported values fall back to 100%. Demo choices stay browser-local and cannot override an authenticated member preference.
 
-**Example:** Choose 90% to fit more columns, or 110% for larger controls, then save. Additional columns still scroll within the table.
+**Example:** On a phone choose 90% to fit more content, or 110% for larger text, then save. Return to 100% to reset. Additional desktop columns still scroll within the table.
 
 ### Book mode
 
@@ -68,7 +68,7 @@ Stored on your account through GET/PATCH /me; other members are unaffected. Choo
 
 A personal reading style with warm paper surfaces and serif fonts throughout headings, navigation, tables, forms, buttons and chart labels. Dark mode uses charcoal paper. Phone numbers remain monospace. This is a visual style, not physical e-ink or an offline reader.
 
-Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick sunrise/sunset toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Responsive type-size roles match the standard UI while keeping the Book serif family; this is a web adaptation, not native Dynamic Type. Shared typography roles and responsive layouts apply across phones, tablets, laptops and desktops; font families remain serif in Book mode.
+Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Responsive type-size roles match the standard UI while keeping the Book serif family; this is a web adaptation, not native Dynamic Type. Shared typography roles and responsive layouts apply across phones, tablets, laptops and desktops; font families remain serif in Book mode.
 
 **Example:** Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace.
 

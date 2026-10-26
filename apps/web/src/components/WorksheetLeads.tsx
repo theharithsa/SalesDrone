@@ -241,12 +241,14 @@ export default function WorksheetLeads({
             >
               <strong>{lead.name || 'Name not recorded'}</strong>
               <ScoreBadge score={scores[lead.id]} />
-              <span>{lead.company || 'Company not recorded'}</span>
-              <span>
+              <span className="worksheet-card-company">
+                {lead.company || 'Company not recorded'}
+              </span>
+              <span className="worksheet-card-location">
                 {[lead.location, lead.zone].filter(Boolean).join(' · ') ||
                   'City / sector not recorded'}
               </span>
-              <small>
+              <small className="worksheet-card-meta">
                 <span className="phone-number">{value(lead, 'phone')}</span> ·{' '}
                 {lead.legacyStatus || lead.stage}
               </small>

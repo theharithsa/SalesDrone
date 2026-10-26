@@ -19,7 +19,8 @@ message NumberPoint { fixed64 startTimeUnixNano=2; fixed64 timeUnixNano=3; doubl
 message HistogramPoint { fixed64 startTimeUnixNano=2; fixed64 timeUnixNano=3; fixed64 count=4; double sum=5; repeated fixed64 bucketCounts=6 [packed=true]; repeated double explicitBounds=7 [packed=true]; repeated KeyValue attributes=9; }
 message Sum { repeated NumberPoint dataPoints=1; int32 aggregationTemporality=2; bool isMonotonic=3; }
 message Histogram { repeated HistogramPoint dataPoints=1; int32 aggregationTemporality=2; }
-message Metric { string name=1; string description=2; string unit=3; Sum sum=7; Histogram histogram=9; }
+message Gauge { repeated NumberPoint dataPoints=1; }
+message Metric { string name=1; string description=2; string unit=3; Gauge gauge=5; Sum sum=7; Histogram histogram=9; }
 message ScopeMetrics { Scope scope=1; repeated Metric metrics=2; }
 message ResourceMetrics { Resource resource=1; repeated ScopeMetrics scopeMetrics=2; }
 message ExportMetricsServiceRequest { repeated ResourceMetrics resourceMetrics=1; }

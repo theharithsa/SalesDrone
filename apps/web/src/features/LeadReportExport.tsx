@@ -18,13 +18,24 @@ export default function LeadReportExport({
   criteria,
   demoLeads,
   demo = false,
+  menuTriggerRef,
 }: {
   request: (p: string, m?: string, b?: any) => Promise<any>;
   config: FieldOptions;
   criteria: Criteria;
   demoLeads: Lead[];
   demo?: boolean;
+  menuTriggerRef?: { current: HTMLElement | null };
 }) {
+  const exportTrigger = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = {
+    get current() {
+      return menuTriggerRef?.current?.getClientRects().length
+        ? menuTriggerRef.current
+        : exportTrigger.current;
+    },
+  };
+
   const choices = [
     ...Object.entries(reportColumns)
       .filter(([key]) => !config.hiddenFields.includes(key))
@@ -182,6 +193,7 @@ export default function LeadReportExport({
   return (
     <>
       <button
+        ref={exportTrigger}
         className="button"
         onClick={() => {
           setError('');
@@ -195,6 +207,7 @@ export default function LeadReportExport({
       <Modal
         open={open}
         onClose={close}
+        returnFocusRef={returnFocusRef}
         title="Export filtered leads"
         description="Choose the columns for your Excel report. All matching leads within your access are included, across every page."
       >

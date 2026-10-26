@@ -20,8 +20,10 @@ export async function probeSignals(tenant, token, fetchImpl = fetch) {
     environment: 'production-verification',
     allowLocalTest: true,
   });
+  let probeContext;
   try {
     await telemetry.worker('release.verification', async () => {
+      probeContext = telemetry.capture();
       telemetry.log('release.instrumentation', { outcome: 'success' });
       return { processed: 0 };
     });
@@ -45,9 +47,15 @@ export async function probeSignals(tenant, token, fetchImpl = fetch) {
           body: batch.body,
           signal: AbortSignal.timeout(15000),
         });
-        receipts.push(
-          otlpReceipt(signal, r.status, new Uint8Array(await r.arrayBuffer())),
-        );
+        receipts.push({
+          ...otlpReceipt(
+            signal,
+            r.status,
+            new Uint8Array(await r.arrayBuffer()),
+          ),
+          traceId: probeContext.traceparent?.split('-')[1],
+          spanId: probeContext.traceparent?.split('-')[2],
+        });
       } catch {
         receipts.push({ signal, status: 0, rejected: -1, error: true });
       }

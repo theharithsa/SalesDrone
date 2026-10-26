@@ -6,6 +6,24 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.0.1] - 2026-10-26
+
+### Changed
+- Fix full-width lead cards and name/metadata alignment on narrow screens; remove the nested search-field outline.
+- Open mobile filters in an Apply/Cancel dialog with draft Reset and focus restoration; retain desktop inline filtering.
+- Round shared fields/dropdowns, align branding, reduce the signed-in Avinya mark and compact bottom navigation.
+- Enable saved display zoom on mobile while compensating touch targets and viewport-based drawers/dialogs.
+- Simplify the mobile lead header: one primary action, secondary actions under More, a compact stage picker and no introductory sentence or stage-chip strip.
+- Redesign Tasks with a compact mobile title/action row and status picker, full-width aligned task rows, small completion symbols within touch targets and one menu for secondary actions.
+- Replace the gradient theme button with a compact sun/moon pill and solid active-mode indicator; preserve keyboard, System, busy and reduced-motion behavior.
+- Move mobile lead selection into a leading checkbox column with aligned names and remove the Avinya logo beside the workspace theme control.
+- Extend the mobile navigation selection background around both icon and label.
+- Align the outreach chart day value and chevron in a rounded filled selector.
+- Complete observability with process/SDK queue/export/flush/outbox health, known lifecycle transition counts, safe CI check/testcase events and correlated reporting signals.
+- Repair blocked-storage RUM identities and once-only action closure; document the Observability agent, MCP validation and mandatory PR-first releases.
+- Add a reproducible synthetic touch/browser sweep across modules. Local review only; no publication yet.
+
 ## [2.0.0] - 2026-10-26
 
 ### Changed

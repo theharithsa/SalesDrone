@@ -22,19 +22,20 @@ export default function ThemeToggle({
   const dark = appearance === 'dark' || (appearance === 'system' && systemDark);
   return (
     <button
-      className="theme-toggle celestial-toggle"
+      className="theme-toggle mode-toggle"
       type="button"
       data-night={dark}
+      aria-busy={busy || undefined}
       onClick={() => onChange(dark ? 'light' : 'dark')}
       disabled={busy}
       aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-      title={dark ? 'Sunrise · light mode' : 'Sunset · dark mode'}
+      title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      <span className="celestial-sky" aria-hidden="true">
-        <Sun size={20} className="celestial-sun" />
-        <Moon size={19} className="celestial-moon" />
+      <span className="mode-toggle-track" aria-hidden="true">
+        <span className="mode-toggle-indicator" />
+        <span className="mode-toggle-option mode-toggle-light"><Sun size={18} /></span>
+        <span className="mode-toggle-option mode-toggle-dark"><Moon size={18} /></span>
       </span>
-      <span className="celestial-horizon" aria-hidden="true" />
     </button>
   );
 }

@@ -488,7 +488,7 @@ export default function SettingsPage({
                     >
                       <h3 id="display-scale-heading">Display scale</h3>
                       <label>
-                        Desktop display zoom
+                        Display zoom
                         <select
                           value={displayScale}
                           onChange={(e) =>
@@ -511,10 +511,9 @@ export default function SettingsPage({
                         </select>
                       </label>
                       <p className="field-hint" id="display-scale-help">
-                        Applies after saving on desktop screens with a mouse or
-                        trackpad. Touch and narrow layouts stay at 100% for
-                        comfortable controls. Browser zoom remains available.
-                        Choose 100% to reset.
+                        Applies after saving on phones, tablets and desktops.
+                        Touch controls retain a usable minimum size. Browser and
+                        pinch zoom remain available. Choose 100% to reset.
                       </p>
                     </section>
                     <section

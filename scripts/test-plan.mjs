@@ -45,11 +45,14 @@ export async function executePlan(plan, run, clock = Date.now) {
       exitCode = 1;
     }
     failed = exitCode !== 0;
+    const finished = clock();
     results.push({
       id: step.id,
       status: failed ? 'failed' : 'passed',
       exitCode,
-      durationMs: Math.max(0, clock() - started),
+      startedAt: new Date(started).toISOString(),
+      finishedAt: new Date(finished).toISOString(),
+      durationMs: Math.max(0, finished - started),
     });
   }
   return { passed: !failed, results };

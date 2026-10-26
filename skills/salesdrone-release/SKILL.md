@@ -94,3 +94,9 @@ gates and use current reviewed screenshots before the main push. Verify that
 design:forms and check-design-build execute in CI, and that dev-only HTML/admin
 fixtures never reach Hosting. Record exact main SHA in postchecks; API stays1.16.
 A synthetic browser session is not live Google, push or private Storage verification.
+
+All changes must go through a GitHub pull request before merging into main, per
+the human's standing instruction. Push the working branch, open and attach its
+PR, wait for required verification, then merge through the PR. Never push commits
+directly to main or bypass failed checks. Production still deploys from the
+resulting main commit via the normal workflow.

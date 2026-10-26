@@ -14,7 +14,9 @@ npm test
 npm run security:scan
 git add <reviewed paths>
 git commit -m "fix: describe the customer-visible change"
-git push origin main
+git push -u origin <working-branch>
+# Open a PR, wait for verification, and merge the PR through GitHub.
+# Never push directly to main.
 ```
 
 The main push runs the deployment workflow. PRs run verification only. GitHub Actions
@@ -80,3 +82,29 @@ outcome and function revisions. The postcheck requires public-access prevention
 indexes before enabling list/cleanup code. Keep cleanup in the existing reminders
 worker and retain compatible metadata states during rollback. Never make a bucket
 public or create a permanent URL to diagnose an access failure.
+
+## PR-first observability release
+
+All changes must be submitted as a PR before main integration. On the working
+branch, complete the release impact plan, reviewed synthetic capture manifest,
+API/settings/skill docs and relevant backend/emulator tests. Push that branch,
+create and attach a PR, inspect all required verification jobs and merge through
+GitHub only after success. Do not push directly to main or use an administrative
+bypass. Main's merge commit is the deployed identity; PR head/test identity differs.
+
+The verify job runs ci-checks.mjs and archives safe check/leaf-case metadata on
+success or failure. PR jobs have no Dynatrace/production secret. Deploy and Pages
+remain dependent on successful verification. A trusted main observe job reports
+workflow/check/testcase results, correlated reporting spans/logs and bounded
+metrics independently. Failed/skipped deployment is still represented honestly.
+CI signal failure does not undo a successful app deployment; repair/report again
+using the retained run/attempt/artifact identity instead of redeploying business code.
+
+After merge, verify the individual verify/deploy/documentation/observe jobs, live
+version/commit, postchecks and signal receipts. Then use the existing Dynatrace MCP
+to locate the exact release/CI event IDs, probe trace ID, release logs, runtime and
+queue/CI metrics with short-window projections. App-domain events must come from
+real committed operations; do not create customer changes merely to populate a
+query. Native RUM-to-trace navigation is a separate check, with any unavailable
+session/linking capability explicitly unverified. Maintain rollback source/config
+and follow forward SemVer for any corrective code release.

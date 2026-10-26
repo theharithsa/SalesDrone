@@ -91,3 +91,10 @@ Contract 1.16 adds seven operations: batch preview/apply and private attachment 
 ## Material 3 v2 local-review guidance
 
 Material v2 refreshes api-portal.css around the existing self-hosted Swagger portal. Keep authentication only in memory, remote validation disabled, same-origin requests and no RUM. Contract 1.16/scopes remain unchanged; the local admin preview never issues PAT credentials.
+
+### Existing preference description
+
+App 2.0.1 applies displayScale on mobile too. OpenAPI description is corrected;
+contract 1.16 routes, schemas, numeric allowlist and scopes are unchanged. GET/PATCH
+/me remains Google/App Check self-service only; no PAT scope is added. The mobile
+filter dialog reuses the existing leads query and report criteria.

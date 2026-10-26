@@ -31,6 +31,27 @@ function domain(p, data) {
   if (parts[0] === 'users' && parts[2] === 'devices') return 'devices';
   return null;
 }
+/** Count only transitions observed from a read-before-write snapshot. No field values leave the store. */
+export function lifecycleCounts(domain, before, after) {
+  if (!before || !after) return {};
+  const result = {};
+  if (domain === 'tasks') {
+    for (const state of ['Completed', 'Cancelled', 'Pending'])
+      if (after.state === state && before.state !== state)
+        result[state === 'Pending' ? 'reopened' : state.toLowerCase()] = 1;
+    if (!before.deletedAt && after.deletedAt) result.soft_deleted = 1;
+  }
+  if (domain === 'leads') {
+    if (!before.archived && after.archived) result.archived = 1;
+    if (!before.doNotContact && after.doNotContact) result.suppressed = 1;
+    if (before.doNotContact && after.doNotContact === false)
+      result.unsuppressed = 1;
+    if (before.stage !== after.stage) result.stage_changed = 1;
+    if (before.assignedToUid !== after.assignedToUid)
+      result.assignment_changed = 1;
+  }
+  return result;
+}
 // Instrument the SDK boundary; never serialize document values into telemetry.
 export function observableStore(base, getTelemetry = () => null) {
   const wrap = (name, fn) => {
@@ -96,6 +117,10 @@ export function observableStore(base, getTelemetry = () => null) {
                 if (known.get(p) === null) s.created++;
                 else s.changed++;
               }
+              for (const [kind, count] of Object.entries(
+                lifecycleCounts(d, known.get(p), v),
+              ))
+                s[kind] = (s[kind] || 0) + count;
               summaries.set(d, s);
             }
             const capture = t.capture(),
@@ -119,6 +144,16 @@ export function observableStore(base, getTelemetry = () => null) {
                 'records.known_created': s.created,
                 'records.known_changed': s.changed,
                 'records.deleted': s.deleted,
+                ...Object.fromEntries(
+                  Object.entries(s)
+                    .filter(
+                      ([k]) =>
+                        !['written', 'created', 'changed', 'deleted'].includes(
+                          k,
+                        ),
+                    )
+                    .map(([k, v]) => ['records.' + k, v]),
+                ),
                 'correlation.origin': capture.traceparent
                   ? 'backend-transaction'
                   : 'outbox-consumer',

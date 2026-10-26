@@ -121,3 +121,29 @@ prevents duplicate IDs. Test overlap/replay/empty pages and selection using
 lead-pagination.test.ts. Filters remount loader/batch selection. Append keeps
 unchanged selected rows; changed/removed rows are dropped. Demo has 96 fictional
 rows revealed 30 at a time; reports must still use all matching rows.
+
+### Mobile filter transaction and full-width cards
+
+MobileLeadFilters snapshots applied criteria on open. Apply updates search field,
+stage, source and conditions together; Cancel/Escape discards, Reset edits only
+the draft. ColumnFilterFields is shared with desktop and must not nest forms.
+Keep dynamic field labels/choices and all server scope/scan/cursor invariants.
+The outer leads-table section spans the collection grid, not just its nested card.
+review:mobile measures card width, verifies draft isolation and restores focus.
+
+### Mobile quick stage and actions
+
+All stages picker mirrors the same applied stage used by the filter dialog and
+server query; it must include all configured stages. The loaded count is not the
+workspace total or an inferred filtered total. More only reorganizes existing
+export/import access, preserving report criteria, capabilities and export policy.
+Mobile New may be icon-only but keeps its New enquiry accessible name.
+
+### Leading mobile selection (local 2.0.1)
+
+Place mobile selection in a real leading grid column with a compensated >=48px
+target; align every name at the same content edge. Checkbox toggles batch selection
+without opening the record; the adjacent button opens it. Remove trailing checkbox
+positioning/name padding together. Desktop table selection and batch/cursor policy
+remain unchanged. review:mobile asserts leading geometry at 320/390/600/767px,
+selection isolation, and placement at all five saved scales on 320/390px screens.

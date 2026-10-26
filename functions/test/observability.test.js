@@ -32,7 +32,7 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
   ).root;
   const received = [],
     biz = [];
-  let rejectExport = false;
+  let rejectExport = false, delayTraces = 0;
   const server = createServer(async (req, res) => {
     const chunks = [];
     for await (const c of req) chunks.push(c);
@@ -44,6 +44,7 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
       res.end();
       return;
     }
+    if (req.url.endsWith('traces') && delayTraces) await new Promise(r => setTimeout(r, delayTraces));
     const name = req.url.endsWith('traces')
       ? 'ExportTraceServiceRequest'
       : req.url.endsWith('logs')
@@ -215,6 +216,13 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
       );
     const counter = metrics.find((m) => m.name === 'salesdrone.http.requests'),
       hist = metrics.find((m) => m.name === 'salesdrone.http.duration');
+    const runtimeMemory = metrics.find(m => m.name === 'salesdrone.runtime.memory');
+    assert.equal(runtimeMemory.unit, 'By');
+    assert.ok(runtimeMemory.gauge.dataPoints.some(p => attr(p.attributes).kind === 'heapUsed' && p.asDouble > 0));
+    assert.ok(metrics.some(m => m.name === 'salesdrone.runtime.cpu' && m.sum.aggregationTemporality === 1));
+    assert.ok(metrics.some(m => m.name === 'salesdrone.telemetry.exports'));
+    assert.ok(metrics.some(m => m.name === 'otel.sdk.processor.span.queue.capacity'));
+    assert.ok(metrics.some(m => m.name === 'otel.sdk.processor.log.queue.capacity'));
     assert.equal(counter.sum.aggregationTemporality, 1);
     assert.equal(hist.unit, 's');
     assert.ok(
@@ -247,6 +255,13 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
         !exported.includes('secret_contact') &&
         !exported.includes('synthetic-credential'),
     );
+    await store.run(async tx => tx.set(path('tasks', 'lifecycle'), {id:'lifecycle',state:'Pending'}));
+    await store.run(async tx => { const old=await tx.get(path('tasks','lifecycle'));tx.set(path('tasks','lifecycle'), {...old,state:'Completed'}); });
+    const lifecycle = (await base.query(path('telemetryOutbox'), {limit:100})).filter(e=>e.event.data['records.completed']===1);
+    assert.equal(lifecycle.length,1);
+    const eventCount=(await base.query(path('telemetryOutbox'),{limit:100})).length;
+    await assert.rejects(store.run(async tx=>{const old=await tx.get(path('tasks','lifecycle'));tx.set(path('tasks','lifecycle'),{...old,state:'Pending'});throw Error('rollback');}));
+    assert.equal((await base.query(path('telemetryOutbox'),{limit:100})).length,eventCount);
     let clock = Date.now() + 10000;
     const now = () => new Date(clock).toISOString();
     const [first, second] = await Promise.all([
@@ -393,6 +408,13 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
         })
       ).length,
     );
+    delayTraces = 100;
+    await Promise.all(Array.from({length: 800}, () => t.span('queue.bound.fixture', async () => {})));
+    await t.flush();
+    const healthMetrics = received.filter(r=>r.path.endsWith('metrics')).flatMap(r=>r.decoded.resourceMetrics.flatMap(rs=>rs.scopeMetrics.flatMap(s=>s.metrics)));
+    assert.ok(healthMetrics.some(m=>m.name==='otel.sdk.processor.span.processed' && m.sum.dataPoints.some(p=>attr(p.attributes)['error.type']==='queue_full' && p.asDouble>0)), 'SDK reports actual dropped spans at the queue bound');
+    assert.ok(healthMetrics.some(m=>m.name==='salesdrone.outbox.records' && m.gauge.dataPoints.some(p=>attr(p.attributes).state==='Pending')));
+    delayTraces = 0;
     rejectExport = true;
     const still = await post(
       'bob',

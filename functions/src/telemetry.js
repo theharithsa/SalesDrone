@@ -1,3 +1,6 @@
+import { CI_CHECKS, CI_STATUSES } from './ci-contract.js';
+import { performance } from 'node:perf_hooks';
+import { monitorExporter, boundedFlush } from './telemetry-health.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID, createHash } from 'node:crypto';
 import {
@@ -15,6 +18,7 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace';
 import { BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
 import {
+  MeterProvider,
   PeriodicExportingMetricReader,
   AggregationTemporality,
 } from '@opentelemetry/sdk-metrics';
@@ -53,6 +57,9 @@ const safeKeys = new Set([
   'cancelled',
   'skipped',
   'duration.ms',
+  'ci.check',
+  'ci.case.id',
+  'ci.run.id',
 ]);
 export const actorId = (uid) =>
   'user:' +
@@ -81,60 +88,85 @@ export function createTelemetry({
   const origin = tenantOrigin(tenant, { allowLocalTest }),
     headers = { Authorization: 'Api-Token ' + key },
     timeoutMillis = 1500;
+  const health = Object.fromEntries(
+    ['traces', 'logs', 'metrics'].map((s) => [s, { success: 0, failure: 0 }]),
+  );
+  const observed = (signal, exporter) =>
+    monitorExporter(exporter, signal, health, () => {
+      // Use the platform log for failure of the exporter itself; never export its error text.
+      console.warn(
+        JSON.stringify({ event: 'telemetry.export.failed', signal }),
+      );
+    });
+  const resource = resourceFromAttributes({
+    'service.name': service,
+    'service.namespace': 'avinyatech',
+    'service.version': APP_VERSION,
+    'deployment.environment.name': environment,
+    'build.commit': BUILD_COMMIT,
+    'service.instance.id': randomUUID(),
+  });
+  const metricReader = new PeriodicExportingMetricReader({
+    exporter: observed(
+      'metrics',
+      exporters.metrics ||
+        new OTLPMetricExporter({
+          url: origin + '/api/v2/otlp/v1/metrics',
+          headers,
+          timeoutMillis,
+          temporalityPreference: AggregationTemporality.DELTA,
+        }),
+    ),
+    exportIntervalMillis: 60000,
+    exportTimeoutMillis: 1500,
+    cardinalityLimits: { default: 256 },
+    maxExportBatchSize: 256,
+  });
+  const meterProvider = new MeterProvider({
+    resource,
+    readers: [metricReader],
+  });
+  metrics.setGlobalMeterProvider(meterProvider);
   const spanProcessor = new BatchSpanProcessor({
-    exporter:
+    exporter: observed(
+      'traces',
       exporters.traces ||
-      new OTLPTraceExporter({
-        url: origin + '/api/v2/otlp/v1/traces',
-        headers,
-        timeoutMillis,
-      }),
+        new OTLPTraceExporter({
+          url: origin + '/api/v2/otlp/v1/traces',
+          headers,
+          timeoutMillis,
+        }),
+    ),
+    selfObsMeterProvider: meterProvider,
     maxQueueSize: 512,
     maxExportBatchSize: 64,
     scheduledDelayMillis: 500,
     exportTimeoutMillis: 1500,
   });
   const logProcessor = new BatchLogRecordProcessor({
-    exporter:
+    exporter: observed(
+      'logs',
       exporters.logs ||
-      new OTLPLogExporter({
-        url: origin + '/api/v2/otlp/v1/logs',
-        headers,
-        timeoutMillis,
-      }),
+        new OTLPLogExporter({
+          url: origin + '/api/v2/otlp/v1/logs',
+          headers,
+          timeoutMillis,
+        }),
+    ),
+    selfObsMeterProvider: meterProvider,
     maxQueueSize: 256,
     maxExportBatchSize: 64,
     scheduledDelayMillis: 500,
     exportTimeoutMillis: 1500,
   });
-  const metricReader = new PeriodicExportingMetricReader({
-    exporter:
-      exporters.metrics ||
-      new OTLPMetricExporter({
-        url: origin + '/api/v2/otlp/v1/metrics',
-        headers,
-        timeoutMillis,
-        temporalityPreference: AggregationTemporality.DELTA,
-      }),
-    exportIntervalMillis: 60000,
-    exportTimeoutMillis: 1500,
-    cardinalityLimits: { default: 256 },
-    maxExportBatchSize: 256,
-  });
   const sdk = new NodeSDK({
-    resource: resourceFromAttributes({
-      'service.name': service,
-      'service.namespace': 'avinyatech',
-      'service.version': APP_VERSION,
-      'deployment.environment.name': environment,
-      'build.commit': BUILD_COMMIT,
-    }),
+    resource,
     autoDetectResources: false,
     contextManager: new AsyncLocalStorageContextManager(),
     textMapPropagator: new W3CTraceContextPropagator(),
     spanProcessors: [spanProcessor],
     logRecordProcessors: [logProcessor],
-    metricReaders: [metricReader],
+    metricReaders: [],
     instrumentations: [],
   });
   sdk.start();
@@ -161,9 +193,91 @@ export function createTelemetry({
         'Finalized outbox delivery attempts, not unique business outcomes',
       unit: '{attempt}',
     });
+  const flushes = meter.createCounter('salesdrone.telemetry.flushes', {
+    unit: '{flush}',
+  });
+  const memory = meter.createObservableGauge('salesdrone.runtime.memory', {
+    unit: 'By',
+  });
+  memory.addCallback((result) => {
+    const usage = process.memoryUsage();
+    for (const kind of ['rss', 'heapUsed', 'heapTotal', 'external'])
+      result.observe(usage[kind], { kind });
+  });
+  meter
+    .createObservableCounter('salesdrone.runtime.cpu', { unit: 's' })
+    .addCallback((result) => {
+      const cpu = process.cpuUsage();
+      for (const mode of ['user', 'system'])
+        result.observe(cpu[mode] / 1e6, { mode });
+    });
+  let previousLoop = performance.eventLoopUtilization();
+  meter
+    .createObservableGauge('salesdrone.runtime.event_loop_utilization', {
+      unit: '1',
+    })
+    .addCallback((result) => {
+      const current = performance.eventLoopUtilization();
+      result.observe(
+        performance.eventLoopUtilization(current, previousLoop).utilization,
+      );
+      previousLoop = current;
+    });
+  const exportsMetric = meter.createObservableCounter(
+    'salesdrone.telemetry.exports',
+    { unit: '{batch}' },
+  );
+  exportsMetric.addCallback((result) => {
+    for (const signal of ['traces', 'logs', 'metrics'])
+      for (const outcome of ['success', 'failure'])
+        result.observe(health[signal][outcome], { signal, outcome });
+  });
+  let outboxSnapshot = null;
+  meter
+    .createObservableGauge('salesdrone.outbox.records', { unit: '{record}' })
+    .addCallback((result) => {
+      if (outboxSnapshot)
+        for (const state of ['Pending', 'Sending', 'Rejected'])
+          result.observe(outboxSnapshot.counts[state], { state });
+    });
+  meter
+    .createObservableGauge('salesdrone.outbox.oldest_due_age', { unit: 's' })
+    .addCallback((result) => {
+      if (outboxSnapshot) result.observe(outboxSnapshot.age);
+    });
+  const ciResults = meter.createCounter('salesdrone.ci.results', {
+    unit: '{result}',
+  });
+  const ciDuration = meter.createHistogram('salesdrone.ci.duration', {
+    unit: 's',
+  });
   let flushing;
   const self = {
     enabled: true,
+    diagnostics: () => structuredClone(health),
+    outboxHealth(counts, age) {
+      if (
+        ['Pending', 'Sending', 'Rejected'].every(
+          (s) => Number.isFinite(counts[s]) && counts[s] >= 0,
+        ) &&
+        Number.isFinite(age)
+      )
+        outboxSnapshot = { counts, age: Math.max(0, age) };
+    },
+    quality(check, outcome, durationMs, caseId, runId) {
+      if (!CI_CHECKS.includes(check) || !CI_STATUSES.includes(outcome)) return;
+      const attributes = { check, outcome, kind: caseId ? 'case' : 'check' };
+      ciResults.add(1, attributes);
+      if (Number.isFinite(durationMs) && durationMs >= 0)
+        ciDuration.record(durationMs / 1000, attributes);
+      self.log('ci.result', {
+        'ci.check': check,
+        outcome,
+        'duration.ms': durationMs,
+        ...(caseId ? { 'ci.case.id': caseId } : {}),
+        'ci.run.id': runId,
+      });
+    },
     capture() {
       const s = scope.getStore() || {};
       const c = trace.getActiveSpan()?.spanContext();
@@ -383,18 +497,17 @@ export function createTelemetry({
     async flush() {
       if (flushing) return flushing;
       flushing = (async () => {
-        let timer;
-        await Promise.race([
-          Promise.allSettled([
-            spanProcessor.forceFlush(),
-            logProcessor.forceFlush(),
-            metricReader.forceFlush(),
-          ]),
-          new Promise((resolve) => {
-            timer = setTimeout(resolve, 2000);
-          }),
+        const result = await boundedFlush([
+          spanProcessor,
+          logProcessor,
+          metricReader,
         ]);
-        clearTimeout(timer);
+        flushes.add(1, { outcome: result.outcome });
+        if (result.outcome !== 'success')
+          console.warn(
+            JSON.stringify({ event: 'telemetry.flush.' + result.outcome }),
+          );
+        return result;
       })()
         .catch(() => {})
         .finally(() => {
@@ -404,6 +517,7 @@ export function createTelemetry({
     },
     async shutdown() {
       await sdk.shutdown();
+      await meterProvider.shutdown();
       context.disable();
       trace.disable();
       metrics.disable();

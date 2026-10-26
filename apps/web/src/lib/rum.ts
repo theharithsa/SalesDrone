@@ -1,3 +1,4 @@
+import { createAnonymousId, finishAction } from './rum-runtime';
 import { createRumIdentity } from './rum-identity';
 import { APP_VERSION } from './version';
 type Rum = {
@@ -86,18 +87,11 @@ export const safeOperation = (path: string, method: string) => {
     );
   return `${['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(method) ? method : 'OTHER'} /${root}${p.split('/').filter(Boolean).length > 1 ? '/:id' : ''}${tail.length ? '/' + tail.join('/') : ''}`;
 };
-function anonymousId() {
-  try {
-    let id = localStorage.getItem('salesdrone.rum.browser');
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem('salesdrone.rum.browser', id);
-    }
-    return 'browser:' + id;
-  } catch {
-    return 'browser:session';
-  }
-}
+const anonymousId = createAnonymousId({
+  read: () => localStorage.getItem('salesdrone.rum.browser'),
+  write: (id) => localStorage.setItem('salesdrone.rum.browser', id),
+  random: () => crypto.randomUUID(),
+});
 export const setRumIdentity = createRumIdentity({
   agent: rum,
   anonymous: anonymousId,
@@ -141,17 +135,20 @@ export function beginRumRequest(path: string, method: string) {
   try {
     id = r?.enterAction?.('API ' + safeOperation(path, method));
   } catch {}
-  return (outcome: string, requestId?: string) => {
-    if (id === undefined) return;
-    try {
-      r?.addActionProperties?.(id, undefined, undefined, {
-        'app.version': APP_VERSION,
-        'operation.outcome': outcome,
-        ...(requestId && /^[a-f0-9-]{36}$/i.test(requestId)
-          ? { 'request.id': requestId }
-          : {}),
-      });
-      r?.leaveAction?.(id);
-    } catch {}
-  };
+  const finish = finishAction(r, id);
+  return (outcome: string, requestId?: string) =>
+    finish({
+      'app.version': APP_VERSION,
+      'operation.outcome': [
+        'success',
+        'failure',
+        'cancelled',
+        'error',
+      ].includes(outcome)
+        ? outcome
+        : 'other',
+      ...(requestId && /^[a-f0-9-]{36}$/i.test(requestId)
+        ? { 'request.id': requestId }
+        : {}),
+    });
 }

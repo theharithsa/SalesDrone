@@ -83,3 +83,26 @@ Desktop displayScale changes export only the changed key in personal appearance 
 ## v1.9 operating notes
 
 Attachment metadata joins observableStore as the low-cardinality leadAttachments domain. Committed events contain safe counts/actor/context only, never filenames, bytes, checksums or bucket paths. Bulk lead writes reuse atomic leads/journey/activity/recipient events. Firebase Storage network calls have named dependency spans (storage.upload/download/delete); no object attributes. Request methods include PUT. RUM uses fixed batch/attachment/content templates, never names. Cleanup emits removed/failed counts; delivery uses the existing committed outbox and deployment receipts remain separate from tenant searchability.
+
+## Observability agent workflow
+
+This is the canonical repository skill for the Observability agent; do not create
+an overlapping second owner. For an instrumentation-to-release task, follow the
+[operations runbook](references/operations.md) for gap analysis, CI/test metadata,
+PR-first deployment, safe MCP queries and recovery. The portable `dt-obs` skill is
+an additional reference when installed, not a production dependency.
+
+Current release additions: independent exporter/flush diagnostics, process
+memory/CPU/event-loop metrics, sampled outbox backlog/due age, numeric known
+lifecycle transition counts inside existing committed events, and trusted-main
+workflow/check/testcase reporting. PR runs retain safe artifacts without secrets.
+Never classify manual catalog cases as executed. CI spans describe report
+processing; source/delivery/app traces remain distinct.
+
+Entry points: `telemetry-health.js`, `ci-checks.mjs`, `ci-test-reporter.mjs`,
+`ci-events.mjs`, `notify-ci.mjs` and the workflow's `observe` job. Tests include
+`functions/test/telemetry-health.test.js`, the independent OTLP receiver,
+`tests/ci-events.test.ts` and RUM lifecycle tests. The RUM helper closes actions
+once even when attributes fail, and uses a random page fallback when storage fails.
+The [gap plan](../../docs/OBSERVABILITY-PLAN.md) and per-release query evidence
+separate implementation, local test, deploy, ingest and tenant visibility.

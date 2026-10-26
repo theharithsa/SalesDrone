@@ -79,3 +79,45 @@ from capturePixels. Update screenshot captions to describe the current captured
 state (e.g. initial disabled import preview versus completed mapping); never keep
 old viewport numbers or claims of interactions not shown. README screenshot cache
 query hashes must follow the current manifest.
+
+### Mobile 2.0.1 handbook updates
+
+Describe mobile filter drafts in a dialog, Apply versus Cancel, Reset timing and
+focus return. Display zoom is now available on phones/tablets; remove old desktop-
+only copy and stale v1 type/spacing values. Mention compact navigation plus safe
+area rather than claiming a fixed physical-device height. Public captures remain
+v2.0 until new reviewed 2.0.1 assets are curated; link the local review separately.
+
+### Mobile collection controls
+
+Mobile export/import moved to More lead actions; New remains primary. Document
+the compact All stages picker and full filter dialog separately, with the same
+underlying applied stage. Refresh phone light/dark captures after review and
+describe shortened/hidden labels by actual available width.
+
+### Task collection review
+
+Document phone New, status picker and row Actions menu separately from desktop
+Add reminder/status buttons. Edit task and Delete task remain available for closed
+states; snooze/reschedule/cancel are Pending-only. Explain loaded counts and the
+single timezone label. Keep new local captures in test-results; refresh affected
+public task/dashboard captures only after review, preserving honest v2.0 assets.
+
+### Local 2.0.1 theme control
+
+ThemeToggle uses one native button with sun/moon icons and a solid indicator for
+the resolved current mode. The named action switches to the opposite explicit
+mode, preserving System following in Settings and Book mode. Keep the existing
+changeTheme persistence/error/busy path, keyboard focus and compensated touch
+target. The indicator moves 28px in 160ms, disabled under reduced motion. Use
+semantic Material colour pairs rather than gradient day/night palettes. Refresh
+affected login/workspace public captures after approval; local captures do not
+replace or relabel published v2.0 images. No API or new audit/event is introduced.
+
+### Header mark and leading selection review
+
+Mobile lead selection is on the left in a separate target column. The adjacent
+card opens the lead; selecting its checkbox only changes the batch selection.
+The workspace header no longer shows the Avinya logo beside the theme pill.
+Preserve sidebar attribution. Public screenshots still await local-review approval;
+never relabel the v2.0 header images as current v2.0.1 evidence.

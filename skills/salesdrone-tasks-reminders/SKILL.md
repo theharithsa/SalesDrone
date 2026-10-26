@@ -86,3 +86,27 @@ entry containers and grouped actions. Keep native date/time validation, field
 names and localInstant conversion intact. `design:forms` checks real reminder/edit
 markup. The isolated admin preview can open reminder/edit dialogs but never saves
 a real task. Review required dates, focus and narrow dialogs in MATERIAL-05.
+
+### Mobile action menus
+
+Task menu triggers/actions retain compensated touch targets under saved zoom.
+On opening, measure available viewport space excluding sticky header/bottom nav;
+choose above/below and bound scrolling rather than letting actions fall behind the
+bar. Closing the disclosure after an action must not alter the task handler or
+authorization. review:mobile includes a bottom-edge anchor containment regression.
+
+### Local 2.0.1 task list refinement
+
+Tasks uses title/New on one phone row, a status picker below, a loaded count and
+one timezone label. Desktop keeps Add reminder and pressed-state status buttons.
+Rows group title, lead/company and due instant; completion uses a 22px symbol
+inside a compensated target. Secondary actions share the row menu. Completed and
+cancelled rows retain Edit task/Delete task, without pending scheduling actions.
+Preserve existing handlers, capability guards and recipient privacy. Menus close
+on Escape (restoring trigger focus), outside pointer, blur and action selection.
+
+review:mobile checks full list width, aligned menu anchors, compact symbol/target
+sizes, status empty/completed/cancelled states, edit/reschedule/delete dialogs and
+completion/cancellation using in-memory demo tasks. Review five saved scales and
+light/dark/Book palettes; this is no proof of server persistence or delivery.
+No new API, permission, setting or business event is needed for this presentation.
