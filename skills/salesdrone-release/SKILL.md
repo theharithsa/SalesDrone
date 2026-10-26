@@ -86,3 +86,11 @@ Deployment BizEvents use application/cloudevent+json; CUSTOM_DEPLOYMENT markers 
 ## v1.9 operating notes
 
 Private lead attachments add storage.rules and Firebase Storage to the emulator suite and main deployment workflow. Deploy deny-all Storage rules and wait for attachment indexes before API/Hosting. Existing api/reminders function exports own upload and bounded cleanup; do not create an untracked sixth function. Verify bucket public-access prevention, runtime object permissions, API contract 1.16 and no permanent download links. No service-account credentials belong in source.
+
+## v2.0 release procedure
+
+The v2 design has explicit user approval dated 26 October 2026. Run the complete
+gates and use current reviewed screenshots before the main push. Verify that
+design:forms and check-design-build execute in CI, and that dev-only HTML/admin
+fixtures never reach Hosting. Record exact main SHA in postchecks; API stays1.16.
+A synthetic browser session is not live Google, push or private Storage verification.

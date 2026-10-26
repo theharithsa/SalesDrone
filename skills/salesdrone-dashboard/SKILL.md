@@ -72,3 +72,7 @@ Read for detailed behavior:
 - [docs/INTELLIGENCE.md](../../docs/INTELLIGENCE.md)
 
 Chart reading uses HTML y-axis/date labels and a centered HTML ring total; retain SVG accessible descriptions and authorized aggregate data. A native Chart day selector provides a touch/keyboard alternative to the dots. Clamp selectedIndex when data shrinks; an empty chart has a disabled fallback. Selecting a day changes local presentation only: no new Gemini request, API scope or conversion event. Check first/last/empty selection, resizing and both palettes/Book mode. Dashboard content-container thresholds govern chart columns, not outer-window width.
+
+## Material 3 v2 local-review guidance
+
+Material v2 places metric cards before the briefing, uses horizontal stage cards and one chart hierarchy. Current-stage counts are still snapshots, not historic conversion. Manual/automatic AI generation policy is unchanged. Review the redesigned chart labels, small-screen scrolling and both palettes before approval.

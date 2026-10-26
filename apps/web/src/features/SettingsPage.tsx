@@ -34,6 +34,7 @@ import { Session, Entity } from '../lib/types';
 import { Avatar, ErrorMessage, SaveButton, useSubmit } from '../components/UI';
 import { enablePush, revokeThisDevice } from '../lib/api';
 export default function SettingsPage({
+  previewOnly = false,
   session,
   guestPreferences,
   demo,
@@ -46,6 +47,7 @@ export default function SettingsPage({
   initialSection,
   onWorkspacePolicyChanged,
 }: {
+  previewOnly?: boolean;
   initialSection?: string;
   onWorkspacePolicyChanged?: () => void;
   session: Session | null;
@@ -191,6 +193,7 @@ export default function SettingsPage({
     setMessage('Preferences saved.');
   });
   async function push() {
+    if (previewOnly) return;
     setBusy(true);
     setError('');
     try {
@@ -693,7 +696,7 @@ export default function SettingsPage({
                 <button
                   className="button primary"
                   onClick={push}
-                  disabled={busy || demo}
+                  disabled={busy || demo || previewOnly}
                 >
                   {busy ? 'Enabling…' : 'Enable notifications'}
                 </button>

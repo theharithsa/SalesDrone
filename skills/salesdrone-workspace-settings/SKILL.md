@@ -95,3 +95,7 @@ Appearance & time includes Desktop display zoom numeric85/90/100/110/125. Draft 
 ## v1.9 operating notes
 
 Explain the new PAT scopes in Developer settings and leads:edit file/batch capabilities in People & permissions. No attachment toggle or global setting is introduced; limits are a documented versioned contract. Existing tokens require explicit new scopes; current owner capabilities and assigned-only policy still apply.
+
+## Material 3 v2 local-review guidance
+
+Material v2 uses shared section cards and a settings dropdown below 900px. The local AdminReview entry renders real components with fictional state, never live API access. SettingsPage previewOnly blocks push registration; the ordinary app does not pass it. Existing field IDs, stored preferences and API policy are unchanged.

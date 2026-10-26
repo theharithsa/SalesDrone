@@ -225,7 +225,7 @@
     {
       "id": "salesdrone-interface",
       "path": "skills/salesdrone-interface/SKILL.md",
-      "description": "Maintain SalesDrone shared responsive shell, navigation, typography, themes, accessible overlays and synthetic demo adapters. Use for cross-module UI work; feature logic belongs to the corresponding domain skill.",
+      "description": "Maintain SalesDrone Material 3 responsive shell, typography, themes, accessible overlays and synthetic demo adapters. Use for cross-module UI and design work; business logic stays with its owning module.",
       "matchTerms": [
         "sidebar",
         "mobile ui",
@@ -249,12 +249,8 @@
         "display zoom"
       ],
       "related": [
-        "salesdrone-release",
-        "salesdrone-authentication",
-        "salesdrone-workspace-settings",
-        "salesdrone-notifications",
-        "salesdrone-dashboard",
-        "salesdrone-book-mode"
+        "salesdrone-release-readiness",
+        "salesdrone-release"
       ],
       "apiOperations": []
     },

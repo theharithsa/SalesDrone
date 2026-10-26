@@ -82,8 +82,8 @@ export function LeadForm({
       </datalist>
       <div className="form-grid">
         {visible('source') ? (
-          <label>
-            {labelFor(config, 'source')}
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'source')}</span>
             <input
               name="source"
               list="workspace-source-options"
@@ -92,8 +92,8 @@ export function LeadForm({
             />
           </label>
         ) : null}
-        <label>
-          {labelFor(config, 'name')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'name')}</span>
           <input
             name="name"
             required={!lead?.needsReview}
@@ -103,8 +103,8 @@ export function LeadForm({
             autoComplete="name"
           />
         </label>
-        <label>
-          {labelFor(config, 'phone')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'phone')}</span>
           <input
             name="phone"
             type="tel"
@@ -117,8 +117,8 @@ export function LeadForm({
           ) : null}
         </label>
         {visible('company') ? (
-          <label>
-            {labelFor(config, 'company')}
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'company')}</span>
             <input
               name="company"
               maxLength={200}
@@ -128,8 +128,8 @@ export function LeadForm({
           </label>
         ) : null}
         {visible('location') ? (
-          <label>
-            {labelFor(config, 'location')}
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'location')}</span>
             <input
               name="location"
               list="workspace-location-options"
@@ -139,8 +139,8 @@ export function LeadForm({
           </label>
         ) : null}
         {visible('zone') ? (
-          <label>
-            {labelFor(config, 'zone')}
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'zone')}</span>
             <input
               name="zone"
               list="workspace-sector-options"
@@ -149,8 +149,8 @@ export function LeadForm({
             />
           </label>
         ) : null}
-        <label>
-          {labelFor(config, 'enquiryDate')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'enquiryDate')}</span>
           <input
             name="enquiryDate"
             type="date"
@@ -162,8 +162,10 @@ export function LeadForm({
           ) : null}
         </label>
         {visible('legacyStatus') ? (
-          <label>
-            {labelFor(config, 'legacyStatus')}
+          <label className="material-field">
+            <span className="field-label">
+              {labelFor(config, 'legacyStatus')}
+            </span>
             <input
               name="legacyStatus"
               list="enquiry-statuses"
@@ -177,8 +179,8 @@ export function LeadForm({
             </datalist>
           </label>
         ) : null}
-        <label>
-          {labelFor(config, 'stage')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'stage')}</span>
           <select name="stage" defaultValue={lead?.stage || 'New'}>
             {withCurrent(choices.stage, lead?.stage).map((v) => (
               <option key={v}>{v}</option>
@@ -186,8 +188,10 @@ export function LeadForm({
           </select>
         </label>
         {visible('initialDiscussion') ? (
-          <label className="full">
-            {labelFor(config, 'initialDiscussion')}
+          <label className="material-field full">
+            <span className="field-label">
+              {labelFor(config, 'initialDiscussion')}
+            </span>
             <textarea
               name="initialDiscussion"
               rows={3}
@@ -199,8 +203,8 @@ export function LeadForm({
       </div>
 
       <div className="form-grid">
-        <label>
-          {labelFor(config, 'email')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'email')}</span>
           <input
             name="email"
             type="email"
@@ -208,8 +212,8 @@ export function LeadForm({
             defaultValue={lead?.email}
           />
         </label>
-        <label>
-          {labelFor(config, 'countryCode')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'countryCode')}</span>
           <select
             name="countryCode"
             defaultValue={lead?.countryCode || choices.countryCode[0]}
@@ -220,8 +224,8 @@ export function LeadForm({
           </select>
         </label>
         {lead ? (
-          <label className="full">
-            Add a comment
+          <label className="material-field full">
+            <span className="field-label">Add a comment</span>
             <textarea
               name="comments"
               rows={3}
@@ -351,16 +355,16 @@ export function CallForm({
       }}
     >
       <div className="form-grid">
-        <label>
-          {labelFor(config, 'outcome')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'outcome')}</span>
           <select name="outcome" autoFocus>
             {choices.outcome.map((s) => (
               <option key={s}>{s}</option>
             ))}
           </select>
         </label>
-        <label>
-          {labelFor(config, 'disposition')}
+        <label className="material-field">
+          <span className="field-label">{labelFor(config, 'disposition')}</span>
           <select
             value={disposition}
             onChange={(e) => {
@@ -373,8 +377,8 @@ export function CallForm({
             ))}
           </select>
         </label>
-        <label>
-          Duration (seconds, optional)
+        <label className="material-field">
+          <span className="field-label">Duration (seconds, optional)</span>
           <input
             type="number"
             min="0"
@@ -384,8 +388,8 @@ export function CallForm({
           />
         </label>
         {canEdit ? (
-          <label>
-            {labelFor(config, 'stage')}
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'stage')}</span>
             <select name="stage" defaultValue={lead.stage}>
               {withCurrent(choices.stage, lead?.stage).map((s) => (
                 <option key={s}>{s}</option>
@@ -393,8 +397,8 @@ export function CallForm({
             </select>
           </label>
         ) : null}
-        <label className="full">
-          Conversation notes
+        <label className="material-field full">
+          <span className="field-label">Conversation notes</span>
           <textarea
             name="notes"
             rows={4}
@@ -414,8 +418,8 @@ export function CallForm({
         ) : null}
         {followUp ? (
           <>
-            <label>
-              Next action
+            <label className="material-field">
+              <span className="field-label">Next action</span>
               <input
                 name="title"
                 required
@@ -423,8 +427,8 @@ export function CallForm({
                 placeholder="e.g. Share the product overview"
               />
             </label>
-            <label>
-              Remind me
+            <label className="material-field">
+              <span className="field-label">Remind me</span>
               <input name="dueAt" type="datetime-local" required />
             </label>
             <p className="field-hint full">
@@ -491,8 +495,8 @@ export function TaskForm({
       }}
     >
       <div className="form-grid">
-        <label className="full">
-          What would you like to remember?
+        <label className="material-field full">
+          <span className="field-label">What would you like to remember?</span>
           <input
             required
             name="title"
@@ -501,12 +505,12 @@ export function TaskForm({
             placeholder="e.g. Follow up on the enquiry"
           />
         </label>
-        <label>
-          Due date and time
+        <label className="material-field">
+          <span className="field-label">Due date and time</span>
           <input name="dueAt" type="datetime-local" required />
         </label>
-        <label>
-          Task type
+        <label className="material-field">
+          <span className="field-label">Task type</span>
           <select
             name="kind"
             defaultValue={leadId ? 'outreach' : 'administrative'}
@@ -559,8 +563,8 @@ export function NoteForm({
         submit.run(inputData(e));
       }}
     >
-      <label>
-        Comment
+      <label className="material-field">
+        <span className="field-label">Comment</span>
         <textarea
           name="notes"
           required
@@ -614,8 +618,8 @@ export function RescheduleForm({
         submit.run(inputData(e));
       }}
     >
-      <label>
-        New date and time
+      <label className="material-field">
+        <span className="field-label">New date and time</span>
         <input
           name="dueAt"
           type="datetime-local"
@@ -664,16 +668,16 @@ export function CorrectionForm({
       <div className="form-grid">
         {activity.type === 'call' ? (
           <>
-            <label>
-              Call outcome
+            <label className="material-field">
+              <span className="field-label">Call outcome</span>
               <select name="outcome" defaultValue={activity.outcome}>
                 {withCurrent(choices.outcome, activity.outcome).map((s) => (
                   <option key={s}>{s}</option>
                 ))}
               </select>
             </label>
-            <label>
-              Disposition
+            <label className="material-field">
+              <span className="field-label">Disposition</span>
               <select
                 name="disposition"
                 defaultValue={activity.disposition || 'None'}
@@ -685,8 +689,8 @@ export function CorrectionForm({
             </label>
           </>
         ) : null}
-        <label className="full">
-          Notes
+        <label className="material-field full">
+          <span className="field-label">Notes</span>
           <textarea
             name="notes"
             rows={4}

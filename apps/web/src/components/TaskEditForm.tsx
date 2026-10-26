@@ -34,8 +34,8 @@ export default function TaskEditForm({
         });
       }}
     >
-      <label>
-        Task title
+      <label className="material-field">
+        <span className="field-label">Task title</span>
         <input
           name="title"
           defaultValue={task.title}
@@ -45,8 +45,8 @@ export default function TaskEditForm({
         />
       </label>
       <div className="form-grid">
-        <label>
-          Due date and time
+        <label className="material-field">
+          <span className="field-label">Due date and time</span>
           <input
             name="dueAt"
             type="datetime-local"
@@ -54,15 +54,15 @@ export default function TaskEditForm({
             required
           />
         </label>
-        <label>
-          Task type
+        <label className="material-field">
+          <span className="field-label">Task type</span>
           <select name="kind" defaultValue={task.kind || 'outreach'}>
             <option value="outreach">Outreach</option>
             <option value="administrative">Administrative</option>
           </select>
         </label>
-        <label>
-          Status
+        <label className="material-field">
+          <span className="field-label">Status</span>
           <select name="state" defaultValue={task.state}>
             {['Pending', 'Completed', 'Cancelled'].map((value) => (
               <option key={value}>{value}</option>

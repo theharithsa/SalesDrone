@@ -5,6 +5,18 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.0.0] - 2026-10-26
+
+### Changed
+- Replace the layered v1 global styling entry with a Material 3 role-based system for sign-in, navigation, dashboard, leads, record workspace, tasks, files, inbox, forms, imports, settings and Swagger presentation.
+- Reorganise lead identity/company/stage columns and independently sized conversation/details panes; retain existing permissions and data contracts.
+- Add a development-only responsive review canvas and fictional admin settings preview, with focused contrast/presentation tests and a bundle isolation check.
+- Address local review feedback with visible table overflow navigation, padded activity/composer sections, non-wrapping blade actions and shared Material filled forms and styled dropdown triggers. Add real-form render checks and fictional form dialogs.
+- Switch lead toolbar actions to accessible icon-only buttons when the lead container is narrow, restoring labels on expansion.
+- Automatically load lead pages near the list bottom, with retry/fallback controls, overlap protection, stable selections on append and a 96-record synthetic demo.
+- Preserve personal font, Book mode and display scale choices. Human design approval received; release and deployment use the full verification workflow.
+
 ## [1.9.1] - 2026-10-26
 
 ### Changed

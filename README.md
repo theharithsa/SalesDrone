@@ -1,5 +1,10 @@
 # SalesDrone by AvinyaTech
 
+SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
+filled forms, a resizable lead inspector and automatic lead-list pagination.
+See the [product handbook](docs/PRODUCT-GUIDE.md), [settings reference](docs/SETTINGS.md)
+and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo data.
+
 [![Verify, deploy and observe](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
 [![Latest release](https://img.shields.io/github/v/release/theharithsa/SalesDrone?color=0756a5)](https://github.com/theharithsa/SalesDrone/releases/latest)
 [![MIT licence](https://img.shields.io/github/license/theharithsa/SalesDrone?color=0756a5)](LICENSE)
@@ -12,7 +17,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.9.1 · MIT**
+**Part of Avinya Enterprises · v2.0.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -34,7 +39,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard funnel is a snapshot of current counts: selecting a stage opens its filtered leads. Its widths do not claim conversion rates or an invented history.
 
-![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=c91e0dd55b36)
+![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=3934038da18b)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -45,7 +50,7 @@ The notification bell opens an overlay without losing your place. Assignment and
 <details>
 <summary>Mobile lead view</summary>
 
-<img src="site/assets/screenshots/mobile-demo.jpg?sha=663413bd5f13" alt="A fictional lead’s journey on mobile" width="320">
+<img src="site/assets/screenshots/mobile-demo.jpg?sha=8ca3faafdfbe" alt="A fictional lead’s journey on mobile" width="320">
 
 </details>
 
@@ -123,13 +128,13 @@ Filtered Excel reports are available directly in Leads, with a column picker and
 
 Read the [complete settings guide](docs/SETTINGS.md) or its [published version](https://theharithsa.github.io/SalesDrone/settings.html) for every control, default, permission and environment boundary. Agent routing: [skill-tree.json](skill-tree.json) / [skill-tree.md](skill-tree.md). Every feature release follows the [completion and deployment checks](skills/salesdrone-release-readiness/SKILL.md).
 
-The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changing the table. Open full lead page for All, Comments, Calls, Tasks and Review tabs at a bookmarkable URL. Wider journeys run horizontally; stage/assignment stay at the top. Keyboard resizing, aligned fluid navigation and reduced-motion preferences are supported.
+The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changing the table. Open full lead page for All, Comments, Calls, Tasks, Files and Review tabs at a bookmarkable URL. Wider journeys run horizontally; stage/assignment stay at the top. Keyboard resizing, aligned fluid navigation and reduced-motion preferences are supported.
 
 ## Product handbook
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=c91e0dd55b36)
+![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=3934038da18b)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
@@ -141,21 +146,21 @@ The full lead page opens in **All**: loaded activity and review information. You
 
 Open **Settings → Appearance & time**, enable **Book mode**, and save. Warm paper and serif fonts throughout the UI work with Light, Dark and System; the sunrise/sunset switch keeps your reading style. This is personal to your account.
 
-![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=f785916260f5)
+![Book mode dashboard with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=224e8995b58a)
 
 Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).
 
-Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Apple HIG while retaining our fonts. Open Filters for advanced search options; opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
+Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Material 3 while retaining personal font and Book mode preferences. Open Filters for advanced search options; opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
 
-![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=9bc76470a996)
+![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=c7f39e7e1d89)
 
 ## Reviewed across screen sizes
 
-Shared 17px body text, readable chart labels and content-width form/chart layouts preserve the existing fonts. The [v1.6.7 review](docs/UI-REVIEW-1.6.7.md) records 17 requested widths from 320 to 2560px, short-window checks and the limits of browser-only verification.
+Material 3 type roles use 16px body text, compact table labels and content-width forms while preserving personal font choices. The [v2.0 review](docs/MATERIAL-3-REVIEW.md) records measured layouts from 360 to 1920px, real infinite-scroll behavior, form checks and browser-only verification limits.
 
-![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=820551af44ec)
+![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=d2942e724c6a)
 
-[Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Synthetic import mapping](site/assets/screenshots/import-demo.jpg)
+[Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Synthetic import preview](site/assets/screenshots/import-demo.jpg)
 
 The v1.6.7 maintenance updates align wrapped customer names, remove duplicate lead actions/contact summaries, and make Set a reminder a regular sidebar menu item. Desktop spacing is now more compact: the synthetic 1280px review shows 8 data columns instead of 5. Open a lead to edit; the list has no Actions column. The original release tag is retained; the deployment commit and workflow identify the maintenance build.
 
@@ -163,7 +168,7 @@ The v1.6.7 maintenance updates align wrapped customer names, remove duplicate le
 
 Open Settings → Appearance & time to preview and save Standard, Inter, Source Sans 3 or Lora. The choice is personal; Book mode keeps its serif styling. Activity cards now use a clearer, more compact type hierarchy. Fonts are self-hosted, with licences retained. See the [font and activity guide](docs/FONT-CHOICES.md).
 
-![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=cdd2836b92a2)
+![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=d8164c539cd6)
 
 ## Repeatable testing
 

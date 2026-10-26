@@ -20,7 +20,25 @@ const contacts = [
   ['Siddharth Jain', 'Summit Systems', 'Jaipur', 'Exhibition', 'New'],
 ];
 export function demoData() {
-  const leads = contacts.map(
+  // A finite, clearly fictional dataset spanning four pages of 30 records.
+  const samples = Array.from({ length: 96 }, (_, index) => {
+    const [name, company, ...rest] = contacts[index % contacts.length];
+    const cycle = Math.floor(index / contacts.length);
+    const sampleName = cycle
+      ? name.split(' ')[0] +
+        ' ' +
+        contacts[(index + cycle) % contacts.length][0]
+          .split(' ')
+          .slice(1)
+          .join(' ')
+      : name;
+    return [
+      sampleName,
+      cycle ? company + ' · Sample ' + (cycle + 1) : company,
+      ...rest,
+    ];
+  });
+  const leads = samples.map(
     ([name, company, location, source, stage], i) =>
       ({
         id: 'demo-' + i,
@@ -30,7 +48,7 @@ export function demoData() {
         source,
         stage,
         phone: `+1 202 555 ${String(100 + i).padStart(4, '0')}`,
-        email: name.toLowerCase().replace(' ', '.') + '@example.com',
+        email: 'sample.' + i + '@example.com',
         enquiryDate: dateOnly(),
         zone: 'South',
         comments:

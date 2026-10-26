@@ -38,6 +38,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch'
       - run: npm test
       - run: npm run check
+      - run: npm run design:forms
       - run: npm run api:docs
       - run: git diff --exit-code -- docs/openapi.json apps/web/public/openapi.json
       - run: npm run test:emulator
@@ -47,6 +48,7 @@ jobs:
         env:
           VITE_USE_EMULATORS: 'false'
           VITE_ENABLE_RUM: 'false'
+      - run: node scripts/check-design-build.mjs
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: verify

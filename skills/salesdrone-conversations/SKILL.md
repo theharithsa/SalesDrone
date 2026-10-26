@@ -70,3 +70,15 @@ The full-page Comments tab posts inline via the existing activity contract; comp
 All is the initial full-page view and includes every loaded activity, contact/follow-up review information. The private task list appears only in Tasks, avoiding duplication in All. Comments filters type=note (including imported discussions); Calls filters type=call. Filter locally over authorized loaded pages without changing order or duplicating review entries. Earlier activity remains available in filtered empty states; never imply unloaded history is complete. Keep inline drafts mounted and available in All and Comments; use five-tab keyboard wrapping and responsive scrolling. No additional API, permissions or business events are required.
 
 The All/Comments/Calls timeline shares compact type roles from typography.css: title15px, body15px desktop/16px narrow, metadata13px with1.5 body leading and12–16px card padding. Every interface family and Book mode uses the same hierarchy. Preserve full note text/newlines, imports, correction revisions, pagination, inline drafts and reminder analysis; visual density must never collapse or silently trim content.
+
+## Material 3 v2 local-review guidance
+
+Material v2 puts the inline composer and compact timeline in an independently sized activity pane, beside details on wide screens. Do not let long qualification details stretch tab/action row heights. All/Comments/Calls/Review semantics, pagination and revision history remain unchanged.
+
+### Local v2 spacing and form corrections
+
+The inline composer is inside `.lead-composer-region`, not a direct child of the
+work panel. Keep its 24px desktop/16px compact inline padding, helper/footer gaps
+and timeline heading alignment. Call/correction/note forms use persistent outlined
+field labels while checkbox follow-up controls and revision behavior are unchanged.
+Run design:forms and review MATERIAL-04/05; source/render checks are not visual proof.

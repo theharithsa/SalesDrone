@@ -1,0 +1,319 @@
+.login-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px;
+  background: var(--bg);
+}
+.login-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.login-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.login-top .enterprise-mark {
+  width: 42px;
+  height: 42px;
+}
+.login-top .enterprise-wordmark {
+  width: 134px;
+}
+.login-content {
+  width: 100%;
+  max-width: 1160px;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  align-items: center;
+  gap: 88px;
+  margin: 80px auto;
+}
+.login-copy .eyebrow {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+.login-copy h1 {
+  font-size: clamp(2.5rem, 3.8vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.13;
+}
+.conversation-script {
+  font-family: 'Caveat Variable', var(--heading-font);
+  font-size: 1.18em;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.login-copy h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.login-copy > p {
+  font-size: 1.125rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 24px;
+}
+.login-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+.login-benefits span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--md-sys-color-surface-container);
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.login-benefits svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+}
+.login-card {
+  background: var(--panel);
+  padding: 40px;
+  border-radius: 28px;
+  max-width: 460px;
+  width: 100%;
+  justify-self: end;
+}
+.login-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+.login-card h2 {
+  font-size: 1.75rem;
+  line-height: 1.3;
+}
+.login-card > p {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-top: 12px;
+  margin-bottom: 28px;
+}
+.login-card .google-button,
+.login-card .demo-button {
+  width: 100%;
+  min-height: 48px;
+  justify-content: center;
+}
+.google-button svg {
+  width: 18px;
+  height: 18px;
+}
+.login-card > .text-button {
+  display: flex;
+  width: 100%;
+  font-size: 0.75rem;
+  margin-top: 8px;
+}
+.login-divider {
+  position: relative;
+  text-align: center;
+  margin: 24px 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.login-divider:before,
+.login-divider:after {
+  content: '';
+  height: 1px;
+  background: var(--line);
+  flex: 1;
+}
+.login-card .demo-button {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border: 0;
+}
+.login-card > .login-fine {
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 24px 0 0;
+}
+.login-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  padding-top: 24px;
+}
+.login-art {
+  display: grid;
+  gap: 8px;
+  margin-top: 32px;
+  max-width: 360px;
+}
+.login-art-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  font-size: 0.8125rem;
+}
+.login-art-row > span:first-child {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.login-art-row > span:nth-child(2) {
+  flex: 1;
+}
+.login-art-row strong {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.login-art-row small {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.login-art-row > .badge {
+  font-size: 0.625rem;
+  padding: 4px 8px;
+}
+.login-art-caption {
+  font-size: 0.625rem;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.login-art-row:nth-child(2) {
+  margin-left: 24px;
+  background: var(--md-sys-color-primary-container);
+  border-color: transparent;
+  color: var(--md-sys-color-on-primary-container);
+}
+.login-art-row:nth-child(2) small {
+  color: inherit;
+}
+.login-art-row:nth-child(2) > span:first-child {
+  background: var(--panel);
+}
+@media (max-width: 1000.99px) {
+  .login-content {
+    gap: 40px;
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+  .login-card {
+    padding: 32px;
+  }
+  .login-copy h1 {
+    font-size: 2.5rem;
+  }
+  .login-benefits {
+    display: grid;
+  }
+  .login-art {
+    display: none;
+  }
+}
+@media (max-width: 767.99px) {
+  .login-page {
+    padding: 24px;
+  }
+  .login-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin: 48px auto;
+    max-width: 480px;
+  }
+  .login-copy h1 {
+    font-size: 2.25rem;
+  }
+  .login-copy .eyebrow {
+    margin-bottom: 16px;
+  }
+  .login-copy > p {
+    font-size: 1rem;
+    margin-top: 16px;
+  }
+  .login-benefits {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .login-benefits span {
+    font-size: 0.6875rem;
+    padding: 8px;
+  }
+  .login-card {
+    max-width: none;
+    justify-self: stretch;
+  }
+  .login-top .enterprise-wordmark {
+    display: none;
+  }
+  .login-top-actions {
+    gap: 12px;
+  }
+  .login-top .brand strong {
+    font-size: 1.25rem;
+  }
+  .login-bottom {
+    font-size: 0.6875rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+  .login-top .enterprise-mark {
+    width: 36px;
+    height: 36px;
+  }
+}
+@media (max-width: 399.99px) {
+  .login-page {
+    padding: 20px 16px;
+  }
+  .login-card {
+    padding: 28px 24px;
+  }
+  .login-copy h1 {
+    font-size: 2rem;
+  }
+  .login-copy .eyebrow {
+    font-size: 0.625rem;
+  }
+  .login-benefits span {
+    font-size: 0.6875rem;
+  }
+  .login-card h2 {
+    font-size: 1.5rem;
+  }
+}
+:root[data-reading-mode='book'] .conversation-script {
+  font-family: var(--heading-font);
+  font-size: 1em;
+}

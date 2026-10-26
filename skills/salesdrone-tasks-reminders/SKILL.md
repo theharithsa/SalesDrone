@@ -74,3 +74,15 @@ Read for detailed behavior:
 LeadTaskTab pages the existing recipient-private GET tasks endpoint by leadId and optional state. Do not widen access for administrators. Include all supported states, loading/error/refresh/load-more and stale-request guards and refresh after successful task mutations without resetting its status filter; card selection opens existing edit/delete/reschedule/complete dialogs.
 
 useSubmit supplies an isCurrent callback so a dismissed task form cannot close a replacement dialog after its request resolves. The synchronous submit lock blocks double-click writes before React commits busy state. Verify edit/delete/cancel and delayed completion in synthetic fixtures.
+
+## Material 3 v2 local-review guidance
+
+Material v2 uses a plain Tasks heading, status chips, compact rows and shared action/menu styling. Keep task ownership, completion, edit/delete and date-entry behavior unchanged. Check long titles and wrapped dates/actions at phone widths before release.
+
+### Local v2 form contract
+
+TaskForm, TaskEditForm and RescheduleForm use persistent outlined labels, 56px
+entry containers and grouped actions. Keep native date/time validation, field
+names and localInstant conversion intact. `design:forms` checks real reminder/edit
+markup. The isolated admin preview can open reminder/edit dialogs but never saves
+a real task. Review required dates, focus and narrow dialogs in MATERIAL-05.

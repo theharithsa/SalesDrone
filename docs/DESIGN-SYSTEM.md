@@ -1,104 +1,115 @@
-# SalesDrone interface design system
+# SalesDrone 2 interface design system
 
-The project design skill is [salesdrone-interface](../skills/salesdrone-interface/SKILL.md).
-This is a responsive web adaptation of [Apple’s official typography guidance](https://developer.apple.com/design/human-interface-guidelines/typography), reviewed 2026-10-26. It is not a claim of native Dynamic Type support or platform certification.
+**Approved v2.0 design:** [review guide](MATERIAL-3-REVIEW.md). Material 3 is the primary
+visual system for this redesign, replacing the previous Apple-derived size cascade.
+This does not claim native platform behavior, Material certification or Dynamic Type.
 
-## Default fonts and semantic typography
+## Architecture
 
-Standard keeps Google Sans headings/lead first names, Manrope body and monospace phone numbers. Personal alternative families are documented below.
-Book mode keeps its serif stack and monospace phone exception. No font files or
-families change for the typography correction.
+`apps/web/src/main.tsx` loads only the Material entry files:
 
-Use semantic roles in `apps/web/src/design-system.css`, loaded after palette and
-component styles. Native Apple points are not CSS `pt`; the web tokens use `rem`
-with a default 16px root. They respond to browser default-text preferences and
-zoom. Do not prevent pinch zoom or use `text-size-adjust: none`.
+- `material/fonts.css`: existing self-hosted Google Sans/Caveat script subsets.
+- `material/tokens.css`: semantic colour, shape, typography, motion and preference roles.
+- `material/base.css`: shared actions, dialogs, feedback and utilities.
+- `material/controls.css`: filled form fields and progressive native-select menu styling.
+- `material/shell.css`: drawer/rail/bottom navigation, top bar and content spacing.
+- `material/workspaces.css`: collection, inspector, full lead, conversations, tasks and inbox.
+- `material/dashboard.css`: metrics, insights, charts and current-stage distribution.
+- `material/settings.css`: personal/admin settings, imports and reports.
+- `material/login.css`: authentication presentation.
 
-| Role | All screen sizes: default CSS size | Leading | Purpose |
-| --- | --- | --- | --- |
-| Page title | Fluid 28–34px | 1.22 | One main title, not marketing display type |
-| Section / lead identity | 22px / fluid 22–28px | 1.28–1.3 | Related content and the person’s name |
-| Body / editable text | 17px | 1.35–1.55 | Reading and form values |
-| Callout / actions | 16px | 1.35–1.45 | Buttons and primary labels |
-| Supporting / list context | 15px | 1.35–1.45 | Company, location, tabs and secondary controls |
-| Caption / metadata | 13px | 1.4–1.45 | Time, help, section labels; never primary body text |
-| Bottom navigation | 12px | 1.35 | Short labels paired with icons |
+ThemeToggle retains its component-scoped motion stylesheet. The previous global
+stylesheets remain unimported for historical references during review. Do not add
+another global refresh/override file or mix the v1 cascade into this entry.
 
-Body and editable values use 17px across phones, tablets, laptops and desktops. Navigation and table data use 15px, table headers 13px, and tertiary attribution 12px. Long-form passages have a bounded
-measure. Maintain readable weight, modest heading tracking and near-zero body
-tracking. Do not copy San Francisco’s numeric tracking tables onto other fonts.
-A platform minimum is a floor, not the default body size. Form values stay at least
-16px at normal browser settings. Touch actions have 44px minimum targets; a small
-caption does not justify a small hit area.
+## Typography
 
-## Layout and disclosure
+Default root is 16px, using rem roles so browser text preferences and zoom work.
+Use Google Sans headings and Manrope body; alternate fonts change the same roles.
 
-Search is immediately available. Filters groups search-field, stage, source and
-custom-column conditions behind one native disclosure, with an active-condition
-count. Filtering, export scope and permissions are unchanged. On phones these
-controls stack at full width rather than truncating long labels into half columns.
-Stage shortcuts scroll locally without widening the document. Lead cards retain normal name typography and contact information. Open a lead before choosing Edit lead; list rows/cards have no Edit action.
+| Role | Size / line height | Use |
+| --- | --- | --- |
+| Headline | 32 / 40; 28 / 35 on compact screens | Page heading, one per view |
+| Title large | 22 / 29 | Dialog/section titles |
+| Title medium | 16 / 24 | Named items and sub-sections |
+| Body | 16 / 24 | Forms, reading and general content |
+| Supporting | 14 / 22 | Conversation text and secondary content |
+| Label | 14 / 20, medium | Actions and field labels |
+| Metadata | 12 / 18 | Dates, table context and secondary identifiers |
 
-At widths below 1001 CSS pixels, opening a lead navigates to `/leads/{id}`. The
-original list is hidden, with no desktop-sheet offset. At larger widths the table
-stays unchanged behind the resizable inspection overlay. Expanding opens the
-same dedicated lead route. Back to leads and browser Back keep navigation coherent.
-A desktop panel left open during a resize also becomes a full-width detail view.
+Compact tables use 13px cells and 14px identity actions, keeping rows scannable.
+Do not shrink the entire app by default. Personal desktop scale remains 85–125%;
+touch and narrow layouts retain 100%. Phone text inputs stay 16px. Monospace contact
+numbers are deliberate. Book mode uses serif roles, preserving monospace identifiers.
 
-Stage and assignment are at the top. At narrow widths they stack; native selects
-have bounded width. The identity uses a small avatar, inline wrapping name and
-company beneath. The journey is horizontally scrollable on narrow screens;
-it describes current stages, not fabricated historical conversion. All, Comments,
-Calls, Tasks and Review retain their existing contracts and keyboard behavior.
+## Colour, shape and motion
 
-## Verification and release rules
+Use `--md-sys-color-*` semantic pairs, not literal per-screen palettes. Primary blue
+identifies action; secondary container identifies selection. Surface levels group
+related areas. Error and tertiary pairs express semantic states with text labels.
+Four palettes cover day/night and Book day/night. Text role pairs require >=4.5:1.
+Legacy variable names are aliases to these roles for functional component compatibility.
 
-Use actual synthetic application screens, never customer screenshots. Review all size tiers even when a reported example is a phone. Include 320/375/600/767/767.5/768/900/1000/1000.5/1001/1024/1100/1280/1440/1600/1920/2560px requested widths, plus 600/768/900/1080px window heights. Fractional requests test breakpoint boundaries; innerWidth may round. Exercise lead open/back, filters, Edit, dialogs, chart day selection, tabs and both palettes/Book mode. Verify long names/assignees, no document overflow, intentional local scrolling, large text and keyboard focus. Test browser zoom separately from default-text preferences; changing root font size is not proof of native accessibility support. See [the v1.6.7 review](UI-REVIEW-1.6.7.md) for observed coverage and limits.
+Spacing uses a 4px grid. Rounded chips are 8px, filled form fields 4px top corners, cards 20px and dialogs
+28px. Filled primary, tonal, outlined and text buttons carry distinct emphasis.
+Desktop actions have 40px visible containers; phone/coarse-pointer actions are 48px.
+Focus rings are visible, 3px with offset. Reduced motion disables transitions; normal
+state changes use 160ms and entrances 240–260ms. Dragging follows the pointer directly.
 
-Refresh affected reviewed public screenshots and their hashes/version. Update
-interface/Book mode skills, handbook, settings-reference descriptions and release
-impact plan. Pure visual/navigation changes need no new REST endpoint, PAT scope,
-setting-change audit or conversion event. Preserve existing RUM, backend audit,
-metrics/traces/logs/outboxes and deployment reporting. Report only observed results;
-physical-device checks and tenant queries remain separate verification.
+## Responsive composition
 
-## Shared third-party references
+- >=1200px: 232px drawer or user-collapsed 88px rail; lead conversation/details panes.
+- 600–1199px: labelled 88px navigation rail. Lead inspection opens a dedicated record
+  below 1001px; details stack after activity below that width.
+- <600px: modal navigation drawer, 80px bottom navigation and full-width content.
+- Lead tables switch to cards below 768px. Additional columns scroll locally.
+- Settings navigation becomes a section dropdown below 900px.
 
-Nine [Wondel Design & UX skills](../skills/WONDEL-SOURCE.md) are installed in the
-canonical project skills folder, exposed through `.agents/skills`. Their licence
-and source revision are retained. They supplement this project contract and official
-sources; their suggestions cannot override a user’s typography/branding choices.
+These are web content breakpoints, adapted from Material principles rather than
+native device detection. Keep horizontal scroll within tables, tabs, charts and the
+stage path. Long names/labels must wrap. A long details card must never stretch the
+conversation tab/action rows; the two panes have independent internal layout.
 
-## Available space, not device labels
+## Verification
 
-Main content is centered with a 1600px maximum and fluid 16–32px gutters; Settings has a 1480px maximum. Dashboard charts become one column at a 52rem content-container width, with two KPI columns; below 30rem the ring legend stacks. Settings forms collapse at a 42rem content width. The shared `.dialog` form has two columns only above a 38rem surface width. Import mapping collapses at 44rem. Container thresholds scale with text preferences. Media maximums end at .99px before the next integer minimum to avoid fractional-width gaps. Keep CSS and JavaScript lead-routing thresholds aligned.
+Use `tests/material-design.test.ts` for colour contrast, configured table identity,
+retired/hidden fields and production entry isolation. Start `npm run design:dev` and use the local review canvas
+for width/height inspection. These tests are not proof of visual layout. Read the
+actual observation limits in the review guide. The user approved v2.0 on 26 October 2026. Full release checks and measured
+browser evidence remain distinct from production post-deployment verification.
 
-At 768–1100px the expanded sidebar is 224px; collapsed navigation remains 80px. The reminder shortcut is a normal capability-gated menu row; do not reintroduce the promotional banner. At very short heights the sidebar scrolls, including account controls. Fixed icon cells keep navigation aligned.
+References: [Material colour](https://m3.material.io/styles/color/the-color-system),
+[typography](https://m3.material.io/styles/typography/applying-type),
+[type roles](https://m3.material.io/styles/typography/type-scale-tokens).
 
-Chart axes, dates and ring totals are HTML text with shared roles rather than shrinking SVG lettering. The native Chart day selector provides a 44px alternative to small data points and changes only the selected local day. Table data retains 44px actions with compact row padding; long comments have a 72-character measure. After choosing an import workbook, a compact replacement chooser leaves mapping visible. Login columns use minmax(0, ...) and wrapping text to avoid min-content overflow at 320px.
+## Form and local-scroll contract
 
-## Table alignment and lead content ownership
+Lead, call, reminder, reschedule and task-edit forms use 56px borderless filled fields with
+persistent inset labels, 16px entry text and 12px labels. Custom fields use the
+same pattern; checkbox/radio semantics stay separate. Dialog field rows use 28px
+vertical gaps, supporting text remains below the field, and the action group
+has explicit spacing. Keep names, required fields, form submission, dates and
+existing mutation handlers intact.
 
-Customer-name buttons fill their column and align text to start, including wrapped, unbroken, missing and non-Latin names. Reserve a 14rem default name-column width (11rem in compact fine-pointer desktop layouts); additional columns scroll locally. Do not use whole-app scaling to compensate for alignment. Explicit user-selected desktop display scale is described below.
+All select triggers use a single chevron; form fields use the borderless filled surface. Native select
+semantics preserve keyboard navigation and validation. Browsers supporting
+`appearance: base-select` also receive a Material menu surface and selected states;
+other browsers keep the platform option picker. Do not claim identical popup
+rendering across browsers without inspecting them. References:
+[fields](https://m3.material.io/components/text-fields/specs),
+[menus](https://m3.material.io/components/menus/guidelines).
 
-The inspection overlay owns its compact actions; the dedicated lead page owns its action row above the tabs. Do not mount both on a full page. Contact values appear once in the labelled Lead information list, including email and permitted phone/email links. Avoid a second icon summary repeating those fields. Custom fields remain in Additional information.
+The desktop lead table has its own focusable scroll region and native horizontal
+scrollbar. When columns overflow, a visible range control and previous/next buttons
+sit above the table; they reflect native wheel/trackpad scrolling and resize. These
+controls disappear when all columns fit and in the phone card layout. Do not rely
+on macOS scrollbar visibility to make additional columns discoverable.
 
-## Compact desktop density
+The composer wrapper, not just the form's former parent, owns its inner spacing:
+24px on desktop and 16px inline on compact screens. All activity tabs keep aligned
+section headings and content edges. Blade actions must stay on one line per button;
+wrap the action group onto another row when necessary.
 
-At widths of at least 1001px with a fine pointer, the authenticated/demo app shell uses a 216px expanded sidebar, 64px top bar and 20px page gutters. Sidebar rows are 40px; title actions/stage filters are 36px. Reading text and forms remain17px; page descriptions/actions use15px and dense lead data14px with13px headers. Font families do not change. Phones, coarse-pointer layouts and form controls retain their existing touch sizing. The table name button has a 32px target inside an approximately 49px row on fine-pointer desktop; touch tables retain 44px name targets.
-
-Table cells use 8px padding, an 11rem minimum name column and bounded secondary values with native title text/full lead detail for long values. Additional or unusually wide/custom columns scroll locally rather than shrinking text further. Remove row/card editing and the sticky Actions column; one Edit lead action is available after opening a lead. If configuration hides the name column, native table rows become keyboard-focusable and Enter/Space opens details. Keep default density based on padding, columns and typography. Do not force scaling or reduce the root font size to fix alignment.
-
-## Personal interface families and activity roles
-
-The fontStyle preference defaults to Standard and supports Inter, Source Sans 3 and Lora. typography.css loads after design-system.css; its allowlisted root selectors apply only outside Book mode. Preserve brand font variables and monospace exceptions. Keep native font selection, a draft sample and save-before-apply semantics. No font URLs/uploads or runtime Google CDN. See FONT-CHOICES.md for licensing, persistence and precedence.
-
-Activity text is intentionally smaller than the general body: 15px desktop,16px narrow/touch,1.5 leading; entry title15px and metadata13px. Use12–16px card padding and12px list gaps. Preserve complete notes and line breaks, wrapping long text with no clamping. General reading/forms and existing desktop table density keep their own roles. Test every family and Book mode at phone, tablet, laptop and wide desktop widths.
-
-## Compact lead overview and optional personal scale
-
-The header has one toolbar, then a content-width grid containing identity, score, stage and assignee. At 900px of blade content it becomes one row; below that it stacks identity and workflow, and below 450px workflow controls stack. Use a 24px name (21px narrow), 14px company, 13px labels and 15px selects; preserve the selected font and Book-mode family. Avoid independent tall identity/ownership bands. Keep one action set and one contact-detail list. Journey labels are 13px on a locally scrolling horizontal path, with explanation and recorded history in independent disclosures.
-
-A score ring supplements an accessible numeric label, not replaces it. Unknown uses a dashed neutral track, known zero a solid empty track; risk also has a warning icon/text. Header and details share the existing score fetch, with lead-id guards against stale responses. No fake score is assigned to demo or unknown evidence.
-
-The only whole-app scaling is the explicitly saved personal Desktop display zoom (85/90/100/110/125, default 100). CSS zoom is layout-aware and gated by min-width1001px and pointer:fine; narrow and touch interfaces remain 100. Do not use transforms or zoom:reset, or disable browser/pinch zoom. Overlay coordinates and viewport offsets convert screen pixels back into layout pixels before resizing. Unsupported browsers retain100%. Verify the saved setting, small screens, long names, dialogs, focus and overlay keyboard/drag at both extremes.
+At lead container widths <=560px, the header actions become icon-only on one row;
+labels return above that width. Accessible names and hover titles remain. The rule
+follows the actual resizable blade/full-page width, independently of the viewport.

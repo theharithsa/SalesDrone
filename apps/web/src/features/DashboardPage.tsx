@@ -466,7 +466,7 @@ export default function DashboardPage({
       <div className="page-title">
         <div>
           <span className="eyebrow">SIGNALS INTO MOMENTUM</span>
-          <h1>Your pipeline, in perspective.</h1>
+          <h1>Overview</h1>
           <p>
             {firstName}, here’s where your next conversation can make a
             difference.
@@ -494,6 +494,43 @@ export default function DashboardPage({
         <Loading />
       ) : (
         <>
+          <div className="dashboard-kpis">
+            {[
+              {
+                label: 'Visible pipeline',
+                value: snapshot.coverage.totalLeads,
+                icon: UsersRound,
+                note: 'Within your access',
+              },
+              {
+                label: 'Open reminders',
+                value: facts.pendingTasks,
+                icon: Clock,
+                note: facts.overdueTasks + ' overdue',
+              },
+              {
+                label: 'Calls · 14 days',
+                value: facts.calls14,
+                icon: PhoneCall,
+                note: facts.connected14 + ' connected',
+              },
+              {
+                label: 'Scored leads',
+                value: facts.knownScores,
+                icon: Target,
+                note: facts.highPriorityLeads + ' high priority',
+              },
+            ].map((k) => (
+              <div key={k.label}>
+                <div>
+                  <span>{k.label}</span>
+                  <k.icon size={18} />
+                </div>
+                <strong>{k.value ?? 0}</strong>
+                <small>{k.note}</small>
+              </div>
+            ))}
+          </div>
           <section className="dashboard-brief">
             <div className="brief-orbit" aria-hidden="true">
               <span />
@@ -603,43 +640,6 @@ export default function DashboardPage({
               ))}
             </div>
           ) : null}
-          <div className="dashboard-kpis">
-            {[
-              {
-                label: 'Visible pipeline',
-                value: snapshot.coverage.totalLeads,
-                icon: UsersRound,
-                note: 'Within your access',
-              },
-              {
-                label: 'Open reminders',
-                value: facts.pendingTasks,
-                icon: Clock,
-                note: facts.overdueTasks + ' overdue',
-              },
-              {
-                label: 'Calls · 14 days',
-                value: facts.calls14,
-                icon: PhoneCall,
-                note: facts.connected14 + ' connected',
-              },
-              {
-                label: 'Scored leads',
-                value: facts.knownScores,
-                icon: Target,
-                note: facts.highPriorityLeads + ' high priority',
-              },
-            ].map((k) => (
-              <div key={k.label}>
-                <div>
-                  <span>{k.label}</span>
-                  <k.icon size={18} />
-                </div>
-                <strong>{k.value ?? 0}</strong>
-                <small>{k.note}</small>
-              </div>
-            ))}
-          </div>
           <PipelineFunnel
             counts={snapshot.stages}
             order={snapshot.stageOrder || stageOrder}
@@ -650,7 +650,7 @@ export default function DashboardPage({
               <div className="chart-heading">
                 <div>
                   <span className="eyebrow">PIPELINE COMPOSITION</span>
-                  <h2>A view of every stage</h2>
+                  <h2>Pipeline stages</h2>
                 </div>
                 <BarChart3 size={21} />
               </div>
@@ -664,7 +664,7 @@ export default function DashboardPage({
               <div className="chart-heading">
                 <div>
                   <span className="eyebrow">14-DAY PULSE</span>
-                  <h2>Keep the conversation moving</h2>
+                  <h2>Outreach activity</h2>
                 </div>
                 <TrendingUp size={21} />
               </div>
@@ -678,7 +678,7 @@ export default function DashboardPage({
               <div className="chart-heading">
                 <div>
                   <span className="eyebrow">YOUR REMINDERS</span>
-                  <h2>Where attention is due</h2>
+                  <h2>Task workload</h2>
                 </div>
                 <Clock size={21} />
               </div>
@@ -725,7 +725,7 @@ export default function DashboardPage({
               <div className="chart-heading">
                 <div>
                   <span className="eyebrow">QUALIFICATION COVERAGE</span>
-                  <h2>Potential, with perspective</h2>
+                  <h2>Qualification coverage</h2>
                 </div>
                 <Target size={21} />
               </div>
@@ -742,7 +742,7 @@ export default function DashboardPage({
               <div className="chart-heading">
                 <div>
                   <span className="eyebrow">OUTREACH OUTCOMES</span>
-                  <h2>What conversations tell you</h2>
+                  <h2>Call outcomes</h2>
                 </div>
                 <CheckCircle2 size={21} />
               </div>
@@ -757,7 +757,7 @@ export default function DashboardPage({
               <div className="section-heading">
                 <div>
                   <span className="eyebrow">NEXT ON YOUR RADAR</span>
-                  <h2>Close the loop</h2>
+                  <h2>Upcoming follow-ups</h2>
                 </div>
                 <button className="text-button" onClick={onTasks}>
                   All tasks <ArrowUpRight size={14} />
@@ -800,7 +800,7 @@ export default function DashboardPage({
               <div className="section-heading">
                 <div>
                   <span className="eyebrow">LEADS TO REVIEW</span>
-                  <h2>Leads to look closer at</h2>
+                  <h2>Priority leads</h2>
                 </div>
                 <Target size={21} />
               </div>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SalesDrone 2 · Local design review</title>
+    <style>
+      body {
+        margin: 0;
+        background: #dde2eb;
+        font:
+          14px system-ui,
+          sans-serif;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        padding: 12px 20px;
+        background: #fff;
+        color: #191c20;
+      }
+      header a {
+        color: #005ca9;
+      }
+      label {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      select {
+        padding: 8px;
+        border: 1px solid #737781;
+        border-radius: 8px;
+      }
+      main {
+        padding: 16px;
+        overflow: auto;
+      }
+      iframe {
+        display: block;
+        border: 0;
+        background: #fff;
+        box-shadow: 0 4px 32px #0002;
+      }
+      small {
+        margin-left: auto;
+        color: #434750;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>SalesDrone 2.0 · Local review</strong
+      ><label
+        >Screen width<select id="width">
+          <option>360</option>
+          <option>390</option>
+          <option>600</option>
+          <option>768</option>
+          <option>1024</option>
+          <option selected>1280</option>
+          <option>1440</option>
+          <option>1920</option>
+        </select></label
+      ><label
+        >Screen height<select id="height">
+          <option>600</option>
+          <option>720</option>
+          <option selected>900</option>
+          <option>1080</option>
+        </select></label
+      ><label
+        >Preview<select id="screen">
+          <option value="/">Application</option>
+          <option value="/design-admin.html">Admin settings (fictional)</option>
+        </select></label
+      ><a href="/" target="_blank">Open application ↗</a
+      ><small>Local only · use demo data · no deployment</small>
+    </header>
+    <main>
+      <iframe
+        id="preview"
+        title="Responsive app preview"
+        width="1280"
+        height="900"
+        src="/"
+      ></iframe>
+    </main>
+    <script type="module">
+      const frame = document.querySelector('iframe');
+      document.querySelector('#width').onchange = (e) =>
+        (frame.width = e.target.value);
+      document.querySelector('#height').onchange = (e) =>
+        (frame.height = e.target.value);
+      document.querySelector('#screen').onchange = (e) =>
+        (frame.src = e.target.value);
+    </script>
+  </body>
+</html>

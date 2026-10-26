@@ -15,14 +15,14 @@ export default function CustomFieldInputs({
             key={f.id}
             className={
               f.type === 'textarea'
-                ? 'full'
+                ? 'material-field full'
                 : f.type === 'checkbox'
                   ? 'checkbox-row'
-                  : ''
+                  : 'material-field'
             }
           >
             {f.type !== 'checkbox' ? (
-              <span>
+              <span className="field-label">
                 {f.label}
                 {f.required ? ' *' : ''}
               </span>

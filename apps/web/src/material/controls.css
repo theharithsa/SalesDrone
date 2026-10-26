@@ -1,0 +1,168 @@
+/* Shared filled fields. Native form submission, validation and keyboard behavior
+   are preserved. Browsers with customizable select support also use our menu surface. */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 48px;
+  padding: 12px 44px 12px 16px;
+  border-radius: 4px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='m7 10 5 5 5-5' stroke='%23434750' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 24px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+:root[data-color-scheme='dark'] select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='m7 10 5 5 5-5' stroke='%23c3c7d1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+@supports (appearance: base-select) {
+  select,
+  select::picker(select) {
+    appearance: base-select;
+  }
+  select::picker-icon {
+    display: none;
+  }
+  select::picker(select) {
+    margin-block: 4px;
+    padding: 8px 0;
+    border: 0;
+    border-radius: 4px;
+    background: var(--md-sys-color-surface-container);
+    color: var(--text);
+    box-shadow: 0 4px 12px #0003;
+    max-height: min(320px, 50dvh);
+    min-width: anchor-size(width);
+    overflow: auto;
+    font: inherit;
+  }
+  select option {
+    padding: 12px 16px;
+    min-height: 48px;
+    gap: 12px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  select option:checked {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+  select option:hover,
+  select option:focus-visible {
+    background: color-mix(
+      in srgb,
+      var(--accent) 10%,
+      var(--md-sys-color-surface-container)
+    );
+    outline-offset: -3px;
+  }
+}
+/* Persistent inset labels keep field names visible without a rectangular outline. */
+.material-field {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  padding-top: 0;
+  --field-surface: var(--input);
+}
+.material-field > .field-label {
+  position: absolute;
+  top: 7px;
+  left: 16px;
+  z-index: 1;
+  max-width: calc(100% - 28px);
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.material-field > input:not([type='checkbox']):not([type='radio']),
+.material-field > select,
+.material-field > textarea {
+  min-height: 56px;
+  padding: 24px 16px 8px;
+  border: 0;
+  border-radius: 4px 4px 0 0;
+  background-color: var(--field-surface);
+  line-height: 24px;
+}
+.material-field > select {
+  padding-right: 44px;
+}
+.material-field > textarea {
+  min-height: 120px;
+}
+.material-field:focus-within > .field-label {
+  color: var(--accent);
+}
+.material-field > input:focus,
+.material-field > select:focus,
+.material-field > textarea:focus {
+  outline: none;
+  box-shadow: inset 0 -2px var(--accent);
+}
+.material-field > small {
+  color: var(--muted);
+  padding: 0 16px;
+}
+.dialog form > .material-field {
+  margin-top: 12px;
+}
+.dialog .form-grid {
+  gap: 28px 20px;
+  margin: 28px 0 20px;
+}
+.dialog .form-grid > .material-field {
+  margin: 0;
+}
+.dialog .form-footer > div,
+.dialog .form-actions > div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dialog .form-footer > .check {
+  margin-right: auto;
+}
+.dialog .button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.dialog input,
+.dialog textarea,
+.dialog select {
+  --field-surface: var(--md-sys-color-surface-container-lowest);
+}
+.dialog .material-field {
+  --field-surface: var(--md-sys-color-surface-container-lowest);
+}
+@media (max-width: 599.99px) {
+  .dialog .form-footer > div,
+  .dialog .form-actions > div {
+    width: 100%;
+  }
+  .dialog .form-footer > div > .button {
+    flex: 1;
+  }
+}
+
+.material-field > input:focus-visible,
+.material-field > select:focus-visible,
+.material-field > textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

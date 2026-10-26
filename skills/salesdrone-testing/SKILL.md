@@ -31,3 +31,36 @@ Entry points: [runner](../../scripts/run-test-suite.mjs), [execution policy](../
 ## v1.9 operating notes
 
 Run bulk-and-files.test.js for atomic batches, strict fields, scope, stale rows, replay, assignment cancellation/alerts, upload signatures/limits, immutable retry, revoke-during-upload, quota, cleanup and telemetry privacy. The real emulator integration now includes Storage, actual byte round trips and direct unauthenticated Storage denial. Java 21 can run from a portable local SDK. If default ports belong to another project, use an isolated temporary emulator config rather than killing unrelated processes. Browser demo files are memory-only: do not use them as proof of a production bucket write.
+
+## Material 3 v2 local-review guidance
+
+Use npm run design:check for local Material contrast, table configuration and production-entry isolation checks plus type/build. The responsive review canvas is a manual aid, not automated visual evidence. Read MATERIAL-3-REVIEW.md: the initial connector became unavailable, then an already-installed isolated Chromium/CDP session supplied fresh synthetic screenshots and measured browser checks. Refresh affected synthetic screenshots and run full release gates after user design approval.
+
+### Real form rendering and screenshot feedback
+
+`npm run design:forms` uses Vite SSR to render actual components, checking labels,
+configured names, required dates, native checkboxes and action types. It is part
+of design:check, not a browser substitute. Review INTERFACE-MATERIAL-02 through
+05 for range/arrow/trackpad scrolling, narrow blade toolbars, composer spacing,
+outlined fields, conditional call follow-ups and popup fallback across browsers.
+The fictional admin entry includes four real form dialogs with saves blocked.
+Keep preview-only components out of the application bundle.
+
+### Infinite lead regression
+
+lead-pagination.test.ts covers page overlap/replay, empty results and unchanged
+selection during append. design:forms checks unique IDs/names in the 96-row demo.
+Execute LEADS-INFINITE-01 in a browser: successive pages, end, keyboard fallback,
+retry, sparse pages, viewport resize, filter changes and selection preservation.
+Emulator request/identity races and browser observer behavior are separate from
+these helper/render tests; do not report them as tested without actual evidence.
+
+### Isolated installed-browser fallback
+
+If browser tools are unavailable, reuse an already-installed headless Chromium with
+a fresh profile over localhost CDP; scripts/local-browser.mjs supplies basic actions,
+measurements and screenshots without downloading tooling. Never attach personal or
+signed-in production browser profiles. Keep captures/evidence in test-results until
+privacy/visual review, then curate filenames and hashes. Chromium viewport checks
+are not physical device tests. Disconnect CDP and stop only the browser/server you
+started when finished. CI now runs design:forms and production fixture exclusion.

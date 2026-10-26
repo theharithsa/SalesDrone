@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { retainLeadSelection } from '../lib/lead-pagination';
 import WorksheetLeads from '../components/WorksheetLeads';
 import { Modal, ErrorMessage } from '../components/UI';
 import type { Lead } from '../lib/types';
@@ -36,8 +37,15 @@ export default function LeadBatchEditor({
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
   const signature = leads.map((l) => l.id + ':' + l.version).join('|');
+  const previousVersions = useRef(
+    new Map(leads.map((lead) => [lead.id, lead.version])),
+  );
   useEffect(() => {
-    setSelected(new Set());
+    const before = previousVersions.current;
+    setSelected((old) => retainLeadSelection(old, before, leads));
+    previousVersions.current = new Map(
+      leads.map((lead) => [lead.id, lead.version]),
+    );
     setReview(null);
   }, [signature]);
   useEffect(() => {
@@ -182,69 +190,71 @@ export default function LeadBatchEditor({
           : members.find((m) => m.uid === v)?.name || String(v);
   return (
     <>
-      {canEdit && (
-        <div className="batch-toolbar">
-          <label>
-            <input
-              type="checkbox"
-              checked={
-                leads.length > 0 &&
-                leads.slice(0, 25).every((l) => selected.has(l.id))
-              }
-              onChange={(e) => {
-                setSelected(
-                  e.target.checked
-                    ? new Set(leads.slice(0, 25).map((l) => l.id))
-                    : new Set(),
-                );
-                setReview(null);
-              }}
-            />
-            Select {leads.length > 25 ? 'first 25' : 'loaded'} leads
-          </label>
-          <span>{selected.size} selected</span>
-          <button
-            className="button"
-            disabled={!selected.size}
-            onClick={() => {
-              setOpen(true);
-              setReview(null);
-              setError('');
-            }}
-          >
-            Batch edit
-          </button>
-          {selected.size > 0 && (
+      <div className="leads-table-card">
+        {canEdit && (
+          <div className="batch-toolbar">
+            <label>
+              <input
+                type="checkbox"
+                checked={
+                  leads.length > 0 &&
+                  leads.slice(0, 25).every((l) => selected.has(l.id))
+                }
+                onChange={(e) => {
+                  setSelected(
+                    e.target.checked
+                      ? new Set(leads.slice(0, 25).map((l) => l.id))
+                      : new Set(),
+                  );
+                  setReview(null);
+                }}
+              />
+              Select {leads.length > 25 ? 'first 25' : 'loaded'} leads
+            </label>
+            <span>{selected.size} selected</span>
             <button
-              className="text-button"
-              onClick={() => setSelected(new Set())}
+              className="button"
+              disabled={!selected.size}
+              onClick={() => {
+                setOpen(true);
+                setReview(null);
+                setError('');
+              }}
             >
-              Clear selection
+              Batch edit
             </button>
-          )}
-        </div>
-      )}
-      {notice && (
-        <p className="field-hint" role="status">
-          {notice}
-        </p>
-      )}
-      <WorksheetLeads
-        leads={leads}
-        config={config}
-        scores={scores}
-        selectedId={selectedId}
-        onSelect={onSelect}
-        checkedIds={canEdit ? selected : undefined}
-        onToggle={toggle}
-      />
+            {selected.size > 0 && (
+              <button
+                className="text-button"
+                onClick={() => setSelected(new Set())}
+              >
+                Clear selection
+              </button>
+            )}
+          </div>
+        )}
+        {notice && (
+          <p className="field-hint" role="status">
+            {notice}
+          </p>
+        )}
+        <WorksheetLeads
+          leads={leads}
+          config={config}
+          scores={scores}
+          selectedId={selectedId}
+          onSelect={onSelect}
+          checkedIds={canEdit ? selected : undefined}
+          onToggle={toggle}
+        />
+      </div>
       <Modal
         open={open}
         onClose={() => {
           if (!busy) setOpen(false);
         }}
-        title={`Batch edit ${selected.size} leads`}
-        description="Choose shared changes, review them, then apply one atomic batch. Selection covers loaded leads only and resets when the list changes."
+        title={`Batch edit ${selected.size} ${selected.size === 1 ? 'lead' : 'leads'}`}
+        description="Choose shared changes, review them, then apply one atomic batch. Selection covers loaded leads only. Loading another page keeps your selection."
         wide
       >
         <ErrorMessage error={error} />

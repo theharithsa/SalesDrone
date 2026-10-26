@@ -194,7 +194,9 @@
       "automatedTests": [
         "tests/dates.test.ts",
         "tests/import-mapping.test.ts",
-        "tests/lead-fields.test.ts"
+        "tests/lead-fields.test.ts",
+        "tests/material-design.test.ts",
+        "scripts/check-material-forms.mjs"
       ],
       "manualCases": [
         {
@@ -206,6 +208,31 @@
           "id": "INTERFACE-02",
           "expected": "At390/768px preserve normal scale and comfortable touch targets; browser zoom is not blocked.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "INTERFACE-MATERIAL-01",
+          "fixture": "local synthetic guest app and separate fictional admin review only",
+          "expected": "Material roles remain consistent across 360/390/600/768/1024/1280/1440/1920px, short windows, font/scale preferences and day/night/Book palettes; no global overflow, stretched tabs or hidden actions. Browser review is pending where tools were unavailable."
+        },
+        {
+          "id": "INTERFACE-MATERIAL-02",
+          "expected": "At tablet/desktop widths, overflowing lead columns are reachable via range, arrows, trackpad and keyboard without page overflow. Controls hide when all columns fit. Phone cards remain intact.",
+          "fixture": "synthetic guest leads; measure 390/768/1024/1280/1440/1920px; macOS auto-hidden scrollbars"
+        },
+        {
+          "id": "INTERFACE-MATERIAL-03",
+          "expected": "Minimum-width blade actions retain single-line button text; action group can wrap without clipping or icon misalignment.",
+          "fixture": "synthetic lead inspector; pointer and keyboard resizing"
+        },
+        {
+          "id": "INTERFACE-MATERIAL-04",
+          "expected": "All/Comments/Calls/Tasks/Files/Review have consistent content edges; comment textarea, helper, count and post action have visible spacing.",
+          "fixture": "synthetic full lead record at phone and desktop widths, all palettes"
+        },
+        {
+          "id": "INTERFACE-MATERIAL-05",
+          "expected": "New enquiry, call, reminder and edit-task forms have labelled outlined fields, required date validation, working keyboard selection, and spaced actions. Custom dropdown popup is tested where base-select is supported; native fallback remains usable elsewhere.",
+          "fixture": "development-only fictional admin form preview; no record writes; light/dark/Book and long fields"
         }
       ]
     },
@@ -262,7 +289,8 @@
         "functions/test/custom-fields-and-tasks.test.js",
         "functions/test/workbook-and-filters.test.js",
         "tests/import-mapping.test.ts",
-        "functions/test/bulk-and-files.test.js"
+        "functions/test/bulk-and-files.test.js",
+        "tests/lead-pagination.test.ts"
       ],
       "manualCases": [
         {
@@ -284,6 +312,11 @@
           "id": "LEADS-BATCH-01",
           "fixture": "Synthetic demo leads only",
           "expected": "Select loaded leads, choose shared fields, inspect before/after, apply once. Stale/out-of-scope/archived rows reject all; changing filters clears selection. Network retry reuses reviewed idempotency key."
+        },
+        {
+          "id": "LEADS-INFINITE-01",
+          "fixture": "96 synthetic guest leads; demo-salesdrone for network/race checks; no customer writes",
+          "expected": "Bottom proximity loads 30/60/90/96 sample rows, then stops. Live cursor pages retain filters/access and continue through sparse results. At most one append is in flight; failed loads wait for Retry. Filter/navigation changes reject stale responses. Keyboard fallback and mobile work; appending preserves selection without selecting new rows; demo export includes all matching rows."
         }
       ]
     },

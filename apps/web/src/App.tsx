@@ -1,4 +1,6 @@
 import LeadFiles from './features/LeadFiles';
+import InfiniteLeadLoader from './components/InfiniteLeadLoader';
+import { appendUniqueRows } from './lib/lead-pagination';
 import { normalizeDisplayScale } from './lib/display-scale';
 import { normalizeFontStyle } from './lib/fonts';
 import { resolveVisualPreferences } from './lib/appearance';
@@ -197,6 +199,8 @@ export default function App() {
     [source, setSource] = useState(''),
     [taskFilter, setTaskFilter] = useState('Pending'),
     [nextCursor, setNextCursor] = useState<string | null>(null),
+    [demoLeadLimit, setDemoLeadLimit] = useState(30),
+    [listLoadError, setListLoadError] = useState(false),
     [menu, setMenu] = useState(false),
     [sidebarCollapsed, setSidebarCollapsed] = useState(
       () =>
@@ -254,10 +258,10 @@ export default function App() {
     };
   }, []);
   const [compact, setCompact] = useState(
-    () => window.matchMedia('(max-width: 767.99px)').matches,
+    () => window.matchMedia('(max-width: 599.99px)').matches,
   );
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 767.99px)');
+    const media = window.matchMedia('(max-width: 599.99px)');
     const change = () => setCompact(media.matches);
     media.addEventListener('change', change);
     return () => media.removeEventListener('change', change);
@@ -278,6 +282,7 @@ export default function App() {
   const admin = !demo && session?.member?.role === 'Admin';
   const generation = useRef(0);
   const listEpoch = useRef(0);
+  const pendingList = useRef<number | null>(null);
   const detailEpoch = useRef(0);
   const leadTabRef = useRef(leadTab);
   leadTabRef.current = leadTab;
@@ -770,10 +775,14 @@ export default function App() {
           ),
         );
         setLoading(false);
+        setListLoadError(false);
         return;
       }
+      if (append && (pendingList.current !== null || !nextCursor)) return;
       const g = generation.current;
       const epoch = ++listEpoch.current;
+      pendingList.current = epoch;
+      setListLoadError(false);
       setLoading(true);
       setError('');
       try {
@@ -807,7 +816,9 @@ export default function App() {
           const field = endpoint.slice(1) as keyof Data;
           setData((d) => ({
             ...d,
-            [field]: append ? [...d[field], ...result.items] : result.items,
+            [field]: append
+              ? appendUniqueRows(d[field], result.items)
+              : result.items,
           }));
           setNextCursor(result.nextCursor);
           if (page === 'members') {
@@ -825,15 +836,18 @@ export default function App() {
           setData((d) => ({ ...d, leads: leads.items, tasks: tasks.items }));
           setSummary(stats);
         }
-        if (page === 'leads') {
+        if (page === 'leads' && !append) {
           const stats = await request('/summary');
           if (g === generation.current && epoch === listEpoch.current)
             setSummary(stats);
         }
       } catch (e) {
-        if (g === generation.current && epoch === listEpoch.current)
+        if (g === generation.current && epoch === listEpoch.current) {
+          setListLoadError(true);
           setError((e as Error).message);
+        }
       } finally {
+        if (pendingList.current === epoch) pendingList.current = null;
         if (g === generation.current && epoch === listEpoch.current)
           setLoading(false);
       }
@@ -856,6 +870,7 @@ export default function App() {
   loadRef.current = load;
   useEffect(() => {
     setNextCursor(null);
+    setDemoLeadLimit(30);
     void loadRef.current();
   }, [
     active,
@@ -1010,7 +1025,7 @@ export default function App() {
     setTimelineMoreBusy(false);
     setSelected(lead);
     setLeadTab(initialTab);
-    if (window.matchMedia('(max-width: 767.99px)').matches)
+    if (window.matchMedia('(max-width: 599.99px)').matches)
       window.scrollTo(0, 0);
     setLeadTasks([]);
     setTimeline([]);
@@ -1258,7 +1273,7 @@ export default function App() {
   const timezone =
     session?.preferences.timezone ||
     Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const visibleLeads = demo
+  const filteredDemoLeads = demo
     ? data.leads.filter(
         (l) =>
           matchesColumnFilters(l, columnFilters) &&
@@ -1270,6 +1285,23 @@ export default function App() {
               .includes(search.toLowerCase())),
       )
     : data.leads;
+  const visibleLeads = demo
+    ? filteredDemoLeads.slice(0, demoLeadLimit)
+    : data.leads;
+  const leadQueryKey = JSON.stringify([
+    session?.identity.uid,
+    demo,
+    stage,
+    source,
+    search,
+    searchField,
+    columnFilters,
+  ]);
+  const leadMoreCursor = demo
+    ? demoLeadLimit < filteredDemoLeads.length
+      ? 'sample:' + demoLeadLimit
+      : null
+    : nextCursor;
   const scoreIds = visibleLeads.map((l) => l.id + ':' + l.version).join(',');
   useEffect(() => {
     setLeadScores({});
@@ -1362,6 +1394,32 @@ export default function App() {
               <br />
               Together in one calm workspace.
             </p>
+            <div className="login-art" aria-label="Illustrative sales workflow">
+              <div className="login-art-row">
+                <span>01</span>
+                <span>
+                  <strong>Capture an enquiry</strong>
+                  <small>One place for every conversation</small>
+                </span>
+                <span className="badge">New</span>
+              </div>
+              <div className="login-art-row">
+                <span>02</span>
+                <span>
+                  <strong>Keep the next step clear</strong>
+                  <small>Notes, calls and timely follow-ups</small>
+                </span>
+                <span className="badge">Working</span>
+              </div>
+              <div className="login-art-row">
+                <span>03</span>
+                <span>
+                  <strong>Build the relationship</strong>
+                  <small>From first contact to the right opportunity</small>
+                </span>
+                <span className="badge stage-qualified">Qualified</span>
+              </div>
+            </div>
             <div className="login-benefits">
               <span>
                 <UsersRound size={17} /> Know your leads.
@@ -1427,6 +1485,9 @@ export default function App() {
     <div
       className={'app-shell ' + (sidebarCollapsed ? 'sidebar-collapsed' : '')}
     >
+      <a className="skip-link" href="#main-content">
+        Skip to workspace
+      </a>
       <aside
         className={'sidebar ' + (menu ? 'mobile-open' : '')}
         inert={compact && !menu}
@@ -1818,13 +1879,14 @@ export default function App() {
                         RELATIONSHIPS IN THE MAKING
                       </span>
                       <h1>
-                        Your pipeline
+                        Leads
                         <span className="heading-count">
                           {summary.total ?? data.leads.length}
                         </span>
                       </h1>
                       <p>
-                        Every enquiry has a story. Keep the next chapter moving.
+                        Capture enquiries, keep the context and move the next
+                        step forward.
                       </p>
                     </div>
                     <div className="title-actions">
@@ -1840,7 +1902,7 @@ export default function App() {
                             ...(search ? { search, field: searchField } : {}),
                           }}
                           demo={demo}
-                          demoLeads={visibleLeads}
+                          demoLeads={filteredDemoLeads}
                           key={session?.member?.accessPolicyVersion || 'demo'}
                         />
                       ) : null}
@@ -1983,6 +2045,7 @@ export default function App() {
                       <Loading />
                     ) : visibleLeads.length ? (
                       <LeadBatchEditor
+                        key={leadQueryKey}
                         canEdit={!!can('leads:edit')}
                         canAssign={!!can('assignments:write')}
                         request={request}
@@ -2020,21 +2083,16 @@ export default function App() {
                       <span>
                         {visibleLeads.length} {demo ? 'sample ' : ''}leads shown
                       </span>
-                      {nextCursor && !demo ? (
-                        <button
-                          className="text-button"
-                          onClick={() => void load(true)}
-                          disabled={loading}
-                        >
-                          Load more <ChevronRight size={14} />
-                        </button>
-                      ) : (
-                        <span className="field-hint">
-                          {search
-                            ? 'Search applied'
-                            : 'Your pipeline, in one place'}
-                        </span>
-                      )}
+                      <InfiniteLeadLoader
+                        key={leadQueryKey}
+                        cursor={leadMoreCursor}
+                        busy={loading}
+                        error={listLoadError}
+                        onLoad={() => {
+                          if (demo) setDemoLeadLimit((limit) => limit + 30);
+                          else void loadRef.current(!!nextCursor);
+                        }}
+                      />
                     </div>
                   </section>
                 </div>
@@ -2062,32 +2120,40 @@ export default function App() {
                       <>
                         <button
                           className="text-button"
+                          aria-label="Back to leads"
+                          title="Back to leads"
                           onClick={() => {
                             closeLead();
                           }}
                         >
                           <ChevronLeft size={16} />
-                          <span>Back to leads</span>
+                          <span className="lead-action-label">
+                            Back to leads
+                          </span>
                         </button>
                         {!routeLeadId && (
                           <button
                             className="button detail-files-button"
+                            aria-label="Files"
+                            title="Files"
                             onClick={() => {
                               expandLead();
                               setLeadTab('files');
                             }}
                           >
                             <Paperclip size={16} />
-                            Files
+                            <span className="lead-action-label">Files</span>
                           </button>
                         )}
                         {can('leads:edit') ? (
                           <button
                             className="button detail-edit-button"
                             aria-label="Edit lead"
+                            title="Edit lead"
                             onClick={() => setModal('edit')}
                           >
-                            <Pencil size={16} /> Edit lead
+                            <Pencil size={16} />
+                            <span className="lead-action-label">Edit lead</span>
                           </button>
                         ) : null}
                       </>
@@ -2170,199 +2236,33 @@ export default function App() {
                       timezone={timezone}
                       demo={!!demo}
                     />
-                    <details className="lead-context" open={!routeLeadId}>
-                      <summary>Lead details &amp; score</summary>
-                      <LeadScore
-                        key={selected.id}
-                        leadId={selected.id}
-                        version={selected.version}
-                        request={request}
-                        onReport={acceptScore}
-                        canRefresh={!!can('leads:edit')}
-                        timezone={timezone}
-                        demo={demo}
-                      />
-                      {selected.doNotContact ? (
-                        <div className="detail-warning">
-                          Do not contact · {selected.suppressionReason}
-                        </div>
-                      ) : selected.needsReview ? (
-                        <div className="detail-warning">
-                          Contact needs review before outreach.
-                        </div>
-                      ) : null}
-                      {!routeLeadId ? (
-                        <div className="detail-actions">
-                          {can('activities:write') ? (
-                            <button
-                              className="button primary"
-                              disabled={
-                                selected.doNotContact ||
-                                selected.needsReview ||
-                                detailBusy
-                              }
-                              onClick={() => setModal('call')}
-                            >
-                              <Phone size={15} /> Log call
-                            </button>
-                          ) : null}
-                          {can('tasks:write') ? (
-                            <button
-                              className="button"
-                              onClick={() => setModal('task')}
-                              disabled={detailBusy}
-                            >
-                              <Bell size={15} /> Remind me
-                            </button>
-                          ) : null}
-                          {can('activities:write') ? (
-                            <button
-                              className="button"
-                              aria-label="Add comment"
-                              onClick={() => setModal('note')}
-                              disabled={detailBusy}
-                            >
-                              <FileText size={18} /> Add comment
-                            </button>
-                          ) : null}
-                        </div>
-                      ) : null}
-                      <div className="detail-section contact-info">
-                        <div className="worksheet-details">
-                          <h3>LEAD INFORMATION</h3>
-                          <dl>
-                            {worksheetColumns
-                              .filter(
-                                ([field]) =>
-                                  !fieldOptions.hiddenFields.includes(field) &&
-                                  ![
-                                    'initialDiscussion',
-                                    'followUp1',
-                                    'followUp2',
-                                    'followUp3',
-                                    'followUp4',
-                                  ].includes(field),
-                              )
-                              .map(([field, label]) => (
-                                <div key={field}>
-                                  <dt>
-                                    {labelFor(fieldOptions, field, label)}
-                                  </dt>
-                                  <dd
-                                    className={
-                                      field === 'phone'
-                                        ? 'phone-number'
-                                        : undefined
-                                    }
-                                  >
-                                    {field === 'name' ? (
-                                      <LeadName name={selected.name} />
-                                    ) : field === 'enquiryDate' ? (
-                                      displayDate(selected.enquiryDate)
-                                    ) : field === 'phone' ? (
-                                      !demo &&
-                                      selected.phone &&
-                                      !selected.doNotContact &&
-                                      !selected.needsReview ? (
-                                        <a href={'tel:' + selected.phone}>
-                                          {selected.phone}
-                                        </a>
-                                      ) : (
-                                        selected.phone ||
-                                        selected.originalPhone ||
-                                        'Not recorded'
-                                      )
-                                    ) : (
-                                      String(selected[field] || 'Not recorded')
-                                    )}
-                                  </dd>
-                                </div>
-                              ))}
-                            {!fieldOptions.hiddenFields.includes('email') ? (
-                              <div>
-                                <dt>
-                                  {labelFor(fieldOptions, 'email', 'Email')}
-                                </dt>
-                                <dd>
-                                  {!demo &&
-                                  selected.email &&
-                                  !selected.doNotContact &&
-                                  !selected.needsReview ? (
-                                    <a href={'mailto:' + selected.email}>
-                                      {selected.email}
-                                    </a>
-                                  ) : (
-                                    selected.email || 'Not recorded'
-                                  )}
-                                </dd>
-                              </div>
-                            ) : null}
-                          </dl>
-                        </div>
-                        {fieldOptions.customFields.some(
-                          (f) =>
-                            !f.deleted ||
-                            selected.customFields?.[f.id] !== undefined,
-                        ) ? (
-                          <details className="worksheet-details" open>
-                            <summary>Additional information</summary>
-                            <dl>
-                              {fieldOptions.customFields
-                                .filter(
-                                  (f) =>
-                                    !f.deleted ||
-                                    selected.customFields?.[f.id] !== undefined,
-                                )
-                                .map((f) => (
-                                  <div key={f.id}>
-                                    <dt>
-                                      {f.label}
-                                      {f.deleted ? ' (removed field)' : ''}
-                                    </dt>
-                                    <dd>
-                                      {typeof selected.customFields?.[f.id] ===
-                                      'boolean'
-                                        ? selected.customFields[f.id]
-                                          ? 'Yes'
-                                          : 'No'
-                                        : String(
-                                            selected.customFields?.[f.id] ??
-                                              'Not recorded',
-                                          )}
-                                    </dd>
-                                  </div>
-                                ))}
-                            </dl>
-                          </details>
+                    <div className="lead-work-layout">
+                      <details className="lead-context" open={!compact}>
+                        <summary>Details &amp; qualification</summary>
+                        <LeadScore
+                          key={selected.id}
+                          leadId={selected.id}
+                          version={selected.version}
+                          request={request}
+                          onReport={acceptScore}
+                          canRefresh={!!can('leads:edit')}
+                          timezone={timezone}
+                          demo={demo}
+                        />
+                        {selected.doNotContact ? (
+                          <div className="detail-warning">
+                            Do not contact · {selected.suppressionReason}
+                          </div>
+                        ) : selected.needsReview ? (
+                          <div className="detail-warning">
+                            Contact needs review before outreach.
+                          </div>
                         ) : null}
-                      </div>
-                    </details>
-                    {!routeLeadId && leadTasks.length ? (
-                      <div className="detail-section">
-                        <h3>YOUR UPCOMING FOLLOW-UPS</h3>
-                        {leadTasks.map((t) => (
-                          <button
-                            className="lead-task"
-                            key={t.id}
-                            onClick={() => openTask(t)}
-                          >
-                            <Bell size={14} />
-                            <span>
-                              {t.title}
-                              <small>{displayDate(t.dueAt, timezone)}</small>
-                            </span>
-                            <ChevronRight size={14} />
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
-                    {routeLeadId ? (
-                      <>
-                        <div className="lead-page-actions">
-                          {can('activities:write') ? (
-                            <>
+                        {!routeLeadId ? (
+                          <div className="detail-actions">
+                            {can('activities:write') ? (
                               <button
-                                className="button"
+                                className="button primary"
                                 disabled={
                                   selected.doNotContact ||
                                   selected.needsReview ||
@@ -2370,398 +2270,589 @@ export default function App() {
                                 }
                                 onClick={() => setModal('call')}
                               >
-                                <Phone size={16} /> Log call
+                                <Phone size={15} /> Log call
                               </button>
-                            </>
-                          ) : null}
-                          {can('tasks:write') ? (
-                            <button
-                              className="button"
-                              onClick={() => setModal('task')}
-                            >
-                              <Bell size={16} /> Remind me
-                            </button>
-                          ) : null}
-                        </div>
-                        <div
-                          className="lead-work-tabs"
-                          role="tablist"
-                          aria-label="Lead workspace"
-                        >
-                          {leadWorkspaceTabs.map((tab, index) => (
-                            <button
-                              key={tab}
-                              id={'lead-tab-' + tab}
-                              role="tab"
-                              aria-selected={leadTab === tab}
-                              aria-controls={'lead-panel-' + tab}
-                              tabIndex={leadTab === tab ? 0 : -1}
-                              onKeyDown={(e) => {
-                                const tabs = leadWorkspaceTabs;
-                                const next =
-                                  e.key === 'ArrowRight'
-                                    ? (index + 1) % tabs.length
-                                    : e.key === 'ArrowLeft'
-                                      ? (index + tabs.length - 1) % tabs.length
-                                      : e.key === 'Home'
-                                        ? 0
-                                        : e.key === 'End'
-                                          ? tabs.length - 1
-                                          : -1;
-                                if (next >= 0) {
-                                  e.preventDefault();
-                                  setLeadTab(tabs[next]);
-                                  document
-                                    .getElementById('lead-tab-' + tabs[next])
-                                    ?.focus();
-                                }
-                              }}
-                              onClick={() => setLeadTab(tab)}
-                            >
-                              {tab === 'all'
-                                ? 'All'
-                                : tab === 'calls'
-                                  ? 'Calls'
-                                  : tab === 'comments'
-                                    ? 'Comments'
-                                    : tab === 'tasks'
-                                      ? 'Tasks'
-                                      : tab === 'files'
-                                        ? 'Files'
-                                        : 'Review'}
-                              {tab === 'review' &&
-                              (selected.needsReview ||
-                                reviewActivities(timeline).length > 0)
-                                ? ' •'
-                                : ''}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    ) : null}
-                    <div
-                      className="lead-work-panel"
-                      role={routeLeadId ? 'tabpanel' : undefined}
-                      id={routeLeadId ? 'lead-panel-' + leadTab : undefined}
-                      aria-labelledby={
-                        routeLeadId ? 'lead-tab-' + leadTab : undefined
-                      }
-                      tabIndex={routeLeadId ? 0 : undefined}
-                    >
-                      {routeLeadId &&
-                      (leadTab === 'review' ||
-                        (leadTab === 'all' &&
-                          (selected.needsReview ||
-                            selected.doNotContact ||
-                            reviewActivities(timeline).length > 0))) ? (
-                        <section className="lead-review-intro">
-                          <h3>Needs attention</h3>
-                          <p>
-                            {selected.needsReview
-                              ? 'Contact details need review before outreach. Check and edit the details, then clear the review flag below.'
-                              : 'Contact details have no review flag.'}
-                          </p>
-                          {selected.doNotContact ? (
-                            <p>
-                              Do not contact:{' '}
-                              {selected.suppressionReason ||
-                                'Outreach is paused.'}
-                            </p>
-                          ) : null}
-                          <p>
-                            Follow-ups needing a date, failed analysis and
-                            pending checks appear below. Load earlier activity
-                            to inspect older entries. Tasks belong to their
-                            recipient; this view does not expose another
-                            member’s private reminders.
-                          </p>
-                        </section>
-                      ) : null}
-                      {routeLeadId && can('activities:write') ? (
-                        <div
-                          className="lead-composer-region"
-                          id="lead-inline-composer"
-                          hidden={leadTab !== 'comments' && leadTab !== 'all'}
-                        >
-                          <InlineCommentComposer
-                            key={
-                              (session?.identity.uid || 'demo') +
-                              ':' +
-                              selected.id
-                            }
-                            leadId={selected.id}
-                            version={selected.version}
-                            request={request}
-                            onSaved={refresh}
-                            disabled={detailBusy}
-                          />
-                        </div>
-                      ) : null}
-                      {!routeLeadId ||
-                      (leadTab !== 'tasks' && leadTab !== 'files') ? (
-                        <div
-                          className={
-                            'detail-section lead-conversations ' +
-                            (routeLeadId ? 'conversation-workspace' : '')
-                          }
-                        >
-                          <div className="detail-section-title">
-                            <h3>
-                              {routeLeadId && leadTab === 'review'
-                                ? 'FOLLOW-UP REVIEW'
-                                : routeLeadId && leadTab === 'calls'
-                                  ? 'CALL HISTORY'
-                                  : routeLeadId && leadTab === 'comments'
-                                    ? 'COMMENTS'
-                                    : 'ALL ACTIVITY'}
-                            </h3>
-                            <span>
-                              {
-                                filterLeadActivities(
-                                  timeline,
-                                  routeLeadId ? leadTab : 'all',
-                                ).length
-                              }{' '}
-                              {filterLeadActivities(
-                                timeline,
-                                routeLeadId ? leadTab : 'all',
-                              ).length === 1
-                                ? 'entry'
-                                : 'entries'}
-                            </span>
+                            ) : null}
+                            {can('tasks:write') ? (
+                              <button
+                                className="button"
+                                onClick={() => setModal('task')}
+                                disabled={detailBusy}
+                              >
+                                <Bell size={15} /> Remind me
+                              </button>
+                            ) : null}
+                            {can('activities:write') ? (
+                              <button
+                                className="button"
+                                aria-label="Add comment"
+                                onClick={() => setModal('note')}
+                                disabled={detailBusy}
+                              >
+                                <FileText size={18} /> Add comment
+                              </button>
+                            ) : null}
                           </div>
-                          {detailBusy ? (
-                            <Loading />
-                          ) : filterLeadActivities(
-                              timeline,
-                              routeLeadId ? leadTab : 'all',
-                            ).length ? (
-                            <div className="timeline">
-                              {filterLeadActivities(
-                                timeline,
-                                routeLeadId ? leadTab : 'all',
-                              ).map((a) => (
-                                <div key={a.id} className="timeline-item">
-                                  <span
-                                    className={
-                                      'timeline-icon ' +
-                                      (a.type === 'call' ? 'call' : '')
-                                    }
-                                  >
-                                    {a.type === 'call' ? (
-                                      <Phone size={13} />
-                                    ) : (
-                                      <FileText size={13} />
-                                    )}
-                                  </span>
-                                  <div>
-                                    <strong>
-                                      {a.type === 'call'
-                                        ? a.outcome
-                                        : a.type === 'note'
-                                          ? a.sourceColumn || 'Comment'
-                                          : 'Lead updated'}
-                                    </strong>
-                                    <time>
-                                      {a.imported
-                                        ? 'Imported history · original date not recorded'
-                                        : displayDate(a.createdAt, timezone)}
-                                    </time>
-                                    <p className="comment-body">{a.notes}</p>
-                                    <AutomaticReminder
-                                      key={a.id + '_' + a.revision}
-                                      activity={a}
-                                      timezone={timezone}
-                                      canManage={
-                                        !demo &&
-                                        can('tasks:write') &&
-                                        a.autoReminder?.ownerUid ===
-                                          session?.member?.uid
+                        ) : null}
+                        <div className="detail-section contact-info">
+                          <div className="worksheet-details">
+                            <h3>LEAD INFORMATION</h3>
+                            <dl>
+                              {worksheetColumns
+                                .filter(
+                                  ([field]) =>
+                                    !fieldOptions.hiddenFields.includes(
+                                      field,
+                                    ) &&
+                                    ![
+                                      'initialDiscussion',
+                                      'followUp1',
+                                      'followUp2',
+                                      'followUp3',
+                                      'followUp4',
+                                    ].includes(field),
+                                )
+                                .map(([field, label]) => (
+                                  <div key={field}>
+                                    <dt>
+                                      {labelFor(fieldOptions, field, label)}
+                                    </dt>
+                                    <dd
+                                      className={
+                                        field === 'phone'
+                                          ? 'phone-number'
+                                          : undefined
                                       }
-                                      onAction={async (body) => {
-                                        await request(
-                                          '/activities/' +
-                                            a.id +
-                                            '/automatic-reminder',
-                                          'PATCH',
-                                          body,
-                                        );
-                                        await refresh();
-                                      }}
-                                    />
-                                    {['call', 'note'].includes(a.type) &&
-                                    a.revision &&
-                                    can('activities:write') ? (
-                                      <button
-                                        className="text-button correction-button"
-                                        onClick={() => {
-                                          setSelectedActivity(a);
-                                          setModal('correction');
-                                        }}
-                                      >
-                                        Correct entry
-                                      </button>
-                                    ) : null}
-                                    {a.disposition &&
-                                    a.disposition !== 'None' ? (
-                                      <span className="timeline-disposition">
-                                        {a.disposition}
-                                      </span>
-                                    ) : null}
+                                    >
+                                      {field === 'name' ? (
+                                        <LeadName name={selected.name} />
+                                      ) : field === 'enquiryDate' ? (
+                                        displayDate(selected.enquiryDate)
+                                      ) : field === 'phone' ? (
+                                        !demo &&
+                                        selected.phone &&
+                                        !selected.doNotContact &&
+                                        !selected.needsReview ? (
+                                          <a href={'tel:' + selected.phone}>
+                                            {selected.phone}
+                                          </a>
+                                        ) : (
+                                          selected.phone ||
+                                          selected.originalPhone ||
+                                          'Not recorded'
+                                        )
+                                      ) : (
+                                        String(
+                                          selected[field] || 'Not recorded',
+                                        )
+                                      )}
+                                    </dd>
                                   </div>
+                                ))}
+                              {!fieldOptions.hiddenFields.includes('email') ? (
+                                <div>
+                                  <dt>
+                                    {labelFor(fieldOptions, 'email', 'Email')}
+                                  </dt>
+                                  <dd>
+                                    {!demo &&
+                                    selected.email &&
+                                    !selected.doNotContact &&
+                                    !selected.needsReview ? (
+                                      <a href={'mailto:' + selected.email}>
+                                        {selected.email}
+                                      </a>
+                                    ) : (
+                                      selected.email || 'Not recorded'
+                                    )}
+                                  </dd>
                                 </div>
+                              ) : null}
+                            </dl>
+                          </div>
+                          {fieldOptions.customFields.some(
+                            (f) =>
+                              !f.deleted ||
+                              selected.customFields?.[f.id] !== undefined,
+                          ) ? (
+                            <details className="worksheet-details" open>
+                              <summary>Additional information</summary>
+                              <dl>
+                                {fieldOptions.customFields
+                                  .filter(
+                                    (f) =>
+                                      !f.deleted ||
+                                      selected.customFields?.[f.id] !==
+                                        undefined,
+                                  )
+                                  .map((f) => (
+                                    <div key={f.id}>
+                                      <dt>
+                                        {f.label}
+                                        {f.deleted ? ' (removed field)' : ''}
+                                      </dt>
+                                      <dd>
+                                        {typeof selected.customFields?.[
+                                          f.id
+                                        ] === 'boolean'
+                                          ? selected.customFields[f.id]
+                                            ? 'Yes'
+                                            : 'No'
+                                          : String(
+                                              selected.customFields?.[f.id] ??
+                                                'Not recorded',
+                                            )}
+                                      </dd>
+                                    </div>
+                                  ))}
+                              </dl>
+                            </details>
+                          ) : null}
+                        </div>
+                      </details>
+                      <div className="lead-activity-area">
+                        {!routeLeadId && leadTasks.length ? (
+                          <div className="detail-section">
+                            <h3>YOUR UPCOMING FOLLOW-UPS</h3>
+                            {leadTasks.map((t) => (
+                              <button
+                                className="lead-task"
+                                key={t.id}
+                                onClick={() => openTask(t)}
+                              >
+                                <Bell size={14} />
+                                <span>
+                                  {t.title}
+                                  <small>
+                                    {displayDate(t.dueAt, timezone)}
+                                  </small>
+                                </span>
+                                <ChevronRight size={14} />
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                        {routeLeadId ? (
+                          <>
+                            <div className="lead-page-actions">
+                              {can('activities:write') ? (
+                                <>
+                                  <button
+                                    className="button"
+                                    disabled={
+                                      selected.doNotContact ||
+                                      selected.needsReview ||
+                                      detailBusy
+                                    }
+                                    onClick={() => setModal('call')}
+                                  >
+                                    <Phone size={16} /> Log call
+                                  </button>
+                                </>
+                              ) : null}
+                              {can('tasks:write') ? (
+                                <button
+                                  className="button"
+                                  onClick={() => setModal('task')}
+                                >
+                                  <Bell size={16} /> Remind me
+                                </button>
+                              ) : null}
+                            </div>
+                            <div
+                              className="lead-work-tabs"
+                              role="tablist"
+                              aria-label="Lead workspace"
+                            >
+                              {leadWorkspaceTabs.map((tab, index) => (
+                                <button
+                                  key={tab}
+                                  id={'lead-tab-' + tab}
+                                  role="tab"
+                                  aria-selected={leadTab === tab}
+                                  aria-controls={'lead-panel-' + tab}
+                                  tabIndex={leadTab === tab ? 0 : -1}
+                                  onKeyDown={(e) => {
+                                    const tabs = leadWorkspaceTabs;
+                                    const next =
+                                      e.key === 'ArrowRight'
+                                        ? (index + 1) % tabs.length
+                                        : e.key === 'ArrowLeft'
+                                          ? (index + tabs.length - 1) %
+                                            tabs.length
+                                          : e.key === 'Home'
+                                            ? 0
+                                            : e.key === 'End'
+                                              ? tabs.length - 1
+                                              : -1;
+                                    if (next >= 0) {
+                                      e.preventDefault();
+                                      setLeadTab(tabs[next]);
+                                      document
+                                        .getElementById(
+                                          'lead-tab-' + tabs[next],
+                                        )
+                                        ?.focus();
+                                    }
+                                  }}
+                                  onClick={() => setLeadTab(tab)}
+                                >
+                                  {tab === 'all'
+                                    ? 'All'
+                                    : tab === 'calls'
+                                      ? 'Calls'
+                                      : tab === 'comments'
+                                        ? 'Comments'
+                                        : tab === 'tasks'
+                                          ? 'Tasks'
+                                          : tab === 'files'
+                                            ? 'Files'
+                                            : 'Review'}
+                                  {tab === 'review' &&
+                                  (selected.needsReview ||
+                                    reviewActivities(timeline).length > 0)
+                                    ? ' •'
+                                    : ''}
+                                </button>
                               ))}
                             </div>
-                          ) : (
-                            <p className="field-hint">
-                              {routeLeadId && leadTab === 'review'
-                                ? 'No follow-ups need review in the loaded activity. Use Earlier activity to check older entries.'
-                                : routeLeadId && leadTab === 'calls'
-                                  ? 'No calls in the loaded activity. Log a call or load earlier activity.'
-                                  : routeLeadId && leadTab === 'comments'
-                                    ? 'No comments in the loaded activity. Write a comment or load earlier activity.'
-                                    : 'No activity yet. Start with a conversation or a note.'}
-                            </p>
-                          )}
-                          {timelineCursor ? (
-                            <button
-                              className="text-button"
-                              disabled={timelineMoreBusy}
-                              onClick={async () => {
-                                if (timelineMoreLock.current) return;
-                                timelineMoreLock.current = true;
-                                setTimelineMoreBusy(true);
-                                const token = ++timelineMoreRequest.current;
-                                const epoch = detailEpoch.current,
-                                  current = generation.current;
-                                try {
-                                  const a = await request(
-                                    '/leads/' +
-                                      selected.id +
-                                      '/activities?cursor=' +
-                                      encodeURIComponent(timelineCursor),
-                                  );
-                                  if (
-                                    epoch !== detailEpoch.current ||
-                                    current !== generation.current
-                                  )
-                                    return;
-                                  setTimeline((t) => [
-                                    ...new Map(
-                                      [...t, ...a.items].map((item) => [
-                                        item.id,
-                                        item,
-                                      ]),
-                                    ).values(),
-                                  ]);
-                                  setTimelineCursor(a.nextCursor);
-                                } catch (e) {
-                                  if (
-                                    epoch === detailEpoch.current &&
-                                    current === generation.current
-                                  )
-                                    setError((e as Error).message);
-                                } finally {
-                                  if (token === timelineMoreRequest.current) {
-                                    timelineMoreLock.current = false;
-                                    setTimelineMoreBusy(false);
-                                  }
-                                }
-                              }}
+                          </>
+                        ) : null}
+                        <div
+                          className="lead-work-panel"
+                          role={routeLeadId ? 'tabpanel' : undefined}
+                          id={routeLeadId ? 'lead-panel-' + leadTab : undefined}
+                          aria-labelledby={
+                            routeLeadId ? 'lead-tab-' + leadTab : undefined
+                          }
+                          tabIndex={routeLeadId ? 0 : undefined}
+                        >
+                          {routeLeadId &&
+                          (leadTab === 'review' ||
+                            (leadTab === 'all' &&
+                              (selected.needsReview ||
+                                selected.doNotContact ||
+                                reviewActivities(timeline).length > 0))) ? (
+                            <section className="lead-review-intro">
+                              <h3>Needs attention</h3>
+                              <p>
+                                {selected.needsReview
+                                  ? 'Contact details need review before outreach. Check and edit the details, then clear the review flag below.'
+                                  : 'Contact details have no review flag.'}
+                              </p>
+                              {selected.doNotContact ? (
+                                <p>
+                                  Do not contact:{' '}
+                                  {selected.suppressionReason ||
+                                    'Outreach is paused.'}
+                                </p>
+                              ) : null}
+                              <p>
+                                Follow-ups needing a date, failed analysis and
+                                pending checks appear below. Load earlier
+                                activity to inspect older entries. Tasks belong
+                                to their recipient; this view does not expose
+                                another member’s private reminders.
+                              </p>
+                            </section>
+                          ) : null}
+                          {routeLeadId && can('activities:write') ? (
+                            <div
+                              className="lead-composer-region"
+                              id="lead-inline-composer"
+                              hidden={
+                                leadTab !== 'comments' && leadTab !== 'all'
+                              }
                             >
-                              Earlier activity
-                            </button>
+                              <InlineCommentComposer
+                                key={
+                                  (session?.identity.uid || 'demo') +
+                                  ':' +
+                                  selected.id
+                                }
+                                leadId={selected.id}
+                                version={selected.version}
+                                request={request}
+                                onSaved={refresh}
+                                disabled={detailBusy}
+                              />
+                            </div>
+                          ) : null}
+                          {!routeLeadId ||
+                          (leadTab !== 'tasks' && leadTab !== 'files') ? (
+                            <div
+                              className={
+                                'detail-section lead-conversations ' +
+                                (routeLeadId ? 'conversation-workspace' : '')
+                              }
+                            >
+                              <div className="detail-section-title">
+                                <h3>
+                                  {routeLeadId && leadTab === 'review'
+                                    ? 'FOLLOW-UP REVIEW'
+                                    : routeLeadId && leadTab === 'calls'
+                                      ? 'CALL HISTORY'
+                                      : routeLeadId && leadTab === 'comments'
+                                        ? 'COMMENTS'
+                                        : 'ALL ACTIVITY'}
+                                </h3>
+                                <span>
+                                  {
+                                    filterLeadActivities(
+                                      timeline,
+                                      routeLeadId ? leadTab : 'all',
+                                    ).length
+                                  }{' '}
+                                  {filterLeadActivities(
+                                    timeline,
+                                    routeLeadId ? leadTab : 'all',
+                                  ).length === 1
+                                    ? 'entry'
+                                    : 'entries'}
+                                </span>
+                              </div>
+                              {detailBusy ? (
+                                <Loading />
+                              ) : filterLeadActivities(
+                                  timeline,
+                                  routeLeadId ? leadTab : 'all',
+                                ).length ? (
+                                <div className="timeline">
+                                  {filterLeadActivities(
+                                    timeline,
+                                    routeLeadId ? leadTab : 'all',
+                                  ).map((a) => (
+                                    <div key={a.id} className="timeline-item">
+                                      <span
+                                        className={
+                                          'timeline-icon ' +
+                                          (a.type === 'call' ? 'call' : '')
+                                        }
+                                      >
+                                        {a.type === 'call' ? (
+                                          <Phone size={13} />
+                                        ) : (
+                                          <FileText size={13} />
+                                        )}
+                                      </span>
+                                      <div>
+                                        <strong>
+                                          {a.type === 'call'
+                                            ? a.outcome
+                                            : a.type === 'note'
+                                              ? a.sourceColumn || 'Comment'
+                                              : 'Lead updated'}
+                                        </strong>
+                                        <time>
+                                          {a.imported
+                                            ? 'Imported history · original date not recorded'
+                                            : displayDate(
+                                                a.createdAt,
+                                                timezone,
+                                              )}
+                                        </time>
+                                        <p className="comment-body">
+                                          {a.notes}
+                                        </p>
+                                        <AutomaticReminder
+                                          key={a.id + '_' + a.revision}
+                                          activity={a}
+                                          timezone={timezone}
+                                          canManage={
+                                            !demo &&
+                                            can('tasks:write') &&
+                                            a.autoReminder?.ownerUid ===
+                                              session?.member?.uid
+                                          }
+                                          onAction={async (body) => {
+                                            await request(
+                                              '/activities/' +
+                                                a.id +
+                                                '/automatic-reminder',
+                                              'PATCH',
+                                              body,
+                                            );
+                                            await refresh();
+                                          }}
+                                        />
+                                        {['call', 'note'].includes(a.type) &&
+                                        a.revision &&
+                                        can('activities:write') ? (
+                                          <button
+                                            className="text-button correction-button"
+                                            onClick={() => {
+                                              setSelectedActivity(a);
+                                              setModal('correction');
+                                            }}
+                                          >
+                                            Correct entry
+                                          </button>
+                                        ) : null}
+                                        {a.disposition &&
+                                        a.disposition !== 'None' ? (
+                                          <span className="timeline-disposition">
+                                            {a.disposition}
+                                          </span>
+                                        ) : null}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="field-hint">
+                                  {routeLeadId && leadTab === 'review'
+                                    ? 'No follow-ups need review in the loaded activity. Use Earlier activity to check older entries.'
+                                    : routeLeadId && leadTab === 'calls'
+                                      ? 'No calls in the loaded activity. Log a call or load earlier activity.'
+                                      : routeLeadId && leadTab === 'comments'
+                                        ? 'No comments in the loaded activity. Write a comment or load earlier activity.'
+                                        : 'No activity yet. Start with a conversation or a note.'}
+                                </p>
+                              )}
+                              {timelineCursor ? (
+                                <button
+                                  className="text-button"
+                                  disabled={timelineMoreBusy}
+                                  onClick={async () => {
+                                    if (timelineMoreLock.current) return;
+                                    timelineMoreLock.current = true;
+                                    setTimelineMoreBusy(true);
+                                    const token = ++timelineMoreRequest.current;
+                                    const epoch = detailEpoch.current,
+                                      current = generation.current;
+                                    try {
+                                      const a = await request(
+                                        '/leads/' +
+                                          selected.id +
+                                          '/activities?cursor=' +
+                                          encodeURIComponent(timelineCursor),
+                                      );
+                                      if (
+                                        epoch !== detailEpoch.current ||
+                                        current !== generation.current
+                                      )
+                                        return;
+                                      setTimeline((t) => [
+                                        ...new Map(
+                                          [...t, ...a.items].map((item) => [
+                                            item.id,
+                                            item,
+                                          ]),
+                                        ).values(),
+                                      ]);
+                                      setTimelineCursor(a.nextCursor);
+                                    } catch (e) {
+                                      if (
+                                        epoch === detailEpoch.current &&
+                                        current === generation.current
+                                      )
+                                        setError((e as Error).message);
+                                    } finally {
+                                      if (
+                                        token === timelineMoreRequest.current
+                                      ) {
+                                        timelineMoreLock.current = false;
+                                        setTimelineMoreBusy(false);
+                                      }
+                                    }
+                                  }}
+                                >
+                                  Earlier activity
+                                </button>
+                              ) : null}
+                            </div>
+                          ) : null}
+                          {routeLeadId && leadTab === 'files' ? (
+                            <LeadFiles
+                              key={'files:' + selected.id}
+                              leadId={selected.id}
+                              request={request}
+                              demo={demo}
+                              canEdit={!!can('leads:edit')}
+                            />
+                          ) : null}
+                          {routeLeadId && leadTab === 'tasks' ? (
+                            <section>
+                              <LeadTaskTab
+                                refreshKey={dashboardRefreshKey}
+                                key={selected.id}
+                                leadId={selected.id}
+                                request={request}
+                                timezone={timezone}
+                                onOpen={openTask}
+                              />
+                            </section>
                           ) : null}
                         </div>
-                      ) : null}
-                      {routeLeadId && leadTab === 'files' ? (
-                        <LeadFiles
-                          key={'files:' + selected.id}
-                          leadId={selected.id}
-                          request={request}
-                          demo={demo}
-                          canEdit={!!can('leads:edit')}
-                        />
-                      ) : null}
-                      {routeLeadId && leadTab === 'tasks' ? (
-                        <section>
-                          <LeadTaskTab
-                            refreshKey={dashboardRefreshKey}
-                            key={selected.id}
-                            leadId={selected.id}
-                            request={request}
-                            timezone={timezone}
-                            onOpen={openTask}
-                          />
-                        </section>
-                      ) : null}
-                    </div>
-                    {can('leads:edit') ? (
-                      <div className="detail-section detail-admin-actions">
-                        {selected.needsReview ? (
+                      </div>
+                      {can('leads:edit') ? (
+                        <div className="detail-section detail-admin-actions">
+                          {selected.needsReview ? (
+                            <button
+                              className="button"
+                              type="button"
+                              disabled={mutationBusy || detailBusy}
+                              onClick={() =>
+                                void leadAction({ needsReview: false })
+                              }
+                            >
+                              Clear contact review
+                            </button>
+                          ) : null}
                           <button
-                            className="button"
+                            className="button lead-contact-action"
                             type="button"
                             disabled={mutationBusy || detailBusy}
-                            onClick={() =>
-                              void leadAction({ needsReview: false })
-                            }
-                          >
-                            Clear contact review
-                          </button>
-                        ) : null}
-                        <button
-                          className="button lead-contact-action"
-                          type="button"
-                          disabled={mutationBusy || detailBusy}
-                          onClick={() => {
-                            if (selected.doNotContact)
-                              void leadAction({
-                                doNotContact: false,
-                                suppressionReason: '',
-                              });
-                            else {
-                              const reason = window.prompt(
-                                'Reason for marking do not contact:',
-                              );
-                              if (reason?.trim())
+                            onClick={() => {
+                              if (selected.doNotContact)
                                 void leadAction({
-                                  doNotContact: true,
-                                  suppressionReason: reason.trim(),
+                                  doNotContact: false,
+                                  suppressionReason: '',
                                 });
-                            }
-                          }}
-                        >
-                          <Ban size={18} aria-hidden="true" />
-                          {selected.doNotContact
-                            ? 'Remove do-not-contact flag'
-                            : 'Mark as do not contact'}
-                        </button>
-                        <button
-                          className="button lead-archive-action"
-                          type="button"
-                          disabled={mutationBusy || detailBusy}
-                          onClick={async () => {
-                            try {
-                              await request(
-                                '/leads/' + selected.id + '/archive',
-                                'POST',
-                                { expectedVersion: selected.version },
-                              );
-                              closeLead();
-                              await loadRef.current();
-                              notify(
-                                'Lead archived. Pending outreach was cancelled.',
-                              );
-                            } catch (e) {
-                              setError((e as Error).message);
-                            }
-                          }}
-                        >
-                          <Archive size={18} aria-hidden="true" /> Archive lead
-                        </button>
-                      </div>
-                    ) : null}
+                              else {
+                                const reason = window.prompt(
+                                  'Reason for marking do not contact:',
+                                );
+                                if (reason?.trim())
+                                  void leadAction({
+                                    doNotContact: true,
+                                    suppressionReason: reason.trim(),
+                                  });
+                              }
+                            }}
+                          >
+                            <Ban size={18} aria-hidden="true" />
+                            {selected.doNotContact
+                              ? 'Remove do-not-contact flag'
+                              : 'Mark as do not contact'}
+                          </button>
+                          <button
+                            className="button lead-archive-action"
+                            type="button"
+                            disabled={mutationBusy || detailBusy}
+                            onClick={async () => {
+                              try {
+                                await request(
+                                  '/leads/' + selected.id + '/archive',
+                                  'POST',
+                                  { expectedVersion: selected.version },
+                                );
+                                closeLead();
+                                await loadRef.current();
+                                notify(
+                                  'Lead archived. Pending outreach was cancelled.',
+                                );
+                              } catch (e) {
+                                setError((e as Error).message);
+                              }
+                            }}
+                          >
+                            <Archive size={18} aria-hidden="true" /> Archive
+                            lead
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
                   </LeadBlade>
                 ) : null}
               </div>
@@ -2771,8 +2862,8 @@ export default function App() {
                 <div className="page-title">
                   <div>
                     <span className="eyebrow">NOTHING SLIPS THROUGH</span>
-                    <h1>Small steps. Steady progress.</h1>
-                    <p>Make room for what needs your attention.</p>
+                    <h1>Tasks</h1>
+                    <p>Your follow-ups, organised by what needs attention.</p>
                   </div>
                   {can('tasks:write') ? (
                     <button
@@ -2999,9 +3090,7 @@ export default function App() {
       <Modal
         open={modal === 'lead' || modal === 'edit'}
         onClose={() => setModal(null)}
-        title={
-          modal === 'edit' ? 'Edit enquiry' : 'A new conversation starts here.'
-        }
+        title={modal === 'edit' ? 'Edit enquiry' : 'New enquiry'}
         description={
           modal === 'edit'
             ? 'Keep contact details and enquiry context up to date.'

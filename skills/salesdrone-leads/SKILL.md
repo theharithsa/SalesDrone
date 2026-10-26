@@ -96,3 +96,28 @@ Lead identity is rendered once in LeadBlade identity slot with the shared header
 PATs require the separate leads:bulk-edit scope; reassignment also needs assignments:write. [LeadBatchEditor.tsx](../../apps/web/src/features/LeadBatchEditor.tsx) owns explicit selection, preview and frozen input/key. Selection covers loaded records only and resets when their IDs/versions change. Never imply all filtered rows are selected. An uncertain network response can be retried with the same key; do not claim zero changes when the outcome is unknown. Contacts and history remain individual edits. Use [attachment service](../salesdrone-attachments/SKILL.md) for files and [bulk-and-files.test.js](../../functions/test/bulk-and-files.test.js) for atomicity/policy regression tests.
 
 Batch resource budgets also cap aggregate cancellation at 200 pending tasks and serialized old/new/task data at 2 MiB. Exceeding either rejects the whole batch; select fewer leads.
+
+## Material 3 v2 local-review guidance
+
+The v2 table presents customer identity first, with company as supporting text and a visible sales-stage badge. lead-table.ts respects configured names, hidden fields and active custom fields. It changes presentation only; workbook/export order, field IDs, filter authorization and batch policy remain unchanged.
+
+### Local v2 collection review corrections
+
+WorksheetLeads exposes persistent overflow controls only when desktop columns
+exceed the viewport, synchronized with native horizontal scroll and resizing.
+Do not replace column navigation with page-wide scrolling or remove mobile cards.
+LeadForm uses the shared outlined labels while configured names/field IDs, required
+validation and FormData stay unchanged. Narrow blade toolbars wrap action groups,
+not the Edit lead text. See interface manual cases MATERIAL-02/03/05.
+
+## Infinite collection pagination
+
+App.tsx follows the existing scoped cursor in 30-row live pages; the
+InfiniteLeadLoader footer observes within 300px and attempts each cursor once
+automatically. Preserve manual retry/fallback and stop at null. Sparse pages may
+be empty with another cursor. Never fetch the workspace at once. pendingList blocks
+concurrent append; generation/list epochs reject old responses. appendUniqueRows
+prevents duplicate IDs. Test overlap/replay/empty pages and selection using
+lead-pagination.test.ts. Filters remount loader/batch selection. Append keeps
+unchanged selected rows; changed/removed rows are dropped. Demo has 96 fictional
+rows revealed 30 at a time; reports must still use all matching rows.

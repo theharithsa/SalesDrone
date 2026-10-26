@@ -40,3 +40,7 @@ Typography sizes and responsive layout now come from design-system.css after Boo
 Book mode shares the all-screen semantic sizes, available-width grids and dialog layout in design-system.css, which loads after book-mode.css. Preserve serif families, monospace phone numbers and palette tokens. Check phone, tablet, laptop, wide desktop and short heights, not just mobile. HTML chart labels inherit the reading font without SVG downscaling. Use the matrix in DESIGN-SYSTEM.md and distinguish simulated default-text scaling from physical-device testing.
 
 Interface font selection is orthogonal to Book mode. Store the selected font but never override --reading-font with it. Turning Book mode off restores the selected family; all Book content retains its serif stack except existing monospace phone rules. Activity role sizes now come from typography.css, loaded last, and must match standard mode without truncating history.
+
+## Material 3 v2 local-review guidance
+
+Material v2 owns day/night paper palettes in material/tokens.css and uses the same geometry as Standard. Do not re-import the legacy book-mode.css override cascade. Serif body/headings and the existing monospace identifier exception remain. Check every field/control and personal font restoration in both palettes.

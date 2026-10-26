@@ -179,6 +179,7 @@ if ((await readFile('docs/SETTINGS.md', 'utf8')) !== settings.markdown)
 const product = renderProductGuide(
   JSON.parse(await readFile('docs/product-guide.json', 'utf8')),
   pkg.version,
+  manifest,
 );
 await writeFile(out + '/product.html', stamp(product.html));
 await copyFile('site/product.css', out + '/product.css');

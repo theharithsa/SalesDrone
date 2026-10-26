@@ -53,3 +53,29 @@ For the compact lead overview and display scale, update lead-workspace and scree
 ## v1.9 operating notes
 
 Document loaded-only batch selection, shared fields/clearing, preview, atomic conflicts, assignment side effects and network retry semantics. Add the Files workflow with supported types, limits, current authorization, progress/retry/cancel, removal confirmation and expiry/cleanup. Explain that guest files clear on leaving the Files tab, no public link is issued, attachments are not AI inputs, and existing conversations remain individual records. Refresh table/mobile/lead-tab captures and add batch/files examples using synthetic files only.
+
+## Material 3 v2 local-review guidance
+
+For local v2 review, keep published v1 captures honest and link MATERIAL-3-REVIEW.md. Do not relabel old screenshots as v2. After approval capture every changed module/theme/viewport, update approved hashes and screenshots in the release plan, then publish the revised handbook. Explain customer/company table grouping, visible stage and independent record panes.
+
+### v2 review feedback evidence
+
+The review guide now records column-navigation, composer/section spacing, narrow
+blade actions and outlined-form feedback. The fictional admin preview includes
+lead/call/reminder/edit dialogs. All changed v2 captures were refreshed after approval with an isolated installed browser; neither
+SSR markup checks nor the viewport canvas are a substitute for new approved
+captures. Describe native picker fallback accurately where base-select is absent.
+
+### Lead scrolling documentation
+
+Explain automatic cursor paging, 30-row request size, potentially sparse matching
+pages, loading/end state and manual retry/fallback. Batch selection survives page
+append but resets with filters and drops changed rows. Demo is finite at 96 rows;
+never claim it mirrors the production count. Scrolling does not limit filtered
+Excel reports to the visible rows. Update the handbook from product-guide.json.
+
+The public renderer accepts reviewed capture metadata and derives HTML image widths
+from capturePixels. Update screenshot captions to describe the current captured
+state (e.g. initial disabled import preview versus completed mapping); never keep
+old viewport numbers or claims of interactions not shown. README screenshot cache
+query hashes must follow the current manifest.

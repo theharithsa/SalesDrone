@@ -1,19 +1,42 @@
 @font-face {
-  font-family: Google Sans;
+  font-family: 'Google Sans';
   src: url('/fonts/google-sans/google-sans-latin-wght-normal.woff2')
     format('woff2');
-  font-weight: 100 900;
+  font-weight: 400 700;
   font-display: swap;
+}
+:root {
+  --portal-bg: #f8f9ff;
+  --portal-panel: #fff;
+  --portal-container: #eceff6;
+  --portal-text: #191c20;
+  --portal-muted: #434750;
+  --portal-line: #c3c7d1;
+  --portal-primary: #005ca9;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --portal-bg: #111318;
+    --portal-panel: #1d2026;
+    --portal-container: #282a31;
+    --portal-text: #e1e2e9;
+    --portal-muted: #c3c7d1;
+    --portal-line: #434750;
+    --portal-primary: #a5c8ff;
+    color-scheme: dark;
+  }
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
-  background: #f8faff;
-  color: #1b2940;
+  background: var(--portal-bg);
+  color: var(--portal-text);
   font:
-    16px/1.65 system-ui,
+    16px/1.6 'Google Sans',
+    Arial,
     sans-serif;
 }
 .portal-header {
@@ -21,107 +44,245 @@ body {
   align-items: center;
   gap: 24px;
   justify-content: space-between;
-  padding: 20px max(24px, calc((100vw - 1400px) / 2));
-  border-bottom: 1px solid #d8e2ee;
-  background: white;
+  padding: 20px max(24px, calc((100vw - 1360px) / 2));
+  background: var(--portal-bg);
 }
 .portal-header > a:first-child {
-  font:
-    750 26px Google Sans,
-    system-ui,
-    sans-serif;
-  letter-spacing: -1px;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.05em;
+  color: var(--portal-text);
   text-decoration: none;
-  color: #17243b;
 }
-.portal-header span {
-  color: #0756a5;
-  font-size: 12px;
-  letter-spacing: 0.12em;
+.portal-header > span {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--portal-muted);
 }
 .portal-header > a:last-child {
   font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  border: 1px solid var(--portal-line);
+  text-decoration: none;
 }
 .portal-intro {
-  max-width: 1180px;
-  margin: 48px auto 32px;
-  padding: 0 24px;
+  max-width: 1360px;
+  margin: 24px auto;
+  padding: 32px;
+  background: var(--portal-panel);
+  border-radius: 28px;
 }
 .portal-intro h1 {
-  font:
-    650 clamp(30px, 5vw, 46px) / 1.15 Google Sans,
-    system-ui,
-    sans-serif;
-  letter-spacing: -1.6px;
+  font-size: 32px;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  margin: 8px 0 20px;
 }
 .portal-intro p,
 .portal-intro li {
+  font-size: 14px;
   max-width: 1000px;
 }
+.portal-intro ol {
+  padding-left: 20px;
+}
 .portal-intro li {
-  padding: 5px 0;
+  padding: 4px 0;
 }
 .eyebrow {
-  font-size: 12px;
-  font-weight: 750;
-  letter-spacing: 0.16em;
-  color: #0756a5;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--portal-primary);
 }
 .portal-note {
-  padding: 18px 22px;
-  border: 1px solid #cad9e9;
-  border-radius: 14px;
-  background: #eef5fc;
-  font-size: 14px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: var(--portal-container);
+  color: var(--portal-muted);
 }
 .portal-links {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 24px;
+  margin-top: 24px;
 }
 a {
-  color: #0756a5;
+  color: var(--portal-primary);
 }
 a:focus-visible,
-button:focus-visible {
-  outline: 3px solid #0756a5;
-  outline-offset: 4px;
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--portal-primary);
+  outline-offset: 3px;
 }
 #swagger-ui {
-  max-width: 1400px;
+  max-width: 1424px;
   margin: auto;
-  padding: 0 16px 50px;
+  padding: 0 32px 48px;
 }
 .swagger-ui .topbar {
   display: none;
 }
+.swagger-ui,
+.swagger-ui .info .title,
+.swagger-ui .opblock-tag,
+.swagger-ui .btn {
+  font-family: 'Google Sans', Arial, sans-serif;
+}
 .swagger-ui .info .title {
-  font-family:
-    Google Sans,
-    system-ui,
-    sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--portal-text);
+}
+.swagger-ui .info {
+  margin: 32px 0;
+}
+.swagger-ui .info p,
+.swagger-ui .info li,
+.swagger-ui .info hgroup.main a,
+.swagger-ui .opblock-tag,
+.swagger-ui .opblock-summary-path,
+.swagger-ui .opblock-description-wrapper p,
+.swagger-ui .response-col_status,
+.swagger-ui .response-col_description,
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__in,
+.swagger-ui section.models h4,
+.swagger-ui .model-title,
+.swagger-ui .model,
+.swagger-ui label,
+.swagger-ui table thead tr th,
+.swagger-ui .opblock-summary-description {
+  color: var(--portal-text);
 }
 .swagger-ui .scheme-container {
-  border-radius: 14px;
+  box-shadow: none;
+  border-radius: 20px;
+  padding: 24px;
+  background: var(--portal-panel);
+}
+.swagger-ui .btn {
+  border: 1px solid var(--portal-line);
+  border-radius: 24px;
+  min-height: 40px;
+  padding: 10px 20px;
+  box-shadow: none;
+  color: var(--portal-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+.swagger-ui .btn.authorize {
+  border-color: var(--portal-primary);
+  color: var(--portal-primary);
+}
+.swagger-ui .btn.authorize svg {
+  fill: var(--portal-primary);
 }
 .swagger-ui input,
 .swagger-ui select,
 .swagger-ui textarea {
   font-size: 16px !important;
+  border: 1px solid var(--portal-line);
+  border-radius: 8px;
+  background: var(--portal-panel);
+  color: var(--portal-text);
+  min-height: 48px;
+  box-shadow: none;
+}
+.swagger-ui .opblock {
+  background: var(--portal-panel) !important;
+  border: 1px solid var(--portal-line) !important;
+  border-radius: 12px;
+  box-shadow: none;
+  overflow: hidden;
+}
+.swagger-ui .opblock .opblock-summary {
+  flex-wrap: wrap;
+  padding: 12px;
+  min-height: 52px;
+  border-color: var(--portal-line) !important;
 }
 .swagger-ui .opblock-summary-path {
   overflow-wrap: anywhere;
   word-break: break-word;
-}
-.swagger-ui .opblock .opblock-summary {
-  flex-wrap: wrap;
+  font-size: 14px;
 }
 .swagger-ui .opblock-summary-description {
   min-width: 160px;
+  font-size: 13px;
 }
-.swagger-ui .btn,
-.swagger-ui button {
-  min-height: 40px;
+.swagger-ui .opblock .opblock-section-header {
+  background: var(--portal-container);
+  box-shadow: none;
+}
+.swagger-ui .opblock .opblock-section-header h4 {
+  color: var(--portal-text);
+}
+.swagger-ui .opblock.opblock-get .opblock-summary-method {
+  background: #005ca9;
+}
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background: #006b5f;
+}
+.swagger-ui .opblock.opblock-put .opblock-summary-method {
+  background: #6d4c91;
+}
+.swagger-ui .opblock.opblock-patch .opblock-summary-method {
+  background: #735100;
+}
+.swagger-ui .opblock.opblock-delete .opblock-summary-method {
+  background: #ba1a1a;
+}
+.swagger-ui .opblock .opblock-summary-method {
+  border-radius: 8px;
+  min-width: 72px;
+  font-size: 12px;
+  color: #fff;
+  text-shadow: none;
+  box-shadow: none;
+}
+.swagger-ui .model-container {
+  background: var(--portal-container);
+  border-radius: 12px;
+}
+.swagger-ui section.models {
+  border-color: var(--portal-line);
+  border-radius: 16px;
+}
+.swagger-ui .dialog-ux .modal-ux {
+  border: 0;
+  border-radius: 28px;
+  background: var(--portal-panel);
+  color: var(--portal-text);
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+}
+.swagger-ui .dialog-ux .modal-ux-header h3,
+.swagger-ui .auth-container h4,
+.swagger-ui .dialog-ux .modal-ux-content p {
+  color: var(--portal-text);
+}
+.swagger-ui .dialog-ux .modal-ux-header {
+  border-color: var(--portal-line);
+}
+.swagger-ui .auth-container {
+  border-color: var(--portal-line);
+}
+.swagger-ui button svg {
+  fill: var(--portal-muted);
+}
+.swagger-ui pre {
+  max-width: 100%;
+  overflow: auto;
+}
+.swagger-ui code,
+.swagger-ui .opblock-summary-path {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 @media (max-width: 650px) {
   .portal-header {
@@ -132,21 +293,29 @@ button:focus-visible {
   .portal-header > span {
     display: none;
   }
+  .portal-header > a:last-child {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
   .portal-intro {
-    margin-top: 28px;
-    padding: 0 20px;
+    margin: 8px 16px 24px;
+    padding: 24px;
+    border-radius: 24px;
+  }
+  .portal-intro h1 {
+    font-size: 28px;
   }
   .portal-intro ol {
     padding-left: 20px;
   }
   #swagger-ui {
-    padding: 0 4px 32px;
+    padding: 0 12px 32px;
   }
   .swagger-ui .opblock .opblock-summary-path {
     font-size: 13px;
   }
   .swagger-ui .opblock-tag {
-    font-size: 19px;
+    font-size: 20px;
   }
   .swagger-ui .opblock-summary-description {
     padding: 8px 0;
@@ -157,13 +326,11 @@ button:focus-visible {
     min-width: 0;
   }
   .swagger-ui .auth-container {
-    padding: 12px;
+    padding: 16px;
   }
   .swagger-ui .auth-container .wrapper {
     padding: 0;
   }
-}
-@media (max-width: 650px) {
   .swagger-ui .response-col_links {
     display: none;
   }
@@ -178,8 +345,8 @@ button:focus-visible {
     min-width: 0;
     overflow-wrap: anywhere;
   }
-  .swagger-ui pre {
-    max-width: 100%;
-    overflow: auto;
+  .swagger-ui .btn,
+  .swagger-ui button {
+    min-height: 48px;
   }
 }

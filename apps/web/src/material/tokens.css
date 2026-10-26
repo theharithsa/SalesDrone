@@ -1,0 +1,162 @@
+/* SalesDrone 2 — Material 3 role tokens. One palette, no per-screen overrides. */
+:root {
+  --md-sys-color-primary: #005ca9;
+  --md-sys-color-on-primary: #fff;
+  --md-sys-color-primary-container: #d5e4ff;
+  --md-sys-color-on-primary-container: #001c3b;
+  --md-sys-color-secondary: #535f70;
+  --md-sys-color-secondary-container: #d7e3f7;
+  --md-sys-color-on-secondary-container: #101c2b;
+  --md-sys-color-tertiary: #006b5f;
+  --md-sys-color-tertiary-container: #9ef2df;
+  --md-sys-color-on-tertiary-container: #00201b;
+  --md-sys-color-surface: #f8f9ff;
+  --md-sys-color-surface-container-lowest: #fff;
+  --md-sys-color-surface-container-low: #f1f3fa;
+  --md-sys-color-surface-container: #eceff6;
+  --md-sys-color-surface-container-high: #e6e9f0;
+  --md-sys-color-surface-container-highest: #e0e3ea;
+  --md-sys-color-on-surface: #191c20;
+  --md-sys-color-on-surface-variant: #434750;
+  --md-sys-color-outline: #737781;
+  --md-sys-color-outline-variant: #c3c7d1;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+  --md-sys-color-inverse-surface: #2e3036;
+  --md-sys-color-inverse-on-surface: #eff0f7;
+  --md-sys-shape-small: 8px;
+  --md-sys-shape-medium: 12px;
+  --md-sys-shape-large: 16px;
+  --md-sys-shape-extra-large: 28px;
+  --md-sys-shape-full: 999px;
+  --md-sys-motion-easing: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-short: 160ms;
+  --md-sys-motion-medium: 260ms;
+  --heading-font: 'Google Sans Variable', 'Manrope Variable', Arial, sans-serif;
+  --body-font: 'Manrope Variable', Arial, sans-serif;
+  --mono-font: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --md-type-headline: 2rem;
+  --md-type-title: 1.375rem;
+  --md-type-body: 1rem;
+  --md-type-supporting: 0.875rem;
+  --md-type-label: 0.875rem;
+  --md-type-caption: 0.75rem;
+  --bg: var(--md-sys-color-surface);
+  --panel: var(--md-sys-color-surface-container-lowest);
+  --sidebar: var(--md-sys-color-surface-container-low);
+  --text: var(--md-sys-color-on-surface);
+  --muted: var(--md-sys-color-on-surface-variant);
+  --line: var(--md-sys-color-outline-variant);
+  --accent: var(--md-sys-color-primary);
+  --accent-dark: var(--md-sys-color-primary);
+  --accent-soft: var(--md-sys-color-primary-container);
+  --on-accent: var(--md-sys-color-on-primary);
+  --input: var(--panel);
+  --brand-blue: #0054a6;
+  --danger: var(--md-sys-color-error);
+  --radius: 20px;
+  --shadow: 0 2px 6px #0000000d;
+  font-family: var(--body-font);
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+:root[data-color-scheme='dark'] {
+  --md-sys-color-primary: #a5c8ff;
+  --md-sys-color-on-primary: #00315d;
+  --md-sys-color-primary-container: #004882;
+  --md-sys-color-on-primary-container: #d5e4ff;
+  --md-sys-color-secondary: #bbc7da;
+  --md-sys-color-secondary-container: #3c4858;
+  --md-sys-color-on-secondary-container: #d7e3f7;
+  --md-sys-color-tertiary: #82d6c4;
+  --md-sys-color-tertiary-container: #005047;
+  --md-sys-color-on-tertiary-container: #9ef2df;
+  --md-sys-color-surface: #111318;
+  --md-sys-color-surface-container-lowest: #0c0e13;
+  --md-sys-color-surface-container-low: #191c22;
+  --md-sys-color-surface-container: #1d2026;
+  --md-sys-color-surface-container-high: #282a31;
+  --md-sys-color-surface-container-highest: #32353c;
+  --md-sys-color-on-surface: #e1e2e9;
+  --md-sys-color-on-surface-variant: #c3c7d1;
+  --md-sys-color-outline: #8d919b;
+  --md-sys-color-outline-variant: #434750;
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+  --md-sys-color-inverse-surface: #e1e2e9;
+  --md-sys-color-inverse-on-surface: #2e3036;
+  color-scheme: dark;
+}
+:root[data-reading-mode='book'] {
+  --body-font: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --heading-font: var(--body-font);
+  --md-sys-color-surface: #f5efe2;
+  --md-sys-color-surface-container-lowest: #fffbf1;
+  --md-sys-color-surface-container-low: #ede6d6;
+  --md-sys-color-surface-container: #e8dfcd;
+  --md-sys-color-surface-container-high: #e2d7c1;
+  --md-sys-color-surface-container-highest: #dcd0b8;
+  --md-sys-color-on-surface: #312b23;
+  --md-sys-color-on-surface-variant: #62594a;
+  --md-sys-color-outline: #847663;
+  --md-sys-color-outline-variant: #d0c4ad;
+  --md-sys-color-primary: #3e5f62;
+  --md-sys-color-on-primary: #fffaf0;
+  --md-sys-color-primary-container: #dce7dd;
+  --md-sys-color-on-primary-container: #243c37;
+  --md-sys-color-secondary-container: #e5dcc7;
+  --md-sys-color-on-secondary-container: #3d3425;
+}
+:root[data-reading-mode='book'][data-color-scheme='dark'] {
+  --md-sys-color-surface: #201d18;
+  --md-sys-color-surface-container-lowest: #27231d;
+  --md-sys-color-surface-container-low: #2d2820;
+  --md-sys-color-surface-container: #332d24;
+  --md-sys-color-surface-container-high: #3a3329;
+  --md-sys-color-surface-container-highest: #42392d;
+  --md-sys-color-on-surface: #eee4d0;
+  --md-sys-color-on-surface-variant: #ccbea3;
+  --md-sys-color-outline: #9e8c70;
+  --md-sys-color-outline-variant: #625441;
+  --md-sys-color-primary: #b0ccc6;
+  --md-sys-color-on-primary: #213b38;
+  --md-sys-color-primary-container: #354b44;
+  --md-sys-color-on-primary-container: #d7e9de;
+  --md-sys-color-secondary-container: #514732;
+  --md-sys-color-on-secondary-container: #eee0bf;
+}
+:root:not([data-reading-mode='book'])[data-font-style='inter'] {
+  --body-font: 'Inter Variable', Arial, sans-serif;
+  --heading-font: var(--body-font);
+}
+:root:not([data-reading-mode='book'])[data-font-style='source-sans'] {
+  --body-font: 'Source Sans 3 Variable', Arial, sans-serif;
+  --heading-font: var(--body-font);
+}
+:root:not([data-reading-mode='book'])[data-font-style='lora'] {
+  --body-font: 'Lora Variable', Georgia, serif;
+  --heading-font: var(--body-font);
+}
+@media (min-width: 1001px) and (pointer: fine) {
+  @supports (zoom: 1) {
+    :root {
+      zoom: var(--interface-scale, 1);
+    }
+  }
+}
+
+@media (max-width: 599.99px), (pointer: coarse) {
+  :root {
+    --md-touch-target: 48px;
+  }
+}

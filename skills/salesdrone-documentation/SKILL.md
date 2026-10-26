@@ -76,3 +76,12 @@ When full-page identity layout changes, refresh both journey-demo.jpg and lead-w
 Same-version maintenance remains visible in changelog/commit history. Document inline comment drafts, uncertain retries, left-aligned history and blocked-storage recovery; refresh affected desktop/mobile screenshots and retain explicit browser-only testing limits.
 
 Public guide builds stamp the exact source commit and hash-version reviewed screenshot URLs. Post-deploy guide checks require commit as well as version, including same-version maintenance, so stale Pages HTML cannot satisfy the release gate.
+
+## Material 3 v2 publication
+
+Use current synthetic captures for every changed surface, retaining actual widths,
+privacy review and hashes in the manifest. Update README/technical/product/settings
+references together and remove obsolete local-approval holds after the explicit
+user approval. The v2 review guide records browser measurements and remaining
+limits; do not replace these with a blanket E2E claim. Documentation builds and
+Pages postchecks must use exact release version and source commit.

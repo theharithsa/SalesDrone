@@ -2,13 +2,6 @@ import '@fontsource-variable/manrope';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './styles.css';
-import './ui-refresh.css';
-import './settings-refresh.css';
-import './brand.css';
-import './lead-refinements.css';
-import './intelligence.css';
-import './lead-blade.css';
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { error: boolean }
@@ -45,17 +38,16 @@ if ('serviceWorker' in navigator)
       .catch(() => {}),
   );
 
-import './lead-workspace.css';
-
-import './book-mode.css';
-
-import './design-system.css';
-
 import '@fontsource-variable/inter';
 import '@fontsource-variable/source-sans-3';
 import '@fontsource-variable/lora';
-import './typography.css';
 
-import './lead-overview.css';
-
-import './lead-files.css';
+import './material/fonts.css';
+import './material/tokens.css';
+import './material/base.css';
+import './material/controls.css';
+import './material/shell.css';
+import './material/workspaces.css';
+import './material/dashboard.css';
+import './material/settings.css';
+import './material/login.css';

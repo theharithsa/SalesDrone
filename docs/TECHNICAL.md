@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **1.9.1** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **2.0.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -153,3 +153,22 @@ Settings mutations also persist per-control `settingsChanges` and atomic, chunke
 The [testing guide](TESTING.md) documents the bounded QA runner and 23-module case catalog. The runner writes sanitized step status/timing in ignored test-results, stops on failure and never deploys. Display-scale preferences use the existing /me transaction/audit; the compact header shares the score-details fetch instead of starting another poller. Scale-aware blade resizing converts viewport coordinates into layout coordinates.
 
 Lead batch preview/apply lives in bulk-leads.js and shares transactional stage/assignment/notification behavior. Attachment metadata is in leadAttachments; bytes live in the private Firebase Storage bucket. The existing reminders worker performs bounded expiry/deletion cleanup after reminder dispatch. Storage clients are deny-all; authenticated API routes mediate every read/write. See [the file architecture](ATTACHMENTS.md).
+
+## Material 3 presentation architecture (v2)
+
+The application imports only the owned Material stylesheets from `src/material/`.
+Role tokens map colours, typography and personal preferences; controls own filled
+forms and native-select enhancement. Legacy v1 styles remain unimported. The
+resizable inspector uses a named size container so narrow action bars become
+accessible icon-only rows. Full records independently size details and activity.
+
+Leads use the existing version 1.16 API and scoped cursor, up to 30 results per
+request. The footer observes bottom proximity; one automatic attempt per cursor,
+explicit retry, an append lock and identity/navigation epochs prevent request
+storms or stale appends. Pages deduplicate IDs. Appending preserves selected
+unchanged rows; query changes reset selection. Demo mode reveals 96 fictional
+records incrementally; reports still use all matching records.
+
+Development-only review HTML and fictional admin/form fixtures are separate Vite
+entries, excluded from the production bundle and checked by check-design-build.
+They have no live data transport and cannot generate real tokens or grant access.

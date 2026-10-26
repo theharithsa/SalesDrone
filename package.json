@@ -26,7 +26,10 @@
     "release:postcheck": "node scripts/post-deploy.mjs",
     "skills:tree": "node scripts/build-skill-tree.mjs",
     "docs:product": "node scripts/build-product-guide.mjs",
-    "qa": "node scripts/run-test-suite.mjs"
+    "qa": "node scripts/run-test-suite.mjs",
+    "design:check": "node --test tests/material-design.test.ts && npm run design:forms && npm run check && npm run build && node scripts/check-design-build.mjs",
+    "design:dev": "node scripts/design-dev.mjs",
+    "design:forms": "node scripts/check-material-forms.mjs"
   },
   "devDependencies": {
     "firebase-tools": "^15.34.1",
@@ -41,5 +44,5 @@
       "uuid": "^11.1.1"
     }
   },
-  "version": "1.9.1"
+  "version": "2.0.0"
 }

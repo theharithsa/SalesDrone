@@ -87,3 +87,7 @@ Contract1.15 adds optional numeric Preferences.displayScale enum 85/90/100/110/1
 ## v1.9 operating notes
 
 Contract 1.16 adds seven operations: batch preview/apply and private attachment reservation, binary PUT, paginated list, forced binary GET and versioned removal. New PAT scopes are leads:bulk-edit, attachments:read and attachments:write. Batch reassignment additionally requires assignments:write. Existing token scopes gain no implicit access to the new endpoints. Swagger must generate PUT and binary request/response bodies with pagination, validation, errors, idempotency and capability requirements.
+
+## Material 3 v2 local-review guidance
+
+Material v2 refreshes api-portal.css around the existing self-hosted Swagger portal. Keep authentication only in memory, remote validation disabled, same-origin requests and no RUM. Contract 1.16/scopes remain unchanged; the local admin preview never issues PAT credentials.

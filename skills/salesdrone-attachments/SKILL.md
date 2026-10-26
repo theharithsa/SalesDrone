@@ -42,3 +42,7 @@ The desktop inspector has a visible Files shortcut that opens the full lead File
 When expanding the inspector into the full lead route, preserve the requested Files
 tab through asynchronous lead loading. New/different leads start at All. Verify the
 shortcut after the data request finishes, not just immediately after navigation.
+
+## Material 3 v2 local-review guidance
+
+Material v2 keeps the private Files API/limits intact while adopting shared file-row, progress and confirmation surfaces. Its inspector shortcut must preserve Files after asynchronous loading. Validate layout and keyboard flow separately from Storage byte/authorization tests.

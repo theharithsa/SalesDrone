@@ -126,3 +126,12 @@ Display-scale saves reuse the personal appearance audit and atomic settings.audi
 ## Batch leads and private files
 
 Atomic batch updates reuse committed lead, journey, activity and assignment notification signals. Attachment metadata commits use the leadAttachments domain in the existing safe outbox, with count-only dimensions. Storage upload/download/delete have explicit dependency spans; no object paths, names, checksums or bytes are attributes. Frontend RUM operation templates now distinguish fixed batch paths and attachment/content routes, including PUT. Cleanup logs export removed/failed counts and failures never break reminder dispatch. Storage Rules and bucket public-access prevention keep direct access closed. Deployment events include v1.9.0/SHA and Storage deployment is part of the main pipeline. Unit privacy tests inspect events; HTTP receipts remain separate from tenant searchability.
+
+## Local v2 visual redesign
+
+The Material 3 preview retains current RUM page identities, API route templates,
+member-email identity policy and canonical backend outboxes. No colour, layout or
+tab selection invents a backend business event. The separate fictional admin review
+entry has no RUM tag or API transport. No deployment event is sent for local work.
+After design approval the existing workflow must report the real version/SHA and
+verify delivery independently of tenant searchability.

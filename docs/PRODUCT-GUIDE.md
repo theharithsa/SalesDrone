@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.9.1
+Version 2.0.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -90,6 +90,8 @@ Customer names in the table align to the same column edge, including names that 
 
 The list has no row-level Edit controls or Actions column. Open the customer name (or the mobile lead card), then choose Edit lead. When the customer-name column is hidden by configuration, the desktop row remains keyboard-focusable: press Enter or Space to open its details.
 
+Infinite scrolling loads the next page automatically as you approach the bottom of the lead list. The initial live page requests up to 30 leads; sparse filtered scans may contain fewer results with another cursor. Loading continues until the API returns no cursor. Load more leads remains available as a keyboard/browser fallback; failures pause automatic loading and show Retry loading leads. Changing filters starts a fresh list. Demo mode uses 96 fictional leads, revealed 30 at a time.
+
 ### Questions
 
 **Why does a filter show no results?**
@@ -112,7 +114,7 @@ Members with lead-edit access; assignment permission for reassignment
 
 4. Select Preview changes and inspect the before/after rows. Apply reviewed changes commits all selected updates together. A stale, archived or inaccessible lead rejects the whole batch; refresh and preview again.
 
-Selection resets when the loaded lead IDs or versions change. Additional pages are not silently included. At most 25 leads are written per atomic transaction. No-op rows retain their versions.
+Loading another page keeps your existing selection; new rows are not automatically selected. Changed or removed records leave the selection, and changing the lead filters resets it. At most 25 leads are written per atomic transaction. No-op rows retain their versions.
 
 After a connection failure, the outcome can be uncertain. Retry the same reviewed action safely or refresh to inspect the result; the API reuses the same idempotency key. Never assume the batch failed solely because a response was lost.
 
@@ -626,6 +628,6 @@ Settings > Appearance & time > Desktop display zoom offers 85%, 90%, 100%, 110% 
 
 No. Layout never grants access or changes assigned-lead scope, API permissions or report filters.
 
-**Is this certified native Apple typography?**
+**Does the design follow Material 3?**
 
-No. It is a responsive web adaptation of Apple typography principles using the existing fonts. Browser review does not certify physical devices or native Dynamic Type.
+Yes. SalesDrone 2 uses Material 3 colour roles, responsive navigation, filled forms and accessible states with existing font preferences. It is a web adaptation; browser testing does not certify physical devices or native platform behavior.

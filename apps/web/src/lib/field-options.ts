@@ -1,6 +1,6 @@
-import standardFieldLabels from '../../../../functions/src/lead-labels.json';
+import standardFieldLabels from '../../../../functions/src/lead-labels.json' with { type: 'json' };
 export { standardFieldLabels };
-import { stages, outcomes } from './types';
+import { stages, outcomes } from './types.ts';
 export const defaultFieldValues = {
   source: [
     'Direct enquiry',

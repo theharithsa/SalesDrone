@@ -82,3 +82,20 @@ test('handbook screenshots accept curated names and reject path or script inject
       ),
     );
 });
+
+test('current capture metadata determines screenshot widths instead of stale template widths', () => {
+  const guide = {
+    title: 'Guide',
+    modules: [{ ...module, screenshot: 'tablet-demo.jpg' }],
+  };
+  const { html } = renderProductGuide(guide, '2.0.0', [
+    { file: 'tablet-demo.jpg', capturePixels: '768 x 900' },
+  ]);
+  assert.match(html, /<img[^>]*tablet-demo\.jpg[^>]*width="768"/);
+  assert.ok(!html.includes('Tablet-width workspace, 1024'));
+  assert.throws(() =>
+    renderProductGuide(guide, '2.0.0', [
+      { file: 'tablet-demo.jpg', capturePixels: '" onerror="alert(1)' },
+    ]),
+  );
+});

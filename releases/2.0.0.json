@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "version": "2.0.0",
+  "summary": "Approved Material 3 redesign across SalesDrone with responsive navigation, filled forms, independent lead activity/details, accessible icon toolbars and cursor-based infinite lead scrolling.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-leads",
+    "salesdrone-dashboard",
+    "salesdrone-conversations",
+    "salesdrone-tasks-reminders",
+    "salesdrone-notifications",
+    "salesdrone-workspace-settings",
+    "salesdrone-book-mode",
+    "salesdrone-attachments",
+    "salesdrone-api-integrations",
+    "salesdrone-imports",
+    "salesdrone-testing",
+    "salesdrone-product-guide",
+    "salesdrone-release-readiness",
+    "salesdrone-release",
+    "salesdrone-documentation"
+  ],
+  "documentation": [
+    "docs/DESIGN-SYSTEM.md",
+    "docs/MATERIAL-3-REVIEW.md",
+    "docs/TESTING.md",
+    "docs/TECHNICAL.md",
+    "docs/observability.md",
+    "README.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Presentation-only redesign retains API contract 1.16, field IDs, stored preferences and business mutations; no cosmetic API endpoints are added.",
+    "contractVersion": "1.16.0",
+    "permissions": "Existing Google/App Check, active membership, lead scope, PAT scopes and private Storage access remain authoritative. The separate local admin fixture has no API transport.",
+    "tests": [
+      "tests/material-design.test.ts",
+      "functions/test/api-portal.test.js",
+      "tests/lead-pagination.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "The visual redesign keeps current RUM page identities, API telemetry and committed domain outboxes. No new business events are invented for style changes. Deployment reporting runs only after the approved release is actually published.",
+      "tests": [
+        "tests/material-design.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "The visual redesign keeps current RUM page identities, API telemetry and committed domain outboxes. No new business events are invented for style changes. Deployment reporting runs only after the approved release is actually published.",
+      "tests": [
+        "tests/material-design.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "The visual redesign keeps current RUM page identities, API telemetry and committed domain outboxes. No new business events are invented for style changes. Deployment reporting runs only after the approved release is actually published.",
+      "tests": [
+        "tests/material-design.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "The visual redesign keeps current RUM page identities, API telemetry and committed domain outboxes. No new business events are invented for style changes. Deployment reporting runs only after the approved release is actually published.",
+      "tests": [
+        "tests/material-design.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The visual redesign keeps current RUM page identities, API telemetry and committed domain outboxes. No new business events are invented for style changes. Deployment reporting runs only after the approved release is actually published.",
+      "tests": [
+        "tests/material-design.test.ts",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts",
+    "private-storage"
+  ],
+  "manualVerification": "Actual isolated Chromium review with fictional guest/admin fixtures: 360/390/600/768/1024/1280/1440/1920px lead list with no page overflow; automatic 30/60/90/96 demo paging and stable selection; 440/520/720px inspector toolbar; full lead tabs and memory-only attachments; filled 56px forms on desktop/phone; light/dark Book palettes; public Swagger only. All 26 affected screenshots refreshed and reviewed. Physical device, production signed-in writes and live cursor failure/identity race browser simulation were not performed. Full local tests and Firebase emulator integration are recorded separately from CI/post-deploy evidence.",
+  "screenshots": [
+    "dashboard-demo.jpg",
+    "journey-demo.jpg",
+    "mobile-demo.jpg",
+    "notifications-demo.jpg",
+    "api-portal-demo.jpg",
+    "developer-settings-demo.jpg",
+    "lead-overlay-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "book-mode-light.jpg",
+    "book-mode-dark.jpg",
+    "book-mode-mobile.jpg",
+    "book-settings-demo.jpg",
+    "leads-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "import-demo.jpg",
+    "laptop-demo.jpg",
+    "login-demo.jpg",
+    "tablet-demo.jpg",
+    "activity-demo.jpg",
+    "font-settings-demo.jpg",
+    "display-scale-demo.jpg",
+    "score-ring-demo.jpg",
+    "batch-edit-demo.jpg",
+    "batch-edit-mobile.jpg",
+    "lead-files-demo.jpg",
+    "lead-files-mobile.jpg"
+  ],
+  "pendingDesignApproval": false,
+  "designApprovedAt": "2026-10-26",
+  "designApproval": "User approved v2.0.0 after local review and requested all documentation and release checks."
+}

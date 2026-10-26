@@ -28,3 +28,40 @@ Current observed layout evidence is recorded in [the v1.8.0 review](UI-REVIEW-1.
 ![Labelled fictional score states, using actual components and no server calls.](../site/assets/screenshots/score-ring-demo.jpg)
 
 Batch/file regression entrypoint: functions/test/bulk-and-files.test.js. Real emulator tests now include a binary round trip through Firebase Admin Storage and direct-client denial. Use an isolated temporary emulator config when default ports are in use; preserve unrelated running projects. Never use customer files as fixtures.
+
+## Material 3 local design review
+
+Run `npm run design:check` for focused contrast/table-presentation/entry-isolation
+tests, types, local bundle build and review-fixture exclusion. It never deploys.
+Use `apps/web/design-review.html` on the dev server to inspect exact viewport sizes.
+The fictional admin entry is a separate local HTML page, with no API transport or
+real token/device grants. See MATERIAL-3-REVIEW.md for observed versus pending UI
+coverage; the unavailable browser tool is not a passed responsive screen sweep.
+Full release and post-deployment suites wait for the requested human approval.
+
+### v2 component review regressions
+
+`npm run design:forms` server-renders the actual lead/call/reminder/task-edit and
+custom-field components. It checks persistent labels, configured names, required
+dates and native control/action semantics. It does not run a browser. The admin
+review entry now includes isolated form dialogs with saves disabled. Manual cases
+INTERFACE-MATERIAL-02 through 05 cover scrolling, composer spacing, blade action
+alignment and form/dropdown geometry; execute them before approving v2.
+
+### Infinite lead paging
+
+Run `node --test tests/lead-pagination.test.ts` for overlapping/replayed and empty
+pages plus selection preservation. `design:forms` validates the 96-record synthetic
+demo fixture. Browser case LEADS-INFINITE-01 covers loading, end state, retry and
+filter changes; API/emulator race verification is a separate pending integration
+check. Keep page requests scoped and bounded, including empty pages with cursors.
+
+### Approved v2 release browser evidence
+
+The user approved v2.0.0 on 26 October 2026. Subsequent checks reused installed
+Chromium with a fresh profile via localhost CDP (no package/browser installation).
+See MATERIAL-3-REVIEW.md for measured widths, real observer-driven pagination,
+form measurements, screenshots and explicit limits. Earlier pending notes describe
+the initial review stage; current release evidence supersedes them. CI independently
+runs form-render and production review-fixture exclusion checks. Never attach a
+personal signed-in browser profile for these synthetic rehearsals.

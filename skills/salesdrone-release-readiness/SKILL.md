@@ -43,3 +43,10 @@ Use [salesdrone-release](../salesdrone-release/SKILL.md) for publishing mechanic
 ## v1.8 operating notes
 
 Use salesdrone-testing and qa/test-cases.json to select automated/manual cases. npm run qa -- quick/integration/release runs bounded static scripts, stops on failure and records sanitized status. It does not authorize deployment. Review contract generation differences, real emulator results, visual screenshots and post-deploy artifacts separately; never mark blocked or not-run cases passed.
+
+## Material 3 v2 approved release
+
+The user approved v2.0.0 on 26 October 2026. The local design hold is resolved for
+this release. Use fresh reviewed v2 captures, never restamp v1 images. Browser
+measurement/render checks, emulator results and post-deployment evidence remain
+separate. Source assets/fixtures must still pass bundle isolation and secret scans.

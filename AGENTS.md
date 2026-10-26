@@ -43,7 +43,7 @@ Coordinate shared-file changes and keep one integrated release owner.
 
 A screenshot is an example, not a screen-size limit. Shared UI changes require phone, tablet, laptop, desktop and wide-screen review, fractional breakpoint boundaries, short-window scrolling, large text and affected dialogs. Follow docs/DESIGN-SYSTEM.md and record measured coverage/limits.
 
-Use apple-design guidance. Keep responsive touch controls, keyboard focus, Escape,
+Use Material 3 as the primary visual system for v2, following docs/DESIGN-SYSTEM.md. Keep responsive touch controls, keyboard focus, Escape,
 light/dark contrast and reduced-motion behavior. Preserve Google Sans headings,
 Manrope body, Google Sans first names in lead details, and monospace phone numbers.
 A funnel is a current stage distribution, not evidence of historic conversion.
@@ -78,3 +78,11 @@ site/ are published to GitHub Pages; docs/ contains engineering references; loca
 An explicit human request to keep the displayed version may authorize one maintenance deployment. Record the exact prior commit and instruction in releases/maintenance.json; preserve existing tags and distinguish the deployment by commit/run. Do not infer future same-version authorization from that record.
 
 For testing handoffs use skills/salesdrone-testing/SKILL.md and qa/test-cases.json. npm run qa selects actual suites and records sanitized results; CLI success does not imply browser, physical-device or tenant-search verification.
+
+## v2 design approval and release evidence
+
+The human approved v2.0.0 on 26 October 2026 and requested documentation/checks
+and publication. The local-first hold is resolved for this release. Follow the
+normal release gates; no approval bypasses failures. MATERIAL-3-REVIEW.md records
+measured browser evidence and limitations. Do not restamp historical screenshots;
+use newly captured synthetic images with reviewed hashes and dimensions.
