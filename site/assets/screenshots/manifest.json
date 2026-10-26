@@ -12,22 +12,22 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "c91e0dd55b3669131f0e989219da403e45766f40c4ae2a7e6d2c10cbfac8ae8b",
-    "capturedAt": "2026-10-26T02:42:24.865017+00:00",
-    "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
-    "version": "1.6.7",
-    "capturePixels": "1807 x 1016"
+    "sha256": "13f75c08e055469af99344daee334b1d82da4481489e5393e21ca34ffa1eec09",
+    "capturedAt": "2026-10-26T04:20:57.552050+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "version": "1.8.0",
+    "capturePixels": "1280 x 900"
   },
   {
     "file": "mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "663413bd5f13399c4979e5f224427f8fcaaf1a49c17be5d73e4a20b6104a55ad",
-    "capturedAt": "2026-10-25T23:15:11.594894+00:00",
-    "viewport": "390 x 844 CSS pixels, application iframe",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
-    "version": "1.6.7",
-    "capturePixels": "390 x 844"
+    "sha256": "256b90193096520a7e5896d0cbb8b15cdbd74cf526496dc86817fc384b4b65a8",
+    "capturedAt": "2026-10-26T04:21:01.617575+00:00",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "version": "1.8.0",
+    "capturePixels": "390 x 900"
   },
   {
     "file": "notifications-demo.jpg",
@@ -60,22 +60,22 @@
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "a260a424f8d4000d5cae8cae9d74d81dc0c8e9e2cea5447686ab05ffa1575fe1",
-    "capturedAt": "2026-10-26T02:42:24.044693+00:00",
-    "viewport": "1828 x 1028 CSS pixels",
-    "version": "1.6.7",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
-    "capturePixels": "1807 x 1016"
+    "sha256": "e1b940d16df1a2d315b374c0b4ecaf7ee61a4572601c12cb1f21a0208a50e5a2",
+    "capturedAt": "2026-10-26T04:20:58.878182+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "version": "1.8.0",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "capturePixels": "1280 x 900"
   },
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "c91e0dd55b3669131f0e989219da403e45766f40c4ae2a7e6d2c10cbfac8ae8b",
-    "capturedAt": "2026-10-26T02:42:24.668746+00:00",
-    "viewport": "1828 x 1028 CSS pixels",
-    "version": "1.6.7",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
-    "capturePixels": "1807 x 1016"
+    "sha256": "13f75c08e055469af99344daee334b1d82da4481489e5393e21ca34ffa1eec09",
+    "capturedAt": "2026-10-26T04:20:58.213514+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "version": "1.8.0",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "capturePixels": "1280 x 900"
   },
   {
     "file": "book-mode-light.jpg",
@@ -100,41 +100,41 @@
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "7300e84807c01b60b166f043b66b0f464968f39b2e15a0194a943bc209e4b00b",
-    "capturedAt": "2026-10-25T23:15:13.986748+00:00",
-    "viewport": "390 x 844 CSS pixels, application iframe",
-    "review": "Reviewed fictional demo data only; no production contacts, records or credentials. Actual responsive application capture; not physical-device certification.",
-    "version": "1.6.7",
-    "capturePixels": "390 x 844"
+    "sha256": "5e5194f353950de16bbb11b9b8d72ba7c50699f390f683354765e01bad0c45b9",
+    "capturedAt": "2026-10-26T04:21:03.043945+00:00",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "version": "1.8.0",
+    "capturePixels": "390 x 900"
   },
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "30fa5780be0da9d30cc986e7d75117c3be5a2b6c742764983c8f37175ba51951",
-    "capturedAt": "2026-10-26T03:21:23.929028+00:00",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only. No customer data, production changes or credentials. Personal font selector and compact, complete activity text; browser layout check, not physical-device certification.",
-    "version": "1.7.0",
+    "sha256": "cf2b6045d8825886c8d75d215b6f7e1ed1932aff90967d3bff61b699227f8cff",
+    "capturedAt": "2026-10-26T04:21:03.851510+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "version": "1.8.0",
     "capturePixels": "1280 x 900"
   },
   {
     "file": "leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "6a0599b9de73b34aef2b195e3423ee53220fed1a294d53bdda4af4711359aa99",
-    "capturedAt": "2026-10-26T02:42:23.426859+00:00",
-    "version": "1.6.7",
-    "viewport": "1828 x 1028 CSS pixels",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
-    "capturePixels": "1807 x 1016"
+    "sha256": "854af73d122ac4cca6e4c6ac7e1cba3bda1448c2225adf7ec5b4e2bb294dacdd",
+    "capturedAt": "2026-10-26T04:20:59.570718+00:00",
+    "version": "1.8.0",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "capturePixels": "1280 x 900"
   },
   {
     "file": "mobile-leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "9bc76470a9961e5e09d5dab5c9f81b15395ae953d9da815132eaf2f0a671389b",
-    "capturedAt": "2026-10-26T02:44:09.538743+00:00",
-    "version": "1.6.7",
-    "viewport": "390 x 900 CSS pixels, application iframe",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
+    "sha256": "34171617a7cf84fa82ed8b0627d66002845b3e308ba8d04e76202a4a783ded74",
+    "capturedAt": "2026-10-26T04:21:00.927737+00:00",
+    "version": "1.8.0",
+    "viewport": "390 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
     "capturePixels": "390 x 900"
   },
   {
@@ -150,11 +150,11 @@
   {
     "file": "laptop-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "820551af44ecd636ca6a24c4182a53430466dceb15c8e772291cb3947234707a",
-    "capturedAt": "2026-10-26T02:44:08.487258+00:00",
-    "version": "1.6.7",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
-    "viewport": "1280 x 900 CSS pixels, application iframe",
+    "sha256": "854af73d122ac4cca6e4c6ac7e1cba3bda1448c2225adf7ec5b4e2bb294dacdd",
+    "capturedAt": "2026-10-26T04:21:00.246361+00:00",
+    "version": "1.8.0",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
     "capturePixels": "1280 x 900"
   },
   {
@@ -170,11 +170,11 @@
   {
     "file": "tablet-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "537943cd4ed75228934075b1c9a8436610b494e4f849c375ce7baf24c11a5438",
-    "capturedAt": "2026-10-26T02:44:09.028884+00:00",
-    "version": "1.6.7",
-    "review": "Reviewed actual fictional guest demo only. v1.6.7 compact desktop maintenance: narrower shell, readable dense table and no row/card Edit controls. No production data/credentials; browser layout review, not physical-device certification.",
-    "viewport": "1024 x 900 CSS pixels, application iframe",
+    "sha256": "37964e20fb41abd08909b8d343f63f07cfcf9f54e5026591168c94387d582b76",
+    "capturedAt": "2026-10-26T04:21:02.307975+00:00",
+    "version": "1.8.0",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
+    "viewport": "1024 x 900 CSS pixels, actual application iframe; default 100% display scale",
     "capturePixels": "1024 x 900"
   },
   {
@@ -190,11 +190,31 @@
   {
     "file": "font-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "version": "1.7.0",
-    "sha256": "601af6004dced9b809a50b41c3f3be6272b586cf64cf7e7d42d6d3af37ae9674",
-    "capturedAt": "2026-10-26T03:21:23.466377+00:00",
-    "viewport": "1280 x 900 CSS pixels, actual application iframe",
-    "review": "Reviewed actual synthetic guest demo only. No customer data, production changes or credentials. Personal font selector and compact, complete activity text; browser layout check, not physical-device certification.",
+    "version": "1.8.0",
+    "sha256": "51c61a533bb7543e8c8902057d029e11c27ae6a9668cb4ed63c47770b4d4b756",
+    "capturedAt": "2026-10-26T04:21:04.440355+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification.",
     "capturePixels": "1280 x 900"
+  },
+  {
+    "file": "display-scale-demo.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.8.0",
+    "sha256": "a0c6a6cda1edb2209730256926c414bdf0535e1cae7ac7a76ec51e8bf5622b0f",
+    "capturedAt": "2026-10-26T04:21:04.868131+00:00",
+    "viewport": "1280 x 900 CSS pixels, actual application iframe; default 100% display scale",
+    "capturePixels": "1280 x 900",
+    "review": "Reviewed synthetic guest application only; no customer data, credentials or production mutations. Compact lead header, rings and saved display scale. Browser layout evidence, not physical-device certification."
+  },
+  {
+    "file": "score-ring-demo.jpg",
+    "mode": "synthetic-demo",
+    "version": "1.8.0",
+    "sha256": "5ec0edd6ff1e49fbadf1e015381ea7f8f37a8c80030af3411d669041562c2040",
+    "capturedAt": "2026-10-26T04:21:05.384731+00:00",
+    "viewport": "Isolated real ScoreBadge/LeadBlade synthetic fixture, 1280 CSS pixel wide crop",
+    "capturePixels": "1280 x 514",
+    "review": "Explicitly labelled fictional score states and assignee with stub requests; no server calls or customer data. Numeric labels, null versus zero and reported risk reviewed. Not a score assigned to a real/demo lead."
   }
 ]

@@ -45,3 +45,7 @@ When removing repeated UI, expand disclosures before capturing/verifying: count 
 Document editing as open lead then Edit lead; remove instructions to edit directly in table/card rows. For desktop-density claims distinguish data columns from former sticky Actions, quote measured viewport/fixture counts and keep custom-schema limits. Refresh desktop shell/table captures and mobile-list captures when row actions change; unchanged login/isolated-component images can retain honest prior metadata.
 
 Document personal font styles under Appearance & time, draft preview/save timing, defaults, Book override and branding/monospace exceptions. Refresh changed activity and Appearance screenshots with synthetic data; keep unchanged captures honest. Retain self-hosted font licence/source documentation and browser-check native font selection at narrow widths.
+
+## v1.8 operating notes
+
+For the compact lead overview and display scale, update lead-workspace and screen-layouts handbook modules, Appearance control reference and affected synthetic captures. Explain score unknown versus zero, risk labels, journey disclosures and scale reset/touch limits. Testing guide/catalog are agent handoff references, not evidence every manual case passed.

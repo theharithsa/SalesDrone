@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 1.7.0
+Version 1.8.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -127,6 +127,8 @@ Lead actions at the bottom use full-size buttons. Mark as do not contact pauses 
 Mobile typography uses a 28px page-title role, 22px lead identity, 17px body/form text and 15px supporting text at default browser settings. Existing font families are retained. Stage/assignment controls reflow to available width and the journey scrolls horizontally, without widening the document. Browser text preferences and zoom may change the visual sizes.
 
 Log call and Remind me appear once above the tabs. Expanding Lead details & score shows a single labelled Lead information list, including email. Available phone/email links follow contact review and do-not-contact guards. The quick-inspection overlay has its own compact actions; those are not repeated on the full page.
+
+The lead header groups the person, a small score ring, current sales stage and assignee. It reflows by available content width. The journey is a compact horizontally scrollable path; About this journey and Recorded stage changes expand separately. The ring shows a known score out of 100; a dashed ring means Unscored, which is different from a known zero. Reported risks retain an explicit warning label; a score is not a verified commercial guarantee.
 
 ### Questions
 
@@ -549,6 +551,8 @@ Dialogs and Settings forms select columns by their own available width. Dashboar
 Desktop layouts with a fine pointer use a narrower 216px expanded sidebar, a 64px top bar, 20px page gutters and tighter controls/cards. Lead tables use 14px data, 13px headers and 32px name-button targets inside approximately 49px rows; normal reading/form text remains 17px. Touch and narrow layouts retain larger targets. Additional/custom columns may still need horizontal scrolling.
 
 Standard keeps the current Google Sans/Manrope pairing. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode keeps its reading font and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
+
+Settings > Appearance & time > Desktop display zoom offers 85%, 90%, 100%, 110% or 125%. Save changes to apply it to your personal fine-pointer desktop layout; narrow/touch screens remain at 100%. Browser zoom still works. Return to 100% to reset. It changes visual density, not permissions, lead data or other users. The lead header and journey reflow instead of using extra vertical bands.
 
 ### Questions
 

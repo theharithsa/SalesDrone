@@ -20,7 +20,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-interface, salesdrone-api-integrations, salesdrone-product-guide.
 - [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping.
   Related: salesdrone-release, salesdrone-leads, salesdrone-conversations, salesdrone-workspace-settings, salesdrone-notifications.
-- [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit.
+- [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit, lead header redesign, display zoom.
   Related: salesdrone-release, salesdrone-authentication, salesdrone-workspace-settings, salesdrone-notifications, salesdrone-dashboard, salesdrone-book-mode.
 - [salesdrone-lead-journey](skills/salesdrone-lead-journey/SKILL.md) — lead journey, stage flow, transition history.
   Related: salesdrone-release, salesdrone-leads, salesdrone-workspace-settings, salesdrone-dashboard.
@@ -42,5 +42,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release.
 - [salesdrone-tasks-reminders](skills/salesdrone-tasks-reminders/SKILL.md) — edit task, delete task, manual reminder, snooze.
   Related: salesdrone-release, salesdrone-automatic-reminders, salesdrone-notifications, salesdrone-people-permissions.
+- [salesdrone-testing](skills/salesdrone-testing/SKILL.md) — testing, test cases, regression tests, QA handoff, test runner, test agent.
+  Related: salesdrone-release-readiness, salesdrone-release.
 - [salesdrone-workspace-settings](skills/salesdrone-workspace-settings/SKILL.md) — manage fields, lead fields, dropdown choices, settings, custom fields, book mode preference, interface font, font preference, font style.
   Related: salesdrone-release, salesdrone-imports, salesdrone-leads, salesdrone-lead-scoring, salesdrone-people-permissions, salesdrone-api-integrations, salesdrone-book-mode.

@@ -1,3 +1,4 @@
+import { displayScales, normalizeDisplayScale } from '../lib/display-scale';
 import { interfaceFonts, normalizeFontStyle } from '../lib/fonts';
 import settingsSections from '../lib/settings-sections.json';
 import WorkspacePolicySettings from './WorkspacePolicySettings';
@@ -134,6 +135,13 @@ export default function SettingsPage({
     bookMode: false,
     ...guestPreferences,
   };
+  const [displayScale, setDisplayScale] = useState(() =>
+    normalizeDisplayScale(preferences.displayScale),
+  );
+  useEffect(
+    () => setDisplayScale(normalizeDisplayScale(preferences.displayScale)),
+    [preferences.displayScale],
+  );
   const [fontStyle, setFontStyle] = useState(() =>
     normalizeFontStyle(preferences.fontStyle),
   );
@@ -172,6 +180,7 @@ export default function SettingsPage({
       ...data,
       bookMode,
       fontStyle,
+      displayScale,
       automaticReminders,
       reminderTime,
       nextWeekRule,
@@ -470,6 +479,41 @@ export default function SettingsPage({
                         );
                       })}
                     </div>
+                    <section
+                      className="display-scale-settings"
+                      aria-labelledby="display-scale-heading"
+                    >
+                      <h3 id="display-scale-heading">Display scale</h3>
+                      <label>
+                        Desktop display zoom
+                        <select
+                          value={displayScale}
+                          onChange={(e) =>
+                            setDisplayScale(
+                              normalizeDisplayScale(Number(e.target.value)),
+                            )
+                          }
+                          aria-describedby="display-scale-help"
+                        >
+                          {displayScales.map((scale) => (
+                            <option key={scale} value={scale}>
+                              {scale}%
+                              {scale === 100
+                                ? ' — Standard'
+                                : scale < 100
+                                  ? ' — More content'
+                                  : ' — Larger'}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <p className="field-hint" id="display-scale-help">
+                        Applies after saving on desktop screens with a mouse or
+                        trackpad. Touch and narrow layouts stay at 100% for
+                        comfortable controls. Browser zoom remains available.
+                        Choose 100% to reset.
+                      </p>
+                    </section>
                     <section
                       className="interface-font-settings"
                       aria-labelledby="interface-font-heading"

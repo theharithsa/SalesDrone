@@ -58,3 +58,7 @@ Adjacent owners:
 - [salesdrone-leads](../salesdrone-leads/SKILL.md)
 - [salesdrone-workspace-settings](../salesdrone-workspace-settings/SKILL.md)
 - [salesdrone-dashboard](../salesdrone-dashboard/SKILL.md)
+
+## v1.8 operating notes
+
+Journey uses a compact locally scrolling horizontal path. Current remains aria-current=step with highlighted text/point; the extra Current pill is removed. About this journey and Recorded stage changes are separate native disclosures; preserve honest recorded history and pagination. Test narrow/desktop/scale extremes.

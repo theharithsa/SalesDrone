@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v1.7.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v1.8.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -51,6 +51,16 @@ Choose Standard, Inter, Source Sans 3 or Lora for your own interface. A sample p
 Saved on your own account through PATCH /me and returned by GET /me. Older clients that omit fontStyle preserve it. Book mode uses its own serif stack and restores your selected font when disabled. Branding, phone numbers and technical code retain their established fonts. Other users are unaffected. Demo choices are a guarded browser-local fallback.
 
 **Example:** Choose Inter for a compact interface or Lora for an editorial serif style, inspect the sample, then save. Standard restores the original pairing.
+
+### Desktop display zoom
+
+**Default:** 100% (Standard).
+
+Choose 85%, 90%, 100%, 110% or 125% for your own desktop workspace. The change applies after Save changes on a desktop wider than 1000 CSS pixels with a fine pointer (mouse or trackpad). Narrow and touch layouts remain at 100% even when a different desktop preference is saved.
+
+Stored on your account through GET/PATCH /me; other members are unaffected. Choose 100% to reset. Browser zoom and pinch zoom remain available. Older clients preserve an omitted displayScale; missing or unsupported values fall back to 100%. Demo choices stay browser-local and cannot override an authenticated member preference.
+
+**Example:** Choose 90% to fit more columns, or 110% for larger controls, then save. Additional columns still scroll within the table.
 
 ### Book mode
 

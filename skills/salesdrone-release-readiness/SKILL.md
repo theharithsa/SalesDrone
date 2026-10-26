@@ -39,3 +39,7 @@ Separately verify affected read-only production UI and the browser RUM identity 
 - [settings-reference.test.ts](../../tests/settings-reference.test.ts): complete settings coverage, escaped rendering and route selection.
 
 Use [salesdrone-release](../salesdrone-release/SKILL.md) for publishing mechanics. Do not bypass a failing gate; change implementation or state the actual external blocker.
+
+## v1.8 operating notes
+
+Use salesdrone-testing and qa/test-cases.json to select automated/manual cases. npm run qa -- quick/integration/release runs bounded static scripts, stops on failure and records sanitized status. It does not authorize deployment. Review contract generation differences, real emulator results, visual screenshots and post-deploy artifacts separately; never mark blocked or not-run cases passed.

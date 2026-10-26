@@ -48,6 +48,14 @@
           "example": "Choose Inter for a compact interface or Lora for an editorial serif style, inspect the sample, then save. Standard restores the original pairing."
         },
         {
+          "id": "displayScale",
+          "label": "Desktop display zoom",
+          "default": "100% (Standard)",
+          "description": "Choose 85%, 90%, 100%, 110% or 125% for your own desktop workspace. The change applies after Save changes on a desktop wider than 1000 CSS pixels with a fine pointer (mouse or trackpad). Narrow and touch layouts remain at 100% even when a different desktop preference is saved.",
+          "effect": "Stored on your account through GET/PATCH /me; other members are unaffected. Choose 100% to reset. Browser zoom and pinch zoom remain available. Older clients preserve an omitted displayScale; missing or unsupported values fall back to 100%. Demo choices stay browser-local and cannot override an authenticated member preference.",
+          "example": "Choose 90% to fit more columns, or 110% for larger controls, then save. Additional columns still scroll within the table."
+        },
+        {
           "id": "bookMode",
           "label": "Book mode",
           "default": "Off",
@@ -61,7 +69,7 @@
           "default": "Asia/Kolkata for live accounts",
           "description": "Use an IANA timezone, such as Asia/Kolkata or Europe/London. It controls displayed dates, dashboard calendar boundaries and automatic reminder interpretation.",
           "effect": "Save preferences. Manual reminder forms label the device timezone they use; already scheduled instants do not move.",
-          "example": "Set Europe/London before adding a note saying “tomorrow morning”."
+          "example": "Set Europe/London before adding a note saying \u201ctomorrow morning\u201d."
         }
       ]
     },
@@ -107,7 +115,7 @@
           "id": "exportsEnabled",
           "label": "Allow Excel reports",
           "default": "On",
-          "description": "Lets members with lead access export matching lead fields and selected columns from Leads → Export Excel. Admins are also subject to this switch.",
+          "description": "Lets members with lead access export matching lead fields and selected columns from Leads \u2192 Export Excel. Admins are also subject to this switch.",
           "effect": "Turning it off blocks the report API as well as hiding the action. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.",
           "example": "Filter Sector equals MEP, choose phone and company, then export all matching pages."
         },
@@ -227,7 +235,7 @@
           "id": "disposition",
           "label": "Call dispositions",
           "default": "None, Interested, Not interested, Callback requested, Do not contact",
-          "description": "Describe the contact’s response separately from the technical call outcome.",
+          "description": "Describe the contact\u2019s response separately from the technical call outcome.",
           "effect": "Do not contact is protected and suppresses outreach; renaming a field does not remove suppression rules.",
           "example": ""
         },
@@ -285,11 +293,11 @@
           "default": "10:00",
           "description": "Time of day used when an inferred dated follow-up has no explicit time.",
           "effect": "Uses your display timezone; exact written times take precedence.",
-          "example": "“Call tomorrow” uses 10:00 unless you choose another default."
+          "example": "\u201cCall tomorrow\u201d uses 10:00 unless you choose another default."
         },
         {
           "id": "nextWeekRule",
-          "label": "“Next week” means",
+          "label": "\u201cNext week\u201d means",
           "default": "Seven days after the note",
           "description": "Choose seven days after the note or next Monday for ambiguous next-week wording.",
           "effect": "Only ambiguous relative wording uses this preference; named dates/weekdays remain explicit.",
@@ -323,7 +331,7 @@
           "id": "factorDefinition",
           "label": "Factor label, group and evidence condition",
           "default": "Commercial construction / wholesale defaults",
-          "description": "Define what counts as Fit, Intent or a Red flag. Gemini must cite recorded evidence rather than guess. Conditions are 10–600 characters; labels up to 80; up to 30 factors.",
+          "description": "Define what counts as Fit, Intent or a Red flag. Gemini must cite recorded evidence rather than guess. Conditions are 10\u2013600 characters; labels up to 80; up to 30 factors.",
           "effect": "Condition/factor changes require fresh evidence analysis. Missing evidence remains unknown. This is sales prioritization, not a credit, licensing or safety verification.",
           "example": "Add an Intent factor for a documented active RFQ."
         },
@@ -332,7 +340,7 @@
           "label": "Factor weight and enabled flag",
           "default": "Default positive weights and red-flag penalties",
           "description": "Give enabled factors integer weights from 1 to 100, or disable an irrelevant factor. Keep at least one enabled Fit or Intent factor when scoring is on.",
-          "effect": "Positive matches are normalized against enabled positive weights; red flags subtract points; the result is clamped to 0–100. Weight-only edits can recalculate without new extraction.",
+          "effect": "Positive matches are normalized against enabled positive weights; red flags subtract points; the result is clamped to 0\u2013100. Weight-only edits can recalculate without new extraction.",
           "example": ""
         },
         {
@@ -355,7 +363,7 @@
           "id": "tokenName",
           "label": "Personal Access Token name",
           "default": "Provided on creation",
-          "description": "A descriptive name of 1–80 characters helps identify an integration.",
+          "description": "A descriptive name of 1\u201380 characters helps identify an integration.",
           "effect": "Names are metadata, not secrets or unique identifiers.",
           "example": ""
         },
@@ -363,8 +371,8 @@
           "id": "tokenScopes",
           "label": "Permission scopes",
           "default": "Explicit selection required",
-          "description": "Select only needed data operations. Scopes intersect the current owner’s capabilities and effective lead scope. Read leads and Export leads are separate.",
-          "effect": "Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route’s scope. See the generated scope catalog below.",
+          "description": "Select only needed data operations. Scopes intersect the current owner\u2019s capabilities and effective lead scope. Read leads and Export leads are separate.",
+          "effect": "Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route\u2019s scope. See the generated scope catalog below.",
           "example": ""
         },
         {
@@ -379,7 +387,7 @@
           "id": "tokenCopy",
           "label": "Copy a newly generated token",
           "default": "Shown once",
-          "description": "Save the secret directly in your integration’s secret manager. SalesDrone stores a hash and cannot recover the full token later.",
+          "description": "Save the secret directly in your integration\u2019s secret manager. SalesDrone stores a hash and cannot recover the full token later.",
           "effect": "Never put it in URLs, screenshots, code or documentation. A lost creation response requires revoking its metadata and generating a replacement.",
           "example": ""
         },
@@ -443,7 +451,7 @@
           "id": "memberActive",
           "label": "Suspend/restore membership",
           "default": "Active after valid acceptance",
-          "description": "Disable a member’s live workspace access without deleting their historical work.",
+          "description": "Disable a member\u2019s live workspace access without deleting their historical work.",
           "effect": "Current API requests, token checks and worker delivery eligibility use active membership. Re-enabling restores only the configured role/scope/capabilities.",
           "example": ""
         }

@@ -218,7 +218,9 @@
         "laptop layout",
         "tablet layout",
         "wide screen",
-        "responsive audit"
+        "responsive audit",
+        "lead header redesign",
+        "display zoom"
       ],
       "related": [
         "salesdrone-release",
@@ -454,6 +456,24 @@
         "PATCH /api/v1/tasks/{id}",
         "DELETE /api/v1/tasks/{id}"
       ]
+    },
+    {
+      "id": "salesdrone-testing",
+      "path": "skills/salesdrone-testing/SKILL.md",
+      "description": "Test SalesDrone features and regressions using module cases, unit/API checks, Auth/Firestore emulators and approved-browser UI checks. Use for test execution and evidence; release authorization remains separate.",
+      "matchTerms": [
+        "testing",
+        "test cases",
+        "regression tests",
+        "QA handoff",
+        "test runner",
+        "test agent"
+      ],
+      "related": [
+        "salesdrone-release-readiness",
+        "salesdrone-release"
+      ],
+      "apiOperations": []
     },
     {
       "id": "salesdrone-workspace-settings",

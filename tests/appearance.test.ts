@@ -7,17 +7,28 @@ test('live accounts never inherit guest book mode; unapproved/demo preferences r
     appearance: 'dark',
     bookMode: true,
     fontStyle: 'lora',
+    displayScale: 90,
   } as const;
   assert.deepEqual(
     resolveVisualPreferences({ appearance: 'light' }, false, guest),
-    { appearance: 'light', bookMode: false, fontStyle: 'standard' },
+    {
+      appearance: 'light',
+      bookMode: false,
+      fontStyle: 'standard',
+      displayScale: 100,
+    },
   );
   assert.deepEqual(
     resolveVisualPreferences({ appearance: 'system', bookMode: true }, false, {
       appearance: 'light',
       bookMode: false,
     }),
-    { appearance: 'system', bookMode: true, fontStyle: 'standard' },
+    {
+      appearance: 'system',
+      bookMode: true,
+      fontStyle: 'standard',
+      displayScale: 100,
+    },
   );
   assert.deepEqual(
     resolveVisualPreferences(

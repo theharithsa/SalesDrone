@@ -25,7 +25,8 @@
     "release:readiness": "node scripts/check-readiness.mjs",
     "release:postcheck": "node scripts/post-deploy.mjs",
     "skills:tree": "node scripts/build-skill-tree.mjs",
-    "docs:product": "node scripts/build-product-guide.mjs"
+    "docs:product": "node scripts/build-product-guide.mjs",
+    "qa": "node scripts/run-test-suite.mjs"
   },
   "devDependencies": {
     "firebase-tools": "^15.34.1",
@@ -40,5 +41,5 @@
       "uuid": "^11.1.1"
     }
   },
-  "version": "1.7.0"
+  "version": "1.8.0"
 }

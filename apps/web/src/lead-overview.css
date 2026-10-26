@@ -1,0 +1,295 @@
+/* An explicit personal desktop zoom, independent of browser accessibility zoom. */
+@media (min-width: 1001px) and (pointer: fine) {
+  @supports (zoom: 1) {
+    :root {
+      zoom: var(--interface-scale, 1);
+    }
+  }
+}
+.display-scale-settings {
+  margin: 24px 0;
+}
+.display-scale-settings h3 {
+  margin-bottom: 12px;
+}
+.score-ring {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  display: block;
+}
+.score-ring-track {
+  stroke: var(--muted);
+  stroke-opacity: 0.4;
+}
+.score-ring-progress {
+  stroke: var(--accent);
+  stroke-linecap: round;
+}
+.score-ring.is-unscored .score-ring-track {
+  stroke-dasharray: 2 3;
+}
+.score-risk .score-ring-progress {
+  stroke: var(--danger, #b85240);
+}
+.score-badge {
+  gap: 6px;
+}
+.lead-score-number .score-ring {
+  width: 56px;
+  height: 56px;
+}
+/* Toolbar, identity, score and ownership form one compact header. */
+.lead-blade .blade-header {
+  padding: 16px 20px;
+}
+.lead-blade .detail-top {
+  padding: 0;
+  margin-bottom: 16px;
+}
+.lead-blade .lead-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  min-width: 0;
+}
+.lead-blade .lead-overview .detail-profile {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  text-align: left;
+  align-items: center;
+  min-width: 0;
+}
+.lead-blade .lead-overview .detail-profile .avatar {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  margin: 0;
+}
+.lead-blade .lead-overview .detail-profile h2 {
+  display: block;
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.lead-blade .lead-overview .detail-profile h2 span {
+  display: inline;
+  font-size: inherit;
+  letter-spacing: 0;
+}
+.lead-blade .lead-overview .detail-profile p {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.lead-header-score {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+.lead-header-score > span {
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+.lead-header-score .score-badge {
+  background: none;
+  border: 0;
+  padding: 0;
+  min-height: 40px;
+  font-size: 16px;
+}
+.lead-header-score .score-ring {
+  width: 32px;
+  height: 32px;
+}
+.lead-header-score .score-badge small {
+  font-size: 13px;
+}
+.lead-blade .lead-overview .blade-workflow {
+  padding: 0;
+  margin: 0;
+  max-width: none;
+  gap: 12px;
+  align-items: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.lead-blade .blade-workflow h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.lead-blade .blade-workflow select {
+  font-size: 15px;
+  min-height: 40px;
+  height: auto;
+  padding-block: 8px;
+}
+.lead-blade .blade-workflow .assignment-control > span {
+  font-size: 15px;
+  min-height: 40px;
+  padding: 8px 0;
+}
+.lead-blade .blade-workflow .assignment-help summary {
+  font-size: 12px;
+  margin-top: 4px;
+}
+.full-lead-page .blade-body {
+  display: block;
+}
+.full-lead-page .blade-header {
+  border-radius: 16px 16px 0 0;
+}
+.lead-blade .lead-journey {
+  padding: 16px 20px;
+}
+.lead-journey .score-section-heading {
+  margin-bottom: 4px;
+}
+.lead-journey h3 {
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+.lead-journey .lead-stage-path {
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 8px 0;
+  min-height: 0;
+  overflow-x: auto;
+}
+.lead-journey .lead-stage-path li {
+  flex: 1 0 104px;
+  min-width: 104px;
+  min-height: 0;
+  padding: 8px 6px;
+  font-size: 13px;
+  line-height: 1.35;
+  gap: 8px;
+}
+.journey-explanation,
+.lead-journey .journey-history {
+  font-size: 13px;
+  margin-top: 8px;
+}
+.journey-explanation summary,
+.lead-journey .journey-history summary {
+  min-height: 28px;
+  padding: 4px 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.lead-blade .lead-context > summary {
+  padding: 12px 20px;
+  min-height: 44px;
+  font-size: 15px;
+}
+.full-lead-page .lead-page-actions {
+  padding: 12px 20px;
+  gap: 10px;
+}
+.full-lead-page .lead-work-tabs {
+  padding-inline: 20px;
+}
+.full-lead-page .lead-work-tabs button {
+  font-size: 14px;
+  padding-block: 12px;
+}
+@container lead-blade (min-width: 900px) {
+  .lead-blade .lead-overview {
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 1fr);
+    align-items: start;
+    gap: 24px;
+  }
+}
+@container lead-blade (max-width: 450px) {
+  .lead-blade .lead-overview .detail-profile {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+  .lead-header-score {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .lead-blade .lead-overview .detail-profile h2 {
+    font-size: 21px;
+  }
+}
+@media (max-width: 1000.99px), (pointer: coarse) {
+  .lead-blade .blade-header,
+  .lead-blade .lead-journey {
+    padding: 14px;
+  }
+  .lead-blade .blade-workflow select,
+  .lead-blade .detail-top .button,
+  .lead-blade .detail-top .text-button {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .journey-explanation summary,
+  .lead-journey .journey-history summary {
+    min-height: 44px;
+  }
+}
+
+.lead-blade {
+  container-type: inline-size;
+  container-name: lead-blade;
+}
+.journey-options {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  align-items: start;
+}
+.journey-options > details[open] {
+  flex-basis: 100%;
+}
+
+@container lead-blade (max-width: 450px) {
+  .lead-blade .lead-overview .blade-workflow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lead-blade .lead-overview .detail-profile .avatar {
+    width: 36px;
+    height: 36px;
+  }
+}
+/* Keep one horizontal path even in a narrow desktop inspection blade. */
+.lead-journey .lead-stage-path li {
+  flex-direction: column;
+  text-align: center;
+}
+.lead-journey .lead-stage-path li:not(:last-child)::after {
+  left: calc(50% + 5px);
+  right: calc(-50% + 5px);
+  top: 12px;
+  width: auto;
+  height: 1px;
+  bottom: auto;
+}
+@media (min-width: 1001px) and (pointer: fine) {
+  .leads-page.lead-overlay-mode .lead-blade {
+    max-height: calc(100dvh / var(--interface-scale, 1) - 104px);
+  }
+}

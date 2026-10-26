@@ -79,7 +79,7 @@ Chart axes, dates and ring totals are HTML text with shared roles rather than sh
 
 ## Table alignment and lead content ownership
 
-Customer-name buttons fill their column and align text to start, including wrapped, unbroken, missing and non-Latin names. Reserve a 14rem default name-column width (11rem in compact fine-pointer desktop layouts); additional columns scroll locally. Never use whole-app CSS zoom or transforms to compensate for alignment.
+Customer-name buttons fill their column and align text to start, including wrapped, unbroken, missing and non-Latin names. Reserve a 14rem default name-column width (11rem in compact fine-pointer desktop layouts); additional columns scroll locally. Do not use whole-app scaling to compensate for alignment. Explicit user-selected desktop display scale is described below.
 
 The inspection overlay owns its compact actions; the dedicated lead page owns its action row above the tabs. Do not mount both on a full page. Contact values appear once in the labelled Lead information list, including email and permitted phone/email links. Avoid a second icon summary repeating those fields. Custom fields remain in Additional information.
 
@@ -87,10 +87,18 @@ The inspection overlay owns its compact actions; the dedicated lead page owns it
 
 At widths of at least 1001px with a fine pointer, the authenticated/demo app shell uses a 216px expanded sidebar, 64px top bar and 20px page gutters. Sidebar rows are 40px; title actions/stage filters are 36px. Reading text and forms remain17px; page descriptions/actions use15px and dense lead data14px with13px headers. Font families do not change. Phones, coarse-pointer layouts and form controls retain their existing touch sizing. The table name button has a 32px target inside an approximately 49px row on fine-pointer desktop; touch tables retain 44px name targets.
 
-Table cells use 8px padding, an 11rem minimum name column and bounded secondary values with native title text/full lead detail for long values. Additional or unusually wide/custom columns scroll locally rather than shrinking text further. Remove row/card editing and the sticky Actions column; one Edit lead action is available after opening a lead. If configuration hides the name column, native table rows become keyboard-focusable and Enter/Space opens details. Do not introduce global CSS zoom, transforms or a reduced root font size to achieve density.
+Table cells use 8px padding, an 11rem minimum name column and bounded secondary values with native title text/full lead detail for long values. Additional or unusually wide/custom columns scroll locally rather than shrinking text further. Remove row/card editing and the sticky Actions column; one Edit lead action is available after opening a lead. If configuration hides the name column, native table rows become keyboard-focusable and Enter/Space opens details. Keep default density based on padding, columns and typography. Do not force scaling or reduce the root font size to fix alignment.
 
 ## Personal interface families and activity roles
 
 The fontStyle preference defaults to Standard and supports Inter, Source Sans 3 and Lora. typography.css loads after design-system.css; its allowlisted root selectors apply only outside Book mode. Preserve brand font variables and monospace exceptions. Keep native font selection, a draft sample and save-before-apply semantics. No font URLs/uploads or runtime Google CDN. See FONT-CHOICES.md for licensing, persistence and precedence.
 
 Activity text is intentionally smaller than the general body: 15px desktop,16px narrow/touch,1.5 leading; entry title15px and metadata13px. Use12–16px card padding and12px list gaps. Preserve complete notes and line breaks, wrapping long text with no clamping. General reading/forms and existing desktop table density keep their own roles. Test every family and Book mode at phone, tablet, laptop and wide desktop widths.
+
+## Compact lead overview and optional personal scale
+
+The header has one toolbar, then a content-width grid containing identity, score, stage and assignee. At 900px of blade content it becomes one row; below that it stacks identity and workflow, and below 450px workflow controls stack. Use a 24px name (21px narrow), 14px company, 13px labels and 15px selects; preserve the selected font and Book-mode family. Avoid independent tall identity/ownership bands. Keep one action set and one contact-detail list. Journey labels are 13px on a locally scrolling horizontal path, with explanation and recorded history in independent disclosures.
+
+A score ring supplements an accessible numeric label, not replaces it. Unknown uses a dashed neutral track, known zero a solid empty track; risk also has a warning icon/text. Header and details share the existing score fetch, with lead-id guards against stale responses. No fake score is assigned to demo or unknown evidence.
+
+The only whole-app scaling is the explicitly saved personal Desktop display zoom (85/90/100/110/125, default 100). CSS zoom is layout-aware and gated by min-width1001px and pointer:fine; narrow and touch interfaces remain 100. Do not use transforms or zoom:reset, or disable browser/pinch zoom. Overlay coordinates and viewport offsets convert screen pixels back into layout pixels before resizing. Unsupported browsers retain100%. Verify the saved setting, small screens, long names, dialogs, focus and overlay keyboard/drag at both extremes.

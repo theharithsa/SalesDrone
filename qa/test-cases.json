@@ -1,0 +1,472 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Execution catalog, not prefilled pass evidence",
+  "modules": [
+    {
+      "module": "salesdrone-api-integrations",
+      "ownerSkill": "skills/salesdrone-api-integrations/SKILL.md",
+      "automatedTests": [
+        "functions/test/api-portal.test.js",
+        "functions/test/emulator.integration.js",
+        "functions/test/personal-access-tokens.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "API-INTEGRATIONS-01",
+          "expected": "Strict schemas, version conflicts, cursors and scoped PAT allowlists enforce policy.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "API-INTEGRATIONS-02",
+          "expected": "Personal preferences reject PAT writes, identity spoofing and invalid scales/fonts.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-authentication",
+      "ownerSkill": "skills/salesdrone-authentication/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/custom-fields-and-tasks.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "AUTHENTICATION-01",
+          "expected": "Approved active identity enters live scope; unapproved identity sees only demo.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "AUTHENTICATION-02",
+          "expected": "Sign-out/account switch clears stale lead views and resets personal fallback boundaries.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-automatic-reminders",
+      "ownerSkill": "skills/salesdrone-automatic-reminders/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/automatic-reminders.test.js",
+        "tests/dates.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "AUTOMATIC-REMINDERS-01",
+          "expected": "Dated new notes produce a reminder or actionable review; uncertain dates are not invented.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "AUTOMATIC-REMINDERS-02",
+          "expected": "Correction/Undo/manual task edits preserve idempotency and protected changes.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-book-mode",
+      "ownerSkill": "skills/salesdrone-book-mode/SKILL.md",
+      "automatedTests": [
+        "functions/test/book-mode.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/appearance.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "BOOK-MODE-01",
+          "expected": "Book serif styling wins over interface font; switching it off restores the saved family.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "BOOK-MODE-02",
+          "expected": "Both palettes, zoom and phone monospace exceptions retain readable contrast.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-conversations",
+      "ownerSkill": "skills/salesdrone-conversations/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/automatic-reminders.test.js",
+        "functions/test/workbook-and-filters.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "CONVERSATIONS-01",
+          "expected": "All includes loaded notes/calls/review; Comments and Calls filter without reordering.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "CONVERSATIONS-02",
+          "expected": "Post/correct synthetic multi-line text; full content and revisions are preserved.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-dashboard",
+      "ownerSkill": "skills/salesdrone-dashboard/SKILL.md",
+      "automatedTests": [
+        "functions/test/intelligence.test.js",
+        "functions/test/journey.test.js",
+        "functions/test/personal-access-tokens.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "DASHBOARD-01",
+          "expected": "Current-stage funnel totals match permitted records; historical conversion is not implied.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "DASHBOARD-02",
+          "expected": "Get insights/manual/automatic modes and chart day selection retain their contracts.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-data-platform",
+      "ownerSkill": "skills/salesdrone-data-platform/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/emulator.integration.js",
+        "functions/test/workbook-and-filters.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "DATA-PLATFORM-01",
+          "expected": "Transactions roll back domain writes and outbox records together.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "DATA-PLATFORM-02",
+          "expected": "Client Firestore deny rules, cursor bounds and indexed assigned queries remain enforced.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-documentation",
+      "ownerSkill": "skills/salesdrone-documentation/SKILL.md",
+      "automatedTests": [
+        "functions/test/api-portal.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "DOCUMENTATION-01",
+          "expected": "Handbook search/anchors/settings/API links work and match the current commit.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "DOCUMENTATION-02",
+          "expected": "Changed images use reviewed synthetic captures and accurate viewport/version hashes.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-imports",
+      "ownerSkill": "skills/salesdrone-imports/SKILL.md",
+      "automatedTests": [
+        "functions/test/emulator.integration.js",
+        "functions/test/workbook-and-filters.test.js",
+        "tests/import-mapping.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "IMPORTS-01",
+          "expected": "Use a fictional first-sheet workbook; select multiple comment columns and inspect preview.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "IMPORTS-02",
+          "expected": "Repeated chunks recover without duplicate activities; no live workbook is used.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-interface",
+      "ownerSkill": "skills/salesdrone-interface/SKILL.md",
+      "automatedTests": [
+        "tests/dates.test.ts",
+        "tests/import-mapping.test.ts",
+        "tests/lead-fields.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "INTERFACE-01",
+          "expected": "At each desktop scale check navigation, overlays, resizing, dialogs and no document overflow.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "INTERFACE-02",
+          "expected": "At390/768px preserve normal scale and comfortable touch targets; browser zoom is not blocked.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-lead-journey",
+      "ownerSkill": "skills/salesdrone-lead-journey/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/journey.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "LEAD-JOURNEY-01",
+          "expected": "Configured path marks only the current stage; do not infer visited stages.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "LEAD-JOURNEY-02",
+          "expected": "Recorded history remains available through its disclosure and pagination.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-lead-scoring",
+      "ownerSkill": "skills/salesdrone-lead-scoring/SKILL.md",
+      "automatedTests": [
+        "functions/test/intelligence.test.js",
+        "functions/test/personal-access-tokens.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "LEAD-SCORING-01",
+          "expected": "Unknown/null displays a dashed neutral ring and Unscored; actual zero displays0/100.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "LEAD-SCORING-02",
+          "expected": "Positive scores fill the proportional ring; risks are explicit beyond colour.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "LEAD-SCORING-03",
+          "expected": "Opening/refreshing a lead does not leak previous lead scores or duplicate score fetches.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-leads",
+      "ownerSkill": "skills/salesdrone-leads/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/custom-fields-and-tasks.test.js",
+        "functions/test/workbook-and-filters.test.js",
+        "tests/import-mapping.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "LEADS-01",
+          "expected": "Open a lead from its name/card; use Edit lead inside details and cancel without writes.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "LEADS-02",
+          "expected": "Stage/owner controls align with identity and score; no duplicate action sets or contact fields.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "LEADS-03",
+          "expected": "Filter each supported column; hidden-name rows remain keyboard accessible.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-notifications",
+      "ownerSkill": "skills/salesdrone-notifications/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/notifications.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "NOTIFICATIONS-01",
+          "expected": "Bell opens an overlay and preserves page context; Escape/close restores focus.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "NOTIFICATIONS-02",
+          "expected": "Read/unread state, recipient scope and test push remain separate from task completion.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-observability",
+      "ownerSkill": "skills/salesdrone-observability/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/observability.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "OBSERVABILITY-01",
+          "expected": "Committed settings changes produce key-only outbox/audit evidence; rollback/no-op emits none.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "OBSERVABILITY-02",
+          "expected": "Separate HTTP signal acceptance from tenant searchability and RUM identity mode.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-people-permissions",
+      "ownerSkill": "skills/salesdrone-people-permissions/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/notifications.test.js",
+        "functions/test/personal-access-tokens.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "PEOPLE-PERMISSIONS-01",
+          "expected": "Protected administrators cannot be removed; assigned scope applies to reads and writes.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "PEOPLE-PERMISSIONS-02",
+          "expected": "Role/capability changes are audited atomically and invalidate unauthorized actions.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-product-guide",
+      "ownerSkill": "skills/salesdrone-product-guide/SKILL.md",
+      "automatedTests": [
+        "tests/product-guide.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "PRODUCT-GUIDE-01",
+          "expected": "Follow each changed workflow as a reader, including permissions and empty states.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "PRODUCT-GUIDE-02",
+          "expected": "Refresh affected UI captures; do not relabel historical screenshots as current.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-release",
+      "ownerSkill": "skills/salesdrone-release/SKILL.md",
+      "automatedTests": [
+        "tests/release-readiness.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "RELEASE-01",
+          "expected": "Pre-deploy verify passes before publication; exact live version/SHA and active revisions follow.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "RELEASE-02",
+          "expected": "Archive deployment/docs/monitoring artifacts and distinguish reporting failures.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-release-readiness",
+      "ownerSkill": "skills/salesdrone-release-readiness/SKILL.md",
+      "automatedTests": [
+        "tests/release-readiness.test.ts",
+        "tests/settings-reference.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "RELEASE-READINESS-01",
+          "expected": "Every feature declares docs, API/permissions, signals, tests, images and release impact.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "RELEASE-READINESS-02",
+          "expected": "Missing or failed checks are reported as such, never prefilled success.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-tasks-reminders",
+      "ownerSkill": "skills/salesdrone-tasks-reminders/SKILL.md",
+      "automatedTests": [
+        "functions/test/app.test.js",
+        "functions/test/custom-fields-and-tasks.test.js",
+        "functions/test/notifications.test.js",
+        "tests/dates.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "TASKS-REMINDERS-01",
+          "expected": "Create/edit/snooze/complete/delete a synthetic private task in the emulator.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "TASKS-REMINDERS-02",
+          "expected": "Suppressed contacts and revoked access prevent invalid outreach delivery.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-testing",
+      "ownerSkill": "skills/salesdrone-testing/SKILL.md",
+      "automatedTests": [
+        "functions/test/emulator.integration.js",
+        "tests/test-plan.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "TESTING-01",
+          "expected": "Suite selection rejects arbitrary commands; failures stop later checks as not-run.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "TESTING-02",
+          "expected": "Reports contain status/timing only, and browser evidence is explicitly separate.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-workspace-settings",
+      "ownerSkill": "skills/salesdrone-workspace-settings/SKILL.md",
+      "automatedTests": [
+        "functions/test/custom-fields-and-tasks.test.js",
+        "functions/test/workbook-and-filters.test.js",
+        "tests/lead-fields.test.ts"
+      ],
+      "manualCases": [
+        {
+          "id": "WORKSPACE-SETTINGS-01",
+          "expected": "Font/scale are draft until save; missing preferences default Standard/100.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "WORKSPACE-SETTINGS-02",
+          "expected": "Saved desktop scales85/90/100/110/125 persist; narrow/touch layouts remain100.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "WORKSPACE-SETTINGS-03",
+          "expected": "Old PATCH clients preserve omitted choices; denied/no-op saves emit no false audit.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        }
+      ]
+    }
+  ]
+}

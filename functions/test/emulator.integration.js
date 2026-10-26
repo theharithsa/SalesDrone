@@ -115,6 +115,7 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     appearance: 'light',
     bookMode: true,
     fontStyle: 'source-sans',
+    displayScale: 90,
   }).expect(200);
   await req('patch', '/me', {
     timezone: 'Asia/Kolkata',
@@ -126,6 +127,10 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   );
   const ownUser = (await auth.verifyIdToken(token)).uid;
   assert.equal((await db.doc('users/' + ownUser).get()).data().bookMode, true);
+  assert.equal(
+    (await db.doc('users/' + ownUser).get()).data().displayScale,
+    90,
+  );
   assert.equal(
     (await db.doc('users/' + ownUser).get()).data().fontStyle,
     'source-sans',

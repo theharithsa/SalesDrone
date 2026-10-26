@@ -79,3 +79,7 @@ Read for detailed behavior:
 Configuration/token routes document x-settings-audit metadata in OpenAPI. This internal side effect grants no audit-read endpoint or PAT scope. Token lifecycle audits include safe changed-key names only, never secret/hash/name values, and one-time issuance/revocation semantics remain unchanged.
 
 Contract1.14.0 adds optional Preferences.fontStyle to GET/PATCH /me with an allowlisted enum and omission preservation. This is Google/App Check self-service, excluded from PAT writes; no new PAT scope. Keep strict request validation, response defaults, generated schema/portal and examples aligned. Font choices do not grant API data access.
+
+## v1.8 operating notes
+
+Contract1.15 adds optional numeric Preferences.displayScale enum 85/90/100/110/125 with missing default 100 and omission preservation. Existing self-owned active-member Google/AppCheck /me only; no PAT route/scope expansion. Test invalid/string values, unapproved access, identity isolation and no-op audits.

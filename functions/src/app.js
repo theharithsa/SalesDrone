@@ -391,6 +391,7 @@ export function createApp({
           appearance: 'system',
           bookMode: false,
           fontStyle: 'standard',
+          displayScale: 100,
           ...AUTO_DEFAULTS,
           ...prefs,
         },
@@ -469,6 +470,7 @@ export function createApp({
       const prefs = {
         bookMode: false,
         fontStyle: 'standard',
+        displayScale: 100,
         ...AUTO_DEFAULTS,
         ...(await tx.get(`users/${req.identity.uid}`)),
         ...input,

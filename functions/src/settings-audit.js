@@ -13,10 +13,17 @@ const personalDefaults = {
   appearance: 'system',
   bookMode: false,
   fontStyle: 'standard',
+  displayScale: 100,
   ...AUTO_DEFAULTS,
 };
 const definitions = {
-  appearance: ['appearance', 'bookMode', 'fontStyle', 'timezone'],
+  appearance: [
+    'appearance',
+    'bookMode',
+    'fontStyle',
+    'displayScale',
+    'timezone',
+  ],
   reminders: [
     'automaticReminders',
     'reminderTime',

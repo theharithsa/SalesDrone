@@ -199,6 +199,15 @@ export const Preferences = z
     appearance: z.enum(['system', 'light', 'dark']),
     bookMode: z.boolean().optional(),
     fontStyle: z.enum(['standard', 'inter', 'source-sans', 'lora']).optional(),
+    displayScale: z
+      .union([
+        z.literal(85),
+        z.literal(90),
+        z.literal(100),
+        z.literal(110),
+        z.literal(125),
+      ])
+      .optional(),
     automaticReminders: z.boolean().optional(),
     reminderTime: z
       .string()

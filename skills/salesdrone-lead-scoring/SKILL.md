@@ -69,3 +69,7 @@ Adjacent owners:
 Read for detailed behavior:
 
 - [docs/INTELLIGENCE.md](../../docs/INTELLIGENCE.md)
+
+## v1.8 operating notes
+
+ScoreRing adds a small decorative SVG to an accessible numeric ScoreBadge. Unknown is dashed/Unscored; known zero is empty solid; progress clamps finite numbers0..100. Retain risk warning icon/label. Header and details share report updates through an id-guarded stable callback; never start duplicate fetch/poll loops or show a stale previous-lead score. Tests: tests/display-scale.test.ts.

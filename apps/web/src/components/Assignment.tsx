@@ -42,7 +42,7 @@ export default function Assignment({
   }, [request]);
   return (
     <div className={compact ? 'assignment-control' : 'detail-section'}>
-      <h3>ASSIGNED TO</h3>
+      <h3>Assigned to</h3>
       <select
         value={lead.assignedToUid || ''}
         disabled={busy || loadingMembers}

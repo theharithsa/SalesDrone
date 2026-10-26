@@ -12,7 +12,7 @@
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v1.7.0 · MIT**
+**Part of Avinya Enterprises · v1.8.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -164,3 +164,11 @@ The v1.6.7 maintenance updates align wrapped customer names, remove duplicate le
 Open Settings → Appearance & time to preview and save Standard, Inter, Source Sans 3 or Lora. The choice is personal; Book mode keeps its serif styling. Activity cards now use a clearer, more compact type hierarchy. Fonts are self-hosted, with licences retained. See the [font and activity guide](docs/FONT-CHOICES.md).
 
 ![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=cdd2836b92a2)
+
+## Repeatable testing
+
+The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.json) cover 22 modules. Run `npm run qa -- quick` for local checks or `npm run qa -- release` with Java 21 for the emulator and build gates. The [testing skill](skills/salesdrone-testing/SKILL.md) gives future agents browser recipes, privacy rules and an evidence handoff. CLI success is separate from visual and production verification.
+
+Personal desktop display zoom lives in Settings → Appearance & time. The compact lead header keeps identity, score, stage and assignment together; rings distinguish a known zero from missing evidence.
+
+![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/lead-workspace-demo.jpg)

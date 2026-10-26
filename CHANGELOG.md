@@ -3,7 +3,14 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+## [1.8.0] - 2026-10-26
 
+### Changed
+- Group lead identity, score, stage and assignee into one responsive compact header; reduce journey spacing and disclose explanations/history independently.
+- Add accessible score rings with distinct unknown/zero and explicit reported-risk states; share existing score reads.
+- Add personal desktop display zoom 85/90/100/110/125 with default 100, save timing, narrow/touch safeguards and scale-aware blade resizing.
+- Extend preferences contract to 1.15.0 with strict validation, older-client preservation and key-only committed audits.
+- Add a dedicated testing skill, 22-module case catalog and bounded QA scripts with sanitized evidence; refresh docs, skills and synthetic captures.
 
 ## [1.7.0] - 2026-10-26
 

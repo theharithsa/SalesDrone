@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SalesDrone by AvinyaTech API",
-    "version": "1.14.0",
+    "version": "1.15.0",
     "description": "Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data."
   },
   "servers": [
@@ -18780,6 +18780,31 @@
               "lora"
             ],
             "description": "Personal interface font: standard (default), inter, source-sans or lora. Omission preserves the saved value. Book mode keeps its own serif family; no authorization change. Google sign-in/App Check only; PAT writes denied."
+          },
+          "displayScale": {
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 85
+              },
+              {
+                "type": "number",
+                "const": 90
+              },
+              {
+                "type": "number",
+                "const": 100
+              },
+              {
+                "type": "number",
+                "const": 110
+              },
+              {
+                "type": "number",
+                "const": 125
+              }
+            ],
+            "description": "Personal desktop display zoom percentage: 85, 90, 100 (default), 110 or 125. Omission preserves the saved value. Only applies on fine-pointer desktop layouts; touch/narrow layouts remain 100%. Browser zoom is unrestricted. Self-service Google/App Check only; PAT writes denied."
           },
           "automaticReminders": {
             "type": "boolean"

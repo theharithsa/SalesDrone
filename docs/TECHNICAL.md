@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **1.7.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **1.8.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -149,3 +149,5 @@ Release readiness is the cross-module completion owner. Shared settings catalogs
 Browser lead routing uses /leads/{id} with history state and current API authorization. Desktop quick inspection is fixed above the unchanged table; full pages separate paginated conversations, recipient-private tasks and loaded-activity review. Product handbook JSON generates both Markdown and searchable public HTML. Changed-screen captures carry reviewed hashes and release versions; readiness validates those declared in the release plan.
 
 Settings mutations also persist per-control `settingsChanges` and atomic, chunked `settings.audit.committed` outbox records independently of OTel availability. Accepted export emits an allowlisted `settings.audit.delivered` log; values and secrets are excluded. See [settings audit coverage and delivery](SETTINGS-AUDIT.md) and the dedicated [Book mode module skill](../skills/salesdrone-book-mode/SKILL.md).
+
+The [testing guide](TESTING.md) documents the bounded QA runner and 22-module case catalog. The runner writes sanitized step status/timing in ignored test-results, stops on failure and never deploys. Display-scale preferences use the existing /me transaction/audit; the compact header shares the score-details fetch instead of starting another poller. Scale-aware blade resizing converts viewport coordinates into layout coordinates.

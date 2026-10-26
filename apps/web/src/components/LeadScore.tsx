@@ -1,27 +1,39 @@
+import ScoreRing from './ScoreRing';
+import { scoreDisplay } from '../lib/score-display';
 import { useEffect, useState } from 'react';
-import { RefreshCw, Target, ChevronDown, ShieldAlert } from 'lucide-react';
+import { RefreshCw, ChevronDown, ShieldAlert } from 'lucide-react';
 import { Entity, displayDate } from '../lib/types';
 import { ErrorMessage } from './UI';
 export function ScoreBadge({ score }: { score?: any }) {
+  const display = scoreDisplay(
+    score?.status === 'Disabled' ? null : score?.score,
+  );
   return (
     <span
       className={
         'score-badge ' +
-        (score?.hasRisk ? 'score-risk' : score?.score >= 70 ? 'score-high' : '')
+        (score?.hasRisk
+          ? 'score-risk'
+          : display.score !== null && display.score >= 70
+            ? 'score-high'
+            : '')
+      }
+      role="img"
+      aria-label={
+        'Lead score: ' +
+        display.label +
+        (score?.hasRisk ? ' · Reported risk' : '')
       }
       title={
-        score?.score === null || score?.score === undefined
+        display.score === null
           ? 'Not scored yet or not enough reported evidence'
-          : `${score.band} · ${score.knownFactors || 0}/${score.totalFactors || 0} factors have reported evidence`
+          : `${score?.hasRisk ? 'Reported risk · ' : ''}${score.band} · ${score.knownFactors || 0}/${score.totalFactors || 0} factors have reported evidence`
       }
     >
-      <Target size={12} />
-      {score?.score === null || score?.score === undefined ? '—' : score.score}
-      <small>
-        {score?.score === null || score?.score === undefined
-          ? 'Unscored'
-          : '/100'}
-      </small>
+      <ScoreRing value={display.score} />
+      {score?.hasRisk ? <ShieldAlert size={12} aria-hidden="true" /> : null}
+      {display.score === null ? '—' : display.score}
+      <small>{display.score === null ? 'Unscored' : '/100'}</small>
     </span>
   );
 }
@@ -32,6 +44,7 @@ export default function LeadScore({
   canRefresh,
   timezone,
   demo = false,
+  onReport,
 }: {
   leadId: string;
   version: number;
@@ -39,28 +52,35 @@ export default function LeadScore({
   canRefresh: boolean;
   timezone: string;
   demo?: boolean;
+  onReport?: (leadId: string, report: any) => void;
 }) {
   const [report, setReport] = useState<any>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
   useEffect(() => {
     if (demo) {
-      setReport({
+      const placeholder = {
         status: 'Ready',
         score: null,
         factors: [],
         knownFactors: 0,
         totalFactors: 14,
-      });
+      };
+      setReport(placeholder);
+      onReport?.(leadId, placeholder);
       return;
     }
     let alive = true;
     setReport(null);
+    onReport?.(leadId, null);
     setError('');
     const get = () =>
       request('/leads/' + leadId + '/score')
         .then((r) => {
-          if (alive) setReport(r);
+          if (alive) {
+            setReport(r);
+            onReport?.(leadId, r);
+          }
         })
         .catch((e) => {
           if (alive) setError(e.message);
@@ -71,14 +91,18 @@ export default function LeadScore({
       alive = false;
       clearInterval(timer);
     };
-  }, [leadId, version, request, demo]);
+  }, [leadId, version, request, demo, onReport]);
   async function refresh() {
     setBusy(true);
     setError('');
     try {
-      setReport(
-        await request('/leads/' + leadId + '/score/refresh', 'POST', {}),
+      const result = await request(
+        '/leads/' + leadId + '/score/refresh',
+        'POST',
+        {},
       );
+      setReport(result);
+      onReport?.(leadId, result);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -101,6 +125,7 @@ export default function LeadScore({
         ) : null}
       </div>
       <div className="lead-score-number">
+        <ScoreRing value={report?.score} />
         <strong>{report?.score ?? '—'}</strong>
         <span>
           {report?.score === null || report?.score === undefined

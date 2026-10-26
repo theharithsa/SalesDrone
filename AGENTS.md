@@ -76,3 +76,5 @@ workbooks, logs, generated caches and private screenshots. Only curated assets f
 site/ are published to GitHub Pages; docs/ contains engineering references; local production captures and evidence are excluded from Git.
 
 An explicit human request to keep the displayed version may authorize one maintenance deployment. Record the exact prior commit and instruction in releases/maintenance.json; preserve existing tags and distinguish the deployment by commit/run. Do not infer future same-version authorization from that record.
+
+For testing handoffs use skills/salesdrone-testing/SKILL.md and qa/test-cases.json. npm run qa selects actual suites and records sanitized results; CLI success does not imply browser, physical-device or tenant-search verification.

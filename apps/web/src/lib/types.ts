@@ -38,6 +38,7 @@ export type Session = {
     appearance: 'light' | 'dark' | 'system';
     bookMode?: boolean;
     fontStyle?: 'standard' | 'inter' | 'source-sans' | 'lora';
+    displayScale?: 85 | 90 | 100 | 110 | 125;
     automaticReminders?: boolean;
     reminderTime?: string;
     nextWeekRule?: 'seven_days' | 'next_monday';

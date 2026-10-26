@@ -1,3 +1,4 @@
+import { normalizeDisplayScale } from './lib/display-scale';
 import { normalizeFontStyle } from './lib/fonts';
 import { resolveVisualPreferences } from './lib/appearance';
 import { readStored, writeStored, removeStored } from './lib/browser-storage';
@@ -18,7 +19,7 @@ import { setRumIdentity, rumPage } from './lib/rum';
 import NotificationOverlay from './components/NotificationOverlay';
 import LeadJourney from './components/LeadJourney';
 import { APP_VERSION } from './lib/version';
-import LeadScore from './components/LeadScore';
+import LeadScore, { ScoreBadge } from './components/LeadScore';
 import EnterpriseBrand from './components/EnterpriseBrand';
 import ThemeToggle from './components/ThemeToggle';
 import TaskEditForm from './components/TaskEditForm';
@@ -223,6 +224,18 @@ export default function App() {
   const [guestFontStyle, setGuestFontStyle] = useState(() =>
     normalizeFontStyle(readStored('localStorage', 'salesdrone.guestFontStyle')),
   );
+  const [guestDisplayScale, setGuestDisplayScale] = useState(() =>
+    normalizeDisplayScale(
+      Number(readStored('localStorage', 'salesdrone.guestDisplayScale')),
+    ),
+  );
+  const [detailScore, setDetailScore] = useState<{
+    id: string;
+    report: any;
+  } | null>(null);
+  const acceptScore = useCallback((id: string, report: any) => {
+    if (selectedIdRef.current === id) setDetailScore({ id, report });
+  }, []);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [leadScores, setLeadScores] = useState<Record<string, any>>({});
@@ -361,20 +374,22 @@ export default function App() {
       window.removeEventListener('focus', recheck);
     };
   }, [session, demo]);
-  const { appearance, bookMode, fontStyle } = resolveVisualPreferences(
-    session?.preferences || null,
-    demo,
-    {
+  const { appearance, bookMode, fontStyle, displayScale } =
+    resolveVisualPreferences(session?.preferences || null, demo, {
       appearance: guestAppearance,
       bookMode: guestBookMode,
       fontStyle: guestFontStyle,
-    },
-  );
+      displayScale: guestDisplayScale,
+    });
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
       document.documentElement.dataset.theme = appearance;
       document.documentElement.dataset.fontStyle = fontStyle;
+      document.documentElement.style.setProperty(
+        '--interface-scale',
+        String(displayScale / 100),
+      );
       const dark =
         appearance === 'dark' || (appearance === 'system' && media.matches);
       document.documentElement.dataset.colorScheme = dark ? 'dark' : 'light';
@@ -402,7 +417,7 @@ export default function App() {
     } catch {}
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
-  }, [appearance, bookMode, fontStyle]);
+  }, [appearance, bookMode, fontStyle, displayScale]);
   async function changeTheme(next: 'light' | 'dark') {
     if (demo || !session) {
       setGuestAppearance(next);
@@ -2000,10 +2015,31 @@ export default function App() {
                         ) : null}
                       </>
                     }
+                    identity={
+                      <div className="detail-profile">
+                        <Avatar name={selected.name} />
+                        <h2>
+                          <LeadName name={selected.name} detail />
+                        </h2>
+                        <p>{selected.company || 'Independent enquiry'}</p>
+                        <div className="lead-header-score">
+                          <span>Lead score</span>
+                          <ScoreBadge
+                            score={
+                              detailScore?.id === selected.id
+                                ? detailScore.report
+                                : leadScores[selected.id]
+                            }
+                          />
+                        </div>
+                      </div>
+                    }
                     workflow={
                       <>
                         <div className="detail-section">
-                          <h3>LEAD STAGE</h3>
+                          <h3>
+                            {labelFor(fieldOptions, 'stage', 'Sales stage')}
+                          </h3>
                           {can('leads:edit') ? (
                             <select
                               aria-label="Update lead stage"
@@ -2034,7 +2070,7 @@ export default function App() {
                           />
                         ) : (
                           <div className="assignment-control">
-                            <h3>ASSIGNED TO</h3>
+                            <h3>Assigned to</h3>
                             <span>
                               {selected.assignedToUid ===
                                 session?.identity.uid ||
@@ -2049,14 +2085,6 @@ export default function App() {
                       </>
                     }
                   >
-                    <div className="detail-profile">
-                      <Avatar name={selected.name} />
-                      <h2>
-                        <LeadName name={selected.name} detail />
-                      </h2>
-                      <p>{selected.company || 'Independent enquiry'}</p>
-                      <Badge stage={selected.stage} />
-                    </div>
                     <LeadJourney
                       key={'journey:' + selected.id}
                       lead={selected}
@@ -2072,6 +2100,7 @@ export default function App() {
                         leadId={selected.id}
                         version={selected.version}
                         request={request}
+                        onReport={acceptScore}
                         canRefresh={!!can('leads:edit')}
                         timezone={timezone}
                         demo={demo}
@@ -2802,7 +2831,13 @@ export default function App() {
                 onWorkspacePolicyChanged={() => void resolveSession()}
                 initialSection={page === 'members' ? 'access' : undefined}
                 session={session}
-                guestPreferences={{ appearance, bookMode, fontStyle, timezone }}
+                guestPreferences={{
+                  appearance,
+                  bookMode,
+                  fontStyle,
+                  displayScale,
+                  timezone,
+                }}
                 demo={demo}
                 devices={data.devices}
                 fieldOptions={fieldOptions}
@@ -2817,6 +2852,12 @@ export default function App() {
                     setGuestAppearance(p.appearance);
                     setGuestBookMode(p.bookMode === true);
                     setGuestFontStyle(normalizeFontStyle(p.fontStyle));
+                    setGuestDisplayScale(normalizeDisplayScale(p.displayScale));
+                    writeStored(
+                      'localStorage',
+                      'salesdrone.guestDisplayScale',
+                      String(normalizeDisplayScale(p.displayScale)),
+                    );
                     writeStored(
                       'localStorage',
                       'salesdrone.guestFontStyle',

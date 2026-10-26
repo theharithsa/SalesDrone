@@ -1,3 +1,4 @@
+import { layoutPixels, scaleFromCSS } from '../lib/display-scale';
 import {
   useLayoutEffect,
   useRef,
@@ -26,6 +27,7 @@ function savedWidth() {
 export default function LeadBlade({
   toolbar,
   workflow,
+  identity,
   children,
   fullPage = false,
   onExpand,
@@ -36,6 +38,7 @@ export default function LeadBlade({
   onClose: () => void;
   toolbar: ReactNode;
   workflow: ReactNode;
+  identity: ReactNode;
   children: ReactNode;
 }) {
   const root = useRef<HTMLElement>(null),
@@ -53,6 +56,8 @@ export default function LeadBlade({
       lastX: number;
     } | null>(null),
     frame = useRef<number | undefined>(undefined);
+  const scale = () =>
+    scaleFromCSS(getComputedStyle(document.documentElement).zoom);
   function apply(value: number) {
     const next = clampBladeWidth(value, boundsRef.current);
     widthRef.current = next;
@@ -80,7 +85,9 @@ export default function LeadBlade({
     const measure = () => {
       measureFrame = undefined;
       if (!window.matchMedia('(min-width: 1001px)').matches) return;
-      const next = bladeBounds(parent.getBoundingClientRect().width);
+      const next = bladeBounds(
+        layoutPixels(parent.getBoundingClientRect().width, scale()),
+      );
       boundsRef.current = next;
       setBounds((old) =>
         old.min === next.min && old.max === next.max ? old : next,
@@ -94,8 +101,8 @@ export default function LeadBlade({
         Math.max(
           12,
           Math.min(
-            window.innerHeight - 240,
-            Math.round(node.getBoundingClientRect().top),
+            layoutPixels(window.innerHeight, scale()) - 240,
+            Math.round(layoutPixels(node.getBoundingClientRect().top, scale())),
           ),
         ),
       );
@@ -195,9 +202,9 @@ export default function LeadBlade({
           e.currentTarget.focus({ preventScroll: true });
           drag.current = {
             pointerId: e.pointerId,
-            startX: e.clientX,
+            startX: layoutPixels(e.clientX, scale()),
             startWidth: widthRef.current,
-            lastX: e.clientX,
+            lastX: layoutPixels(e.clientX, scale()),
           };
           e.currentTarget.setPointerCapture(e.pointerId);
           setResizing(true);
@@ -206,7 +213,7 @@ export default function LeadBlade({
         onPointerMove={(e) => {
           const active = drag.current;
           if (!active || active.pointerId !== e.pointerId) return;
-          active.lastX = e.clientX;
+          active.lastX = layoutPixels(e.clientX, scale());
           if (frame.current === undefined)
             frame.current = requestAnimationFrame(() => {
               frame.current = undefined;
@@ -261,7 +268,10 @@ export default function LeadBlade({
             </button>
           ) : null}
         </div>
-        <div className="blade-workflow">{workflow}</div>
+        <div className="lead-overview">
+          {identity}
+          <div className="blade-workflow">{workflow}</div>
+        </div>
       </header>
       <div
         className="blade-body"

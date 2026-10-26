@@ -85,47 +85,51 @@ export default function LeadJourney({
           >
             <span />
             {label}
-            {label === lead.stage ? <small>Current</small> : null}
           </li>
         ))}
       </ol>
-      <p className="field-hint">
-        Stages show your workspace path. Only the recorded changes below confirm
-        where this lead has been.
-      </p>
-      <details className="journey-history">
-        <summary>
-          Recorded stage changes{' '}
-          {items.length ? `(${items.length}${cursor ? '+' : ''})` : ''}
-        </summary>
-        {items.map((item) => (
-          <div key={item.id}>
-            <strong>
-              {item.from || 'Created'} <ArrowRight size={12} /> {item.to}
-            </strong>
-            <time dateTime={item.createdAt}>
-              {displayDate(item.createdAt, timezone)}
-            </time>
-          </div>
-        ))}
-        {busy ? <p className="field-hint">Loading journey…</p> : null}
-        {!complete && !busy ? (
+      <div className="journey-options">
+        <details className="journey-explanation">
+          <summary>About this journey</summary>
           <p className="field-hint">
-            {demo
-              ? 'Demo stages are illustrative; no stage history is fabricated.'
-              : 'Earlier stage history is unavailable for this lead. Recording starts with changes made after this feature was introduced.'}
+            Stages show your workspace path. Only the recorded changes below
+            confirm where this lead has been.
           </p>
-        ) : null}
-        {cursor ? (
-          <button
-            className="text-button"
-            disabled={busy}
-            onClick={() => void more()}
-          >
-            Earlier changes
-          </button>
-        ) : null}
-      </details>
+        </details>
+        <details className="journey-history">
+          <summary>
+            Recorded stage changes{' '}
+            {items.length ? `(${items.length}${cursor ? '+' : ''})` : ''}
+          </summary>
+          {items.map((item) => (
+            <div key={item.id}>
+              <strong>
+                {item.from || 'Created'} <ArrowRight size={12} /> {item.to}
+              </strong>
+              <time dateTime={item.createdAt}>
+                {displayDate(item.createdAt, timezone)}
+              </time>
+            </div>
+          ))}
+          {busy ? <p className="field-hint">Loading journey…</p> : null}
+          {!complete && !busy ? (
+            <p className="field-hint">
+              {demo
+                ? 'Demo stages are illustrative; no stage history is fabricated.'
+                : 'Earlier stage history is unavailable for this lead. Recording starts with changes made after this feature was introduced.'}
+            </p>
+          ) : null}
+          {cursor ? (
+            <button
+              className="text-button"
+              disabled={busy}
+              onClick={() => void more()}
+            >
+              Earlier changes
+            </button>
+          ) : null}
+        </details>
+      </div>
       <ErrorMessage error={error} />
     </section>
   );

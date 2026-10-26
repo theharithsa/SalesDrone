@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.0",
+  "summary": "Compact responsive lead overview, accessible score rings, personal desktop display scale and repeatable module testing handoffs.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-leads",
+    "salesdrone-lead-journey",
+    "salesdrone-lead-scoring",
+    "salesdrone-workspace-settings",
+    "salesdrone-api-integrations",
+    "salesdrone-observability",
+    "salesdrone-product-guide",
+    "salesdrone-release-readiness",
+    "salesdrone-testing"
+  ],
+  "documentation": [
+    "docs/TESTING.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/API.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Optional numeric Preferences.displayScale enum on existing self-service GET/PATCH /me, default100 and omission preservation; no new route or PAT scope.",
+    "contractVersion": "1.15.0",
+    "permissions": "Current active-member Google JWT and App Check, caller-owned preferences only; PAT and unapproved access remain denied.",
+    "tests": [
+      "functions/test/display-scale.test.js",
+      "functions/test/font-style.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Personal appearance commits add the displayScale changed key only, with atomic safe audit/outbox and no value export. Existing request metrics/traces/logs remain; deployment events carry exact version/SHA/outcome. No-op, denied and rolled-back writes emit no committed change.",
+      "tests": [
+        "functions/test/display-scale.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Personal appearance commits add the displayScale changed key only, with atomic safe audit/outbox and no value export. Existing request metrics/traces/logs remain; deployment events carry exact version/SHA/outcome. No-op, denied and rolled-back writes emit no committed change.",
+      "tests": [
+        "functions/test/display-scale.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Personal appearance commits add the displayScale changed key only, with atomic safe audit/outbox and no value export. Existing request metrics/traces/logs remain; deployment events carry exact version/SHA/outcome. No-op, denied and rolled-back writes emit no committed change.",
+      "tests": [
+        "functions/test/display-scale.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Personal appearance commits add the displayScale changed key only, with atomic safe audit/outbox and no value export. Existing request metrics/traces/logs remain; deployment events carry exact version/SHA/outcome. No-op, denied and rolled-back writes emit no committed change.",
+      "tests": [
+        "functions/test/display-scale.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Personal appearance commits add the displayScale changed key only, with atomic safe audit/outbox and no value export. Existing request metrics/traces/logs remain; deployment events carry exact version/SHA/outcome. No-op, denied and rolled-back writes emit no committed change.",
+      "tests": [
+        "functions/test/display-scale.test.js",
+        "functions/test/settings-audit.test.js",
+        "tests/deployment-bizevents.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic browser review at390/768/1024/1280/1920 and all five saved scales; narrow layouts stay100. Inspect compact identity, score null/zero/25/74/100/risk, journey disclosures, font/Book palettes, full route/overlay and resize controls. Real Auth/Firestore emulator is a CI gate because local Java is unavailable. Receipts are acceptance, not tenant-search or physical-device certification.",
+  "screenshots": [
+    "journey-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "lead-overlay-demo.jpg",
+    "leads-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "mobile-demo.jpg",
+    "tablet-demo.jpg",
+    "laptop-demo.jpg",
+    "book-mode-mobile.jpg",
+    "book-settings-demo.jpg",
+    "font-settings-demo.jpg",
+    "display-scale-demo.jpg",
+    "score-ring-demo.jpg"
+  ]
+}

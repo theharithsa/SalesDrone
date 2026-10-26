@@ -66,7 +66,9 @@
     "laptop layout",
     "tablet layout",
     "wide screen",
-    "responsive audit"
+    "responsive audit",
+    "lead header redesign",
+    "display zoom"
   ],
   "salesdrone-lead-journey": [
     "lead journey",
@@ -154,5 +156,13 @@
     "serif workspace",
     "reading mode",
     "paper palette"
+  ],
+  "salesdrone-testing": [
+    "testing",
+    "test cases",
+    "regression tests",
+    "QA handoff",
+    "test runner",
+    "test agent"
   ]
 }
