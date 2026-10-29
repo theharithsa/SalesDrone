@@ -318,5 +318,15 @@
     "capturePixels": "390 x 844",
     "version": "2.1.0",
     "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Unconfirmed phone cleanup review; synthetic counts and no deletion. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+  },
+  {
+    "file": "startup-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "952b0db1638561f6908d50e24712d1cb65425f33e42e0bdc92c7b683ea550069",
+    "capturedAt": "2026-10-29T14:30:27.288234+00:00",
+    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 844",
+    "version": "2.1.1",
+    "review": "Visually reviewed actual Brand and Loading components in dev-only startup preview. Centered phone composition; synthetic state, no authentication/API/customer data. Screenshot review only, no local test suite or device/Safari certification."
   }
 ]

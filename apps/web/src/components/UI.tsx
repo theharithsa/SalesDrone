@@ -80,7 +80,8 @@ export function Empty({
 export function Loading() {
   return (
     <div className="loading" role="status">
-      <LoaderCircle className="spin" size={22} /> Loading your workspace…
+      <LoaderCircle className="spin" size={22} />
+      <span>Loading your workspace…</span>
     </div>
   );
 }

@@ -171,3 +171,7 @@ pill; preserve the compact bar height and compensated touch target.
 ## Archives (2.1)
 
 Settings Archives reuses scoped data and responsive cards with wrapping contact fields; demo archiving retains the fictional record with archived=true and removes it from the active filter and summary. Never connect the demo to live archive endpoints.
+
+## Startup loading alignment (2.1.1)
+
+Loading wraps its message in a span with centered text and a non-shrinking spinner. The startup shell uses 24px outer padding and a full-width vertical Loading row with no extra horizontal padding, keeping the spinner and wrapped message centered on phones. Inline/panel loading keeps its existing row layout. The synthetic AdminReview preview=startup renders these exact components without authentication or live API calls. This is CSS/markup only: no API, permission or business-event change.
