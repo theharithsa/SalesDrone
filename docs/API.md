@@ -234,3 +234,21 @@ GET /api/v1/archived-leads returns a Lead page with limit (1–100, default 30) 
 ### Admin lead-data reset
 
 GET /lead-data-reset returns active/job status. POST /lead-data-reset/preview returns an owner-bound, ten-minute preview and approximate counts. POST /lead-data-reset requires previewId, confirmation=DELETE ALL LEADS and UUID Idempotency-Key. POST /lead-data-reset/{id}/resume requires expectedVersion and only accepts Blocked work. All are Google/App Check Admin-only with members:write; PAT denied. Accepted jobs are not cancellable; the worker waits five minutes then cleans bounded batches. Domain mutations return 503 LEAD_DATA_RESET while active. Old request results become expired tombstones and return 409 RESET_REQUEST_EXPIRED. See [scope and recovery](LEAD-DATA-MANAGEMENT.md).
+
+
+### Field visibility (contract 1.18.0)
+
+`PATCH /api/v1/field-options` accepts `hiddenFields` for standard field IDs except
+`name` and `enquiryDate`, including `phone`, `email`, `countryCode`, `stage`,
+`comments` and workflow/report labels. At most 25 entries are accepted; unknown
+IDs and hiding both `phone` and `email` return 400. This replaces the visibility
+list, so use `[]` to restore all fields. Admin Google/App Check and `members:write`
+remain required; PAT writes remain denied. `expectedVersion` rejects stale saves.
+
+Visibility removes controls from enquiry entry and available configurable columns,
+filters and new reports where applicable. It does not erase lead values, alter API
+lead fields, hide every record header, or disable workflow/suppression actions.
+New enquiries with hidden `stage` still default to `New`. Hidden `countryCode`
+uses the first configured code in the manual form; edits retain existing values.
+Name/date and a phone or email remain required by the unchanged lead-save policy.
+Settings changes retain the existing transactional key-only audit/outbox.

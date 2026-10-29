@@ -382,7 +382,7 @@
       ],
       "details": [
         "Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.",
-        "Manage fields includes editable built-in labels and supported required/active behavior, adding custom fields with stable IDs and types, and editing/retiring existing definitions. Dropdown choices manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.",
+        "Manage fields includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. Name, enquiry date and at least one contact field remain available. Dropdown choices manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.",
         "Reports & lead access controls exports and assigned-only visibility for non-admins. People & permissions manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.",
         "The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.",
         "The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it."
@@ -394,9 +394,10 @@
         ],
         [
           "Can I remove a field without losing historical data?",
-          "Supported retirement/active controls hide it from future capture while preserving existing records. Review the per-control limits before changing required fields or types."
+          "Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name, Enquiry date and at least one of Phone number or Email remain available so new enquiries can still be saved. Removing a form field does not disable contact restrictions or workflow actions."
         ]
-      ]
+      ],
+      "screenshot": "field-manager-demo.jpg"
     },
     {
       "id": "book-mode",

@@ -240,3 +240,13 @@ GET /archived-leads is a read-only scoped list: existing normalized HTTP RED met
 ### Global lead reset
 
 leadDataResets.committed uses the backend provider and server-confirmed authority. Job state commits include numeric reset_started/reset_completed/reset_blocked transition counts. Existing per-domain records.deleted summaries cover acknowledged deletion batches without names, titles or file paths. Worker/HTTP RED metrics/logs/traces remain bounded; no new labels or tenant settings. Audit and telemetry outbox records are retained. Observe completion separately from POST acceptance; never execute a production reset simply to generate tenant evidence.
+
+
+## Field visibility and Settings layout (2.2)
+
+Expanded hiddenFields choices reuse the existing Admin PATCH /field-options RED
+metrics, request traces, sanitized logs and atomic settings.audit.committed outbox.
+The change key remains hiddenFields; no labels, contact values or new dimensions
+are exported. No-op/denied/stale/rolled-back saves produce no committed change.
+Text spacing and icon rendering produce no domain event. Production deployment
+and tenant verification remain separate from configuration-preview interactions.

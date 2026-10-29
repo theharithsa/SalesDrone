@@ -172,3 +172,15 @@ Chart day name, keyboard focus and existing local day-selection behavior.
 ### Startup loading
 
 The initial workspace loading state centers the brand, spinner and status text. The spinner sits above the message; the message remains centered when wrapping at mobile widths. Startup uses 24px shell padding and no nested horizontal loading padding. Inline/panel loaders retain their row layout with centered message text. This is presentation only; loading status semantics and reduced-motion handling are unchanged.
+
+
+## Settings field rows (2.2)
+
+Field titles and supporting descriptions occupy separate lines with a 4px gap.
+Use a shrinkable text column and trailing edit/delete icon targets at every width;
+long names wrap within the text column. Explanatory notices stack title and body.
+Inline field editors span the row. Delete and restore actions have accessible names
+and hover titles; name/date and the last available contact field show their
+minimum-save requirement rather than silently allowing an unusable enquiry form.
+
+Shared action buttons use a unitless line height (20/14) so multiline labels grow with enlarged text instead of overlapping at the former fixed 20px height.

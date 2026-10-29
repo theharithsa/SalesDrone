@@ -37,12 +37,9 @@ const values = z
     'Remove duplicate values',
   );
 export const OPTIONAL_LEAD_FIELDS = [
-  'source',
-  'company',
-  'location',
-  'zone',
-  'legacyStatus',
-  'initialDiscussion',
+  ...Object.keys(DEFAULT_FIELD_LABELS).filter(
+    (key) => !['name', 'enquiryDate'].includes(key),
+  ),
   'followUp1',
   'followUp2',
   'followUp3',
@@ -93,7 +90,15 @@ export const FieldOptionsPatch = z
       .strict()
       .optional(),
     customFields: z.array(CustomField).max(100).optional(),
-    hiddenFields: z.array(z.enum(OPTIONAL_LEAD_FIELDS)).max(10).optional(),
+    hiddenFields: z
+      .array(z.enum(OPTIONAL_LEAD_FIELDS))
+      .max(25)
+      .refine(
+        (fields) => !(fields.includes('phone') && fields.includes('email')),
+        'Keep Phone number or Email available for contact details',
+      )
+      .describe('Remove standard fields from enquiry entry and configurable columns. Name and enquiryDate stay visible; at least one of phone or email must remain. Existing records and workflow controls are preserved.')
+      .optional(),
     values: z
       .object(
         Object.fromEntries(

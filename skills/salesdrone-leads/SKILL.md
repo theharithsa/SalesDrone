@@ -156,3 +156,7 @@ GET /archived-leads lists only archived records using the same current effective
 ## Lead-data reset (2.1)
 
 Global reset removes active and archived leads and related history/files/imports/dedupe/cache data after the Admin confirms the exact scope. Workspace-settings owns the reset endpoints. guardLeadData reads a common lock in transactions; lead mutation routes reject 503 during cleanup. Never bypass it for background or integration writes. Old request tombstones return 409 RESET_REQUEST_EXPIRED, preventing replay resurrection.
+
+## Configured form visibility (2.2)
+
+LeadForm respects hidden phone/email/countryCode/stage/comments as well as earlier optional fields. Keep required name/date and at least one visible contact input; only require the remaining contact input when no retained alternate contact satisfies the existing record. Hidden keys are omitted on edits, preserving saved values. New manual records use the existing New stage default and configured first country code even when those controls are removed. Lead normalization, dedupe, suppression/review and legacy import rules remain unchanged. Field retirement never erases historical records or disables dedicated workflow actions. Backend field-options policy prevents hiding both contact inputs; tests cover preservation, contactless-save rejection and restoration.

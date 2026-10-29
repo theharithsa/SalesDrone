@@ -57,6 +57,9 @@ export function LeadForm({
           delete d['custom:' + f.id];
         }
         if (lead && !d.comments) delete d.comments;
+        // Hidden country-code controls still use the configured default for new contacts.
+        if (!lead && !visible('countryCode'))
+          d.countryCode = choices.countryCode[0];
         submit.run({
           ...d,
           customFields,
@@ -103,19 +106,22 @@ export function LeadForm({
             autoComplete="name"
           />
         </label>
-        <label className="material-field">
-          <span className="field-label">{labelFor(config, 'phone')}</span>
-          <input
-            name="phone"
-            type="tel"
-            maxLength={40}
-            defaultValue={lead?.phone}
-            autoComplete="tel"
-          />
-          {lead?.originalPhone ? (
-            <small>Original: {lead.originalPhone}</small>
-          ) : null}
-        </label>
+        {visible('phone') ? (
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'phone')}</span>
+            <input
+              name="phone"
+              required={!lead?.needsReview && !visible('email') && !lead?.email}
+              type="tel"
+              maxLength={40}
+              defaultValue={lead?.phone}
+              autoComplete="tel"
+            />
+            {lead?.originalPhone ? (
+              <small>Original: {lead.originalPhone}</small>
+            ) : null}
+          </label>
+        ) : null}
         {visible('company') ? (
           <label className="material-field">
             <span className="field-label">{labelFor(config, 'company')}</span>
@@ -179,14 +185,16 @@ export function LeadForm({
             </datalist>
           </label>
         ) : null}
-        <label className="material-field">
-          <span className="field-label">{labelFor(config, 'stage')}</span>
-          <select name="stage" defaultValue={lead?.stage || 'New'}>
-            {withCurrent(choices.stage, lead?.stage).map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </select>
-        </label>
+        {visible('stage') ? (
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'stage')}</span>
+            <select name="stage" defaultValue={lead?.stage || 'New'}>
+              {withCurrent(choices.stage, lead?.stage).map((v) => (
+                <option key={v}>{v}</option>
+              ))}
+            </select>
+          </label>
+        ) : null}
         {visible('initialDiscussion') ? (
           <label className="material-field full">
             <span className="field-label">
@@ -203,27 +211,32 @@ export function LeadForm({
       </div>
 
       <div className="form-grid">
-        <label className="material-field">
-          <span className="field-label">{labelFor(config, 'email')}</span>
-          <input
-            name="email"
-            type="email"
-            maxLength={200}
-            defaultValue={lead?.email}
-          />
-        </label>
-        <label className="material-field">
-          <span className="field-label">{labelFor(config, 'countryCode')}</span>
-          <select
-            name="countryCode"
-            defaultValue={lead?.countryCode || choices.countryCode[0]}
-          >
-            {withCurrent(choices.countryCode, lead?.countryCode).map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </select>
-        </label>
-        {lead ? (
+        {visible('email') ? (
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'email')}</span>
+            <input
+              name="email"
+              required={!lead?.needsReview && !visible('phone') && !lead?.phone}
+              type="email"
+              maxLength={200}
+              defaultValue={lead?.email}
+            />
+          </label>
+        ) : null}
+        {visible('countryCode') ? (
+          <label className="material-field">
+            <span className="field-label">{labelFor(config, 'countryCode')}</span>
+            <select
+              name="countryCode"
+              defaultValue={lead?.countryCode || choices.countryCode[0]}
+            >
+              {withCurrent(choices.countryCode, lead?.countryCode).map((v) => (
+                <option key={v}>{v}</option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        {lead && visible('comments') ? (
           <label className="material-field full">
             <span className="field-label">Add a comment</span>
             <textarea

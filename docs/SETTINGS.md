@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.1.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.2.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -178,13 +178,15 @@ Shared forms, table/filter labels and report headers use the configured names af
 
 **Example:** Rename Sector to Business segment without changing the zone API key.
 
-### Optional field visibility
+### Field visibility
 
 **Default:** Visible.
 
-Hide supported optional fields from the enquiry UI. Essential identity/workflow requirements remain protected.
+Use the trash icon to remove standard fields from enquiry entry and configurable columns, filters and new reports where applicable. Use the restore icon to bring them back. Customer name and Enquiry date stay required; keep Phone number or Email available. A disabled delete control explains the minimum requirement.
 
-Hiding is not deletion or a substitute for authorization. Historical records remain; hidden fields cannot be selected in a new Excel report.
+Existing records and values are preserved. This is workspace-wide presentation configuration, not authorization or removal of sales-stage, call, assignment, suppression or review workflows. Removing Country code uses the first configured country code for new manual enquiries; existing contacts retain their country code. A hidden Sales stage defaults new enquiries to New.
+
+**Example:** Remove Phone number when you collect Email instead, or remove Sector and restore it later.
 
 ### Custom field name, type and required flag
 

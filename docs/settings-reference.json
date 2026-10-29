@@ -161,11 +161,11 @@
         },
         {
           "id": "visibility",
-          "label": "Optional field visibility",
+          "label": "Field visibility",
           "default": "Visible",
-          "description": "Hide supported optional fields from the enquiry UI. Essential identity/workflow requirements remain protected.",
-          "effect": "Hiding is not deletion or a substitute for authorization. Historical records remain; hidden fields cannot be selected in a new Excel report.",
-          "example": ""
+          "description": "Use the trash icon to remove standard fields from enquiry entry and configurable columns, filters and new reports where applicable. Use the restore icon to bring them back. Customer name and Enquiry date stay required; keep Phone number or Email available. A disabled delete control explains the minimum requirement.",
+          "effect": "Existing records and values are preserved. This is workspace-wide presentation configuration, not authorization or removal of sales-stage, call, assignment, suppression or review workflows. Removing Country code uses the first configured country code for new manual enquiries; existing contacts retain their country code. A hidden Sales stage defaults new enquiries to New.",
+          "example": "Remove Phone number when you collect Email instead, or remove Sector and restore it later."
         },
         {
           "id": "customDefinition",

@@ -29,6 +29,8 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'field-manager-mobile-demo.jpg',
+  'field-manager-demo.jpg',
   'startup-mobile-demo.jpg',
   'archives-demo.jpg',
   'archives-mobile.jpg',

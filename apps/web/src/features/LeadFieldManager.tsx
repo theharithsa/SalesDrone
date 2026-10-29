@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, RotateCcw, X } from 'lucide-react';
 import {
   CustomField,
   FieldOptions,
-  optionalLeadFields,
+  fieldRemovalReason,
   standardFieldLabels,
   labelFor,
 } from '../lib/field-options';
@@ -124,6 +124,7 @@ export default function LeadFieldManager({
               <button
                 className="icon-button"
                 aria-label={'Edit ' + f.label}
+                title={'Edit ' + f.label}
                 disabled={busy || !!editing || !!standardEditing}
                 onClick={() => open(f)}
               >
@@ -131,7 +132,8 @@ export default function LeadFieldManager({
               </button>
               <button
                 className="icon-button danger"
-                aria-label={'Remove ' + f.label}
+                aria-label={'Delete ' + f.label + ' from form'}
+                title={'Delete ' + f.label + ' from form'}
                 disabled={busy || !!editing || !!standardEditing}
                 onClick={() =>
                   void update({
@@ -263,118 +265,137 @@ export default function LeadFieldManager({
         </form>
       ) : null}
       <div className="settings-notice">
-        <strong>Essential fields stay available</strong>
+        <strong>Your form, your fields</strong>
         <p>
-          Rename built-in fields to suit your team. Their data types and
-          workflow roles stay the same. Essential fields remain available for
-          contact validation and the sales workflow.
+          Keep a name, enquiry date and at least one contact field. Removed fields
+          keep their saved data; workflow controls stay available.
         </p>
       </div>
       <h3 className="settings-group-title">Standard fields</h3>
       <div className="standard-field-list">
-        {Object.entries(standardFieldLabels).map(([key, originalLabel]) => (
-          <div className="settings-field-row" key={key}>
-            {standardEditing?.key === key ? (
-              <form
-                className="standard-label-editor"
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (
-                    await update({
-                      labels: {
-                        ...config.labels,
-                        [key]: standardEditing.label,
-                      },
-                    })
-                  )
-                    setStandardEditing(null);
-                }}
-              >
-                <label>
-                  Field name
-                  <input
-                    autoFocus
-                    required
-                    maxLength={80}
-                    value={standardEditing.label}
-                    disabled={busy}
-                    onChange={(e) =>
-                      setStandardEditing({ key, label: e.target.value })
-                    }
-                  />
-                </label>
-                <div className="form-actions">
-                  <button
-                    type="button"
-                    className="text-button"
-                    disabled={busy}
-                    onClick={() =>
-                      setStandardEditing({ key, label: originalLabel })
-                    }
-                  >
-                    Original name
-                  </button>
-                  <button
-                    type="button"
-                    className="button"
-                    disabled={busy}
-                    onClick={() => setStandardEditing(null)}
-                  >
-                    Cancel
-                  </button>
-                  <button className="button primary" disabled={busy}>
-                    {busy ? 'Saving…' : 'Save name'}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <>
-                <span>
-                  <strong>{labelFor(config, key)}</strong>
-                  <small>
-                    {labelFor(config, key) !== originalLabel
-                      ? `Originally ${originalLabel} · `
-                      : ''}
-                    {config.hiddenFields.includes(key)
-                      ? 'Hidden from entry and table'
-                      : 'Built-in field'}
-                  </small>
-                </span>
-                <div className="field-row-actions">
-                  <button
-                    className="icon-button"
-                    aria-label={'Edit ' + labelFor(config, key)}
-                    disabled={busy || !!editing || !!standardEditing}
-                    onClick={() => {
-                      setStandardEditing({ key, label: labelFor(config, key) });
-                      setError('');
-                      setMessage('');
-                    }}
-                  >
-                    <Pencil size={17} />
-                  </button>
-                  {key in optionalLeadFields ? (
+        {Object.entries(standardFieldLabels).map(([key, originalLabel]) => {
+          const hidden = config.hiddenFields.includes(key);
+          const reason = fieldRemovalReason(config, key);
+          const action = hidden
+            ? 'Restore ' + labelFor(config, key) + ' to form'
+            : 'Delete ' + labelFor(config, key) + ' from form';
+          return (
+            <div className="settings-field-row" key={key}>
+              {standardEditing?.key === key ? (
+                <form
+                  className="standard-label-editor"
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (
+                      await update({
+                        labels: {
+                          ...config.labels,
+                          [key]: standardEditing.label,
+                        },
+                      })
+                    )
+                      setStandardEditing(null);
+                  }}
+                >
+                  <label>
+                    Field name
+                    <input
+                      autoFocus
+                      required
+                      maxLength={80}
+                      value={standardEditing.label}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setStandardEditing({ key, label: e.target.value })
+                      }
+                    />
+                  </label>
+                  <div className="form-actions">
                     <button
-                      className="button"
-                      disabled={busy || !!editing || !!standardEditing}
+                      type="button"
+                      className="text-button"
+                      disabled={busy}
                       onClick={() =>
-                        void update({
-                          hiddenFields: config.hiddenFields.includes(key)
-                            ? config.hiddenFields.filter((k) => k !== key)
-                            : [...config.hiddenFields, key],
-                        })
+                        setStandardEditing({ key, label: originalLabel })
                       }
                     >
-                      {config.hiddenFields.includes(key)
-                        ? 'Restore field'
-                        : 'Remove field'}
+                      Original name
                     </button>
-                  ) : null}
-                </div>
-              </>
-            )}
-          </div>
-        ))}
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={busy}
+                      onClick={() => setStandardEditing(null)}
+                    >
+                      Cancel
+                    </button>
+                    <button className="button primary" disabled={busy}>
+                      {busy ? 'Saving…' : 'Save name'}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <span>
+                    <strong>{labelFor(config, key)}</strong>
+                    <small id={'field-description-' + key}>
+                      {labelFor(config, key) !== originalLabel
+                        ? `Originally ${originalLabel} · `
+                        : ''}
+                      {hidden
+                        ? 'Removed from form and table'
+                        : reason || 'Built-in field'}
+                    </small>
+                  </span>
+                  <div className="field-row-actions">
+                    <button
+                      className="icon-button"
+                      aria-label={'Edit ' + labelFor(config, key)}
+                      title={'Edit ' + labelFor(config, key)}
+                      disabled={busy || !!editing || !!standardEditing}
+                      onClick={() => {
+                        setStandardEditing({ key, label: labelFor(config, key) });
+                        setError('');
+                        setMessage('');
+                      }}
+                    >
+                      <Pencil size={17} />
+                    </button>
+                    <span title={reason || undefined}>
+                      <button
+                        className={
+                          hidden
+                            ? 'icon-button'
+                            : 'icon-button danger'
+                        }
+                        aria-describedby={'field-description-' + key}
+                        aria-label={action}
+                        title={action}
+                        disabled={
+                          busy || !!editing || !!standardEditing ||
+                          !!reason
+                        }
+                        onClick={() =>
+                          void update({
+                            hiddenFields: hidden
+                              ? config.hiddenFields.filter((k) => k !== key)
+                              : [...config.hiddenFields, key],
+                          })
+                        }
+                      >
+                        {hidden ? (
+                          <RotateCcw size={17} />
+                        ) : (
+                          <Trash2 size={17} />
+                        )}
+                      </button>
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
       <p className="field-hint">
         Removing a field preserves its existing values and history. Standard

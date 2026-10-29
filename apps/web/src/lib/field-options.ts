@@ -33,14 +33,16 @@ export type CustomField = {
   required: boolean;
   deleted: boolean;
 };
-export const optionalLeadFields = {
-  source: 'Enquiry source',
-  company: 'Company name',
-  location: 'City / location',
-  zone: 'Sector',
-  legacyStatus: 'Enquiry status',
-  initialDiscussion: 'Initial discussion',
-};
+export function fieldRemovalReason(config: FieldOptions, key: string) {
+  if (key === 'name' || key === 'enquiryDate')
+    return 'Required to save an enquiry';
+  if (
+    (key === 'phone' && config.hiddenFields.includes('email')) ||
+    (key === 'email' && config.hiddenFields.includes('phone'))
+  )
+    return 'Keep at least one contact field: Phone number or Email';
+  return '';
+}
 export type FieldOptions = {
   labels?: Record<string, string>;
   customFields: CustomField[];

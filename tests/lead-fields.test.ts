@@ -90,3 +90,16 @@ test('renamed header labels are detected without changing legacy workbook aliase
   );
   assert.equal(detectHeaderRow([[], ['Ｃｏｎｔａｃｔ']], ['Contact']), 1);
 });
+
+
+import { defaultFieldOptions, fieldRemovalReason } from '../apps/web/src/lib/field-options.ts';
+test('field removal guards preserve required identity and one contact while permitting restoration', () => {
+  assert.ok(fieldRemovalReason(defaultFieldOptions, 'name'));
+  assert.ok(fieldRemovalReason(defaultFieldOptions, 'enquiryDate'));
+  assert.equal(fieldRemovalReason(defaultFieldOptions, 'phone'), '');
+  const phoneHidden = {...defaultFieldOptions, hiddenFields: ['phone']};
+  assert.ok(fieldRemovalReason(phoneHidden, 'email'));
+  assert.equal(fieldRemovalReason(phoneHidden, 'phone'), '');
+  assert.ok(fieldRemovalReason({...defaultFieldOptions, hiddenFields: ['email']}, 'phone'));
+  assert.equal(fieldRemovalReason(phoneHidden, 'stage'), '');
+});

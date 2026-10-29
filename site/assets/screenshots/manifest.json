@@ -328,5 +328,25 @@
     "capturePixels": "390 x 844",
     "version": "2.1.1",
     "review": "Visually reviewed actual Brand and Loading components in dev-only startup preview. Centered phone composition; synthetic state, no authentication/API/customer data. Screenshot review only, no local test suite or device/Safari certification."
+  },
+  {
+    "file": "field-manager-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "9e6075796cb8532e559e777b3916c7a7db43c7ce21aab613e1239d529612c434",
+    "capturedAt": "2026-10-29T14:58:45.172501+00:00",
+    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 844",
+    "version": "2.2.0",
+    "review": "Visually and privacy reviewed. Real Settings components with fictional in-memory AdminReview state and one synthetic Product interest field; no live API calls, customer data or credentials. Browser viewport only; not physical-device or Safari certification."
+  },
+  {
+    "file": "field-manager-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "01928cba101c4b13f8a17fc02285915af8ff1ae661bfd81ee2ed09bdc7322486",
+    "capturedAt": "2026-10-29T14:58:45.427589+00:00",
+    "viewport": "1440 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 844",
+    "version": "2.2.0",
+    "review": "Visually and privacy reviewed. Real Settings components with fictional in-memory AdminReview state and one synthetic Product interest field; no live API calls, customer data or credentials. Browser viewport only; not physical-device or Safari certification."
   }
 ]
