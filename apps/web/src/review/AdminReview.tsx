@@ -3,7 +3,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import SettingsPage from '../features/SettingsPage';
 import ImportPage from '../features/ImportPage';
-import { Modal } from '../components/UI';
+import { Brand, Loading, Modal } from '../components/UI';
 import { LeadForm, CallForm, TaskForm } from '../components/Forms';
 import TaskEditForm from '../components/TaskEditForm';
 import { demoData } from '../lib/demo';
@@ -243,6 +243,13 @@ function AdminReview() {
     },
     [config],
   );
+  if (new URLSearchParams(window.location.search).get('preview') === 'startup')
+    return (
+      <div className="startup">
+        <Brand full />
+        <Loading />
+      </div>
+    );
   return (
     <>
       <div className="review-admin-banner">

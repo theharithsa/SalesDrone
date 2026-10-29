@@ -168,3 +168,7 @@ The outreach chart's Day select uses a rounded filled surface, vertically center
 value and reserved right padding for the shared chevron. Keep the full date on one
 line; allow the caption metrics to wrap independently. Retain the native select,
 Chart day name, keyboard focus and existing local day-selection behavior.
+
+### Startup loading
+
+The initial workspace loading state centers the brand, spinner and status text. The spinner sits above the message; the message remains centered when wrapping at mobile widths. Startup uses 24px shell padding and no nested horizontal loading padding. Inline/panel loaders retain their row layout with centered message text. This is presentation only; loading status semantics and reduced-motion handling are unchanged.

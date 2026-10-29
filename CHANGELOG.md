@@ -8,6 +8,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.1.1] - 2026-10-29
+
+### Changed
+- Center the workspace loading message on mobile and stack the startup spinner above the text without nested horizontal padding.
+
 ## [2.1.0] - 2026-10-29
 
 ### Changed

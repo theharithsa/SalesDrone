@@ -243,6 +243,11 @@
           "id": "THEME-CONTROL-2.0.1",
           "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320\u20131920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
           "fixture": "isolated synthetic browser; node scripts/review-theme.mjs; no account writes"
+        },
+        {
+          "id": "INTERFACE-LOADING-01",
+          "expected": "Initial startup spinner and wrapped workspace-loading message stay centered on mobile. Inline and panel loading retain row alignment; role=status is preserved.",
+          "fixture": "synthetic AdminReview preview=startup; no live authentication or customer data"
         }
       ]
     },

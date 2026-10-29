@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.1.0 adds Settings Archives and Admin-only lead-data management.
+> v2.1.1 centers the workspace loading message on mobile; v2.1.0 introduced Archives and Admin lead-data management.
 > See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.1.0 · MIT**
+**Part of Avinya Enterprises · v2.1.1 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -206,3 +206,7 @@ Settings now includes a scoped Archives view. Admins can review a workspace-wide
 ![Read-only Archives Settings with fictional records](site/assets/screenshots/archives-demo.jpg)
 
 ![Unconfirmed lead-data reset review with synthetic counts; no deletion](site/assets/screenshots/lead-data-reset-demo.jpg)
+
+The initial workspace loading screen centers its spinner and status text on phones.
+
+<img src="site/assets/screenshots/startup-mobile-demo.jpg" alt="Centered workspace loading state; synthetic preview only" width="320">

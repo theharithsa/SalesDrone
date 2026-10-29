@@ -29,6 +29,7 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'startup-mobile-demo.jpg',
   'archives-demo.jpg',
   'archives-mobile.jpg',
   'lead-data-reset-demo.jpg',
