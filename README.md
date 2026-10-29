@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.2.0 improves Settings text hierarchy and field delete/restore controls, retaining the minimum enquiry details.
+> v2.2.1 aligns mobile lead headers and outreach chart axes, alongside the Settings text and field-control improvements.
 > See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.2.0 · MIT**
+**Part of Avinya Enterprises · v2.2.1 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -137,7 +137,7 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=85f6447a44a9)
+![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=3d99d25324ac)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
@@ -179,7 +179,7 @@ The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.jso
 
 Personal desktop display zoom lives in Settings → Appearance & time. The compact lead header keeps identity, score, stage and assignment together; rings distinguish a known zero from missing evidence.
 
-![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/lead-workspace-demo.jpg)
+![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/lead-workspace-demo.jpg?sha=3d99d25324ac)
 
 Batch edit up to 25 explicitly selected leads with a before/after review and atomic version checks. Lead pages now include a Files tab for private Firebase Storage attachments, with upload progress, retry and forced downloads. See [file architecture](docs/ATTACHMENTS.md) and [the product handbook](docs/PRODUCT-GUIDE.md).
 
@@ -219,3 +219,9 @@ icons. Keep name, enquiry date and one contact method; removed fields retain the
 saved values.
 
 <img src="site/assets/screenshots/field-manager-mobile-demo.jpg" alt="Fictional mobile field settings with edit, delete and restore behavior" width="390">
+
+### Aligned phone lead controls and chart axes
+
+Stage and assignment stack on compact lead surfaces. Outreach tick labels share the chart gridline positions.
+
+<img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional administrator lead header with aligned full-width controls" width="412">

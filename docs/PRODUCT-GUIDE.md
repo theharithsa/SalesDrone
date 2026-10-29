@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.2.0
+Version 2.2.1
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -441,6 +441,8 @@ Reports & lead access controls exports and assigned-only visibility for non-admi
 The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.
 
 The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.
+
+On phones, lead details stack Sales stage and Assigned to controls with matching labels and widths. Dashboard outreach labels align with their horizontal gridlines; use the metric switch and Day selector to inspect values.
 
 ![Settings: complete control reference — synthetic demo only](../site/assets/screenshots/field-manager-demo.jpg)
 

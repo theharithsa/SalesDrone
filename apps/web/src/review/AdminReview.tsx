@@ -3,7 +3,11 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import SettingsPage from '../features/SettingsPage';
 import ImportPage from '../features/ImportPage';
-import { Brand, Loading, Modal } from '../components/UI';
+import { Avatar, Brand, LeadName, Loading, Modal } from '../components/UI';
+import LeadBlade from '../components/LeadBlade';
+import Assignment from '../components/Assignment';
+import { ScoreBadge } from '../components/LeadScore';
+import { ChevronLeft, Pencil } from 'lucide-react';
 import { LeadForm, CallForm, TaskForm } from '../components/Forms';
 import TaskEditForm from '../components/TaskEditForm';
 import { demoData } from '../lib/demo';
@@ -143,6 +147,14 @@ const formSamples = demoData();
 let resetPreview = false;
 let previewResetJob: any = null;
 function AdminReview() {
+  const [headerLead, setHeaderLead] = useState({
+    ...formSamples.leads[0],
+    id: 'synthetic-header',
+    name: 'Asha Raman',
+    company: 'Northstar Buildworks',
+    assignedToUid: null as string | null,
+    stage: 'Won',
+  });
   const [formPreview, setFormPreview] = useState('');
   const previewSave = async () => {
     throw Error('Form preview only. Nothing is saved.');
@@ -243,6 +255,38 @@ function AdminReview() {
     },
     [config],
   );
+  const headerRequest = useCallback(async (path: string, method = 'GET', body?: any) => {
+    if (path === '/leads/synthetic-header/assignment' && method === 'PATCH') {
+      setHeaderLead((old) => ({ ...old, assignedToUid: body.assignedToUid }));
+      return {};
+    }
+    return request(path, method, body);
+  }, [request]);
+  if (new URLSearchParams(window.location.search).get('preview') === 'lead-header')
+    return <>
+      <div className="review-admin-banner">Fictional lead header · in-memory preview only</div>
+      <LeadBlade
+        fullPage={!new URLSearchParams(window.location.search).has('overlay')}
+        onClose={() => { window.location.href = '/design-admin.html'; }}
+        onExpand={() => { window.location.href = '/design-admin.html?preview=lead-header'; }}
+        toolbar={<>
+          <button className="text-button" aria-label="Back to leads"><ChevronLeft size={16}/><span className="lead-action-label">Back to leads</span></button>
+          <button className="button detail-edit-button" aria-label="Edit lead"><Pencil size={16}/><span className="lead-action-label">Edit lead</span></button>
+        </>}
+        identity={<div className="detail-profile">
+          <Avatar name={headerLead.name}/><h2><LeadName name={headerLead.name} detail/></h2><p>{headerLead.company}</p>
+          <div className="lead-header-score"><span>Lead score</span><ScoreBadge/></div>
+        </div>}
+        workflow={<>
+          <div className="detail-section"><h3>Sales stage</h3>
+            <select aria-label="Update lead stage" value={headerLead.stage} onChange={e => setHeaderLead(old=>({...old,stage:e.target.value}))}>
+              {config.values.stage.map(stage=><option key={stage}>{stage}</option>)}
+            </select>
+          </div>
+          <Assignment compact lead={headerLead} request={headerRequest} onSaved={async()=>{}}/>
+        </>}
+      ><p className="notice">Synthetic layout preview. No customer records or live API calls.</p></LeadBlade>
+    </>;
   if (new URLSearchParams(window.location.search).get('preview') === 'startup')
     return (
       <div className="startup">

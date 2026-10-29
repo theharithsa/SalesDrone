@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "version": "2.2.1",
+  "summary": "Resolve issues #66 and #67: align mobile lead workflow controls and outreach chart Y-axis. Complete the approved production rollout including v2.2.0 Settings changes after cancelling its deployment before publication.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-leads",
+    "salesdrone-dashboard",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "docs/DESIGN-SYSTEM.md",
+    "docs/MATERIAL-3-REVIEW.md",
+    "docs/PRODUCT-GUIDE.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Presentation-only header/axis correction; the merged field-options 1.18.0 contract remains unchanged.",
+    "contractVersion": "1.18.0",
+    "permissions": "Existing membership, Google/App Check, PAT and assigned scope unchanged.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "unchanged",
+      "reason": "Header/chart geometry changes no telemetry payload, aggregate or server write. Existing RUM, HTTP/worker signals and committed stage/assignment events remain authoritative.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "unchanged",
+      "reason": "Header/chart geometry changes no telemetry payload, aggregate or server write. Existing RUM, HTTP/worker signals and committed stage/assignment events remain authoritative.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "unchanged",
+      "reason": "Header/chart geometry changes no telemetry payload, aggregate or server write. Existing RUM, HTTP/worker signals and committed stage/assignment events remain authoritative.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "unchanged",
+      "reason": "Header/chart geometry changes no telemetry payload, aggregate or server write. Existing RUM, HTTP/worker signals and committed stage/assignment events remain authoritative.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "unchanged",
+      "reason": "Header/chart geometry changes no telemetry payload, aggregate or server write. Existing RUM, HTTP/worker signals and committed stage/assignment events remain authoritative.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Focused fictional browser review: Admin lead header 320/390/412/480/600/768/1440px; trend axis 320/412/768/1440/1920px light/dark with tick/gridline centers within 0.01px. Both metric switches reviewed. No full local suites rerun, production writes or physical-device/Safari certification. Required CI and deployment artifacts remain separate.",
+  "screenshots": [
+    "lead-header-mobile-demo.jpg",
+    "outreach-mobile-demo.jpg",
+    "outreach-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "lead-overlay-demo.jpg"
+  ],
+  "pendingDesignApproval": false
+}

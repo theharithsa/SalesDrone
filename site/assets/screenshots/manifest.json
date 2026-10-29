@@ -100,26 +100,6 @@
     "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
   },
   {
-    "file": "lead-overlay-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "a187913ee838c152d85ec30151f8416166bc48e4a5ffeb0a4a10664eddcfe7bf",
-    "capturedAt": "2026-10-26T16:39:39.403Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
-  },
-  {
-    "file": "lead-workspace-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "85f6447a44a90bee7d7b2bdae46291e1b0b8ed9b5a649bc93e531004933592a9",
-    "capturedAt": "2026-10-26T16:39:40.290Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
-  },
-  {
     "file": "activity-demo.jpg",
     "mode": "synthetic-demo",
     "sha256": "85f6447a44a90bee7d7b2bdae46291e1b0b8ed9b5a649bc93e531004933592a9",
@@ -348,5 +328,55 @@
     "capturePixels": "1440 x 844",
     "version": "2.2.0",
     "review": "Visually and privacy reviewed. Real Settings components with fictional in-memory AdminReview state and one synthetic Product interest field; no live API calls, customer data or credentials. Browser viewport only; not physical-device or Safari certification."
+  },
+  {
+    "file": "lead-header-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "6c328aee2e224dce7815d7b3c1ccd393df044dcd925c1d177488337f8171f0d1",
+    "capturedAt": "2026-10-29T16:00:09.525523+00:00",
+    "viewport": "412 x 892 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "412 x 892",
+    "version": "2.2.1",
+    "review": "Visually/privacy reviewed. Isolated real-component Admin header with fictional in-memory assignment and stage controls. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+  },
+  {
+    "file": "outreach-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "1de47d5a7985b817a31b311c0c366897167e36da129d8d50e6cd6a33363243af",
+    "capturedAt": "2026-10-29T16:00:09.733406+00:00",
+    "viewport": "412 x 892 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "412 x 892",
+    "version": "2.2.1",
+    "review": "Visually/privacy reviewed. Guest dashboard outreach chart with synthetic count-derived data; Y-axis aligned to gridlines. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+  },
+  {
+    "file": "outreach-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "add125a3b19816511359f7165fefbf6364ece594144525ed91fa69d756482493",
+    "capturedAt": "2026-10-29T16:00:09.940567+00:00",
+    "viewport": "1440 x 892 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 892",
+    "version": "2.2.1",
+    "review": "Visually/privacy reviewed. Guest dashboard outreach chart with synthetic count-derived data; Y-axis aligned to gridlines. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+  },
+  {
+    "file": "lead-workspace-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "3d99d25324acc682957a525414819702cddeeeec0703632ddde2575d2536ba13",
+    "capturedAt": "2026-10-29T16:00:10.219977+00:00",
+    "viewport": "1440 x 892 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 892",
+    "version": "2.2.1",
+    "review": "Visually/privacy reviewed. Fictional guest full lead page; no live mutation. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+  },
+  {
+    "file": "lead-overlay-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "f258ce25d18f66d9529cdf47a815db92160ebe778bc7662fdd075373565f7d7e",
+    "capturedAt": "2026-10-29T16:00:10.405010+00:00",
+    "viewport": "1440 x 892 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 892",
+    "version": "2.2.1",
+    "review": "Visually/privacy reviewed. Fictional guest inspector showing responsive workflow and score placement; no live mutation. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
   }
 ]

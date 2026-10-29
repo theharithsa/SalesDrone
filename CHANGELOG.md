@@ -10,6 +10,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.2.1] - 2026-10-29
+
+### Changed
+- Align lead-header stage and assignment labels/controls; remove inherited section padding/divider and stack workflow fields on compact surfaces.
+- Align outreach chart Y-axis labels with SVG gridlines at every width, reserve a dynamic label gutter and keep date labels with the plot.
+- Include the v2.2.0 Settings improvements in the production rollout; its workflow was cancelled before publication to incorporate the additional review feedback.
+
 ## [2.2.0] - 2026-10-29
 
 ### Changed

@@ -106,3 +106,7 @@ fractional CDP width and selector quoting were corrected; they were tooling erro
 not recorded as passing coverage. Full local test suites were not rerun.
 Backend/emulator regression cases are updated for required CI execution; local
 preview behavior does not prove backend persistence or production behavior.
+
+## Lead header and outreach axis — local 2.2.1
+
+The human supplied Samsung S26 Ultra screenshots; those private examples are not public fixtures. A fictional real-component Admin header was measured at 320/390/412/480/600/768/1440px. Compact stage/assignee selects shared the same left edge/width; wide controls shared the same Y coordinate; the obsolete stage divider measured zero. Outreach HTML tick centers matched SVG gridlines within 0.01px at 320/412/768/1440/1920px in both themes; both metrics switched. Synthetic captures were inspected. These are Chromium viewport checks, not a physical-device, Samsung-browser or Safari certification. Full local suites were not rerun. The v2.2.0 production run was cancelled during setup, before publishing; live version remained v2.1.1. Required PR/main CI and postdeployment results are separate evidence.

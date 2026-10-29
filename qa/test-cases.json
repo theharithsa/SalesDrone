@@ -124,6 +124,11 @@
           "id": "DASHBOARD-02",
           "expected": "Get insights/manual/automatic modes and chart day selection retain their contracts.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "DASHBOARD-TREND-AXIS-01",
+          "expected": "At phone/tablet/desktop widths in both themes, each Y tick center aligns with the corresponding SVG gridline; include zero, sparse/spike and multi-digit counts, both metrics and keyboard Day/circle selection. Dates align within the plot column.",
+          "fixture": "Isolated fictional UI preview and synthetic demo only; no production writes"
         }
       ]
     },
@@ -343,6 +348,11 @@
           "id": "LEADS-ARCHIVES-01",
           "expected": "Archive a fictional lead; it leaves the active pipeline, remains in Settings Archives, displays its recorded date and opens without restoring or restarting reminders. Refresh/load-more/error/empty states remain usable on phone and desktop.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "LEADS-HEADER-ALIGN-01",
+          "expected": "On compact lead surfaces stage and assignment share left edge and full width; on wide surfaces their labels and controls align. Include Admin assignment/help, read-only member, long assignee and enlarged text. Keep versioned actions unchanged.",
+          "fixture": "Isolated fictional UI preview and synthetic demo only; no production writes"
         }
       ]
     },

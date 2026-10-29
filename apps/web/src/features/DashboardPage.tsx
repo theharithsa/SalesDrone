@@ -167,14 +167,17 @@ function Trend({ data }: { data: any[] }) {
         </button>
       </div>
       <div className="trend-plot">
-        <div className="trend-y-labels" aria-hidden="true">
+        <div className="trend-y-labels" data-maximum={max} aria-hidden="true">
           {[1, 0.5, 0].map((v) => (
-            <span key={v}>{Math.round(max * v)}</span>
+            <span key={v} style={{ top: `${((168 - v * 130) / 210) * 100}%` }}>
+              {Math.round(max * v)}
+            </span>
           ))}
         </div>
         <svg
           className="trend-chart"
           viewBox="0 0 620 210"
+          preserveAspectRatio="none"
           role="img"
           aria-label={
             metric === 'calls'
@@ -244,10 +247,10 @@ function Trend({ data }: { data: any[] }) {
             </>
           ) : null}
         </svg>
-      </div>
-      <div className="trend-dates" aria-hidden="true">
-        <span>{data[0]?.date.slice(5)}</span>
-        <span>{data.at(-1)?.date.slice(5)}</span>
+        <div className="trend-dates" aria-hidden="true">
+          <span>{data[0]?.date.slice(5)}</span>
+          <span>{data.at(-1)?.date.slice(5)}</span>
+        </div>
       </div>
       <div className="trend-caption">
         <label className="trend-day-picker">

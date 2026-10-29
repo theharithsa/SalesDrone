@@ -133,3 +133,7 @@ Document Lead data management as irreversible workspace-wide lead deletion retai
 ## Field configuration controls (2.2)
 
 Explain the trash/restore icons under Manage fields, standard-field historical-value retention and custom retirement. The human retained minimum-save validation: name/date and one phone/email input remain available. Visibility does not remove workflow/suppression controls. field-manager-demo.jpg and field-manager-mobile-demo.jpg show real components with fictional in-memory AdminReview state; keep their reviewed hashes and dimensions in the manifest and list them in the release plan. Unitless action line-height and content-based stacking support enlarged text; browser emulation is not device certification.
+
+## Header and chart review (2.2.1)
+
+The 2.2.1 header/axis correction refreshes lead-workspace/overlay captures and adds isolated synthetic Admin header and outreach chart captures. Explain stacked phone workflow controls and Y-axis gridline alignment without claiming a physical Samsung test. The earlier 2.2.0 main workflow was cancelled before publication; its Settings assets remain honestly versioned 2.2.0.

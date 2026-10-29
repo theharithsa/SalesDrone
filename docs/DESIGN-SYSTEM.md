@@ -184,3 +184,7 @@ and hover titles; name/date and the last available contact field show their
 minimum-save requirement rather than silently allowing an unusable enquiry form.
 
 Shared action buttons use a unitless line height (20/14) so multiline labels grow with enlarged text instead of overlapping at the former fixed 20px height.
+
+## Lead workflow and chart geometry (2.2.1)
+
+The lead header owns workflow spacing: stage/assignment labels and controls share type, margins and full width; section padding/dividers do not apply inside this group. A 36rem content-container threshold stacks them. Trend Y ticks share the SVG gridline coordinate transform, with a dynamic text gutter and the dates in the plot column. Do not apply the HTML layout grid to the SVG element.

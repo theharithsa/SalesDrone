@@ -81,3 +81,7 @@ The outreach chart's Day select uses a rounded filled surface, vertically center
 value and reserved right padding for the shared chevron. Keep the full date on one
 line; allow the caption metrics to wrap independently. Retain the native select,
 Chart day name, keyboard focus and existing local day-selection behavior.
+
+## Header and chart review (2.2.1)
+
+The outreach trend wrapper owns a grid with a content-sized HTML Y-axis gutter and the SVG plot. Position each tick at the same normalized Y coordinate as its gridline; preserveAspectRatio=none makes the fixed-height SVG coordinate transform consistent across widths. Reserve gutter width from data-maximum rather than a fixed digit count. Date endpoints occupy the plot column. Keep native day selection and SVG circle keyboard actions; geometry is presentation-only, with no changed aggregates, API or telemetry.
