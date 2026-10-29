@@ -106,3 +106,11 @@ Entry points: `telemetry-health.js`, `ci-checks.mjs`, `ci-test-reporter.mjs`,
 once even when attributes fail, and uses a random page fallback when storage fails.
 The [gap plan](../../docs/OBSERVABILITY-PLAN.md) and per-release query evidence
 separate implementation, local test, deploy, ingest and tenant visibility.
+
+## Archive browser (2.1)
+
+Read-only GET /archived-leads uses existing normalized HTTP metrics/logs/traces; no customer contents or canonical read event. The archive timestamp write reuses the existing committed lead lifecycle counter and task cancellation events, without duplicate outcome events. No new tenant configuration is required; local tests are not production tenant evidence.
+
+## Lead-data reset (2.1)
+
+leadDataResets joins the observable-store domain catalog. Numeric records.reset_started, reset_completed and reset_blocked reflect observed job transitions atomically with job state. Deletion batches reuse safe committed domain counts, HTTP RED/log/spans and Storage/Firestore dependency spans; no customer data or object paths exported. Retain audit/outbox during reset. Local/emulator proofs do not certify production tenant events.

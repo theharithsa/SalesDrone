@@ -226,3 +226,11 @@ POST /leads/{id}/attachments reserves metadata {name,size,contentType} with a UU
 8 MiB per file, 50 active/pending per lead; one-hour reservation expiry. Filenames cannot contain paths/control characters; declared size, extension/type and byte signatures must agree. Uploads are immutable; identical byte retries succeed. Recheck authorization after Storage I/O, before Ready commit or binary response. Metadata list excludes objectPath/checksum. Removed files have no app restore endpoint; expired pending and deletion work retry through the existing worker. Errors include 400 invalid file/fields, 403 capability/token, 404 unavailable scope/resource, 409 stale/version/quota/expired upload, 413 oversized binary, 415 wrong transport type, 429 mutation rate and 503 storage unavailable. Tests: bulk-and-files.test.js and real Auth/Firestore/Storage integration. See [file architecture](ATTACHMENTS.md).
 
 Batch resource budgets also cap aggregate cancellation at 200 pending tasks and serialized old/new/task data at 2 MiB. Exceeding either rejects the whole batch; select fewer leads.
+
+## Archived lead collection (contract 1.17)
+
+GET /api/v1/archived-leads returns a Lead page with limit (1–100, default 30) and signed cursor. Requires leads:read, current active membership and effective assigned/all scope; PAT uses the existing leads:read scope. No stage/search/filter parameters are accepted. ArchivedAt is optional for historical records. The active /leads collection still excludes archives.
+
+### Admin lead-data reset
+
+GET /lead-data-reset returns active/job status. POST /lead-data-reset/preview returns an owner-bound, ten-minute preview and approximate counts. POST /lead-data-reset requires previewId, confirmation=DELETE ALL LEADS and UUID Idempotency-Key. POST /lead-data-reset/{id}/resume requires expectedVersion and only accepts Blocked work. All are Google/App Check Admin-only with members:write; PAT denied. Accepted jobs are not cancellable; the worker waits five minutes then cleans bounded batches. Domain mutations return 503 LEAD_DATA_RESET while active. Old request results become expired tombstones and return 409 RESET_REQUEST_EXPIRED. See [scope and recovery](LEAD-DATA-MANAGEMENT.md).

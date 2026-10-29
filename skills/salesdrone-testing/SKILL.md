@@ -116,3 +116,11 @@ without test names, error text or output. CI artifacts are the execution evidenc
 qa/test-cases.json remains a recipe catalog. The trusted main observe job reports
 workflow/check/testcase events and reporting spans/logs/metrics. PR jobs receive no
 telemetry or production secret. See the Observability operations runbook.
+
+## Archives (2.1)
+
+Archive regressions live in functions/test/archived-leads.test.js: signed/scoped paging, cross-member cursor denial, stale versions, retained dates and pending-task cancellation. Test the Settings list loading/error/empty/retry/load-more behavior with synthetic data at phone and desktop widths.
+
+## Lead-data reset (2.1)
+
+functions/test/lead-data-reset.test.js covers Admin/PAT/revocation/strict phrase/preview expiry, stable start replay, concurrent workers, lock/no resurrection, config/personal reminder retention and storage blocked/resume. Actual Auth/Firestore/Storage reset coverage is in emulator.integration.js, only against demo-salesdrone. Never run reset on production as a postdeploy test. Synthetic AdminReview only simulates Waiting status; do not count it as backend deletion evidence.

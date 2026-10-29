@@ -11,7 +11,7 @@ this map is an immutable schema or a standalone microservice.
 
 ## Responsibility and entry points
 
-Reviewed module changes → tests/contracts/security/skills checks → one integrated version/changelog → push main → verify → Firebase deploy + Pages → safe deployment metadata → Dynatrace reporting → versioned release → live version checks.
+Reviewed module changes → tests/contracts/security/skills checks → one integrated version/changelog → push working branch → verified PR merge → verify → Firebase deploy + Pages → safe deployment metadata → Dynatrace reporting → versioned release → live version checks.
 
 - [.github/workflows/deploy.yml](../../.github/workflows/deploy.yml)
 - [scripts/release.mjs](../../scripts/release.mjs)
@@ -100,3 +100,7 @@ the human's standing instruction. Push the working branch, open and attach its
 PR, wait for required verification, then merge through the PR. Never push commits
 directly to main or bypass failed checks. Production still deploys from the
 resulting main commit via the normal workflow.
+
+## Lead-data reset (2.1)
+
+For lead reset deploy all shared Functions exports so API and background producers share the reset lock. Verify runtime Storage list/delete access without broadening IAM implicitly. Do not roll back or remove the cleanup worker while a reset is active; forward-fix/recover its cursor/lease. Postdeploy verification uses read-only status/metadata; do not execute destructive customer writes for evidence. Follow docs/LEAD-DATA-MANAGEMENT.md.

@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.0.1 includes mobile refinements and observability completion.
+> v2.1.0 adds Settings Archives and Admin-only lead-data management.
 > See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.0.0 · MIT**
+**Part of Avinya Enterprises · v2.1.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -198,3 +198,11 @@ check/testcase results separately from server-committed business events; see the
 [Observability agent](skills/salesdrone-observability/SKILL.md) and [release procedure](docs/RELEASE.md).
 
 ![Task collection with fictional reminders](site/assets/screenshots/tasks-demo.jpg)
+
+## Archives and lead-data management
+
+Settings now includes a scoped Archives view. Admins can review a workspace-wide lead-data reset with typed confirmation and resumable cleanup, retaining users, permissions and configuration. Publication follows the PR verification and deployment gates; using the destructive reset requires a separate explicit Admin confirmation in Settings. See [scope and recovery](docs/LEAD-DATA-MANAGEMENT.md).
+
+![Read-only Archives Settings with fictional records](site/assets/screenshots/archives-demo.jpg)
+
+![Unconfirmed lead-data reset review with synthetic counts; no deletion](site/assets/screenshots/lead-data-reset-demo.jpg)

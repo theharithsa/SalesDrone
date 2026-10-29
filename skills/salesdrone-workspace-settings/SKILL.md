@@ -27,6 +27,10 @@ Admin field edit or personal preference → schema/ownership/version validation 
 
 ## Primary API ownership
 
+- GET /api/v1/lead-data-reset
+- POST /api/v1/lead-data-reset/preview
+- POST /api/v1/lead-data-reset
+- POST /api/v1/lead-data-reset/{id}/resume
 - GET /api/v1/workspace-settings
 - PATCH /api/v1/workspace-settings
 - GET /api/v1/ai-settings
@@ -119,3 +123,11 @@ target. The indicator moves 28px in 160ms, disabled under reduced motion. Use
 semantic Material colour pairs rather than gradient day/night palettes. Refresh
 affected login/workspace public captures after approval; local captures do not
 replace or relabel published v2.0 images. No API or new audit/event is introduced.
+
+## Archives (2.1)
+
+Settings → Archives is available to lead-reading members, including assigned-scope users. It uses GET /archived-leads owned by leads; no workspace setting or additional write permission is introduced. Preserve loading/error/empty/retry/pagination states and read-only archive summaries. Old missing dates show Date not recorded. The shared section catalog and generated guide include archives.
+
+## Lead-data reset (2.1)
+
+Own GET /lead-data-reset; POST /lead-data-reset/preview; POST /lead-data-reset; POST /lead-data-reset/{id}/resume. See functions/src/lead-data-reset.js and docs/LEAD-DATA-MANAGEMENT.md. Google/App Check active Admin with members:write only; PAT denied. Owner-bound ten-minute preview, typed phrase and acknowledgment, UUID retry-safe start, persisted progress and versioned blocked retry. No cancel after acceptance. Keeps users/configuration and standalone reminders. Five-minute grace and scheduled batches continue after leaving the page. All old idempotency results are redacted/expired. Never execute against production merely to verify a release.

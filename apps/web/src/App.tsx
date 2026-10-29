@@ -542,6 +542,15 @@ export default function App() {
       const collection = parts[0],
         id = parts[1];
       let result: any = { ok: true };
+      if (collection === 'archived-leads' && method === 'GET') {
+        const params = new URLSearchParams(path.split('?')[1]);
+        const offset = Number(params.get('cursor') || 0);
+        const rows = d.leads.filter((l) => l.archived);
+        return {
+          items: rows.slice(offset, offset + 30),
+          nextCursor: rows.length > offset + 30 ? String(offset + 30) : null,
+        };
+      }
       if (collection === 'leads' && id === 'batch' && method === 'POST') {
         if (!body.items?.length || body.items.length > 25)
           throw Error('Select 1–25 leads.');
@@ -739,7 +748,24 @@ export default function App() {
         result = { ok: true };
         d = { ...d, tasks: d.tasks.filter((t) => t.id !== id) };
       } else if (collection === 'leads' && parts[2] === 'archive') {
-        d = { ...d, leads: d.leads.filter((l) => l.id !== id) };
+        d = {
+          ...d,
+          leads: d.leads.map((l) =>
+            l.id === id
+              ? {
+                  ...l,
+                  archived: true,
+                  archivedAt: new Date().toISOString(),
+                  version: l.version + 1,
+                }
+              : l,
+          ),
+          tasks: d.tasks.map((t) =>
+            t.leadId === id && t.state === 'Pending'
+              ? { ...t, state: 'Cancelled', version: t.version + 1 }
+              : t,
+          ),
+        };
       } else if (collection === 'activities' && parts[2] === 'corrections') {
         result = {
           ...d.activities.find((a) => a.id === id),
@@ -1288,6 +1314,7 @@ export default function App() {
   const filteredDemoLeads = demo
     ? data.leads.filter(
         (l) =>
+          !l.archived &&
           matchesColumnFilters(l, columnFilters) &&
           (!stage || l.stage === stage) &&
           (!source || l.source === source) &&
@@ -3146,6 +3173,10 @@ export default function App() {
             ) : null}
             {page === 'settings' || page === 'members' ? (
               <SettingsPage
+                onOpenLead={(lead) => {
+                  setPage('leads');
+                  void inspectLead(lead);
+                }}
                 onWorkspacePolicyChanged={() => void resolveSession()}
                 initialSection={page === 'members' ? 'access' : undefined}
                 session={session}
@@ -3784,7 +3815,9 @@ function TaskRow({
           </summary>
           <div>
             {onEdit ? (
-              <button onClick={onEdit} disabled={disabled}>Edit task</button>
+              <button onClick={onEdit} disabled={disabled}>
+                Edit task
+              </button>
             ) : null}
             {task.state === 'Pending' ? (
               <>

@@ -7,6 +7,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.1.0] - 2026-10-29
+
+### Changed
+- Add a scoped, paginated Archives page in Settings; retain archive dates and fictional demo records without restarting cancelled reminders.
+- Add Admin-only lead-data reset with preview, typed confirmation, resumable cleanup, concurrent-write protection, private-file removal and safe progress/audit events. Retain users, permissions, configuration and standalone reminders.
+
 ## [2.0.1] - 2026-10-26
 
 ### Changed

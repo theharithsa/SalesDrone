@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.0.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.1.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -113,6 +113,24 @@ FCM acceptance does not prove the device displayed it. Check the browser permiss
 Stops future push delivery to that registration. Revoking this browser also deletes its local messaging registration.
 
 In-app reminders and notifications are retained. The notification bell lets you mark inbox items read or unread.
+
+## Personal → Archives
+
+**Who/where:** Workspace records within your current lead scope; read only.
+
+**API:** GET /api/v1/archived-leads; POST /api/v1/leads/{id}/archive.
+
+**Permissions:** Active member with leads:read; archiving additionally requires leads:edit and current record version. PAT archive reads use leads:read..
+
+### Archived leads
+
+**Default:** No archived leads until records are archived.
+
+Lists archived leads in Settings in 30-record pages with contact details and stage. Only permitted leads are returned, including when opening direct links. Archived leads stay outside the active pipeline and cancelled reminders remain cancelled.
+
+Refresh reloads the first page. Load more follows a signed, access-bound cursor. View lead record opens the retained record; viewing does not restore it. This page has no permanent deletion or restore action.
+
+**Example:** Archive a lead from its record, then open Settings > Archives. Older archives display Date not recorded instead of inventing an archive date.
 
 ## Workspace · Admin → Reports & lead access
 
@@ -502,6 +520,34 @@ Removing a capability blocks subsequent relevant operations. UI visibility alone
 Disable a member’s live workspace access without deleting their historical work.
 
 Current API requests, token checks and worker delivery eligibility use active membership. Re-enabling restores only the configured role/scope/capabilities.
+
+## Workspace · Admin → Lead data management
+
+**Who/where:** All active and archived lead data across the workspace.
+
+**API:** GET /api/v1/lead-data-reset; POST /api/v1/lead-data-reset/preview; POST /api/v1/lead-data-reset; POST /api/v1/lead-data-reset/{id}/resume.
+
+**Permissions:** Active Admin with members:write and leads:read, verified Google sign-in and App Check. All PAT access denied..
+
+### Permanently clear lead data
+
+**Default:** No deletion; requires an explicit new preview and confirmation.
+
+Review current approximate total/archived lead counts, type DELETE ALL LEADS exactly and acknowledge permanent workspace-wide deletion. The preview is owner-bound and expires after ten minutes. Leads added before confirmation are included too.
+
+After acceptance the operation cannot be cancelled. Lead changes and background processing pause for a five-minute in-flight grace period, then the existing scheduled worker removes records/files in resumable batches. Users, roles, permissions, configuration, personal preferences, standalone personal reminders, security audit and telemetry delivery evidence are retained. All old API idempotency receipts are redacted and expire, including standalone-operation retries. Removed imports must be uploaded anew. No in-app undo; provider backup/soft-delete retention is outside this control.
+
+**Example:** Use this only to start a fresh pipeline. Export first if needed; a report is not a full file/history backup.
+
+### Cleanup status and retry
+
+**Default:** Idle.
+
+Status refreshes while this section is open. Waiting, Running, Blocked and Completed are persisted. You may leave and return; cleanup continues independently of the browser.
+
+Refresh status checks progress immediately. A failure retains the pause and cursor. After fixing service/storage access, an Admin can Retry cleanup with its current version. There is no automatic rollback or cancellation after partial deletion. Counts reflect acknowledged batch work; provider deletes retried after a crash may be undercounted.
+
+**Example:** A network error does not mean cleanup was rejected. Refresh status or retry the same confirmation request; stable operation IDs prevent another reset.
 
 ## Product → About SalesDrone
 

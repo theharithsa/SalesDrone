@@ -70,3 +70,7 @@ Check in order: domain commit → outbox Pending/Sending/Delivered/Rejected and 
 On the 26 October 2026 release review (Asia/Kolkata), read-only production diagnostics found 3 Delivered records, 0 Pending, 0 Sending and 0 Rejected; the three previous receipts were HTTP 202. The separately configured Dynatrace query context returned HTTP 401, so tenant searchability and native RUM-to-trace navigation remain unverified. Local tests independently verify media types, envelopes, decoded OTLP signals/metric dimensions, retries, idempotency, rollback and stale-lease behavior. Each release archives its own safe ingest receipts and exact commit in GitHub Actions.
 
 References: [Dynatrace CloudEvents ingestion](https://docs.dynatrace.com/docs/observe/business-observability/bo-events-capturing/bo-events-capturing-external-sources), [API ingestion reference](https://docs.dynatrace.com/docs/platform/openpipeline/reference/api-ingestion-reference), [observability contract](observability.md).
+
+## Lead-data resets (2.1)
+
+com.avinyatech.salesdrone.leadDataResets.committed records safe job writes and numeric records.reset_started/reset_completed/reset_blocked transitions, atomically with persisted job state. Existing domain committed events carry deletion counts. No files/contact content enters these events. Server acceptance, completed cleanup and searchable tenant evidence are separate states. Retain event IDs/outbox/audit during cleanup.

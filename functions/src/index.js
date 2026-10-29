@@ -1,3 +1,9 @@
+import {
+  guardLeadData,
+  advanceLeadReset,
+  resetActive,
+  RESET_STATE,
+} from './lead-data-reset.js';
 import { firebaseFiles } from './file-storage.js';
 import { cleanupAttachments } from './attachments.js';
 import { createTelemetry } from './telemetry.js';
@@ -70,9 +76,8 @@ const appCheckMode = defineString('APP_CHECK_MODE', {
   default: 'enforce',
   description: 'enforce in production; disabled only for emulators.',
 });
-const store = observableStore(
-  firestoreStore(getFirestore()),
-  () => observability,
+const store = guardLeadData(
+  observableStore(firestoreStore(getFirestore()), () => observability),
 );
 const handler = createApp({
   files: firebaseFiles(dependency),
@@ -168,6 +173,17 @@ export const reminders = onSchedule(
   },
   async () =>
     worker('reminders', async () => {
+      const reset = await advanceLeadReset({
+        store,
+        files: firebaseFiles(dependency),
+      });
+      if (reset.active)
+        return {
+          reset: true,
+          processed: reset.processed,
+          removed: reset.removed,
+          blocked: reset.blocked,
+        };
       const stats = await dispatchReminders({
         store,
         send: (message) =>
@@ -201,6 +217,7 @@ export const analyzeNotes = onSchedule(
   },
   async () =>
     worker('note-analysis', async () => {
+      if (resetActive(await store.get(RESET_STATE))) return { skipped: 1 };
       const stats = await processNotes({
         store,
         extract: (input) =>
@@ -229,6 +246,7 @@ export const leadIntelligence = onSchedule(
   },
   async () =>
     worker('lead-intelligence', async () => {
+      if (resetActive(await store.get(RESET_STATE))) return { skipped: 1 };
       const stats = await scoreLeads({
         store,
         extract: (input) =>

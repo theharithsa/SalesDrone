@@ -121,3 +121,11 @@ card opens the lead; selecting its checkbox only changes the batch selection.
 The workspace header no longer shows the Avinya logo beside the theme pill.
 Preserve sidebar attribution. Public screenshots still await local-review approval;
 never relabel the v2.0 header images as current v2.0.1 evidence.
+
+## Archives (2.1)
+
+Explain Settings → Archives, access-scoped cursor paging, retained lead/history, read-only viewing and unknown historical dates. Viewing never restores a record or restarts reminders. Capture changed Settings navigation only from synthetic previews.
+
+## Lead-data reset (2.1)
+
+Document Lead data management as irreversible workspace-wide lead deletion retaining people/settings and standalone reminders. Explain approximate counts, ten-minute preview, five-minute grace, immutable accepted job, background status/retry, API receipt expiry and provider retention limits. No production cleanup is authorized by a handbook or screenshot. Capture the confirmation and archive views with synthetic data.

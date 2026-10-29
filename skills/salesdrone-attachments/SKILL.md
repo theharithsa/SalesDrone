@@ -46,3 +46,7 @@ shortcut after the data request finishes, not just immediately after navigation.
 ## Material 3 v2 local-review guidance
 
 Material v2 keeps the private Files API/limits intact while adopting shared file-row, progress and confirmation surfaces. Its inspector shortcut must preserve Files after asynchronous loading. Validate layout and keyboard flow separately from Storage byte/authorization tests.
+
+## Lead-data reset (2.1)
+
+The global lead reset waits five minutes past current function request deadlines, deletes metadata-associated objects then sweeps the fixed workspaces/avinyatech/lead-files/ prefix via bounded firebaseFiles.list. No caller-controlled prefix, filenames or network calls in transactions. Listing/deletion failure blocks completion and retains the data-write pause; storage operations are idempotent. Provider soft-delete/backups are outside the application's undo/erasure promise.

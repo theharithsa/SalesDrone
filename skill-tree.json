@@ -322,6 +322,7 @@
       ],
       "apiOperations": [
         "GET /api/v1/leads",
+        "GET /api/v1/archived-leads",
         "POST /api/v1/leads/export",
         "POST /api/v1/leads",
         "POST /api/v1/leads/batch/preview",
@@ -528,6 +529,10 @@
         "salesdrone-book-mode"
       ],
       "apiOperations": [
+        "GET /api/v1/lead-data-reset",
+        "POST /api/v1/lead-data-reset/preview",
+        "POST /api/v1/lead-data-reset",
+        "POST /api/v1/lead-data-reset/{id}/resume",
         "GET /api/v1/workspace-settings",
         "PATCH /api/v1/workspace-settings",
         "GET /api/v1/ai-settings",

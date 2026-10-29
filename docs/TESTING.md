@@ -87,3 +87,9 @@ actions, System changes, guest-local persistence, reduced motion, narrow/wide
 header geometry and stored zoom/Book fixtures. Phone targets must remain >=44px;
 fine-pointer controls follow the existing personal display scale. It does not
 prove signed-in account persistence or physical-device/Safari behavior.
+
+### Archives (2.1 local)
+
+functions/test/archived-leads.test.js covers scope, pagination/cursor bindings, validation, stale versions and retained state/date/reminder cancellation. The emulator suite adds actual Auth/Firestore archive persistence and assigned paging. Local review: 22 Chromium viewport/theme cases (320–1920px), load-more 30→35 and refresh→30 using isolated AdminReview stubs. These do not certify physical devices, Safari or production. Reset tests additionally cover durable batched removal, retained configuration, locks and retry-safe recovery in memory and real emulators.
+
+The ordinary synthetic guest app also passed archive → Settings Archives → same retained record navigation without a reload. Reset confirmation and API cleanup remain separate UI-stub and real-emulator evidence.

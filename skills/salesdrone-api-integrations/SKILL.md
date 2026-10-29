@@ -98,3 +98,7 @@ App 2.0.1 applies displayScale on mobile too. OpenAPI description is corrected;
 contract 1.16 routes, schemas, numeric allowlist and scopes are unchanged. GET/PATCH
 /me remains Google/App Check self-service only; no PAT scope is added. The mobile
 filter dialog reuses the existing leads query and report criteria.
+
+## Archives (2.1)
+
+GET /archived-leads reuses leads:read PAT scope and current effective member scope; it has bounded limit/cursor query parameters and returns the Lead page schema. No new token permission or restoration/deletion endpoint is implied.

@@ -192,32 +192,32 @@
   {
     "file": "font-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d58a4fea59e529c2e1d99edd140aff15f2d1b01a1cb05c1d31f7f6dbb8aca5d5",
-    "capturedAt": "2026-10-26T16:45:35.756Z",
+    "sha256": "188056cad632e796926956b97e9c2be528d48acff1f55b55e3bd6f589fc1a982",
+    "capturedAt": "2026-10-29T13:02:51.735087+00:00",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest Appearance settings; no live save, token or notifications overlay. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Fictional Admin Appearance controls; no account save. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
   },
   {
     "file": "display-scale-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "a60ced53b02b4ea5b899c6b59c763f2f08798d3d5b6e6042a2075e70ccb1ac2d",
-    "capturedAt": "2026-10-26T16:45:35.391Z",
+    "sha256": "7bdbbdf718feea023a60a0c5eeab6919234a8466f4e7333a4fa0f0d29b03cc8d",
+    "capturedAt": "2026-10-29T13:02:51.936871+00:00",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest Appearance settings; no live save, token or notifications overlay. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Fictional Admin Appearance controls and saved zoom options; no account save. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
   },
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1a9ff9fd54a307c3324e346d69551828e0f2e16dd72c8f406c71a4bfabb47564",
-    "capturedAt": "2026-10-26T16:45:36.214Z",
+    "sha256": "188056cad632e796926956b97e9c2be528d48acff1f55b55e3bd6f589fc1a982",
+    "capturedAt": "2026-10-29T13:02:52.115183+00:00",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest Appearance settings; no live save, token or notifications overlay. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Fictional Admin Appearance controls and Book mode switch; no account save. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
   },
   {
     "file": "book-mode-light.jpg",
@@ -252,12 +252,12 @@
   {
     "file": "developer-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1deb26fceb6d1d39b0bc30ac4648976b97f5dad50693d8bc19bc5198b411bde8",
-    "capturedAt": "2026-10-26T16:39:53.860Z",
+    "sha256": "53c91fda8de71af9470d241fee1f3a8723cb26c3f6a3ff9526878391b2d4fcac",
+    "capturedAt": "2026-10-29T13:02:52.308130+00:00",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Isolated fictional administrator settings component; token/device actions blocked; no API transport. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Fictional Admin Developer section; token issuance disabled, no credentials. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
   },
   {
     "file": "import-demo.jpg",
@@ -272,11 +272,51 @@
   {
     "file": "api-portal-demo.jpg",
     "mode": "public-contract",
-    "sha256": "253df649a1f83144f9defb53956d27597c17475fbeb642f5840386ae8a956a06",
-    "capturedAt": "2026-10-26T16:39:55.984Z",
+    "sha256": "68899b07319b4b1e1162f61c3ebf92818729e59b88ab619a48eff815926d53ac",
+    "capturedAt": "2026-10-29T13:02:52.465957+00:00",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Public OpenAPI schema only; no credentials or API writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Local public OpenAPI 1.17 task schemas only; no token, account or customer API request. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+  },
+  {
+    "file": "archives-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "5dc5ea63df31a7798a45416d01a44e6f9371c20504945a008351d78b261fe993",
+    "capturedAt": "2026-10-29T13:02:50.939492+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Scoped archives design; fictional records and stubbed paging. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+  },
+  {
+    "file": "archives-mobile.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "ad0cfd7a82511fe8bbbf91132091128985aa6231b11d74d58c799ef5cb2c7fc0",
+    "capturedAt": "2026-10-29T13:02:51.139846+00:00",
+    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 844",
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Phone archive cards; fictional records and stubbed paging. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+  },
+  {
+    "file": "lead-data-reset-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "d27d850c2f8893395c2133c5262d0a8d7c6825f9980bdc416251cf8db4554f3d",
+    "capturedAt": "2026-10-29T13:02:51.330576+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Unconfirmed cleanup review; synthetic counts, disabled final confirmation, no deletion. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+  },
+  {
+    "file": "lead-data-reset-mobile.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "2d00f0070fc20da62ac7515e7793ab4df8838f134338036b9dfa80845735e5e1",
+    "capturedAt": "2026-10-29T13:02:51.528626+00:00",
+    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 844",
+    "version": "2.1.0",
+    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Unconfirmed phone cleanup review; synthetic counts and no deletion. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
   }
 ]

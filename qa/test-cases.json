@@ -300,7 +300,8 @@
         "functions/test/workbook-and-filters.test.js",
         "tests/import-mapping.test.ts",
         "functions/test/bulk-and-files.test.js",
-        "tests/lead-pagination.test.ts"
+        "tests/lead-pagination.test.ts",
+        "functions/test/archived-leads.test.js"
       ],
       "manualCases": [
         {
@@ -332,6 +333,11 @@
           "id": "LEADS-LEADING-SELECTION-2.0.1",
           "expected": "At 320/390/600/767px, checkbox target is left of the name and names share a start edge. Select/deselect without opening the lead. Verify target size and placement through all five saved zoom values, plus desktop table selection, dark and Book layouts. Workspace header omits Avinya logo beside the theme control.",
           "fixture": "isolated synthetic demo; review:mobile; no customer writes"
+        },
+        {
+          "id": "LEADS-ARCHIVES-01",
+          "expected": "Archive a fictional lead; it leaves the active pipeline, remains in Settings Archives, displays its recorded date and opens without restoring or restarting reminders. Refresh/load-more/error/empty states remain usable on phone and desktop.",
+          "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         }
       ]
     },
@@ -515,7 +521,8 @@
       "automatedTests": [
         "functions/test/custom-fields-and-tasks.test.js",
         "functions/test/workbook-and-filters.test.js",
-        "tests/lead-fields.test.ts"
+        "tests/lead-fields.test.ts",
+        "functions/test/lead-data-reset.test.js"
       ],
       "manualCases": [
         {
@@ -532,6 +539,11 @@
           "id": "WORKSPACE-SETTINGS-03",
           "expected": "Old PATCH clients preserve omitted choices; denied/no-op saves emit no false audit.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "SETTINGS-RESET-01",
+          "expected": "Only Admin sees Lead data management; review counts, typed phrase plus acknowledgment required, Cancel restores focus, accepted status persists and blocked cleanup can be retried. Preserve workspace configuration and standalone reminders.",
+          "fixture": "synthetic demo or demo-salesdrone emulator only; no production reset"
         }
       ]
     },

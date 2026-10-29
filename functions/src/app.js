@@ -1,4 +1,16 @@
 import {
+  guardLeadData,
+  RESET_STATE,
+  resetActive,
+  resetAdmin,
+  previewReset,
+  startReset,
+  resumeReset,
+  resetStatus,
+  ResetConfirmation,
+  ResetResume,
+} from './lead-data-reset.js';
+import {
   AttachmentInput,
   AttachmentDelete,
   attachmentView,
@@ -147,6 +159,8 @@ export function createApp({
   summarizeDashboard = null,
   now = () => new Date().toISOString(),
 }) {
+  const maintenanceStore = store.maintenanceStore || store;
+  store = guardLeadData(store);
   const app = express();
   app.disable('x-powered-by');
   app.use((req, res, next) => {
@@ -240,6 +254,16 @@ export function createApp({
         }
         req.member = await requireMember(store, req.identity, capability);
         telemetry()?.operation(method.toUpperCase() + ' ' + url);
+        if (
+          method !== 'get' &&
+          /^\/(leads|tasks|activities|imports|dashboard)(\/|$)/.test(url) &&
+          resetActive(await store.get(RESET_STATE))
+        )
+          throw new AppError(
+            503,
+            'LEAD_DATA_RESET',
+            'Lead data is being cleared. Try again after cleanup finishes.',
+          );
         const allowed =
           url === '/lead-scores'
             ? ['ids']
@@ -283,6 +307,12 @@ export function createApp({
       const requestPath = path('requests', hash(member.uid + ':' + key));
       const prior = idempotent ? await tx.get(requestPath) : null;
       if (prior) {
+        if (prior.expiredByReset)
+          throw new AppError(
+            409,
+            'RESET_REQUEST_EXPIRED',
+            'This operation belongs to cleared data. Start a new operation.',
+          );
         if (prior.fingerprint !== fingerprint)
           throw new AppError(
             409,
@@ -854,6 +884,39 @@ export function createApp({
       return updated;
     });
   });
+  route('get', '/lead-data-reset', 'members:write', async (req) => {
+    await resetAdmin(maintenanceStore, req.identity);
+    return resetStatus(maintenanceStore);
+  });
+  route('post', '/lead-data-reset/preview', 'members:write', async (req) => {
+    parse(z.object({}).strict(), req.body);
+    return previewReset({
+      store: maintenanceStore,
+      identity: req.identity,
+      now,
+    });
+  });
+  route('post', '/lead-data-reset', 'members:write', (req) =>
+    startReset({
+      store: maintenanceStore,
+      identity: req.identity,
+      input: parse(ResetConfirmation, req.body),
+      key: req.headers['idempotency-key'],
+      now,
+    }),
+  );
+  route('post', '/lead-data-reset/:id/resume', 'members:write', (req) =>
+    resumeReset({
+      store: maintenanceStore,
+      identity: req.identity,
+      id: req.params.id,
+      expectedVersion: parse(ResetResume, req.body).expectedVersion,
+      now,
+    }),
+  );
+  route('get', '/archived-leads', 'leads:read', (req) =>
+    list(req, 'leads', [...scopeFilters(req.member), ['archived', '==', true]]),
+  );
   route('get', '/leads', 'leads:read', (req) => {
     if (
       req.query.filters !== undefined ||
@@ -1202,6 +1265,7 @@ export function createApp({
       tx.set(path('leads', l.id), {
         ...l,
         archived: true,
+        archivedAt: l.archivedAt || now(),
         version: l.version + 1,
         updatedAt: now(),
       });
