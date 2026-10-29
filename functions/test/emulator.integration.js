@@ -443,6 +443,23 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     ).sourceActivityId,
     freshNotes[0].id,
   );
+  // Configuration retirement preserves lead data and cannot hide both contact inputs.
+  const beforeVisibility = (await req('get', '/field-options').expect(200)).body;
+  await req('patch', '/field-options', {
+    expectedVersion: beforeVisibility.version,
+    values: beforeVisibility.values,
+    hiddenFields: ['phone', 'countryCode', 'stage'],
+  }).expect(200);
+  const visibility = (await req('get', '/field-options').expect(200)).body;
+  assert.deepEqual(visibility.hiddenFields, ['phone', 'countryCode', 'stage']);
+  await req('patch', '/field-options', {
+    expectedVersion: visibility.version, values: visibility.values,
+    hiddenFields: ['phone', 'email'],
+  }).expect(400);
+  await req('patch', '/field-options', {
+    expectedVersion: visibility.version, values: visibility.values,
+    hiddenFields: [],
+  }).expect(200);
   const fields = (await req('get', '/field-options').expect(200)).body;
   fields.values.stage.push('Emulator custom stage');
   fields.values.outcome.push('Emulator custom outcome');

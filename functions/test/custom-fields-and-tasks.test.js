@@ -444,6 +444,9 @@ test('invalid custom definitions and hiding essential fields are rejected', asyn
       ],
     },
     { hiddenFields: ['name'] },
+    { hiddenFields: ['enquiryDate'] },
+    { hiddenFields: ['phone', 'email'] },
+    { hiddenFields: ['unrecognized'] },
     { customFields: [{ ...f, id: '__proto__', type: 'text' }] },
   ])
     await s
@@ -550,4 +553,29 @@ test('Google profile photos come only from verified identity claims and fall bac
     undefined,
   );
   assert.throws(() => googleIdentity({ ...token, email_verified: false }));
+});
+
+
+test('Admin may retire either contact field and other standard fields without erasing contacts or weakening save validation', async () => {
+  const s = await setup();
+  const c = (await s.call('get', '/field-options').expect(200)).body;
+  const existing = (await s.call('post', '/leads', lead).expect(200)).body;
+  const hiddenFields = ['phone', 'countryCode', 'stage', 'comments', 'outcome', 'disposition', 'assignedToUid', 'lastCallOutcome', 'lastContactAt', 'doNotContact', 'needsReview', 'latestComment'];
+  const saved = (await s.call('patch', '/field-options', {
+    expectedVersion: c.version, values: c.values, hiddenFields,
+  }).expect(200)).body;
+  assert.deepEqual(saved.hiddenFields, hiddenFields);
+  assert.equal((await s.call('get', '/leads/' + existing.id).expect(200)).body.phone, lead.phone);
+  await s.call('post', '/leads', {...lead, phone: '', email: 'synthetic@example.com'}).expect(200);
+  await s.call('post', '/leads', {...lead, phone: '', email: ''}).expect(400);
+  await s.call('patch', '/field-options', {
+    expectedVersion: saved.version, values: c.values, hiddenFields: ['email'],
+  }).expect(200);
+  await s.call('patch', '/field-options', {
+    expectedVersion: saved.version, values: c.values, hiddenFields: [],
+  }).expect(409);
+  const restored = (await s.call('patch', '/field-options', {
+    expectedVersion: saved.version + 1, values: c.values, hiddenFields: [],
+  }).expect(200)).body;
+  assert.deepEqual(restored.hiddenFields, []);
 });

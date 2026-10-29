@@ -9,6 +9,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.2.0] - 2026-10-29
+
+### Changed
+- Separate Settings field names from supporting text, stack explanatory notices on narrow screens and let button line height grow with enlarged text.
+- Replace field-removal text buttons with accessible delete/restore icons. Expand standard-field visibility while retaining required name/date and at least one contact input, preserving existing records and workflow controls.
+- Update the field-options contract to 1.18.0, documentation and regression coverage.
+
 ## [2.1.1] - 2026-10-29
 
 ### Changed

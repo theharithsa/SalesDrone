@@ -84,3 +84,25 @@ entries are development-only and excluded from the production bundle.
 `npm run qa -- release` runs the broader gates and does not deploy. For browser
 verification reuse the installed isolated browser through scripts/local-browser.mjs
 or an available approved browser tool; never connect a personal authenticated tab.
+
+
+## Settings field hierarchy and visibility — local 2.2.0
+
+A focused fictional AdminReview pass used 320, 390, 599, 600, 768, 899, 900,
+1440 and 1920px viewports in light and dark. The field rows had separate title
+and metadata geometry, no page overflow, and action widths of at least 40px.
+These are integer viewport boundaries, not fractional-width or physical-device
+certification. Screenshots at 390 × 844 and 1440 × 844 were visually reviewed;
+curated field-manager captures contain one fictional custom field and no live data.
+
+Removing Phone in the in-memory preview removed its form input, required Email,
+retained required name/date and disabled deletion of the last contact field.
+Restoration was available. No server configuration or customer records were changed.
+At a synthetic 200% root font and 320 × 568 viewport, shared button line height
+scaled from the previous fixed 20px to 40px for 28px text. Container-responsive
+field actions moved below full-width text, avoiding mid-word title breaks.
+The final large-text screenshots were inspected. Browser helper failures from
+fractional CDP width and selector quoting were corrected; they were tooling errors,
+not recorded as passing coverage. Full local test suites were not rerun.
+Backend/emulator regression cases are updated for required CI execution; local
+preview behavior does not prove backend persistence or production behavior.

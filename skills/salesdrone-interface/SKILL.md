@@ -175,3 +175,9 @@ Settings Archives reuses scoped data and responsive cards with wrapping contact 
 ## Startup loading alignment (2.1.1)
 
 Loading wraps its message in a span with centered text and a non-shrinking spinner. The startup shell uses 24px outer padding and a full-width vertical Loading row with no extra horizontal padding, keeping the spinner and wrapped message centered on phones. Inline/panel loading keeps its existing row layout. The synthetic AdminReview preview=startup renders these exact components without authentication or live API calls. This is CSS/markup only: no API, permission or business-event change.
+
+## Settings supporting text and delete controls (2.2)
+
+.settings-field-row uses a minmax(0,1fr) text column plus a compact action group, including phones. Its direct span is a grid with a 4px title/metadata gap, explicit type roles and anywhere wrapping. Do not rely on adjacent strong/small inline elements for separation. settings-notice stacks title and body; standard-label-editor spans both row columns. Delete/restore icons retain accessible names, hover titles, minimum-requirement descriptions, focus and compensated touch targets. Form visibility belongs to workspace-settings; visual changes introduce no new API telemetry or business events. Inspect long names, both themes, narrow widths and enlarged text with synthetic fixtures.
+
+Shared action buttons use a unitless line height (20/14) so multiline labels grow with enlarged text instead of overlapping at the former fixed 20px height.

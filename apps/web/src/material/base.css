@@ -122,7 +122,7 @@ small {
   color: var(--accent);
   font-size: var(--md-type-label);
   font-weight: 600;
-  line-height: 20px;
+  line-height: 1.428571;
   text-decoration: none;
   white-space: normal;
   text-align: center;

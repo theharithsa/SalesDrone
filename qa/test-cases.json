@@ -549,6 +549,11 @@
           "id": "SETTINGS-RESET-01",
           "expected": "Only Admin sees Lead data management; review counts, typed phrase plus acknowledgment required, Cancel restores focus, accepted status persists and blocked cleanup can be retried. Preserve workspace configuration and standalone reminders.",
           "fixture": "synthetic demo or demo-salesdrone emulator only; no production reset"
+        },
+        {
+          "id": "SETTINGS-FIELD-ICONS-01",
+          "expected": "At 320/390/768/1440px in both themes, long field titles and supporting text remain separate and delete/restore targets fit. Remove Phone: Email remains visible/required for new enquiries; deleting Email is unavailable until Phone is restored. Name/date cannot be removed. Save/Edit/Cancel retain stored hidden values and keyboard focus. Backend rejects unknown keys, both contacts hidden, stale versions and unauthorized writes.",
+          "fixture": "Fictional local AdminReview and demo-salesdrone emulators only; never production configuration writes"
         }
       ]
     },

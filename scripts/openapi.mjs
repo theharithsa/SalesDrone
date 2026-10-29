@@ -303,7 +303,10 @@ schemas.FieldOptions = {
     values: schemas.FieldOptionsPatch.properties.values,
     labels: schemas.FieldOptionsPatch.properties.labels,
     customFields: schemas.FieldOptionsPatch.properties.customFields,
-    hiddenFields: schemas.FieldOptionsPatch.properties.hiddenFields,
+    hiddenFields: {
+      ...schemas.FieldOptionsPatch.properties.hiddenFields,
+      description: 'Fields removed from enquiry entry, configurable columns, filters and new reports where applicable. Name and enquiryDate cannot be hidden; keep phone or email visible. This is presentation configuration, not data erasure, authorization or removal of workflow/suppression controls.',
+    },
   },
 };
 schemas.Error = {
@@ -1047,7 +1050,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.17.0',
+    version: '1.18.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

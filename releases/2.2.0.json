@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "version": "2.2.0",
+  "summary": "Fix issue #64: repair Settings field text hierarchy and mobile notice layout; provide accessible delete/restore icons and expanded standard-field visibility while retaining the human-confirmed minimum name/date/contact requirements.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-workspace-settings",
+    "salesdrone-leads",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "docs/DESIGN-SYSTEM.md",
+    "docs/API.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/observability.md",
+    "docs/MATERIAL-3-REVIEW.md"
+  ],
+  "settingsSections": [
+    "fields"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Compatible field-options hiddenFields allowlist expansion; retain mandatory identity/date and one visible contact field. No endpoint or permission changes.",
+    "contractVersion": "1.18.0",
+    "permissions": "Admin Google/App Check members:write and expectedVersion still required; PAT writes denied. Lead-save validation unchanged.",
+    "tests": [
+      "functions/test/custom-fields-and-tasks.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing normalized field-options HTTP request signals and atomic key-only settings audit cover visibility saves; cosmetic layout creates no domain event. No new attributes, dimensions or customer payloads.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing normalized field-options HTTP request signals and atomic key-only settings audit cover visibility saves; cosmetic layout creates no domain event. No new attributes, dimensions or customer payloads.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing normalized field-options HTTP request signals and atomic key-only settings audit cover visibility saves; cosmetic layout creates no domain event. No new attributes, dimensions or customer payloads.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing normalized field-options HTTP request signals and atomic key-only settings audit cover visibility saves; cosmetic layout creates no domain event. No new attributes, dimensions or customer payloads.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing normalized field-options HTTP request signals and atomic key-only settings audit cover visibility saves; cosmetic layout creates no domain event. No new attributes, dimensions or customer payloads.",
+      "tests": [
+        "functions/test/settings-audit.test.js",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Focused fictional AdminReview browser pass at 320/390/599/600/768/899/900/1440/1920px in light/dark: separated metadata, no page overflow and >=40px action widths. Phone removal required Email and protected the remaining contact; name/date stayed required. Reviewed 200% root font at 320x568 after unitless button line-height and container layout fixes. No full local suites; updated backend/emulator cases run in required PR CI. No physical-device/Safari/fractional-viewport certification or production writes. See docs/MATERIAL-3-REVIEW.md.",
+  "screenshots": [
+    "field-manager-mobile-demo.jpg",
+    "field-manager-demo.jpg"
+  ],
+  "pendingDesignApproval": false
+}

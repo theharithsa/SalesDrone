@@ -129,3 +129,7 @@ Explain Settings → Archives, access-scoped cursor paging, retained lead/histor
 ## Lead-data reset (2.1)
 
 Document Lead data management as irreversible workspace-wide lead deletion retaining people/settings and standalone reminders. Explain approximate counts, ten-minute preview, five-minute grace, immutable accepted job, background status/retry, API receipt expiry and provider retention limits. No production cleanup is authorized by a handbook or screenshot. Capture the confirmation and archive views with synthetic data.
+
+## Field configuration controls (2.2)
+
+Explain the trash/restore icons under Manage fields, standard-field historical-value retention and custom retirement. The human retained minimum-save validation: name/date and one phone/email input remain available. Visibility does not remove workflow/suppression controls. field-manager-demo.jpg and field-manager-mobile-demo.jpg show real components with fictional in-memory AdminReview state; keep their reviewed hashes and dimensions in the manifest and list them in the release plan. Unitless action line-height and content-based stacking support enlarged text; browser emulation is not device certification.
