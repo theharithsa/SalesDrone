@@ -55,6 +55,7 @@ const safeKeys = new Set([
   'sent',
   'created',
   'cancelled',
+  'blocked',
   'skipped',
   'duration.ms',
   'ci.check',

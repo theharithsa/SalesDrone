@@ -566,6 +566,65 @@
           "Yes. SalesDrone 2 uses Material 3 colour roles, responsive navigation, filled forms and accessible states with existing font preferences. It is a web adaptation; browser testing does not certify physical devices or native platform behavior."
         ]
       ]
+    },
+    {
+      "id": "archives",
+      "title": "Archives: retained leads",
+      "audience": "Members with lead-reading permission, within their current scope",
+      "steps": [
+        "Open a lead and use Archive to remove it from the active pipeline. Pending reminders for that lead are cancelled.",
+        "Open Settings > Archives to view archived names, company, stage and contact details.",
+        "Choose Load more archived leads for the next page, or Refresh archives to reload the list. View lead record opens the retained record without restoring it."
+      ],
+      "details": [
+        "Archive keeps the lead and its history; it is not permanent deletion. The archive list enforces the same assigned-lead restrictions as the active list.",
+        "New archives retain their archive date. Historical archives without that field show Date not recorded. No date is inferred from the last edit.",
+        "The demo retains archived fictional records in memory until reset or exit; it never contacts the live API."
+      ],
+      "faq": [
+        [
+          "Why is an archived lead missing?",
+          "Your current assigned-lead scope or permissions may exclude it. Refresh the list; ask an administrator about access."
+        ],
+        [
+          "Does viewing an archive restart reminders?",
+          "No. Viewing does not change archive state or restart cancelled reminders."
+        ]
+      ],
+      "screenshot": "archives-demo.jpg"
+    },
+    {
+      "id": "lead-data-management",
+      "title": "Lead data management: start a fresh pipeline",
+      "audience": "Active Google-signed-in administrators only",
+      "steps": [
+        "Export what you need before clearing; Excel reports are not full backups of files and history.",
+        "Open Settings > Lead data management and select Review clearing all leads. Review total and archived counts.",
+        "Type DELETE ALL LEADS exactly, acknowledge the impact on everyone, then select Permanently clear lead data. Cancel closes the review without changing data.",
+        "Watch cleanup status. It waits five minutes for in-flight work and then runs background batches. You can leave the page and return; the browser is not the cleanup engine.",
+        "If cleanup is Blocked, fix the service/storage problem, refresh status and Retry cleanup. Once Completed, create or import new leads."
+      ],
+      "details": [
+        "This permanently removes every active/archived lead, conversations/revisions, stage history, scores, note analysis, lead-related tasks/delivery receipts, private files (including orphaned objects under the fixed lead-file prefix), import jobs/chunks, duplicate-contact keys, lead notifications and member insight caches.",
+        "Users, role/permission grants, protected admins, tokens, devices, workspace/field/scoring/AI configuration, personal preferences and reminders not attached to a lead are retained. Security audit, reset progress and telemetry delivery records are retained. Existing idempotent API receipts are redacted; old retries return RESET_REQUEST_EXPIRED instead of recreating cleared data.",
+        "The preview counts are approximate and expire after ten minutes. The operation also deletes leads added between review and confirmation. After acceptance it cannot be cancelled or undone in SalesDrone. Provider backups/soft-delete retention follow provider policy and are not erased by this control.",
+        "Demo users cannot start a live reset. The clearly labelled fictional Admin preview only demonstrates status using stubbed requests."
+      ],
+      "faq": [
+        [
+          "Can an integration token clear lead data?",
+          "No. Reset APIs require an active Admin using verified Google sign-in and App Check."
+        ],
+        [
+          "What happens if I close the tab or a cleanup request fails?",
+          "Accepted work continues in the scheduled worker. Refresh status before starting anything else; a stable idempotency key makes an uncertain start retry-safe. A storage failure leaves cleanup paused until an Admin retries."
+        ],
+        [
+          "Will my users or workspace settings disappear?",
+          "No. Reset is limited to lead data and its related operational records; workspace configuration and people are retained."
+        ]
+      ],
+      "screenshot": "lead-data-reset-demo.jpg"
     }
   ]
 }

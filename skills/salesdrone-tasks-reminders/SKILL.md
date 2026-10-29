@@ -110,3 +110,7 @@ sizes, status empty/completed/cancelled states, edit/reschedule/delete dialogs a
 completion/cancellation using in-memory demo tasks. Review five saved scales and
 light/dark/Book palettes; this is no proof of server persistence or delivery.
 No new API, permission, setting or business event is needed for this presentation.
+
+## Lead-data reset (2.1)
+
+reminders advances bounded lead-reset batches before dispatch. When active, normal reminder/attachment cleanup is skipped; note/scoring workers also skip, and store guards stop in-flight domain writes. Reset removes lead-related tasks/deliveries/device receipts but retains standalone personal reminders and their retry receipts. Every producer must receive the guarded store; no independent unguarded write path.

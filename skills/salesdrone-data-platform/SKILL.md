@@ -66,3 +66,7 @@ Adjacent owners:
 - [salesdrone-release](../salesdrone-release/SKILL.md)
 
 Settings audit snapshots are requested immediately before each first tracked write, before memory-adapter mutation and before buffered Firestore flush. Keep snapshot read failures transactional and observe the final net write. Do not move audit/outbox writes outside the transaction or depend on OTel enabled state. Real emulator tests verify the adapter boundary.
+
+## Lead-data reset (2.1)
+
+Store adapters expose scan(collection,{after,limit}) by document ID and return {id,data}, including records missing an id field. It is an internal bounded cleanup primitive, not a client API. guardLeadData wraps the observable store in index and createApp; reset uses maintenanceStore to bypass only its own lock. Preserve transaction read-before-write buffering and raw document IDs. Cleanup leases/cursors/tombstones are durable; do not delete/reset locks to fix a blocked job.

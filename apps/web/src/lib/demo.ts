@@ -118,6 +118,7 @@ export function demoData() {
   };
 }
 export function demoSummary(leads: Lead[], tasks: Task[], activities: any[]) {
+  leads = leads.filter((lead) => !lead.archived);
   return {
     total: leads.length,
     newLeads: leads.filter((l) => l.stage === stages[0]).length,

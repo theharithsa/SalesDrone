@@ -21,6 +21,13 @@
     "admin": false
   },
   {
+    "id": "archives",
+    "label": "Archives",
+    "description": "View archived leads without returning them to the active pipeline.",
+    "group": "personal",
+    "admin": false
+  },
+  {
     "id": "workspace",
     "label": "Reports & lead access",
     "description": "Control Excel exports and access to assigned leads.",
@@ -73,6 +80,13 @@
     "id": "access",
     "label": "People & access",
     "description": "Manage who can use your live workspace.",
+    "group": "workspace",
+    "admin": true
+  },
+  {
+    "id": "data",
+    "label": "Lead data management",
+    "description": "Review and permanently clear lead data while retaining workspace configuration.",
     "group": "workspace",
     "admin": true
   },

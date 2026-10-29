@@ -1,8 +1,13 @@
+import {
+  advanceLeadReset,
+  guardLeadData,
+  RESET_STATE,
+} from '../src/lead-data-reset.js';
 import { cleanupAttachments } from '../src/attachments.js';
 import { firebaseFiles } from '../src/file-storage.js';
 import { path } from '../src/policy.js';
 import { observableStore } from '../src/observable-store.js';
-import { test } from 'node:test';
+import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { initializeApp } from 'firebase-admin/app';
@@ -840,5 +845,195 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
       objectPath,
     ),
   );
-  await db.terminate();
 });
+
+test('archive Settings API persists dates and paginates with actual Firestore assigned-scope queries', async () => {
+  const token = await signIn('archive-review@example.com');
+  const identity = await auth.verifyIdToken(token);
+  const store = firestoreStore(db);
+  const app = createApp({
+    store,
+    verifyToken: (t) => auth.verifyIdToken(t, true),
+  });
+  const call = (method, url, body) => {
+    const r = request(app)
+      [method]('/api/v1' + url)
+      .set('Authorization', 'Bearer ' + token);
+    return body ? r.send(body) : r;
+  };
+  await store.run(async (tx) => {
+    tx.set(path('members', identity.uid), {
+      id: identity.uid,
+      uid: identity.uid,
+      role: 'SDR',
+      scope: 'assigned',
+      capabilities: ['leads:read', 'leads:edit'],
+      active: true,
+      version: 1,
+    });
+    for (let i = 0; i < 4; i++)
+      tx.set(path('leads', 'archive_emulator_' + i), {
+        id: 'archive_emulator_' + i,
+        name: 'Synthetic archive ' + i,
+        stage: 'New',
+        archived: i !== 0,
+        assignedToUid: i === 3 ? 'someone-else' : identity.uid,
+        version: 1,
+      });
+    tx.set(path('tasks', 'archive_emulator_pending'), {
+      id: 'archive_emulator_pending',
+      leadId: 'archive_emulator_0',
+      recipientUid: identity.uid,
+      state: 'Pending',
+      version: 1,
+    });
+  });
+  await call('post', '/leads/archive_emulator_0/archive', {
+    expectedVersion: 1,
+  }).expect(200);
+  const archived = await store.get(path('leads', 'archive_emulator_0'));
+  assert.ok(archived.archivedAt);
+  assert.equal(archived.archived, true);
+  assert.equal(
+    (await store.get(path('tasks', 'archive_emulator_pending'))).state,
+    'Cancelled',
+  );
+  const first = (await call('get', '/archived-leads?limit=2').expect(200)).body;
+  assert.equal(first.items.length, 2);
+  assert.ok(first.nextCursor);
+  const second = (
+    await call(
+      'get',
+      '/archived-leads?limit=2&cursor=' + encodeURIComponent(first.nextCursor),
+    ).expect(200)
+  ).body;
+  assert.equal(second.items.length, 1);
+  assert.equal(second.nextCursor, null);
+  assert.ok(
+    [...first.items, ...second.items].every(
+      (l) => l.assignedToUid === identity.uid && l.archived,
+    ),
+  );
+  await call('get', '/leads/archive_emulator_3').expect(404);
+});
+
+test('lead reset uses real Auth/Firestore/Storage, tombstones retries and preserves workspace configuration', async () => {
+  let at = '2026-10-29T11:00:00.000Z';
+  const raw = firestoreStore(db),
+    store = guardLeadData(
+      observableStore(raw, () => ({
+        enabled: true,
+        span: async (_n, fn) => fn(),
+        capture: () => ({
+          actorId: 'system',
+          operation: 'reset.integration',
+          operationId: 'reset-emulator',
+          requestId: 'reset-emulator',
+          traceparent: null,
+        }),
+      })),
+    );
+  const files = firebaseFiles(undefined, 'demo-salesdrone.firebasestorage.app');
+  const token = await signIn('spraghav@gmail.com');
+  const app = createApp({
+    store,
+    files,
+    now: () => at,
+    verifyToken: (t) => auth.verifyIdToken(t, true),
+  });
+  const call = (method, url, body, key) => {
+    const r = request(app)
+      [method]('/api/v1' + url)
+      .set('Authorization', 'Bearer ' + token);
+    if (key) r.set('Idempotency-Key', key);
+    return body ? r.send(body) : r;
+  };
+  await call('get', '/me').expect(200);
+  const settingsBefore = await raw.get(path('settings', 'workspace'));
+  const owner = (await auth.verifyIdToken(token)).uid;
+  const objectPath = 'workspaces/avinyatech/lead-files/reset-emulator/file';
+  await files.save(
+    objectPath,
+    Buffer.from('synthetic reset fixture'),
+    'text/plain',
+    'fixture',
+  );
+  await raw.run(async (tx) => {
+    tx.set(path('leads', 'reset-emulator'), {
+      id: 'reset-emulator',
+      name: 'Synthetic reset fixture',
+      archived: false,
+      version: 1,
+    });
+    tx.set(path('leadAttachments', 'file'), {
+      id: 'file',
+      leadId: 'reset-emulator',
+      objectPath,
+    });
+    tx.set(`users/${owner}/insights/reset-test`, {
+      summary: 'Synthetic reset fixture',
+    });
+    tx.set(`users/${owner}/notifications/reset-test`, {
+      id: 'reset-test',
+      leadId: 'reset-emulator',
+    });
+  });
+  const p = (await call('post', '/lead-data-reset/preview', {}).expect(200))
+    .body;
+  const input = { previewId: p.previewId, confirmation: 'DELETE ALL LEADS' },
+    key = randomUUID();
+  await call('post', '/lead-data-reset', input, key).expect(200);
+  await assert.rejects(
+    store.run(async (tx) =>
+      tx.set(path('leads', 'late-reset-emulator'), {
+        id: 'late-reset-emulator',
+      }),
+    ),
+    { code: 'LEAD_DATA_RESET' },
+  );
+  await call(
+    'post',
+    '/leads',
+    { name: 'Synthetic denied', phone: '5555555555' },
+    randomUUID(),
+  ).expect(503);
+  at = '2026-10-29T11:06:00.000Z';
+  for (let i = 0; i < 200; i++) {
+    const result = await advanceLeadReset({
+      store,
+      files,
+      now: () => at,
+      batches: 4,
+    });
+    assert.equal(result.blocked, 0);
+    if (!result.active) break;
+  }
+  const state = await raw.get(RESET_STATE);
+  assert.equal(state.active, false);
+  assert.equal(await raw.count(path('leads')), 0);
+  assert.deepEqual(
+    await files.list('workspaces/avinyatech/lead-files/', 30),
+    [],
+  );
+  assert.equal(await raw.get(`users/${owner}/insights/reset-test`), null);
+  assert.equal(await raw.get(`users/${owner}/notifications/reset-test`), null);
+  assert.deepEqual(
+    await raw.get(path('settings', 'workspace')),
+    settingsBefore,
+  );
+  assert.equal((await raw.get(path('members', owner))).role, 'Admin');
+  assert.ok(
+    (await raw.query(path('telemetryOutbox'), { limit: 1000 })).some(
+      (row) => row.event.data['records.reset_completed'] === 1,
+    ),
+  );
+  await store.run(async (tx) =>
+    tx.set(path('leads', 'fresh-reset-emulator'), {
+      id: 'fresh-reset-emulator',
+    }),
+  );
+  await call('post', '/lead-data-reset', input, key).expect(200);
+  assert.ok(await raw.get(path('leads', 'fresh-reset-emulator')));
+});
+
+after(() => db.terminate());

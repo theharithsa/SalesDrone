@@ -232,3 +232,11 @@ The connected MCP was verified as bos01241 / indiacs.apps.dynatrace.com and foun
 existing SalesDrone 2.0.0 logs. Release-specific 2.0.1 transport, tenant search and
 native RUM linkage evidence are recorded after deployment; this section alone is
 implementation guidance, not a verification certificate.
+
+## Archive browser (2.1)
+
+GET /archived-leads is a read-only scoped list: existing normalized HTTP RED metrics, request traces and allowlisted logs cover it, without customer field attributes or a canonical read event. Archiving reuses the existing transactional leads.committed records.archived and tasks.committed cancellation counts; adding archivedAt does not introduce a second event. Release-time tenant and production evidence is recorded separately from this contract.
+
+### Global lead reset
+
+leadDataResets.committed uses the backend provider and server-confirmed authority. Job state commits include numeric reset_started/reset_completed/reset_blocked transition counts. Existing per-domain records.deleted summaries cover acknowledged deletion batches without names, titles or file paths. Worker/HTTP RED metrics/logs/traces remain bounded; no new labels or tenant settings. Audit and telemetry outbox records are retained. Observe completion separately from POST acceptance; never execute a production reset simply to generate tenant evidence.

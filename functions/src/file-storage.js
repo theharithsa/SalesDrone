@@ -7,6 +7,15 @@ export function firebaseFiles(
 ) {
   const bucket = () => getStorage().bucket(bucketName);
   return {
+    list: async (prefix, limit = 30) =>
+      observe('storage.list', async () => {
+        const [objects] = await bucket().getFiles({
+          prefix,
+          maxResults: limit,
+          autoPaginate: false,
+        });
+        return objects.map((file) => file.name);
+      }),
     save: async (path, bytes, contentType, checksum) =>
       observe('storage.upload', async () => {
         try {

@@ -172,3 +172,7 @@ records incrementally; reports still use all matching records.
 Development-only review HTML and fictional admin/form fixtures are separate Vite
 entries, excluded from the production bundle and checked by check-design-build.
 They have no live data transport and cannot generate real tokens or grant access.
+
+### Archives Settings (2.1)
+
+Archive is retained state, not physical deletion. Settings uses a dedicated read-only /archived-leads collection endpoint over archived=true and current scope, with existing signed pagination. New archives retain archivedAt; old missing timestamps stay unknown. No new Firestore composite query shape is introduced beyond the existing archived/assignee/id index. Admin lead-data reset is described in docs/LEAD-DATA-MANAGEMENT.md; it preserves configuration and users.

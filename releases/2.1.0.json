@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "version": "2.1.0",
+  "summary": "Archives Settings and Admin-only confirmed, resumable lead-data reset, retaining users/configuration and standalone reminders. Publication authorized by the human on 29 October 2026; production reset execution is not authorized.",
+  "modules": [
+    "salesdrone-leads",
+    "salesdrone-workspace-settings",
+    "salesdrone-interface",
+    "salesdrone-product-guide",
+    "salesdrone-api-integrations",
+    "salesdrone-testing",
+    "salesdrone-observability",
+    "salesdrone-data-platform",
+    "salesdrone-attachments",
+    "salesdrone-tasks-reminders",
+    "salesdrone-release"
+  ],
+  "documentation": [
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/TESTING.md",
+    "docs/observability.md",
+    "docs/LEAD-DATA-MANAGEMENT.md",
+    "docs/BUSINESS-EVENTS.md"
+  ],
+  "settingsSections": [
+    "archives",
+    "data"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Add scoped archive page, optional archive timestamp and four Google-only Admin reset preview/status/start/resume endpoints, with explicit ownership, strict validation, concurrency lock and idempotency tombstones.",
+    "contractVersion": "1.17.0",
+    "permissions": "Archives reuses current lead-reading member/PAT scope; reset denies all PATs and requires active Admin, members:write, baseline leads:read and production Google/App Check. Standalone reminders/configuration retained.",
+    "tests": [
+      "functions/test/archived-leads.test.js",
+      "functions/test/api-portal.test.js",
+      "functions/test/emulator.integration.js",
+      "functions/test/lead-data-reset.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse HTTP/worker RED and safe dependency log/spans; new reset job committed events add numeric start/completed/blocked transitions and existing per-domain deletion counts. No new metric labels, credential scopes or tenant settings; transport, production and tenant verification remain separate.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/emulator.integration.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Reuse HTTP/worker RED and safe dependency log/spans; new reset job committed events add numeric start/completed/blocked transitions and existing per-domain deletion counts. No new metric labels, credential scopes or tenant settings; transport, production and tenant verification remain separate.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/emulator.integration.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Reuse HTTP/worker RED and safe dependency log/spans; new reset job committed events add numeric start/completed/blocked transitions and existing per-domain deletion counts. No new metric labels, credential scopes or tenant settings; transport, production and tenant verification remain separate.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/emulator.integration.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Reuse HTTP/worker RED and safe dependency log/spans; new reset job committed events add numeric start/completed/blocked transitions and existing per-domain deletion counts. No new metric labels, credential scopes or tenant settings; transport, production and tenant verification remain separate.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/emulator.integration.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Reuse HTTP/worker RED and safe dependency log/spans; new reset job committed events add numeric start/completed/blocked transitions and existing per-domain deletion counts. No new metric labels, credential scopes or tenant settings; transport, production and tenant verification remain separate.",
+      "tests": [
+        "tests/release-readiness.test.ts",
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/emulator.integration.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Local: 123 backend + 67 web tests pass; real Auth/Firestore/Storage emulator suite passes all three integration tests. Isolated Chromium: archive 22 viewport/theme cases and paging/refresh, reset 18 viewport/theme cases and exact phrase/acknowledgment/Cancel-focus/status, plus short-window/large-text/Escape and four fractional iframe boundaries. Nine current synthetic/public-schema captures were visually/privacy reviewed with hashes/dimensions. No production reset, physical-device/Safari or tenant evidence; application is not pushed or deployed. The ordinary guest application archive-to-Settings-to-record flow passed without reloading or losing synthetic archive state. The human requested production publication on 29 October 2026; this lifts the local release hold, not permission to run a production reset.",
+  "screenshots": [
+    "archives-demo.jpg",
+    "archives-mobile.jpg",
+    "lead-data-reset-demo.jpg",
+    "lead-data-reset-mobile.jpg",
+    "font-settings-demo.jpg",
+    "display-scale-demo.jpg",
+    "book-settings-demo.jpg",
+    "developer-settings-demo.jpg",
+    "api-portal-demo.jpg"
+  ],
+  "pendingDesignApproval": false
+}

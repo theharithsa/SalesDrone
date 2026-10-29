@@ -55,6 +55,7 @@ export const PAT_ROUTES = {
   'post /leads/export': 'leads:export',
   'get /workspace-settings': 'configuration:read',
   'get /leads': 'leads:read',
+  'get /archived-leads': 'leads:read',
   'get /leads/:id': 'leads:read',
   'get /leads/:id/journey': 'leads:read',
   'post /leads': 'leads:create',

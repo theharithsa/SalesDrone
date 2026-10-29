@@ -24,6 +24,7 @@ Form or scoped API → field and contact validation → member/lead policy → a
 ## Primary API ownership
 
 - GET /api/v1/leads
+- GET /api/v1/archived-leads
 - POST /api/v1/leads/export
 - POST /api/v1/leads
 - POST /api/v1/leads/batch/preview
@@ -147,3 +148,11 @@ without opening the record; the adjacent button opens it. Remove trailing checkb
 positioning/name padding together. Desktop table selection and batch/cursor policy
 remain unchanged. review:mobile asserts leading geometry at 320/390/600/767px,
 selection isolation, and placement at all five saved scales on 320/390px screens.
+
+## Archives in Settings (2.1)
+
+GET /archived-leads lists only archived records using the same current effective member scope and signed cursor policy (limit 1–100; UI 30). PAT reads reuse leads:read. Settings Archives is read-only, including for permitted non-admins, with links to retained records; no restoration or hard deletion is implied. New archives set archivedAt once; older missing dates remain unknown. Pending task cancellation is unchanged. Demo archives remain in memory rather than being removed; active filters/dashboard exclude them. Verify functions/test/archived-leads.test.js and real emulator scope/paging.
+
+## Lead-data reset (2.1)
+
+Global reset removes active and archived leads and related history/files/imports/dedupe/cache data after the Admin confirms the exact scope. Workspace-settings owns the reset endpoints. guardLeadData reads a common lock in transactions; lead mutation routes reject 503 during cleanup. Never bypass it for background or integration writes. Old request tombstones return 409 RESET_REQUEST_EXPIRED, preventing replay resurrection.

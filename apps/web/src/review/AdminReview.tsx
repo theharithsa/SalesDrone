@@ -140,6 +140,8 @@ const values: Record<string, any> = {
   '/imports': { items: [], nextCursor: null },
 };
 const formSamples = demoData();
+let resetPreview = false;
+let previewResetJob: any = null;
 function AdminReview() {
   const [formPreview, setFormPreview] = useState('');
   const previewSave = async () => {
@@ -166,6 +168,43 @@ function AdminReview() {
   const request = useCallback(
     async (path: string, method = 'GET', body: any = {}) => {
       const key = path.split('?')[0];
+      if (key === '/lead-data-reset/preview')
+        return {
+          previewId: '11111111-1111-4111-8111-111111111111',
+          expiresAt: new Date(Date.now() + 600000).toISOString(),
+          counts: { leads: 96, archived: 35 },
+        };
+      if (key === '/lead-data-reset' && method === 'POST') {
+        if (body.confirmation !== 'DELETE ALL LEADS')
+          throw Error('Confirmation required');
+        previewResetJob = {
+          id: 'synthetic-reset',
+          status: 'Waiting',
+          phase: 'reminderDeliveries',
+          version: 1,
+          deletedRecords: 0,
+          deletedFiles: 0,
+          lastError: null,
+        };
+        resetPreview = true;
+        return previewResetJob;
+      }
+      if (key === '/lead-data-reset')
+        return { active: resetPreview, job: previewResetJob };
+      if (key === '/archived-leads') {
+        const offset = Number(
+          new URLSearchParams(path.split('?')[1]).get('cursor') || 0,
+        );
+        const rows = formSamples.leads.slice(0, 35).map((lead, i) => ({
+          ...lead,
+          archived: true,
+          archivedAt: i ? '2026-10-29T10:00:00Z' : undefined,
+        }));
+        return {
+          items: rows.slice(offset, offset + 30),
+          nextCursor: offset + 30 < rows.length ? String(offset + 30) : null,
+        };
+      }
       if (key === '/me') return structuredClone(body);
       if (
         method !== 'GET' &&

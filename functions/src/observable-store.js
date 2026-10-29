@@ -3,6 +3,7 @@ import { hash, path, ROOT } from './policy.js';
 import { APP_VERSION, BUILD_COMMIT } from './version.js';
 const domains = new Set([
   'leads',
+  'leadDataResets',
   'leadAttachments',
   'activities',
   'activityRevisions',
@@ -33,6 +34,16 @@ function domain(p, data) {
 }
 /** Count only transitions observed from a read-before-write snapshot. No field values leave the store. */
 export function lifecycleCounts(domain, before, after) {
+  if (domain === 'leadDataResets' && after)
+    return {
+      ...(!before ? { reset_started: 1 } : {}),
+      ...(after.status === 'Completed' && before?.status !== 'Completed'
+        ? { reset_completed: 1 }
+        : {}),
+      ...(after.status === 'Blocked' && before?.status !== 'Blocked'
+        ? { reset_blocked: 1 }
+        : {}),
+    };
   if (!before || !after) return {};
   const result = {};
   if (domain === 'tasks') {
@@ -68,6 +79,7 @@ export function observableStore(base, getTelemetry = () => null) {
     get: (p) => wrap('firestore.get', () => base.get(p)),
     query: (p, o) => wrap('firestore.query', () => base.query(p, o)),
     count: (p, f) => wrap('firestore.count', () => base.count(p, f)),
+    scan: (p, options) => wrap('firestore.scan', () => base.scan(p, options)),
     run: (fn) => {
       const t = getTelemetry();
       if (!t?.enabled) return base.run(fn);

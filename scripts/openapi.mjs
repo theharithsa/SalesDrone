@@ -1,3 +1,7 @@
+import {
+  ResetConfirmation,
+  ResetResume,
+} from '../functions/src/lead-data-reset.js';
 import { BulkLeadInput } from '../functions/src/bulk-leads.js';
 import {
   AttachmentInput,
@@ -54,6 +58,60 @@ schemas.ImportInput.properties.rows.items.properties = {
     description:
       'Each nonempty selected spreadsheet cell becomes a separate historical note. Other keys are standard lead fields.',
   },
+};
+schemas.ResetConfirmation = z.toJSONSchema(ResetConfirmation, { io: 'input' });
+schemas.ResetResume = z.toJSONSchema(ResetResume, { io: 'input' });
+schemas.ResetJob = {
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    status: {
+      type: 'string',
+      enum: ['Waiting', 'Running', 'Blocked', 'Completed'],
+    },
+    phase: { type: 'string' },
+    version: { type: 'integer' },
+    createdAt: { type: 'string', format: 'date-time' },
+    readyAt: { type: 'string', format: 'date-time' },
+    updatedAt: { type: 'string', format: 'date-time' },
+    completedAt: { type: ['string', 'null'] },
+    deletedRecords: { type: 'integer' },
+    deletedFiles: { type: 'integer' },
+    redactedRequests: { type: 'integer' },
+    lastError: { type: ['string', 'null'] },
+  },
+  required: [
+    'id',
+    'status',
+    'phase',
+    'version',
+    'deletedRecords',
+    'deletedFiles',
+    'redactedRequests',
+  ],
+};
+schemas.ResetStatus = {
+  type: 'object',
+  properties: {
+    active: { type: 'boolean' },
+    job: {
+      anyOf: [{ type: 'null' }, { $ref: '#/components/schemas/ResetJob' }],
+    },
+  },
+  required: ['active', 'job'],
+};
+schemas.ResetPreview = {
+  type: 'object',
+  properties: {
+    previewId: { type: 'string', format: 'uuid' },
+    expiresAt: { type: 'string', format: 'date-time' },
+    counts: {
+      type: 'object',
+      properties: { leads: { type: 'integer' }, archived: { type: 'integer' } },
+      required: ['leads', 'archived'],
+    },
+  },
+  required: ['previewId', 'expiresAt', 'counts'],
 };
 schemas.BulkLeadInput = z.toJSONSchema(BulkLeadInput, { io: 'input' });
 schemas.AttachmentInput = z.toJSONSchema(AttachmentInput, { io: 'input' });
@@ -305,6 +363,11 @@ schemas.Lead = object(
     doNotContact: { type: 'boolean' },
     suppressionReason: string,
     archived: { type: 'boolean' },
+    archivedAt: {
+      ...instant,
+      description:
+        'Recorded for new archives; absent on older records. Never inferred from updatedAt.',
+    },
   },
   ['id', 'name', 'stage', 'version', 'assignedToUid', 'createdAt', 'updatedAt'],
 );
@@ -551,6 +614,9 @@ const responseFor = (method, url) => {
         },
       },
     };
+  if (url === '/lead-data-reset/preview') return ref('ResetPreview');
+  if (url === '/lead-data-reset' && method === 'get') return ref('ResetStatus');
+  if (url.startsWith('/lead-data-reset')) return ref('ResetJob');
   if (url.startsWith('/leads/batch')) return ref('BulkLeadResult');
   if (url.includes('/attachments'))
     return method === 'delete'
@@ -587,7 +653,8 @@ const responseFor = (method, url) => {
   if (url === '/invitations')
     return method === 'get' ? pageOf('Invitation') : ref('Invitation');
   if (url.includes('/invitations/')) return ref('Ok');
-  if (url === '/leads' && method === 'get') return pageOf('Lead');
+  if ((url === '/leads' || url === '/archived-leads') && method === 'get')
+    return pageOf('Lead');
   if (url.endsWith('/archive')) return ref('Ok');
   if (url.startsWith('/leads')) return ref('Lead');
   if (url === '/tasks' && method === 'get') return pageOf('Task');
@@ -623,55 +690,62 @@ endpoints.push(
   },
 );
 const bodyFor = (m, u) =>
-  u.startsWith('/leads/batch')
-    ? 'BulkLeadInput'
-    : u === '/leads/:id/attachments' && m === 'post'
-      ? 'AttachmentInput'
-      : u === '/leads/:id/attachments/:attachmentId' && m === 'delete'
-        ? 'AttachmentDelete'
-        : u === '/workspace-settings'
-          ? 'WorkspaceSettingsPatch'
-          : u === '/leads/export'
-            ? 'LeadExportInput'
-            : u === '/personal-access-tokens' && m === 'post'
-              ? 'TokenInput'
-              : u === '/ai-settings'
-                ? 'AISettingsPatch'
-                : u === '/scoring-settings'
-                  ? 'ScoringPatch'
-                  : u.endsWith('/score/refresh') || u === '/dashboard/insights'
-                    ? 'EmptyInput'
-                    : u === '/field-options'
-                      ? 'FieldOptionsPatch'
-                      : u.endsWith('/assignment')
-                        ? 'AssignmentPatch'
-                        : u === '/notifications/:id'
-                          ? 'NotificationPatch'
-                          : u === '/me'
-                            ? 'Preferences'
-                            : u.endsWith('/automatic-reminder')
-                              ? 'AutomaticReminderAction'
-                              : u === '/leads'
-                                ? 'LeadInput'
-                                : u === '/leads/:id'
-                                  ? 'LeadPatch'
-                                  : u.endsWith('/activities')
-                                    ? 'ActivityInput'
-                                    : u === '/tasks'
-                                      ? 'TaskInput'
-                                      : u === '/tasks/:id'
-                                        ? m === 'delete'
-                                          ? 'TaskDelete'
-                                          : 'TaskPatch'
-                                        : u === '/invitations'
-                                          ? 'GrantInput'
-                                          : u === '/members/:uid'
-                                            ? 'MemberPatch'
-                                            : u === '/devices'
-                                              ? 'DeviceInput'
-                                              : u === '/imports/preview'
-                                                ? 'ImportInput'
-                                                : null;
+  u === '/lead-data-reset/preview'
+    ? 'EmptyInput'
+    : u === '/lead-data-reset' && m === 'post'
+      ? 'ResetConfirmation'
+      : u === '/lead-data-reset/:id/resume'
+        ? 'ResetResume'
+        : u.startsWith('/leads/batch')
+          ? 'BulkLeadInput'
+          : u === '/leads/:id/attachments' && m === 'post'
+            ? 'AttachmentInput'
+            : u === '/leads/:id/attachments/:attachmentId' && m === 'delete'
+              ? 'AttachmentDelete'
+              : u === '/workspace-settings'
+                ? 'WorkspaceSettingsPatch'
+                : u === '/leads/export'
+                  ? 'LeadExportInput'
+                  : u === '/personal-access-tokens' && m === 'post'
+                    ? 'TokenInput'
+                    : u === '/ai-settings'
+                      ? 'AISettingsPatch'
+                      : u === '/scoring-settings'
+                        ? 'ScoringPatch'
+                        : u.endsWith('/score/refresh') ||
+                            u === '/dashboard/insights'
+                          ? 'EmptyInput'
+                          : u === '/field-options'
+                            ? 'FieldOptionsPatch'
+                            : u.endsWith('/assignment')
+                              ? 'AssignmentPatch'
+                              : u === '/notifications/:id'
+                                ? 'NotificationPatch'
+                                : u === '/me'
+                                  ? 'Preferences'
+                                  : u.endsWith('/automatic-reminder')
+                                    ? 'AutomaticReminderAction'
+                                    : u === '/leads'
+                                      ? 'LeadInput'
+                                      : u === '/leads/:id'
+                                        ? 'LeadPatch'
+                                        : u.endsWith('/activities')
+                                          ? 'ActivityInput'
+                                          : u === '/tasks'
+                                            ? 'TaskInput'
+                                            : u === '/tasks/:id'
+                                              ? m === 'delete'
+                                                ? 'TaskDelete'
+                                                : 'TaskPatch'
+                                              : u === '/invitations'
+                                                ? 'GrantInput'
+                                                : u === '/members/:uid'
+                                                  ? 'MemberPatch'
+                                                  : u === '/devices'
+                                                    ? 'DeviceInput'
+                                                    : u === '/imports/preview'
+                                                      ? 'ImportInput'
+                                                      : null;
 const paths = {};
 for (const e of endpoints) {
   const url = '/api/v1' + e.url.replace(/:([a-zA-Z]+)/g, '{$1}');
@@ -728,6 +802,7 @@ for (const e of endpoints) {
     e.url !== '/me' &&
     e.url !== '/summary' &&
     ![
+      '/lead-data-reset',
       '/lead-scores',
       '/ai-settings',
       '/workspace-settings',
@@ -814,7 +889,9 @@ for (const e of endpoints) {
     e.url !== '/dashboard/insights' &&
     e.url !== '/personal-access-tokens' &&
     e.url !== '/leads/batch/preview' &&
-    !e.url.endsWith('/score/refresh')
+    !e.url.endsWith('/score/refresh') &&
+    e.url !== '/lead-data-reset/preview' &&
+    e.url !== '/lead-data-reset/:id/resume'
   )
     operation.parameters.push({
       in: 'header',
@@ -823,6 +900,9 @@ for (const e of endpoints) {
       schema: { type: 'string', format: 'uuid' },
       description: 'Reuse the same key and body after an uncertain response.',
     });
+  if (e.url.startsWith('/lead-data-reset'))
+    operation.description +=
+      ' Google/App Check Admin-only; PAT denied. Clear all active/archived leads and related data, retain users/configuration and standalone reminders. Preview expires after ten minutes; confirmation includes concurrent additions. Cleanup waits five minutes then runs in bounded resumable batches; lead mutations return LEAD_DATA_RESET (503) while active/blocked. Old idempotency receipts are redacted and return RESET_REQUEST_EXPIRED (409). No cancel after acceptance.';
   const body = bodyFor(e.method, e.url);
   if (body && ['post', 'patch', 'delete'].includes(e.method))
     operation.requestBody = {
@@ -967,9 +1047,9 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.16.0',
+    version: '1.17.0',
     description:
-      'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Lead removal is archiving, never permanent erasure. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
+      'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
   servers: [{ url: '/' }],
   paths,

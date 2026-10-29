@@ -1,3 +1,4 @@
+import { FieldPath } from 'firebase-admin/firestore';
 // Both adapters expose the same transaction boundary. Buffered writes ensure all
 // Firestore reads precede writes, including policy checks and idempotency reads.
 function firestoreReader(db, transaction) {
@@ -14,6 +15,12 @@ function firestoreReader(db, transaction) {
     return q.limit(limit);
   };
   return {
+    scan: async (path, { after, limit = 50 } = {}) => {
+      let q = db.collection(path).orderBy(FieldPath.documentId()).limit(limit);
+      if (after) q = q.startAfter(after);
+      const result = transaction ? await transaction.get(q) : await q.get();
+      return result.docs.map((doc) => ({ id: doc.id, data: doc.data() }));
+    },
     get: async (path) => {
       const ref = db.doc(path);
       const s = transaction ? await transaction.get(ref) : await ref.get();
@@ -56,6 +63,20 @@ export function memoryStore(seed = {}) {
   let data = new Map(Object.entries(seed));
   let tail = Promise.resolve();
   const reader = (map) => ({
+    scan: async (p, { after, limit = 50 } = {}) =>
+      [...map.entries()]
+        .filter(
+          ([k]) =>
+            k.startsWith(p + '/') &&
+            k.split('/').length === p.split('/').length + 1,
+        )
+        .map(([k, v]) => ({
+          id: k.slice(p.length + 1),
+          data: structuredClone(v),
+        }))
+        .filter((row) => !after || row.id > after)
+        .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+        .slice(0, limit),
     get: async (p) => structuredClone(map.get(p) || null),
     query: async (
       p,

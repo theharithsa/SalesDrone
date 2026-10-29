@@ -1,3 +1,5 @@
+import LeadDataSettings from './LeadDataSettings';
+import ArchivedLeadsSettings from './ArchivedLeadsSettings';
 import { displayScales, normalizeDisplayScale } from '../lib/display-scale';
 import { interfaceFonts, normalizeFontStyle } from '../lib/fonts';
 import settingsSections from '../lib/settings-sections.json';
@@ -29,12 +31,14 @@ import {
   ChevronRight,
   Sparkles,
   CodeXml,
+  Archive,
 } from 'lucide-react';
-import { Session, Entity } from '../lib/types';
+import { Session, Entity, Lead } from '../lib/types';
 import { Avatar, ErrorMessage, SaveButton, useSubmit } from '../components/UI';
 import { enablePush, revokeThisDevice } from '../lib/api';
 export default function SettingsPage({
   previewOnly = false,
+  onOpenLead,
   session,
   guestPreferences,
   demo,
@@ -48,6 +52,7 @@ export default function SettingsPage({
   onWorkspacePolicyChanged,
 }: {
   previewOnly?: boolean;
+  onOpenLead?: (lead: Lead) => void;
   initialSection?: string;
   onWorkspacePolicyChanged?: () => void;
   session: Session | null;
@@ -62,6 +67,8 @@ export default function SettingsPage({
 }) {
   const isAdmin = !demo && session?.member?.role === 'Admin';
   const icons: Record<string, typeof UserRound> = {
+    archives: Archive,
+    data: SlidersHorizontal,
     profile: UserRound,
     appearance: Monitor,
     notifications: Smartphone,
@@ -109,10 +116,10 @@ export default function SettingsPage({
   );
   const currentSection = sections.find((s) => s.id === section) || sections[0];
   const personalSections = sections.filter((item) =>
-    ['profile', 'appearance', 'notifications'].includes(item.id),
+    ['profile', 'appearance', 'notifications', 'archives'].includes(item.id),
   );
   const workspaceSections = sections.filter((item) =>
-    ['workspace', 'developer', 'access'].includes(item.id),
+    ['workspace', 'developer', 'access', 'data'].includes(item.id),
   );
   const chooseSection = (id: string) => {
     setSection(id);
@@ -375,6 +382,12 @@ export default function SettingsPage({
             <p className="success-message" role="status">
               {message}
             </p>
+          ) : null}
+          {section === 'archives' ? (
+            <ArchivedLeadsSettings request={request} onOpenLead={onOpenLead} />
+          ) : null}
+          {isAdmin && section === 'data' ? (
+            <LeadDataSettings request={request} onChanged={onRefresh} />
           ) : null}
           {isAdmin && section === 'workspace' ? (
             <WorkspacePolicySettings

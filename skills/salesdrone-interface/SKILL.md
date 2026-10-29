@@ -167,3 +167,7 @@ spans the row. Keep checkbox and open actions independent and keyboard-accessibl
 The mobile bottom-navigation selection fills the rounded button behind both icon
 and label. Use the button's active background, not a separately positioned icon
 pill; preserve the compact bar height and compensated touch target.
+
+## Archives (2.1)
+
+Settings Archives reuses scoped data and responsive cards with wrapping contact fields; demo archiving retains the fictional record with archived=true and removes it from the active filter and summary. Never connect the demo to live archive endpoints.
