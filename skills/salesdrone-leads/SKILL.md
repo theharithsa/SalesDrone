@@ -160,3 +160,7 @@ Global reset removes active and archived leads and related history/files/imports
 ## Configured form visibility (2.2)
 
 LeadForm respects hidden phone/email/countryCode/stage/comments as well as earlier optional fields. Keep required name/date and at least one visible contact input; only require the remaining contact input when no retained alternate contact satisfies the existing record. Hidden keys are omitted on edits, preserving saved values. New manual records use the existing New stage default and configured first country code even when those controls are removed. Lead normalization, dedupe, suppression/review and legacy import rules remain unchanged. Field retirement never erases historical records or disables dedicated workflow actions. Backend field-options policy prevents hiding both contact inputs; tests cover preservation, contactless-save rejection and restoration.
+
+## Header and chart review (2.2.1)
+
+Stage and assignment in the lead header use uniform label/control geometry. Remove the stage detail-section inset/divider within blade-workflow only; compact lead surfaces stack the two full-width controls. Preserve current stage values, expectedVersion, reassignment warnings and capability checks; responsive layout introduces no write or event.

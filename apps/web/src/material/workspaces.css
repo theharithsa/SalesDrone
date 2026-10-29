@@ -486,13 +486,22 @@ tbody tr:last-child td {
   gap: 16px;
   align-items: start;
 }
-.blade-workflow h3 {
+.blade-workflow > * {
+  min-width: 0;
+}
+.blade-workflow > .detail-section {
+  padding: 0;
+  border: 0;
+}
+.blade-workflow > div > h3 {
   font-size: 0.75rem;
   color: var(--muted);
   font-weight: 500;
+  letter-spacing: normal;
   margin-bottom: 6px;
 }
 .blade-workflow select {
+  width: 100%;
   min-height: max(var(--md-touch-target, 0px), 48px);
   padding: 10px 44px 10px 12px;
   font-size: 0.875rem;
@@ -2122,6 +2131,26 @@ input[type='tel'] {
     min-height: max(var(--md-touch-target, 0px), 44px);
     padding: 0;
     border-radius: 50%;
+  }
+}
+@container lead-surface (max-width: 36rem) {
+  .blade-workflow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lead-header-score {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    justify-items: start;
+    min-width: 0;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .detail-profile,
+  .full-lead-page .detail-profile {
+    grid-template-columns: 44px minmax(0, 1fr);
   }
 }
 
