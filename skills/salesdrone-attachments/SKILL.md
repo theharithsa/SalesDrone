@@ -50,3 +50,7 @@ Material v2 keeps the private Files API/limits intact while adopting shared file
 ## Lead-data reset (2.1)
 
 The global lead reset waits five minutes past current function request deadlines, deletes metadata-associated objects then sweeps the fixed workspaces/avinyatech/lead-files/ prefix via bounded firebaseFiles.list. No caller-controlled prefix, filenames or network calls in transactions. Listing/deletion failure blocks completion and retains the data-write pause; storage operations are idempotent. Provider soft-delete/backups are outside the application's undo/erasure promise.
+
+## API and deployment hardening (2.3.1)
+
+The binary PUT pre-middleware must initialize the exact attachments:write PAT requirement before requireMember and before parsing bytes. The generic route wrapper sets it again; neither check expands scopes. Test the token reserve→PUT→GET→DELETE flow, read-only denial and post-upload revocation with bulk-and-files.test.js and the real Storage emulator.

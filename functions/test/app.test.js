@@ -654,3 +654,86 @@ test('large error reports are paginated without dropping validation failures', a
   assert.equal(report.items.length, 120);
   assert.equal(report.nextCursor, null);
 });
+
+test('archive validates empty, unknown and invalid versions without changing lead state', async () => {
+  const s = setup();
+  await bootstrap(s);
+  const l = await createLead(s);
+  for (const body of [
+    undefined,
+    {},
+    { expectedVersion: '1' },
+    { expectedVersion: 0 },
+    { expectedVersion: -1 },
+    { expectedVersion: 1, extra: true },
+  ]) {
+    const r = await s
+      .call('admin', 'post', '/leads/' + l.id + '/archive', body)
+      .expect(400);
+    assert.equal(r.body.error.code, 'VALIDATION');
+  }
+  const unchanged = await s.store.get(path('leads', l.id));
+  assert.equal(unchanged.version, l.version);
+  assert.equal(unchanged.archived, false);
+  await s
+    .call('admin', 'post', '/leads/' + l.id + '/archive', {
+      expectedVersion: l.version + 1,
+    })
+    .expect(409);
+  await s
+    .call('admin', 'post', '/leads/' + l.id + '/archive', {
+      expectedVersion: l.version,
+    })
+    .expect(200);
+  assert.equal((await s.store.get(path('leads', l.id))).archived, true);
+});
+
+test('duplicate creation never discloses another SDR lead ID or contact values', async () => {
+  const s = setup();
+  await bootstrap(s);
+  await grant(s, 'sdr');
+  await grant(s, 'viewer', 'SDR');
+  const l = await createLead(s, 88, 'sdr');
+  const denied = await s.call('viewer', 'get', '/leads/' + l.id);
+  assert.ok([403, 404].includes(denied.status));
+  for (const who of ['viewer', 'admin']) {
+    const r = await s
+      .call(who, 'post', '/leads', lead(88), randomUUID())
+      .expect(409);
+    assert.equal(r.body.error.code, 'DUPLICATE');
+    assert.equal(r.body.error.details, undefined);
+    const json = JSON.stringify(r.body);
+    assert.ok(!json.includes(l.id));
+    assert.ok(!json.includes(l.phone));
+  }
+  assert.equal(await s.store.count(path('leads')), 1);
+});
+
+test('malformed and oversized JSON have stable private errors with request/version metadata', async () => {
+  const s = setup();
+  const malformed = await request(s.app)
+    .post('/api/v1/leads')
+    .set('Content-Type', 'application/json')
+    .send('{"private":"SYNTHETIC-PRIVATE-CELL", broken}')
+    .expect(400);
+  assert.equal(malformed.body.error.code, 'BAD_JSON');
+  assert.equal(
+    malformed.body.error.message,
+    'Request body must contain valid JSON.',
+  );
+  assert.ok(!JSON.stringify(malformed.body).includes('SYNTHETIC-PRIVATE-CELL'));
+  const oversized = await request(s.app)
+    .post('/api/v1/leads')
+    .send({ value: 'x'.repeat(12 * 1024 * 1024) })
+    .expect(413);
+  assert.equal(oversized.body.error.code, 'PAYLOAD_TOO_LARGE');
+  assert.equal(
+    oversized.body.error.message,
+    'Request body exceeds the allowed size.',
+  );
+  for (const r of [malformed, oversized]) {
+    assert.equal(r.body.error.requestId, r.headers['x-request-id']);
+    assert.ok(r.headers['x-app-version']);
+    assert.equal(r.body.error.details, undefined);
+  }
+});

@@ -104,3 +104,7 @@ resulting main commit via the normal workflow.
 ## Lead-data reset (2.1)
 
 For lead reset deploy all shared Functions exports so API and background producers share the reset lock. Verify runtime Storage list/delete access without broadening IAM implicitly. Do not roll back or remove the cleanup worker while a reset is active; forward-fix/recover its cursor/lease. Postdeploy verification uses read-only status/metadata; do not execute destructive customer writes for evidence. Follow docs/LEAD-DATA-MANAGEMENT.md.
+
+## API and deployment hardening (2.3.1)
+
+Pages now depends on verify and deploy and requires deploy success; a failed/cancelled deploy must not publish a newer guide. Notify uses scripts/deployment-outcome.mjs with explicit rules, index readiness, Storage, Functions, Hosting, published-version and postcheck outcomes. Missing/skipped/cancelled phases report failed, even if later phases succeeded. Tests exercise every required phase; do not intentionally fail production to test the DAG.

@@ -118,3 +118,7 @@ leadDataResets joins the observable-store domain catalog. Numeric records.reset_
 ## Collaborative imports (2.3)
 
 Reviewed imports reuse committed domain outboxes with safe import_created/import_updated/import_unchanged/import_skipped and preparing/completed/blocked/details_deleted counters. Source comparisons stay private application data; never emit filenames, candidate names, contact values or comments. RUM names fixed plan/review/rows/report segments and redacts IDs/query values. HTTP/CI instrumentation remains existing; tenant verification is a separate post-deploy gate.
+
+## API and deployment hardening (2.3.1)
+
+Deployment reporting now computes outcome from seven required phases through deployment-outcome.mjs; missing/index/Storage failures cannot report succeeded. Event schema and classic marker transport stay unchanged (#71 remains separate). Parser failures return bounded codes/messages while HTTP spans/metrics record actual 400/413 statuses. Duplicate conflicts emit no inaccessible IDs; successful token uploads reuse existing committed attachment lifecycle events.

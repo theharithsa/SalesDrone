@@ -108,3 +108,7 @@ real committed operations; do not create customer changes merely to populate a
 query. Native RUM-to-trace navigation is a separate check, with any unavailable
 session/linking capability explicitly unverified. Maintain rollback source/config
 and follow forward SemVer for any corrective code release.
+
+## API and deployment hardening (2.3.1)
+
+Pages requires both verification and the complete deployment job to succeed. Deployment reporting uses deployment-outcome.mjs with explicit Firestore/rules, index readiness, Storage, Functions, Hosting, published-version and postcheck outcomes. Any absent/skipped/cancelled/failed phase reports failed. A reporting failure can still follow an already successful app rollout; inspect live metadata before retrying. No intentional production failure is needed to test ordering.

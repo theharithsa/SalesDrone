@@ -47,7 +47,6 @@ export async function prepareLead(tx, input, { uid, id, now }) {
       409,
       'DUPLICATE',
       'A lead with this contact already exists',
-      { leadIds: duplicateIds },
     );
   const { allowDuplicate, ...fields } = lead;
   const record = {

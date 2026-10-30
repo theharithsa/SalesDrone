@@ -590,3 +590,62 @@ test('batch stored-data budget rejects oversized aggregate records before changi
   for (const { id } of items)
     assert.equal((await c.store.get(path('leads', id))).version, 1);
 });
+
+test('PAT attachment reserve, binary upload, download and delete require their explicit scopes', async () => {
+  const s = await setup();
+  const issue = async (scopes) =>
+    (
+      await s
+        .call('admin', 'post', '/personal-access-tokens', {
+          name: 'Synthetic file integration',
+          scopes,
+          expiresInDays: 7,
+        })
+        .expect(200)
+    ).body.token;
+  const token = await issue(['attachments:read', 'attachments:write']);
+  const readOnly = await issue(['attachments:read']);
+  const base = '/leads/' + s.leads[0].id + '/attachments';
+  const bytes = Buffer.from('Synthetic token upload');
+  const pending = (
+    await s
+      .call(
+        token,
+        'post',
+        base,
+        {
+          name: 'synthetic.txt',
+          contentType: 'text/plain',
+          size: bytes.length,
+        },
+        randomUUID(),
+      )
+      .expect(200)
+  ).body;
+  const content = base + '/' + pending.id + '/content';
+  await s
+    .call(readOnly, 'put', content, bytes)
+    .set('Content-Type', 'application/octet-stream')
+    .expect(403);
+  assert.equal(s.objects.size, 0);
+  const ready = (
+    await s
+      .call(token, 'put', content, bytes)
+      .set('Content-Type', 'application/octet-stream')
+      .expect(200)
+  ).body;
+  assert.equal(ready.state, 'Ready');
+  const downloaded = await s.call(token, 'get', content).expect(200);
+  assert.deepEqual(downloaded.body, bytes);
+  await s
+    .call(readOnly, 'delete', base + '/' + pending.id, {
+      expectedVersion: ready.version,
+    })
+    .expect(403);
+  await s
+    .call(token, 'delete', base + '/' + pending.id, {
+      expectedVersion: ready.version,
+    })
+    .expect(200);
+  await s.call(token, 'get', content).expect(404);
+});

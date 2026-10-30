@@ -735,6 +735,7 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     }).expect(200)
   ).body;
   await patCall('get', '/leads/' + patLead.id + '/journey').expect(200);
+  await patCall('post', '/leads/' + patLead.id + '/archive').expect(400);
   await patCall('post', '/leads/' + patLead.id + '/archive', {
     expectedVersion: patLead.version,
   }).expect(200);
@@ -806,10 +807,24 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     (await store.get(path('leads', fileLead.id))).company,
     'Synthetic batch fixture',
   );
+  const attachmentToken = (
+    await req('post', '/personal-access-tokens', {
+      name: 'Synthetic Storage API token',
+      scopes: ['attachments:read', 'attachments:write'],
+      expiresInDays: 7,
+    }).expect(200)
+  ).body.token;
+  const fileCall = (method, url, body, key) => {
+    let r = request(app)
+      [method]('/api/v1' + url)
+      .set('Authorization', 'Bearer ' + attachmentToken);
+    if (key) r = r.set('Idempotency-Key', key);
+    return body === undefined ? r : r.send(body);
+  };
   const fileBytes = Buffer.from('Fictional emulator file contents');
   const base = '/leads/' + fileLead.id + '/attachments';
   const pending = (
-    await req(
+    await fileCall(
       'post',
       base,
       {
@@ -821,17 +836,21 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     ).expect(200)
   ).body;
   const ready = (
-    await req('put', base + '/' + pending.id + '/content')
+    await fileCall('put', base + '/' + pending.id + '/content')
       .set('Content-Type', 'application/octet-stream')
       .send(fileBytes)
       .expect(200)
   ).body;
   assert.equal(ready.state, 'Ready');
   assert.deepEqual(
-    (await req('get', base + '/' + ready.id + '/content').expect(200)).body,
+    (await fileCall('get', base + '/' + ready.id + '/content').expect(200))
+      .body,
     fileBytes,
   );
-  assert.equal((await req('get', base).expect(200)).body.items[0].id, ready.id);
+  assert.equal(
+    (await fileCall('get', base).expect(200)).body.items[0].id,
+    ready.id,
+  );
   const objectPath =
     'workspaces/avinyatech/lead-files/' + fileLead.id + '/' + ready.id;
   const directStorage = await fetch(
@@ -846,7 +865,7 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     403,
     'Direct unauthenticated Storage access must remain denied',
   );
-  await req('delete', base + '/' + ready.id, {
+  await fileCall('delete', base + '/' + ready.id, {
     expectedVersion: ready.version,
   }).expect(200);
   await req('get', base + '/' + ready.id + '/content').expect(404);

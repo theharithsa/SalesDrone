@@ -128,3 +128,7 @@ functions/test/lead-data-reset.test.js covers Admin/PAT/revocation/strict phrase
 ## Collaborative imports (2.3)
 
 Run import-review.test.js for three-way decisions, ambiguity, scope, concurrency, expiry, deletion, clears and 1,000-row replay, then API portal and emulator integration. Use isolated alternate ports when another project owns emulator ports. Synthetic browser captures demonstrate mapping/history/row-review presentation only; distinguish them from database commit evidence and physical devices.
+
+## API and deployment hardening (2.3.1)
+
+The quick issue batch covers PAT file round trips and read-only denial, archive invalid-body/no-write behavior, duplicate-ID privacy and parser error privacy in actual requests. Auth/Firestore/Storage integration now uploads bytes using a scoped PAT and checks missing archive input. deployment-outcome.test.ts exercises all required phases and CLI mapping. No UI changes require new screenshot assertions.

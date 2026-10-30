@@ -164,3 +164,7 @@ LeadForm respects hidden phone/email/countryCode/stage/comments as well as earli
 ## Header and chart review (2.2.1)
 
 Stage and assignment in the lead header use uniform label/control geometry. Remove the stage detail-section inset/divider within blade-workflow only; compact lead surfaces stack the two full-width controls. Preserve current stage values, expectedVersion, reassignment warnings and capability checks; responsive layout introduces no write or event.
+
+## API and deployment hardening (2.3.1)
+
+Archive uses strict ArchiveInput with a positive integer expectedVersion, returning VALIDATION (400) before state changes for malformed/missing bodies. DUPLICATE create errors contain no lead IDs for any caller; the contact index still enforces uniqueness. Authorized duplicate candidates remain available through reviewed Imports. Archive cancellation/restoration policy is unchanged; see open #4/#15/#21/#22.
