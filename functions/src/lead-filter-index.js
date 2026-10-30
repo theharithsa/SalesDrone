@@ -90,7 +90,7 @@ export async function reindexLeadPage(
     updated: state.updated + updated,
     ...(ready ? { completedAt: now } : {}),
   });
-  return { scanned: rows.length, updated, ready, completed: ready };
+  return { scanned: rows.length, updated, ready };
 }
 export async function advanceLeadFilterIndex({
   store,
