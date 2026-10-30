@@ -1065,3 +1065,138 @@ button[role='switch'][aria-checked='true'] > span {
   align-items: flex-start;
   margin-block: 16px;
 }
+
+/* Import review keeps the comparison readable without widening the page. */
+.import-review-panel,
+.import-history {
+  margin-block: 24px;
+  min-width: 0;
+}
+.import-review-rows {
+  display: grid;
+  gap: 16px;
+  margin-block: 20px;
+}
+.import-result-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.import-result-card > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.import-result-card > header > div {
+  min-width: 0;
+  flex: 1 1 180px;
+}
+.import-result-card small,
+.import-candidates span,
+.import-history-list small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+.import-result-card fieldset {
+  margin-block: 16px;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+.import-field-diff {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.import-field-diff input {
+  margin-top: 4px;
+}
+.import-candidates {
+  background: var(--md-sys-color-surface-container-low);
+  padding: 16px;
+  border-radius: 12px;
+}
+.import-candidates > div {
+  margin-top: 12px;
+}
+.import-row-decisions {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+.import-match-choice {
+  display: grid;
+  gap: 16px;
+}
+.import-history-list article {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.import-history-list article > div:first-child {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.import-review-panel .form-actions {
+  flex-wrap: wrap;
+}
+@media (max-width: 599.99px) {
+  .import-result-card {
+    padding: 16px;
+  }
+  .import-history-list article > .form-actions {
+    justify-content: flex-start;
+  }
+  .import-review-panel .import-counts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.import-review-panel .import-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.import-review-panel .import-counts > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 12px;
+}
+.import-review-panel .import-counts strong {
+  font-size: 1rem;
+}
+.import-review-panel > progress {
+  width: 100%;
+  height: 6px;
+  margin-top: 12px;
+  accent-color: var(--md-sys-color-primary);
+}
+.import-review-panel > .form-actions {
+  justify-content: flex-start;
+  gap: 8px;
+}
+.import-history form > .button {
+  align-self: end;
+  justify-self: start;
+}
+.import-history-list .form-actions {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}

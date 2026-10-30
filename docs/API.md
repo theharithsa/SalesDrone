@@ -252,3 +252,7 @@ New enquiries with hidden `stage` still default to `New`. Hidden `countryCode`
 uses the first configured code in the manual form; edits retain existing values.
 Name/date and a phone or email remain required by the unchanged lead-save policy.
 Settings changes retain the existing transactional key-only audit/outbox.
+
+## Collaborative imports (2.3)
+
+Contract 1.19.0 adds GET /imports; GET /imports/{id}/rows and /report; POST /imports/{id}/plan, /review and /refresh; PATCH /imports/{id}/rows/{index}; DELETE /imports/{id}. Preview opts into reviewed:true; reviewed commit requires expectedVersion. Optional imports:read/write/share never replace lead scope/create/edit checks. New routes require Google/App Check; PAT allowlists stay unchanged. Import mutations have independent 180/minute route-template buckets. See [Imports](IMPORTS.md) for schemas, cursor bounds, retention and recovery.

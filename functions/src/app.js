@@ -1,4 +1,20 @@
 import {
+  ImportVersion,
+  ImportDecision,
+  ImportDelete,
+  createImportReview,
+  readImport,
+  importSummary,
+  sharedImports,
+  planImportChunk,
+  visibleImportRows,
+  decideImportRow,
+  approveImportChunk,
+  commitImportReview,
+  refreshImportReview,
+  deleteImportDetails,
+} from './import-review.js';
+import {
   guardLeadData,
   RESET_STATE,
   resetActive,
@@ -278,9 +294,11 @@ export function createApp({
                   'field',
                   'filters',
                 ]
-              : url === '/tasks'
-                ? ['limit', 'cursor', 'state', 'leadId']
-                : ['limit', 'cursor'];
+              : url === '/imports'
+                ? ['limit', 'cursor', 'status', 'uploader', 'from', 'to']
+                : url === '/tasks'
+                  ? ['limit', 'cursor', 'state', 'leadId']
+                  : ['limit', 'cursor'];
         for (const [key, value] of Object.entries(req.query))
           if (!allowed.includes(key) || typeof value !== 'string')
             throw new AppError(
@@ -331,11 +349,17 @@ export function createApp({
           await leadAccess(tx, member, prior.result.leadId);
         if (req.path.startsWith('/activities/') && prior.result?.leadId)
           await leadAccess(tx, member, prior.result.leadId);
+        if (req.path.startsWith('/imports') && prior.result?.id) {
+          const job = await readImport(tx, member, prior.result.id);
+          return job.formatVersion === 3 ? importSummary(job) : prior.result;
+        }
         return prior.result;
       }
       const ratePath = path(
         'rateLimits',
-        hash(`${member.uid}:${now().slice(0, 16)}`),
+        hash(
+          `${member.uid}:${req.route.path.startsWith('/imports') ? req.route.path : 'writes'}:${now().slice(0, 16)}`,
+        ),
       );
       const rate = await tx.get(ratePath);
       if ((rate?.count || 0) >= 180)
@@ -369,7 +393,14 @@ export function createApp({
       tx.set(path('auditEvents', id), audit);
       queueSettingsAudits(tx, audit, settingsChanges, telemetry()?.capture());
       if (idempotent)
-        tx.set(requestPath, { fingerprint, result, createdAt: now() });
+        tx.set(requestPath, {
+          fingerprint,
+          result:
+            result?.formatVersion === 3
+              ? { id: result.id, formatVersion: 3 }
+              : result,
+          createdAt: now(),
+        });
       return result;
     });
   }
@@ -1849,27 +1880,233 @@ export function createApp({
       return m;
     });
   });
+  route('get', '/imports', 'imports:read', async (req) => {
+    const filters = sharedImports(req.member)
+      ? []
+      : [['createdByUid', '==', req.member.uid]];
+    if (req.query.uploader) {
+      if (!sharedImports(req.member) && req.query.uploader !== req.member.uid)
+        throw new AppError(
+          403,
+          'FORBIDDEN',
+          'Shared import access is required',
+        );
+      if (!filters.length)
+        filters.push(['createdByUid', '==', req.query.uploader]);
+    }
+    if (req.query.status) {
+      if (
+        ![
+          'Preparing',
+          'Preview',
+          'Importing',
+          'Blocked',
+          'Completed',
+          'Deleting',
+          'DetailsDeleted',
+        ].includes(req.query.status)
+      )
+        throw new AppError(400, 'FILTER', 'Unknown import status');
+      filters.push(['status', '==', req.query.status]);
+    }
+    for (const [key, op] of [
+      ['from', '>='],
+      ['to', '<='],
+    ])
+      if (req.query[key]) {
+        if (
+          !/^\d{4}-\d{2}-\d{2}T/.test(req.query[key]) ||
+          !Number.isFinite(Date.parse(req.query[key]))
+        )
+          throw new AppError(400, 'FILTER', 'Use an ISO date-time');
+        filters.push(['createdAt', op, new Date(req.query[key]).toISOString()]);
+      }
+    const result = await list(
+      req,
+      'imports',
+      filters,
+      undefined,
+      'createdAt',
+      'desc',
+    );
+    return { ...result, items: result.items.map(importSummary) };
+  });
+  route('get', '/imports/:id/rows', 'imports:read', async (req) => {
+    const j = await readImport(store, req.member, req.params.id);
+    if (j.formatVersion !== 3)
+      return { items: [], nextCursor: null, legacy: true };
+    const result = await list(
+      req,
+      'importChunks',
+      [['importId', '==', j.id]],
+      undefined,
+      'id',
+      'asc',
+    );
+    return {
+      ...result,
+      items: await visibleImportRows(
+        store,
+        req.member,
+        j,
+        result.items.flatMap((c) => c.rows || []),
+      ),
+    };
+  });
+  route('get', '/imports/:id/report', 'imports:read', async (req) => {
+    if (!(await readWorkspaceSettings(store)).exportsEnabled)
+      throw new AppError(
+        403,
+        'EXPORT_DISABLED',
+        'Workspace exports are disabled',
+      );
+    const j = await readImport(store, req.member, req.params.id);
+    if (j.formatVersion !== 3 || j.status === 'DetailsDeleted')
+      return { items: [], nextCursor: null };
+    const result = await list(
+      req,
+      'importChunks',
+      [['importId', '==', j.id]],
+      undefined,
+      'id',
+      'asc',
+    );
+    return {
+      ...result,
+      items: await visibleImportRows(
+        store,
+        req.member,
+        j,
+        result.items.flatMap((c) => c.rows || []),
+      ),
+    };
+  });
+  route('post', '/imports/:id/plan', 'imports:write', (req) =>
+    mutate(req, 'imports:write', (tx, m) =>
+      planImportChunk(
+        tx,
+        m,
+        req.params.id,
+        parse(ImportVersion, req.body),
+        now(),
+      ),
+    ),
+  );
+  route('post', '/imports/:id/review', 'imports:write', (req) =>
+    mutate(req, 'imports:write', (tx, m) =>
+      approveImportChunk(
+        tx,
+        m,
+        req.params.id,
+        parse(ImportVersion, req.body),
+        now(),
+      ),
+    ),
+  );
+  route('patch', '/imports/:id/rows/:index', 'imports:write', (req) => {
+    const index = Number(req.params.index);
+    if (!/^\d+$/.test(req.params.index) || !Number.isSafeInteger(index))
+      throw new AppError(400, 'IMPORT_ROW', 'Choose a valid row');
+    return mutate(req, 'imports:write', (tx, m) =>
+      decideImportRow(
+        tx,
+        m,
+        req.params.id,
+        index,
+        parse(ImportDecision, req.body),
+        now(),
+      ),
+    );
+  });
+  route('post', '/imports/:id/refresh', 'imports:write', (req) =>
+    mutate(req, 'imports:write', (tx, m) =>
+      refreshImportReview(
+        tx,
+        m,
+        req.params.id,
+        parse(ImportVersion, req.body),
+        now(),
+      ),
+    ),
+  );
+  route('delete', '/imports/:id', 'members:write', (req) =>
+    mutate(req, 'members:write', (tx, m) =>
+      deleteImportDetails(
+        tx,
+        m,
+        req.params.id,
+        parse(ImportDelete, req.body),
+        now(),
+      ),
+    ),
+  );
   route('post', '/imports/preview', 'imports:write', async (req) => {
     const input = parse(ImportInput, req.body);
+    if (input.reviewed) {
+      if (req.identity.personalAccess)
+        throw new AppError(
+          403,
+          'GOOGLE_REQUIRED',
+          'Reviewed imports require Google sign-in',
+        );
+      return mutate(
+        req,
+        'imports:write',
+        (tx, m) => createImportReview(tx, m, input, now()),
+        { idempotent: true },
+      );
+    }
+    if (req.member.role !== 'Admin')
+      throw new AppError(403, 'FORBIDDEN', 'Use reviewed import mode');
+    if (input.duplicateMode === 'update' || input.sourceImportId)
+      throw new AppError(
+        400,
+        'IMPORT_MODE',
+        'Updates require reviewed import mode',
+      );
     const options = await readFieldOptions(store);
     const rows = previewRows(input, options.values.stage);
-    const fingerprint = hash(
-      JSON.stringify([
-        input.sheet,
-        input.rows,
-        input.statusMap,
-        input.dateOrder,
-        input.duplicateMode,
-        options.version,
-        'discussion-import-v2',
-      ]),
+    const fingerprintData = [
+      input.sheet,
+      input.rows,
+      input.statusMap,
+      input.dateOrder,
+      input.duplicateMode,
+      options.version,
+      'discussion-import-v2',
+    ];
+    const ownerFingerprint = hash(
+      JSON.stringify([req.member.uid, ...fingerprintData]),
     );
-    const duplicate = await store.get(path('imports', fingerprint));
-    if (duplicate) return duplicate;
     return mutate(
       req,
       'imports:write',
       async (tx, m) => {
+        let base = await tx.get(path('imports', ownerFingerprint));
+        if (!base) {
+          const legacy = await tx.get(
+            path('imports', hash(JSON.stringify(fingerprintData))),
+          );
+          if (legacy?.createdByUid === m.uid) base = legacy;
+        }
+        const duplicate = base?.replacementImportId
+          ? await tx.get(path('imports', base.replacementImportId))
+          : base;
+        if (
+          duplicate &&
+          duplicate.createdByUid === m.uid &&
+          duplicate.status !== 'DetailsDeleted' &&
+          (duplicate.expiresAt > now() ||
+            duplicate.status !== 'Preview' ||
+            duplicate.offset)
+        )
+          return duplicate;
+        const fingerprint = base ? uid() : ownerFingerprint;
+        if (base)
+          tx.set(path('imports', base.id), {
+            ...base,
+            replacementImportId: fingerprint,
+          });
         for (let offset = 0; offset < rows.length; offset += IMPORT_CHUNK_SIZE)
           tx.set(
             path(
@@ -1913,14 +2150,20 @@ export function createApp({
       { idempotent: true },
     );
   });
-  route('get', '/imports/:id', 'imports:write', async (req) => {
-    const i = await store.get(path('imports', req.params.id));
-    if (!i) throw new AppError(404, 'NOT_FOUND', 'Import not found');
-    return i;
+  route('get', '/imports/:id', 'imports:read', async (req) => {
+    const i = await readImport(store, req.member, req.params.id);
+    return i.formatVersion === 3 || req.member.role !== 'Admin'
+      ? importSummary(i)
+      : i;
   });
-  route('get', '/imports/:id/errors', 'imports:write', async (req) => {
-    const job = await store.get(path('imports', req.params.id));
-    if (!job) throw new AppError(404, 'NOT_FOUND', 'Import not found');
+  route('get', '/imports/:id/errors', 'imports:read', async (req) => {
+    const job = await readImport(store, req.member, req.params.id);
+    if (req.member.scope !== 'all' && job.createdByUid !== req.member.uid)
+      throw new AppError(
+        403,
+        'FORBIDDEN',
+        'Use the permission-filtered row results',
+      );
     const result = await list(req, 'importChunks', [
       ['importId', '==', job.id],
     ]);
@@ -1934,14 +2177,38 @@ export function createApp({
     };
   });
   route('post', '/imports/:id/commit', 'imports:write', async (req) => {
+    if (req.identity.personalAccess) {
+      const job = await readImport(store, req.member, req.params.id, true);
+      if (job.formatVersion === 3)
+        throw new AppError(
+          403,
+          'GOOGLE_REQUIRED',
+          'Reviewed commits require Google sign-in',
+        );
+    }
     return mutate(
       req,
       'imports:write',
       async (tx, m) => {
         const p = path('imports', req.params.id);
-        const job = await tx.get(p);
-        if (!job) throw new AppError(404, 'NOT_FOUND', 'Import not found');
-        if (job.expiresAt <= now() && job.status !== 'Completed')
+        const job = await readImport(tx, m, req.params.id, true);
+        if (job.formatVersion === 3)
+          return commitImportReview(
+            tx,
+            m,
+            job.id,
+            parse(ImportVersion, req.body),
+            now(),
+          );
+        if (job.createdByUid !== m.uid && m.role !== 'Admin')
+          throw new AppError(
+            403,
+            'FORBIDDEN',
+            'Legacy jobs must be resumed by their uploader or an admin',
+          );
+        if (m.role !== 'Admin')
+          throw new AppError(403, 'FORBIDDEN', 'Use reviewed import mode');
+        if (job.expiresAt <= now() && job.status === 'Preview' && !job.offset)
           throw new AppError(
             409,
             'EXPIRED',

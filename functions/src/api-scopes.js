@@ -28,7 +28,7 @@ export const TOKEN_SCOPES = [
   ],
   ['tasks:read', 'Read your accessible reminders', 'leads:read'],
   ['tasks:write', 'Create, edit and delete reminders', 'tasks:write'],
-  ['imports:read', 'Read your import jobs and errors', 'imports:write'],
+  ['imports:read', 'Read your import jobs and errors', 'imports:read'],
   ['imports:write', 'Preview and commit enquiry imports', 'imports:write'],
   ['scores:read', 'Read reported lead scores', 'leads:read'],
   ['dashboard:read', 'Read dashboard and summary data', 'leads:read'],

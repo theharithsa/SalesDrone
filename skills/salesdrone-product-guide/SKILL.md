@@ -137,3 +137,7 @@ Explain the trash/restore icons under Manage fields, standard-field historical-v
 ## Header and chart review (2.2.1)
 
 The 2.2.1 header/axis correction refreshes lead-workspace/overlay captures and adds isolated synthetic Admin header and outreach chart captures. Explain stacked phone workflow controls and Y-axis gridline alignment without claiming a physical Samsung test. The earlier 2.2.0 main workflow was cancelled before publication; its Settings assets remain honestly versioned 2.2.0.
+
+## Collaborative imports (2.3)
+
+Explain linked updates, three-way conflicts, actual duplicate candidates, optional member grants, resume and Admin-only detail deletion. Refresh import-demo.jpg and import-review-demo.jpg/import-review-mobile-demo.jpg from fictional isolated components. Captures prove presentation, not production writes.

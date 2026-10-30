@@ -46,7 +46,11 @@
     "excel import",
     "csv import",
     "xlsx import",
-    "spreadsheet mapping"
+    "spreadsheet mapping",
+    "import history",
+    "revised workbook",
+    "duplicate comparison",
+    "collaborative import"
   ],
   "salesdrone-interface": [
     "sidebar",

@@ -82,3 +82,7 @@ work panel. Keep its 24px desktop/16px compact inline padding, helper/footer gap
 and timeline heading alignment. Call/correction/note forms use persistent outlined
 field labels while checkbox follow-up controls and revision behavior are unchanged.
 Run design:forms and review MATERIAL-04/05; source/render checks are not visual proof.
+
+## Collaborative imports (2.3)
+
+Reviewed workbook corrections match source column label/ordinal, preserve activityRevisions and avoid duplicate notes or AI scheduling. Renamed/reordered sources need review. Reminder-linked corrections fail with DISCUSSION_REVIEW and must use the timeline to preserve reminder state. See docs/IMPORTS.md and import-review.test.js.

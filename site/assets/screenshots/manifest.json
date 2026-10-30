@@ -242,12 +242,12 @@
   {
     "file": "import-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "28129839d8da6bed0e8119eb6076a10ba6edb7f563785071ebc00db72853ed36",
-    "capturedAt": "2026-10-26T16:39:54.644Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Isolated fictional import component, initial mapping state; no imports committed. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "sha256": "aeaed6069031e08d4fd3ea72b3f2a53fb7cce3b976df2f0584edb7bb4659f3da",
+    "capturedAt": "2026-10-30T13:24:11.383174+00:00",
+    "viewport": "1440 x 1000 CSS pixels; isolated installed Chromium at 100% scale",
+    "capturePixels": "1440 x 1000",
+    "version": "2.3.0",
+    "review": "Visually/privacy reviewed fictional CSV mapping or import row-review component. No API transport, customer data or database writes. Mobile comparison capture is scrolled to the first row in dark mode. Browser emulation, not physical-device/Safari certification."
   },
   {
     "file": "api-portal-demo.jpg",
@@ -378,5 +378,25 @@
     "capturePixels": "1440 x 892",
     "version": "2.2.1",
     "review": "Visually/privacy reviewed. Fictional guest inspector showing responsive workflow and score placement; no live mutation. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+  },
+  {
+    "file": "import-review-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "1ed5844913f78987d2f2df7a8d52ecc728baad65db66e53bc051e78a9322ecc3",
+    "capturedAt": "2026-10-30T13:29:19.269880+00:00",
+    "viewport": "1440 x 1000 CSS pixels; isolated installed Chromium at 100% scale",
+    "capturePixels": "1440 x 1000",
+    "version": "2.3.0",
+    "review": "Visually/privacy reviewed fictional CSV mapping or import row-review component. No API transport, customer data or database writes. Mobile comparison capture is scrolled to the first row in dark mode. Browser emulation, not physical-device/Safari certification."
+  },
+  {
+    "file": "import-review-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "f2853350ad6f59b0c169a2e6aef6a880d1634f0b10eaa200c78b0fa45d1cc93e",
+    "capturedAt": "2026-10-30T13:29:20.297711+00:00",
+    "viewport": "390 x 1000 CSS pixels; isolated installed Chromium at 100% scale",
+    "capturePixels": "390 x 1000",
+    "version": "2.3.0",
+    "review": "Visually/privacy reviewed fictional CSV mapping or import row-review component. No API transport, customer data or database writes. Mobile comparison capture is scrolled to the first row in dark mode. Browser emulation, not physical-device/Safari certification."
   }
 ]

@@ -124,3 +124,7 @@ Archive regressions live in functions/test/archived-leads.test.js: signed/scoped
 ## Lead-data reset (2.1)
 
 functions/test/lead-data-reset.test.js covers Admin/PAT/revocation/strict phrase/preview expiry, stable start replay, concurrent workers, lock/no resurrection, config/personal reminder retention and storage blocked/resume. Actual Auth/Firestore/Storage reset coverage is in emulator.integration.js, only against demo-salesdrone. Never run reset on production as a postdeploy test. Synthetic AdminReview only simulates Waiting status; do not count it as backend deletion evidence.
+
+## Collaborative imports (2.3)
+
+Run import-review.test.js for three-way decisions, ambiguity, scope, concurrency, expiry, deletion, clears and 1,000-row replay, then API portal and emulator integration. Use isolated alternate ports when another project owns emulator ports. Synthetic browser captures demonstrate mapping/history/row-review presentation only; distinguish them from database commit evidence and physical devices.

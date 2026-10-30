@@ -64,6 +64,16 @@ export async function effectiveMember(store, member) {
   const config = await readWorkspaceSettings(store);
   return {
     ...member,
+    capabilities:
+      member.role === 'Admin' && member.capabilities.includes('imports:write')
+        ? [
+            ...new Set([
+              ...member.capabilities,
+              'imports:read',
+              'imports:share',
+            ]),
+          ]
+        : member.capabilities,
     scope:
       member.role !== 'Admin' && config.assignedOnly
         ? 'assigned'

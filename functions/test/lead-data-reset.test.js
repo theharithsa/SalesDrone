@@ -88,6 +88,7 @@ async function setup() {
       'leadScores',
       'imports',
       'importChunks',
+      'importBaselines',
       'dedupeKeys',
     ])
       tx.set(path(collection, 'fixture'), {

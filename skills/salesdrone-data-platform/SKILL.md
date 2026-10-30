@@ -70,3 +70,7 @@ Settings audit snapshots are requested immediately before each first tracked wri
 ## Lead-data reset (2.1)
 
 Store adapters expose scan(collection,{after,limit}) by document ID and return {id,data}, including records missing an id field. It is an internal bounded cleanup primitive, not a client API. guardLeadData wraps the observable store in index and createApp; reset uses maintenanceStore to bypass only its own lock. Preserve transaction read-before-write buffering and raw document IDs. Cleanup leases/cursors/tombstones are durable; do not delete/reset locks to fix a blocked job.
+
+## Collaborative imports (2.3)
+
+Reviewed imports add dataset-scoped importBaselines and padded chunk IDs. Deploy import history/chunk/baseline/name indexes and wait for READY. Transactions validate all rows before domain writes and bound comment/write budgets. Lead reset deletes baselines as well as jobs/chunks. Preserve legacy chunk handling. Emulator tests cover concurrent executors and baseline deletion.

@@ -70,3 +70,7 @@ Adjacent owners:
 - [salesdrone-api-integrations](../salesdrone-api-integrations/SKILL.md)
 
 Role/scope/capability changes, invitation grants/revocation and the direct invitation acceptance transaction participate in settings-audit.js. Acceptance must preserve matching verified identity and atomic member/invitation/audit/outbox writes; no raw invitation email or target UID goes to Dynatrace. Replay must not grant again or emit another audit change.
+
+## Collaborative imports (2.3)
+
+Non-admin import grants default off: imports:read (own history), imports:write (reviewed upload/decide/resume) and imports:share (other uploaders). Write/share require read; none grants lead create/edit or expands assigned scope. Admins with existing imports:write inherit only the new read/share flags. Preserve current PAT owner capability checks; collaboration remains Google-only. See docs/IMPORTS.md and import-review.test.js.

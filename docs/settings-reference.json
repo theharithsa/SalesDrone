@@ -459,7 +459,7 @@
           "id": "memberCapabilities",
           "label": "Detailed permissions",
           "default": "Role preset unless customized",
-          "description": "Fine-tune allowed non-administrative actions while retaining lead-read permission for workspace access.",
+          "description": "Fine-tune non-administrative actions while retaining lead-read access. Import history, import writes and shared-import access can be granted separately; writes/sharing require import history permission. Lead create/edit permissions and effective lead scope still apply to import execution.",
           "effect": "Removing a capability blocks subsequent relevant operations. UI visibility alone is not authorization.",
           "example": ""
         },
@@ -470,6 +470,30 @@
           "description": "Disable a member\u2019s live workspace access without deleting their historical work.",
           "effect": "Current API requests, token checks and worker delivery eligibility use active membership. Re-enabling restores only the configured role/scope/capabilities.",
           "example": ""
+        },
+        {
+          "id": "importHistory",
+          "label": "View own import history",
+          "default": "Off for Viewer/SDR; available to existing import-capable Admins",
+          "description": "Grant imports:read to view the member\u2019s import jobs and permission-filtered row results.",
+          "effect": "Read-only access does not allow uploads, review decisions, commits or deletion. Applies on the next server request after an Admin saves permissions.",
+          "example": "Grant shared history to a reviewer; grant write access only when they should execute imports."
+        },
+        {
+          "id": "importWrite",
+          "label": "Prepare and execute imports",
+          "default": "Off for Viewer/SDR; available to existing import-capable Admins",
+          "description": "Grant imports:write with imports:read. New rows also require leads:create; matched updates require leads:edit.",
+          "effect": "Own new leads are assigned to the uploader; a different executor cannot change that planned assignment or bypass scope. Applies on the next server request after an Admin saves permissions.",
+          "example": "Grant shared history to a reviewer; grant write access only when they should execute imports."
+        },
+        {
+          "id": "importShare",
+          "label": "Access shared imports",
+          "default": "Off for Viewer/SDR; available to existing import-capable Admins",
+          "description": "Grant imports:share with imports:read to list and view other uploaders\u2019 jobs. Add imports:write to review/resume their jobs.",
+          "effect": "Incoming rows and matched leads outside the member\u2019s current lead scope are redacted and cannot be updated. Shared access never implies lead access or promotes the member to Admin. Applies on the next server request after an Admin saves permissions.",
+          "example": "Grant shared history to a reviewer; grant write access only when they should execute imports."
         }
       ]
     },

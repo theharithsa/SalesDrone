@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.2.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.3.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -511,7 +511,7 @@ Changing scope applies server-side; old cursors/cached context cannot grant broa
 
 **Default:** Role preset unless customized.
 
-Fine-tune allowed non-administrative actions while retaining lead-read permission for workspace access.
+Fine-tune non-administrative actions while retaining lead-read access. Import history, import writes and shared-import access can be granted separately; writes/sharing require import history permission. Lead create/edit permissions and effective lead scope still apply to import execution.
 
 Removing a capability blocks subsequent relevant operations. UI visibility alone is not authorization.
 
@@ -522,6 +522,36 @@ Removing a capability blocks subsequent relevant operations. UI visibility alone
 Disable a member’s live workspace access without deleting their historical work.
 
 Current API requests, token checks and worker delivery eligibility use active membership. Re-enabling restores only the configured role/scope/capabilities.
+
+### View own import history
+
+**Default:** Off for Viewer/SDR; available to existing import-capable Admins.
+
+Grant imports:read to view the member’s import jobs and permission-filtered row results.
+
+Read-only access does not allow uploads, review decisions, commits or deletion. Applies on the next server request after an Admin saves permissions.
+
+**Example:** Grant shared history to a reviewer; grant write access only when they should execute imports.
+
+### Prepare and execute imports
+
+**Default:** Off for Viewer/SDR; available to existing import-capable Admins.
+
+Grant imports:write with imports:read. New rows also require leads:create; matched updates require leads:edit.
+
+Own new leads are assigned to the uploader; a different executor cannot change that planned assignment or bypass scope. Applies on the next server request after an Admin saves permissions.
+
+**Example:** Grant shared history to a reviewer; grant write access only when they should execute imports.
+
+### Access shared imports
+
+**Default:** Off for Viewer/SDR; available to existing import-capable Admins.
+
+Grant imports:share with imports:read to list and view other uploaders’ jobs. Add imports:write to review/resume their jobs.
+
+Incoming rows and matched leads outside the member’s current lead scope are redacted and cannot be updated. Shared access never implies lead access or promotes the member to Admin. Applies on the next server request after an Admin saves permissions.
+
+**Example:** Grant shared history to a reviewer; grant write access only when they should execute imports.
 
 ## Workspace · Admin → Lead data management
 

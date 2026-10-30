@@ -1,4 +1,9 @@
 import {
+  ImportVersion,
+  ImportDecision,
+  ImportDelete,
+} from '../functions/src/import-review.js';
+import {
   ResetConfirmation,
   ResetResume,
 } from '../functions/src/lead-data-reset.js';
@@ -44,6 +49,20 @@ const schemas = Object.fromEntries(
     z.toJSONSchema(contracts[n], { target: 'draft-2020-12', io: 'input' }),
   ]),
 );
+for (const [name, schema] of Object.entries({
+  ImportVersion,
+  ImportDecision,
+  ImportDelete,
+}))
+  schemas[name] = z.toJSONSchema(schema, { io: 'input' });
+schemas.ImportCommit = {
+  anyOf: [
+    schemas.ImportVersion,
+    { type: 'object', additionalProperties: false },
+  ],
+  description:
+    'Reviewed jobs require expectedVersion. Legacy jobs accept an empty body.',
+};
 schemas.Preferences.properties.bookMode.description =
   'Personal reading style, default false. Omission preserves the stored value; does not alter theme, timezone or permissions.';
 schemas.Preferences.properties.fontStyle.description =
@@ -305,7 +324,8 @@ schemas.FieldOptions = {
     customFields: schemas.FieldOptionsPatch.properties.customFields,
     hiddenFields: {
       ...schemas.FieldOptionsPatch.properties.hiddenFields,
-      description: 'Fields removed from enquiry entry, configurable columns, filters and new reports where applicable. Name and enquiryDate cannot be hidden; keep phone or email visible. This is presentation configuration, not data erasure, authorization or removal of workflow/suppression controls.',
+      description:
+        'Fields removed from enquiry entry, configurable columns, filters and new reports where applicable. Name and enquiryDate cannot be hidden; keep phone or email visible. This is presentation configuration, not data erasure, authorization or removal of workflow/suppression controls.',
     },
   },
 };
@@ -516,7 +536,18 @@ schemas.ImportJob = object({
   imported: integer,
   duplicates: integer,
   failed: integer,
-  status: { type: 'string', enum: ['Preview', 'Importing', 'Completed'] },
+  status: {
+    type: 'string',
+    enum: [
+      'Preparing',
+      'Preview',
+      'Importing',
+      'Blocked',
+      'Completed',
+      'Deleting',
+      'DetailsDeleted',
+    ],
+  },
   createdByUid: string,
   createdAt: instant,
   expiresAt: instant,
@@ -532,6 +563,98 @@ schemas.ImportJob.properties.chunkSize = {
   minimum: 1,
   description:
     'New previews use 11 rows per commit; older previews may use 25.',
+};
+schemas.ImportJob.required = schemas.ImportJob.required.filter(
+  (k) => k !== 'errors',
+);
+Object.assign(schemas.ImportJob.properties, {
+  version: integer,
+  formatVersion: integer,
+  datasetId: string,
+  sourceImportId: { type: ['string', 'null'] },
+  createdByName: string,
+  updatedAt: instant,
+  completedAt: instant,
+  configVersion: integer,
+  planOffset: integer,
+  reviewOffset: integer,
+  pending: integer,
+  updated: integer,
+  unchanged: integer,
+  skipped: integer,
+  reviewedByUid: string,
+  executedByUid: string,
+  lastError: { type: ['string', 'null'] },
+  planCounts: { type: 'object', additionalProperties: integer },
+  detailsDeletedAt: instant,
+});
+const boolean = { type: 'boolean' };
+schemas.ImportRow = {
+  type: 'object',
+  properties: {
+    index: integer,
+    sourceRow: integer,
+    classification: {
+      type: 'string',
+      enum: [
+        'New',
+        'Update',
+        'Unchanged',
+        'Conflict',
+        'Duplicate',
+        'Invalid',
+        'Restricted',
+      ],
+    },
+    decision: { type: 'string', enum: ['pending', 'accept', 'skip'] },
+    outcome: {
+      type: 'string',
+      enum: ['Created', 'Updated', 'Unchanged', 'Duplicate', 'Skipped'],
+    },
+    reason: string,
+    error: string,
+    leadId: { type: ['string', 'null'] },
+    expectedLeadVersion: integer,
+    initialComparison: boolean,
+    committedAt: instant,
+    committedByUid: string,
+    reviewedByUid: string,
+    row: {
+      type: 'object',
+      description:
+        'Authorized parsed workbook data, including normalized matching fields. Not telemetry.',
+    },
+    clearFields: { type: 'array', items: string },
+    incomingFields: { type: 'array', items: string },
+    mapped: { type: 'array', items: string },
+    relatedSourceRows: { type: 'array', items: integer },
+    candidates: {
+      type: 'array',
+      items: object({
+        id: string,
+        name: string,
+        phone: string,
+        email: string,
+        company: string,
+        archived: boolean,
+      }),
+    },
+    changes: {
+      type: 'array',
+      items: object(
+        {
+          key: string,
+          current: {},
+          incoming: {},
+          conflict: boolean,
+          explicitClear: boolean,
+        },
+        ['key', 'current', 'incoming', 'conflict'],
+      ),
+    },
+    commentChanges: { type: 'array', items: { type: 'object' } },
+  },
+  required: ['index'],
 };
 schemas.Summary = object({
   total: integer,
@@ -645,6 +768,9 @@ const responseFor = (method, url) => {
   if (url === '/summary') return ref('Summary');
   if (url.includes('/imports/') && url.endsWith('/errors'))
     return pageOf('ImportError');
+  if (url === '/imports') return pageOf('ImportJob');
+  if (url.endsWith('/rows') || url.endsWith('/report'))
+    return pageOf('ImportRow');
   if (url.startsWith('/imports')) return ref('ImportJob');
   if (url.endsWith('/automatic-reminder') || url.includes('/corrections'))
     return ref('Activity');
@@ -746,9 +872,25 @@ const bodyFor = (m, u) =>
                                                   ? 'MemberPatch'
                                                   : u === '/devices'
                                                     ? 'DeviceInput'
-                                                    : u === '/imports/preview'
-                                                      ? 'ImportInput'
-                                                      : null;
+                                                    : u === '/imports/:id' &&
+                                                        m === 'delete'
+                                                      ? 'ImportDelete'
+                                                      : u ===
+                                                          '/imports/:id/rows/:index'
+                                                        ? 'ImportDecision'
+                                                        : [
+                                                              '/imports/:id/plan',
+                                                              '/imports/:id/review',
+                                                              '/imports/:id/refresh',
+                                                            ].includes(u)
+                                                          ? 'ImportVersion'
+                                                          : u ===
+                                                              '/imports/:id/commit'
+                                                            ? 'ImportCommit'
+                                                            : u ===
+                                                                '/imports/preview'
+                                                              ? 'ImportInput'
+                                                              : null;
 const paths = {};
 for (const e of endpoints) {
   const url = '/api/v1' + e.url.replace(/:([a-zA-Z]+)/g, '{$1}');
@@ -792,6 +934,20 @@ for (const e of endpoints) {
       ),
     },
   };
+  if (e.url === '/imports')
+    for (const name of ['status', 'uploader', 'from', 'to'])
+      operation.parameters.push({
+        in: 'query',
+        name,
+        required: false,
+        schema: { type: 'string' },
+        description:
+          name === 'uploader'
+            ? 'Creator UID; shared access is required to select another member'
+            : name === 'from' || name === 'to'
+              ? 'ISO date-time, inclusive'
+              : 'Import lifecycle status',
+      });
   for (const [, name] of e.url.matchAll(/:([a-zA-Z]+)/g))
     operation.parameters.push({
       in: 'path',
@@ -1050,7 +1206,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.18.0',
+    version: '1.19.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

@@ -53,6 +53,8 @@ const screenshots = [
   'laptop-demo.jpg',
   'tablet-demo.jpg',
   'import-demo.jpg',
+  'import-review-demo.jpg',
+  'import-review-mobile-demo.jpg',
   'dashboard-demo.jpg',
   'leads-demo.jpg',
   'mobile-leads-demo.jpg',

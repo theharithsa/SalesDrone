@@ -185,3 +185,7 @@ Shared action buttons use a unitless line height (20/14) so multiline labels gro
 ## Header and chart review (2.2.1)
 
 Lead header workflow children reset inherited detail-section padding/borders. Keep equal label type/margins and full-width selects; below a 36rem lead-surface container, stack stage/assignment instead of squeezing them into adjacent columns. The score row can wrap and centers its items. AdminReview preview=lead-header uses real LeadBlade/Assignment with fictional in-memory state; never include it in production. Review compact and wide surfaces, assignee help expansion and keyboard controls.
+
+## Collaborative imports (2.3)
+
+ImportReviewPanel shows paginated history and row candidate/current/incoming comparisons, deliberate clears and paused progress. Read-only grants hide mutations. Conflicts start unchecked; choosing a match only compares. Guard async responses against stale jobs/filter changes. Keep Material 3, wrapping and named icon controls.

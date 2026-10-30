@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.2.1 aligns mobile lead headers and outreach chart axes, alongside the Settings text and field-control improvements.
+> v2.3.0 adds collaborative import history and reviewed workbook updates.
 > See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.2.1 · MIT**
+**Part of Avinya Enterprises · v2.3.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -225,3 +225,7 @@ saved values.
 Stage and assignment stack on compact lead surfaces. Outreach tick labels share the chart gridline positions.
 
 <img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional administrator lead header with aligned full-width controls" width="412">
+
+## Collaborative imports (2.3)
+
+Collaborative import review supports history, visible duplicate matches and linked workbook updates preserving team edits. Admins can grant member import access and explicitly delete retained details. See [Imports](docs/IMPORTS.md).

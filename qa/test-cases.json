@@ -178,7 +178,8 @@
       "automatedTests": [
         "functions/test/emulator.integration.js",
         "functions/test/workbook-and-filters.test.js",
-        "tests/import-mapping.test.ts"
+        "tests/import-mapping.test.ts",
+        "functions/test/import-review.test.js"
       ],
       "manualCases": [
         {
@@ -190,6 +191,16 @@
           "id": "IMPORTS-02",
           "expected": "Repeated chunks recover without duplicate activities; no live workbook is used.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "IMPORTS-REVIEW-01",
+          "expected": "History opens prior jobs; exact name/contact matches show candidates, conflicts start unchecked, selecting incoming and saving persists the decision across reload. Blank cells preserve current values.",
+          "fixture": "fictional import review; emulator for persistence"
+        },
+        {
+          "id": "IMPORTS-SHARE-01",
+          "expected": "Optional import read/write/share grants preserve current lead scope; two collaborators cannot apply stale plans. Admin deletion removes details/baselines but retains leads and summary.",
+          "fixture": "demo-salesdrone emulator; no customer data"
         }
       ]
     },

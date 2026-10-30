@@ -3,6 +3,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import SettingsPage from '../features/SettingsPage';
 import ImportPage from '../features/ImportPage';
+import ImportReviewFixture from './ImportReviewFixture';
 import { Avatar, Brand, LeadName, Loading, Modal } from '../components/UI';
 import LeadBlade from '../components/LeadBlade';
 import Assignment from '../components/Assignment';
@@ -357,7 +358,7 @@ function AdminReview() {
           />
         ) : null}
       </Modal>
-      {importing ? (
+      {new URLSearchParams(location.search).get('preview') === 'import-review' ? (<ImportReviewFixture />) : importing ? (
         <ImportPage demo request={request} onImported={() => {}} />
       ) : (
         <SettingsPage

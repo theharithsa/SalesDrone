@@ -1,3 +1,4 @@
+import ImportReviewPanel from './ImportReviewPanel';
 import { readStored, writeStored, removeStored } from '../lib/browser-storage';
 import { isCommentHeader, mapImportRows } from '../lib/import-mapping';
 import {
@@ -24,6 +25,8 @@ import { ErrorMessage } from '../components/UI';
 const columns: Record<string, string> = Object.fromEntries([
   ...worksheetColumns.map(([key, label]) => [label, key]),
   ['Email (optional)', 'email'],
+  ['Country code', 'countryCode'],
+  ['SalesDrone lead ID (optional)', 'leadId'],
 ]);
 
 type Sheet = { name: string; rows: string[][] };
@@ -80,7 +83,11 @@ export default function ImportPage({
   onImported,
   choices = defaultFieldOptions.values,
   config = defaultFieldOptions,
+  canWrite = true,
+  canDelete = false,
 }: {
+  canWrite?: boolean;
+  canDelete?: boolean;
   config?: FieldOptions;
   demo: boolean;
   choices?: FieldOptions['values'];
@@ -92,6 +99,12 @@ export default function ImportPage({
   ) => Promise<any>;
   onImported: () => void;
 }) {
+  const fieldColumns = {
+    ...columns,
+    ...Object.fromEntries(
+      config.customFields.filter((f) => !f.deleted).map((f) => [f.label, f.id]),
+    ),
+  };
   const [sheets, setSheets] = useState<Sheet[]>([]),
     [sheetIndex, setSheetIndex] = useState(0),
     [headerRow, setHeaderRow] = useState(0),
@@ -99,7 +112,8 @@ export default function ImportPage({
     [commentColumns, setCommentColumns] = useState<number[]>([]),
     [filename, setFilename] = useState(''),
     [dateOrder, setDateOrder] = useState('DMY'),
-    [keepDuplicates, setKeepDuplicates] = useState(false),
+    [importMode, setImportMode] = useState('skip'),
+    [sourceImportId, setSourceImportId] = useState(''),
     [statusMap, setStatusMap] = useState<Record<string, string>>({}),
     [job, setJob] = useState<Entity | null>(null),
     [busy, setBusy] = useState(false),
@@ -116,7 +130,7 @@ export default function ImportPage({
     );
     setMapping(
       Object.fromEntries(
-        Object.entries(columns).map(([header, key]) => [
+        Object.entries(fieldColumns).map(([header, key]) => [
           key,
           String(
             headers.findIndex(
@@ -151,9 +165,12 @@ export default function ImportPage({
       ),
     );
   }, [sheetIndex, headerRow, sheets]);
-  const rows =
-    sheet?.rows.slice(headerRow + 1).filter((r) => r.some((v) => v.trim())) ||
-    [];
+  const populatedRows =
+    sheet?.rows
+      .slice(headerRow + 1)
+      .map((row, index) => ({ row, sourceRow: headerRow + index + 2 }))
+      .filter(({ row }) => row.some((v) => v.trim())) || [];
+  const rows = populatedRows.map((r) => r.row);
   const mapped = mapImportRows(rows, headers, mapping, commentColumns);
   const distinctStatuses = [
     ...new Set(mapped.map((r) => r.legacyStatus).filter(Boolean)),
@@ -245,15 +262,27 @@ export default function ImportPage({
         {
           filename,
           sheet: sheet.name,
-          rows: mapped,
+          rows: mapped.map((r, i) => ({
+            ...r,
+            sourceRow: populatedRows[i].sourceRow,
+          })),
+          reviewed: true,
+          ...(sourceImportId ? { sourceImportId } : {}),
           statusMap,
           dateOrder,
-          duplicateMode: keepDuplicates ? 'keep' : 'skip',
+          duplicateMode: importMode,
           blankRows: sheet.rows.length - headerRow - 1 - rows.length,
         },
         crypto.randomUUID(),
       );
-      setJob(result);
+      let current = result;
+      setJob(current);
+      while (current.status === 'Preparing') {
+        current = await request('/imports/' + current.id + '/plan', 'POST', {
+          expectedVersion: current.version,
+        });
+        setJob(current);
+      }
       if (!writeStored('sessionStorage', 'salesdrone.import', result.id))
         setError(
           'Preview is ready. Browser storage is unavailable; keep this page open to finish the import.',
@@ -309,9 +338,9 @@ export default function ImportPage({
       <div className="page-title">
         <div>
           <span className="eyebrow">BRING YOUR PIPELINE WITH YOU</span>
-          <h1>One sheet. A fresh start.</h1>
+          <h1>Imports &amp; history</h1>
           <p>
-            Import existing enquiries, then let the form handle every new one.
+            Bring new enquiries in or review updates from a revised workbook.
           </p>
         </div>
         <button className="button" onClick={downloadTemplate}>
@@ -322,7 +351,7 @@ export default function ImportPage({
         <div className="notice">
           <AlertCircle size={18} />
           <div>
-            <strong>Imports are available to live administrators.</strong>
+            <strong>Imports require live workspace import access.</strong>
             <p>
               Demo mode uses fictional records. Your files are never uploaded
               here.
@@ -330,55 +359,70 @@ export default function ImportPage({
           </div>
         </div>
       ) : null}
-      <div className="import-steps">
-        {['Choose workbook', 'Review & map', 'Import enquiries'].map((s, i) => (
-          <div
-            key={s}
-            className={i === (job ? 2 : sheets.length ? 1 : 0) ? 'current' : ''}
-          >
-            <span>{i + 1}</span>
-            {s}
+      {canWrite || demo ? (
+        <>
+          <div className="import-steps">
+            {['Choose workbook', 'Review & map', 'Import enquiries'].map(
+              (s, i) => (
+                <div
+                  key={s}
+                  className={
+                    i === (job ? 2 : sheets.length ? 1 : 0) ? 'current' : ''
+                  }
+                >
+                  <span>{i + 1}</span>
+                  {s}
+                </div>
+              ),
+            )}
           </div>
-        ))}
-      </div>
-      <section
-        className={'panel' + (sheets.length ? ' import-file-summary' : '')}
-      >
-        <div className="upload-area">
-          <FileSpreadsheet size={36} strokeWidth={1.4} />
-          <h2>Your enquiries, ready to move.</h2>
-          <p>
-            Excel (.xlsx) or CSV · first worksheet only · up to 5,000 records ·
-            10 MB maximum
-          </p>
-          <label
-            className={'button primary ' + (demo || busy ? 'disabled' : '')}
+          <section
+            className={'panel' + (sheets.length ? ' import-file-summary' : '')}
           >
-            <Upload size={16} />{' '}
-            {busy
-              ? 'Processing…'
-              : sheets.length
-                ? 'Choose another workbook'
-                : 'Choose a workbook'}
-            <input
-              type="file"
-              accept=".xlsx,.csv"
-              disabled={demo || busy}
-              hidden
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) read(f);
-                e.currentTarget.value = '';
-              }}
-            />
-          </label>
-          {!demo && readStored('sessionStorage', 'salesdrone.import') ? (
-            <button className="text-button" onClick={resume} disabled={busy}>
-              Resume previous import
-            </button>
-          ) : null}
-        </div>
-      </section>
+            <div className="upload-area">
+              <FileSpreadsheet size={36} strokeWidth={1.4} />
+              <h2>Your enquiries, ready to move.</h2>
+              <p>
+                Excel (.xlsx) or CSV · first worksheet only · up to 5,000
+                records · 10 MB maximum
+              </p>
+              <label
+                className={
+                  'button primary ' +
+                  (demo || busy || !canWrite ? 'disabled' : '')
+                }
+              >
+                <Upload size={16} />{' '}
+                {busy
+                  ? 'Processing…'
+                  : sheets.length
+                    ? 'Choose another workbook'
+                    : 'Choose a workbook'}
+                <input
+                  type="file"
+                  accept=".xlsx,.csv"
+                  disabled={demo || busy || !canWrite}
+                  hidden
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) read(f);
+                    e.currentTarget.value = '';
+                  }}
+                />
+              </label>
+              {!demo && readStored('sessionStorage', 'salesdrone.import') ? (
+                <button
+                  className="text-button"
+                  onClick={resume}
+                  disabled={busy}
+                >
+                  Resume previous import
+                </button>
+              ) : null}
+            </div>
+          </section>
+        </>
+      ) : null}
       <ErrorMessage error={error} />
       {sheet && !job ? (
         <section className="panel">
@@ -441,17 +485,36 @@ export default function ImportPage({
               </select>
             </label>
           </div>
-          <label className="check import-profile-note">
-            <input
-              type="checkbox"
-              checked={keepDuplicates}
-              onChange={(e) => setKeepDuplicates(e.target.checked)}
-            />
-            Keep separate enquiry rows when a contact repeats. Each row retains
-            its own discussions. Leave off to skip duplicate contacts.
+          <label>
+            When records already exist
+            <select
+              value={importMode}
+              onChange={(e) => setImportMode(e.target.value)}
+            >
+              <option value="skip">Show matches and skip duplicates</option>
+              <option value="update">Review updates to existing leads</option>
+              <option value="keep">Keep separate enquiry rows</option>
+            </select>
           </label>
+          <p className="field-hint">
+            Exact name and phone matches can identify updates. Partial matches
+            require review. Blank cells leave saved values unchanged. Existing
+            history and contact restrictions stay intact.
+          </p>
+          {sourceImportId ? (
+            <p className="notice">
+              Linked to the completed import selected in history.{' '}
+              <button
+                className="text-button"
+                type="button"
+                onClick={() => setSourceImportId('')}
+              >
+                Unlink previous import
+              </button>
+            </p>
+          ) : null}
           <div className="mapping-grid">
-            {Object.entries(columns).map(([label, key]) => (
+            {Object.entries(fieldColumns).map(([label, key]) => (
               <label key={key}>
                 {labelFor(config, key, label)}
                 <select
@@ -572,7 +635,7 @@ export default function ImportPage({
           remains disabled until reviewed.
         </p>
       ) : null}
-      {job ? (
+      {job && job.formatVersion !== 3 ? (
         <section className="panel">
           <div className="section-heading">
             <div>
@@ -594,7 +657,7 @@ export default function ImportPage({
               <button
                 className="button primary"
                 onClick={commit}
-                disabled={busy}
+                disabled={busy || !canWrite}
               >
                 {busy
                   ? 'Importing…'
@@ -680,6 +743,25 @@ export default function ImportPage({
             </>
           ) : null}
         </section>
+      ) : null}
+      {!demo ? (
+        <ImportReviewPanel
+          request={request}
+          job={job}
+          onJob={setJob}
+          canWrite={canWrite}
+          canDelete={canDelete}
+          externalBusy={busy}
+          onImported={onImported}
+          onSource={(id) => {
+            setSourceImportId(id);
+            setImportMode('update');
+            setJob(null);
+            setSheets([]);
+            setFilename('');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
       ) : null}
     </div>
   );

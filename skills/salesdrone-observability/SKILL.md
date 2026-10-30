@@ -114,3 +114,7 @@ Read-only GET /archived-leads uses existing normalized HTTP metrics/logs/traces;
 ## Lead-data reset (2.1)
 
 leadDataResets joins the observable-store domain catalog. Numeric records.reset_started, reset_completed and reset_blocked reflect observed job transitions atomically with job state. Deletion batches reuse safe committed domain counts, HTTP RED/log/spans and Storage/Firestore dependency spans; no customer data or object paths exported. Retain audit/outbox during reset. Local/emulator proofs do not certify production tenant events.
+
+## Collaborative imports (2.3)
+
+Reviewed imports reuse committed domain outboxes with safe import_created/import_updated/import_unchanged/import_skipped and preparing/completed/blocked/details_deleted counters. Source comparisons stay private application data; never emit filenames, candidate names, contact values or comments. RUM names fixed plan/review/rows/report segments and redacts IDs/query values. HTTP/CI instrumentation remains existing; tenant verification is a separate post-deploy gate.

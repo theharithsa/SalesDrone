@@ -102,3 +102,7 @@ filter dialog reuses the existing leads query and report criteria.
 ## Archives (2.1)
 
 GET /archived-leads reuses leads:read PAT scope and current effective member scope; it has bounded limit/cursor query parameters and returns the Lead page schema. No new token permission or restoration/deletion endpoint is implied.
+
+## Collaborative imports (2.3)
+
+API 1.19.0 adds Google/App Check reviewed import history/rows/report/plan/review/refresh/decisions/detail deletion. PAT_ROUTES does not gain collaboration routes; legacy reads stay owner-only with current owner capabilities. See docs/IMPORTS.md for versions, chunk pagination, deletion and report export policy.
