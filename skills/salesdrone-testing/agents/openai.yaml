@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Testing and regression"
   short_description: "Test SalesDrone modules and release evidence"
-  default_prompt: "Use $salesdrone-testing to select relevant module cases, reproduce with synthetic data, execute the appropriate suites, and report verified results and limits."
+  default_prompt: "Use $salesdrone-testing for this module change. Keep synthetic, emulator, browser and production evidence distinct. Verify with `node --test tests/test-plan.test.ts` and report remaining evidence limits."

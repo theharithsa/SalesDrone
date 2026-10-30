@@ -22,14 +22,14 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-interface, salesdrone-api-integrations, salesdrone-product-guide.
 - [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping, import history, revised workbook, duplicate comparison, collaborative import.
   Related: salesdrone-release, salesdrone-leads, salesdrone-conversations, salesdrone-workspace-settings, salesdrone-notifications.
-- [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit, lead header redesign, display zoom.
-  Related: salesdrone-release-readiness, salesdrone-release.
+- [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit, lead header redesign, display zoom, design review, Material 3, make my site stunning, Tailwind styling, Awwwards, responsive UI.
+  Related: salesdrone-leads, salesdrone-tasks-reminders, salesdrone-workspace-settings, salesdrone-book-mode, salesdrone-product-guide.
 - [salesdrone-lead-journey](skills/salesdrone-lead-journey/SKILL.md) — lead journey, stage flow, transition history.
   Related: salesdrone-release, salesdrone-leads, salesdrone-workspace-settings, salesdrone-dashboard.
 - [salesdrone-lead-scoring](skills/salesdrone-lead-scoring/SKILL.md) — lead score, scoring factor, qualification.
   Related: salesdrone-release, salesdrone-dashboard, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-people-permissions.
 - [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report, batch edit, bulk edit, select leads.
-  Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications, salesdrone-attachments.
+  Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications.
 - [salesdrone-notifications](skills/salesdrone-notifications/SKILL.md) — push notification, notification bell, read unread, fcm.
   Related: salesdrone-release, salesdrone-tasks-reminders, salesdrone-leads, salesdrone-authentication, salesdrone-interface.
 - [salesdrone-observability](skills/salesdrone-observability/SKILL.md) — dynatrace, rum, telemetry, trace, metric, logs, bizevent, settings audit, audit logs, audit delivery.

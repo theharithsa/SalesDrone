@@ -2,7 +2,7 @@
 // This script never creates or downloads a service-account private key.
 import {cloud} from './cloud-access.mjs';
 import {spawnSync} from 'node:child_process';
-import {readFile,writeFile} from 'node:fs/promises';
+import {readFile,} from 'node:fs/promises';
 const project='sales-drone-avinya',number='510928501696',repo='theharithsa/SalesDrone',repoId='1432488502',ownerId='14597214';
 const account='salesdrone-github-deploy',email=`${account}@${project}.iam.gserviceaccount.com`;
 const pool='github-salesdrone',provider='github-main';

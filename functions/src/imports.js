@@ -30,7 +30,7 @@ export function importDate(raw, order) {
       .toISOString()
       .slice(0, 10);
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  const m = s.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})$/);
+  const m = s.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/);
   if (!m)
     throw new AppError(
       400,
@@ -102,7 +102,7 @@ export function previewRows(input, allowedStages = STAGES) {
         );
       if (Object.keys(r).length > 20)
         throw new AppError(400, 'COLUMNS', 'A row has too many mapped columns');
-      for (const [k, v] of Object.entries(r)) {
+      for (const [_k, v] of Object.entries(r)) {
         if (
           typeof v !== 'string' &&
           typeof v !== 'boolean' &&

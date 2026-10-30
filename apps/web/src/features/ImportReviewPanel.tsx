@@ -506,7 +506,7 @@ export default function ImportReviewPanel({
                 disabled={busy || externalBusy}
                 onClick={() =>
                   operate(async () => {
-                    let current = await request(
+                    const current = await request(
                       '/imports/' + job.id + '/refresh',
                       'POST',
                       { expectedVersion: job.version },

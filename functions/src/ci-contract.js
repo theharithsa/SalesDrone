@@ -8,6 +8,8 @@ export const CI_CHECKS = [
   'version',
   'functions',
   'web',
+  'lint',
+  'components',
   'types',
   'forms',
   'contracts',

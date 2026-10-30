@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Dashboard and AI insights"
   short_description: "Maintain dashboard and ai insights in SalesDrone"
-  default_prompt: "Use $salesdrone-dashboard to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-dashboard for this module change. A funnel shows current stage counts, not historical conversion rates; it can widen. Include configured zero-count and custom stages. Verify with `node --test functions/test/intelligence.test.js` and report remaining evidence limits."

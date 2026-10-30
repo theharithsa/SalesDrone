@@ -26,6 +26,12 @@ function firestoreReader(db, transaction) {
       const s = transaction ? await transaction.get(ref) : await ref.get();
       return s.exists ? s.data() : null;
     },
+    getAll: async (paths) => {
+      if (!paths.length) return [];
+      const refs = paths.map(p => db.doc(p));
+      const snapshots = transaction ? await transaction.getAll(...refs) : await db.getAll(...refs);
+      return snapshots.map(s => s.exists ? s.data() : null);
+    },
     query: async (path, opts) => {
       const q = queryRef(path, opts);
       const s = transaction ? await transaction.get(q) : await q.get();
@@ -78,6 +84,7 @@ export function memoryStore(seed = {}) {
         .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
         .slice(0, limit),
     get: async (p) => structuredClone(map.get(p) || null),
+    getAll: async (paths) => paths.map(p => structuredClone(map.get(p) || null)),
     query: async (
       p,
       { filters = [], order = 'id', direction = 'asc', after, limit = 50 } = {},

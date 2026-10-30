@@ -1,15 +1,15 @@
 # SalesDrone API integration guide
 
-Application release **v1.6.1**, OpenAPI contract **1.12.0**. All application operations
+Application release **v2.3.2**, OpenAPI contract **1.19.2**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
 - [Download OpenAPI 3.1 JSON](https://sales-drone-avinya.firebaseapp.com/openapi.json)
 - [Public source contract](openapi.json)
 
-The portal documents all **49 supported operations**, including GET (read), POST
-(create or an explicit action), PATCH (update) and DELETE (removal/revocation).
-It does not advertise unsupported PUT or permanent lead erasure. Try it out performs
+The portal documents all **72 supported operations**, including GET (read), POST
+(create or an explicit action), PATCH (update), PUT (attachment bytes) and DELETE (removal/revocation).
+Workspace lead-data reset is a separate Admin-only, previewed operation. Try it out performs
 real operations against the signed-in credential's workspace. Use synthetic test
 records for write experiments, and archive them afterward.
 
@@ -260,3 +260,9 @@ Contract 1.19.0 adds GET /imports; GET /imports/{id}/rows and /report; POST /imp
 ## API and deployment hardening (2.3.1)
 
 Contract 1.19.1 uses strict ArchiveInput (positive integer expectedVersion, no unknown fields). Missing/invalid archive input returns 400 VALIDATION; stale valid versions remain 409. Malformed JSON returns BAD_JSON (400); endpoint body-size failures return PAYLOAD_TOO_LARGE (413). Messages never echo body contents. Lead-creation DUPLICATE errors omit IDs universally. Existing reviewed import matching remains authorized and detailed. Binary PUT accepts attachments:write PATs and still rechecks current token, membership and lead scope after storage writes.
+
+## Archive transition history
+
+Archive retains the strict versioned input and existing permissions. A successful first transition writes a `change` activity (`Lead archived`, actor UID and timestamp) in the same transaction. An already-archived lead with the current version returns OK without another activity. Stale versions still fail. Archive currently cancels all pending linked tasks; #15/#21 track the unresolved cancellation policy. The archive browser is read-only; restore remains #4.
+
+The managed Functions Framework can reject malformed JSON before this Express application executes. Its outer-runtime HTML 400 is tracked in #30; local parser tests do not establish production JSON error envelopes.

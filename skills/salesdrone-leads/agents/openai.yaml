@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Lead service"
   short_description: "Maintain lead service in SalesDrone"
-  default_prompt: "Use $salesdrone-leads to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-leads for this module change. Normalize contact values without discarding original input; name/date/contact requirements differ only for explicitly needsReview imports. Duplicate overrides must be intentional. Verify with `node --test functions/test/app.test.js` and report remaining evidence limits."

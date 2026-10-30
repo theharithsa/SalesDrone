@@ -112,3 +112,11 @@ and follow forward SemVer for any corrective code release.
 ## API and deployment hardening (2.3.1)
 
 Pages requires both verification and the complete deployment job to succeed. Deployment reporting uses deployment-outcome.mjs with explicit Firestore/rules, index readiness, Storage, Functions, Hosting, published-version and postcheck outcomes. Any absent/skipped/cancelled/failed phase reports failed. A reporting failure can still follow an already successful app rollout; inspect live metadata before retrying. No intentional production failure is needed to test ordering.
+
+## Counter TTL and model configuration
+
+Deploy the rateLimits.expiresAt field override and wait for ACTIVE as well as composite-index READY before Functions/Hosting. A creation failure remains a failed deployment; do not bypass the wait. The reminders worker converts only internal legacy rate-limit timestamps in bounded transactions. Managed TTL deletion can lag expiry; admission control uses the minute bucket, not deletion.
+
+GEMINI_MODEL defaults once in functions/src/model-config.js and is resolved through the Firebase runtime parameter by all AI adapters. The workflow does not write another default. Optional repository variable GEMINI_MODEL supplies an explicit override; leave it unset to use the shared default. API initialization requires the bound CURSOR_SECRET; Functions discovery defers secret reads and scheduled exports do not require that secret.
+
+Dependabot opens reviewed weekly dependency/action PRs; it grants no auto-merge or deployment bypass. The lint gate and component tests execute in verification before production secrets are available.

@@ -7,7 +7,7 @@ import {
 } from '../lib/field-options';
 import { FormEvent, useState } from 'react';
 import { localInstant } from '../lib/dates';
-import { Lead, stages, outcomes, dateOnly } from '../lib/types';
+import {Lead, dateOnly} from '../lib/types';
 import { ErrorMessage, SaveButton, useSubmit } from './UI';
 const inputData = (e: FormEvent<HTMLFormElement>) =>
   Object.fromEntries(new FormData(e.currentTarget));

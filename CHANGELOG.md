@@ -13,6 +13,29 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.3.2] - 2026-10-30
+
+### Fixed
+- #6: Store rate-limit expiry as Firestore timestamps, enable TTL, convert legacy counter strings in bounded resumable batches and wait for the policy to be active during deployment. Import-detail retention is unchanged.
+- #22: Record one actor-attributed archive activity atomically with the lead transition; repeated archive requests do not duplicate timeline entries.
+- #29: Require a stable production cursor secret at API initialization; retain isolated local/emulator fallback and cross-instance cursor compatibility.
+- #34: Resolve one shared Gemini model default/runtime parameter across reminder, scoring and dashboard adapters; remove the workflow's competing default.
+- #38: Batch-read distinct task-linked leads while preserving recipient privacy and current lead-access checks.
+
+### Engineering
+- #41: Add ESLint for backend/scripts/TypeScript, hooks and accessibility. CI rejects errors and warning increases over the reviewed existing UI baseline; this does not claim every legacy hook/accessibility finding is resolved.
+- #42: Add weekly grouped Dependabot updates for npm workspaces, the Functions deployment lockfile and pinned GitHub Actions.
+- #43: Add Vitest/Testing Library interaction coverage for lead blades, desktop/mobile filters, batch review and CSV import mapping; run in CI with sanitized per-case telemetry. jsdom is not browser/device certification.
+- #47: Keep module entrypoints evergreen and move conditional recipes into linked references while retaining API ownership and the established skill-update requirement.
+- #48: Reject release-labelled headings and oversized module entrypoints; validate links inside conditional references.
+- #49: Prioritize the Material interface owner for SalesDrone web design and narrow imported native/experimental design triggers.
+- #50: Diagnose Windows text-file symlink checkouts with explicit repair instructions, without changing Git settings or overwriting files.
+- #51: Generate all 23 module catalog entries with the skill tree and reject stale catalogs.
+- #52: Give skill prompts module-specific invariants and runnable verification commands.
+- #53: Link unresolved module gaps and explicitly distinguish current archive behavior from pending restore/cancellation decisions.
+
+
 ## [2.3.1] - 2026-10-30
 
 ### Fixed

@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Lead journey"
   short_description: "Maintain lead journey in SalesDrone"
-  default_prompt: "Use $salesdrone-lead-journey to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-lead-journey for this module change. Record only committed creation and actual stage changes. Notes, rejected writes and replays do not create transitions. Verify with `node --test functions/test/journey.test.js` and report remaining evidence limits."

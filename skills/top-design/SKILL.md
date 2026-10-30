@@ -1,6 +1,7 @@
 ---
 name: top-design
-description: 'Create award-winning, immersive web experiences at the level of Awwwards-featured agencies. Use when the user mentions "Awwwards quality", "make my site stunning", "scroll animations", "parallax storytelling", "cinematic web design", "portfolio site", or "brand experience". Also trigger when elevating a standard landing page into a memorable digital experience. Covers dramatic typography, purposeful motion, scroll-based composition, and performance-optimized animation. For foundational UI, see refactoring-ui. For type selection, see web-typography.'
+description: "Design standalone experimental microsites with immersive scroll or parallax art direction. SalesDrone product screens use salesdrone-interface and its Material design system."
+
 license: MIT
 metadata:
   author: wondelai

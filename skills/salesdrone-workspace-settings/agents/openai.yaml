@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Workspace fields and preferences"
   short_description: "Maintain workspace fields and preferences in SalesDrone"
-  default_prompt: "Use $salesdrone-workspace-settings to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-workspace-settings for this module change. Admin-only workspace field writes use expectedVersion. Personal preferences remain user-owned; capabilities are not inferred from editable preference payloads. Verify with `node --test functions/test/custom-fields-and-tasks.test.js` and report remaining evidence limits."

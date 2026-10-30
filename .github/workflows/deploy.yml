@@ -59,6 +59,7 @@ jobs:
     env:
       GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
       DYNATRACE_TENANT_URL: ${{ vars.DYNATRACE_TENANT_URL }}
+      GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
       VITE_USE_EMULATORS: 'false'
       VITE_ENABLE_RUM: ${{ vars.VITE_ENABLE_RUM }}
       VITE_FIREBASE_VAPID_KEY: ${{ vars.VITE_FIREBASE_VAPID_KEY }}
@@ -84,7 +85,7 @@ jobs:
       - name: Build exact release
         run: |
           npm run build
-          node --input-type=module -e "import{writeFileSync}from'node:fs';writeFileSync('functions/.env.'+process.env.GCP_PROJECT_ID,'SDR_REGION=asia-south1\nAPP_CHECK_MODE=enforce\nGEMINI_MODEL=gemini-3.5-flash-lite\nDYNATRACE_TENANT_URL='+process.env.DYNATRACE_TENANT_URL+'\n')"
+          node --input-type=module -e "import{writeFileSync}from'node:fs';if(/[\r\n]/.test(process.env.GEMINI_MODEL||''))throw Error('Invalid GEMINI_MODEL');writeFileSync('functions/.env.'+process.env.GCP_PROJECT_ID,'SDR_REGION=asia-south1\nAPP_CHECK_MODE=enforce\nDYNATRACE_TENANT_URL='+process.env.DYNATRACE_TENANT_URL+'\n'+(process.env.GEMINI_MODEL?'GEMINI_MODEL='+process.env.GEMINI_MODEL+'\n':''))"
       - name: Deployment started
         run: echo 'DEPLOY_ATTEMPTED=true' >> "$GITHUB_ENV"
       - name: Deploy Firestore rules and indexes

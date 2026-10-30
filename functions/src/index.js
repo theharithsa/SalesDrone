@@ -1,3 +1,8 @@
+import { backfillRateLimitExpiry } from './rate-limit.js';
+import { ROOT } from './policy.js';
+import { onInit } from 'firebase-functions/v2/core';
+import { requireCursorSecret } from './cursors.js';
+import { DEFAULT_GEMINI_MODEL } from './model-config.js';
 import {
   guardLeadData,
   advanceLeadReset,
@@ -31,6 +36,12 @@ initializeApp();
 const geminiKey = defineSecret('GEMINI_API_KEY');
 const dtKey = defineSecret('DYNATRACE_API_TOKEN');
 const cursorKey = defineSecret('CURSOR_SECRET');
+onInit(() => {
+  if (
+    process.env.FUNCTION_TARGET === 'api' &&
+    process.env.FUNCTIONS_EMULATOR !== 'true'
+  ) requireCursorSecret(cursorKey.value());
+});
 const dtTenant = defineString('DYNATRACE_TENANT_URL', {
   default: 'https://indiacs.live.dynatrace.com',
 });
@@ -61,11 +72,11 @@ async function worker(name, fn) {
   }
 }
 const geminiModel = defineString('GEMINI_MODEL', {
-  default: 'gemini-3.5-flash-lite',
+  default: DEFAULT_GEMINI_MODEL,
 });
 const intelligence = intelligenceGemini({
   key: () => geminiKey.value(),
-  model: process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
+  model: () => geminiModel.value(),
 });
 const region = defineString('SDR_REGION', {
   default: 'asia-south1',
@@ -80,6 +91,9 @@ const store = guardLeadData(
   observableStore(firestoreStore(getFirestore()), () => observability),
 );
 const handler = createApp({
+  cursorSecret: () => process.env.FUNCTIONS_EMULATOR === 'true'
+    ? process.env.CURSOR_SECRET || 'isolated-emulator-cursor-key'
+    : cursorKey.value(),
   files: firebaseFiles(dependency),
   store,
   telemetry: () => observability,
@@ -173,6 +187,14 @@ export const reminders = onSchedule(
   },
   async () =>
     worker('reminders', async () => {
+      try {
+        const expiry = await backfillRateLimitExpiry(store, ROOT);
+        if (expiry.scanned)
+          console.info(JSON.stringify({ event: 'rate_limit_expiry_backfill', ...expiry }));
+      } catch {
+        // Internal retention maintenance must not prevent scheduled outreach delivery.
+        console.warn(JSON.stringify({ event: 'rate_limit_expiry_backfill_failed' }));
+      }
       const reset = await advanceLeadReset({
         store,
         files: firebaseFiles(dependency),
@@ -224,7 +246,7 @@ export const analyzeNotes = onSchedule(
           dependency('gemini.reminder', () =>
             geminiExtractor({
               key: geminiKey.value(),
-              model: geminiModel.value(),
+              model: () => geminiModel.value(),
             })(input),
           ),
       });

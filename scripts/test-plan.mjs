@@ -1,9 +1,9 @@
 export const suites = {
-  quick: ['unit', 'types', 'contracts', 'documentation', 'skills', 'readiness'],
+  quick: ['unit', 'lint', 'types', 'contracts', 'documentation', 'skills', 'readiness'],
   integration: ['emulator'],
   release: [
     'unit',
-    'types',
+    'lint', 'types',
     'contracts',
     'documentation',
     'skills',
@@ -15,6 +15,7 @@ export const suites = {
 };
 export const steps = {
   unit: ['test'],
+  lint: ['run', 'lint'],
   types: ['run', 'check'],
   contracts: ['run', 'api:docs'],
   documentation: ['run', 'docs:check'],

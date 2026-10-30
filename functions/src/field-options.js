@@ -82,6 +82,7 @@ export const FieldOptionsPatch = z
               .trim()
               .min(1)
               .max(80)
+              // eslint-disable-next-line no-control-regex -- Reject control characters in untrusted text.
               .regex(/^[^\r\n\x00-\x1f]+$/),
           ]),
         ),

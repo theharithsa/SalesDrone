@@ -73,3 +73,12 @@ test('skill tree routes prompts to current modules and rejects orphan routing re
     ),
   );
 });
+
+test('generic SalesDrone design prompts prioritize the Material interface owner', async()=>{
+ const tree=await read('skill-tree.json');
+ for(const prompt of ['SalesDrone design review','make my site stunning with responsive UI','Tailwind styling for the Material 3 page'])assert.equal(routeSkills(prompt,tree)[0].id,'salesdrone-interface');
+ const readme=await readFile(new URL('../skills/README.md',import.meta.url),'utf8');
+ const catalog=readme.split('<!-- module-catalog:start -->')[1].split('<!-- module-catalog:end -->')[0];
+ assert.equal((catalog.match(/\| \[salesdrone-/g)||[]).length,tree.nodes.length);
+ for(const node of tree.nodes)assert.ok(catalog.includes(`](${node.id}/SKILL.md)`));
+});

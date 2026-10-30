@@ -1,15 +1,16 @@
+import { DEFAULT_GEMINI_MODEL, resolveModel } from './model-config.js';
 import { AppError } from './contracts.js';
 import { z } from 'zod';
 import { ScoreExtraction } from './scoring.js';
 import { BriefOutput } from './dashboard.js';
 export function intelligenceGemini({
   key,
-  model = 'gemini-3.5-flash-lite',
+  model = DEFAULT_GEMINI_MODEL,
   fetchImpl = fetch,
 }) {
   async function generate(schema, instruction, input) {
     const response = await fetchImpl(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${resolveModel(model)}:generateContent`,
       {
         method: 'POST',
         headers: {

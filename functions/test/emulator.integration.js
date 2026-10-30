@@ -1299,3 +1299,20 @@ test('lead reset uses real Auth/Firestore/Storage, tombstones retries and preser
 });
 
 after(() => db.terminate());
+
+test('real Firestore stores TTL timestamps and batch reads preserve missing positions',async()=>{
+ const {rateLimitExpiry,backfillRateLimitExpiry}=await import('../src/rate-limit.js');
+ const {ROOT}=await import('../src/policy.js');const store=firestoreStore(db);
+ const id='ttl-'+randomUUID(),legacy='legacy-'+id;
+ await store.run(async tx=>{
+  tx.set(path('rateLimits',id),{id,count:2,expiresAt:rateLimitExpiry('2026-10-30T00:00:00Z')});
+  tx.set(path('rateLimits',legacy),{id:legacy,count:3,expiresAt:'2026-10-29T00:00:00Z'});
+ });
+ const [row,missing]=await store.getAll([path('rateLimits',id),path('rateLimits','missing-'+id)]);
+ assert.equal(row.expiresAt.toDate().toISOString(),'2026-10-31T00:00:00.000Z');assert.equal(missing,null);
+ // A fresh maintenance cursor exercises the actual transactional read/write adapter.
+ await store.run(async tx=>tx.delete(`${ROOT}/maintenance/rateLimitExpiry`));
+ let result;do{result=await backfillRateLimitExpiry(store,ROOT)}while(!result.complete);
+ assert.equal((await store.get(path('rateLimits',legacy))).expiresAt.toDate().toISOString(),'2026-10-29T00:00:00.000Z');
+ await store.run(async tx=>{tx.delete(path('rateLimits',id));tx.delete(path('rateLimits',legacy));});
+});

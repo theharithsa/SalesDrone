@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Book mode"
   short_description: "Maintain Book mode fonts, palettes and preferences"
-  default_prompt: "Use $salesdrone-book-mode to improve the requested reading experience, preserve preference and audit boundaries, and verify responsive behavior."
+  default_prompt: "Use $salesdrone-book-mode. Keep live/guest preference isolation and monospace contact identifiers across both paper palettes. Verify with `node --test functions/test/book-mode.test.js` and report evidence limits."

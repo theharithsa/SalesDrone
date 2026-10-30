@@ -1,15 +1,16 @@
+import { DEFAULT_GEMINI_MODEL, resolveModel } from './model-config.js';
 import { z } from 'zod';
 import { Extraction, localParts } from './automatic-reminders.js';
 // Notes are untrusted data, never instructions to the model or to an API/tool.
 export function geminiExtractor({
   key,
-  model = 'gemini-3.5-flash-lite',
+  model = DEFAULT_GEMINI_MODEL,
   fetchImpl = fetch,
 }) {
   return async ({ notes, referenceAt, timezone }) => {
     const reference = localParts(referenceAt, timezone);
     const response = await fetchImpl(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${resolveModel(model)}:generateContent`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },

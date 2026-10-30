@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Release and deployment"
   short_description: "Maintain release and deployment in SalesDrone"
-  default_prompt: "Use $salesdrone-release to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-release. Use an issue-linked PR, preserve SemVer/tags and never bypass failed release gates. Verify with `npm run release:check` and report evidence limits."

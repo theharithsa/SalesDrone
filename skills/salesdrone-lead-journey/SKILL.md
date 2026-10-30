@@ -59,6 +59,10 @@ Adjacent owners:
 - [salesdrone-workspace-settings](../salesdrone-workspace-settings/SKILL.md)
 - [salesdrone-dashboard](../salesdrone-dashboard/SKILL.md)
 
-## v1.8 operating notes
+## Conditional reference
 
-Journey uses a compact locally scrolling horizontal path. Current remains aria-current=step with highlighted text/point; the extra Current pill is removed. About this journey and Recorded stage changes are separate native disclosures; preserve honest recorded history and pagination. Test narrow/desktop/scale extremes.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
+
+## Known gaps
+
+These are tracked follow-ups, not implemented behavior: [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.
