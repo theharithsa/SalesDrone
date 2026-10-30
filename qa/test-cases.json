@@ -140,8 +140,7 @@
         "functions/test/emulator.integration.js",
         "functions/test/workbook-and-filters.test.js",
         "functions/test/configuration.test.js",
-        "tests/skill-guard.test.ts",
-        "functions/test/lead-filter-index.test.js"
+        "tests/skill-guard.test.ts"
       ],
       "manualCases": [
         {
@@ -329,8 +328,7 @@
         "tests/lead-pagination.test.ts",
         "functions/test/archived-leads.test.js",
         "apps/web/test/workflows.test.tsx",
-        "functions/test/configuration.test.js",
-        "functions/test/lead-filter-index.test.js"
+        "functions/test/configuration.test.js"
       ],
       "manualCases": [
         {
@@ -542,8 +540,7 @@
         "functions/test/emulator.integration.js",
         "tests/test-plan.test.ts",
         "tests/skill-guard.test.ts",
-        "apps/web/test/workflows.test.tsx",
-        "functions/test/lead-filter-index.test.js"
+        "apps/web/test/workflows.test.tsx"
       ],
       "manualCases": [
         {

@@ -1033,7 +1033,7 @@ for (const e of endpoints) {
         'application/json': { schema: ref('LeadFilters'), example: [] },
       },
       description:
-        'AND-combined column filters. Use JSON in the filters query parameter. NFKC/trim/case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. After the controlled backfill is ready, one eligible stage/source/custom-select equality narrows candidates through a normalized index; every condition is still checked. Other searches use bounded authorized scans. Signed cursors pin the query plan across index activation. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment.',
+        'AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. Uses a bounded scan of authorized lead pages, with a signed continuation cursor. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment.',
     });
   if (e.method === 'get' && e.url === '/tasks')
     for (const name of ['state', 'leadId'])

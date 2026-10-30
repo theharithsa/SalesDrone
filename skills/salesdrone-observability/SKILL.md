@@ -80,8 +80,6 @@ Font preference changes add fontStyle to normalized personal defaults and appear
 
 For detailed UI, recovery and integration recipes, read [module recipes](references/maintenance.md) and [observability runbook](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-Normalized-index maintenance patches derived fields without business events, lead versions or activities. Keep count-only progress and value-free firestore.index-backfill spans. Never emit normalized tokens, query values or document cursor IDs. Verify migration readiness separately from successful deployment and ingest receipts.
-
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.

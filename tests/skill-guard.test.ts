@@ -84,10 +84,3 @@ test("lint ratchet rejects additional or new warning categories while allowing r
   assert.equal(newWarnings({ "a::rule": 3 }, baseline).length, 1);
   assert.equal(newWarnings({ "b::rule": 1 }, baseline).length, 1);
 });
-
-test('array index readiness ignores JSON key ordering and implicit document-ID suffixes',async()=>{
- const {indexKey}=await import('../scripts/index-readiness.mjs');
- const configured={collectionGroup:'leads',queryScope:'COLLECTION',fields:[{fieldPath:'archived',order:'ASCENDING'},{fieldPath:'_filterEqualsV1',arrayConfig:'CONTAINS'},{fieldPath:'id',order:'DESCENDING'}]};
- const deployed={name:'projects/demo/databases/(default)/collectionGroups/leads/indexes/example',queryScope:'COLLECTION',fields:[{order:'ASCENDING',fieldPath:'archived'},{arrayConfig:'CONTAINS',fieldPath:'_filterEqualsV1'},{order:'DESCENDING',fieldPath:'id'},{fieldPath:'__name__',order:'DESCENDING'}]};
- assert.equal(indexKey(configured),indexKey(deployed));assert.notEqual(indexKey(configured),indexKey({...deployed,queryScope:'COLLECTION_GROUP'}));
-});

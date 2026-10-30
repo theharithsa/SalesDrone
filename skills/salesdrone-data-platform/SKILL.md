@@ -71,8 +71,6 @@ Adjacent owners:
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-Store adapters derive private normalized equality tokens on every lead write and strip them from all reads. reindexLeads patches only that field through isolated bounded transactions. Published-build verification plus a 150-second drain gate legacy backfill; readiness activates one indexed candidate equality while signed cursors pin their query plan. Keep fallback until ready, reset pause, current scope and no-business-event maintenance. See docs/TECHNICAL.md and lead-filter-index.test.js.
-
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#35](https://github.com/theharithsa/SalesDrone/issues/35). Check their current status before changing the contract.

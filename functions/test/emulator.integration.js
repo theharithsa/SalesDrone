@@ -1300,153 +1300,19 @@ test('lead reset uses real Auth/Firestore/Storage, tombstones retries and preser
 
 after(() => db.terminate());
 
-test('real Firestore stores TTL timestamps and batch reads preserve missing positions', async () => {
-  const { rateLimitExpiry, backfillRateLimitExpiry } = await import(
-    '../src/rate-limit.js'
-  );
-  const { ROOT } = await import('../src/policy.js');
-  const store = firestoreStore(db);
-  const id = 'ttl-' + randomUUID(),
-    legacy = 'legacy-' + id;
-  await store.run(async (tx) => {
-    tx.set(path('rateLimits', id), {
-      id,
-      count: 2,
-      expiresAt: rateLimitExpiry('2026-10-30T00:00:00Z'),
-    });
-    tx.set(path('rateLimits', legacy), {
-      id: legacy,
-      count: 3,
-      expiresAt: '2026-10-29T00:00:00Z',
-    });
-  });
-  const [row, missing] = await store.getAll([
-    path('rateLimits', id),
-    path('rateLimits', 'missing-' + id),
-  ]);
-  assert.equal(
-    row.expiresAt.toDate().toISOString(),
-    '2026-10-31T00:00:00.000Z',
-  );
-  assert.equal(missing, null);
-  // A fresh maintenance cursor exercises the actual transactional read/write adapter.
-  await store.run(async (tx) =>
-    tx.delete(`${ROOT}/maintenance/rateLimitExpiry`),
-  );
-  let result;
-  do {
-    result = await backfillRateLimitExpiry(store, ROOT);
-  } while (!result.complete);
-  assert.equal(
-    (await store.get(path('rateLimits', legacy))).expiresAt
-      .toDate()
-      .toISOString(),
-    '2026-10-29T00:00:00.000Z',
-  );
-  await store.run(async (tx) => {
-    tx.delete(path('rateLimits', id));
-    tx.delete(path('rateLimits', legacy));
-  });
-});
-
-test('normalized equality indexes and isolated legacy backfill work in real Firestore without business rewrites', async () => {
-  const { LEAD_INDEX_FIELD, LEAD_INDEX_STATE, equalityToken } = await import(
-    '../src/lead-filter-index.js'
-  );
-  const id = 'index-' + randomUUID(),
-    doc = db.doc(path('leads', id));
-  const original = {
-    id,
-    name: 'Synthetic legacy index',
-    source: '  ＷｅｂＳｉｔｅ  ',
-    stage: 'New',
-    archived: false,
-    assignedToUid: 'synthetic-index-owner',
-    customFields: { cf_product: 'ＲＥＴＡＩＬ' },
-    version: 19,
-    updatedAt: '2026-10-30T00:00:00.000Z',
-  };
-  await doc.set(original);
-  await db.doc(LEAD_INDEX_STATE).delete();
-  const store = firestoreStore(db),
-    commit = 'c'.repeat(40),
-    before = (await db.collection(path('telemetryOutbox')).count().get()).data()
-      .count;
-  await store.reindexLeads({ commit, now: '2026-10-30T00:00:00.000Z' });
-  let result;
-  do {
-    result = await store.reindexLeads({
-      commit,
-      now: '2026-10-30T00:03:00.000Z',
-    });
-  } while (!result.ready);
-  const raw = (await doc.get()).data();
-  assert.ok(raw[LEAD_INDEX_FIELD].includes(equalityToken('source', 'website')));
-  assert.deepEqual(await store.get(path('leads', id)), original);
-  for (const [field, value] of [
-    ['source', 'WEBSITE'],
-    ['stage', 'new'],
-    ['cf_product', 'retail'],
-  ]) {
-    const rows = await store.query(path('leads'), {
-      filters: [
-        ['archived', '==', false],
-        ['assignedToUid', '==', 'synthetic-index-owner'],
-        [LEAD_INDEX_FIELD, 'array-contains', equalityToken(field, value)],
-      ],
-      order: 'id',
-      direction: 'desc',
-      limit: 10,
-    });
-    assert.deepEqual(
-      rows.map((l) => l.id),
-      [id],
-    );
-    assert.ok(!(LEAD_INDEX_FIELD in rows[0]));
-  }
-  assert.equal(
-    (await db.collection(path('telemetryOutbox')).count().get()).data().count,
-    before,
-  );
-  await store.run(async (tx) => {
-    const l = await tx.get(path('leads', id));
-    tx.set(path('leads', id), { ...l, source: 'Referral' });
-  });
-  assert.ok(
-    (await doc.get())
-      .data()
-      [LEAD_INDEX_FIELD].includes(equalityToken('source', 'referral')),
-  );
-  // Reads precede the buffered update; a failed migration transaction commits no cursor or index patch.
-  await db.doc(LEAD_INDEX_STATE).delete();
-  await doc.set(original);
-  await store.reindexLeads({ commit, now: '2026-10-30T00:00:00.000Z' });
-  const failing = firestoreStore({
-    doc: (p) => db.doc(p),
-    collection: (p) => db.collection(p),
-    runTransaction: (fn) =>
-      db.runTransaction((tx) =>
-        fn(
-          new Proxy(tx, {
-            get(target, key) {
-              if (key === 'update')
-                return (...args) => {
-                  target.update(...args);
-                  throw Error('synthetic index write failure');
-                };
-              const value = Reflect.get(target, key, target);
-              return typeof value === 'function' ? value.bind(target) : value;
-            },
-          }),
-        ),
-      ),
-  });
-  await assert.rejects(
-    failing.reindexLeads({ commit, now: '2026-10-30T00:03:00.000Z' }),
-    /synthetic index write failure/,
-  );
-  assert.ok(!(LEAD_INDEX_FIELD in (await doc.get()).data()));
-  assert.equal((await store.get(LEAD_INDEX_STATE)).ready, false);
-  await doc.delete();
-  await db.doc(LEAD_INDEX_STATE).delete();
+test('real Firestore stores TTL timestamps and batch reads preserve missing positions',async()=>{
+ const {rateLimitExpiry,backfillRateLimitExpiry}=await import('../src/rate-limit.js');
+ const {ROOT}=await import('../src/policy.js');const store=firestoreStore(db);
+ const id='ttl-'+randomUUID(),legacy='legacy-'+id;
+ await store.run(async tx=>{
+  tx.set(path('rateLimits',id),{id,count:2,expiresAt:rateLimitExpiry('2026-10-30T00:00:00Z')});
+  tx.set(path('rateLimits',legacy),{id:legacy,count:3,expiresAt:'2026-10-29T00:00:00Z'});
+ });
+ const [row,missing]=await store.getAll([path('rateLimits',id),path('rateLimits','missing-'+id)]);
+ assert.equal(row.expiresAt.toDate().toISOString(),'2026-10-31T00:00:00.000Z');assert.equal(missing,null);
+ // A fresh maintenance cursor exercises the actual transactional read/write adapter.
+ await store.run(async tx=>tx.delete(`${ROOT}/maintenance/rateLimitExpiry`));
+ let result;do{result=await backfillRateLimitExpiry(store,ROOT)}while(!result.complete);
+ assert.equal((await store.get(path('rateLimits',legacy))).expiresAt.toDate().toISOString(),'2026-10-29T00:00:00.000Z');
+ await store.run(async tx=>{tx.delete(path('rateLimits',id));tx.delete(path('rateLimits',legacy));});
 });

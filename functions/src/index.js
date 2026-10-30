@@ -1,5 +1,3 @@
-import { advanceLeadFilterIndex } from './lead-filter-index.js';
-import { BUILD_COMMIT } from './version.js';
 import { backfillRateLimitExpiry } from './rate-limit.js';
 import { ROOT } from './policy.js';
 import { onInit } from 'firebase-functions/v2/core';
@@ -42,8 +40,7 @@ onInit(() => {
   if (
     process.env.FUNCTION_TARGET === 'api' &&
     process.env.FUNCTIONS_EMULATOR !== 'true'
-  )
-    requireCursorSecret(cursorKey.value());
+  ) requireCursorSecret(cursorKey.value());
 });
 const dtTenant = defineString('DYNATRACE_TENANT_URL', {
   default: 'https://indiacs.live.dynatrace.com',
@@ -94,10 +91,9 @@ const store = guardLeadData(
   observableStore(firestoreStore(getFirestore()), () => observability),
 );
 const handler = createApp({
-  cursorSecret: () =>
-    process.env.FUNCTIONS_EMULATOR === 'true'
-      ? process.env.CURSOR_SECRET || 'isolated-emulator-cursor-key'
-      : cursorKey.value(),
+  cursorSecret: () => process.env.FUNCTIONS_EMULATOR === 'true'
+    ? process.env.CURSOR_SECRET || 'isolated-emulator-cursor-key'
+    : cursorKey.value(),
   files: firebaseFiles(dependency),
   store,
   telemetry: () => observability,
@@ -194,14 +190,10 @@ export const reminders = onSchedule(
       try {
         const expiry = await backfillRateLimitExpiry(store, ROOT);
         if (expiry.scanned)
-          console.info(
-            JSON.stringify({ event: 'rate_limit_expiry_backfill', ...expiry }),
-          );
+          console.info(JSON.stringify({ event: 'rate_limit_expiry_backfill', ...expiry }));
       } catch {
         // Internal retention maintenance must not prevent scheduled outreach delivery.
-        console.warn(
-          JSON.stringify({ event: 'rate_limit_expiry_backfill_failed' }),
-        );
+        console.warn(JSON.stringify({ event: 'rate_limit_expiry_backfill_failed' }));
       }
       const reset = await advanceLeadReset({
         store,
@@ -220,21 +212,6 @@ export const reminders = onSchedule(
           dependency('fcm.delivery', () => getMessaging().send(message)),
       });
       console.info(JSON.stringify({ event: 'reminder_dispatch', ...stats }));
-      if (process.env.FUNCTIONS_EMULATOR !== 'true')
-        try {
-          const index = await dependency('firestore.index-backfill', () =>
-            advanceLeadFilterIndex({ store, commit: BUILD_COMMIT }),
-          );
-          if (index.scanned || index.waiting)
-            console.info(
-              JSON.stringify({ event: 'lead_filter_index_backfill', ...index }),
-            );
-        } catch {
-          console.warn(
-            JSON.stringify({ event: 'lead_filter_index_backfill_failed' }),
-          );
-        }
-
       try {
         const cleanup = await cleanupAttachments({
           store,

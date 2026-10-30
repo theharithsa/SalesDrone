@@ -34,8 +34,6 @@ Entry points: [runner](../../scripts/run-test-suite.mjs), [execution policy](../
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-Run lead-filter-index.test.js and the real Firestore integration for normalized equality: >1,000 sparse records, Unicode/case, scope, custom selects, residual conditions, cursor continuity, writer refresh, publication/drain/reset gating and transactional rollback. Domain responses must not include internal tokens; backfill must not generate lead activities or business outboxes.
-
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#44](https://github.com/theharithsa/SalesDrone/issues/44), [#45](https://github.com/theharithsa/SalesDrone/issues/45), [#46](https://github.com/theharithsa/SalesDrone/issues/46). Check their current status before changing the contract.
