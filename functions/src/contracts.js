@@ -22,7 +22,9 @@ export const CAPABILITIES = [
   'leads:edit',
   'activities:write',
   'tasks:write',
+  'imports:read',
   'imports:write',
+  'imports:share',
   'members:write',
   'assignments:write',
 ];
@@ -164,9 +166,18 @@ export const GrantInput = z
   .refine(
     (x) =>
       !x.capabilities?.some((v) =>
-        ['members:write', 'assignments:write', 'imports:write'].includes(v),
+        ['members:write', 'assignments:write'].includes(v),
       ),
     { message: 'Administrative capabilities are reserved for administrators' },
+  )
+  .refine(
+    (x) =>
+      !x.capabilities ||
+      !x.capabilities.some(
+        (c) => c === 'imports:write' || c === 'imports:share',
+      ) ||
+      x.capabilities.includes('imports:read'),
+    { message: 'Import write/sharing requires import history permission' },
   )
   .refine((x) => !x.capabilities || x.capabilities.includes('leads:read'), {
     message: 'Workspace access requires view permission',
@@ -186,9 +197,18 @@ export const MemberPatch = z
   .refine(
     (x) =>
       !x.capabilities?.some((v) =>
-        ['members:write', 'assignments:write', 'imports:write'].includes(v),
+        ['members:write', 'assignments:write'].includes(v),
       ),
     { message: 'Administrative capabilities are reserved for administrators' },
+  )
+  .refine(
+    (x) =>
+      !x.capabilities ||
+      !x.capabilities.some(
+        (c) => c === 'imports:write' || c === 'imports:share',
+      ) ||
+      x.capabilities.includes('imports:read'),
+    { message: 'Import write/sharing requires import history permission' },
   )
   .refine((x) => !x.capabilities || x.capabilities.includes('leads:read'), {
     message: 'Workspace access requires view permission',
@@ -260,7 +280,9 @@ export const ImportInput = z
     statusMap: z.record(z.string(), text(100).min(1)).default({}),
     dateOrder: z.enum(['DMY', 'MDY']).default('DMY'),
     blankRows: z.number().int().min(0).default(0),
-    duplicateMode: z.enum(['skip', 'keep']).default('skip'),
+    duplicateMode: z.enum(['skip', 'keep', 'update']).default('skip'),
+    reviewed: z.boolean().optional(),
+    sourceImportId: text(150).min(1).optional(),
   })
   .strict();
 export function parse(schema, value) {

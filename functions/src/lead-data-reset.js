@@ -22,6 +22,7 @@ const phases = [
   'leadScores',
   'imports',
   'importChunks',
+  'importBaselines',
   'dedupeKeys',
   'leads',
   'requests',

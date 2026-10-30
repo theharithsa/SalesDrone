@@ -206,7 +206,11 @@
         "excel import",
         "csv import",
         "xlsx import",
-        "spreadsheet mapping"
+        "spreadsheet mapping",
+        "import history",
+        "revised workbook",
+        "duplicate comparison",
+        "collaborative import"
       ],
       "related": [
         "salesdrone-release",
@@ -216,6 +220,14 @@
         "salesdrone-notifications"
       ],
       "apiOperations": [
+        "GET /api/v1/imports",
+        "GET /api/v1/imports/{id}/rows",
+        "GET /api/v1/imports/{id}/report",
+        "POST /api/v1/imports/{id}/plan",
+        "POST /api/v1/imports/{id}/review",
+        "POST /api/v1/imports/{id}/refresh",
+        "PATCH /api/v1/imports/{id}/rows/{index}",
+        "DELETE /api/v1/imports/{id}",
         "POST /api/v1/imports/preview",
         "GET /api/v1/imports/{id}",
         "GET /api/v1/imports/{id}/errors",

@@ -444,7 +444,8 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     freshNotes[0].id,
   );
   // Configuration retirement preserves lead data and cannot hide both contact inputs.
-  const beforeVisibility = (await req('get', '/field-options').expect(200)).body;
+  const beforeVisibility = (await req('get', '/field-options').expect(200))
+    .body;
   await req('patch', '/field-options', {
     expectedVersion: beforeVisibility.version,
     values: beforeVisibility.values,
@@ -453,11 +454,13 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
   const visibility = (await req('get', '/field-options').expect(200)).body;
   assert.deepEqual(visibility.hiddenFields, ['phone', 'countryCode', 'stage']);
   await req('patch', '/field-options', {
-    expectedVersion: visibility.version, values: visibility.values,
+    expectedVersion: visibility.version,
+    values: visibility.values,
     hiddenFields: ['phone', 'email'],
   }).expect(400);
   await req('patch', '/field-options', {
-    expectedVersion: visibility.version, values: visibility.values,
+    expectedVersion: visibility.version,
+    values: visibility.values,
     hiddenFields: [],
   }).expect(200);
   const fields = (await req('get', '/field-options').expect(200)).body;
@@ -932,6 +935,229 @@ test('archive Settings API persists dates and paginates with actual Firestore as
     ),
   );
   await call('get', '/leads/archive_emulator_3').expect(404);
+});
+
+test('reviewed imports persist source baselines and permission-filtered outcomes in actual Auth/Firestore transactions', async () => {
+  const token = await signIn('spraghav@gmail.com'),
+    workerToken = await signIn('import-collaborator@example.com');
+  const identity = await auth.verifyIdToken(workerToken),
+    store = firestoreStore(db);
+  const app = createApp({
+    store,
+    verifyToken: (t) => auth.verifyIdToken(t, true),
+  });
+  const call = (method, url, body, credential = token) => {
+    const r = request(app)
+      [method]('/api/v1' + url)
+      .set('Authorization', 'Bearer ' + credential)
+      .set('Idempotency-Key', randomUUID());
+    return body === undefined ? r : r.send(body);
+  };
+  await call('get', '/me').expect(200);
+  await store.run((tx) =>
+    tx.set(path('members', identity.uid), {
+      id: identity.uid,
+      uid: identity.uid,
+      name: 'Import collaborator',
+      active: true,
+      role: 'SDR',
+      scope: 'assigned',
+      version: 1,
+      capabilities: [
+        'leads:read',
+        'leads:create',
+        'leads:edit',
+        'imports:read',
+        'imports:write',
+        'imports:share',
+      ],
+    }),
+  );
+  const source = [1, 2].map((n) => ({
+    name: 'Import emulator ' + n,
+    phone: '+1202555800' + n,
+    enquiryDate: '2026-10-20',
+    company: 'Initial',
+    importComments: [],
+  }));
+  const prepare = async (rows, extra = {}, credential = token) => {
+    let j = (
+      await call(
+        'post',
+        '/imports/preview',
+        {
+          filename: 'synthetic-emulator.csv',
+          sheet: 'CSV',
+          rows,
+          reviewed: true,
+          ...extra,
+        },
+        credential,
+      ).expect(200)
+    ).body;
+    while (j.status === 'Preparing')
+      j = (
+        await call(
+          'post',
+          '/imports/' + j.id + '/plan',
+          { expectedVersion: j.version },
+          credential,
+        ).expect(200)
+      ).body;
+    return j;
+  };
+  const approve = async (j, credential = token) => {
+    while (j.reviewOffset < j.total)
+      j = (
+        await call(
+          'post',
+          '/imports/' + j.id + '/review',
+          { expectedVersion: j.version },
+          credential,
+        ).expect(200)
+      ).body;
+    return j;
+  };
+  let first = await approve(await prepare(source));
+  first = (
+    await call('post', '/imports/' + first.id + '/commit', {
+      expectedVersion: first.version,
+    }).expect(200)
+  ).body;
+  assert.equal(first.imported, 2);
+  const saved = await store.query(path('leads'), {
+    filters: [['importId', '==', first.id]],
+    limit: 10,
+  });
+  const mine = saved.find((l) => l.phone === source[0].phone);
+  await call('patch', '/leads/' + mine.id + '/assignment', {
+    assignedToUid: identity.uid,
+    expectedVersion: mine.version,
+  }).expect(200);
+  const visible = (
+    await call(
+      'get',
+      '/imports/' + first.id + '/rows?limit=1',
+      undefined,
+      workerToken,
+    ).expect(200)
+  ).body.items;
+  assert.equal(
+    visible.filter((r) => r.classification === 'Restricted').length,
+    1,
+  );
+  assert.equal(
+    visible.find((r) => r.classification === 'Restricted').row,
+    undefined,
+  );
+  const revision = [
+    { ...source[0], company: 'Updated by workbook' },
+    source[1],
+    { ...source[0], name: 'Import emulator 3', phone: '+12025558003' },
+  ];
+  let next = await approve(
+    await prepare(
+      revision,
+      { duplicateMode: 'update', sourceImportId: first.id },
+      workerToken,
+    ),
+    workerToken,
+  );
+  assert.equal(next.pending, 1);
+  next = (
+    await call(
+      'patch',
+      '/imports/' + next.id + '/rows/1',
+      { expectedVersion: next.version, action: 'skip' },
+      workerToken,
+    ).expect(200)
+  ).body;
+  const [a, b] = await Promise.all([
+    call(
+      'post',
+      '/imports/' + next.id + '/commit',
+      { expectedVersion: next.version },
+      workerToken,
+    ),
+    call(
+      'post',
+      '/imports/' + next.id + '/commit',
+      { expectedVersion: next.version },
+      token,
+    ),
+  ]);
+  assert.ok([200, 409].includes(a.status));
+  assert.ok([200, 409].includes(b.status));
+  assert.ok(a.status === 200 || b.status === 200);
+  next = (
+    await call('get', '/imports/' + next.id, undefined, workerToken).expect(200)
+  ).body;
+  assert.equal(next.status, 'Completed');
+  assert.equal(next.updated, 1);
+  assert.equal(next.imported, 1);
+  assert.equal(next.skipped, 1);
+  assert.equal(
+    (
+      await store.query(path('leads'), {
+        filters: [['importId', '==', next.id]],
+        limit: 10,
+      })
+    )[0].assignedToUid,
+    identity.uid,
+  );
+  assert.equal(
+    (await store.get(path('leads', mine.id))).company,
+    'Updated by workbook',
+  );
+  assert.equal(
+    (await store.get(path('leads', saved.find((l) => l.id !== mine.id).id)))
+      .company,
+    'Initial',
+  );
+  assert.equal(
+    (
+      await store.query(path('importBaselines'), {
+        filters: [['datasetId', '==', first.id]],
+        limit: 20,
+      })
+    ).length,
+    3,
+  );
+  do {
+    first = (
+      await call('delete', '/imports/' + first.id, {
+        expectedVersion: first.version,
+        confirmation: 'DELETE IMPORT DETAILS',
+      }).expect(200)
+    ).body;
+  } while (first.status === 'Deleting');
+  assert.equal(
+    (
+      await store.query(path('importBaselines'), {
+        filters: [['datasetId', '==', first.id]],
+        limit: 20,
+      })
+    ).length,
+    0,
+  );
+  assert.ok(await store.get(path('leads', mine.id)));
+  const maximum = (
+    await call('post', '/imports/preview', {
+      filename: 'synthetic-maximum.csv',
+      sheet: 'CSV',
+      reviewed: true,
+      rows: Array.from({ length: 5000 }, (_, i) => ({
+        name: 'Maximum ' + i,
+        phone: '+1202' + String(5000000 + i),
+        enquiryDate: '2026-10-20',
+      })),
+    }).expect(200)
+  ).body;
+  assert.equal(maximum.total, 5000);
+  assert.equal(
+    await store.count(path('importChunks'), [['importId', '==', maximum.id]]),
+    455,
+  );
 });
 
 test('lead reset uses real Auth/Firestore/Storage, tombstones retries and preserves workspace configuration', async () => {

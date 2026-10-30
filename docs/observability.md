@@ -250,3 +250,7 @@ The change key remains hiddenFields; no labels, contact values or new dimensions
 are exported. No-op/denied/stale/rolled-back saves produce no committed change.
 Text spacing and icon rendering produce no domain event. Production deployment
 and tenant verification remain separate from configuration-preview interactions.
+
+## Collaborative imports (2.3)
+
+Committed import writes reuse domain outboxes and HTTP traces/logs. Safe lifecycle counts include import_created, import_updated, import_unchanged, import_skipped, import_preparing, import_completed, import_blocked and import_details_deleted. Never export source baselines, filenames, candidate identities or comments. RUM redacts IDs/query values. Local lifecycle tests/emulator persistence are separate from production/tenant searches, pending authorized publication.

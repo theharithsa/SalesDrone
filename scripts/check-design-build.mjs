@@ -11,11 +11,11 @@ async function files(dir) {
   ).flat();
 }
 for (const file of await files(root)) {
-  if (/design-(admin|review)\.html$|AdminReview/.test(file))
+  if (/design-(admin|review)\.html$|AdminReview|ImportReviewFixture/.test(file))
     throw Error('Development review entry leaked into application build');
   if (
     file.endsWith('.js') &&
-    (await readFile(file, 'utf8')).includes('Fictional admin workspace')
+    /Fictional admin workspace|Fictional review preview/.test(await readFile(file, 'utf8'))
   )
     throw Error('Admin design fixture leaked into application bundle');
 }

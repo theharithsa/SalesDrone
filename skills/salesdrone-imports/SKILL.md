@@ -22,6 +22,15 @@ Browser worker parses first sheet → mapping/comment selection → server previ
 
 ## Primary API ownership
 
+- GET /api/v1/imports
+- GET /api/v1/imports/{id}/rows
+- GET /api/v1/imports/{id}/report
+- POST /api/v1/imports/{id}/plan
+- POST /api/v1/imports/{id}/review
+- POST /api/v1/imports/{id}/refresh
+- PATCH /api/v1/imports/{id}/rows/{index}
+- DELETE /api/v1/imports/{id}
+
 - POST /api/v1/imports/preview
 - GET /api/v1/imports/{id}
 - GET /api/v1/imports/{id}/errors
@@ -76,3 +85,7 @@ After a file has sheets, ImportPage shows a compact replacement chooser labelled
 ## Material 3 v2 local-review guidance
 
 Material v2 updates workbook steps, mapping controls, comment-column choices and table/dialog surfaces only. The separate local review entry keeps imports in demo mode, with no file upload. First-sheet mapping, multiple comment columns, recovery and commit policy remain unchanged.
+
+## Collaborative imports (2.3)
+
+Own reviewed formatVersion 3 planning, decisions, history/report pagination and three-way source baselines in functions/src/import-review.js. Read docs/IMPORTS.md for matching, explicit clears, comment revisions, retention deletion, limits and rollback. Collaboration is Google-only. Preserve uploader assignment, current lead scope, atomic versions and legacy owner replay. Run import-review.test.js and emulator integration, including the 1,000-row changed workbook scenario.

@@ -20,7 +20,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-leads, salesdrone-imports, salesdrone-tasks-reminders, salesdrone-observability.
 - [salesdrone-documentation](skills/salesdrone-documentation/SKILL.md) — readme, documentation, settings guide, screenshots.
   Related: salesdrone-release, salesdrone-interface, salesdrone-api-integrations, salesdrone-product-guide.
-- [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping.
+- [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping, import history, revised workbook, duplicate comparison, collaborative import.
   Related: salesdrone-release, salesdrone-leads, salesdrone-conversations, salesdrone-workspace-settings, salesdrone-notifications.
 - [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit, lead header redesign, display zoom.
   Related: salesdrone-release-readiness, salesdrone-release.

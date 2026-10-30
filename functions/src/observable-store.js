@@ -44,6 +44,26 @@ export function lifecycleCounts(domain, before, after) {
         ? { reset_blocked: 1 }
         : {}),
     };
+  if (domain === 'imports' && after?.formatVersion === 3) {
+    const counts = {};
+    for (const [key, name] of [
+      ['imported', 'import_created'],
+      ['updated', 'import_updated'],
+      ['unchanged', 'import_unchanged'],
+      ['skipped', 'import_skipped'],
+    ]) {
+      const n = (after[key] || 0) - (before?.[key] || 0);
+      if (n > 0) counts[name] = n;
+    }
+    for (const [state, name] of [
+      ['Preparing', 'import_preparing'],
+      ['Completed', 'import_completed'],
+      ['Blocked', 'import_blocked'],
+      ['DetailsDeleted', 'import_details_deleted'],
+    ])
+      if (after.status === state && before?.status !== state) counts[name] = 1;
+    return counts;
+  }
   if (!before || !after) return {};
   const result = {};
   if (domain === 'tasks') {

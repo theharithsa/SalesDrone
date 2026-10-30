@@ -13,7 +13,7 @@
       ],
       "details": [
         "SalesDrone by AvinyaTech, part of Avinya Enterprises, helps small teams move from enquiry spreadsheets to a clear next step for each relationship. Start with imports, then capture new enquiries through the app form. No telephony integration is implied: you log the outcome of calls you make.",
-        "Navigation includes Today, Leads, Tasks, Notifications, Documentation and Settings. Administrators also see Import enquiries. The bell opens an inbox overlay; it does not replace your current working page. Documentation opens this handbook in another browser tab.",
+        "Navigation includes Today, Leads, Tasks, Notifications, Documentation and Settings. Members with import access also see Imports and history. The bell opens an inbox overlay; it does not replace your current working page. Documentation opens this handbook in another browser tab.",
         "Use the bottom sidebar control to collapse or expand desktop navigation. Icons retain the same alignment and accessible labels. On narrow screens, use the menu or bottom navigation. The top-right appearance control switches theme; Settings also offers system appearance. Reduced-motion preferences reduce movement.",
         "Set a reminder is a regular sidebar menu shortcut when you have task-writing permission. It opens the manual reminder form without a promotional banner; on phones it is available in the navigation menu."
       ],
@@ -292,31 +292,44 @@
     {
       "id": "imports",
       "title": "Excel and CSV import",
-      "audience": "Administrators with import permission",
+      "audience": "Members with optional import permissions and import-capable administrators",
       "steps": [
-        "Open Import enquiries and select the initial workbook. Use only the first worksheet; the remaining sheets are ignored.",
-        "Map spreadsheet columns to application fields. Check phone numbers, dates, names and enquiry/status mappings in the preview before committing.",
-        "Select multiple discussion/follow-up columns for comments. Each nonblank selected cell becomes a separate comment under its lead, with source-column information.",
-        "Review invalid rows and duplicates. Import the previewed rows, wait for chunk progress and inspect the completion summary. Recover using the existing import run rather than starting an unrelated duplicate run.",
-        "After initial setup, capture new enquiries through New enquiry. Import remains useful for later batches with careful preview."
+        "Open Imports & history. Find previous jobs by status or date; Load older imports follows server pagination. Your permissions determine which jobs and rows you can inspect.",
+        "Choose a new workbook, or choose Update this workbook on a completed import to link a revised upload to its source comparison history. Upload XLSX/CSV, map columns and choose the duplicate/update mode.",
+        "Validate records to prepare a row-by-row comparison. Inspect existing matches, current versus workbook values, worksheet row numbers and proposed actions. Exact name and phone matches are candidates; ambiguous matches require a decision.",
+        "Choose Approve clear proposals for unambiguous changes. Compare selected lead resolves a match first; then review its fields. Conflict fields start unchecked, keeping the database value unless you explicitly choose the workbook value.",
+        "Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.",
+        "Use View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads."
       ],
       "details": [
-        "A spreadsheet\u2019s display formatting can hide phone-number or date problems. Preview the parsed values; do not assume Excel cell formatting survives as domain data. Blank comment cells are skipped, repeated nonblank discussion text is preserved as separate source entries.",
-        "Imports are bounded/chunked and use replay protection. Source discussions are historical context, not new AI reminder requests. Do not fabricate discussion dates from import time.",
-        "Keep source workbooks private. A CSV or workbook upload is business data; documentation examples and screenshots use fictional records only.",
-        "If browser storage is blocked, keep the import page open: the current preview/run remains available in memory, but automatic resume after a reload cannot be remembered. The app shows this limitation instead of failing the preview.",
-        "After selecting a file, Choose another workbook remains in a compact row above mapping. Use it to replace the file before validation; a preview is not a committed import."
+        "The current default is skip duplicates. Review updates to existing leads is a separate mode; Keep separate enquiry rows explicitly allows distinct enquiries with repeating contacts. Stable SalesDrone lead ID mapping helps when identifiers change. A filename or worksheet row position never identifies a person.",
+        "A linked source comparison checks the prior imported value, current database value and incoming value. Unchanged workbook cells preserve team edits. Different edits in both places are conflicts. Older imports without a source baseline require an initial explicit comparison.",
+        "Blank or unmapped cells leave existing values unchanged. Optional clearing is explicit. Assignment, archive, do-not-contact, review flags and workflow state are not reset by missing columns. Rows omitted from a later workbook are not deleted.",
+        "Each nonblank selected discussion cell remains a distinct historical note. Accepted corrections retain prior revisions; re-importing unchanged cells does not repeat them. Renamed/ambiguous comment columns and reminder-linked discussion corrections need explicit review; imported history does not schedule new outreach.",
+        "Parsed rows, results and source values are retained until an Admin deletes details. Original workbook files are not stored. Deletion also clears the dataset\u2019s source comparison baselines, so later uploads may need a new manual comparison; saved leads, discussions and summary audit history remain.",
+        "View history requires imports:read. imports:write allows planning/review/execution; imports:share adds shared jobs. Lead create/edit capabilities and assigned/all policy still apply. Non-admin import permissions are opt-in in People & permissions.",
+        "Download results produces a local JSON report with permitted row details, provided workspace exports are enabled. History is not a substitute for authorization; changing roles or assignments can redact results or block the next chunk.",
+        "Preview validity is one day before the first commit; Refresh remaining matches renews a preview. Active partial imports remain resumable. Per-route import write limits are 180 requests per minute; a rate-limit error retains progress for a later resume. Maximum 5,000 rows, 10 MB upload, 40 source columns and a 6 MiB parsed-payload budget apply."
       ],
       "faq": [
         [
-          "Can several follow-up columns be imported as comments?",
-          "Yes. Select each discussion column in the comment mapping. They are stored as timeline entries, not extra enquiry columns."
+          "Will the revised workbook overwrite a teammate\u2019s edits?",
+          "Unchanged source cells preserve team edits. Conflicting field changes require your choice, and a record changed after review blocks the chunk until you refresh and review again."
         ],
         [
-          "Why not import sheets two and three?",
-          "The current workflow intentionally targets the first worksheet. Prepare that sheet as the authoritative initial lead list."
+          "Why can I see a job but not some row details?",
+          "Shared-import access and lead access are separate. Rows outside your effective scope are redacted. An Admin must grant the appropriate scope or assignment before you can inspect or update them."
+        ],
+        [
+          "Can I update an old import?",
+          "Select its completed job from history. If its source comparison values were never recorded or have been deleted, the first comparison needs explicit review. If both name and phone changed, map a stable lead ID or manually select the intended accessible lead."
+        ],
+        [
+          "Can I stop and return later?",
+          "Yes. The server retains the job and reviewed rows. Reopen it from history and resume. Version checks prevent two collaborators from applying the same stale chunk. Already committed rows are retained if later work blocks."
         ]
-      ]
+      ],
+      "screenshot": "import-review-demo.jpg"
     },
     {
       "id": "reports",

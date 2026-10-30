@@ -281,6 +281,11 @@ export default function App() {
     rumPage('/' + page);
   }, [page]);
   const admin = !demo && session?.member?.role === 'Admin';
+  const importAccess =
+    !demo &&
+    !!session?.member?.capabilities?.some(
+      (c: string) => c === 'imports:read' || c === 'imports:write',
+    );
   const generation = useRef(0);
   const leadActionsRoot = useRef<HTMLDivElement>(null);
   const leadMoreTrigger = useRef<HTMLButtonElement>(null);
@@ -1572,7 +1577,7 @@ export default function App() {
             </button>
           ))}
         </nav>
-        {admin ? (
+        {importAccess ? (
           <>
             <span className="nav-section second">MANAGE</span>
             <nav aria-label="Administration">
@@ -2008,7 +2013,7 @@ export default function App() {
                                 }
                               />
                             ) : null}
-                            {admin ? (
+                            {importAccess ? (
                               <button
                                 className="button"
                                 onClick={() => go('imports')}
@@ -3164,7 +3169,11 @@ export default function App() {
               <ImportPage
                 config={fieldOptions}
                 choices={fieldOptions.values}
-                demo={demo || !admin}
+                demo={!!demo}
+                canWrite={
+                  !!session?.member?.capabilities.includes('imports:write')
+                }
+                canDelete={!!admin}
                 request={request}
                 onImported={() =>
                   notify('Import complete. Your pipeline is ready.')
@@ -3536,9 +3545,11 @@ export default function App() {
           {[
             ...nav,
             { id: 'settings', label: 'Settings', icon: Settings },
+            ...(importAccess
+              ? [{ id: 'imports', label: 'Imports and history', icon: Upload }]
+              : []),
             ...(admin
               ? [
-                  { id: 'imports', label: 'Import enquiries', icon: Upload },
                   {
                     id: 'members',
                     label: 'People & permissions',

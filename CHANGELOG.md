@@ -11,6 +11,18 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.3.0] - 2026-10-30
+
+### Added
+- Paginated import history, visible duplicate candidates, row-level comparison and resumable collaborative review.
+- Linked workbook updates preserving lead IDs and team edits with previous/current/incoming comparisons, deliberate field clearing and replay-safe discussion revisions.
+- Optional non-admin read/write/shared-import grants preserving assigned lead scope. Admin-only explicit detail deletion retains summaries and lead history; details otherwise have no timed expiry.
+
+### Changed
+- Advance API to 1.19.0 with reviewed planning, decisions, reports and retention endpoints; preserve legacy owner-only replay.
+- Add safe committed import lifecycle counters/events, baseline reset cleanup, indexes, docs and regression coverage.
+
 ## [2.2.1] - 2026-10-29
 
 ### Changed

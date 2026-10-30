@@ -16,6 +16,12 @@ const grants = [
   'activities:write',
   'tasks:write',
 ];
+const availableGrants = [
+  ...grants,
+  'imports:read',
+  'imports:write',
+  'imports:share',
+];
 const presets: Record<string, string[]> = {
   Viewer: ['leads:read'],
   SDR: grants,
@@ -220,7 +226,7 @@ export default function MembersPage({
             </label>
             <fieldset className="full permission-list">
               <legend>Capabilities</legend>
-              {grants.map((c) => (
+              {availableGrants.map((c) => (
                 <label className="check" key={c}>
                   <input
                     type="checkbox"
@@ -228,8 +234,24 @@ export default function MembersPage({
                     onChange={(e) =>
                       setCapabilities(
                         e.target.checked
-                          ? [...capabilities, c]
-                          : capabilities.filter((x) => x !== c),
+                          ? [
+                              ...new Set([
+                                ...capabilities,
+                                c,
+                                ...(c === 'imports:write' ||
+                                c === 'imports:share'
+                                  ? ['imports:read']
+                                  : []),
+                              ]),
+                            ]
+                          : capabilities.filter(
+                              (x) =>
+                                x !== c &&
+                                !(
+                                  c === 'imports:read' &&
+                                  ['imports:write', 'imports:share'].includes(x)
+                                ),
+                            ),
                       )
                     }
                   />
@@ -241,6 +263,11 @@ export default function MembersPage({
                         'leads:edit': 'Edit lead details and stages',
                         'activities:write': 'Log calls and notes',
                         'tasks:write': 'Manage own follow-ups',
+                        'imports:read': 'View own import history',
+                        'imports:write':
+                          'Prepare, review and execute imports (requires lead create/edit permissions)',
+                        'imports:share':
+                          'Access shared imports and resume others’ jobs (lead scope still applies)',
                       } as Record<string, string>
                     )[c]
                   }

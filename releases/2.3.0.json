@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "version": "2.3.0",
+  "summary": "Issue #69: collaborative import history and reviewed workbook updates with name/contact matching, three-way decisions and explicit Admin detail deletion.",
+  "modules": [
+    "salesdrone-imports",
+    "salesdrone-people-permissions",
+    "salesdrone-data-platform",
+    "salesdrone-observability",
+    "salesdrone-conversations",
+    "salesdrone-testing",
+    "salesdrone-interface",
+    "salesdrone-product-guide",
+    "salesdrone-api-integrations"
+  ],
+  "documentation": [
+    "docs/IMPORTS.md",
+    "docs/API.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SETTINGS.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "access"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Reviewed import history, planning, row decisions, reports, refresh and detail deletion with optimistic mutation versions.",
+    "contractVersion": "1.19.0",
+    "permissions": "Optional imports:read/write/share with existing lead scope/create/edit; Admin-only deletion and Google identity. No PAT collaboration access.",
+    "tests": [
+      "functions/test/api-portal.test.js",
+      "functions/test/import-review.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Committed import lifecycle counts use safe dimensions; HTTP/RUM traces and logs reuse existing instrumentation without source values. Deployment reporting remains existing workflow.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-review.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Committed import lifecycle counts use safe dimensions; HTTP/RUM traces and logs reuse existing instrumentation without source values. Deployment reporting remains existing workflow.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-review.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Committed import lifecycle counts use safe dimensions; HTTP/RUM traces and logs reuse existing instrumentation without source values. Deployment reporting remains existing workflow.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-review.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Committed import lifecycle counts use safe dimensions; HTTP/RUM traces and logs reuse existing instrumentation without source values. Deployment reporting remains existing workflow.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-review.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Committed import lifecycle counts use safe dimensions; HTTP/RUM traces and logs reuse existing instrumentation without source values. Deployment reporting remains existing workflow.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Passed 18 fictional component cases across 320/390/599/600/768/1024/1280/1440/1920 CSS pixels in light/dark, including a 600px-short viewport, unchecked conflict defaults and row decision interaction. Browser parsed a fictional CSV; public captures visually/privacy reviewed. Memory API covered 1,000-row revised upload; Auth/Firestore emulator covered collaborators and 5,000-row preview persistence. No production writes, physical-device/Safari certification or new tenant query evidence. Unmerged/undeployed pending approval.",
+  "screenshots": [
+    "import-demo.jpg",
+    "import-review-demo.jpg",
+    "import-review-mobile-demo.jpg"
+  ]
+}
