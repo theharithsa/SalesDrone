@@ -1,3 +1,9 @@
+import {
+  indexedEquality,
+  equalityToken,
+  LEAD_INDEX_FIELD,
+  LEAD_INDEX_STATE,
+} from './lead-filter-index.js';
 import { createCursorCodec } from './cursors.js';
 import { rateLimitExpiry } from './rate-limit.js';
 import {
@@ -547,8 +553,8 @@ export function createApp({
       throw new AppError(400, 'LIMIT', 'Limit must be 1–100');
     const filters = parseLeadFilters(req.query.filters || '[]');
     const customFilters = filters.filter((f) => f.field.startsWith('cf_'));
+    const config = customFilters.length ? await readFieldOptions(store) : null;
     if (customFilters.length) {
-      const config = await readFieldOptions(store);
       for (const filter of customFilters) {
         const definition = config.customFields.find(
           (f) => f.id === filter.field && !f.deleted,
@@ -602,15 +608,48 @@ export function createApp({
         filters,
       ]),
     );
-    let after = req.query.cursor
+    const cursor = req.query.cursor
       ? decodeCursor(String(req.query.cursor), binding)
-      : undefined;
+      : null;
+    const ready = (await store.get(LEAD_INDEX_STATE))?.ready === true;
+    let candidate = null;
+    if (cursor) {
+      if (
+        cursor.length === 2 &&
+        typeof cursor[1] === 'string' &&
+        cursor[1].startsWith('eq1:')
+      ) {
+        candidate = filters.find(
+          (f) => f.op === 'equals' && f.field === cursor[1].slice(4),
+        );
+        if (!candidate || !ready)
+          throw new AppError(
+            400,
+            'CURSOR',
+            'Refresh the lead filter before continuing',
+          );
+      } else if (cursor.length !== 1)
+        throw new AppError(400, 'CURSOR', 'Invalid lead query cursor');
+    } else if (ready) candidate = indexedEquality(filters, config);
+    // Pin the query plan in signed cursors: a scan started before readiness keeps
+    // scanning even if the backfill finishes between pages.
+    const queryFilters = candidate
+      ? [
+          ...base,
+          [
+            LEAD_INDEX_FIELD,
+            'array-contains',
+            equalityToken(candidate.field, candidate.value),
+          ],
+        ]
+      : base;
+    let after = cursor ? [cursor[0]] : undefined;
     const items = [];
     let scanned = 0,
       hasMore = false;
     while (items.length < n && scanned < 1000) {
       const page = await store.query(path('leads'), {
-        filters: base,
+        filters: queryFilters,
         order: 'id',
         direction: 'desc',
         after,
@@ -636,7 +675,12 @@ export function createApp({
     }
     return {
       items,
-      nextCursor: hasMore ? encodeCursor(after, binding) : null,
+      nextCursor: hasMore
+        ? encodeCursor(
+            candidate ? [after[0], 'eq1:' + candidate.field] : after,
+            binding,
+          )
+        : null,
       scanLimited: scanned >= 1000 && hasMore,
     };
   }
@@ -1671,14 +1715,22 @@ export function createApp({
     return list(req, 'tasks', filters, undefined, 'dueAt', 'asc').then(
       async (result) => {
         const leadIds = [
-          ...new Set(result.items.filter(t => !t.deleted && t.leadId).map(t => t.leadId)),
+          ...new Set(
+            result.items
+              .filter((t) => !t.deleted && t.leadId)
+              .map((t) => t.leadId),
+          ),
         ];
-        const records = await store.getAll(leadIds.map(id => path('leads', id)));
+        const records = await store.getAll(
+          leadIds.map((id) => path('leads', id)),
+        );
         const leads = new Map(leadIds.map((id, i) => [id, records[i]]));
-        const items = result.items.filter(t =>
-          !t.deleted && (t.leadId
-            ? canReadLead(req.member, leads.get(t.leadId))
-            : t.creatorUid === req.member.uid),
+        const items = result.items.filter(
+          (t) =>
+            !t.deleted &&
+            (t.leadId
+              ? canReadLead(req.member, leads.get(t.leadId))
+              : t.creatorUid === req.member.uid),
         );
         return { ...result, items };
       },

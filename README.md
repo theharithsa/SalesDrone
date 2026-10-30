@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.3.2 hardens rate-limit retention, archive history, cursor/model configuration and task reads, and adds CI linting, component regressions and maintained module skills.
+> v2.3.2 adds compatible indexed lead filtering and hardens rate-limit retention, archive history, cursor/model configuration and task reads, and adds CI linting, component regressions and maintained module skills.
 > See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,

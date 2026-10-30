@@ -17,6 +17,7 @@ API contract versions are independent from application versions.
 ## [2.3.2] - 2026-10-30
 
 ### Fixed
+- #36: Preserve case-insensitive/NFKC Equals filtering with a hashed normalized index, transactional write maintenance, a publication-gated resumable backfill and cursor-pinned query plans. Compound filters recheck all conditions; no business history is rewritten.
 - #6: Store rate-limit expiry as Firestore timestamps, enable TTL, convert legacy counter strings in bounded resumable batches and wait for the policy to be active during deployment. Import-detail retention is unchanged.
 - #22: Record one actor-attributed archive activity atomically with the lead transition; repeated archive requests do not duplicate timeline entries.
 - #29: Require a stable production cursor secret at API initialization; retain isolated local/emulator fallback and cross-instance cursor compatibility.

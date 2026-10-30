@@ -47,7 +47,7 @@ export const LeadFilters = z
       .strict(),
   )
   .max(16);
-const normalized = (value) =>
+export const normalizeFilterValue = (value) =>
   String(value ?? '')
     .normalize('NFKC')
     .trim()
@@ -93,8 +93,8 @@ export function matchesLead(lead, filters) {
           : f.field.startsWith('cf_')
             ? lead.customFields?.[f.field]
             : lead[f.field];
-    const value = normalized(raw),
-      term = normalized(f.value);
+    const value = normalizeFilterValue(raw),
+      term = normalizeFilterValue(f.value);
     if (f.op === 'empty') return !value;
     if (f.op === 'notEmpty') return !!value;
     if (f.op === 'equals') return value === term;

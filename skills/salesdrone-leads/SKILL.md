@@ -86,6 +86,8 @@ Adjacent owners:
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
+Column Equals uses the existing NFKC/trim/case matcher. After controlled backfill, one stage/source/custom-select equality narrows candidates through a hash-token array index; recheck every remaining condition and keep scan cursors stable across activation. Internal tokens never enter API/export payloads. Verify lead-filter-index.test.js and the real emulator; no new permission or user setting is introduced.
+
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#4](https://github.com/theharithsa/SalesDrone/issues/4), [#15](https://github.com/theharithsa/SalesDrone/issues/15), [#21](https://github.com/theharithsa/SalesDrone/issues/21), [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#35](https://github.com/theharithsa/SalesDrone/issues/35), [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#54](https://github.com/theharithsa/SalesDrone/issues/54), [#55](https://github.com/theharithsa/SalesDrone/issues/55). Check their current status before changing the contract.

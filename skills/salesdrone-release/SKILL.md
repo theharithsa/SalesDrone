@@ -87,6 +87,8 @@ Deployment BizEvents use application/cloudevent+json; CUSTOM_DEPLOYMENT markers 
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
+For normalized equality, deploy compatible writer code and ready composite indexes before publication. The reminders worker verifies its published SHA and drains old invocations before derived-only backfill. Check the private lead-filter-index-v1 readiness marker after release. A rollback must retain indexed writers or disable/rebuild readiness before legacy writers resume; no broad IAM or public maintenance API is authorized.
+
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#27](https://github.com/theharithsa/SalesDrone/issues/27), [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
