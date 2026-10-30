@@ -225,11 +225,17 @@ export const reminders = onSchedule(
           const index = await dependency('firestore.index-backfill', () =>
             advanceLeadFilterIndex({ store, commit: BUILD_COMMIT }),
           );
-          if (index.scanned || index.waiting)
+          if (index.scanned || index.waiting || index.completed) {
+            observability?.log('lead_filter_index_backfill', {
+              worker: 'lead-filter-index', examined: index.scanned, processed: index.updated, ready: index.ready,
+              outcome: index.waiting ? 'waiting' : 'success',
+            });
             console.info(
               JSON.stringify({ event: 'lead_filter_index_backfill', ...index }),
             );
+          }
         } catch {
+          observability?.log('lead_filter_index_backfill_failed', {worker:'lead-filter-index',outcome:'failure'}, true);
           console.warn(
             JSON.stringify({ event: 'lead_filter_index_backfill_failed' }),
           );
