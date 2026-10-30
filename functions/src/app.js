@@ -94,6 +94,7 @@ import {
   parse,
   LeadInput,
   LeadPatch,
+  ArchiveInput,
   AssignmentPatch,
   NotificationPatch,
   ActivityInput,
@@ -1049,6 +1050,10 @@ export function createApp({
     contentRoute,
     async (req, res, next) => {
       try {
+        if (req.identity.personalAccess)
+          req.identity.personalAccess.requiredScopes = [
+            PAT_ROUTES['put ' + contentRoute],
+          ];
         const m = await requireMember(store, req.identity, 'leads:edit');
         await leadAccess(store, m, req.params.id);
         if (!req.is('application/octet-stream'))
@@ -1282,8 +1287,9 @@ export function createApp({
   });
   route('post', '/leads/:id/archive', 'leads:edit', (req) =>
     mutate(req, 'leads:edit', async (tx, m) => {
+      const input = parse(ArchiveInput, req.body);
       const l = await leadAccess(tx, m, req.params.id);
-      assertVersion(l, req.body.expectedVersion);
+      assertVersion(l, input.expectedVersion);
       const tasks = await tx.query(path('tasks'), {
         filters: [
           ['leadId', '==', l.id],
@@ -2512,7 +2518,21 @@ export function createApp({
     }),
   );
   app.use((err, req, res, next) => {
-    const status = err.status || 500;
+    const parserError =
+      err.type === 'entity.parse.failed'
+        ? {
+            status: 400,
+            code: 'BAD_JSON',
+            message: 'Request body must contain valid JSON.',
+          }
+        : err.type === 'entity.too.large'
+          ? {
+              status: 413,
+              code: 'PAYLOAD_TOO_LARGE',
+              message: 'Request body exceeds the allowed size.',
+            }
+          : null;
+    const status = parserError?.status || err.status || 500;
     if (status === 401)
       res.set('WWW-Authenticate', 'Bearer realm="SalesDrone"');
     if (status === 429) res.set('Retry-After', '60');
@@ -2526,10 +2546,11 @@ export function createApp({
       );
     res.status(status).json({
       error: {
-        code: err.code || 'INTERNAL',
+        code: parserError?.code || err.code || 'INTERNAL',
         message:
-          status >= 500 ? 'Something went wrong. Please retry.' : err.message,
-        details: err.details,
+          parserError?.message ||
+          (status >= 500 ? 'Something went wrong. Please retry.' : err.message),
+        details: parserError ? undefined : err.details,
         requestId: req.requestId,
       },
     });

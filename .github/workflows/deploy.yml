@@ -91,6 +91,7 @@ jobs:
         id: indexes
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only firestore --non-interactive
       - name: Wait for indexes
+        id: wait_indexes
         run: node scripts/wait-indexes.mjs
       - name: Deploy private Storage rules
         id: storage
@@ -117,8 +118,15 @@ jobs:
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         env:
           DYNATRACE_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
-          DEPLOYMENT_OUTCOME: ${{ steps.functions.outcome == 'success' && steps.hosting.outcome == 'success' && steps.published.outcome == 'success' && steps.postcheck.outcome == 'success' && 'succeeded' || 'failed' }}
-        run: node scripts/notify-deployment.mjs
+          DEPLOY_FIRESTORE: ${{ steps.indexes.outcome }}
+          DEPLOY_INDEXES: ${{ steps.wait_indexes.outcome }}
+          DEPLOY_STORAGE: ${{ steps.storage.outcome }}
+          DEPLOY_FUNCTIONS: ${{ steps.functions.outcome }}
+          DEPLOY_HOSTING: ${{ steps.hosting.outcome }}
+          DEPLOY_PUBLISHED: ${{ steps.published.outcome }}
+          DEPLOY_POSTCHECK: ${{ steps.postcheck.outcome }}
+        run: |
+          DEPLOYMENT_OUTCOME="$(node scripts/deployment-outcome.mjs)" node scripts/notify-deployment.mjs
       - name: Archive safe deployment details
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -135,8 +143,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/github-release.mjs
   documentation:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.deploy.result == 'success'
+    needs: [verify, deploy]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:

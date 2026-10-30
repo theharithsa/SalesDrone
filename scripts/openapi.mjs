@@ -29,6 +29,7 @@ import * as contracts from '../functions/src/contracts.js';
 const names = [
   'LeadInput',
   'LeadPatch',
+  'ArchiveInput',
   'AssignmentPatch',
   'NotificationPatch',
   'TaskInput',
@@ -910,15 +911,16 @@ for (const e of endpoints) {
         content: { 'application/json': { schema: { type: 'object' } } },
       },
       ...Object.fromEntries(
-        [400, 401, 403, 404, 409, 429, 500, 502, 503].map((status) => [
+        [400, 401, 403, 404, 409, 413, 429, 500, 502, 503].map((status) => [
           status,
           {
             description: {
-              400: 'Validation failure',
+              400: 'Validation failure or BAD_JSON for malformed JSON; parser errors never echo request content',
               401: 'Missing, invalid, expired or revoked credential',
               403: 'Permission denied',
               404: 'Resource unavailable',
               409: 'Duplicate, stale version or conflict',
+              413: 'PAYLOAD_TOO_LARGE: request exceeds the endpoint body limit',
               429: 'Rate limited',
               500: 'Internal failure',
               502: 'AI response could not be grounded',
@@ -1075,15 +1077,7 @@ for (const e of endpoints) {
   if (e.url.endsWith('/archive'))
     operation.requestBody = {
       required: true,
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            required: ['expectedVersion'],
-            properties: { expectedVersion: { type: 'integer', minimum: 1 } },
-          },
-        },
-      },
+      content: { 'application/json': { schema: ref('ArchiveInput') } },
     };
   if (e.url.includes('/corrections'))
     operation.requestBody = {
@@ -1206,7 +1200,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.19.0',
+    version: '1.19.1',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

@@ -106,3 +106,7 @@ GET /archived-leads reuses leads:read PAT scope and current effective member sco
 ## Collaborative imports (2.3)
 
 API 1.19.0 adds Google/App Check reviewed import history/rows/report/plan/review/refresh/decisions/detail deletion. PAT_ROUTES does not gain collaboration routes; legacy reads stay owner-only with current owner capabilities. See docs/IMPORTS.md for versions, chunk pagination, deletion and report export policy.
+
+## API and deployment hardening (2.3.1)
+
+Contract 1.19.1 names the strict ArchiveInput schema, documents BAD_JSON (400) and PAYLOAD_TOO_LARGE (413) without source echo, and keeps PAT scopes unchanged. Binary attachment admission sets attachments:write before requireMember. Existing tokens gain no new route access. Run app.test.js and bulk-and-files.test.js plus emulator integration.

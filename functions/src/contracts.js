@@ -106,6 +106,9 @@ export const LeadPatch = z
     suppressionReason: text(500).optional(),
   })
   .strict();
+export const ArchiveInput = z
+  .object({ expectedVersion: z.number().int().positive() })
+  .strict();
 export const AssignmentPatch = z
   .object({
     expectedVersion: z.number().int().positive(),

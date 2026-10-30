@@ -12,6 +12,19 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.3.1] - 2026-10-30
+
+### Fixed
+- #2: initialize attachment upload PAT scope before binary middleware, retaining explicit scope and post-upload revocation checks.
+- #5: validate archive bodies with a strict positive expected version; reject missing/invalid input as 400 before writes.
+- #20: omit lead IDs from duplicate creation errors, preserving contact uniqueness without exposing inaccessible records.
+- #30: return stable BAD_JSON (400) and PAYLOAD_TOO_LARGE (413) responses without echoing request content.
+- #31: publish Pages documentation only after the deployment job succeeds.
+- #73: fix the time-dependent settings-audit privacy test by reproducing an envelope timestamp collision while inspecting only the payload.
+- #32: require successful rules, index readiness, Storage, Functions, Hosting and live checks before reporting deployment success.
+- Publish API contract 1.19.1 with the strict archive schema and documented parser errors.
+
 ## [2.3.0] - 2026-10-30
 
 ### Added

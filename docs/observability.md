@@ -254,3 +254,7 @@ and tenant verification remain separate from configuration-preview interactions.
 ## Collaborative imports (2.3)
 
 Committed import writes reuse domain outboxes and HTTP traces/logs. Safe lifecycle counts include import_created, import_updated, import_unchanged, import_skipped, import_preparing, import_completed, import_blocked and import_details_deleted. Never export source baselines, filenames, candidate identities or comments. RUM redacts IDs/query values. Local lifecycle tests/emulator persistence are separate from production/tenant searches, pending authorized publication.
+
+## API and deployment hardening (2.3.1)
+
+Deployment event success now requires all seven infrastructure/application/live-check phases. Payload schema, providers and classic marker transport remain unchanged; #71 (SDLC platform events and tenant bucket verification) is a separate change. BAD_JSON and PAYLOAD_TOO_LARGE are bounded response codes; no raw parser messages, source cells or duplicate lead IDs enter response details. Existing HTTP and committed attachment telemetry cover the fixes.

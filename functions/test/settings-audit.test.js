@@ -11,10 +11,11 @@ import {
   queueSettingsAudits,
 } from '../src/settings-audit.js';
 const type = 'com.avinyatech.salesdrone.settings.audit.committed';
-async function setup() {
+async function setup(now = () => new Date().toISOString()) {
   const store = memoryStore(),
     app = createApp({
       store,
+      now,
       verifyToken: async (uid) => ({
         uid,
         email:
@@ -49,7 +50,7 @@ async function setup() {
   return { store, call, events };
 }
 test('personal settings create durable key-level audits with OTel unavailable; unchanged and denied saves do not emit changes', async () => {
-  const { store, call, events } = await setup();
+  const { store, call, events } = await setup(() => '2026-10-30T14:00:00.000Z');
   const prefs = {
     timezone: 'Asia/Kolkata',
     appearance: 'system',
@@ -89,7 +90,9 @@ test('personal settings create durable key-level audits with OTel unavailable; u
   assert.ok(
     rows.every((x) => /^user:[a-f0-9]{32}$/.test(x.event.data['actor.id'])),
   );
-  assert.ok(rows.every((x) => !JSON.stringify(x.event).includes('14:00')));
+  // The envelope legitimately contains 14:00; reminder values must not enter data.
+  assert.ok(rows.every((x) => x.event.time === '2026-10-30T14:00:00.000Z'));
+  assert.ok(rows.every((x) => !JSON.stringify(x.event.data).includes('14:00')));
   await call(
     'patch',
     '/me',

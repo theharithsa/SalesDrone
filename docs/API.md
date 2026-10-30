@@ -256,3 +256,7 @@ Settings changes retain the existing transactional key-only audit/outbox.
 ## Collaborative imports (2.3)
 
 Contract 1.19.0 adds GET /imports; GET /imports/{id}/rows and /report; POST /imports/{id}/plan, /review and /refresh; PATCH /imports/{id}/rows/{index}; DELETE /imports/{id}. Preview opts into reviewed:true; reviewed commit requires expectedVersion. Optional imports:read/write/share never replace lead scope/create/edit checks. New routes require Google/App Check; PAT allowlists stay unchanged. Import mutations have independent 180/minute route-template buckets. See [Imports](IMPORTS.md) for schemas, cursor bounds, retention and recovery.
+
+## API and deployment hardening (2.3.1)
+
+Contract 1.19.1 uses strict ArchiveInput (positive integer expectedVersion, no unknown fields). Missing/invalid archive input returns 400 VALIDATION; stale valid versions remain 409. Malformed JSON returns BAD_JSON (400); endpoint body-size failures return PAYLOAD_TOO_LARGE (413). Messages never echo body contents. Lead-creation DUPLICATE errors omit IDs universally. Existing reviewed import matching remains authorized and detailed. Binary PUT accepts attachments:write PATs and still rechecks current token, membership and lead scope after storage writes.

@@ -28,3 +28,7 @@ Use the attachment skill and testing catalog. Unit tests cover validation, scope
 
 The inspector’s Files shortcut expands the same lead and preserves Files through
 its asynchronous reload. Opening a different lead starts at All activity.
+
+## API and deployment hardening (2.3.1)
+
+Binary PUT admission initializes the attachments:write PAT requirement before authorization and body parsing. Tokens with only attachments:read cannot upload/remove bytes. Emulator integration covers token reservation, upload and download against real Auth/Firestore/Storage, with direct-client Storage denial retained.
