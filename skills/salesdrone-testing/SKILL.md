@@ -132,3 +132,5 @@ Run import-review.test.js for three-way decisions, ambiguity, scope, concurrency
 ## API and deployment hardening (2.3.1)
 
 The quick issue batch covers PAT file round trips and read-only denial, archive invalid-body/no-write behavior, duplicate-ID privacy and parser error privacy in actual requests. Auth/Firestore/Storage integration now uploads bytes using a scoped PAT and checks missing archive input. deployment-outcome.test.ts exercises all required phases and CLI mapping. No UI changes require new screenshot assertions.
+
+Settings audit privacy tests inject a fixed event time matching the fixture reminder time. Inspect event.data for private values; a legitimate CloudEvent envelope timestamp must not fail payload privacy assertions. Do not rerun a wall-clock collision to hide it.

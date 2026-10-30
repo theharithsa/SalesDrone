@@ -54,7 +54,8 @@
       "status": "existing",
       "reason": "Seven required phase outcomes determine deployment success; HTTP statuses and existing committed attachment events cover API fixes without raw request/file/contact data.",
       "tests": [
-        "functions/test/observability.test.js"
+        "functions/test/observability.test.js",
+        "functions/test/settings-audit.test.js"
       ]
     },
     "deploymentEvents": {
