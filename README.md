@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.5.3 explains temporary import blocking during lead-data cleanup.
+> v2.5.2 maintenance clarifies cleanup pauses and unrecorded lead-score evidence.
 > See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.5.3 · MIT**
+**Part of Avinya Enterprises · v2.5.2 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 

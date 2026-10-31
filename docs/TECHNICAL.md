@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **2.5.3** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **2.5.2** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository

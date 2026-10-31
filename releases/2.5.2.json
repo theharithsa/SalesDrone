@@ -1,13 +1,15 @@
 {
   "schemaVersion": 1,
   "version": "2.5.2",
-  "summary": "Use field-aware chart descriptions and expose every compatible import destination with explicit mapped-column/additional-field conflict resolution.",
+  "summary": "Authorized same-version maintenance: clarify cleanup blocking and distinguish unknown scoring evidence from measured zero, retaining the field-aware dashboard/import behavior.",
   "modules": [
     "salesdrone-dashboard",
     "salesdrone-imports",
     "salesdrone-interface",
     "salesdrone-testing",
-    "salesdrone-product-guide"
+    "salesdrone-product-guide",
+    "salesdrone-lead-scoring",
+    "salesdrone-workspace-settings"
   ],
   "documentation": [
     "docs/FIELD-AWARE-2.5.2-REVIEW.md",
@@ -17,20 +19,25 @@
     "docs/SETTINGS.md",
     "docs/TESTING.md",
     "docs/observability.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "docs/IMPORTS.md",
+    "docs/INTELLIGENCE.md",
+    "docs/LEAD-DATA-MANAGEMENT.md"
   ],
   "settingsSections": [
-    "appearance"
+    "appearance",
+    "data"
   ],
   "api": {
     "status": "unchanged",
-    "reason": "Presentation and browser preflight only: existing statusField destinations, request/response schema, reviewed import transformation, server STATUS_COLUMN/STATUS_FIELD checks and API 1.21.0 stay unchanged.",
+    "reason": "Existing API 1.21.0 shape and calculations remain unchanged. Fixed public cleanup guidance/Retry-After clarify existing 503 LEAD_DATA_RESET; factor points and unknown totals are presentation only.",
     "contractVersion": "1.21.0",
     "permissions": "Existing import capabilities, lead scope and Admin-only schema creation remain authoritative; personal grouping remains self-only. Local focus/conflict resolution adds no privilege or server operation.",
     "tests": [
       "functions/test/import-status.test.js",
       "functions/test/dashboard-grouping.test.js",
-      "tests/import-fields.test.ts"
+      "tests/import-fields.test.ts",
+      "functions/test/lead-data-reset.test.js"
     ]
   },
   "observability": {
@@ -98,7 +105,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Local measured cases and limits are recorded in docs/FIELD-AWARE-2.5.2-REVIEW.md. Review selected Source/Zone/custom labels, mapped destination choices, focus and explicit source-column preservation/exclusion in synthetic fixtures. Required PR CI remains the broader regression gate. No deployment, customer writes, physical-device/Safari or tenant-query acceptance is claimed; verify exact live version/SHA and monitoring only after publication approval.",
+  "manualVerification": "Explicitly authorized v2.5.2 maintenance, bound to the immediate production parent in maintenance.json. Focused component cases verify omitted unknown points, unknown totals and retained reported zero/positive values. Existing API regression verifies safe cleanup feedback/no job/retry/provider redaction. No repeated local broad suites for the score-only change. No fresh browser/physical-device certification or score screenshot is claimed because browser control is unavailable. Existing reviewed captures remain historical evidence, not new factor-row captures. Required PR/main CI and postdeploy artifacts remain separate.",
   "screenshots": [
     "dashboard-fields-demo.jpg",
     "dashboard-fields-mobile-demo.jpg",

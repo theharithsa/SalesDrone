@@ -8,12 +8,11 @@ API contract versions are independent from application versions.
 
 
 
-## [2.5.3] - 2026-10-31
-
-### Fixed
-- #90: Explain that lead-data cleanup temporarily blocks imports and other lead writes instead of showing an opaque server failure. Return a safe fixed message and Retry-After guidance while preserving the cleanup lock and redaction of unrelated server errors.
-
 ## [2.5.2] - 2026-10-31
+
+### Maintenance (same version; identified by commit and workflow run)
+- #90: Explain temporary import/lead-write blocking during cleanup with fixed safe guidance and Retry-After; retain maintenance locking and generic redaction for unrelated server errors.
+- #92: Hide numeric points for unrecorded score factors, space reported points separately from wrapping labels, use dashes for unscored component totals and avoid negative-zero risk. Scoring calculations and evidence are unchanged.
 
 ### Fixed
 - #88: Make dashboard titles, descriptions and notes follow the selected field label, including Zone, Enquiry source and custom fields. Describe current distributions without pipeline-movement wording; wrap long labels on narrow screens.
