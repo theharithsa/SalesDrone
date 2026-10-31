@@ -440,26 +440,6 @@
     "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
   },
   {
-    "file": "dashboard-fields-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "06d38a158dbb4bb4f81fb060157ed45c595bac105717107370473c76442cb996",
-    "capturedAt": "2026-10-31T08:21:07.153732+00:00",
-    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
-    "file": "dashboard-fields-mobile-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "d6379e471de609bfe30d8855679935b2762c299e3213c22d524563e1e9bc8d57",
-    "capturedAt": "2026-10-31T08:21:07.542207+00:00",
-    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
     "file": "status-mapping-demo.jpg",
     "mode": "synthetic-demo",
     "sha256": "d1ccfe4a65817c7df2d5e60bcd0a023ad7a2082355dc428bd781057bf676d4a1",
@@ -508,5 +488,45 @@
     "capturePixels": "1440 x 900",
     "version": "2.5.0",
     "review": "Visually/privacy reviewed fictional guest application. Real dashboard or native-picker filter dialog controls; no server writes, customer data or credentials. OS popup rendering delegated to browser. Browser viewport only; not device/Safari certification."
+  },
+  {
+    "file": "dashboard-missing-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "7b42f81e91255cd35163e08de098c40ce5b26fe8bae44956ee732ad7a541b774",
+    "capturedAt": "2026-10-31T08:59:47.757547+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.5.1",
+    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
+  },
+  {
+    "file": "dashboard-missing-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "1b98fbf842dc48dd2d28230d1c4464a087145d57428883de965017bfe5cb7034",
+    "capturedAt": "2026-10-31T08:59:48.201368+00:00",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.5.1",
+    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
+  },
+  {
+    "file": "dashboard-fields-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "2d9829aa7dbf93919781c2aaf880246305c932afa82d1de207143fb744e4dfc5",
+    "capturedAt": "2026-10-31T09:00:39.260960+00:00",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 1000",
+    "version": "2.5.1",
+    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
+  },
+  {
+    "file": "dashboard-fields-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "9de1e57377e237ca529680c47d0e7491242250599467fef6ce05e1791194d7f1",
+    "capturedAt": "2026-10-31T09:00:39.644998+00:00",
+    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 1000",
+    "version": "2.5.1",
+    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
   }
 ]

@@ -1,7 +1,7 @@
 # SalesDrone by AvinyaTech
 
-> v2.5.0 adds reusable import fields, configurable status mapping, personal dashboard grouping and readable import/popup controls.
-> See [review evidence](docs/IMPORT-FIELDS-2.5.0-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
+> v2.5.1 separates missing-category labels and helper text, alongside the v2.5.0 import-field, status-mapping and personal-dashboard improvements.
+> See [import review](docs/IMPORT-FIELDS-2.5.0-REVIEW.md) and [chart label review](docs/DASHBOARD-MISSING-2.5.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
 filled forms, a resizable lead inspector and automatic lead-list pagination.
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.5.0 · MIT**
+**Part of Avinya Enterprises · v2.5.1 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
