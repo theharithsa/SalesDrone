@@ -124,3 +124,7 @@ Dependabot opens reviewed weekly dependency/action PRs; it grants no auto-merge 
 ## Exact match rollout
 
 The additive Exact operator requires no lead-data migration. Retain existing default single-field indexes for source, stage and customFields keys; do not exempt these fields. The existing index-readiness gate still runs. A read-only managed planner probe with nonexistent values and document-name-only projection accepted combined equality predicates and returned no documents. The rate-limit TTL conversion is separate internal maintenance, not a lead rewrite.
+
+## Non-interactive function parameters
+
+Build the exact release, then run `node scripts/write-function-env.mjs`. The optional GitHub model override falls back to functions/src/model-config.js; the dotenv file always contains GEMINI_MODEL because Firebase CLI non-interactive resolution does not apply SDK defaults. No private token is written. Test the installed CLI resolver with function-environment.test.ts. The first 2.4.0 rollout failed at this admission step, before any Functions or Hosting update; its indexes/TTL are active. Recovery uses forward patch 2.4.1 through a verified PR.

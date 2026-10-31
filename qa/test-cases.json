@@ -468,7 +468,8 @@
       "ownerSkill": "skills/salesdrone-release/SKILL.md",
       "automatedTests": [
         "tests/release-readiness.test.ts",
-        "tests/deployment-outcome.test.ts"
+        "tests/deployment-outcome.test.ts",
+        "tests/function-environment.test.ts"
       ],
       "manualCases": [
         {
@@ -493,7 +494,8 @@
       "ownerSkill": "skills/salesdrone-release-readiness/SKILL.md",
       "automatedTests": [
         "tests/release-readiness.test.ts",
-        "tests/settings-reference.test.ts"
+        "tests/settings-reference.test.ts",
+        "tests/function-environment.test.ts"
       ],
       "manualCases": [
         {
@@ -543,7 +545,8 @@
         "tests/test-plan.test.ts",
         "tests/skill-guard.test.ts",
         "apps/web/test/workflows.test.tsx",
-        "functions/test/exact-filters.test.js"
+        "functions/test/exact-filters.test.js",
+        "tests/function-environment.test.ts"
       ],
       "manualCases": [
         {
