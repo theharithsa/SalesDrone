@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.5.2
+Version 2.5.3
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -54,9 +54,9 @@ AvinyaIntelligence uses reported workspace evidence. Insights are suggestions, n
 
 Changing the lead list, completing tasks or refreshing may update aggregates. If a brief seems stale, request another in manual mode. AI availability depends on the server configuration and provider.
 
-Available categories include configured built-ins and active custom text/dropdown fields. Missing values are a separate group. Select a concrete group to open matching Leads; up to 20 groups are shown and remaining values are combined as Other values. That aggregate and very long text groups have no direct filter. If a saved field is retired, a notice explains the fallback. Demo choices stay local.
+Sales stage remains explicitly selectable even when hidden from enquiry forms. Automatic still uses the visible-field fallback. Other available categories include configured built-ins and active custom text/dropdown fields. Missing values are a separate group. Select a concrete group to open matching Leads; up to 20 groups are shown and remaining values are combined as Other values. That aggregate and very long text groups have no direct filter. If a saved field is retired, a notice explains the fallback. Demo choices stay local.
 
-![Today: charts, insights and lead breakdown — synthetic demo only](../site/assets/screenshots/dashboard-fields-demo.jpg)
+![Today: charts, insights and lead breakdown — synthetic demo only](../site/assets/screenshots/dashboard-stage-demo.jpg)
 
 ### Questions
 
@@ -80,7 +80,7 @@ Members; actions depend on capability
 
 4. Drag the overlay’s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.
 
-5. Open a lead, then choose Edit lead inside its details or full page to update an existing enquiry. Save against the current version; reload if another change caused a conflict.
+5. Open a lead, then choose Edit lead inside its details or full page to update an existing enquiry. Save against the current version; reload if another change caused a conflict. Separate enquiries may retain a shared contact while stage or other details change. Changing to another lead’s contact is still blocked.
 
 The source worksheet naming is made readable in the application: Enquiry source, Customer name, Phone number, Company name, City / location, Sector, Enquiry date and Enquiry status. Sales stage is separate from original imported status. Serial number is not a required application field.
 

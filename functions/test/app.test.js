@@ -791,3 +791,24 @@ test('archive timeline failure rolls back the lead and every linked write',async
  await request(app).post(`/api/v1/leads/${lead.id}/archive`).set('Authorization','Bearer admin').send({expectedVersion:lead.version}).expect(500);
  assert.deepEqual(s.store.dump(),before);
 });
+
+test('stage and detail edits retain shared imported contacts; newly acquired duplicate contacts stay blocked', async () => {
+  const s = setup();
+  await bootstrap(s);
+  const first = (await s.call('admin', 'post', '/leads', lead(80), randomUUID()).expect(200)).body;
+  const second = (await s.call('admin', 'post', '/leads', {...lead(80), name:'Separate synthetic enquiry', allowDuplicate:true}, randomUUID()).expect(200)).body;
+  const third = (await s.call('admin', 'post', '/leads', lead(81), randomUUID()).expect(200)).body;
+  const edited = (await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:second.version,stage:'Qualified',company:'Changed company'}).expect(200)).body;
+  assert.equal(edited.stage,'Qualified');
+  assert.equal(edited.phone,second.phone);
+  await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:edited.version,phone:third.phone}).expect(409);
+  assert.equal((await s.store.get(path('leads',second.id))).version,edited.version);
+  await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:second.version,stage:'Won'}).expect(409);
+  const {contactKeys} = await import('../src/leads.js');
+  const sharedKey=contactKeys(edited)[0];
+  assert.deepEqual(new Set((await s.store.get(path('dedupeKeys',sharedKey))).leadIds),new Set([first.id,second.id]));
+  const moved=(await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:edited.version,phone:lead(82).phone}).expect(200)).body;
+  assert.deepEqual((await s.store.get(path('dedupeKeys',sharedKey))).leadIds,[first.id]);
+  assert.deepEqual((await s.store.get(path('dedupeKeys',contactKeys(moved)[0]))).leadIds,[second.id]);
+  assert.equal((await s.store.get(path('leads',first.id))).stage,'New');
+});

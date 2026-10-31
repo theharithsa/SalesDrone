@@ -8,6 +8,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.5.3] - 2026-10-31
+
+### Fixed
+- #93: Restore Sales Stage as an explicit personal dashboard grouping even when hidden in enquiry forms; retain Automatic fallback and hidden import-destination restrictions.
+- #93: Permit stage/detail changes on separate enquiries that already share a contact. Reject newly acquired duplicate contacts and preserve atomic contact indexes, versions and stage history.
+- #93: Keep closed dialog dropdowns CSS-sized so Country Code and custom field values no longer overlap their inset labels; retain native open menus.
+
 ## [2.5.2] - 2026-10-31
 
 ### Maintenance (same version; identified by commit and workflow run)

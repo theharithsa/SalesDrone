@@ -1,15 +1,16 @@
 const builtin = ['stage','legacyStatus','source','zone','location'];
 export const categoryKey = value => String(value ?? '').normalize('NFKC').trim().toLocaleLowerCase('en');
-export function dashboardFields(config) {
+export function dashboardFields(config, { includeHiddenStage = false } = {}) {
   return [
-    ...builtin.filter(field=>!config.hiddenFields.includes(field)).map(field=>({field,label:config.labels?.[field]||field,order:config.values[field]||[]})),
+    ...builtin.filter(field=>!config.hiddenFields.includes(field)||(field==='stage'&&includeHiddenStage)).map(field=>({field,label:config.labels?.[field]||field,order:config.values[field]||[]})),
     ...config.customFields.filter(f=>!f.deleted&&['select','text'].includes(f.type)).map(f=>({field:f.id,label:f.label,order:f.options})),
   ];
 }
 /** Same normalized equality as lead filters; a missing bucket uses Is empty. */
 export function dashboardGrouping(leads, config, requested = 'auto') {
-  const availableFields=dashboardFields(config);
-  const selected=availableFields.find(f=>f.field===requested)||availableFields[0];
+  const activeFields=dashboardFields(config);
+  const availableFields=dashboardFields(config,{includeHiddenStage:true});
+  const selected=(requested==='auto'?activeFields[0]:availableFields.find(f=>f.field===requested))||activeFields[0];
   const buckets=new Map();
   for(const label of selected?.order||[])buckets.set('v:'+categoryKey(label),{key:'v:'+categoryKey(label),label,value:0,empty:false,filterable:label.length<=400});
   if(selected)for(const lead of leads){

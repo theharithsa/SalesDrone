@@ -140,7 +140,13 @@
           "id": "DASHBOARD-FIELD-COPY-01",
           "expected": "Choose Source, renamed Zone and a custom field. Headings, descriptions and notes follow the effective label; current counts and group drill-through stay correct, with no movement/conversion language or extra AI request. Long labels wrap on phones and at larger interface scales.",
           "fixture": "isolated fictional guest/Admin dashboard preview only"
+        },
+        {
+          "id": "DASHBOARD-STAGE-HIDDEN-01",
+          "expected": "Sales stage is explicitly selectable even if hidden in forms. Automatic keeps visible-field fallback; saved stage choice and counts remain personal and scope-filtered. Import destinations do not gain hidden stage.",
+          "fixture": "synthetic grouping/API plus isolated dashboard fixture"
         }
+
       ]
     },
     {
@@ -293,7 +299,13 @@
           "id": "INTERFACE-LOADING-01",
           "expected": "Initial startup spinner and wrapped workspace-loading message stay centered on mobile. Inline and panel loading retain row alignment; role=status is preserved.",
           "fixture": "synthetic AdminReview preview=startup; no live authentication or customer data"
+        },
+        {
+          "id": "DIALOG-FILLED-SELECT-01",
+          "expected": "Country code/custom dropdown closed controls keep filled height and separated inset labels/values. Native open menus remain available; inspect phone/desktop and both palettes.",
+          "fixture": "isolated fictional lead-form-selects fixture; no live writes"
         }
+
       ]
     },
     {
@@ -396,7 +408,13 @@
           "id": "LEADS-HEADER-ALIGN-01",
           "expected": "On compact lead surfaces stage and assignment share left edge and full width; on wide surfaces their labels and controls align. Include Admin assignment/help, read-only member, long assignee and enlarged text. Keep versioned actions unchanged.",
           "fixture": "Isolated fictional UI preview and synthetic demo only; no production writes"
+        },
+        {
+          "id": "LEADS-SHARED-CONTACT-01",
+          "expected": "Separate imported enquiries sharing a contact can edit stage/details. New duplicate acquisition and stale versions fail atomically; leaving one shared key retains other owners.",
+          "fixture": "synthetic API and demo-salesdrone Auth/Firestore only"
         }
+
       ]
     },
     {

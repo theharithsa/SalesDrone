@@ -1352,3 +1352,26 @@ test('Admin-created import fields persist through replay/update and personal das
  await call('patch','/me',{dashboardField:fieldId}).expect(200);const dashboard=(await call('get','/dashboard').expect(200)).body;assert.equal(dashboard.visualization.field,fieldId);assert.ok(dashboard.visualization.groups.some(g=>g.label==='0034'&&g.value===1));
  await call('patch','/me',{dashboardField:'legacyStatus'},memberToken).expect(200);assert.equal((await call('get','/me',undefined,memberToken).expect(200)).body.preferences.dashboardField,'legacyStatus');
 });
+
+test('shared contact stage edits and hidden stage analytics persist in actual Firestore', async () => {
+  await fetch(`http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/${projectId}/databases/(default)/documents`, {method:'DELETE'});
+  const store=firestoreStore(db),token=await signIn('spraghav@gmail.com');
+  const app=createApp({store,verifyToken:t=>auth.verifyIdToken(t,true)});
+  const call=(method,url,body)=>{const r=request(app)[method]('/api/v1'+url).set('Authorization','Bearer '+token).set('Idempotency-Key',randomUUID());return body===undefined?r:r.send(body)};
+  await call('get','/me').expect(200);
+  const data={name:'Synthetic shared contact',phone:'+12025550777',enquiryDate:'2026-10-31'};
+  const a=(await call('post','/leads',data).expect(200)).body;
+  const b=(await call('post','/leads',{...data,name:'Synthetic separate enquiry',allowDuplicate:true}).expect(200)).body;
+  const c=(await call('post','/leads',{...data,name:'Synthetic other contact',phone:'+12025550888'}).expect(200)).body;
+  const changed=(await call('patch','/leads/'+b.id,{expectedVersion:b.version,stage:'Qualified'}).expect(200)).body;
+  assert.equal((await store.get(path('leads',b.id))).stage,'Qualified');
+  await call('patch','/leads/'+b.id,{expectedVersion:changed.version,phone:c.phone}).expect(409);
+  const {contactKeys}=await import('../src/leads.js');
+  assert.deepEqual(new Set((await store.get(path('dedupeKeys',contactKeys(a)[0]))).leadIds),new Set([a.id,b.id]));
+  const config=(await call('get','/field-options').expect(200)).body;
+  await call('patch','/field-options',{expectedVersion:config.version,values:config.values,hiddenFields:['stage']}).expect(200);
+  await call('patch','/me',{dashboardField:'stage'}).expect(200);
+  const dashboard=(await call('get','/dashboard').expect(200)).body;
+  assert.equal(dashboard.visualization.field,'stage');
+  assert.equal(dashboard.visualization.groups.find(g=>g.label==='Qualified').value,1);
+});

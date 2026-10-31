@@ -530,7 +530,7 @@ export function createApp({
     const input = parse(Preferences, req.body);
     if(input.timezone!==undefined)validateTimezone(input.timezone);
     return mutate(req, null, async (tx) => {
-      if(input.dashboardField && input.dashboardField!=='auto' && !dashboardFields(await readFieldOptions(tx)).some(f=>f.field===input.dashboardField))
+      if(input.dashboardField && input.dashboardField!=='auto' && !dashboardFields(await readFieldOptions(tx),{includeHiddenStage:true}).some(f=>f.field===input.dashboardField))
         throw new AppError(400,'DASHBOARD_FIELD','Choose an available dashboard category field');
       const prefs = {
         timezone: 'Asia/Kolkata',
@@ -1202,14 +1202,15 @@ export function createApp({
         );
       }
       const normalized = normalizeLead({ ...base, ...changes });
-      const keys = [
-        ...new Set([...contactKeys(old), ...contactKeys(normalized)]),
-      ];
+      const oldKeys = contactKeys(old), nextKeys = contactKeys(normalized);
+      const keys = [...new Set([...oldKeys, ...nextKeys])];
       const docs = await Promise.all(
         keys.map((k) => tx.get(path('dedupeKeys', k))),
       );
       const otherIds = keys
-        .filter((k) => contactKeys(normalized).includes(k))
+        // Retained contact keys may be shared by separate imported enquiries.
+        // Reject another lead's ownership only for newly acquired keys.
+        .filter((k) => nextKeys.includes(k) && !oldKeys.includes(k))
         .flatMap((k) =>
           (docs[keys.indexOf(k)]?.leadIds || []).filter((id) => id !== old.id),
         );

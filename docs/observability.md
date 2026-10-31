@@ -282,3 +282,5 @@ Field-aware dashboard copy and import mapping-conflict focus are presentation on
 Cleanup-lock feedback reuses the existing `LEAD_DATA_RESET` code, sanitized HTTP 503 logs/request spans/RED metrics and reset lifecycle events. The fixed client message and Retry-After header introduce no event, dimension or customer payload. Failed preview writes create no import committed event; unrelated provider errors remain redacted.
 
 Score-factor spacing/unknown-value presentation reuses existing safe reads and refresh signals; no canonical event, value, quote or metric dimension is added. The authorized v2.5.2 maintenance is identified by commit/run while preserving its original tag.
+
+Stage/detail saves retain existing authorized HTTP/Firestore spans, logs/RED metrics and committed lead/journey/activity outbox events. Retained shared contact keys do not add new telemetry. Personal stage grouping uses existing key-only preference audit. Dialog control sizing is presentation only; no contact values, labels, screenshots or new dimensions/events are exported.

@@ -67,12 +67,16 @@ select:disabled {
   }
 }
 /* Platform pickers avoid customizable-select Escape conflicts in modal dialogs. */
+.dialog select {
+  /* Native macOS closed chrome can collapse underneath the inset label.
+     appearance:none keeps CSS sizing while retaining the platform menu. */
+  appearance: none;
+  -webkit-appearance: none;
+}
 @supports (appearance: base-select) {
-  .dialog select,
   .dialog select::picker(select) {
     appearance: auto;
   }
-  .dialog select { background-image: none; }
 }
 /* Persistent inset labels keep field names visible without a rectangular outline. */
 .material-field {

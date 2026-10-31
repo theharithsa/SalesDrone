@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "version": "2.5.3",
+  "summary": "Restore explicit stage analytics, retained shared-contact edits and filled dialog-select geometry.",
+  "modules": [
+    "salesdrone-dashboard",
+    "salesdrone-leads",
+    "salesdrone-interface",
+    "salesdrone-workspace-settings",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SETTINGS.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/observability.md",
+    "docs/STAGE-EDIT-2.5.3-REVIEW.md",
+    "CHANGELOG.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Existing API 1.21.0 schemas unchanged. Correct retained-contact PATCH validation and restore supported explicit stage preference independently from form hiding; Automatic/import destinations stay unchanged.",
+    "contractVersion": "1.21.0",
+    "permissions": "Preserve authentication, lead scope, expectedVersion and atomic dedupe ownership. No duplicate override on newly acquired contacts; preferences remain personal.",
+    "tests": [
+      "functions/test/app.test.js",
+      "functions/test/dashboard-grouping.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing safe request/database telemetry and atomic lead/journey/preference outboxes remain authoritative. Presentation adds no business event, customer data or dimension.",
+      "tests": [
+        "functions/test/app.test.js",
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing safe request/database telemetry and atomic lead/journey/preference outboxes remain authoritative. Presentation adds no business event, customer data or dimension.",
+      "tests": [
+        "functions/test/app.test.js",
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing safe request/database telemetry and atomic lead/journey/preference outboxes remain authoritative. Presentation adds no business event, customer data or dimension.",
+      "tests": [
+        "functions/test/app.test.js",
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing safe request/database telemetry and atomic lead/journey/preference outboxes remain authoritative. Presentation adds no business event, customer data or dimension.",
+      "tests": [
+        "functions/test/app.test.js",
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing safe request/database telemetry and atomic lead/journey/preference outboxes remain authoritative. Presentation adds no business event, customer data or dimension.",
+      "tests": [
+        "functions/test/app.test.js",
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Focused synthetic browser cases and exact limits in docs/STAGE-EDIT-2.5.3-REVIEW.md. Phone/desktop selected stage and four dialog width/theme geometry cases passed; native popup keyboard automation failed and remains uncertified. New real Firestore case and targeted API regressions passed; no production data edits/backfill or broad repeated local suites. Publication/live evidence remains separate.",
+  "screenshots": [
+    "dashboard-stage-demo.jpg",
+    "dashboard-stage-mobile-demo.jpg",
+    "lead-form-selects-demo.jpg",
+    "lead-form-selects-mobile-demo.jpg"
+  ]
+}

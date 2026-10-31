@@ -88,3 +88,5 @@ These are tracked follow-ups, not implemented behavior: [#16](https://github.com
 Missing groups need separate primary-label and helper elements in cards and the composition legend. Clamp only the primary text; keep Missing value on its own line with a visible gap so literal Not recorded values remain distinguishable. Browser-check the empty group, not only populated fixtures.
 
 Selected-field headings, supporting copy and chart notes must use the effective configured label without lowercasing acronyms. Use neutral current-distribution language for Source, Zone and custom fields; no pipeline movement/conversion wording. Wrap long configured labels in headings, descriptions and selection hints.
+
+Expose stage as an explicit analytics choice even when hidden from enquiry forms. Use includeHiddenStage only for dashboard grouping/preference validation; default dashboardFields remains strict for import destinations. Automatic keeps its existing visible-field fallback and scoped counts. Cover hidden-stage explicit selection plus assigned-scope persistence.
