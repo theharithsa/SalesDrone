@@ -39,7 +39,7 @@ Workspace-root domain collections plus private users/{uid} subcollections; path(
 - Do not hard-delete production data, migrate schemas or reassign records as a side effect of a query repair. Design compatibility and recovery before an authorized migration.
 - Memory tests are insufficient for Firestore query/transaction validity. Deny-all client rules remain a required security boundary.
 
-Rate-limit expiry uses Date/Timestamp values and an active Firestore TTL policy. The reminders worker converts legacy counter strings in bounded resumable transactions; customer/import retention is unchanged. Task pages use positional batch lead reads with current-access filtering. Production cursors require a stable Secret Manager key; ephemeral keys are local/emulator only. Verify configuration.test.js and the real emulator.
+Rate-limit expiry uses Date/Timestamp values and an active Firestore TTL policy. Keep scripts/indexes.py aligned so regenerating indexes retains that policy. The reminders worker converts legacy counter strings in bounded resumable transactions; customer/import retention is unchanged. Task pages use positional batch lead reads with current-access filtering. Production cursors require a stable Secret Manager key; ephemeral keys are local/emulator only. Verify configuration.test.js and the real emulator.
 
 ## Change and diagnosis
 
