@@ -305,3 +305,9 @@ atomic lead lifecycle outbox with restored=1, preserving audit and retry semanti
 CI reports actual ingress cases; deployment requires and records the ingress
 revision/parser boundary separately from the five Functions. Ingestion receipts,
 tenant queries and RUM cross-signal linkage remain separate evidence.
+
+The operational ingress identity path is `/ingress-health`, separated from `/api/*`
+in request metrics. A managed HTML/error response cannot satisfy health verification.
+The first 2.6.1 rollout stopped at this boundary; 2.6.2 completes cutover using the
+same signal contracts. Tenant query access is still independent: the installed
+indiacs-apps CLI context currently references a missing OAuth credential.

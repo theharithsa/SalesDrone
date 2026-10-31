@@ -1,3 +1,4 @@
+import { HEALTH_PATH } from './contract.js';
 import http from 'node:http';
 import https from 'node:https';
 import { randomUUID } from 'node:crypto';
@@ -26,7 +27,7 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
   };
   return http.createServer({ requestTimeout: timeoutMs, headersTimeout: Math.min(timeoutMs, 20000), maxHeaderSize: 16384 }, (req, res) => {
     req.requestId = randomUUID();
-    req.route = { path: '/api/*' };
+    req.route = { path: req.url===HEALTH_PATH ? HEALTH_PATH : '/api/*' };
     res.setHeader('X-Request-Id', req.requestId);
     res.setHeader('X-App-Version', version);
     res.setHeader('Cache-Control', 'no-store');
@@ -50,7 +51,7 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
     const run = async () => {
       traceparent=telemetry?.capture()?.traceparent;
       try {
-        if (req.url === '/healthz' && req.method === 'GET') {
+        if (req.url === HEALTH_PATH && req.method === 'GET') {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ version, commit }));
           return;

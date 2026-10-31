@@ -1,4 +1,5 @@
-import {checkIngress} from '../../../scripts/ingress-checks.mjs';
+import {HEALTH_PATH} from '../src/contract.js';
+import {checkIngress,checkIngressIdentity} from '../../../scripts/ingress-checks.mjs';
 import {randomUUID} from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -53,7 +54,9 @@ test('fixed origin rejects unsafe configuration and non-api routes', async t => 
   assert.throws(() => createGateway({ upstream: 'http://example.com' }));
   assert.throws(() => createGateway({ upstream: 'https://example.com/?target=private' }));
   const f = await fixture(t); const r = await fetch(f.url + '/other'); assert.equal(r.status, 404); assert.equal(f.calls.length, 0);
-  const health = await fetch(f.url + '/healthz'); assert.deepEqual(await health.json(), { version: '2.6.1', commit: 'synthetic' });
+  const health = await fetch(f.url + HEALTH_PATH); assert.deepEqual(await health.json(), { version: '2.6.1', commit: 'synthetic' });
+  assert.deepEqual(await checkIngressIdentity(f.url,{version:'2.6.1',commit:'synthetic'}),{version:'2.6.1',commit:'synthetic'});
+  await assert.rejects(checkIngressIdentity(f.url,{version:'2.6.1',commit:'wrong'}),/identity mismatch/);
 });
 
 test('plain oversized requests and unsupported encodings fail without forwarding', async t=>{
@@ -77,4 +80,9 @@ test('an incomplete request body gets a bounded safe timeout without reaching ba
 test('production probes exercise real ingress denial/parser boundaries without authenticated writes',async t=>{
  const f=await fixture(t,(_req,res)=>{const requestId=randomUUID();res.statusCode=401;res.setHeader('X-Request-Id',requestId);res.setHeader('Content-Type','application/json');res.end(JSON.stringify({error:{code:'UNAUTHENTICATED',requestId}}));});
  const results=await checkIngress(f.url,{version:'2.6.1'});assert.equal(results.length,5);assert.ok(results.every(r=>r.status==='passed'));assert.equal(f.calls.length,2);assert.ok(f.calls.every(call=>!call.headers.authorization));
+});
+
+test('operational health avoids Cloud Run reserved paths and rejects managed HTML errors',async()=>{
+ assert.ok(!HEALTH_PATH.endsWith('z')&&!HEALTH_PATH.startsWith('/_ah/'));
+ await assert.rejects(checkIngressIdentity('https://synthetic.example.invalid',{version:'2.6.2',commit:'synthetic'},{fetchImpl:async()=>new Response('<html>provider error</html>',{status:404,headers:{'content-type':'text/html'}})}),/did not return application JSON/);
 });

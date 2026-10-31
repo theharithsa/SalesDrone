@@ -1,7 +1,8 @@
-# API ingress contract — v2.6.1
+# API ingress contract
 
-Release candidate implementation for #30; new ingress was explicitly selected on
-1 November 2026. Production is still 2.6.0 until the verified patch deploys.
+Implementation for #30 was selected on 1 November 2026. The first 2.6.1 rollout
+halted before Hosting at a reserved health path; issue #106 delivers the forward
+2.6.2 repair. Verify current live identity from deployment artifacts, not this source.
 
 A Cloud Run service named salesdrone-ingress in asia-south1 receives the existing
 Firebase Hosting /api/** rewrite. /api/docs remains the static API portal. The
@@ -67,3 +68,14 @@ Oversized supported bodies are drained without buffering up to the 32 MiB HTTP/1
 platform ceiling before returning 413, so closing during upload does not hide the
 envelope. Larger wire/framing errors remain outside the application contract. The
 55-second deadline precedes Hosting’s 60-second limit.
+
+## Managed health routing
+
+Use the shared HEALTH_PATH constant `/ingress-health` in the service, tests and
+deployer. Cloud Run intercepts reserved paths including some ending in z; `/healthz`
+returned provider HTML 404 despite a Ready revision and functioning API. See the
+[official reserved-path limitation](https://docs.cloud.google.com/run/docs/known-issues).
+Check HTTP status and JSON content type before decoding, then exact app version/SHA
+and no-store metadata. A container import/localhost test does not certify managed
+routing. Keep the five unauthenticated parser/denial probes after identity, before
+Hosting cutover, and independently through the final Hosting URL afterward.

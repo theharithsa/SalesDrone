@@ -1,4 +1,4 @@
-import {checkIngress} from './ingress-checks.mjs';
+import {checkIngress,checkIngressIdentity} from './ingress-checks.mjs';
 import { spawnSync } from 'node:child_process';
 import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -26,9 +26,7 @@ try {
   gcloud(['run', 'deploy', service, '--region', region, '--image', image, '--service-account', `salesdrone-ingress@${project}.iam.gserviceaccount.com`, '--allow-unauthenticated', '--ingress', 'all', '--env-vars-file', env, '--set-secrets', 'DYNATRACE_API_TOKEN=DYNATRACE_API_TOKEN:latest', '--cpu', '1', '--memory', '1Gi', '--concurrency', '2', '--min', '0', '--max', '3', '--timeout', '75s', '--no-cpu-throttling']);
   const deployed = JSON.parse(gcloud(['run', 'services', 'describe', service, '--region', region, '--format=json']));
   const url = deployed.status?.url;
-  const health = await fetch(url + '/healthz', { signal: AbortSignal.timeout(30000), redirect: 'error' });
-  const identity = await health.json();
-  if (!health.ok || identity.version !== release.version || identity.commit !== release.commit) throw Error('Ingress identity mismatch before Hosting cutover');
+  const identity=await checkIngressIdentity(url,release);
   const transportChecks=await checkIngress(url,release);
   await writeFile('ingress-deployment.json', JSON.stringify({ service, region, image, uri: url, revision: deployed.status.latestReadyRevisionName, version: identity.version, commit: identity.commit, parserBoundary: 'passed',transportChecks }, null, 2));
   console.log('Ingress identity and real parser boundary verified before Hosting cutover.');
