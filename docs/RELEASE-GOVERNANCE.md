@@ -90,3 +90,7 @@ tag/release before allowing the same candidate on that immediate base. A differe
 base, live identity, partial app publication or existing tag/release rejects recovery.
 After publication this path cannot replace the explicit maintenance/forward-version
 rules. Recovery still passes a new PR, milestone completion and all deployment gates.
+
+After that proof succeeds, readiness compares the complete candidate against the
+verified prior published commit, so its original API/settings/screenshot impact is
+still checked. It does not demand unrelated control/API edits in the index-only PR.
