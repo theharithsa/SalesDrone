@@ -22,3 +22,12 @@ For lead reset deploy all shared Functions exports so API and background produce
 
 Pages now depends on verify and deploy and requires deploy success; a failed/cancelled deploy must not publish a newer guide. Notify uses scripts/deployment-outcome.mjs with explicit rules, index readiness, Storage, Functions, Hosting, published-version and postcheck outcomes. Missing/skipped/cancelled phases report failed, even if later phases succeeded. Tests exercise every required phase; do not intentionally fail production to test the DAG.
 
+
+## Approval promotion and unpublished recovery
+
+Before promoting a reviewed feature release, remove local-only README notices after explicit deployment approval. Keep local review evidence historical and distinguish it from the exact main SHA, workflow run and post-deploy artifacts; do not restamp screenshot metadata or rerun local domain suites for this wording-only promotion. Required PR/main verification still runs.
+
+Unpublished candidate recovery is bound to the exact failed base/run/deploy job,
+skipped Functions/Hosting, older live version/SHA and absent candidate tag/release.
+check-release verifies this with read-only GitHub/Hosting evidence; the record cannot
+authorize another base or published maintenance. See candidate-recovery.mjs/tests.
