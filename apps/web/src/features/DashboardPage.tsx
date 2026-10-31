@@ -93,7 +93,7 @@ function Ring({ data, label }: { data: any[]; label: string }) {
                   : colors[i % colors.length],
               }}
             />
-            <span>{d.label}{d.empty?<small>Missing value</small>:null}</span>
+            <span><span className="category-label-text">{d.label}</span>{d.empty?<small>Missing value</small>:null}</span>
             <strong>{d.value}</strong>
           </div>
         ))}

@@ -5,6 +5,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.5.1] - 2026-10-31
+
+### Fixed
+- #86: Put missing-category helper text on its own line in pipeline cards and the composition legend. Clamp primary labels independently so Not recorded and Missing value remain distinct at phone and desktop widths.
+
 ## [2.5.0] - 2026-10-31
 
 ### Added

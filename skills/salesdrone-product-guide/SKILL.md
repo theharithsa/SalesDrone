@@ -57,3 +57,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#4](https://github.com/theharithsa/SalesDrone/issues/4), [#15](https://github.com/theharithsa/SalesDrone/issues/15), [#21](https://github.com/theharithsa/SalesDrone/issues/21), [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#55](https://github.com/theharithsa/SalesDrone/issues/55), [#56](https://github.com/theharithsa/SalesDrone/issues/56), [#58](https://github.com/theharithsa/SalesDrone/issues/58), [#59](https://github.com/theharithsa/SalesDrone/issues/59), [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.
+
+When a category has no recorded values, review and capture the missing-group state as well as populated groups. Primary labels and Missing value helpers must occupy separate rows; new empty-state captures supplement unchanged populated screenshots without restamping them.

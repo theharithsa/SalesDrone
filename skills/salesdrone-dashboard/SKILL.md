@@ -84,3 +84,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#16](https://github.com/theharithsa/SalesDrone/issues/16), [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.
+
+Missing groups need separate primary-label and helper elements in cards and the composition legend. Clamp only the primary text; keep Missing value on its own line with a visible gap so literal Not recorded values remain distinguishable. Browser-check the empty group, not only populated fixtures.

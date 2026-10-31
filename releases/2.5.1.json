@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "version": "2.5.1",
+  "summary": "Separate missing-category primary labels and helper text in both pipeline charts after the production visual review of 2.5.0.",
+  "modules": [
+    "salesdrone-dashboard",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/TESTING.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "README.md",
+    "docs/DASHBOARD-MISSING-2.5.1-REVIEW.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Only chart label markup and CSS change; grouping data, saved preferences, permissions and API 1.21.0 remain unchanged.",
+    "contractVersion": "1.21.0",
+    "permissions": "Existing self-only preferences and lead-scoped dashboard read policy remain unchanged.",
+    "tests": [
+      "functions/test/dashboard-grouping.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Presentation-only patch reuses existing HTTP/RUM/CI/deployment signals. It adds no business mutation, telemetry dimension, customer data or new event. Deployment receipts remain distinct from tenant searchability.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Presentation-only patch reuses existing HTTP/RUM/CI/deployment signals. It adds no business mutation, telemetry dimension, customer data or new event. Deployment receipts remain distinct from tenant searchability.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Presentation-only patch reuses existing HTTP/RUM/CI/deployment signals. It adds no business mutation, telemetry dimension, customer data or new event. Deployment receipts remain distinct from tenant searchability.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Presentation-only patch reuses existing HTTP/RUM/CI/deployment signals. It adds no business mutation, telemetry dimension, customer data or new event. Deployment receipts remain distinct from tenant searchability.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Presentation-only patch reuses existing HTTP/RUM/CI/deployment signals. It adds no business mutation, telemetry dimension, customer data or new event. Deployment receipts remain distinct from tenant searchability.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Measure separate primary/helper rows for both missing-group card and composition legend at 390/768/1024/1440/1920 in light/dark, inspect new fictional captures and production guest smoke after deployment. Focused local browser/build checks; required PR/main CI runs regression suites. No customer writes, physical-device/Safari or tenant-query certification. Keep the original 2.5.0 release/tag immutable and publish forward patch 2.5.1 through a verified PR.",
+  "screenshots": [
+    "dashboard-missing-demo.jpg",
+    "dashboard-missing-mobile-demo.jpg",
+    "dashboard-fields-demo.jpg",
+    "dashboard-fields-mobile-demo.jpg"
+  ]
+}

@@ -29,6 +29,8 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'dashboard-missing-demo.jpg',
+  'dashboard-missing-mobile-demo.jpg',
   'import-fields-demo.jpg',
   'import-fields-mobile-demo.jpg',
   'import-comments-demo.jpg',

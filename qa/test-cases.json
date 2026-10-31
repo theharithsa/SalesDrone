@@ -130,6 +130,11 @@
           "id": "DASHBOARD-TREND-AXIS-01",
           "expected": "At phone/tablet/desktop widths in both themes, each Y tick center aligns with the corresponding SVG gridline; include zero, sparse/spike and multi-digit counts, both metrics and keyboard Day/circle selection. Dates align within the plot column.",
           "fixture": "Isolated fictional UI preview and synthetic demo only; no production writes"
+        },
+        {
+          "id": "DASHBOARD-MISSING-LABEL-01",
+          "expected": "Choose Enquiry status with all synthetic values empty. In funnel cards and the composition legend, Not recorded and Missing value use separate primary/helper rows with visible spacing; primary labels clamp independently. Verify phone/tablet/laptop/desktop/wide views in both themes; counts and empty-filter behavior remain unchanged.",
+          "fixture": "isolated fictional guest demo only; no customer records or writes"
         }
       ]
     },

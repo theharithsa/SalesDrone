@@ -56,7 +56,7 @@ export default function PipelineFunnel({
               onClick={() => onStage(s.label, 'empty' in s && Boolean(s.empty))}
               aria-label={`${s.label}: ${s.value} leads, ${total ? Math.round((s.value / total) * 100) : 0}% of included leads`}
             >
-              <span className="funnel-label">{s.label}{'empty' in s && s.empty ? <small>Missing value</small> : null}</span>
+              <span className="funnel-label"><span className="category-label-text">{s.label}</span>{'empty' in s && s.empty ? <small>Missing value</small> : null}</span>
               <span className="funnel-volume">
                 <span
                   className="funnel-bar"
