@@ -10,6 +10,21 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.1] - 2026-11-01
+
+Milestone #6: correctness and security fixes (#4, #14, #15, #21, #27, #30).
+
+### Fixed
+- Restore archived leads from Settings with current access/version checks, retained contact ownership and suppression, an attributed timeline entry and no restarted outreach. Accessible archived duplicates point to Archives without disclosing inaccessible records.
+- Restrict note/call corrections to the original author or an Admin, while retaining current capability/scope checks and revision history.
+- Archive and single/batch reassignment cancel Pending outreach tasks only. Private administrative tasks retain their state and remain subject to current delivery eligibility.
+- Add a dedicated bounded Cloud Run ingress before Firebase’s managed JSON parser. Malformed/oversized JSON returns safe request/version-tagged errors; auth, App Check, binary uploads and domain policy remain in the existing API.
+- Add a compatible SPA Content Security Policy, externalize appearance initialization and retain managed HSTS and the stricter API portal policy.
+
+### Operations
+- Register the ingress service playbook, isolated build/runtime identities, immutable container builds, transport regression cases and sanitized OTel/deployment evidence. API contract advances independently to 1.23.0 (92 operations).
+
 ## [2.6.0] - 2026-10-31
 
 Milestone #5: Lead Hygiene, Lead Assistant and release governance. Publication requires completed scope and PR/CI acceptance.

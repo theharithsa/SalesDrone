@@ -103,6 +103,7 @@ export async function planBulkLeads(tx, member, input, now, apply = false) {
           filters: [
             ['leadId', '==', old.id],
             ['state', '==', 'Pending'],
+            ['kind', '==', 'outreach'],
           ],
           limit: 101,
         })

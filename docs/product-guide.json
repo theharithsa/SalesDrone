@@ -198,7 +198,7 @@
       "steps": [
         "Open a lead and choose Log call. Select the actual outcome, add discussion notes and any supported disposition or follow-up fields, then save.",
         "On the full lead page, type directly into Write a comment in All or Comments and choose Post comment. In the quick-inspection overlay, Add comment still opens the compact dialog. Each successful post creates a separate entry.",
-        "Check notes in Comments and logged calls in Calls; All combines both. If you made a mistake, choose Correct entry and submit a correction; the original revision remains part of the record.",
+        "Check notes in Comments and logged calls in Calls; All combines both. The original author or an Admin with current lead access can choose Correct entry; the original revision remains part of the record.",
         "Use Earlier activity to retrieve older pages. Imported discussions show their source column; an unknown original conversation date is explicitly described as unknown."
       ],
       "details": [
@@ -608,7 +608,7 @@
       "steps": [
         "Open a lead and use Archive to remove it from the active pipeline. Pending reminders for that lead are cancelled.",
         "Open Settings > Archives to view archived names, company, stage and contact details.",
-        "Choose Load more archived leads for the next page, or Refresh archives to reload the list. View lead record opens the retained record without restoring it."
+        "Choose Load more archived leads for the next page, or Refresh archives to reload the list. View lead record opens without restoring. If you can edit the lead, Restore lead returns it to the active list after confirmation; cancelled outreach stays cancelled and suppression remains active."
       ],
       "details": [
         "Archive keeps the lead and its history; it is not permanent deletion. The archive list enforces the same assigned-lead restrictions as the active list.",

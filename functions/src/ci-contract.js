@@ -7,6 +7,7 @@ export const CI_CHECKS = [
   'skills',
   'version',
   'functions',
+  'ingress',
   'web',
   'lint',
   'components',

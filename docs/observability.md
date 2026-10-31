@@ -292,3 +292,16 @@ Research uses existing HTTP RED metrics, safe Firestore/Gemini dependency spans 
 Research adds `salesdrone.research.operations` ({operation}) and `salesdrone.research.duration` (s), with only kind=plan/themes/embedding/batch and outcome=success/failure. Durations measure active calls/batches, not invented spans across asynchronous idle time. Where available, worker steps link the real originating request traceparent; no synthetic trace IDs are generated. New Async jobs do not establish native RUM linkage without separate live verification.
 
 Research outcome outboxes remain atomic when the OTel SDK is unavailable. Missing attempt attribution is explicit (`request.id=unavailable`, system actor, genuine transaction ID, no trace parent); later delivery does not fabricate a historic source trace. Telemetry bodies still exclude all questions/answers/evidence.
+
+## 2.6.1 transport and restore coverage
+
+The separate salesdrone-ingress Cloud Run service uses the shared OTel SDK and
+version/SHA plus K_SERVICE/K_REVISION resource identity. Real server/forward spans
+propagate W3C context to the existing API. Only fixed route/method/status/error
+categories are metrics dimensions. No URL/query, auth header or body is exported.
+Cloud Logging excludes automatic ingress request logs; sanitized outcomes remain.
+Bounded JSON rejections cannot create domain events. Restores use the existing
+atomic lead lifecycle outbox with restored=1, preserving audit and retry semantics.
+CI reports actual ingress cases; deployment requires and records the ingress
+revision/parser boundary separately from the five Functions. Ingestion receipts,
+tenant queries and RUM cross-signal linkage remain separate evidence.

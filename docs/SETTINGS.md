@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.6.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.6.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -126,11 +126,11 @@ In-app reminders and notifications are retained. The notification bell lets you 
 
 ## Personal → Archives
 
-**Who/where:** Workspace records within your current lead scope; read only.
+**Who/where:** Workspace records within your current lead scope.
 
-**API:** GET /api/v1/archived-leads; POST /api/v1/leads/{id}/archive.
+**API:** GET /api/v1/archived-leads; POST /api/v1/leads/{id}/archive; POST /api/v1/leads/{id}/restore.
 
-**Permissions:** Active member with leads:read; archiving additionally requires leads:edit and current record version. PAT archive reads use leads:read..
+**Permissions:** Active member with leads:read; archive/restore additionally require leads:edit and current record version. PAT restoration requires leads:archive..
 
 ### Archived leads
 
@@ -138,7 +138,7 @@ In-app reminders and notifications are retained. The notification bell lets you 
 
 Lists archived leads in Settings in 30-record pages with contact details and stage. Only permitted leads are returned, including when opening direct links. Archived leads stay outside the active pipeline and cancelled reminders remain cancelled.
 
-Refresh reloads the first page. Load more follows a signed, access-bound cursor. View lead record opens the retained record; viewing does not restore it. This page has no permanent deletion or restore action.
+Refresh reloads the first page. Load more follows a signed, access-bound cursor. View lead record opens without restoring. Restore lead confirms and returns a permitted record to the active list, retains suppression and shared contacts, and never reschedules cancelled outreach. Administrative tasks retain state. No permanent deletion here.
 
 **Example:** Archive a lead from its record, then open Settings > Archives. Older archives display Date not recorded instead of inventing an archive date.
 
@@ -527,7 +527,7 @@ Authorization stays in tab memory. Clear it when finished, especially on shared 
 - **leads:read** — Read leads and stage history.
 - **leads:create** — Create enquiries.
 - **leads:edit** — Update lead details.
-- **leads:archive** — Archive leads (no permanent deletion).
+- **leads:archive** — Archive or restore leads (no permanent deletion).
 - **assignments:write** — Assign leads to permitted members.
 - **activities:read** — Read comments and calls.
 - **activities:write** — Add/correct comments and calls; notes may schedule reminders.

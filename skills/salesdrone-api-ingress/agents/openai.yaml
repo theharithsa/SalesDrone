@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone API ingress"
+  short_description: "Maintain bounded HTTP ingress and safe Hosting/API cutover"
+  default_prompt: "Use $salesdrone-api-ingress for transport validation, fixed-upstream proxying and deployment evidence."

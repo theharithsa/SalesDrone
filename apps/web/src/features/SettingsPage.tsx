@@ -386,7 +386,7 @@ export default function SettingsPage({
             </p>
           ) : null}
           {section === 'archives' ? (
-            <ArchivedLeadsSettings request={request} onOpenLead={onOpenLead} />
+            <ArchivedLeadsSettings request={request} onOpenLead={onOpenLead} canRestore={demo || !!session?.member?.capabilities.includes('leads:edit')} onRestored={onRefresh} />
           ) : null}
           {isAdmin && section === 'data' ? (
             <LeadDataSettings request={request} onChanged={onRefresh} />

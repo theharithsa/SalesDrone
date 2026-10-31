@@ -69,11 +69,11 @@
           "default": "Asia/Kolkata for live accounts",
           "description": "Use an IANA timezone, such as Asia/Kolkata or Europe/London. It controls displayed dates, dashboard calendar boundaries and automatic reminder interpretation.",
           "effect": "Save preferences. Manual reminder forms label the device timezone they use; already scheduled instants do not move.",
-          "example": "Set Europe/London before adding a note saying \u201ctomorrow morning\u201d."
+          "example": "Set Europe/London before adding a note saying “tomorrow morning”."
         },
         {
           "id": "dashboardField",
-          "label": "Dashboard grouping (Today \u2192 Group leads by)",
+          "label": "Dashboard grouping (Today → Group leads by)",
           "default": "Automatic: first available category field",
           "description": "Set directly on the Today dashboard. Choose Enquiry status, Sales stage, source, sector, location or an active custom text/dropdown field. Sales stage remains explicitly selectable for analytics even when hidden from forms. Other hidden/retired fields are excluded; Automatic keeps its visible-field fallback.",
           "effect": "Personal account preference through GET/PATCH /me and GET /dashboard. Changes apply immediately to the two lead distribution charts. Partial/older preference saves preserve the choice. Workflow stages, KPI definitions and AI brief inputs remain unchanged. Show up to 20 groups plus Other values; aggregates and values exceeding filter limits have no direct drill-through. Demo saves are browser-local. Headings, descriptions and notes follow the effective configured field label.",
@@ -115,16 +115,16 @@
     },
     {
       "sectionId": "archives",
-      "scope": "Workspace records within your current lead scope; read only",
-      "api": "GET /api/v1/archived-leads; POST /api/v1/leads/{id}/archive",
-      "permissions": "Active member with leads:read; archiving additionally requires leads:edit and current record version. PAT archive reads use leads:read.",
+      "scope": "Workspace records within your current lead scope",
+      "api": "GET /api/v1/archived-leads; POST /api/v1/leads/{id}/archive; POST /api/v1/leads/{id}/restore",
+      "permissions": "Active member with leads:read; archive/restore additionally require leads:edit and current record version. PAT restoration requires leads:archive.",
       "controls": [
         {
           "id": "archivedLeads",
           "label": "Archived leads",
           "default": "No archived leads until records are archived",
           "description": "Lists archived leads in Settings in 30-record pages with contact details and stage. Only permitted leads are returned, including when opening direct links. Archived leads stay outside the active pipeline and cancelled reminders remain cancelled.",
-          "effect": "Refresh reloads the first page. Load more follows a signed, access-bound cursor. View lead record opens the retained record; viewing does not restore it. This page has no permanent deletion or restore action.",
+          "effect": "Refresh reloads the first page. Load more follows a signed, access-bound cursor. View lead record opens without restoring. Restore lead confirms and returns a permitted record to the active list, retains suppression and shared contacts, and never reschedules cancelled outreach. Administrative tasks retain state. No permanent deletion here.",
           "example": "Archive a lead from its record, then open Settings > Archives. Older archives display Date not recorded instead of inventing an archive date."
         }
       ]
@@ -139,7 +139,7 @@
           "id": "exportsEnabled",
           "label": "Allow Excel reports",
           "default": "On",
-          "description": "Lets members with lead access export matching lead fields and selected columns from Leads \u2192 Export Excel. Admins are also subject to this switch.",
+          "description": "Lets members with lead access export matching lead fields and selected columns from Leads → Export Excel. Admins are also subject to this switch.",
           "effect": "Turning it off blocks the report API as well as hiding the action. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.",
           "example": "Filter Sector equals MEP, choose phone and company, then export all matching pages."
         },
@@ -259,7 +259,7 @@
           "id": "disposition",
           "label": "Call dispositions",
           "default": "None, Interested, Not interested, Callback requested, Do not contact",
-          "description": "Describe the contact\u2019s response separately from the technical call outcome.",
+          "description": "Describe the contact’s response separately from the technical call outcome.",
           "effect": "Do not contact is protected and suppresses outreach; renaming a field does not remove suppression rules.",
           "example": ""
         },
@@ -317,11 +317,11 @@
           "default": "10:00",
           "description": "Time of day used when an inferred dated follow-up has no explicit time.",
           "effect": "Uses your display timezone; exact written times take precedence.",
-          "example": "\u201cCall tomorrow\u201d uses 10:00 unless you choose another default."
+          "example": "“Call tomorrow” uses 10:00 unless you choose another default."
         },
         {
           "id": "nextWeekRule",
-          "label": "\u201cNext week\u201d means",
+          "label": "“Next week” means",
           "default": "Seven days after the note",
           "description": "Choose seven days after the note or next Monday for ambiguous next-week wording.",
           "effect": "Only ambiguous relative wording uses this preference; named dates/weekdays remain explicit.",
@@ -355,7 +355,7 @@
           "id": "factorDefinition",
           "label": "Factor label, group and evidence condition",
           "default": "Commercial construction / wholesale defaults",
-          "description": "Define what counts as Fit, Intent or a Red flag. Gemini must cite recorded evidence rather than guess. Conditions are 10\u2013600 characters; labels up to 80; up to 30 factors.",
+          "description": "Define what counts as Fit, Intent or a Red flag. Gemini must cite recorded evidence rather than guess. Conditions are 10–600 characters; labels up to 80; up to 30 factors.",
           "effect": "Condition/factor changes require fresh evidence analysis. Missing evidence remains unknown. This is sales prioritization, not a credit, licensing or safety verification.",
           "example": "Add an Intent factor for a documented active RFQ."
         },
@@ -364,7 +364,7 @@
           "label": "Factor weight and enabled flag",
           "default": "Default positive weights and red-flag penalties",
           "description": "Give enabled factors integer weights from 1 to 100, or disable an irrelevant factor. Keep at least one enabled Fit or Intent factor when scoring is on.",
-          "effect": "Positive matches are normalized against enabled positive weights; red flags subtract points; the result is clamped to 0\u2013100. Weight-only edits can recalculate without new extraction.",
+          "effect": "Positive matches are normalized against enabled positive weights; red flags subtract points; the result is clamped to 0–100. Weight-only edits can recalculate without new extraction.",
           "example": ""
         },
         {
@@ -387,7 +387,7 @@
           "id": "tokenName",
           "label": "Personal Access Token name",
           "default": "Provided on creation",
-          "description": "A descriptive name of 1\u201380 characters helps identify an integration.",
+          "description": "A descriptive name of 1–80 characters helps identify an integration.",
           "effect": "Names are metadata, not secrets or unique identifiers.",
           "example": ""
         },
@@ -395,8 +395,8 @@
           "id": "tokenScopes",
           "label": "Permission scopes",
           "default": "Explicit selection required",
-          "description": "Select only needed data operations. Scopes intersect the current owner\u2019s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write.",
-          "effect": "Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route\u2019s scope. See the generated scope catalog below.",
+          "description": "Select only needed data operations. Scopes intersect the current owner’s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write.",
+          "effect": "Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route’s scope. See the generated scope catalog below.",
           "example": ""
         },
         {
@@ -411,7 +411,7 @@
           "id": "tokenCopy",
           "label": "Copy a newly generated token",
           "default": "Shown once",
-          "description": "Save the secret directly in your integration\u2019s secret manager. SalesDrone stores a hash and cannot recover the full token later.",
+          "description": "Save the secret directly in your integration’s secret manager. SalesDrone stores a hash and cannot recover the full token later.",
           "effect": "Never put it in URLs, screenshots, code or documentation. A lost creation response requires revoking its metadata and generating a replacement.",
           "example": ""
         },
@@ -475,7 +475,7 @@
           "id": "memberActive",
           "label": "Suspend/restore membership",
           "default": "Active after valid acceptance",
-          "description": "Disable a member\u2019s live workspace access without deleting their historical work.",
+          "description": "Disable a member’s live workspace access without deleting their historical work.",
           "effect": "Current API requests, token checks and worker delivery eligibility use active membership. Re-enabling restores only the configured role/scope/capabilities.",
           "example": ""
         },
@@ -483,7 +483,7 @@
           "id": "importHistory",
           "label": "View own import history",
           "default": "Off for Viewer/SDR; available to existing import-capable Admins",
-          "description": "Grant imports:read to view the member\u2019s import jobs and permission-filtered row results.",
+          "description": "Grant imports:read to view the member’s import jobs and permission-filtered row results.",
           "effect": "Read-only access does not allow uploads, review decisions, commits or deletion. Applies on the next server request after an Admin saves permissions.",
           "example": "Grant shared history to a reviewer; grant write access only when they should execute imports."
         },
@@ -499,8 +499,8 @@
           "id": "importShare",
           "label": "Access shared imports",
           "default": "Off for Viewer/SDR; available to existing import-capable Admins",
-          "description": "Grant imports:share with imports:read to list and view other uploaders\u2019 jobs. Add imports:write to review/resume their jobs.",
-          "effect": "Incoming rows and matched leads outside the member\u2019s current lead scope are redacted and cannot be updated. Shared access never implies lead access or promotes the member to Admin. Applies on the next server request after an Admin saves permissions.",
+          "description": "Grant imports:share with imports:read to list and view other uploaders’ jobs. Add imports:write to review/resume their jobs.",
+          "effect": "Incoming rows and matched leads outside the member’s current lead scope are redacted and cannot be updated. Shared access never implies lead access or promotes the member to Admin. Applies on the next server request after an Admin saves permissions.",
           "example": "Grant shared history to a reviewer; grant write access only when they should execute imports."
         },
         {
@@ -583,7 +583,7 @@
           "id": "research.inactivityDays",
           "label": "Inactivity threshold",
           "default": "Not configured",
-          "description": "Choose 1\u20133650 days since last recorded contact.",
+          "description": "Choose 1–3650 days since last recorded contact.",
           "effect": "A missing last-contact date does not establish inactivity. Age, low scores or shared phone numbers alone do not create archive candidates."
         },
         {

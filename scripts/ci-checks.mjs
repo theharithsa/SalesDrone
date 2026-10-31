@@ -27,6 +27,7 @@ const commands = {
   skills: [npm, ['run', 'skills:check']],
   version: [npm, ['run', 'release:check']],
   functions: await tests('functions', 'functions/test', 'js'),
+  ingress: await tests('ingress', 'services/ingress/test', 'js'),
   web: await tests('web', 'tests', 'ts'),
   lint: [npm, ['run', 'lint']],
   components: [npm, ['run', 'test:components']],

@@ -1,13 +1,13 @@
 # SalesDrone API integration guide
 
-Application release **v2.5.2**, OpenAPI contract **1.21.0**. All application operations
+Application release **v2.6.1**, OpenAPI contract **1.23.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
 - [Download OpenAPI 3.1 JSON](https://sales-drone-avinya.firebaseapp.com/openapi.json)
 - [Public source contract](openapi.json)
 
-The portal documents all **72 supported operations**, including GET (read), POST
+The portal documents all **92 supported operations**, including GET (read), POST
 (create or an explicit action), PATCH (update), PUT (attachment bytes) and DELETE (removal/revocation).
 Workspace lead-data reset is a separate Admin-only, previewed operation. Try it out performs
 real operations against the signed-in credential's workspace. Use synthetic test
@@ -292,3 +292,23 @@ Stage writes use current Admin field-options values, including replacement/custo
 ## Lead research (API 1.22.0)
 
 See [the versioned feature contract](LEAD-RESEARCH-CONTRACT.md). Hygiene and Assistant routes require Google/App Check and explicit feature grants intersecting leads:read/current scope; Admins receive defaults. No PAT scope is added. Creates require UUID idempotency keys, mutable artifacts/settings use expectedVersion and history/results use bounded owner-bound cursors. Histories are private and retained until explicit deletion; stale source/policy/configuration results are hidden. Exact monthly counts use recorded distinct transitions and expose incomplete import history. Indexing is off until an Admin enables it.
+
+## Restore and correction policy (1.23.0)
+
+POST /api/v1/leads/{id}/restore accepts expectedVersion and returns the retained lead.
+Requires leads:edit and current scope; integrations use the existing leads:archive
+PAT scope. Restoring preserves suppression, stage and assignment, adds one attributed
+activity/lifecycle event and never restarts cancelled outreach. A newly acquired
+conflicting contact returns 409 DUPLICATE. Repeating with the current active version
+returns the record without another restore event. An accessible archived-only match
+on lead creation returns DUPLICATE_ARCHIVED; inaccessible matches stay generic.
+Activity corrections additionally require the original actorUid or Admin. Historic
+entries without an author are Admin-only. Current lead access is always required.
+Archive and all reassignment paths cancel Pending outreach only; administrative
+reminders retain state and remain subject to current delivery eligibility.
+
+The supported Hosting API now uses [the ingress transport](API-INGRESS.md) before
+Firebase's managed parser. Syntax/strict JSON failures return 400 BAD_JSON, and
+bounded payload failures return 413 PAYLOAD_TOO_LARGE, with no-store and request/app
+version metadata. Native provider URLs and platform HTTP/network hard-limit errors
+remain outside this normalized Hosting contract. No authentication is bypassed.

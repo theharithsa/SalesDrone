@@ -201,5 +201,12 @@
     "agent mode",
     "calls next week",
     "approved orders"
+  ],
+  "salesdrone-api-ingress": [
+    "API ingress",
+    "malformed JSON",
+    "managed parser",
+    "Cloud Run gateway",
+    "proxy body limit"
   ]
 }

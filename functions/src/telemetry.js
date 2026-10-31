@@ -106,6 +106,7 @@ export function createTelemetry({
     'deployment.environment.name': environment,
     'build.commit': BUILD_COMMIT,
     'service.instance.id': randomUUID(),
+    ...(process.env.K_SERVICE ? { 'cloud.provider':'gcp', 'cloud.platform':'gcp_cloud_run', 'cloud.region':'asia-south1', 'faas.name':process.env.K_SERVICE, 'faas.version':process.env.K_REVISION || 'unknown' } : {}),
   });
   const metricReader = new PeriodicExportingMetricReader({
     exporter: observed(
@@ -354,13 +355,13 @@ export function createTelemetry({
         {
           attributes,
           links,
-          kind: /^(firestore\.|gemini\.|fcm\.)/.test(name)
+          kind: /^(firestore\.|gemini\.|fcm\.|api\.forward$)/.test(name)
             ? SpanKind.CLIENT
             : SpanKind.INTERNAL,
         },
         async (span) => {
           try {
-            return await fn();
+            return await fn(span);
           } catch (e) {
             span.setStatus({ code: SpanStatusCode.ERROR });
             span.setAttribute('error.type', errorType(e));
@@ -434,12 +435,14 @@ export function createTelemetry({
                     operation,
                     'http.request.method': method,
                     'http.response.status_code': status,
+                    ...(req.ingressError ? {'error.type':req.ingressError} : {}),
                   };
                 span.updateName(operation);
                 span.setAttributes({
                   'http.route': route,
                   'http.response.status_code': status,
                   'actor.id': state.actorId,
+                  ...(req.ingressError ? {'error.type':req.ingressError} : {}),
                 });
                 if (status >= 500)
                   span.setStatus({ code: SpanStatusCode.ERROR });
@@ -453,6 +456,7 @@ export function createTelemetry({
                     'actor.id': state.actorId,
                     'http.status_code': status,
                     outcome: status < 400 ? 'success' : 'failure',
+                    ...(req.ingressError ? {'error.type':req.ingressError} : {}),
                   },
                   status >= 500,
                 );

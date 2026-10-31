@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.6.0
+Version 2.6.1
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -234,7 +234,7 @@ Members with activities:write for changes
 
 2. On the full lead page, type directly into Write a comment in All or Comments and choose Post comment. In the quick-inspection overlay, Add comment still opens the compact dialog. Each successful post creates a separate entry.
 
-3. Check notes in Comments and logged calls in Calls; All combines both. If you made a mistake, choose Correct entry and submit a correction; the original revision remains part of the record.
+3. Check notes in Comments and logged calls in Calls; All combines both. The original author or an Admin with current lead access can choose Correct entry; the original revision remains part of the record.
 
 4. Use Earlier activity to retrieve older pages. Imported discussions show their source column; an unknown original conversation date is explicitly described as unknown.
 
@@ -698,7 +698,7 @@ Members with lead-reading permission, within their current scope
 
 2. Open Settings > Archives to view archived names, company, stage and contact details.
 
-3. Choose Load more archived leads for the next page, or Refresh archives to reload the list. View lead record opens the retained record without restoring it.
+3. Choose Load more archived leads for the next page, or Refresh archives to reload the list. View lead record opens without restoring. If you can edit the lead, Restore lead returns it to the active list after confirmation; cancelled outreach stays cancelled and suppression remains active.
 
 Archive keeps the lead and its history; it is not permanent deletion. The archive list enforces the same assigned-lead restrictions as the active list.
 

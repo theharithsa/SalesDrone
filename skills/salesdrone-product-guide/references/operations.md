@@ -97,3 +97,5 @@ The 2.2.1 header/axis correction refreshes lead-workspace/overlay captures and a
 
 Explain linked updates, three-way conflicts, actual duplicate candidates, optional member grants, resume and Admin-only detail deletion. Refresh import-demo.jpg and import-review-demo.jpg/import-review-mobile-demo.jpg from fictional isolated components. Captures prove presentation, not production writes.
 
+
+Explain Admin field setup before import preview, schema persistence on cancellation, explicit exclusions, duplicate/blank headers and stable field reuse. Explain the Today personal grouping selector and automatic hidden-stage fallback, bounded groups and unchanged KPIs. Refresh affected desktop/mobile import, category and popup captures without relabelling unchanged historical assets.

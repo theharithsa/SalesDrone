@@ -15,6 +15,7 @@ for length in range(4):
 for fields in [['leadId','state'],['recipientUid'],['recipientUid','state'],['recipientUid','leadId'],['recipientUid','state','leadId']]:
  add('tasks',[(f,'ASCENDING') for f in fields]+[('dueAt','ASCENDING'),('id','ASCENDING')])
 add('tasks',[('leadId','ASCENDING'),('state','ASCENDING'),('id','ASCENDING')])
+add('tasks',[('leadId','ASCENDING'),('state','ASCENDING'),('kind','ASCENDING'),('id','ASCENDING')])
 add('tasks',[('recipientUid','ASCENDING'),('state','ASCENDING'),('dueAt','ASCENDING')])
 add('activities',[('leadId','ASCENDING'),('id','DESCENDING')])
 add('activities',[('leadId','ASCENDING'),('type','ASCENDING'),('id','DESCENDING')])

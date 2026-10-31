@@ -5,6 +5,22 @@
   "selectionPolicy": "For SalesDrone web design and generic design reviews, prefer salesdrone-interface and Material 3; imported native/experimental design references are conditional. Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.",
   "nodes": [
     {
+      "id": "salesdrone-api-ingress",
+      "path": "skills/salesdrone-api-ingress/SKILL.md",
+      "description": "Maintain SalesDrone's Cloud Run HTTP ingress, bounded body validation, upstream proxy, service IAM and rollout. Use for Hosting/API parser boundary failures; business authentication and policy stay in the existing API.",
+      "matchTerms": [
+        "API ingress",
+        "malformed JSON",
+        "managed parser",
+        "Cloud Run gateway",
+        "proxy body limit"
+      ],
+      "related": [
+        "salesdrone-release-readiness"
+      ],
+      "apiOperations": []
+    },
+    {
       "id": "salesdrone-api-integrations",
       "path": "skills/salesdrone-api-integrations/SKILL.md",
       "description": "Maintain SalesDrone scoped Personal Access Tokens, versioned OpenAPI/Swagger portal and HTTP integration policy. Use for external API contracts and token lifecycle; domain behavior stays with its module skill.",
@@ -411,6 +427,7 @@
         "GET /api/v1/leads/{id}",
         "PATCH /api/v1/leads/{id}",
         "POST /api/v1/leads/{id}/archive",
+        "POST /api/v1/leads/{id}/restore",
         "PATCH /api/v1/leads/{id}/assignment"
       ]
     },

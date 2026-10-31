@@ -757,11 +757,14 @@ export default function App() {
               : l,
           ),
           tasks: d.tasks.map((t) =>
-            t.leadId === id && t.state === 'Pending'
+            t.leadId === id && t.state === 'Pending' && t.kind === 'outreach'
               ? { ...t, state: 'Cancelled', version: t.version + 1 }
               : t,
           ),
         };
+      } else if (collection === 'leads' && parts[2] === 'restore') {
+        const existing=d.leads.find(l=>l.id===id);if(!existing||existing.version!==body.expectedVersion)throw Error('Refresh the archived lead before restoring.');
+        result={...existing,archived:false,archivedAt:null,version:existing.version+1};d={...d,leads:d.leads.map(l=>l.id===id?result:l)};
       } else if (collection === 'activities' && parts[2] === 'corrections') {
         result = {
           ...d.activities.find((a) => a.id === id),
@@ -2839,7 +2842,7 @@ export default function App() {
                                         />
                                         {['call', 'note'].includes(a.type) &&
                                         a.revision &&
-                                        can('activities:write') ? (
+                                        can('activities:write') && (demo || admin || a.actorUid === session?.identity.uid) ? (
                                           <button
                                             className="text-button correction-button"
                                             onClick={() => {

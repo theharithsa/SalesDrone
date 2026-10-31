@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Archive, RefreshCw } from 'lucide-react';
-import { Badge, Empty, ErrorMessage } from '../components/UI';
+import { Archive, RefreshCw, ArchiveRestore } from 'lucide-react';
+import { Badge, Empty, ErrorMessage, Modal } from '../components/UI';
 import type { Lead } from '../lib/types';
 
 type Request = (
@@ -12,15 +12,21 @@ type Request = (
 export default function ArchivedLeadsSettings({
   request,
   onOpenLead,
+  canRestore=false,
+  onRestored,
 }: {
   request: Request;
   onOpenLead?: (lead: Lead) => void;
+  canRestore?: boolean;
+  onRestored?:()=>void|Promise<void>;
 }) {
   const [items, setItems] = useState<Lead[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
+  const [restoreLead, setRestoreLead] = useState<Lead|null>(null);
+  const refreshRef=useRef<HTMLButtonElement|null>(null);
   const generation = useRef(0);
   const pending = useRef(false);
   async function load(append = false) {
@@ -64,6 +70,7 @@ export default function ArchivedLeadsSettings({
     setItems([]);
     setCursor(null);
     setLoaded(false);
+    setRestoreLead(null);
     void load();
     return () => {
       generation.current++;
@@ -79,13 +86,14 @@ export default function ArchivedLeadsSettings({
           </h3>
           <p>
             Kept for reference, outside your active pipeline. Your current
-            lead-access permissions still apply. Pending reminders stay
-            cancelled.
+            lead-access permissions still apply. Restoring never reschedules cancelled
+            outreach; administrative tasks keep their existing state.
           </p>
         </div>
         <button
           type="button"
           className="button"
+          ref={refreshRef}
           disabled={busy}
           onClick={() => void load()}
         >
@@ -125,6 +133,7 @@ export default function ArchivedLeadsSettings({
                 </dd>
               </div>
             </dl>
+            {canRestore?<button type="button" className="button" disabled={busy} onClick={()=>setRestoreLead(lead)}><ArchiveRestore size={16}/> Restore lead</button>:null}
             <button
               type="button"
               className="text-button"
@@ -151,6 +160,24 @@ export default function ArchivedLeadsSettings({
           Retry loading archives
         </button>
       ) : null}
+      <Modal open={!!restoreLead} onClose={()=>{if(!busy)setRestoreLead(null);}} title="Restore lead?" description="Return this lead to the active list. Suppression stays in place and cancelled outreach stays cancelled." returnFocusRef={refreshRef}>
+        <p>{restoreLead?.name || 'Unnamed lead'}</p>
+        <ErrorMessage error={error}/>
+        <div className="form-actions">
+          <button type="button" className="text-button" disabled={busy} onClick={()=>setRestoreLead(null)}>Cancel</button>
+          <button type="button" className="button primary" disabled={busy || !canRestore} onClick={async()=>{
+            if(!restoreLead || pending.current)return;
+            const lead=restoreLead,current=generation.current;pending.current=true;setBusy(true);setError('');
+            try{
+              await request('/leads/'+encodeURIComponent(lead.id)+'/restore','POST',{expectedVersion:lead.version});
+              if(current!==generation.current)return;
+              setItems(rows=>rows.filter(row=>row.id!==lead.id));setRestoreLead(null);
+              try{await onRestored?.();}catch{if(current===generation.current)setError('Lead restored. Refresh the workspace to see the updated active list.');}
+            }catch(e){if(current===generation.current)setError((e as Error).message);}
+            finally{if(current===generation.current){pending.current=false;setBusy(false);}}
+          }}>{busy?'Restoring…':'Confirm restore'}</button>
+        </div>
+      </Modal>
     </section>
   );
 }

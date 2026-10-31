@@ -48,3 +48,5 @@ apps/web/public/swagger/
 release-verification.json
 docs-verification.json
 monitoring.json
+
+ingress-deployment.json

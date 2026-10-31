@@ -23,7 +23,7 @@
   {
     "id": "archives",
     "label": "Archives",
-    "description": "View archived leads without returning them to the active pipeline.",
+    "description": "Review retained leads and restore permitted records to your active list.",
     "group": "personal",
     "admin": false
   },

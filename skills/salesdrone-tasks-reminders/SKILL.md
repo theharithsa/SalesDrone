@@ -77,9 +77,11 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#15](https://github.com/theharithsa/SalesDrone/issues/15), [#21](https://github.com/theharithsa/SalesDrone/issues/21), [#39](https://github.com/theharithsa/SalesDrone/issues/39), [#40](https://github.com/theharithsa/SalesDrone/issues/40), [#56](https://github.com/theharithsa/SalesDrone/issues/56), [#58](https://github.com/theharithsa/SalesDrone/issues/58). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#39](https://github.com/theharithsa/SalesDrone/issues/39), [#40](https://github.com/theharithsa/SalesDrone/issues/40), [#56](https://github.com/theharithsa/SalesDrone/issues/56), [#58](https://github.com/theharithsa/SalesDrone/issues/58). Check their current status before changing the contract.
 
 Lead Assistant follow-up reads require tasks:read as well as assistant:query and
 current lead access. Only the requester's Pending outreach reminders in the explicit
 reporting-calendar range qualify; suppressed/review/archived leads are excluded.
 Duplicate reminders count a lead once. Task edits invalidate saved reminder results.
+
+Archive and single/batch reassignment query/cancel only Pending outreach tasks. Administrative tasks remain private and unchanged, with existing access/delivery eligibility. TASK_LIMIT counts cancellation work only. Missing historic task kinds are not guessed. Restore never resurrects cancelled outreach. Keep the leadId/state/kind/id index READY.

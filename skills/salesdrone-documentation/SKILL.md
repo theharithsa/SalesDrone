@@ -83,4 +83,6 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
+
+Public release summaries include safe Archives restoration, author/Admin correction policy and the independently deployed API ingress before Hosting cutover. Keep README app version current; engineering ingress limits and native-provider boundaries belong in API-INGRESS.md. Preserve historical screenshot/release identities.

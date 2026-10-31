@@ -48,7 +48,7 @@ Document personal font styles under Appearance & time, draft preview/save timing
 
 Explain Exact match separately from Equals: only source, stage and available custom dropdowns support literal case/space/Unicode matching. Curate desktop and mobile filter captures and keep unchanged historical captures honest.
 
-Explain Admin field setup before import preview, schema persistence on cancellation, explicit exclusions, duplicate/blank headers and stable field reuse. Explain the Today personal grouping selector and automatic hidden-stage fallback, bounded groups and unchanged KPIs. Refresh affected desktop/mobile import, category and popup captures without relabelling unchanged historical assets.
+For import and grouping captures, follow [operations](references/operations.md).
 
 ## Conditional reference
 
@@ -56,8 +56,10 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#4](https://github.com/theharithsa/SalesDrone/issues/4), [#15](https://github.com/theharithsa/SalesDrone/issues/15), [#21](https://github.com/theharithsa/SalesDrone/issues/21), [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#55](https://github.com/theharithsa/SalesDrone/issues/55), [#56](https://github.com/theharithsa/SalesDrone/issues/56), [#58](https://github.com/theharithsa/SalesDrone/issues/58), [#59](https://github.com/theharithsa/SalesDrone/issues/59), [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#55](https://github.com/theharithsa/SalesDrone/issues/55), [#56](https://github.com/theharithsa/SalesDrone/issues/56), [#58](https://github.com/theharithsa/SalesDrone/issues/58), [#59](https://github.com/theharithsa/SalesDrone/issues/59), [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.
 
 Capture Source, Zone and custom-field selections with configured labels, mapped import destinations/conflicts, and empty groups. Keep primary/helper rows separate; refresh affected states without restamping unchanged captures.
 
 Research workflows: [guide notes](references/research.md).
+
+Archives now exposes Restore lead to current lead editors. Explain preserved suppression/contact ownership, current version/scope and no restarted outreach. Corrections are original-author/Admin only. Refresh archives screenshots with fictional records and visible restore controls.

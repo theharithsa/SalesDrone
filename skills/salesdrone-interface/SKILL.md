@@ -52,7 +52,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#4](https://github.com/theharithsa/SalesDrone/issues/4), [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#45](https://github.com/theharithsa/SalesDrone/issues/45), [#46](https://github.com/theharithsa/SalesDrone/issues/46), [#59](https://github.com/theharithsa/SalesDrone/issues/59). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#45](https://github.com/theharithsa/SalesDrone/issues/45), [#46](https://github.com/theharithsa/SalesDrone/issues/46), [#59](https://github.com/theharithsa/SalesDrone/issues/59). Check their current status before changing the contract.
 
 Field-dependent dashboard copy must remain readable with 80-character configured labels at narrow widths and larger display scales. Import conflict messages use local focus links to existing controls; do not silently change column mappings or discard their data.
 
@@ -64,3 +64,5 @@ Lead Assistant uses the dedicated Material conversation surface with on-demand h
 Its fixed history sheet divides viewport dimensions by interface-scale; verify both
 zoom and short windows. Composer insets account for bottom navigation only inside
 the app shell, so standalone synthetic previews do not inherit a phantom nav gap.
+
+Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use existing Material buttons and narrow-card wrapping.

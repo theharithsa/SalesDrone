@@ -45,7 +45,7 @@ const initialSession: Session = {
     id: 'design-admin',
     role: 'Admin',
     active: true,
-    capabilities: [],
+    capabilities: ['leads:read','leads:edit'],
     scope: 'all',
     version: 1,
   },
@@ -236,6 +236,7 @@ function AdminReview() {
           nextCursor: offset + 30 < rows.length ? String(offset + 30) : null,
         };
       }
+      if (key.endsWith('/restore') && method === 'POST') return {ok:true};
       if (key === '/me') return structuredClone(body);
       if (
         method !== 'GET' &&

@@ -48,7 +48,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
 
 Current release plans require a milestone reference with numeric scope and readiness. Planning state holds publication; CI checks live GitHub milestone/issue assignments and PR closing scope. Main publication requires completed issue states. See docs/RELEASE-GOVERNANCE.md and milestone-policy.test.ts; local review iterations do not advance SemVer.
 
@@ -59,3 +59,5 @@ authorize another base or published maintenance. See candidate-recovery.mjs/test
 
 For verified unpublished recovery, impact coverage uses the proven prior published
 commit rather than only the index-fix PR base. The live evidence gate runs first.
+
+The supported API now also requires the registered Cloud Run ingress identity/parser checks before Hosting cutover and live parser probes afterward. CSP source review must preserve Google/App Check/RUM and managed HSTS. Do not close #30 using only inner Express tests.

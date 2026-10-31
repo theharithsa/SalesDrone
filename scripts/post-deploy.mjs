@@ -1,3 +1,4 @@
+import {checkIngress} from './ingress-checks.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 import {
   checkPublishedVersion,
@@ -109,6 +110,19 @@ try {
           expected,
         );
       });
+    await check('live-ingress-parser', async () => {
+      const metadata=JSON.parse(await readFile('ingress-deployment.json','utf8'));
+      if(metadata.version!==expected.version || metadata.commit!==expected.commit || !metadata.revision || metadata.parserBoundary!=='passed')throw Error('Ingress revision not verified');
+      await checkIngress('https://sales-drone-avinya.firebaseapp.com',expected);
+    });
+    await check('spa-security-headers',async()=>{
+      for(const path of ['/','/leads','/settings']){
+        const response=await get('https://sales-drone-avinya.firebaseapp.com'+path);
+        const csp=response.headers.get('content-security-policy')||'';
+        if(!response.ok || !csp.includes("object-src 'none'") || !csp.includes("script-src 'self'") || csp.includes("'unsafe-eval'") || !response.headers.get('strict-transport-security')?.includes('includeSubDomains'))throw Error('SPA security policy missing');
+        await response.body?.cancel();
+      }
+    });
     await check('private-storage', async () => {
       checkStorage(JSON.parse(await readFile('deployment.json', 'utf8')));
       const r = await get(

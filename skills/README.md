@@ -3,8 +3,9 @@
 Start with [skill-tree.json](../skill-tree.json) or [skill-tree.md](../skill-tree.md) for prompt routing. Every feature/setting release uses [release readiness](salesdrone-release-readiness/SKILL.md) with its domain owner.
 
 These are logical service playbooks for the existing modular application, not
-independently deployed microservices. The backend is one Firebase Functions codebase
-with an HTTP API and four scheduled exports. A future agent should load the relevant
+independently deployed microservices. The domain backend is one Firebase Functions
+codebase with an HTTP API and four scheduled exports. The API ingress playbook is
+the explicit exception: a separate Cloud Run transport service forwards to that API. A future agent should load the relevant
 skill and the shared contract before changing its module.
 
 Canonical skills live here. `.agents/skills` points to this directory for project
@@ -17,6 +18,7 @@ Nothing is installed into a user's global skill directory.
 <!-- module-catalog:start -->
 | Skill | Responsibility |
 | --- | --- |
+| [salesdrone-api-ingress](salesdrone-api-ingress/SKILL.md) | Maintain SalesDrone's Cloud Run HTTP ingress, bounded body validation, upstream proxy, service IAM and rollout. Use for Hosting/API parser boundary failures; business authentication and policy stay in the existing API. |
 | [salesdrone-api-integrations](salesdrone-api-integrations/SKILL.md) | Maintain SalesDrone scoped Personal Access Tokens, versioned OpenAPI/Swagger portal and HTTP integration policy. Use for external API contracts and token lifecycle; domain behavior stays with its module skill. |
 | [salesdrone-attachments](salesdrone-attachments/SKILL.md) | Maintain SalesDrone private lead files in Firebase Storage, authenticated upload/download APIs, quotas, expiry and cleanup. Use for lead attachments and Files tab issues; batch lead edits belong to leads. |
 | [salesdrone-authentication](salesdrone-authentication/SKILL.md) | Maintain SalesDrone Google sign-in, App Check, session bootstrap and demo isolation. Use for login failures or identity verification; membership administration belongs to people-permissions. |

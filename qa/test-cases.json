@@ -3,6 +3,22 @@
   "purpose": "Execution catalog, not prefilled pass evidence",
   "modules": [
     {
+      "module": "salesdrone-api-ingress",
+      "ownerSkill": "skills/salesdrone-api-ingress/SKILL.md",
+      "automatedTests": [
+        "services/ingress/test/gateway.test.js",
+        "tests/deployment-outcome.test.ts",
+        "services/ingress/test/telemetry.test.js"
+      ],
+      "manualCases": [
+        {
+          "id": "INGRESS-01",
+          "expected": "Malformed/oversized JSON is rejected before managed parsing; auth and binary uploads retain their contracts.",
+          "fixture": "synthetic local transport; read-only live parser/denial probes; no customer writes"
+        }
+      ]
+    },
+    {
       "module": "salesdrone-api-integrations",
       "ownerSkill": "skills/salesdrone-api-integrations/SKILL.md",
       "automatedTests": [
@@ -291,7 +307,7 @@
         },
         {
           "id": "THEME-CONTROL-2.0.1",
-          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320\u20131920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
+          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320–1920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
           "fixture": "isolated synthetic browser; node scripts/review-theme.mjs; no account writes"
         },
         {
