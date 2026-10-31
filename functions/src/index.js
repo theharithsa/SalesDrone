@@ -1,3 +1,6 @@
+import { researchStore } from './lead-research-store.js';
+import { researchGemini } from './lead-research-gemini.js';
+import { researchWork } from './lead-research-worker.js';
 import { backfillRateLimitExpiry } from './rate-limit.js';
 import { ROOT } from './policy.js';
 import { onInit } from 'firebase-functions/v2/core';
@@ -88,8 +91,20 @@ const appCheckMode = defineString('APP_CHECK_MODE', {
   description: 'enforce in production; disabled only for emulators.',
 });
 const store = guardLeadData(
-  observableStore(firestoreStore(getFirestore()), () => observability),
+  observableStore(researchStore(firestoreStore(getFirestore()),()=>observability?.capture()?.traceparent), () => observability),
 );
+const research = researchGemini({key:()=>geminiKey.value(),model:()=>geminiModel.value()});
+async function researchDependency(kind,fn) {
+  const started=performance.now();let outcome='success';
+  try {return await dependency(kind==='batch'?'lead-research.batch':'gemini.lead-'+kind,fn);}
+  catch(error){outcome='failure';throw error;}
+  finally {try{observability?.researchOperation(kind,outcome,(performance.now()-started)/1000);}catch{}}
+}
+const observedResearch={
+  plan: input=>researchDependency('plan',()=>research.plan(input)),
+  themes: input=>researchDependency('themes',()=>research.themes(input)),
+  embed: (input,task)=>researchDependency('embedding',()=>research.embed(input,task)),
+};
 const handler = createApp({
   cursorSecret: () => process.env.FUNCTIONS_EMULATOR === 'true'
     ? process.env.CURSOR_SECRET || 'isolated-emulator-cursor-key'
@@ -269,6 +284,10 @@ export const leadIntelligence = onSchedule(
   async () =>
     worker('lead-intelligence', async () => {
       if (resetActive(await store.get(RESET_STATE))) return { skipped: 1 };
+      try {
+        const researchStats = await researchDependency('batch',()=>researchWork({store,provider:observedResearch,budgetMs:40000,observe:(name,fn,parent)=>observability?observability.span('lead-research.'+name,fn,{},parent):fn()}));
+        console.info(JSON.stringify({event:'lead_research',...researchStats}));
+      } catch {console.warn(JSON.stringify({event:'lead_research_failed'}));}
       const stats = await scoreLeads({
         store,
         extract: (input) =>

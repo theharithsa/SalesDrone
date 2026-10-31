@@ -502,6 +502,13 @@
           "description": "Grant imports:share with imports:read to list and view other uploaders\u2019 jobs. Add imports:write to review/resume their jobs.",
           "effect": "Incoming rows and matched leads outside the member\u2019s current lead scope are redacted and cannot be updated. Shared access never implies lead access or promotes the member to Admin. Applies on the next server request after an Admin saves permissions.",
           "example": "Grant shared history to a reviewer; grant write access only when they should execute imports."
+        },
+        {
+          "id": "access.research",
+          "label": "Hygiene and Assistant grants",
+          "default": "Admins have access; other members have none",
+          "description": "Grant Hygiene read, run or AI summaries and Lead Assistant separately in People & access. Run/AI also require Hygiene read.",
+          "effect": "Every grant intersects current lead access, assigned-only workspace policy and active membership. Reports and chats remain creator-private; revocation prevents further reads and in-flight publication. No PAT access is added."
         }
       ]
     },
@@ -542,6 +549,56 @@
           "description": "Explains why SalesDrone exists and shows the application version.",
           "effect": "Refresh after a release to load current assets. This page does not change business data.",
           "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "research",
+      "scope": "Workspace-wide reporting rules; Admin writes",
+      "api": "GET/PATCH /api/v1/lead-research-settings; GET/POST /api/v1/lead-assistant/index",
+      "permissions": "Active lead readers may read safe reporting configuration. Google/App Check Admin + members:write and expectedVersion required for settings changes; enabling or rebuilding the workspace-wide index additionally requires All leads scope. No PAT access.",
+      "controls": [
+        {
+          "id": "research.convertedStages",
+          "label": "Converted stages",
+          "default": "Empty; Setup required",
+          "description": "Choose the current Admin-configured stages representing converted leads.",
+          "effect": "Exact current counts use these choices. Calendar-month counts use recorded entries into this group; each lead counts at most once per requested month. Creation/import and moves within this group do not count."
+        },
+        {
+          "id": "research.failedStages",
+          "label": "Failed stages",
+          "default": "Empty; Setup required",
+          "description": "Choose the stages representing failed enquiries. Converted and failed groups must be disjoint.",
+          "effect": "Current failed counts use the full accessible active cohort. Failure themes use only retrieved, source-verified evidence from currently failed leads."
+        },
+        {
+          "id": "research.archiveReviewStages",
+          "label": "Archive-review stages",
+          "default": "Empty; no archive suggestions",
+          "description": "Choose stages eligible for manual archive review.",
+          "effect": "A finding additionally requires recorded last contact older than the threshold and no pending task. No automatic archive, merge, deletion or outreach."
+        },
+        {
+          "id": "research.inactivityDays",
+          "label": "Inactivity threshold",
+          "default": "Not configured",
+          "description": "Choose 1\u20133650 days since last recorded contact.",
+          "effect": "A missing last-contact date does not establish inactivity. Age, low scores or shared phone numbers alone do not create archive candidates."
+        },
+        {
+          "id": "research.timezone",
+          "label": "Reporting timezone",
+          "default": "Asia/Kolkata",
+          "description": "Choose a valid IANA timezone for calendar conversions and Assistant reminder periods. Weeks run Monday through Sunday.",
+          "effect": "Monthly windows include the first calendar day and exclude the first day of the following month. February, leap years and timezone boundaries follow the calendar."
+        },
+        {
+          "id": "research.indexingEnabled",
+          "label": "Knowledge indexing",
+          "default": "Off",
+          "description": "Opt in to a Gemini embedding backfill and incremental private search index. Existing server-side Gemini credentials are reused; no browser secret.",
+          "effect": "Enabling queues a bounded initial scan. Source edits atomically queue updates. Retrieval uses Firestore vectors with ACL prefilters and current source checks. Counts work independently of indexing. Index processing is bounded and may lag; failed jobs can be retried by an Admin rebuild."
         }
       ]
     }

@@ -83,3 +83,5 @@ For detailed UI, recovery and integration recipes, read [module recipes](referen
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
+
+Lead research reuses HTTP RED, safe Firestore/Gemini dependency spans and worker logs containing processed/indexed/failed counts only. hygieneScans, assistantConversations and assistantRequests participate in committed domain outboxes; state transitions export bounded numeric lifecycle counts. Reporting settings have key-only ai.research audit events. Research operation counters/duration histograms use finite kind/outcome dimensions; async step spans link real request context when available. Never export questions, labels, source text, contacts, replies or embeddings. Derived index writes do not create business events.

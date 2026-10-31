@@ -78,3 +78,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#18](https://github.com/theharithsa/SalesDrone/issues/18), [#28](https://github.com/theharithsa/SalesDrone/issues/28), [#56](https://github.com/theharithsa/SalesDrone/issues/56). Check their current status before changing the contract.
+
+Admins receive Hygiene and Assistant capabilities by default, including existing Admin records. Non-admins need explicit hygiene:read/run/ai or assistant:query grants intersected with current lead access. Run/AI require Hygiene read; PATs inherit no research access. Current member/policy versions bind private jobs and cursors; revocation stops in-flight publication. See lead-research.test.js.

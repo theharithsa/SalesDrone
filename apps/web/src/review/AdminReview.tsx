@@ -1,3 +1,8 @@
+import LeadAssistantPage from "../features/LeadAssistantPage";
+import LeadAssistantPrototype from './LeadAssistantPrototype';
+import '../research.css';
+import ResearchPage from '../features/ResearchPage';
+import { researchFixture } from './ResearchFixture';
 /** Development entry only. Real components, fictional in-memory data, no API transport. */
 import React, { useCallback, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -57,6 +62,7 @@ const initialSession: Session = {
   },
 };
 const values: Record<string, any> = {
+  '/lead-research-settings': {version:1,convertedStages:['Won'],failedStages:['Disqualified'],archiveReviewStages:['Disqualified'],inactivityDays:90,timezone:'Asia/Kolkata',indexingEnabled:true},
   '/workspace-settings': {
     version: 1,
     exportsEnabled: true,
@@ -192,6 +198,7 @@ function AdminReview() {
   const request = useCallback(
     async (path: string, method = 'GET', body: any = {}) => {
       const key = path.split('?')[0];
+      if(key.startsWith('/lead-hygiene/')||key.startsWith('/lead-assistant/'))return structuredClone(researchFixture(path,method,body));
       if (key === '/lead-data-reset/preview')
         return {
           previewId: '11111111-1111-4111-8111-111111111111',
@@ -274,6 +281,7 @@ function AdminReview() {
     }
     return request(path, method, body);
   }, [request]);
+  if (new URLSearchParams(window.location.search).get('preview') === 'assistant-agent')return <LeadAssistantPrototype/>;
   if (new URLSearchParams(window.location.search).get('preview') === 'lead-header')
     return <>
       <div className="review-admin-banner">Fictional lead header · in-memory preview only</div>
@@ -369,7 +377,7 @@ function AdminReview() {
           />
         ) : null}
       </Modal>
-      {new URLSearchParams(location.search).get('preview') === 'dashboard-fields' ? (
+      {['hygiene','assistant'].includes(new URLSearchParams(location.search).get('preview')||'') ? new URLSearchParams(location.search).get('preview')==='assistant'?<LeadAssistantPage request={request} demo={false}/>:<ResearchPage mode='hygiene' request={request} demo={false} canRun canAI admin/> : new URLSearchParams(location.search).get('preview') === 'dashboard-fields' ? (
         <DashboardPage demo config={{...config,hiddenFields:[...new Set([...config.hiddenFields,'stage'])]}} request={request} firstName="Explorer" timezone="Asia/Kolkata" sample={(()=>{const data=demoData();return {...data,leads:data.leads.map((lead,i)=>({...lead,zone:['North','South'][i%2],legacyStatus:['Awaiting drawings','Quoted','Under review'][i%3],customFields:{...lead.customFields,cf_preview_campaign:['Spring','Partner'][i%2]}}))}})()} refreshKey={0} stageOrder={config.values.stage} onStage={()=>{}} onCategory={()=>{}} onLead={async()=>{}} onTask={async()=>{}} onTasks={()=>{}}/>
       ) : new URLSearchParams(location.search).get('preview') === 'import-review' ? (<ImportReviewFixture />) : importing || new URLSearchParams(location.search).get('preview') === 'import-fields' ? (
         <><p className="notice">Mapping preview only. Use fictional files. Field setup stays in memory; server import validation and commits are unavailable.</p><ImportPage demo={false} config={config} canManageFields onFieldOptions={setConfig} request={request} onImported={() => {}} /></>

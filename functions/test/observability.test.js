@@ -169,6 +169,8 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
       (await base.query(path('leads'), { limit: 100 })).length,
       before,
     );
+    t.researchOperation('plan','success',0.125);
+    t.researchOperation('PRIVATE_UNBOUNDED','success',0.5);
     await t.flush();
     const traces = received
       .filter((r) => r.path.endsWith('traces'))
@@ -214,6 +216,10 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
           rs.scopeMetrics.flatMap((s) => s.metrics),
         ),
       );
+    const researchMetric=metrics.find(m=>m.name==='salesdrone.research.operations');
+    assert.equal(researchMetric.sum.dataPoints.length,1);
+    assert.deepEqual(attr(researchMetric.sum.dataPoints[0].attributes),{kind:'plan',outcome:'success'});
+    assert.equal(metrics.find(m=>m.name==='salesdrone.research.duration').unit,'s');
     const counter = metrics.find((m) => m.name === 'salesdrone.http.requests'),
       hist = metrics.find((m) => m.name === 'salesdrone.http.duration');
     const runtimeMemory = metrics.find(m => m.name === 'salesdrone.runtime.memory');
@@ -490,4 +496,16 @@ test('a worker that loses its delivery lease cannot finalize or count another wo
   assert.equal(metrics, 0);
   assert.equal((await store.get(p)).lease, 'replacement-worker');
   assert.equal((await store.get(p)).status, 'Sending');
+});
+
+test('research outcomes retain atomic private outboxes without the SDK, exclude question/answer values and roll back failures',async()=>{
+  const base=memoryStore(),store=observableStore(base,()=>null);
+  await store.run(async tx=>{await tx.get(path('assistantRequests','synthetic-request'));tx.set(path('assistantRequests','synthetic-request'),{id:'synthetic-request',status:'Pending',question:'PRIVATE synthetic question',ownerUid:'private-owner'});});
+  await store.run(async tx=>{const r=await tx.get(path('assistantRequests','synthetic-request'));tx.set(path('assistantRequests','synthetic-request'),{...r,status:'Completed',answer:{text:'PRIVATE synthetic answer'}});});
+  const events=await base.query(path('telemetryOutbox'),{limit:100});
+  assert.equal(events.length,2);assert.ok(events.some(e=>e.event.data['records.completed']===1));
+  assert.ok(events.every(e=>e.event.data['record.domain']==='assistantRequests'&&e.event.data['event.authority']==='server-confirmed'));
+  assert.ok(!JSON.stringify(events).includes('PRIVATE')&&!JSON.stringify(events).includes('private-owner'));
+  await assert.rejects(store.run(async tx=>{const r=await tx.get(path('assistantRequests','synthetic-request'));tx.set(path('assistantRequests','synthetic-request'),{...r,status:'Failed'});throw Error('rollback');}));
+  assert.equal((await base.query(path('telemetryOutbox'),{limit:100})).length,2);
 });

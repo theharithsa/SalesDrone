@@ -27,6 +27,10 @@ export const CAPABILITIES = [
   'imports:share',
   'members:write',
   'assignments:write',
+  'hygiene:read',
+  'hygiene:run',
+  'hygiene:ai',
+  'assistant:query',
 ];
 export const PRESETS = {
   Viewer: ['leads:read'],

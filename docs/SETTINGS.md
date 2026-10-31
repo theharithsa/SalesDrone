@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.5.3**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.6.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -406,6 +406,62 @@ Add business-specific signals or remove irrelevant ones. Stable factor identity 
 
 Background scans are bounded; bulk changes are not guaranteed to finish immediately. Inspect evidence coverage, not just the score.
 
+## AvinyaIntelligence → Lead research
+
+**Who/where:** Workspace-wide reporting rules; Admin writes.
+
+**API:** GET/PATCH /api/v1/lead-research-settings; GET/POST /api/v1/lead-assistant/index.
+
+**Permissions:** Active lead readers may read safe reporting configuration. Google/App Check Admin + members:write and expectedVersion required for settings changes; enabling or rebuilding the workspace-wide index additionally requires All leads scope. No PAT access..
+
+### Converted stages
+
+**Default:** Empty; Setup required.
+
+Choose the current Admin-configured stages representing converted leads.
+
+Exact current counts use these choices. Calendar-month counts use recorded entries into this group; each lead counts at most once per requested month. Creation/import and moves within this group do not count.
+
+### Failed stages
+
+**Default:** Empty; Setup required.
+
+Choose the stages representing failed enquiries. Converted and failed groups must be disjoint.
+
+Current failed counts use the full accessible active cohort. Failure themes use only retrieved, source-verified evidence from currently failed leads.
+
+### Archive-review stages
+
+**Default:** Empty; no archive suggestions.
+
+Choose stages eligible for manual archive review.
+
+A finding additionally requires recorded last contact older than the threshold and no pending task. No automatic archive, merge, deletion or outreach.
+
+### Inactivity threshold
+
+**Default:** Not configured.
+
+Choose 1–3650 days since last recorded contact.
+
+A missing last-contact date does not establish inactivity. Age, low scores or shared phone numbers alone do not create archive candidates.
+
+### Reporting timezone
+
+**Default:** Asia/Kolkata.
+
+Choose a valid IANA timezone for calendar conversions and Assistant reminder periods. Weeks run Monday through Sunday.
+
+Monthly windows include the first calendar day and exclude the first day of the following month. February, leap years and timezone boundaries follow the calendar.
+
+### Knowledge indexing
+
+**Default:** Off.
+
+Opt in to a Gemini embedding backfill and incremental private search index. Existing server-side Gemini credentials are reused; no browser secret.
+
+Enabling queues a bounded initial scan. Source edits atomically queue updates. Retrieval uses Firestore vectors with ACL prefilters and current source checks. Counts work independently of indexing. Index processing is bounded and may lag; failed jobs can be retried by an Admin rebuild.
+
 ## Workspace · Admin → Developer settings
 
 **Who/where:** Personal credentials; Admin only.
@@ -562,6 +618,14 @@ Grant imports:share with imports:read to list and view other uploaders’ jobs. 
 Incoming rows and matched leads outside the member’s current lead scope are redacted and cannot be updated. Shared access never implies lead access or promotes the member to Admin. Applies on the next server request after an Admin saves permissions.
 
 **Example:** Grant shared history to a reviewer; grant write access only when they should execute imports.
+
+### Hygiene and Assistant grants
+
+**Default:** Admins have access; other members have none.
+
+Grant Hygiene read, run or AI summaries and Lead Assistant separately in People & access. Run/AI also require Hygiene read.
+
+Every grant intersects current lead access, assigned-only workspace policy and active membership. Reports and chats remain creator-private; revocation prevents further reads and in-flight publication. No PAT access is added.
 
 ## Workspace · Admin → Lead data management
 

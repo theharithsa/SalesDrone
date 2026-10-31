@@ -128,3 +128,7 @@ The additive Exact operator requires no lead-data migration. Retain existing def
 ## Non-interactive function parameters
 
 Build the exact release, then run `node scripts/write-function-env.mjs`. The optional GitHub model override falls back to functions/src/model-config.js; the dotenv file always contains GEMINI_MODEL because Firebase CLI non-interactive resolution does not apply SDK defaults. No private token is written. Test the installed CLI resolver with function-environment.test.ts. The first 2.4.0 rollout failed at this admission step, before any Functions or Hosting update; its indexes/TTL are active. Recovery uses forward patch 2.4.1 through a verified PR.
+
+## Milestone-scoped versions
+
+Create the target GitHub milestone and assign its issues before advancing a candidate. Use `npm run release:plan -- patch|minor|major --milestone NUMBER --issues ISSUE1,ISSUE2`, complete the plan, then bump once. Local refinements and PR review keep that version. The helper preserves existing plans and refuses unplanned bumps. CI validates milestone scope, PR closing references and completed issue states before publication. Read [the carryover audit and governance contract](RELEASE-GOVERNANCE.md); old milestone issues remain open until real completion or explicit retargeting.

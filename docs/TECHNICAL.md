@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **2.5.3** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Application release: **2.6.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -198,3 +198,9 @@ Dashboard-grouping.js is a shared pure category projection used by live and gues
 Import-status.js validates explicit per-import status destinations against current available category fields. New clients send legacyStatus by default; absent fields retain the legacy API path. It transforms before custom-value validation, preserves original sourceStatus outside the lead document, prevents mapped-column overwrites and tracks only explicitly affected fields. Planning retains source metadata and existing scope projections redact restricted rows. Field-version guards and target rechecks protect commit/recovery.
 
 Dashboard presentation uses the effective configured grouping label throughout headings, descriptions and notes. Import status destinations reuse the available-category policy without hiding mapped fields; local conflict resolution focuses existing mapping/field-name controls and preserves source-column review. Server transformation, concurrency, scopes and overwrite checks are unchanged.
+
+## Lead research data flow
+
+Lead/activities writes atomically advance a source epoch and enqueue researchIndexJobs independently of telemetry. The existing leadIntelligence worker advances private hygieneScans/findings/evidence, assistantConversations/requests/contributions and bounded researchChunks backfill/update jobs, with a separate research time budget and failure boundary. Gemini embeddings (768 dimensions) feed ACL-prefiltered Firestore cosine queries; authoritative sources are rechecked before bounded prompts/citations. Counts use full deterministic authorized scans, never vector top-k. The app conservatively marks artifacts stale after source edits. Reset deletes derived collections and suppresses re-queueing. External direct database writes require explicit index rebuilding; all app writes use the shared wrapper.
+
+Research analytics and contact-index diagnostics use adapter field projections to keep read payloads bounded and avoid loading unrelated notes. Projected snapshots are excluded from known-before lifecycle comparisons. Private task changes have a separate Hygiene freshness epoch; they are never retrieved into Assistant context.

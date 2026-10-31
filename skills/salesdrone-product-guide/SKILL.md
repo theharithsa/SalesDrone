@@ -60,4 +60,4 @@ These are tracked follow-ups, not implemented behavior: [#4](https://github.com/
 
 Capture Source, Zone and custom-field selections with configured labels, mapped import destinations/conflicts, and empty groups. Keep primary/helper rows separate; refresh affected states without restamping unchanged captures.
 
-Explain explicit stage analytics separately from form hiding and Automatic fallback. Document retained shared-contact edits versus newly acquired duplicate contacts. Use fresh synthetic filled-select captures for dialog fixes.
+Research workflows: [guide notes](references/research.md).

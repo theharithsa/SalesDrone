@@ -1383,3 +1383,64 @@ test('shared contact stage edits and hidden stage analytics persist in actual Fi
   assert.ok(!refreshed.visualization.groups.some(g=>g.label==='Samples Given'));
   assert.equal((await store.get(path('leads',b.id))).stage,'Review');
 });
+
+test('Lead research uses real scoped Firestore pages, private API history, source invalidation and ACL-prefiltered vectors',async()=>{
+  await fetch(`http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/${projectId}/databases/(default)/documents`,{method:'DELETE'});
+  const {researchStore}=await import('../src/lead-research-store.js');
+  const {stepHygiene}=await import('../src/lead-hygiene.js');
+  const {processIndexJob,retrieveEvidence}=await import('../src/lead-research-index.js');
+  const {researchMember,researchAccessKey}=await import('../src/lead-research-access.js');
+  const store=guardLeadData(researchStore(firestoreStore(db)));
+  const app=createApp({store,verifyToken:token=>auth.verifyIdToken(token),now:()=> '2026-10-31T10:00:00.000Z'});
+  const adminToken=await signIn('spraghav@gmail.com'),repToken=await signIn('research-rep@example.test');
+  const rep=(await auth.verifyIdToken(repToken)).uid;
+  const call=(token,method,url,body,key)=>{let r=request(app)[method]('/api/v1'+url).set('Authorization','Bearer '+token);if(key)r=r.set('Idempotency-Key',key);return body?r.send(body):r;};
+  await call(adminToken,'get','/me').expect(200);
+  await store.run(async tx=>{
+    tx.set(path('members',rep),{id:rep,uid:rep,email:'research-rep@example.test',role:'SDR',scope:'assigned',active:true,version:1,capabilities:['leads:read','hygiene:read','hygiene:run','assistant:query','tasks:read']});
+    tx.set(path('settings','leadResearch'),{version:1,indexingEnabled:true,convertedStages:['Won'],failedStages:['Disqualified'],archiveReviewStages:[],inactivityDays:null,timezone:'Asia/Kolkata'});
+    for(let i=0;i<55;i++){const id='research-'+String(i).padStart(3,'0');tx.set(path('leads',id),{id,name:'Fictional research enquiry',company:'Fictional supplier',phone:'9876543210',countryCode:'+91',email:'',enquiryDate:'2026-01-01',stage:'New',assignedToUid:i<52?rep:'outside',archived:false,version:1,comments:'Fictional material pricing discussion.'});}
+    const {hash}=await import('../src/policy.js');
+    const key=hash('phone:+919876543210');
+    tx.set(path('dedupeKeys',key),{id:key,leadIds:Array.from({length:55},(_,i)=>'research-'+String(i).padStart(3,'0'))});
+  });
+  const scan=(await call(repToken,'post','/lead-hygiene/scans',{},randomUUID()).expect(200)).body;
+  for(let i=0;i<6;i++)await stepHygiene({store,id:scan.id});
+  const report=(await call(repToken,'get','/lead-hygiene/scans/'+scan.id).expect(200)).body;
+  assert.equal(report.status,'Completed');assert.equal(report.scanned,52);
+  const findings=(await call(repToken,'get','/lead-hygiene/scans/'+scan.id+'/findings').expect(200)).body;
+  assert.ok(findings.items.every(f=>!f.leadIds.some(id=>Number(id.split('-')[1])>=52)));
+  await call(adminToken,'get','/lead-hygiene/scans/'+scan.id).expect(404);
+  const embed=async input=>{const v=[1,...Array(767).fill(0)];return Array.isArray(input)?input.map(()=>v):v;};
+  for(const id of ['research-000','research-054']){
+    const {hash}=await import('../src/policy.js');
+    const job=await store.get(path('researchIndexJobs',hash('leads:'+id)));
+    await processIndexJob({store,job,embed});
+  }
+  const actor=await researchMember(store,{uid:rep},['assistant:query']);
+  const sources=await retrieveEvidence({store,identity:{uid:rep},access:researchAccessKey(actor),question:'material pricing',embed});
+  assert.equal(sources.length,1);assert.equal(sources[0].leadId,'research-000');
+  const stored=(await db.collection(path('researchChunks')).get()).docs[0].data();
+  assert.equal(stored.embedding.toArray().length,768);
+  await store.run(async tx=>{const lead=await tx.get(path('leads','research-000'));tx.set(path('leads','research-000'),{...lead,assignedToUid:'outside',version:2});});
+  assert.equal((await call(repToken,'get','/lead-hygiene/scans/'+scan.id).expect(200)).body.status,'Stale');
+  assert.deepEqual(await retrieveEvidence({store,identity:{uid:rep},access:researchAccessKey(actor),question:'material pricing',embed}),[]);
+  const chat=(await call(repToken,'post','/lead-assistant/conversations',{},randomUUID()).expect(200)).body;
+  await call(adminToken,'get','/lead-assistant/conversations/'+chat.id+'/messages').expect(404);
+  const {processAssistantRequest}=await import('../src/lead-assistant.js');
+  await store.run(async tx=>{for(const [id,recipientUid] of [['research-task',rep],['private-other','outside']])tx.set(path('tasks',id),{id,recipientUid,leadId:'research-001',kind:'outreach',state:'Pending',version:1,dueAt:'2026-11-03T10:00:00Z'});});
+  const pending=(await call(repToken,'post','/lead-assistant/conversations/'+chat.id+'/questions',{question:'List leads to call next week'},randomUUID()).expect(200)).body;
+  const provider={plan:async()=>({tool:'find_own_followups',filters:[],groupBy:'',outcome:'none',period:{unit:'week',offset:1,startDate:'',endDate:''},dateField:''})};
+  for(let i=0;i<3;i++)await processAssistantRequest({store,id:pending.id,provider});
+  const answer=(await call(repToken,'get','/lead-assistant/requests/'+pending.id).expect(200)).body;
+  assert.equal(answer.answer.count,1);
+  const matches=(await call(repToken,'get','/lead-assistant/requests/'+pending.id+'/leads?limit=1').expect(200)).body;
+  assert.equal(matches.items[0].id,'research-001');assert.equal(matches.items[0].phone,undefined);
+  await call(repToken,'get','/lead-assistant/conversations/'+chat.id+'/messages').expect(200);
+  const stop=(await call(repToken,'post','/lead-assistant/conversations/'+chat.id+'/questions',{question:'Another lead question'},randomUUID()).expect(200)).body;
+  await call(repToken,'post','/lead-assistant/requests/'+stop.id+'/cancel',{expectedVersion:1}).expect(200);
+  await processAssistantRequest({store,id:stop.id,provider});
+  assert.equal((await call(repToken,'get','/lead-assistant/requests/'+stop.id).expect(200)).body.status,'Cancelled');
+  await call(repToken,'delete','/lead-assistant/conversations/'+chat.id,{expectedVersion:(await store.get(path('assistantConversations',chat.id))).version}).expect(200);
+  await call(repToken,'get','/lead-assistant/conversations/'+chat.id+'/messages').expect(404);
+});

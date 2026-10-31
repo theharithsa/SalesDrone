@@ -450,16 +450,6 @@
     "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
   },
   {
-    "file": "dashboard-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "5e71520ef776bbf686d4ca7d1012ddbde809745a471e941ccd99adbb46e5a5a2",
-    "capturedAt": "2026-10-31T10:10:43.724393+00:00",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.5.2",
-    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
-  },
-  {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
     "sha256": "5e71520ef776bbf686d4ca7d1012ddbde809745a471e941ccd99adbb46e5a5a2",
@@ -578,5 +568,65 @@
     "capturePixels": "390 x 800",
     "version": "2.5.3",
     "review": "Visually/privacy reviewed. Synthetic Admin fixture only, no live API or writes. Stage analytics with hidden form stage or filled Country code/custom Product dialog. No customer data or credentials. Browser viewport only; native popup keyboard selection and physical-device/Safari behavior are not certified."
+  },
+  {
+    "file": "hygiene-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "58ebb501f8c2f27fcde5c95dd275aaf70bb395db36bf37035b0498a067290787",
+    "capturedAt": "2026-10-31T14:28:24.978432+00:00",
+    "viewport": "1280 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1280 x 900",
+    "version": "2.6.0",
+    "review": "Visually/privacy reviewed. Fictional in-memory research/Admin fixture or isolated application demo; no live API, provider inference, customer records or credentials. Mobile captures show scrolled report/conversation results. Browser review is not physical-device or Safari certification."
+  },
+  {
+    "file": "hygiene-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "e6b8f469d23b4ed9678ab552b6c446d75ea227b02a3c528eefcc45dfe7ffbf55",
+    "capturedAt": "2026-10-31T14:28:24.979751+00:00",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.6.0",
+    "review": "Visually/privacy reviewed. Fictional in-memory research/Admin fixture or isolated application demo; no live API, provider inference, customer records or credentials. Mobile captures show scrolled report/conversation results. Browser review is not physical-device or Safari certification."
+  },
+  {
+    "file": "assistant-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "5b254cdef4b3fdd7a2892c1b0bb8088cd19cf1f2e83fae190b8b425df37f721d",
+    "capturedAt": "2026-10-31T16:35:12.508Z",
+    "viewport": "1280 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1280 x 900",
+    "version": "2.6.0",
+    "review": "Fresh 2.6.0 Material 3 conversation/Settings capture visually and privacy reviewed. Synthetic demo or fictional Admin adapter only; no customer records, tokens or live business writes. Browser viewport review, not physical-device certification."
+  },
+  {
+    "file": "assistant-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "a0395dbbfb0dd3da2211c421da8f484126aebbdc729a5aa06a04d6d8ddaeb7eb",
+    "capturedAt": "2026-10-31T16:35:12.509Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.6.0",
+    "review": "Fresh 2.6.0 Material 3 conversation/Settings capture visually and privacy reviewed. Synthetic demo or fictional Admin adapter only; no customer records, tokens or live business writes. Browser viewport review, not physical-device certification."
+  },
+  {
+    "file": "research-settings-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "ab99813ea8e7d4e12806e695e0e4324aedc7e35713d884a032a230f406bf8baa",
+    "capturedAt": "2026-10-31T16:35:12.509Z",
+    "viewport": "1280 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1280 x 900",
+    "version": "2.6.0",
+    "review": "Fresh 2.6.0 Material 3 conversation/Settings capture visually and privacy reviewed. Synthetic demo or fictional Admin adapter only; no customer records, tokens or live business writes. Browser viewport review, not physical-device certification."
+  },
+  {
+    "file": "dashboard-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "987c0e304023cab033cde8f5c88a24697759447e10864698026b95800ed85143",
+    "capturedAt": "2026-10-31T14:28:24.988945+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.6.0",
+    "review": "Visually/privacy reviewed. Fictional in-memory research/Admin fixture or isolated application demo; no live API, provider inference, customer records or credentials. Mobile captures show scrolled report/conversation results. Browser review is not physical-device or Safari certification."
   }
 ]

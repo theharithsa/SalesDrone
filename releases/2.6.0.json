@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.0",
+  "summary": "Add private scoped Lead Hygiene reports and a guarded read-only Lead Assistant with exact analytics and source-verified RAG.",
+  "modules": [
+    "salesdrone-lead-hygiene",
+    "salesdrone-lead-assistant",
+    "salesdrone-people-permissions",
+    "salesdrone-workspace-settings",
+    "salesdrone-data-platform",
+    "salesdrone-observability",
+    "salesdrone-interface",
+    "salesdrone-lead-scoring",
+    "salesdrone-product-guide",
+    "salesdrone-release",
+    "salesdrone-release-readiness",
+    "salesdrone-tasks-reminders",
+    "salesdrone-testing"
+  ],
+  "documentation": [
+    "docs/LEAD-RESEARCH-CONTRACT.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/observability.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "README.md",
+    "CHANGELOG.md",
+    "docs/LEAD-ASSISTANT-AGENT-PLAN.md",
+    "docs/RELEASE-GOVERNANCE.md",
+    "docs/DESIGN-SYSTEM.md"
+  ],
+  "settingsSections": [
+    "research",
+    "access"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "API 1.22.0 adds scoped private report/chat jobs, artifact deletion, exact reporting configuration and opt-in index controls. Existing routes remain compatible.",
+    "contractVersion": "1.22.0",
+    "permissions": "Google/App Check only. Admin defaults and explicit member grants intersect current lead scope. Histories are creator-private, signed cursors are scope-bound and source/policy changes invalidate old data. No PAT expansion or lead mutation.",
+    "tests": [
+      "functions/test/lead-research.test.js",
+      "functions/test/emulator.integration.js",
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Add bounded research operation counters and active-duration histograms by plan/themes/embedding/batch and success/failure; retain existing HTTP/worker/runtime metrics.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Use existing real HTTP/worker context, Firestore/Gemini dependency spans and real original-request links for asynchronous research steps when context is available.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Emit sanitized research batch progress/failure counts and existing HTTP/worker diagnostics; never log customer questions, notes, contacts, vectors or model replies.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Committed hygieneScans, assistantConversations and assistantRequests use atomic domain outboxes with bounded lifecycle counts; reporting settings use key-only ai.research audit events.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Retain the standard version/commit/run deployment BizEvent, marker and independent OTLP receipt probes. HTTP acceptance is separate from tenant-query visibility.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic Material 3 conversation review covered 360/390/430/600/768/1024/1280/1440/1920px in light/dark, actual mobile shell, history Escape/focus, 390x500 short windows, 20px text and 125% zoom. Real Gemini synthetic probes verified schema/plans/citations/768-dimensional embeddings; no customer input. Required CI and exact deployed version/SHA, protected boundaries and five function revisions still gate publication. Browser checks do not certify physical devices or tenant searchability.",
+  "screenshots": [
+    "hygiene-demo.jpg",
+    "hygiene-mobile-demo.jpg",
+    "assistant-demo.jpg",
+    "assistant-mobile-demo.jpg",
+    "research-settings-demo.jpg",
+    "dashboard-demo.jpg"
+  ],
+  "milestone": {
+    "number": 5,
+    "title": "v2.6.0 \u2014 Lead Hygiene & Lead Assistant",
+    "issues": [
+      95,
+      96,
+      98
+    ],
+    "readiness": "ready"
+  }
+}

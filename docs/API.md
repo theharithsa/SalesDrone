@@ -288,3 +288,7 @@ Lead-data mutations, including import preview/resume, temporarily return HTTP 50
 PATCH /leads/{id} permits existing shared normalized contact keys during unrelated stage/detail edits; only newly acquired keys owned by another lead are rejected. Index updates remain atomic and expectedVersion/current scope remain mandatory. Personal dashboardField=stage is accepted even when stage is hidden in forms. Automatic fallback and import status-destination availability remain unchanged; API 1.21.0 shapes are unchanged.
 
 Stage writes use current Admin field-options values, including replacement/custom choices. Invalid or retired newly selected values remain rejected; unchanged legacy values remain readable. Refresh workspace reloads field configuration for another session’s changes.
+
+## Lead research (API 1.22.0)
+
+See [the versioned feature contract](LEAD-RESEARCH-CONTRACT.md). Hygiene and Assistant routes require Google/App Check and explicit feature grants intersecting leads:read/current scope; Admins receive defaults. No PAT scope is added. Creates require UUID idempotency keys, mutable artifacts/settings use expectedVersion and history/results use bounded owner-bound cursors. Histories are private and retained until explicit deletion; stale source/policy/configuration results are hidden. Exact monthly counts use recorded distinct transitions and expose incomplete import history. Indexing is off until an Admin enables it.

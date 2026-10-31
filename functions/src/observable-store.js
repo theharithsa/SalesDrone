@@ -14,6 +14,9 @@ const domains = new Set([
   'invitations',
   'imports',
   'leadScores',
+  'hygieneScans',
+  'assistantConversations',
+  'assistantRequests',
 ]);
 function domain(p, data) {
   const parts = p.split('/');
@@ -34,6 +37,12 @@ function domain(p, data) {
 }
 /** Count only transitions observed from a read-before-write snapshot. No field values leave the store. */
 export function lifecycleCounts(domain, before, after) {
+  if (['hygieneScans','assistantRequests','assistantConversations'].includes(domain) && after) {
+    const result={};
+    for(const state of ['Completed','Failed','Stale','Deleting'])
+      if(after.status===state&&before?.status!==state)result[state.toLowerCase()]=1;
+    return result;
+  }
   if (domain === 'leadDataResets' && after)
     return {
       ...(!before ? { reset_started: 1 } : {}),
@@ -96,15 +105,21 @@ export function observableStore(base, getTelemetry = () => null) {
   };
   return {
     ...base,
+    ...(base.nearest ? {nearest:(p,o)=>wrap('firestore.nearest',()=>base.nearest(p,o))}:{}),
     get: (p) => wrap('firestore.get', () => base.get(p)),
-    getAll: (paths) => wrap('firestore.getAll', () => base.getAll(paths)),
+    getAll: (paths,fields) => wrap('firestore.getAll', () => base.getAll(paths,fields)),
     query: (p, o) => wrap('firestore.query', () => base.query(p, o)),
     count: (p, f) => wrap('firestore.count', () => base.count(p, f)),
     scan: (p, options) => wrap('firestore.scan', () => base.scan(p, options)),
     run: (fn) => {
-      const t = getTelemetry();
-      if (!t?.enabled) return base.run(fn);
+      const available = getTelemetry();
       const transactionId = randomUUID();
+      // Research outcomes remain durable when the SDK is unavailable. Unknown
+      // request/trace attribution is explicit; never invent a parent span.
+      const t = available?.enabled ? available : {
+        span: async (_name, operation) => operation(),
+        capture: () => ({actorId:'system',requestId:'unavailable',operationId:transactionId,operation:'database.commit',traceparent:null}),
+      };
       return t.span(
         'firestore.transaction',
         () =>
@@ -118,14 +133,14 @@ export function observableStore(base, getTelemetry = () => null) {
                 known.set(p, value);
                 return value;
               },
-              getAll: async (paths) => {
-                const values = await tx.getAll(paths);
-                paths.forEach((p, i) => known.set(p, values[i]));
+              getAll: async (paths,fields) => {
+                const values = await tx.getAll(paths,fields);
+                if(!fields)paths.forEach((p, i) => known.set(p, values[i]));
                 return values;
               },
               query: async (p, o) => {
                 const values = await tx.query(p, o);
-                for (const value of values)
+                if(!o?.fields)for (const value of values)
                   known.set(p + '/' + value.id, value);
                 return values;
               },
@@ -142,7 +157,7 @@ export function observableStore(base, getTelemetry = () => null) {
               summaries = new Map();
             for (const [p, v] of written) {
               const d = domain(p, v);
-              if (!d) continue;
+              if (!d || (!available?.enabled && !['hygieneScans','assistantConversations','assistantRequests'].includes(d))) continue;
               const s = summaries.get(d) || {
                 written: 0,
                 created: 0,

@@ -9,6 +9,23 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.0] - 2026-10-31
+
+Milestone #5: Lead Hygiene, Lead Assistant and release governance. Publication requires completed scope and PR/CI acceptance.
+
+### Added
+- Material 3 Assistant design proposal: focused conversation page, rounded composer, on-demand history, compact lead results and collapsed source evidence. The dedicated page connects to private conversation APIs; development-only proposal data is fictional.
+- Lead Hygiene: resumable full-list checks, shared-contact groups with record-level review, field/index issues, configured archive-review candidates and optional grounded summaries.
+- Lead Assistant: validated standard/custom-field filters, paginated matching leads, recipient-private calendar reminder queries, exact distributions, versioned cancellation and private retained chats, exact scoped lead/conversion counts and source-verified semantic retrieval for recorded-note insights. General knowledge, web access and data mutations are outside its scope.
+- Admin settings for outcome-stage meanings, inactivity thresholds, reporting timezone and opt-in knowledge indexing. Members need explicit scoped feature grants; Admins receive access by default.
+
+### Security and operations
+- Milestone-scoped release planning holds publication while required issue scope remains unfinished; review iterations retain one candidate version.
+- Current membership, assignment, source/configuration revisions and reset locks invalidate stale research results. Reports/chats remain until explicit deletion; reset clears derived records.
+- API 1.22.0 adds Google/App Check-only research contracts. Incremental index jobs commit with source writes; no provider call runs inside a transaction. New request/worker/outbox signals exclude customer text.
+- Historical monthly conversions are explicitly observed/partial when import transition dates are unavailable; calendar boundaries use the configured timezone.
+
 ## [2.5.3] - 2026-10-31
 
 ### Fixed

@@ -24,6 +24,10 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-leads, salesdrone-conversations, salesdrone-workspace-settings, salesdrone-notifications.
 - [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit, lead header redesign, display zoom, design review, Material 3, make my site stunning, Tailwind styling, Awwwards, responsive UI.
   Related: salesdrone-leads, salesdrone-tasks-reminders, salesdrone-workspace-settings, salesdrone-book-mode, salesdrone-product-guide.
+- [salesdrone-lead-assistant](skills/salesdrone-lead-assistant/SKILL.md) — lead assistant, chatbot, RAG, converted this month, failure patterns, agent mode, calls next week, approved orders.
+  Related: salesdrone-release-readiness, salesdrone-people-permissions, salesdrone-leads, salesdrone-observability.
+- [salesdrone-lead-hygiene](skills/salesdrone-lead-hygiene/SKILL.md) — lead hygiene, shared phone numbers, data quality, archive review.
+  Related: salesdrone-release-readiness, salesdrone-people-permissions, salesdrone-leads, salesdrone-observability.
 - [salesdrone-lead-journey](skills/salesdrone-lead-journey/SKILL.md) — lead journey, stage flow, transition history.
   Related: salesdrone-release, salesdrone-leads, salesdrone-workspace-settings, salesdrone-dashboard.
 - [salesdrone-lead-scoring](skills/salesdrone-lead-scoring/SKILL.md) — lead score, scoring factor, qualification.

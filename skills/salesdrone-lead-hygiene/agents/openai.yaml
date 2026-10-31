@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Lead Hygiene"
+  short_description: "Maintain scoped lead quality reports and evidence"
+  default_prompt: "Use $salesdrone-lead-hygiene for this module. Read its implementation status and shared contract; enforce current permissions and lead scope. Do not infer business rules or claim planned endpoints are live."

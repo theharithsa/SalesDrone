@@ -21,6 +21,10 @@ const availableGrants = [
   'imports:read',
   'imports:write',
   'imports:share',
+  'hygiene:read',
+  'hygiene:run',
+  'hygiene:ai',
+  'assistant:query',
 ];
 const presets: Record<string, string[]> = {
   Viewer: ['leads:read'],
@@ -238,6 +242,7 @@ export default function MembersPage({
                               ...new Set([
                                 ...capabilities,
                                 c,
+                                ...(['hygiene:run','hygiene:ai'].includes(c)?['hygiene:read']:[]),
                                 ...(c === 'imports:write' ||
                                 c === 'imports:share'
                                   ? ['imports:read']
@@ -248,6 +253,7 @@ export default function MembersPage({
                               (x) =>
                                 x !== c &&
                                 !(
+                                  (c === 'hygiene:read' && ['hygiene:run','hygiene:ai'].includes(x)) ||
                                   c === 'imports:read' &&
                                   ['imports:write', 'imports:share'].includes(x)
                                 ),
@@ -263,6 +269,10 @@ export default function MembersPage({
                         'leads:edit': 'Edit lead details and stages',
                         'activities:write': 'Log calls and notes',
                         'tasks:write': 'Manage own follow-ups',
+                        'hygiene:read': 'View own Hygiene reports',
+                        'hygiene:run': 'Run Hygiene scans (requires Hygiene read)',
+                        'hygiene:ai': 'Summarize own Hygiene reports with AI (requires Hygiene read)',
+                        'assistant:query': 'Use Lead Assistant within current lead access',
                         'imports:read': 'View own import history',
                         'imports:write':
                           'Prepare, review and execute imports (requires lead create/edit permissions)',

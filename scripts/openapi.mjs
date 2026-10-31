@@ -1,3 +1,6 @@
+import { ResearchSettingsPatch } from '../functions/src/lead-research-settings.js';
+import { ScanInput, ResearchVersion } from '../functions/src/lead-hygiene.js';
+import { ConversationInput, QuestionInput } from '../functions/src/lead-assistant.js';
 import {
   ImportVersion,
   ImportDecision,
@@ -713,7 +716,36 @@ schemas.TokenPage = object(
   },
   ['items', 'nextCursor', 'availableScopes', 'maxActiveTokens'],
 );
+const researchSchemas={ResearchSettingsPatch,ResearchVersion,ScanInput,ConversationInput,QuestionInput};
+for(const [name,schema]of Object.entries(researchSchemas))schemas[name]=z.toJSONSchema(schema,{io:'input'});
+schemas.ResearchSettings=z.toJSONSchema(z.object(Object.fromEntries(Object.entries(ResearchSettingsPatch.shape).filter(([key])=>key!=='expectedVersion'))).extend({version:z.number().int().positive()}));
+const researchTheme={type:'object',required:['label','evidence'],properties:{label:{type:'string'},evidence:{type:'array',items:{type:'object',required:['sourceId','quote'],properties:{sourceId:{type:'string'},quote:{type:'string'}}}}}};
+schemas.ResearchScan={type:'object',required:['id','status','version'],properties:{id:{type:'string'},status:{type:'string',enum:['Pending','Running','Completed','Stale','Deleting']},version:{type:'integer'},scanned:{type:['integer','null']},findings:{type:['integer','null']},createdAt:{type:'string'},updatedAt:{type:'string'},summaryStatus:{type:['string','null'],enum:['Pending','Completed','Failed',null]},summary:{type:['object','null'],properties:{themes:{type:'array',items:researchTheme},sampledFindings:{type:'integer'},totalFindings:{type:'integer'}}}}};
+schemas.ResearchLead={type:'object',required:['id'],properties:{id:{type:'string'},version:{type:'integer'},name:{type:'string'},company:{type:'string'}}};
+schemas.ResearchFinding={type:'object',required:['id','kind','count'],properties:{id:{type:'string'},kind:{type:'string',enum:['Review','SharedContact','IndexReview']},count:{type:'integer'},field:{type:'string'},value:{type:'string'},issues:{type:'array',items:{type:'string'}},leadIds:{type:'array',items:{type:'string'}},leads:{type:'array',items:{$ref:'#/components/schemas/ResearchLead'}}}};
+schemas.AssistantConversation={type:'object',required:['id','version','status'],properties:{id:{type:'string'},version:{type:'integer'},status:{type:'string',enum:['Active','Stale','Deleting']},createdAt:{type:'string'},updatedAt:{type:'string'}}};
+schemas.AssistantAnswer={type:'object',required:['state','text'],properties:{state:{type:'string',enum:['Grounded','Partial','Clarify','Insufficient','OutOfScope','Unavailable']},text:{type:'string'},count:{type:'integer'},hasResults:{type:'boolean'},groupOverflow:{type:'integer'},groups:{type:'object',additionalProperties:{type:'integer'}},fields:{type:'array',items:{type:'object',properties:{id:{type:'string'},label:{type:'string'},type:{type:'string'},options:{type:'array',items:{type:'string'}}}}},coverage:{type:'object',properties:{scanned:{type:'integer'},asOf:{type:'string'},timezone:{type:'string'},cohort:{type:'string'},window:{type:'object',properties:{startDate:{type:'string'},endDate:{type:'string'},timezone:{type:'string'}}}}},themes:{type:'array',items:researchTheme},sources:{type:'array',items:{type:'object',properties:{id:{type:'string'},leadId:{type:'string'},name:{type:'string'},text:{type:'string'}}}}}};
+schemas.AssistantRequest={type:'object',required:['id','status'],properties:{id:{type:'string'},jobId:{type:'string'},status:{type:'string',enum:['Pending','Completed','Failed','Stale','Cancelled']},version:{type:'integer'},question:{type:'string'},createdAt:{type:'string'},updatedAt:{type:'string'},answer:{$ref:'#/components/schemas/AssistantAnswer'}}};
+schemas.ResearchIndex={type:'object',properties:{enabled:{type:'boolean'},status:{type:'string'},scanned:{type:'integer'},pending:{type:'integer'},failed:{type:'integer'},note:{type:'string'}}};
+
 const responseFor = (method, url) => {
+  if(url==='/lead-research-settings')return ref('ResearchSettings');
+  if(url==='/lead-assistant/index')return ref('ResearchIndex');
+  if(url.startsWith('/lead-hygiene/')) {
+    if(method==='delete')return ref('Ok');
+    if(url.endsWith('/leads'))return pageOf('ResearchLead');
+    if(url.endsWith('/findings'))return pageOf('ResearchFinding');
+    if(url==='/lead-hygiene/scans'&&method==='get')return pageOf('ResearchScan');
+    return ref('ResearchScan');
+  }
+  if(url.startsWith('/lead-assistant/')) {
+    if(method==='delete')return ref('Ok');
+    if(url.endsWith('/messages'))return {...pageOf('AssistantRequest'),properties:{...pageOf('AssistantRequest').properties,conversation:ref('AssistantConversation')}};
+    if(url.endsWith('/leads'))return {type:'object',properties:{items:{type:'array',items:{type:'object',properties:{id:{type:'string'},name:{type:'string'},company:{type:'string'},stage:{type:'string'},detail:{type:'string'}}}},nextCursor:{type:['string','null']}}};
+    if(url.endsWith('/questions')||url.includes('/requests/'))return ref('AssistantRequest');
+    if(url==='/lead-assistant/conversations'&&method==='get')return pageOf('AssistantConversation');
+    return ref('AssistantConversation');
+  }
   if (url === '/personal-access-tokens')
     return ref(method === 'get' ? 'TokenPage' : 'TokenCreated');
   if (url.startsWith('/personal-access-tokens/')) return ref('Ok');
@@ -825,6 +857,9 @@ endpoints.push(
   },
 );
 const bodyFor = (m, u) =>
+  u==='/lead-research-settings' ? 'ResearchSettingsPatch' :
+  u.startsWith('/lead-hygiene/') || u.startsWith('/lead-assistant/') ?
+    (m==='delete'||u.endsWith('/summary')?'ResearchVersion':u.endsWith('/questions')?'QuestionInput':u==='/lead-hygiene/scans'?'ScanInput':'ConversationInput') :
   u === '/lead-data-reset/preview'
     ? 'EmptyInput'
     : u === '/lead-data-reset' && m === 'post'
@@ -1174,10 +1209,15 @@ for (const e of endpoints) {
       description: 'Batch stored-data budget exceeded; select fewer leads',
     };
   }
+  if(e.url.endsWith('/cancel')&&e.url.startsWith('/lead-assistant/')) operation.requestBody={required:true,content:{'application/json':{schema:{type:'object',required:['expectedVersion'],additionalProperties:false,properties:{expectedVersion:{type:'integer',minimum:1}}}}}};
+  if(e.url.startsWith('/lead-hygiene')||e.url.startsWith('/lead-assistant')||e.url==='/lead-research-settings') {
+    operation.description+=' Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.';
+  }
   const auditRoutes = new Set([
     'PATCH /me',
     'PATCH /workspace-settings',
     'PATCH /ai-settings',
+    'PATCH /lead-research-settings',
     'PATCH /field-options',
     'PATCH /scoring-settings',
     'PATCH /members/:uid',
@@ -1199,6 +1239,8 @@ for (const e of endpoints) {
       auditReadScopeAdded: false,
     };
   }
+  if(e.method==='post'&&['/lead-hygiene/scans','/lead-assistant/conversations','/lead-assistant/conversations/:id/questions'].includes(e.url)&&!operation.parameters.some(p=>p.name==='Idempotency-Key'))
+    operation.parameters.push({in:'header',name:'Idempotency-Key',required:true,schema:{type:'string',format:'uuid'}});
   paths[url] ??= {};
   paths[url][e.method] = operation;
 }
@@ -1206,7 +1248,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.21.0',
+    version: '1.22.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Lead Assistant"
+  short_description: "Maintain guarded lead analytics and retrieval"
+  default_prompt: "Use $salesdrone-lead-assistant for this module. Read its implementation status and shared contract; enforce current permissions and lead scope. Do not infer business rules or claim planned endpoints are live."

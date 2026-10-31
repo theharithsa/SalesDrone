@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.5.3 restores stage analytics, shared-contact editing and aligned dialog dropdowns.
+> v2.6.0 adds scoped Lead Hygiene and a guarded Lead Assistant.
 > See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.5.3 · MIT**
+**Part of Avinya Enterprises · v2.6.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -104,7 +104,7 @@ See the [API integration guide](docs/API.md) for scopes, CRUD examples, paginati
 | Delivery            | GitHub Actions, Google Workload Identity Federation, Firebase Hosting/Functions, GitHub Pages |
 
 - [Technical architecture and data flow](docs/TECHNICAL.md)
-- [Module skills for future agents](skills/README.md) — 18 service playbooks with code, API, test and deployment boundaries
+- [Module skills for future agents](skills/README.md) — 25 service playbooks with code, API, test and deployment boundaries
 - [Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs) and [API integration guide](docs/API.md)
 - [Versioned OpenAPI contract](docs/openapi.json)
 - [Automatic reminders](docs/AUTOMATIC-REMINDERS.md) and [intelligence/scoring](docs/INTELLIGENCE.md)
@@ -175,7 +175,7 @@ Open Settings → Appearance & time to preview and save Standard, Inter, Source 
 
 ## Repeatable testing
 
-The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.json) cover 23 modules. Run `npm run qa -- quick` for local checks or `npm run qa -- release` with Java 21 for the emulator and build gates. The [testing skill](skills/salesdrone-testing/SKILL.md) gives future agents browser recipes, privacy rules and an evidence handoff. CLI success is separate from visual and production verification.
+The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.json) cover 25 modules. Run `npm run qa -- quick` for local checks or `npm run qa -- release` with Java 21 for the emulator and build gates. The [testing skill](skills/salesdrone-testing/SKILL.md) gives future agents browser recipes, privacy rules and an evidence handoff. CLI success is separate from visual and production verification.
 
 Personal desktop display zoom lives in Settings → Appearance & time. The compact lead header keeps identity, score, stage and assignment together; rings distinguish a known zero from missing evidence.
 
@@ -237,3 +237,11 @@ Column filters include an indexed **Exact match** option for enquiry source, sal
 Review the [available import destinations](site/assets/screenshots/status-mapping-options-demo.jpg) and [mapped-column conflict](site/assets/screenshots/status-mapping-demo.jpg) with fictional data.
 
 Reviewed synthetic fixes: [Sales Stage dashboard](site/assets/screenshots/dashboard-stage-demo.jpg), [filled enquiry dropdowns](site/assets/screenshots/lead-form-selects-demo.jpg), and the [focused review and limits](docs/STAGE-EDIT-2.5.3-REVIEW.md).
+
+## Lead Hygiene and Lead Assistant
+
+Review shared contacts and incomplete enquiries in Lead Hygiene. Ask lead-only questions in Lead Assistant: counts scan your accessible records, while note insights retrieve bounded cited evidence. Admins configure outcome meanings and opt in to indexing in Settings → AvinyaIntelligence → Lead research; members need explicit scoped grants. Both are read-only for leads. Reports and private chats remain until deletion; stale data is hidden. See [the feature contract](docs/LEAD-RESEARCH-CONTRACT.md).
+
+![Synthetic Lead Hygiene report](site/assets/screenshots/hygiene-demo.jpg)
+
+![Synthetic Lead Assistant evidence and citations](site/assets/screenshots/assistant-demo.jpg)

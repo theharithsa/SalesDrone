@@ -1,3 +1,4 @@
+import { readResearchSettings } from './lead-research-settings.js';
 import { APP_VERSION, BUILD_COMMIT } from './version.js';
 import DEFAULT_FIELD_LABELS from './lead-labels.json' with { type: 'json' };
 import { DEFAULT_FIELD_OPTIONS } from './field-options.js';
@@ -18,6 +19,7 @@ const personalDefaults = {
   ...AUTO_DEFAULTS,
 };
 const definitions = {
+  'ai.research': ['convertedStages','failedStages','archiveReviewStages','inactivityDays','timezone','indexingEnabled'],
   appearance: [
     'appearance',
     'bookMode',
@@ -61,6 +63,7 @@ function sections(p) {
         workspace: ['reports-access'],
         ai: ['ai.insights'],
         scoring: ['ai.scoring'],
+        leadResearch: ['ai.research'],
       }[tail[1]] || []
     );
   return (
@@ -76,6 +79,7 @@ async function normalized(section, value) {
   if (['appearance', 'reminders', 'dashboard.visualization'].includes(section))
     return { ...personalDefaults, ...value };
   if (section === 'reports-access') return readWorkspaceSettings(reader);
+  if (section === 'ai.research') return readResearchSettings(reader);
   if (section === 'ai.insights') return readAISettings(reader);
   if (section === 'ai.scoring') return readScoring(reader);
   if (section === 'manage-fields') return readFieldOptions(reader);
