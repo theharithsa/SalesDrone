@@ -293,7 +293,7 @@ describe('personal dashboard categories',()=>{
  it('falls back from a hidden stage, saves the demo choice and drills through the selected field without AI calls',async()=>{
   localStorage.removeItem('salesdrone.demo.dashboard-field');
   const user=userEvent.setup(),request=vi.fn(async()=>({})),onCategory=vi.fn();
-  render(<DashboardPage demo config={{...config,hiddenFields:['stage']}} request={request} firstName="Explorer" timezone="UTC" sample={{leads:[{...lead,legacyStatus:'Quoted',source:'Website'}],tasks:[],activities:[]}} refreshKey={0} stageOrder={config.values.stage} onStage={vi.fn()} onCategory={onCategory} onTasks={vi.fn()} onLead={async()=>{}} onTask={async()=>{}}/>);
+  render(<DashboardPage demo config={{...config,labels:{...config.labels,zone:'Delivery region'},customFields:[{id:'cf_campaign',label:'Campaign',type:'text',options:[],required:false,deleted:false}],hiddenFields:['stage']}} request={request} firstName="Explorer" timezone="UTC" sample={{leads:[{...lead,legacyStatus:'Quoted',source:'Website',zone:'North',customFields:{cf_campaign:'Spring'}}],tasks:[],activities:[]}} refreshKey={0} stageOrder={config.values.stage} onStage={vi.fn()} onCategory={onCategory} onTasks={vi.fn()} onLead={async()=>{}} onTask={async()=>{}}/>);
   const picker=await screen.findByLabelText('Dashboard visualization field');
   await waitFor(()=>expect(picker).toBeEnabled());
   expect(screen.queryByRole('option',{name:'Sales stage'})).not.toBeInTheDocument();
@@ -302,6 +302,14 @@ describe('personal dashboard categories',()=>{
   await waitFor(()=>expect(screen.getByText('Currently using Enquiry source')).toBeInTheDocument());
   expect(localStorage.getItem('salesdrone.demo.dashboard-field')).toBe('source');
   await user.click(screen.getByRole('button',{name:/Website: 1 leads/}));expect(onCategory).toHaveBeenCalledWith('source','Website',false);
+  expect(screen.getByRole('heading',{name:'Leads by Enquiry source'})).toBeInTheDocument();
+  await user.selectOptions(picker,'zone');
+  expect(await screen.findByRole('heading',{name:'Leads by Delivery region'})).toBeInTheDocument();
+  await user.click(screen.getByRole('button',{name:/North: 1 leads/}));expect(onCategory).toHaveBeenLastCalledWith('zone','North',false);
+  await user.selectOptions(picker,'cf_campaign');
+  expect(await screen.findByRole('heading',{name:'Leads by Campaign'})).toBeInTheDocument();
+  await user.click(screen.getByRole('button',{name:/Spring: 1 leads/}));expect(onCategory).toHaveBeenLastCalledWith('cf_campaign','Spring',false);
+  expect(localStorage.getItem('salesdrone.demo.dashboard-field')).toBe('cf_campaign');
   expect(request).not.toHaveBeenCalled();localStorage.removeItem('salesdrone.demo.dashboard-field');
  });
 });
@@ -317,4 +325,62 @@ describe('import status destination',()=>{
   await user.selectOptions(screen.getByLabelText('Map status Sent details on WA'),'Website');await user.click(screen.getByRole('button',{name:/Validate records/}));
   await waitFor(()=>expect(request).toHaveBeenCalledWith('/imports/preview','POST',expect.objectContaining({statusField:'source',statusMap:{'Sent details on WA':'Website'}}),expect.any(String)));
  });
+});
+
+
+describe('mapped status destinations',()=>{
+ async function upload(user:ReturnType<typeof userEvent.setup>,csv:string){
+  const file=new File([csv],'mapped.csv',{type:'text/csv'});Object.defineProperty(file,'text',{value:async()=>csv});await user.upload(screen.getByLabelText('Choose a workbook'),file);
+ }
+ it('lists already-mapped categories and requires explicit resolution and exclusion before preview',async()=>{
+  const user=userEvent.setup(),request=vi.fn(async(path:string,_method?:string,_body?:any)=>path==='/imports/preview'?{id:'mapped-preview',formatVersion:3,status:'Preview',filename:'mapped.csv',total:1,offset:0,reviewOffset:0,items:[]}:{items:[],nextCursor:null});
+  render(<ImportPage demo={false} config={{...config,labels:{...config.labels,zone:'Zone'},values:{...config.values,zone:['North','South']}}} request={request} onImported={vi.fn()}/>);
+  await upload(user,'Customer name,Phone number,Status,Zone,Source\nSynthetic,12025550100,Sent details on WA,South,Website');
+  const picker=await screen.findByLabelText('Status mapping field');
+  expect(within(picker).getByRole('option',{name:'Zone'})).toBeEnabled();expect(within(picker).getByRole('option',{name:'Enquiry source'})).toBeEnabled();
+  await user.selectOptions(picker,'zone');expect(screen.getByRole('button',{name:/Validate records/})).toBeDisabled();
+  await user.click(screen.getByRole('button',{name:'Review existing column'}));expect(screen.getByLabelText('Workbook column for Zone')).toHaveFocus();
+  await user.selectOptions(screen.getByLabelText('Workbook column for Zone'),'-1');
+  expect(screen.getByRole('button',{name:/Create \/ reuse 1 fields/})).toBeDisabled();
+  expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(false);
+  await user.click(screen.getByLabelText('Import column 4: Zone as a field'));
+  await user.selectOptions(screen.getByLabelText('Map status Sent details on WA'),'North');
+  await user.click(screen.getByRole('button',{name:/Validate records/}));
+  await waitFor(()=>expect(request).toHaveBeenCalledWith('/imports/preview','POST',expect.objectContaining({statusField:'zone',statusMap:{'Sent details on WA':'North'},rows:[expect.objectContaining({source:'Website',legacyStatus:'Sent details on WA'})]}),expect.any(String)));
+  expect(request.mock.calls.find(([p])=>p==='/imports/preview')![2].rows[0]).not.toHaveProperty('zone');
+  expect(request.mock.calls.some(([p])=>p==='/field-options')).toBe(false);
+ });
+ it('protects a custom status destination from automatic field reuse and preserves its original column under a reviewed new name',async()=>{
+  const user=userEvent.setup();let current:typeof config={...config,customFields:[{id:'cf_region',label:'Delivery region',type:'text',options:[],required:false,deleted:false}]};
+  const request=vi.fn(async(path:string,method?:string,body?:any)=>{if(path==='/field-options'){if(method==='PATCH')current={...current,customFields:body.customFields,version:current.version+1};return current;}return path==='/imports/preview'?{id:'custom-preview',formatVersion:3,status:'Preview',filename:'mapped.csv',total:1,offset:0,reviewOffset:0,items:[]}:{items:[],nextCursor:null};});
+  render(<ImportPage demo={false} canManageFields config={current} request={request} onImported={vi.fn()}/>);
+  await upload(user,'Customer name,Phone number,Status,Delivery region\nSynthetic,12025550100,Sent details on WA,Original region');
+  await user.selectOptions(await screen.findByLabelText('Status mapping field'),'cf_region');
+  await user.selectOptions(screen.getByLabelText('Workbook column for Delivery region'),'-1');
+  expect(screen.getByText(/An additional field would reuse Delivery region/)).toBeInTheDocument();
+  expect(screen.getByRole('button',{name:/Create \/ reuse 1 fields/})).toBeDisabled();
+  await user.click(screen.getByRole('button',{name:'Review additional field'}));expect(screen.getByLabelText('New field name for column 4')).toHaveFocus();
+  await user.clear(screen.getByLabelText('New field name for column 4'));await user.type(screen.getByLabelText('New field name for column 4'),'Previous region');
+  await user.click(screen.getByRole('button',{name:/Create \/ reuse 1 fields/}));
+  await waitFor(()=>expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(true));
+  const preserved=current.customFields.find(f=>f.label==='Previous region')!;
+  expect(request.mock.calls.find(([p])=>p==='/imports/preview')![2]).toMatchObject({statusField:'cf_region',rows:[{[preserved.id]:'Original region',legacyStatus:'Sent details on WA'}]});
+  expect(request.mock.calls.find(([p])=>p==='/imports/preview')![2].rows[0]).not.toHaveProperty('cf_region');
+ });
+});
+
+it('rejects destination reuse from fresh field configuration before any schema or preview write',async()=>{
+ const user=userEvent.setup();
+ const initial:typeof config={...config,customFields:[{id:'cf_region',label:'Delivery region',type:'text',options:[],required:false,deleted:false}]};
+ const current={...initial,version:2,customFields:[{...initial.customFields[0],label:'Legacy region'}]};
+ const request=vi.fn(async(path:string,_method?:string)=>path==='/field-options'?current:{items:[],nextCursor:null});
+ render(<ImportPage demo={false} canManageFields config={initial} request={request} onImported={vi.fn()}/>);
+ const csv='Customer name,Phone number,Status,Legacy region,Product\nSynthetic,12025550100,Quoted,Original region,0012';
+ const file=new File([csv],'fresh.csv',{type:'text/csv'});Object.defineProperty(file,'text',{value:async()=>csv});await user.upload(screen.getByLabelText('Choose a workbook'),file);
+ await user.selectOptions(await screen.findByLabelText('Status mapping field'),'cf_region');
+ await user.click(screen.getByRole('button',{name:/Create \/ reuse 2 fields/}));
+ expect(await screen.findByRole('alert')).toHaveTextContent('An additional field would reuse the status destination');
+ expect(request.mock.calls).not.toContainEqual(['/field-options','PATCH',expect.anything()]);
+ expect(request.mock.calls.some(([p,m])=>p==='/field-options'&&m==='PATCH')).toBe(false);
+ expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(false);
 });

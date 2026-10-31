@@ -14,9 +14,10 @@ export default function DashboardCategoryPicker({
   error: string;
   onChange: (value: string) => void;
 }) {
+  const label = visualization?.availableFields.length ? visualization.label : '';
   return (
     <section className="panel dashboard-category-control">
-      <div><h2>Pipeline visualization</h2><p>Choose the category for your pipeline charts. Saved for your account.</p></div>
+      <div><h2>Lead breakdown</h2><p>{label ? `Compare lead counts by ${label}. Saved for your account.` : 'Choose an available field to group your leads.'}</p></div>
       <label>
         Group leads by
         <select
@@ -28,7 +29,7 @@ export default function DashboardCategoryPicker({
           <option value="auto">Automatic</option>
           {visualization?.availableFields.map(({ field, label }) => <option key={field} value={field}>{label}</option>)}
         </select>
-        <small>Currently using {visualization?.label}</small>
+        <small>{label ? `Currently using ${label}` : 'No grouping fields are available.'}</small>
       </label>
       {visualization?.unavailable ? <p role="status">Your saved field is unavailable. Showing {visualization.label}; choose another field to save a replacement.</p> : null}
       <ErrorMessage error={error} />

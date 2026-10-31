@@ -682,15 +682,14 @@ export default function DashboardPage({
             <section className="panel chart-panel">
               <div className="chart-heading">
                 <div>
-                  <span className="eyebrow">PIPELINE COMPOSITION</span>
-                  <h2>{snapshot.visualization?.label || 'Pipeline distribution'}</h2>
+                  <span className="eyebrow">LEAD COMPOSITION</span>
+                  <h2>{snapshot.visualization?.field ? snapshot.visualization.label : 'Lead distribution'}</h2>
                 </div>
                 <BarChart3 size={21} />
               </div>
-              <Ring data={snapshot.visualization?.groups||[]} label={snapshot.visualization?.label||'Pipeline distribution'} />
+              <Ring data={snapshot.visualization?.groups||[]} label={snapshot.visualization?.field?snapshot.visualization.label:'Lead distribution'} />
               <p className="chart-note">
-                Current distribution across {snapshot.coverage.leadsScanned}{' '}
-                visible leads. This is a snapshot, not a conversion funnel.
+                Distribution of {snapshot.coverage.leadsScanned} included leads{snapshot.visualization?.field ? ` by ${snapshot.visualization.label}` : ''}.
               </p>
             </section>
             <section className="panel chart-panel">

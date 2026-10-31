@@ -26,9 +26,9 @@ export default function PipelineFunnel({
     <section className="panel pipeline-funnel">
       <div className="funnel-heading">
         <div>
-          <span className="eyebrow">PIPELINE FLOW</span>
-          <h2>Where every lead stands</h2>
-          <p>Current {fieldLabel.toLowerCase()} counts. Select a group to explore its leads.</p>
+          <span className="eyebrow">LEAD DISTRIBUTION</span>
+          <h2>Leads by {fieldLabel}</h2>
+          <p>Compare lead counts by {fieldLabel}. Select a group to view matching leads.</p>
         </div>
         <GitBranch size={23} />
       </div>
@@ -80,9 +80,8 @@ export default function PipelineFunnel({
         ))}
       </div>
       <p className="chart-note">
-        {total} included leads · Width reflects each group’s current count.{' '}
-        {groups?.some(g=>g.aggregate) ? 'The largest 20 groups are shown; Other values combines the rest and has no direct filter. ' : ''}{groups?.some(g=>g.filterable===false) ? 'Long-text groups have no direct filter. ' : ''}Groups may widen again; these are not conversion rates or a history of
-        movement.
+        {total} included leads · Bar lengths compare current counts by {fieldLabel}.{' '}
+        {groups?.some(g=>g.aggregate) ? 'The largest 20 groups are shown; Other values combines the rest and has no direct filter. ' : ''}{groups?.some(g=>g.filterable===false) ? 'Long-text groups have no direct filter. ' : ''}Counts reflect current field values.
       </p>
     </section>
   );

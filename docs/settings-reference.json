@@ -76,7 +76,7 @@
           "label": "Dashboard grouping (Today \u2192 Group leads by)",
           "default": "Automatic: first available category field",
           "description": "Set directly on the Today dashboard. Choose Enquiry status, Sales stage, source, sector, location or an active custom text/dropdown field. Hidden/retired fields are excluded; Automatic falls back to Enquiry status when Sales stage is hidden.",
-          "effect": "Personal account preference through GET/PATCH /me and GET /dashboard. Changes apply immediately to the two pipeline distribution charts. Partial/older preference saves preserve the choice. Workflow stages, KPI definitions and AI brief inputs remain unchanged. Show up to 20 groups plus Other values; aggregates and values exceeding filter limits have no direct drill-through. Demo saves are browser-local.",
+          "effect": "Personal account preference through GET/PATCH /me and GET /dashboard. Changes apply immediately to the two lead distribution charts. Partial/older preference saves preserve the choice. Workflow stages, KPI definitions and AI brief inputs remain unchanged. Show up to 20 groups plus Other values; aggregates and values exceeding filter limits have no direct drill-through. Demo saves are browser-local. Headings, descriptions and notes follow the effective configured field label.",
           "example": "Hide Sales stage in Manage fields, then leave Automatic or choose Enquiry status on Today. A field that later disappears falls back with a notice; choose another field to replace the saved selection."
         }
       ]

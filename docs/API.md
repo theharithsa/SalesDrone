@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.5.1**, OpenAPI contract **1.21.0**. All application operations
+Application release **v2.5.2**, OpenAPI contract **1.21.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -280,3 +280,5 @@ PATCH /me accepts partial personal preferences, adding dashboardField (default a
 ### Import status destination
 
 Reviewed ImportInput adds optional statusField. The new browser default is legacyStatus (the existing Enquiry status field); none retains original text without another mapping. Active category fields and custom text/dropdown fields can be selected. Hidden/retired targets return STATUS_FIELD; a target already populated by a mapped column returns a row STATUS_COLUMN error. Configured dropdown/stage targets need valid choices for every status (STATUS_MAP). Text/Enquiry status defaults keep the original value; explicit remapping changes only that target. Source workbook text is retained as sourceStatus in authorized row details and follows existing explicit-Admin deletion retention. Non-admin schema permissions remain unchanged. New target selection requires reviewed mode; legacy HTTP clients omitting statusField retain the old stage-mapping behavior, and existing jobs keep their already prepared rows. Explicit stage columns remain independent; default status-only updates do not reset workflow stages.
+
+The browser lists every compatible active status destination, including targets with existing workbook mappings. It blocks preview until direct-column conflicts are resolved and prevents reviewed additional fields from reusing the selected target ID before any schema write. Unused source columns still require field review or explicit exclusion. This UI preflight does not change ImportInput, STATUS_COLUMN policy, roles or API 1.21.0.

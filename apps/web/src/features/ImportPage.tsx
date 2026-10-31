@@ -170,8 +170,20 @@ export default function ImportPage({
   const distinctStatuses = [
     ...new Set(mapped.map((r) => r.legacyStatus.trim()).filter(Boolean)),
   ];
-  const statusTargets=dashboardFields(config).filter(f=>f.field==='legacyStatus'||Number(mapping[f.field]??'-1')<0);
-  const invalidStatusTarget=statusField!=='none'&&!statusTargets.some(f=>f.field===statusField);
+  const statusTargets=dashboardFields(config);
+  const statusTarget=statusTargets.find(f=>f.field===statusField);
+  const invalidStatusTarget=statusField!=='none'&&!statusTarget;
+  const mappedStatusColumn=statusField==='legacyStatus'||statusField==='none'?-1:Number(mapping[statusField]??'-1');
+  const reusedStatusColumn=statusField.startsWith('cf_')&&statusTarget
+    ?selectedFields.find(p=>fieldNameKey(p.label)===fieldNameKey(statusTarget.label))?.index:undefined;
+  const conflictColumn=!statusTarget?undefined:mappedStatusColumn>=0?mappedStatusColumn:reusedStatusColumn;
+  const statusConflict=conflictColumn===undefined?undefined:{
+    message:mappedStatusColumn>=0
+      ?`${statusTarget?.label} already uses column ${conflictColumn+1} (${headers[conflictColumn]||'Unnamed column'}). Map that column to another field or choose Not mapped above before using this field for statuses. Populated columns not mapped elsewhere appear under Additional workbook fields.`
+      :`An additional field would reuse ${statusTarget?.label}, which is selected for statuses. Rename that additional field, map its column elsewhere, or explicitly exclude it before validating.`,
+    reviewId:mappedStatusColumn>=0?`import-column-${statusField}`:canManageFields?`import-new-label-${conflictColumn}`:`import-field-${conflictColumn}`,
+    reviewLabel:mappedStatusColumn>=0?'Review existing column':'Review additional field',
+  };
   const unsafeCell = (value: string) =>
     value.startsWith('[FORMULA') || value.startsWith('[LINK');
   const invalidCells = mapped.some((row) =>
@@ -248,6 +260,7 @@ export default function ImportPage({
     setError('');
     try {
       if(invalidStatusTarget)throw Error('Choose an available status mapping field.');
+      if(statusConflict)throw Error(statusConflict.message);
       if (!mapped.length) throw Error('No populated data rows were found.');
       if (mapped.length > 5000) throw Error('Import at most 5,000 data rows.');
       if (invalidCells)
@@ -260,6 +273,7 @@ export default function ImportPage({
         if(selectedFields.some(p=>rows.some(row=>unsafeCell(row[p.index]||''))))throw Error('Replace formulas and links with literal values before creating fields.');
         const current:FieldOptions=await request('/field-options');
         const resolved=resolveImportFields(current,selectedFields,()=> 'cf_'+crypto.randomUUID().replaceAll('-',''),mapping);
+        if(statusField!=='none'&&statusField!=='legacyStatus'&&Object.hasOwn(resolved.mapping,statusField))throw Error('An additional field would reuse the status destination. Rename it or choose another destination before validating.');
         const saved:FieldOptions=resolved.created?await request('/field-options','PATCH',{
           expectedVersion:current.version,values:current.values,customFields:resolved.fields,
         }):current;
@@ -449,7 +463,7 @@ export default function ImportPage({
             <button
               className="button primary"
               onClick={preview}
-              disabled={busy || invalidCells || invalidStatusTarget || (!canManageFields && selectedFields.length>0)}
+              disabled={busy || invalidCells || invalidStatusTarget || !!statusConflict || (!canManageFields && selectedFields.length>0)}
             >
               {selectedFields.length ? `Create / reuse ${selectedFields.length} fields & validate` : 'Validate records'} <ArrowRight size={16} />
             </button>
@@ -531,6 +545,8 @@ export default function ImportPage({
               <label key={key}>
                 {labelFor(config, key, label)}
                 <select
+                  id={`import-column-${key}`}
+                  aria-label={`Workbook column for ${labelFor(config,key,label)}`}
                   value={mapping[key] ?? '-1'}
                   onChange={(e) =>
                     setMapping({ ...mapping, [key]: e.target.value })
@@ -601,6 +617,15 @@ export default function ImportPage({
               field={statusField}
               statuses={distinctStatuses}
               mapping={statusMap}
+              conflict={statusConflict ? {
+                message:statusConflict.message,
+                reviewLabel:statusConflict.reviewLabel,
+                onReview:()=>{
+                  const control=document.getElementById(statusConflict.reviewId);
+                  control?.focus({preventScroll:true});
+                  control?.scrollIntoView?.({block:'center'});
+                },
+              }:undefined}
               onField={field=>{setStatusField(field);setStatusMap({});}}
               onValue={(status,value)=>setStatusMap(old=>{
                 const next={...old};

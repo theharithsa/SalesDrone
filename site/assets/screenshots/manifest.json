@@ -400,66 +400,6 @@
     "review": "Visually/privacy reviewed real filter dialog with native-picker controls and fictional guest leads. No live writes or customer data. Phone dialog scrolls to actions. OS popup rendering delegated to browser; no device/Safari certification."
   },
   {
-    "file": "import-fields-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "d07b1b9d39eb0c4dd6baabfdb1b7d5b56ab269c2ccb656bc6cfa040c8e08f347",
-    "capturedAt": "2026-10-31T08:21:04.930097+00:00",
-    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
-    "file": "import-fields-mobile-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "d7eb2161593b1186fbf3410fdc5a75c10f94d30ffd8c7bfafe7807825d4bb885",
-    "capturedAt": "2026-10-31T08:21:06.139796+00:00",
-    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
-    "file": "import-comments-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "2f0d21e9fffbcb28378011702d5ed114b4429570e662b5b0b23b26f4343450e1",
-    "capturedAt": "2026-10-31T08:21:05.309289+00:00",
-    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
-    "file": "import-comments-mobile-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "0fcdc03a9ca61efe10d606f4445cdd0ebd96c3eaada7c97b4555e6954a69e7f4",
-    "capturedAt": "2026-10-31T08:21:05.726164+00:00",
-    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
-    "file": "status-mapping-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "d1ccfe4a65817c7df2d5e60bcd0a023ad7a2082355dc428bd781057bf676d4a1",
-    "capturedAt": "2026-10-31T08:25:12.489585+00:00",
-    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
-    "file": "status-mapping-mobile-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "784bc8255a12d8319832e6642c07dab47d7b2f723dca59037647b0c576a17e16",
-    "capturedAt": "2026-10-31T08:25:12.935558+00:00",
-    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 1000",
-    "version": "2.5.0",
-    "review": "Visually and privacy reviewed. Real import/dashboard components in isolated fictional Admin preview; workbook is synthetic and API validation/commit is stubbed. No live writes, customer data or credentials. Browser viewport, not device/Safari certification."
-  },
-  {
     "file": "popup-select-demo.jpg",
     "mode": "synthetic-demo",
     "sha256": "ed282f469604f5668616cfc111e34f42c20a8c1108a030f2bf96aaa2213e1140",
@@ -470,63 +410,133 @@
     "review": "Visually/privacy reviewed real filter dialog with native-picker controls and fictional guest leads. No live writes or customer data. Phone dialog scrolls to actions. OS popup rendering delegated to browser; no device/Safari certification."
   },
   {
-    "file": "dashboard-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "569fa1c21516ed72a089fdd5844fe5a25a2680455a496a24cec5372dbdf321e0",
-    "capturedAt": "2026-10-31T08:32:42.473228+00:00",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.5.0",
-    "review": "Visually/privacy reviewed fictional guest application. Real dashboard or native-picker filter dialog controls; no server writes, customer data or credentials. OS popup rendering delegated to browser. Browser viewport only; not device/Safari certification."
-  },
-  {
-    "file": "journey-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "569fa1c21516ed72a089fdd5844fe5a25a2680455a496a24cec5372dbdf321e0",
-    "capturedAt": "2026-10-31T08:32:42.473228+00:00",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.5.0",
-    "review": "Visually/privacy reviewed fictional guest application. Real dashboard or native-picker filter dialog controls; no server writes, customer data or credentials. OS popup rendering delegated to browser. Browser viewport only; not device/Safari certification."
-  },
-  {
-    "file": "dashboard-missing-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "7b42f81e91255cd35163e08de098c40ce5b26fe8bae44956ee732ad7a541b774",
-    "capturedAt": "2026-10-31T08:59:47.757547+00:00",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.5.1",
-    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
-  },
-  {
-    "file": "dashboard-missing-mobile-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "1b98fbf842dc48dd2d28230d1c4464a087145d57428883de965017bfe5cb7034",
-    "capturedAt": "2026-10-31T08:59:48.201368+00:00",
-    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 900",
-    "version": "2.5.1",
-    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
-  },
-  {
     "file": "dashboard-fields-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2d9829aa7dbf93919781c2aaf880246305c932afa82d1de207143fb744e4dfc5",
-    "capturedAt": "2026-10-31T09:00:39.260960+00:00",
+    "sha256": "c6e2c662e9709313f6df3fe9e5f1a2ef4ae6df2681042e548f6d717007b70534",
+    "capturedAt": "2026-10-31T10:10:41.210763+00:00",
     "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 1000",
-    "version": "2.5.1",
-    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
   },
   {
     "file": "dashboard-fields-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "9de1e57377e237ca529680c47d0e7491242250599467fef6ce05e1791194d7f1",
-    "capturedAt": "2026-10-31T09:00:39.644998+00:00",
+    "sha256": "90ee511687274891807614ecc656c4c018ff2477c5887eedc8c5b03840a6692e",
+    "capturedAt": "2026-10-31T10:10:41.482701+00:00",
     "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 1000",
-    "version": "2.5.1",
-    "review": "Visually/privacy reviewed fictional guest or isolated Admin dashboard preview. Primary labels and helper rows remain separate; card counts align. No live writes, customer records or credentials. Chromium viewport only, not physical-device/Safari certification."
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
+  },
+  {
+    "file": "dashboard-missing-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "967f3d279da79f2142bf615ac1fc9f461dd43acd6785a1c076d12c18d712a35f",
+    "capturedAt": "2026-10-31T10:10:44.112432+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
+  },
+  {
+    "file": "dashboard-missing-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "68c3faf6c4223537948e87f2764a673f599810aff80e2f9c4f48ef34e8f85c25",
+    "capturedAt": "2026-10-31T10:10:44.400301+00:00",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
+  },
+  {
+    "file": "dashboard-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "5e71520ef776bbf686d4ca7d1012ddbde809745a471e941ccd99adbb46e5a5a2",
+    "capturedAt": "2026-10-31T10:10:43.724393+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
+  },
+  {
+    "file": "journey-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "5e71520ef776bbf686d4ca7d1012ddbde809745a471e941ccd99adbb46e5a5a2",
+    "capturedAt": "2026-10-31T10:10:43.724393+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
+  },
+  {
+    "file": "import-fields-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "a7be01bbaaf2a2ca3f2455748843974f63fb884fb325a2bc99af0714a50b27a3",
+    "capturedAt": "2026-10-31T10:10:46.577741+00:00",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 1000",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+  },
+  {
+    "file": "import-fields-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "14b3f27742645532847408eaccc39982fffa2f6b50433eb6a32bbf3f3c3a7abc",
+    "capturedAt": "2026-10-31T10:10:46.849882+00:00",
+    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 1000",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+  },
+  {
+    "file": "import-comments-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "aa1117fd8d7b626dea1d9c5ba56067387e18415d5517baa060d5df5ac9f08346",
+    "capturedAt": "2026-10-31T10:10:47.145182+00:00",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 1000",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+  },
+  {
+    "file": "import-comments-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "a6720edb0f48eba7b4831f6f7a1c7e385e838d46b0166b5f6ac097cbdee4175b",
+    "capturedAt": "2026-10-31T10:10:47.420098+00:00",
+    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 1000",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+  },
+  {
+    "file": "status-mapping-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "178f80840f5467a58c4b081dad793e6a232cb2be7b8091f29b56e4032714435f",
+    "capturedAt": "2026-10-31T10:10:45.506401+00:00",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 1000",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+  },
+  {
+    "file": "status-mapping-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "31164190f67292f78454473791d644e31d02dee4783d20ca366ab695757bc0c7",
+    "capturedAt": "2026-10-31T10:10:45.786235+00:00",
+    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 1000",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+  },
+  {
+    "file": "status-mapping-options-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "60ba0f9e70cef16d7e1fc63e81ce76123004f8fc0ee3d384f8eda9e286958cbc",
+    "capturedAt": "2026-10-31T10:17:55.973210+00:00",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 1000",
+    "version": "2.5.2",
+    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
   }
 ]

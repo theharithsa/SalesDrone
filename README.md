@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.5.1 separates missing-category labels and helper text, alongside the v2.5.0 import-field, status-mapping and personal-dashboard improvements.
+> Local v2.5.2 review makes dashboard copy follow the selected field and shows mapped import destinations with explicit conflict resolution. Production remains v2.5.1 pending approval.
 > See [import review](docs/IMPORT-FIELDS-2.5.0-REVIEW.md) and [chart label review](docs/DASHBOARD-MISSING-2.5.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,13 +20,13 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.5.1 · MIT**
+**Part of Avinya Enterprises · v2.5.2 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
 [Open SalesDrone](https://sales-drone-avinya.firebaseapp.com) · [Illustrated guide](https://theharithsa.github.io/SalesDrone/) · [Releases](https://github.com/theharithsa/SalesDrone/releases) · [Deployment workflow](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
 
-![The dashboard funnel shows each stage’s current lead count. Synthetic demo data only.](site/assets/screenshots/dashboard-demo.jpg)
+![The dashboard shows lead counts grouped by the selected field. Synthetic demo data only.](site/assets/screenshots/dashboard-demo.jpg)
 
 ## Why SalesDrone
 
@@ -40,9 +40,9 @@ We currently use SalesDrone internally and shape it around everyday work. More m
 
 Import the first Excel worksheet or CSV, map the fields, and select several discussion columns to become separate timeline comments; historical discussion dates remain unknown rather than being invented. New enquiries then arrive through the form. Search and combine column filters, edit a lead, record a call, and keep its comments in one timeline.
 
-A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard funnel is a snapshot of current counts: selecting a stage opens its filtered leads. Its widths do not claim conversion rates or an invented history.
+A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard groups current lead counts by your chosen field. Its headings and descriptions follow that field’s configured label; selecting a group opens matching leads. Recorded stage changes remain in the lead journey.
 
-![A fictional lead with its current stage and journey.](site/assets/screenshots/journey-demo.jpg?sha=0b6e353a7a40)
+![Current dashboard counts, separate from recorded lead-journey history.](site/assets/screenshots/journey-demo.jpg?sha=5e71520ef776)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -233,3 +233,5 @@ Collaborative import review supports history, visible duplicate matches and link
 Column filters include an indexed **Exact match** option for enquiry source, sales stage and custom dropdowns. It compares the saved case, spacing and Unicode literally; existing **Equals** retains tolerant matching. See the [product handbook](docs/PRODUCT-GUIDE.md#leads).
 
 [Reviewed mobile filter example](site/assets/screenshots/lead-filters-mobile-demo.jpg) (fictional demo data).
+
+Review the [available import destinations](site/assets/screenshots/status-mapping-options-demo.jpg) and [mapped-column conflict](site/assets/screenshots/status-mapping-demo.jpg) with fictional data.

@@ -135,6 +135,11 @@
           "id": "DASHBOARD-MISSING-LABEL-01",
           "expected": "Choose Enquiry status with all synthetic values empty. In funnel cards and the composition legend, Not recorded and Missing value use separate primary/helper rows with visible spacing; primary labels clamp independently. Verify phone/tablet/laptop/desktop/wide views in both themes; counts and empty-filter behavior remain unchanged.",
           "fixture": "isolated fictional guest demo only; no customer records or writes"
+        },
+        {
+          "id": "DASHBOARD-FIELD-COPY-01",
+          "expected": "Choose Source, renamed Zone and a custom field. Headings, descriptions and notes follow the effective label; current counts and group drill-through stay correct, with no movement/conversion language or extra AI request. Long labels wrap on phones and at larger interface scales.",
+          "fixture": "isolated fictional guest/Admin dashboard preview only"
         }
       ]
     },
@@ -213,6 +218,11 @@
           "id": "IMPORTS-SHARE-01",
           "expected": "Optional import read/write/share grants preserve current lead scope; two collaborators cannot apply stale plans. Admin deletion removes details/baselines but retains leads and summary.",
           "fixture": "demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "IMPORT-MAPPED-DESTINATION-01",
+          "expected": "Already-mapped categories/custom text-dropdown fields remain selectable. Conflicts disable validation until the column is remapped or explicitly excluded/preserved under a distinct reviewed field. Review links focus the correct controls; fresh field setup cannot reuse the selected destination ID.",
+          "fixture": "fictional CSV and stubbed Admin preview; no production imports"
         }
       ]
     },

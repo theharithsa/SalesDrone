@@ -24,23 +24,23 @@
         ],
         [
           "Does this application call leads automatically?",
-          "No. Phone and email links open your device’s handler. Call logging, reminders and AI analysis help you record and plan outreach; they do not place calls."
+          "No. Phone and email links open your device\u2019s handler. Call logging, reminders and AI analysis help you record and plan outreach; they do not place calls."
         ]
       ]
     },
     {
       "id": "today",
-      "title": "Today: dashboard, insights and funnel",
+      "title": "Today: charts, insights and lead breakdown",
       "audience": "Members with access to the underlying leads",
       "steps": [
-        "Open Today to review your accessible pipeline and outstanding work. Check due or overdue tasks before starting outreach.",
+        "Open Today to review your accessible leads and outstanding work. Check due or overdue tasks before starting outreach.",
         "Use Get insights to request a grounded outreach brief in manual mode. If automatic insights are enabled by an administrator, the button is hidden and the brief is requested when you visit the dashboard.",
         "Read the selected-field distribution and other charts together with the task list. Use Leads filters to examine the records behind a pattern.",
         "Use Chart day below the outreach chart to select a date. Its summary and highlighted point update from the already loaded data; this does not request AI insights.",
-        "Choose Group leads by for your pipeline distribution charts. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions."
+        "Choose Group leads by for your lead distribution charts. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions."
       ],
       "details": [
-        "Graphs describe currently accessible records and aggregates. The pipeline distribution counts leads in the selected field. It does not prove historical stage movement or measure conversion.",
+        "Charts describe current accessible records. The lead breakdown groups counts by your selected field; headings, descriptions and notes use its configured label, whether Zone, Enquiry source or a custom field. Recorded stage history remains in the lead journey.",
         "AvinyaIntelligence uses reported workspace evidence. Insights are suggestions, not guaranteed sales outcomes. Missing information is not proof of disinterest. Administrator instructions shape the brief but do not bypass access controls. Manual mode avoids requesting a new summary on every dashboard visit.",
         "Changing the lead list, completing tasks or refreshing may update aggregates. If a brief seems stale, request another in manual mode. AI availability depends on the server configuration and provider.",
         "Available categories include configured built-ins and active custom text/dropdown fields. Missing values are a separate group. Select a concrete group to open matching Leads; up to 20 groups are shown and remaining values are combined as Other values. That aggregate and very long text groups have no direct filter. If a saved field is retired, a notice explains the fallback. Demo choices stay local."
@@ -51,7 +51,7 @@
           "Automatic mode may be enabled, or your identity does not have access to that feature. Check Settings > AvinyaIntelligence > Insights."
         ],
         [
-          "Can I use the funnel as a conversion report?",
+          "Does this breakdown show historic conversion?",
           "Use it for current distribution only. Recorded stage history on a lead is the evidence of its actual transitions."
         ]
       ],
@@ -65,7 +65,7 @@
         "Open Leads and select New enquiry. Complete the required name and contact information and any workspace-specific fields. Save once and wait for confirmation.",
         "Enter text and run search. Open Filters to choose the search field, stage or source; choose Filter any column for company, city, sector, name, dates or supported custom fields.",
         "Click a customer name for quick inspection. On desktop it opens above the unchanged table. At widths up to 1000 CSS pixels it opens the dedicated lead page directly, without an offset sheet. Use Back to leads; desktop overlays also close with Escape.",
-        "Drag the overlay’s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.",
+        "Drag the overlay\u2019s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.",
         "Open a lead, then choose Edit lead inside its details or full page to update an existing enquiry. Save against the current version; reload if another change caused a conflict."
       ],
       "details": [
@@ -135,7 +135,7 @@
       ],
       "details": [
         "Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.",
-        "Tasks is recipient-private. Its status filter includes Pending, Completed and Cancelled, with All statuses as the starting view. Select a card to view, edit, complete, reschedule or delete using the existing task dialog. Refresh tasks after a change; Load more tasks retrieves another page. Administrators do not automatically gain access to another person’s private tasks.",
+        "Tasks is recipient-private. Its status filter includes Pending, Completed and Cancelled, with All statuses as the starting view. Select a card to view, edit, complete, reschedule or delete using the existing task dialog. Refresh tasks after a change; Load more tasks retrieves another page. Administrators do not automatically gain access to another person\u2019s private tasks.",
         "Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.",
         "The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers.",
         "Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.",
@@ -152,7 +152,7 @@
         ],
         [
           "Why are there fewer tasks than I expected?",
-          "The tab shows your tasks linked to this lead, subject to current access. It does not show another recipient’s private reminders. Check the status filter and Load more tasks."
+          "The tab shows your tasks linked to this lead, subject to current access. It does not show another recipient\u2019s private reminders. Check the status filter and Load more tasks."
         ]
       ],
       "notes": [
@@ -202,7 +202,7 @@
         "Use Earlier activity to retrieve older pages. Imported discussions show their source column; an unknown original conversation date is explicitly described as unknown."
       ],
       "details": [
-        "Call outcomes and lead sales stage are different concepts. No answer records an attempt; Qualified describes the relationship’s sales stage. Change the stage only when the underlying relationship warrants it.",
+        "Call outcomes and lead sales stage are different concepts. No answer records an attempt; Qualified describes the relationship\u2019s sales stage. Change the stage only when the underlying relationship warrants it.",
         "Corrections preserve previous revisions and invalidate stale analysis so an old interpretation cannot silently schedule new work. Imported historical discussions do not automatically create fresh callbacks.",
         "Notes can contain customer context; keep them out of support screenshots and public documentation. Application telemetry excludes comment content and task titles.",
         "Inline drafts stay in memory while you switch All, Comments, Calls, Tasks and Review for the same lead. Failed posts retain text; retrying an unchanged uncertain write reuses its original identity. Blank and in-flight posts are disabled. Drafts are cleared when you leave that lead, change account or reload; customer notes are not stored in browser storage.",
@@ -236,7 +236,7 @@
       ],
       "faq": [
         [
-          "I wrote “follow up soon”; why is there no task?",
+          "I wrote \u201cfollow up soon\u201d; why is there no task?",
           "The timing may be ambiguous. Open Review and use Set date manually, or add a clear future date/time. Also check that automatic reminders are enabled."
         ],
         [
@@ -267,7 +267,7 @@
         ],
         [
           "Can an administrator edit my reminders?",
-          "Task recipient privacy remains in force. Administrator status alone does not grant editing rights to another person’s private tasks."
+          "Task recipient privacy remains in force. Administrator status alone does not grant editing rights to another person\u2019s private tasks."
         ]
       ],
       "screenshot": "tasks-demo.jpg"
@@ -306,7 +306,7 @@
         "Open Imports & history. Find previous jobs by status or date; Load older imports follows server pagination. Your permissions determine which jobs and rows you can inspect.",
         "Choose a new workbook, or choose Update this workbook on a completed import to link a revised upload to its source comparison history. Upload XLSX/CSV, map columns and choose the duplicate/update mode.",
         "Review Additional workbook fields. Every populated unmatched column is selected as a reusable text field by default. Rename if needed or explicitly exclude a column. Admins choose Create / reuse fields & validate; other importers must ask an Admin for setup or map/exclude those columns.",
-        "In Map existing statuses, Enquiry status is the default destination. Keep each original value or choose a configured replacement. Use Map statuses to for another available field; hidden Sales stage does not need to be recreated. Keep original text only applies no extra mapping.",
+        "In Map existing statuses, Enquiry status is the default destination. Map statuses to lists all compatible active category and custom text/dropdown fields, including fields already mapped to workbook columns. Hidden or retired fields are excluded. Keep original text only applies no extra mapping.",
         "Validate records to prepare a row-by-row comparison. Inspect existing matches, current versus workbook values, worksheet row numbers and proposed actions. Exact name and phone matches are candidates; ambiguous matches require a decision.",
         "Choose Approve clear proposals for unambiguous changes. Compare selected lead resolves a match first; then review its fields. Conflict fields start unchecked, keeping the database value unless you explicitly choose the workbook value.",
         "Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.",
@@ -317,17 +317,17 @@
         "A linked source comparison checks the prior imported value, current database value and incoming value. Unchanged workbook cells preserve team edits. Different edits in both places are conflicts. Older imports without a source baseline require an initial explicit comparison.",
         "Blank or unmapped cells leave existing values unchanged. Optional clearing is explicit. Assignment, archive, do-not-contact, review flags and workflow state are not reset by missing columns. Rows omitted from a later workbook are not deleted.",
         "Each nonblank selected discussion cell remains a distinct historical note. Accepted corrections retain prior revisions; re-importing unchanged cells does not repeat them. Renamed/ambiguous comment columns and reminder-linked discussion corrections need explicit review; imported history does not schedule new outreach.",
-        "Parsed rows, results and source values are retained until an Admin deletes details. Original workbook files are not stored. Deletion also clears the dataset’s source comparison baselines, so later uploads may need a new manual comparison; saved leads, discussions and summary audit history remain.",
+        "Parsed rows, results and source values are retained until an Admin deletes details. Original workbook files are not stored. Deletion also clears the dataset\u2019s source comparison baselines, so later uploads may need a new manual comparison; saved leads, discussions and summary audit history remain.",
         "View history requires imports:read. imports:write allows planning/review/execution; imports:share adds shared jobs. Lead create/edit capabilities and assigned/all policy still apply. Non-admin import permissions are opt-in in People & permissions.",
         "Download results produces a local JSON report with permitted row details, provided workspace exports are enabled. History is not a substitute for authorization; changing roles or assignments can redact results or block the next chunk.",
         "Preview validity is one day before the first commit; Refresh remaining matches renews a preview. Active partial imports remain resumable. Per-route import write limits are 180 requests per minute; a rate-limit error retains progress for a later resume. Maximum 5,000 rows, 10 MB upload, 40 source columns and a 6 MiB parsed-payload budget apply.",
         "Text fields preserve leading zeros and codes. Repeat uploads reuse existing field IDs. Selected comment columns remain historical notes; uncheck one to import it as a field instead. Empty columns are skipped and duplicate/blank headers have positional names. Field setup is a workspace change before preview, so those fields remain even if the import is cancelled. Limits remain 40 workbook columns and 30 active custom fields; limit/conflict failures stop setup without dropping columns. When Sales stage is hidden, Enquiry status is retained without a stage mapping.",
         "Recheck positional field names when duplicate or unnamed headers move in a revised workbook. Positional defaults cannot establish which old column a moved blank header represents.",
-        "Selecting a status destination does not overwrite a separate mapped column. To use that field as the destination, unmap its direct column first. Original workbook statuses remain in authorized import history even when normalized to a chosen value; old prepared jobs keep their previous mapping."
+        "If a destination already uses a workbook column, Review existing column focuses its mapping. Remap that column elsewhere or choose Not mapped. Otherwise unused populated data appears in Additional workbook fields: retain it under a reviewed field name or explicitly exclude it. An additional field cannot reuse the status destination. Original workbook statuses remain in authorized import history; server overwrite guards and prepared jobs keep their existing contracts."
       ],
       "faq": [
         [
-          "Will the revised workbook overwrite a teammate’s edits?",
+          "Will the revised workbook overwrite a teammate\u2019s edits?",
           "Unchanged source cells preserve team edits. Conflicting field changes require your choice, and a record changed after review blocks the chunk until you refresh and review again."
         ],
         [
@@ -341,6 +341,10 @@
         [
           "Can I stop and return later?",
           "Yes. The server retains the job and reviewed rows. Reopen it from history and resume. Version checks prevent two collaborators from applying the same stale chunk. Already committed rows are retained if later work blocks."
+        ],
+        [
+          "Why is validation disabled after I choose a status destination?",
+          "Resolve the displayed column conflict first. A separate column and status values cannot fill the same field. Use the review button to reach the existing mapping or additional-field name. Other importers can map existing fields or explicitly exclude columns; only Admins create new fields."
         ]
       ],
       "screenshot": "import-fields-demo.jpg"
@@ -357,7 +361,7 @@
       ],
       "details": [
         "An export follows the active filters and current authorization; it is not an unrestricted database download. The server rechecks current access while report pages are read. Policy/account changes cancel pending work.",
-        "Workbook generation runs in a browser worker. Large result sets are bounded by the reports API; completion time depends on result size and the device. The export does not reveal private task data or another member’s inbox.",
+        "Workbook generation runs in a browser worker. Large result sets are bounded by the reports API; completion time depends on result size and the device. The export does not reveal private task data or another member\u2019s inbox.",
         "Exporting a sheet does not create a live two-way Excel connection. Later edits in the workbook do not update SalesDrone unless entered or imported through an authorized workflow."
       ],
       "faq": [
@@ -376,7 +380,7 @@
       "title": "AvinyaIntelligence and lead scoring",
       "audience": "Members; configuration requires administrator",
       "steps": [
-        "Open a lead’s Lead details & score section and read its score, evidence coverage and factor breakdown together.",
+        "Open a lead\u2019s Lead details & score section and read its score, evidence coverage and factor breakdown together.",
         "Use refresh scoring when permitted and needed. Add factual business context through comments; do not invent evidence to raise a score.",
         "Administrators configure Fit, Intent and Red-flag factors, weights and activation under Settings > AvinyaIntelligence > Lead scoring.",
         "Customize insight instructions and manual/automatic mode under the Insights child section. Leave instructions blank to use the application default."
@@ -384,7 +388,7 @@
       "details": [
         "Fit factors include business/account profile, project capacity, geography, commercial credit and licensing. Intent can include bids, RFQs, samples, credit applications and inbound urgency. Red flags include uneconomic delivery distance, reported payment risk, unsuitable small volume and disputes.",
         "Evidence extraction uses reported information, while score calculation is deterministic from configured factors. Unknown facts are not automatically negative. Scores help prioritize sales work and do not independently verify credit, licensing, distance or safety claims.",
-        "Configuration changes can cause background refresh work. A model response is not a source of truth about a prospect’s creditworthiness or commercial eligibility. Review evidence and use professional judgement."
+        "Configuration changes can cause background refresh work. A model response is not a source of truth about a prospect\u2019s creditworthiness or commercial eligibility. Review evidence and use professional judgement."
       ],
       "faq": [
         [
@@ -404,8 +408,8 @@
       "steps": [
         "Open Settings. On desktop use the left section navigation; on mobile choose a section from the dropdown.",
         "Expand Manage fields to choose Lead fields or Dropdown choices. Expand AvinyaIntelligence to choose Insights or Lead scoring.",
-        "Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members’ workflow.",
-        "Open the complete Settings reference from this handbook for each control’s default, scope, permission, API, effect, example and limitation."
+        "Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members\u2019 workflow.",
+        "Open the complete Settings reference from this handbook for each control\u2019s default, scope, permission, API, effect, example and limitation."
       ],
       "details": [
         "Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.",
@@ -449,7 +453,7 @@
           "No. They are independent; dark Book mode uses charcoal paper and warm ink."
         ],
         [
-          "Will this change my colleagues’ screens?",
+          "Will this change my colleagues\u2019 screens?",
           "No. Book mode is a personal preference."
         ],
         [
@@ -464,14 +468,14 @@
       "audience": "Administrators",
       "steps": [
         "Open Settings > People & permissions. Invite or approve the intended Google account; verify its email carefully.",
-        "Set the role, capabilities and supported lead scope appropriate to the person’s work. Review active status and current ownership before granting access.",
+        "Set the role, capabilities and supported lead scope appropriate to the person\u2019s work. Review active status and current ownership before granting access.",
         "Assign a lead using the top-of-lead assignment control. The recipient receives an eligible assignment notification; pending old-owner outreach is cancelled.",
         "Deactivate or adjust membership when responsibility changes. Recheck access with the affected user rather than assuming a cached page reflects current permission."
       ],
       "details": [
         "The two bootstrap administrator identities remain protected. Routine sign-in does not approve membership. Server policy is authoritative for every read, write, inference input and export; hiding a button alone is not an access boundary.",
         "Role labels and capabilities are related but not interchangeable. A task remains private to its recipient. Assigned-only policy can further restrict non-admin lead access even when other capabilities are present.",
-        "Only grant access needed for the person’s responsibility. Do not share Google sessions or personal API tokens across employees."
+        "Only grant access needed for the person\u2019s responsibility. Do not share Google sessions or personal API tokens across employees."
       ],
       "faq": [
         [
@@ -496,13 +500,13 @@
       ],
       "details": [
         "The API supports documented reads and writes for leads, activities, tasks and other permitted resources. It does not offer arbitrary Firestore access. Archive and soft delete have explicit semantics; they are not equivalent to permanent erasure.",
-        "Token routes enforce supported scopes and the owner’s current active administrator membership. Expired or revoked tokens stop working. Compound operations can need more than one scope. Check the Swagger contract rather than inferring an endpoint from the UI.",
+        "Token routes enforce supported scopes and the owner\u2019s current active administrator membership. Expired or revoked tokens stop working. Compound operations can need more than one scope. Check the Swagger contract rather than inferring an endpoint from the UI.",
         "Never put a token in a public repository, browser URL, client-side JavaScript, screenshot or support ticket. Browser sign-in/App Check and Personal Access Tokens are separate authentication paths."
       ],
       "faq": [
         [
           "Why does my token get 403?",
-          "Check its scopes, expiration, revocation and the token owner’s current administrator membership. A valid secret does not bypass domain policy."
+          "Check its scopes, expiration, revocation and the token owner\u2019s current administrator membership. A valid secret does not bypass domain policy."
         ],
         [
           "Can an integration permanently delete leads?",
