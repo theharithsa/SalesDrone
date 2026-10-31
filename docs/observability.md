@@ -268,3 +268,11 @@ CI adds fixed lint/components labels and actual Vitest leaf-case results with ha
 ## Exact match query signals
 
 Exact match is read-only and reuses existing HTTP RED metrics, request/query spans and privacy-safe errors. Do not emit a fabricated customer business event or include filter values in telemetry. No lead-data backfill or new maintenance signal is introduced; bounded internal rate-counter TTL conversion retains its own numeric progress logging.
+
+## Import setup and dashboard display preferences
+
+Admin import field setup reuses manage-fields audit metadata and atomic settings.audit.committed events from PATCH /field-options. Creation is an explicit reviewed schema operation before import preview; import commit/replay events retain existing authority and privacy. No workbook cells/headers/custom values are exported.
+
+Personal dashboardField changes use dashboard.visualization in settings audit, changed key dashboardField only, with no selected field ID/value. Default normalization avoids false first-save changes and older clients preserve omission. Read-only dashboard category counts reuse existing HTTP RED/query spans and create no business-commit event. Popup/typography changes add no API/telemetry event.
+
+Explicit import status destinations and sourceStatus stay in authorized import details, never telemetry. Destination validation reuses request/error spans; no field label or source status is added to metric dimensions or events.

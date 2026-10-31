@@ -42,7 +42,7 @@ export function importDate(raw, order) {
     day = order === 'DMY' ? a : b;
   return `${y}-${mo.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }
-export function previewRows(input, allowedStages = STAGES) {
+export function previewRows(input, allowedStages = STAGES, {stageHidden = false} = {}) {
   return input.rows.map((row, index) => {
     try {
       const r = { ...row };
@@ -118,7 +118,7 @@ export function previewRows(input, allowedStages = STAGES) {
       }
       const original = String(r.legacyStatus || '').trim();
       if (
-        original &&
+        original && !r.stage && !stageHidden &&
         !allowedStages.includes(original) &&
         !input.statusMap[original]
       )
@@ -128,7 +128,7 @@ export function previewRows(input, allowedStages = STAGES) {
           `Map the status “${original}” before importing`,
         );
       if (
-        input.statusMap[original] &&
+        !stageHidden && input.statusMap[original] &&
         !allowedStages.includes(input.statusMap[original])
       )
         throw new AppError(
@@ -136,9 +136,10 @@ export function previewRows(input, allowedStages = STAGES) {
           'STATUS',
           'Choose an active sales stage for this status',
         );
+      if(r.stage && !allowedStages.includes(r.stage))throw new AppError(400,'STATUS','Choose an active sales stage');
       r.stage =
-        input.statusMap[original] ||
-        (allowedStages.includes(original) ? original : 'New');
+        r.stage || (!stageHidden && input.statusMap[original]) ||
+        (!stageHidden && allowedStages.includes(original) ? original : 'New');
       const warnings = [];
       try {
         r.enquiryDate = importDate(r.enquiryDate, input.dateOrder);

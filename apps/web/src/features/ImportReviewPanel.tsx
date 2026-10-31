@@ -45,6 +45,7 @@ function RowReview({
       <header>
         <div>
           <strong>{row.row?.name || 'Worksheet row ' + row.sourceRow}</strong>
+          {row.sourceStatus?<small>Workbook status: {row.sourceStatus}</small>:null}
           <small>
             Row {row.sourceRow} ·{' '}
             {row.row?.phone || row.row?.email || 'No contact supplied'}

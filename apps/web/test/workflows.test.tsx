@@ -1,3 +1,4 @@
+import DashboardPage from '../src/features/DashboardPage';
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -255,5 +256,65 @@ describe('Exact match filters',()=>{
  it('applies Exact match in the mobile dialog without changing Equals',async()=>{
   const user=userEvent.setup(),apply=vi.fn();render(<MobileLeadFilters config={config} sources={['Website']} applied={{searchField:'name',stage:'',source:'',filters:[]}} onApply={apply}/>);
   await user.click(screen.getByRole('button',{name:'Filter leads'}));await user.click(screen.getByRole('button',{name:/Add condition/}));await user.selectOptions(screen.getByLabelText('Filter 1 comparison'),'exact');await user.type(screen.getByLabelText('Filter 1 value'),'Website');await user.click(screen.getByRole('button',{name:'Apply filters'}));expect(apply).toHaveBeenCalledWith(expect.objectContaining({filters:[{field:'source',op:'exact',value:'Website'}]}));
+ });
+});
+
+describe('workbook field discovery',()=>{
+ async function upload(user:ReturnType<typeof userEvent.setup>,csv:string){
+  const file=new File([csv],'fields.csv',{type:'text/csv'});Object.defineProperty(file,'text',{value:async()=>csv});await user.upload(screen.getByLabelText('Choose a workbook'),file);
+ }
+ it('creates reviewed Admin text fields and imports literal values with comments',async()=>{
+  const user=userEvent.setup();let current:typeof config={...config,customFields:[]};
+  const request=vi.fn(async(path:string,method?:string,body?:any)=>{
+   if(path==='/field-options'){if(method==='PATCH')current={...current,customFields:body.customFields,version:current.version+1};return current;}
+   if(path==='/imports/preview')return{id:'new-fields',formatVersion:3,status:'Preview',filename:'fields.csv',total:1,offset:0,reviewOffset:0,items:[]};
+   return{items:[],nextCursor:null};
+  });
+  render(<ImportPage demo={false} canManageFields config={current} request={request} onImported={vi.fn()}/>);
+  await upload(user,'Customer name,Phone number,Product,Notes\nSynthetic,12025550100,0012,Original note');
+  expect(await screen.findByText('Additional workbook fields')).toBeInTheDocument();
+  await user.click(screen.getByRole('button',{name:/Create \/ reuse 1 fields/}));
+  await waitFor(()=>expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(true));
+  const field=current.customFields[0];expect(field.type).toBe('text');expect(field.label).toBe('Product');
+  const input=request.mock.calls.find(([p])=>p==='/imports/preview')![2];expect(input.rows[0][field.id]).toBe('0012');expect(input.rows[0].importComments[0].notes).toBe('Original note');
+ });
+ it('blocks schema creation for non-admin importers and allows explicit exclusion',async()=>{
+  const user=userEvent.setup(),request=vi.fn(async(_path:string)=>({items:[],nextCursor:null}));render(<ImportPage demo={false} request={request} onImported={vi.fn()}/>);
+  await upload(user,'Customer name,Phone number,Product\nSynthetic,12025550100,0012');
+  expect(await screen.findByRole('button',{name:/Create \/ reuse 1 fields/})).toBeDisabled();
+  expect(screen.getByLabelText('New field name for column 3')).toBeDisabled();
+  const section=screen.getByText('Additional workbook fields').closest('fieldset')!;await user.click(within(section).getByRole('checkbox'));
+  expect(screen.getByRole('button',{name:/Validate records/})).toBeEnabled();expect(request.mock.calls.some(([p])=>p==='/field-options')).toBe(false);
+ });
+});
+
+
+describe('personal dashboard categories',()=>{
+ it('falls back from a hidden stage, saves the demo choice and drills through the selected field without AI calls',async()=>{
+  localStorage.removeItem('salesdrone.demo.dashboard-field');
+  const user=userEvent.setup(),request=vi.fn(async()=>({})),onCategory=vi.fn();
+  render(<DashboardPage demo config={{...config,hiddenFields:['stage']}} request={request} firstName="Explorer" timezone="UTC" sample={{leads:[{...lead,legacyStatus:'Quoted',source:'Website'}],tasks:[],activities:[]}} refreshKey={0} stageOrder={config.values.stage} onStage={vi.fn()} onCategory={onCategory} onTasks={vi.fn()} onLead={async()=>{}} onTask={async()=>{}}/>);
+  const picker=await screen.findByLabelText('Dashboard visualization field');
+  await waitFor(()=>expect(picker).toBeEnabled());
+  expect(screen.queryByRole('option',{name:'Sales stage'})).not.toBeInTheDocument();
+  expect(screen.getByText('Currently using Enquiry status')).toBeInTheDocument();
+  await user.selectOptions(picker,'source');
+  await waitFor(()=>expect(screen.getByText('Currently using Enquiry source')).toBeInTheDocument());
+  expect(localStorage.getItem('salesdrone.demo.dashboard-field')).toBe('source');
+  await user.click(screen.getByRole('button',{name:/Website: 1 leads/}));expect(onCategory).toHaveBeenCalledWith('source','Website',false);
+  expect(request).not.toHaveBeenCalled();localStorage.removeItem('salesdrone.demo.dashboard-field');
+ });
+});
+
+describe('import status destination',()=>{
+ it('defaults to Enquiry status when Sales stage is hidden and lets the importer choose another available field',async()=>{
+  const user=userEvent.setup(), request=vi.fn(async(path:string)=>path==='/imports/preview'?{id:'status-preview',formatVersion:3,status:'Preview',filename:'statuses.csv',total:1,offset:0,reviewOffset:0,items:[]}:{items:[],nextCursor:null});
+  render(<ImportPage demo={false} config={{...config,hiddenFields:['stage']}} request={request} onImported={vi.fn()}/>);
+  const csv='Customer name,Phone number,Status\nSynthetic,12025550100,Sent details on WA';const file=new File([csv],'status.csv',{type:'text/csv'});Object.defineProperty(file,'text',{value:async()=>csv});await user.upload(screen.getByLabelText('Choose a workbook'),file);
+  const picker=await screen.findByLabelText('Status mapping field');expect(picker).toHaveValue('legacyStatus');expect(within(picker).queryByRole('option',{name:'Sales stage'})).not.toBeInTheDocument();
+  expect(screen.getByLabelText('Map status Sent details on WA')).toHaveValue('Sent details on WA');
+  await user.selectOptions(picker,'source');expect(screen.getByLabelText('Map status Sent details on WA')).toHaveValue('');
+  await user.selectOptions(screen.getByLabelText('Map status Sent details on WA'),'Website');await user.click(screen.getByRole('button',{name:/Validate records/}));
+  await waitFor(()=>expect(request).toHaveBeenCalledWith('/imports/preview','POST',expect.objectContaining({statusField:'source',statusMap:{'Sent details on WA':'Website'}}),expect.any(String)));
  });
 });

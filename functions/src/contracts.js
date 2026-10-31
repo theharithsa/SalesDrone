@@ -218,8 +218,9 @@ export const MemberPatch = z
   });
 export const Preferences = z
   .object({
-    timezone: text(100),
-    appearance: z.enum(['system', 'light', 'dark']),
+    timezone: text(100).optional(),
+    appearance: z.enum(['system', 'light', 'dark']).optional(),
+    dashboardField: z.union([z.enum(['auto','stage','legacyStatus','source','zone','location']),z.string().regex(/^cf_[a-z0-9_]{1,60}$/)]).optional(),
     bookMode: z.boolean().optional(),
     fontStyle: z.enum(['standard', 'inter', 'source-sans', 'lora']).optional(),
     displayScale: z
@@ -281,6 +282,7 @@ export const ImportInput = z
     sheet: text(100),
     rows: z.array(z.record(z.string(), z.unknown())).max(5000),
     statusMap: z.record(z.string(), text(100).min(1)).default({}),
+    statusField: z.union([z.enum(['none','legacyStatus','stage','source','zone','location']),z.string().regex(/^cf_[a-z0-9_]{1,60}$/)]).optional(),
     dateOrder: z.enum(['DMY', 'MDY']).default('DMY'),
     blankRows: z.number().int().min(0).default(0),
     duplicateMode: z.enum(['skip', 'keep', 'update']).default('skip'),

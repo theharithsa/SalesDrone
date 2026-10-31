@@ -1,0 +1,14 @@
+# Import fields and dashboard grouping: local v2.5.0 review
+
+Reviewed on 31 October 2026 with fictional workbook rows and guest/Admin preview components. This records local evidence; no production import, merge, deployment or tenant query is implied.
+
+- `npm test`: 164 functions/API cases, 81 helper cases and 13 component cases passed. These cover status destinations, original source status, field discovery/reuse, permissions, partial preference saves and scoped grouping.
+- Real Auth/Firestore/Storage emulator: 7 cases passed, including Admin schema setup, non-admin/stale denial, literal leading-zero values, repeated imports, updates, hidden-stage preservation, source-status planning and personal grouping persistence.
+- Types and lint passed: 0 lint errors; 47 existing baseline warnings. Production build passed and excludes design entrypoints and fictional Admin fixtures. API generation, documentation, skills, release contract/impact plan and credential/export scanning passed locally.
+- Import comment hierarchy and overflow were measured at 390, 599, 600, 767, 768, 900, 1024, 1280, 1440 and 1920 CSS pixels. Status destination layout was checked at all ten widths in light/dark themes; default Enquiry status is visible in the reviewed desktop/phone captures.
+- Category pickers were opened with Chromium's user-activated showPicker at all ten widths in light/dark themes: 20 cases passed for viewport bounds and capped height. Filter-dialog control geometry passed at 390/600/768/1024/1440 and interface scales 85/100/125%: 15 cases. Dialog selects use native platform pickers; CSS does not claim to control their OS popup rendering. Parent-dialog Escape was checked separately. Earlier customizable-picker Escape conflicts prompted the native-dialog fallback; failed intermediate checks are not counted as passes.
+- The generated handbook was browser-checked for feature search/clear, module anchors, FAQ expansion and zero broken images. Public captures were individually visually/privacy reviewed before curation; manifest hashes identify the actual files.
+
+Evidence logs and intermediate captures remain ignored under test-results/fields-2.5.0 and /tmp/salesdrone-250-*. Local browser review used an installed Chromium with a fresh isolated profile on localhost CDP 9337; no personal signed-in profile or live customer data was used. Import setup preview transport is stubbed; server persistence was checked separately in the emulator. These results do not certify physical devices, Safari, production writes, Dynatrace tenant searchability or native cross-signal links.
+
+Production publication remains a separate approval and PR merge step. After approval, verify version/SHA, API 1.21.0, active functions, Pages and Dynatrace transport receipts independently of these local checks.

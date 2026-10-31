@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SalesDrone by AvinyaTech API",
-    "version": "1.20.0",
+    "version": "1.21.0",
     "description": "Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data."
   },
   "servers": [
@@ -28009,6 +28009,26 @@
               "dark"
             ]
           },
+          "dashboardField": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "stage",
+                  "legacyStatus",
+                  "source",
+                  "zone",
+                  "location"
+                ]
+              },
+              {
+                "type": "string",
+                "pattern": "^cf_[a-z0-9_]{1,60}$"
+              }
+            ],
+            "description": "Personal pipeline visualization category. Default auto chooses the first available field: stage, enquiry status, source, sector, location, then custom text/dropdown fields. Active members edit only their own preference; hidden/retired fields are rejected on save and existing unavailable choices fall back without rewriting the preference. PATCH supports partial preferences; omitted keys are preserved. PAT writes are denied."
+          },
           "bookMode": {
             "type": "boolean",
             "description": "Personal reading style, default false. Omission preserves the stored value; does not alter theme, timezone or permissions."
@@ -28066,10 +28086,6 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "timezone",
-          "appearance"
-        ],
         "additionalProperties": false
       },
       "DeviceInput": {
@@ -28142,6 +28158,26 @@
               "minLength": 1,
               "maxLength": 100
             }
+          },
+          "statusField": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "legacyStatus",
+                  "stage",
+                  "source",
+                  "zone",
+                  "location"
+                ]
+              },
+              {
+                "type": "string",
+                "pattern": "^cf_[a-z0-9_]{1,60}$"
+              }
+            ],
+            "description": "Reviewed imports only. New browser uploads default to legacyStatus (Enquiry status): retain workbook text unless explicitly remapped. Choose none, an available built-in category or custom text/select field. Hidden/retired targets and targets already supplied by another mapped column are rejected. Non-text categories require configured values. Omission preserves legacy stage mapping for old API clients. Original sourceStatus remains in permission-filtered import row details."
           },
           "dateOrder": {
             "default": "DMY",
@@ -28995,6 +29031,10 @@
         "properties": {
           "asOf": {
             "type": "string"
+          },
+          "visualization": {
+            "type": "object",
+            "description": "Personal grouping over authorized scanned leads only. Includes requested/effective field, label, unavailable fallback flag, availableFields and groups. At most 20 displayed groups plus Other values; group keys distinguish missing values. Normalized equality and Is empty support drill-through; aggregate/overlong-label groups are not direct filters."
           },
           "insightMode": {
             "type": "string",

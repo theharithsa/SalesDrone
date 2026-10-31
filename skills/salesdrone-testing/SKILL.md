@@ -32,6 +32,8 @@ Entry points: [runner](../../scripts/run-test-suite.mjs), [execution policy](../
 
 Exact match regression entry points: functions/test/exact-filters.test.js and the real Firestore case in emulator.integration.js. Verify all raw predicates, nested fields, assigned scope, actual document-key cursors and unchanged Equals; component interactions alone cannot verify index behavior.
 
+New feature checks: tests/import-fields.test.ts, functions/test/dashboard-grouping.test.js, component workbook-field workflows and the real emulator schema/import/personal-dashboard scenario. Verify literal codes, role/stale denials, replay/update, hidden-stage preservation, scopes, old preference clients, overflow buckets and actual open pickers. Do not infer layout correctness from jsdom.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.4.1**, OpenAPI contract **1.20.0**. All application operations
+Application release **v2.5.0**, OpenAPI contract **1.21.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -270,3 +270,13 @@ The managed Functions Framework can reject malformed JSON before this Express ap
 ## Exact match column filters
 
 Use `op: "exact"` for source, stage or an available custom dropdown (`cf_*`). This additive option compares saved strings literally, including case, spacing and Unicode; existing `equals` is unchanged. Unsupported fields/types return 400 FILTER. All Exact predicates are sent to Firestore along with archived/assignment scope. Exact queries use descending document-ID order and signed cursors; other conditions remain bounded residual filters. Continue sparse pages until nextCursor is null. Export uses the same filter semantics and permissions. No lead migration or new permission is required.
+
+## Import field setup and personal dashboard grouping
+
+The import UI accounts for all populated workbook columns. Existing mapped columns and chosen comment columns retain their paths. Admins review unmatched column names, then create/reuse optional text fields through existing GET/PATCH /field-options before POST /imports/preview. Field setup uses current expectedVersion and preserves all current fields/choices/labels. It is separate from import commit: fields persist even if preview fails or the import is cancelled. Active custom fields are capped at 30 and source files at 40 columns. Empty columns are skipped; duplicate/blank headers get explicit positional names. Non-admin import access does not grant schema writes. Import previews/commit/replay/source baselines retain custom values and skip blank updates. A hidden Sales stage does not require enquiry-status mapping or reset workflow on status-only updates; explicit valid stage mappings still work.
+
+PATCH /me accepts partial personal preferences, adding dashboardField (default auto). Existing omitted keys remain saved, including older clients. Google/App Check active-member self scope only; no PAT support. Select stage, legacyStatus, source, zone, location or an available cf_* text/select field. Hidden/retired/unsupported fields return 400 DASHBOARD_FIELD. GET /me defaults dashboardField; GET /dashboard adds visualization with requested/effective field, fallback, availableFields and normalized scoped groups. Unavailable saved choices fall back without an implicit preference write. Groups cover scanned authorized leads; 20 visible groups plus a summed Other values bucket preserve totals. Aggregate and >400-character labels have no direct drill-through. Missing values use Is empty; other groups use existing Equals. Stage aggregates, KPI definitions and AI context remain compatible and unchanged.
+
+### Import status destination
+
+Reviewed ImportInput adds optional statusField. The new browser default is legacyStatus (the existing Enquiry status field); none retains original text without another mapping. Active category fields and custom text/dropdown fields can be selected. Hidden/retired targets return STATUS_FIELD; a target already populated by a mapped column returns a row STATUS_COLUMN error. Configured dropdown/stage targets need valid choices for every status (STATUS_MAP). Text/Enquiry status defaults keep the original value; explicit remapping changes only that target. Source workbook text is retained as sourceStatus in authorized row details and follows existing explicit-Admin deletion retention. Non-admin schema permissions remain unchanged. New target selection requires reviewed mode; legacy HTTP clients omitting statusField retain the old stage-mapping behavior, and existing jobs keep their already prepared rows. Explicit stage columns remain independent; default status-only updates do not reset workflow stages.

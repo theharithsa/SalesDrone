@@ -29,6 +29,15 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'import-fields-demo.jpg',
+  'import-fields-mobile-demo.jpg',
+  'import-comments-demo.jpg',
+  'import-comments-mobile-demo.jpg',
+  'dashboard-fields-demo.jpg',
+  'dashboard-fields-mobile-demo.jpg',
+  'status-mapping-demo.jpg',
+  'status-mapping-mobile-demo.jpg',
+  'popup-select-demo.jpg',
   'lead-filters-demo.jpg',
   'lead-filters-mobile-demo.jpg',
   'lead-header-mobile-demo.jpg',

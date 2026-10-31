@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "version": "2.5.0",
+  "summary": "Discover and review reusable import fields, select the status destination with Enquiry status as default, and save personal dashboard grouping; improve import and popup layouts.",
+  "modules": [
+    "salesdrone-imports",
+    "salesdrone-dashboard",
+    "salesdrone-workspace-settings",
+    "salesdrone-interface",
+    "salesdrone-testing",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "docs/API.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SETTINGS.md",
+    "docs/TECHNICAL.md",
+    "docs/TESTING.md",
+    "docs/observability.md",
+    "CHANGELOG.md",
+    "docs/IMPORT-FIELDS-2.5.0-REVIEW.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "API 1.21.0 adds explicit reviewed import statusField, authorized sourceStatus history, personal dashboardField preferences and bounded visualization groups. Omitted statusField retains old-client semantics. Field setup reuses versioned field-options.",
+    "contractVersion": "1.21.0",
+    "permissions": "Only Admin members with members:write create fields; import grants and per-lead scope still apply. Preferences are self-only and validate available current fields.",
+    "tests": [
+      "functions/test/import-status.test.js",
+      "functions/test/dashboard-grouping.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing bounded HTTP and import counters cover these operations without field labels, workbook values or new cardinality.",
+      "tests": [
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing request spans cover field setup, preview/commit, preferences and dashboard reads; no workbook content or category labels are attached.",
+      "tests": [
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing allowlisted request/error logs cover validation and stale configuration without source values or field names.",
+      "tests": [
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Existing committed import/lead/field-options events remain atomic; personal dashboard preference adds only key-based dashboard.visualization audit metadata. No schema value or workbook data is emitted.",
+      "tests": [
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing CI and deploy lifecycle reports will identify the new version and commit after authorized publication. No deployment or tenant-search acceptance is claimed by this plan.",
+      "tests": [
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Local execution and measured limitations are recorded in docs/IMPORT-FIELDS-2.5.0-REVIEW.md. Review fictional workbook discovery/status mapping and Today grouping in isolated Chromium across phone, tablet, laptop and wide desktop, both palettes, and open popup controls at display scales. Verify literal codes, hidden stage preservation, permissions, stale writes and replay in the real emulator. Local synthetic browser checks do not certify devices/Safari or tenant-searchable telemetry. Keep production 2.4.1 until review and approval; validate live version/contract/functions and separate Dynatrace receipts after authorized publication.",
+  "screenshots": [
+    "import-fields-demo.jpg",
+    "import-fields-mobile-demo.jpg",
+    "import-comments-demo.jpg",
+    "import-comments-mobile-demo.jpg",
+    "dashboard-fields-demo.jpg",
+    "dashboard-fields-mobile-demo.jpg",
+    "status-mapping-demo.jpg",
+    "status-mapping-mobile-demo.jpg",
+    "popup-select-demo.jpg",
+    "dashboard-demo.jpg",
+    "journey-demo.jpg",
+    "lead-filters-demo.jpg",
+    "lead-filters-mobile-demo.jpg"
+  ]
+}

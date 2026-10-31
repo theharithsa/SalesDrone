@@ -112,7 +112,8 @@
       "automatedTests": [
         "functions/test/intelligence.test.js",
         "functions/test/journey.test.js",
-        "functions/test/personal-access-tokens.test.js"
+        "functions/test/personal-access-tokens.test.js",
+        "functions/test/dashboard-grouping.test.js"
       ],
       "manualCases": [
         {
@@ -183,7 +184,9 @@
         "functions/test/workbook-and-filters.test.js",
         "tests/import-mapping.test.ts",
         "functions/test/import-review.test.js",
-        "apps/web/test/workflows.test.tsx"
+        "apps/web/test/workflows.test.tsx",
+        "tests/import-fields.test.ts",
+        "functions/test/import-status.test.js"
       ],
       "manualCases": [
         {
@@ -546,7 +549,10 @@
         "tests/skill-guard.test.ts",
         "apps/web/test/workflows.test.tsx",
         "functions/test/exact-filters.test.js",
-        "tests/function-environment.test.ts"
+        "tests/function-environment.test.ts",
+        "tests/import-fields.test.ts",
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/import-status.test.js"
       ],
       "manualCases": [
         {
@@ -568,7 +574,9 @@
         "functions/test/custom-fields-and-tasks.test.js",
         "functions/test/workbook-and-filters.test.js",
         "tests/lead-fields.test.ts",
-        "functions/test/lead-data-reset.test.js"
+        "functions/test/lead-data-reset.test.js",
+        "tests/import-fields.test.ts",
+        "functions/test/dashboard-grouping.test.js"
       ],
       "manualCases": [
         {

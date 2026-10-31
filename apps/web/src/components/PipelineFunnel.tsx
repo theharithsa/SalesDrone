@@ -10,12 +10,16 @@ export default function PipelineFunnel({
   counts,
   order,
   onStage,
+  groups,
+  fieldLabel = 'Sales stage',
 }: {
   counts: StageCount[];
   order: string[];
-  onStage: (stage: string) => void;
+  onStage: (stage: string, empty?: boolean) => void;
+  groups?: {key:string;label:string;value:number;empty:boolean;aggregate?:boolean;filterable?:boolean}[];
+  fieldLabel?: string;
 }) {
-  const stages = funnelStages(counts, order),
+  const stages = groups || funnelStages(counts, order),
     total = stages.reduce((n, s) => n + s.value, 0),
     max = Math.max(1, ...stages.map((s) => s.value));
   return (
@@ -24,19 +28,19 @@ export default function PipelineFunnel({
         <div>
           <span className="eyebrow">PIPELINE FLOW</span>
           <h2>Where every lead stands</h2>
-          <p>A live stage snapshot. Select a stage to explore its leads.</p>
+          <p>Current {fieldLabel.toLowerCase()} counts. Select a group to explore its leads.</p>
         </div>
         <GitBranch size={23} />
       </div>
       <div
         className="funnel-rows"
         role="list"
-        aria-label="Current lead counts by stage"
+        aria-label={`Current lead counts by ${fieldLabel}`}
       >
         {stages.map((s, i) => (
           <div
             role="listitem"
-            key={s.label}
+            key={'key' in s ? String(s.key) : s.label}
             className="funnel-stage"
             style={
               {
@@ -48,10 +52,11 @@ export default function PipelineFunnel({
               {String(i + 1).padStart(2, '0')}
             </span>
             <button
-              onClick={() => onStage(s.label)}
+              disabled={('aggregate' in s && Boolean(s.aggregate)) || ('filterable' in s && s.filterable===false)}
+              onClick={() => onStage(s.label, 'empty' in s && Boolean(s.empty))}
               aria-label={`${s.label}: ${s.value} leads, ${total ? Math.round((s.value / total) * 100) : 0}% of included leads`}
             >
-              <span className="funnel-label">{s.label}</span>
+              <span className="funnel-label">{s.label}{'empty' in s && s.empty ? <small>Missing value</small> : null}</span>
               <span className="funnel-volume">
                 <span
                   className="funnel-bar"
@@ -75,8 +80,8 @@ export default function PipelineFunnel({
         ))}
       </div>
       <p className="chart-note">
-        {total} included leads · Width reflects each stage’s current count.
-        Stages may widen again; these are not conversion rates or a history of
+        {total} included leads · Width reflects each group’s current count.{' '}
+        {groups?.some(g=>g.aggregate) ? 'The largest 20 groups are shown; Other values combines the rest and has no direct filter. ' : ''}{groups?.some(g=>g.filterable===false) ? 'Long-text groups have no direct filter. ' : ''}Groups may widen again; these are not conversion rates or a history of
         movement.
       </p>
     </section>

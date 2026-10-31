@@ -75,6 +75,8 @@ Read for detailed behavior:
 
 Chart reading uses HTML y-axis/date labels and a centered HTML ring total; retain SVG accessible descriptions and authorized aggregate data. A native Chart day selector provides a touch/keyboard alternative to the dots. Clamp selectedIndex when data shrinks; an empty chart has a disabled fallback. Selecting a day changes local presentation only: no new Gemini request, API scope or conversion event. Check first/last/empty selection, resizing and both palettes/Book mode. Dashboard content-container thresholds govern chart columns, not outer-window width.
 
+Personal dashboardField defaults auto and chooses the first available stage/status/source/sector/location/custom text/dropdown field. Hidden/retired selections fall back visibly; save validates current config. Both pipeline charts use normalized scoped groups with missing buckets and a 20-group plus Other cap. Only concrete <=400-character groups drill through using Equals/Is empty. KPI/AI semantics stay unchanged. Use dashboard-grouping.test.js and real emulator persistence/scope checks.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

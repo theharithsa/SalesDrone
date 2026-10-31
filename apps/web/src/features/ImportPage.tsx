@@ -1,3 +1,7 @@
+import ImportStatusMapping from './ImportStatusMapping';
+import { dashboardFields } from '../../../../functions/src/dashboard-grouping.js';
+import ImportFieldSetup from './ImportFieldSetup';
+import { unmatchedImportFields, resolveImportFields, fieldNameKey } from '../lib/import-fields';
 import ImportReviewPanel from './ImportReviewPanel';
 import { readStored, writeStored, removeStored } from '../lib/browser-storage';
 import { isCommentHeader, mapImportRows } from '../lib/import-mapping';
@@ -20,12 +24,15 @@ import {
   Download,
   AlertCircle,
 } from 'lucide-react';
-import { Entity, stages } from '../lib/types';
+import { Entity } from '../lib/types';
 import { ErrorMessage } from '../components/UI';
 const columns: Record<string, string> = Object.fromEntries([
   ...worksheetColumns.map(([key, label]) => [label, key]),
   ['Email (optional)', 'email'],
   ['Country code', 'countryCode'],
+  ['Sales stage', 'stage'],
+  ['Job title', 'jobTitle'],
+  ['Website', 'website'],
   ['SalesDrone lead ID (optional)', 'leadId'],
 ]);
 
@@ -85,7 +92,11 @@ export default function ImportPage({
   config = defaultFieldOptions,
   canWrite = true,
   canDelete = false,
+  canManageFields = false,
+  onFieldOptions,
 }: {
+  canManageFields?: boolean;
+  onFieldOptions?: (config: FieldOptions) => void;
   canWrite?: boolean;
   canDelete?: boolean;
   config?: FieldOptions;
@@ -115,55 +126,36 @@ export default function ImportPage({
     [importMode, setImportMode] = useState('skip'),
     [sourceImportId, setSourceImportId] = useState(''),
     [statusMap, setStatusMap] = useState<Record<string, string>>({}),
+    [statusField, setStatusField] = useState('legacyStatus'),
     [job, setJob] = useState<Entity | null>(null),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState('');
+    [error, setError] = useState(''),
+    [excludedColumns, setExcludedColumns] = useState<number[]>([]),
+    [fieldNames, setFieldNames] = useState<Record<number,string>>({});
   const worker = useRef<Worker | null>(null);
   useEffect(() => () => worker.current?.terminate(), []);
   const sheet = sheets[sheetIndex];
-  const headers = sheet?.rows[headerRow] || [];
+  const rawHeaders = sheet?.rows[headerRow] || [];
+  const headers = Array.from({length:sheet?Math.max(rawHeaders.length,...sheet.rows.slice(headerRow+1).map(r=>r.length)):0},(_,i)=>rawHeaders[i]||'');
   useEffect(() => {
-    setCommentColumns(
-      headers
-        .map((header, index) => (isCommentHeader(header) ? index : -1))
-        .filter((index) => index >= 0),
-    );
-    setMapping(
-      Object.fromEntries(
-        Object.entries(fieldColumns).map(([header, key]) => [
-          key,
-          String(
-            headers.findIndex(
-              (h) =>
-                h.trim().toLowerCase() ===
-                  labelFor(config, key, header).toLowerCase() ||
-                h.trim().toLowerCase() === header.toLowerCase() ||
-                legacyImportColumns.some(
-                  ([legacyKey, label]) =>
-                    legacyKey === key &&
-                    h.trim().toLowerCase() === label.toLowerCase(),
-                ) ||
-                (key === 'name' &&
-                  h.trim().toLowerCase() === 'customer name') ||
-                (key === 'zone' &&
-                  h.trim().toLowerCase() === 'zone / sector') ||
-                (key === 'comments' && h.trim().toLowerCase() === 'comments'),
-            ),
-          ),
-        ]),
-      ),
-    );
+    setExcludedColumns([]);
+    setFieldNames({});
+    const claimed = new Set<number>();
+    const nextMapping:Record<string,string>={};
+    for(const [header,key] of Object.entries(fieldColumns)){
+      const index=headers.findIndex((h,i)=>!claimed.has(i)&&(
+        fieldNameKey(h)===fieldNameKey(labelFor(config,key,header)) ||
+        fieldNameKey(h)===fieldNameKey(header) || fieldNameKey(h)===fieldNameKey(key) ||
+        legacyImportColumns.some(([legacyKey,label])=>legacyKey===key&&fieldNameKey(h)===fieldNameKey(label)) ||
+        (key==='zone'&&fieldNameKey(h)==='zone / sector')
+      ));
+      nextMapping[key]=String(index);if(index>=0)claimed.add(index);
+    }
+    setMapping(nextMapping);
+    setCommentColumns(headers.flatMap((header,index)=>isCommentHeader(header)&&!claimed.has(index)?[index]:[]));
     setJob(null);
-    setStatusMap(
-      Object.fromEntries(
-        Object.entries({
-          'Call/WA done': 'Working',
-          'Samples sent': 'Qualified',
-          Quoted: 'Qualified',
-          'Won/Order placed': 'Won',
-        }).filter(([, stage]) => choices.stage.includes(stage)),
-      ),
-    );
+    setStatusMap({});
+    setStatusField(config.hiddenFields.includes('legacyStatus')?'none':'legacyStatus');
   }, [sheetIndex, headerRow, sheets]);
   const populatedRows =
     sheet?.rows
@@ -172,9 +164,14 @@ export default function ImportPage({
       .filter(({ row }) => row.some((v) => v.trim())) || [];
   const rows = populatedRows.map((r) => r.row);
   const mapped = mapImportRows(rows, headers, mapping, commentColumns);
+  const proposals = unmatchedImportFields(headers, rows, mapping, commentColumns, config)
+    .map(p=>({...p,label:fieldNames[p.index]??p.label}));
+  const selectedFields=proposals.filter(p=>!excludedColumns.includes(p.index));
   const distinctStatuses = [
-    ...new Set(mapped.map((r) => r.legacyStatus).filter(Boolean)),
+    ...new Set(mapped.map((r) => r.legacyStatus.trim()).filter(Boolean)),
   ];
+  const statusTargets=dashboardFields(config).filter(f=>f.field==='legacyStatus'||Number(mapping[f.field]??'-1')<0);
+  const invalidStatusTarget=statusField!=='none'&&!statusTargets.some(f=>f.field===statusField);
   const unsafeCell = (value: string) =>
     value.startsWith('[FORMULA') || value.startsWith('[LINK');
   const invalidCells = mapped.some((row) =>
@@ -250,25 +247,41 @@ export default function ImportPage({
     setBusy(true);
     setError('');
     try {
+      if(invalidStatusTarget)throw Error('Choose an available status mapping field.');
       if (!mapped.length) throw Error('No populated data rows were found.');
       if (mapped.length > 5000) throw Error('Import at most 5,000 data rows.');
       if (invalidCells)
         throw Error(
           'Replace formulas and links with literal values before importing.',
         );
+      let importRows=mapped;
+      if(selectedFields.length){
+        if(!canManageFields)throw Error('An Admin must set up these fields, or explicitly exclude the unmatched columns.');
+        if(selectedFields.some(p=>rows.some(row=>unsafeCell(row[p.index]||''))))throw Error('Replace formulas and links with literal values before creating fields.');
+        const current:FieldOptions=await request('/field-options');
+        const resolved=resolveImportFields(current,selectedFields,()=> 'cf_'+crypto.randomUUID().replaceAll('-',''),mapping);
+        const saved:FieldOptions=resolved.created?await request('/field-options','PATCH',{
+          expectedVersion:current.version,values:current.values,customFields:resolved.fields,
+        }):current;
+        onFieldOptions?.(saved);
+        const nextMapping={...mapping,...resolved.mapping};
+        setMapping(nextMapping);
+        importRows=mapImportRows(rows,headers,nextMapping,commentColumns);
+      }
       const result = await request(
         '/imports/preview',
         'POST',
         {
           filename,
           sheet: sheet.name,
-          rows: mapped.map((r, i) => ({
+          rows: importRows.map((r, i) => ({
             ...r,
             sourceRow: populatedRows[i].sourceRow,
           })),
           reviewed: true,
           ...(sourceImportId ? { sourceImportId } : {}),
           statusMap,
+          statusField,
           dateOrder,
           duplicateMode: importMode,
           blankRows: sheet.rows.length - headerRow - 1 - rows.length,
@@ -436,9 +449,9 @@ export default function ImportPage({
             <button
               className="button primary"
               onClick={preview}
-              disabled={busy || invalidCells}
+              disabled={busy || invalidCells || invalidStatusTarget || (!canManageFields && selectedFields.length>0)}
             >
-              Validate records <ArrowRight size={16} />
+              {selectedFields.length ? `Create / reuse ${selectedFields.length} fields & validate` : 'Validate records'} <ArrowRight size={16} />
             </button>
           </div>
           <p className="import-profile-note">
@@ -533,6 +546,16 @@ export default function ImportPage({
               </label>
             ))}
           </div>
+          {proposals.length ? (
+            <ImportFieldSetup
+              proposals={proposals}
+              headers={headers}
+              excluded={excludedColumns}
+              canManage={canManageFields}
+              onToggle={(index,checked)=>setExcludedColumns(old=>checked?old.filter(i=>i!==index):[...old,index])}
+              onLabel={(index,label)=>setFieldNames(old=>({...old,[index]:label}))}
+            />
+          ) : null}
           <fieldset className="comment-column-picker">
             <legend>Import columns as comments</legend>
             <p>
@@ -542,8 +565,9 @@ export default function ImportPage({
             </p>
             <div className="comment-column-options">
               {headers.map((header, index) => (
-                <label key={index} className="checkbox-row">
+                <label key={index} aria-label={`Import column ${index+1}: ${header||'Unnamed column'} as comments`} htmlFor={`import-comment-${index}`} className="checkbox-row">
                   <input
+                    id={`import-comment-${index}`}
                     type="checkbox"
                     checked={commentColumns.includes(index)}
                     onChange={(e) => {
@@ -556,7 +580,7 @@ export default function ImportPage({
                     }}
                   />
                   <span>
-                    {header || `Column ${index + 1}`}
+                    <strong>{header || 'Unnamed column'}</strong>
                     <small>Column {index + 1}</small>
                   </span>
                 </label>
@@ -572,31 +596,18 @@ export default function ImportPage({
             </p>
           </fieldset>
           {distinctStatuses.length ? (
-            <>
-              <h3>Map existing statuses</h3>
-              <p className="field-hint">
-                Original status text is retained. Choose its current sales
-                stage; no call history is inferred.
-              </p>
-              <div className="mapping-grid">
-                {distinctStatuses.map((s) => (
-                  <label key={s}>
-                    {s}
-                    <select
-                      value={statusMap[s] || (stages.includes(s) ? s : '')}
-                      onChange={(e) =>
-                        setStatusMap({ ...statusMap, [s]: e.target.value })
-                      }
-                    >
-                      <option value="">Choose stage</option>
-                      {choices.stage.map((v) => (
-                        <option key={v}>{v}</option>
-                      ))}
-                    </select>
-                  </label>
-                ))}
-              </div>
-            </>
+            <ImportStatusMapping
+              targets={statusTargets}
+              field={statusField}
+              statuses={distinctStatuses}
+              mapping={statusMap}
+              onField={field=>{setStatusField(field);setStatusMap({});}}
+              onValue={(status,value)=>setStatusMap(old=>{
+                const next={...old};
+                if(!value||value===status)delete next[status];else next[status]=value;
+                return next;
+              })}
+            />
           ) : null}
           <div className="table-scroll">
             <table>

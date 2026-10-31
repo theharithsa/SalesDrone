@@ -1,3 +1,4 @@
+import { applyImportStatus, importStatusTarget } from './import-status.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { AppError, LeadInput, } from './contracts.js';
@@ -108,7 +109,11 @@ function assertDraft(j, version) {
     fail('IMPORT_STATE', 'This import cannot be changed');
 }
 function normalizeSource(raw, input, options, index) {
-  const { leadId, sourceRow, ...fields } = raw;
+  const { leadId, sourceRow, ...originalFields } = raw;
+  let transformed;
+  try { transformed=applyImportStatus(originalFields,input,options); }
+  catch(e){return {index,sourceRow:sourceRow||index+1,error:e.message,decision:'skip',row:null};}
+  const fields=transformed.row;
   if (leadId && !/^[A-Za-z0-9_.:-]{1,150}$/.test(leadId))
     return {
       index,
@@ -137,6 +142,7 @@ function normalizeSource(raw, input, options, index) {
   const result = previewRows(
     { ...input, rows: [fields] },
     options.values.stage,
+    {stageHidden:!transformed.legacyStageMapping || options.hiddenFields.includes('stage')},
   )[0];
   if (result.row) {
     result.row.customFields = custom;
@@ -147,11 +153,12 @@ function normalizeSource(raw, input, options, index) {
       result.row = null;
     }
   }
-  const mapped = editable.filter((k) => Object.hasOwn(fields, k));
-  if (fields.legacyStatus && !mapped.includes('stage')) mapped.push('stage');
+  const mapped = editable.filter((k) => Object.hasOwn(fields, k) && (k!=='stage'||String(fields.stage||'').trim()));
+  if (transformed.legacyStageMapping && fields.legacyStatus && !options.hiddenFields.includes('stage') && !mapped.includes('stage')) mapped.push('stage');
   mapped.push(...Object.keys(custom));
   return {
     ...result,
+    ...(input.statusField!==undefined?{sourceStatus:String(raw.legacyStatus||'')}:{}),
     index,
     sourceRow:
       Number.isInteger(sourceRow) && sourceRow > 0 ? sourceRow : index + 1,
@@ -162,6 +169,7 @@ function normalizeSource(raw, input, options, index) {
 }
 export async function createImportReview(tx, m, input, now) {
   const options = await readFieldOptions(tx);
+  importStatusTarget(input.statusField,options);
   const source = input.sourceImportId
     ? await readImport(tx, m, input.sourceImportId)
     : null;
@@ -221,6 +229,7 @@ export async function createImportReview(tx, m, input, now) {
     formatVersion: 3,
     newLeadAssigneeUid: m.role === 'Admin' ? null : m.uid,
     duplicateMode: input.duplicateMode,
+    ...(input.statusField!==undefined?{statusField:input.statusField}:{}),
     chunkSize: IMPORT_CHUNK_SIZE,
     createdByUid: m.uid,
     createdByName: m.name || m.email || 'Member',
@@ -459,6 +468,7 @@ export async function planImportChunk(tx, m, id, input, now) {
       [
         'index',
         'sourceRow',
+        'sourceStatus',
         'error',
         'row',
         'comments',
@@ -888,6 +898,7 @@ export async function commitImportReview(tx, m, id, input, now) {
   if (!j.offset && j.expiresAt <= now)
     return changeJob(tx, j, now, { status: 'Blocked', lastError: 'EXPIRED' });
   const options = await readFieldOptions(tx);
+  importStatusTarget(j.statusField,options);
   if (options.version !== j.configVersion)
     return changeJob(tx, j, now, {
       status: 'Blocked',

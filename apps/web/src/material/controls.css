@@ -11,6 +11,8 @@ select {
   background-position: right 12px center;
   background-size: 24px;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
   cursor: pointer;
 }
 :root[data-color-scheme='dark'] select {
@@ -37,7 +39,9 @@ select:disabled {
     color: var(--text);
     box-shadow: 0 4px 12px #0003;
     max-height: min(320px, 50dvh);
-    min-width: anchor-size(width);
+    width: anchor-size(width);
+    min-width: 0;
+    max-width: calc(100dvw - 24px);
     overflow: auto;
     font: inherit;
   }
@@ -61,6 +65,14 @@ select:disabled {
     );
     outline-offset: -3px;
   }
+}
+/* Platform pickers avoid customizable-select Escape conflicts in modal dialogs. */
+@supports (appearance: base-select) {
+  .dialog select,
+  .dialog select::picker(select) {
+    appearance: auto;
+  }
+  .dialog select { background-image: none; }
 }
 /* Persistent inset labels keep field names visible without a rectangular outline. */
 .material-field {

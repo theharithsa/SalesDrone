@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.4.1
+Version 2.5.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -42,15 +42,21 @@ Members with access to the underlying leads
 
 2. Use Get insights to request a grounded outreach brief in manual mode. If automatic insights are enabled by an administrator, the button is hidden and the brief is requested when you visit the dashboard.
 
-3. Read the current-stage funnel and other charts together with the task list. Use Leads filters to examine the records behind a pattern.
+3. Read the selected-field distribution and other charts together with the task list. Use Leads filters to examine the records behind a pattern.
 
 4. Use Chart day below the outreach chart to select a date. Its summary and highlighted point update from the already loaded data; this does not request AI insights.
 
-Graphs describe currently accessible records and aggregates. The funnel counts leads in each current stage; it does not prove those leads passed through every earlier stage or measure historical conversion.
+5. Choose Group leads by for your pipeline distribution charts. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions.
+
+Graphs describe currently accessible records and aggregates. The pipeline distribution counts leads in the selected field. It does not prove historical stage movement or measure conversion.
 
 AvinyaIntelligence uses reported workspace evidence. Insights are suggestions, not guaranteed sales outcomes. Missing information is not proof of disinterest. Administrator instructions shape the brief but do not bypass access controls. Manual mode avoids requesting a new summary on every dashboard visit.
 
 Changing the lead list, completing tasks or refreshing may update aggregates. If a brief seems stale, request another in manual mode. AI availability depends on the server configuration and provider.
+
+Available categories include configured built-ins and active custom text/dropdown fields. Missing values are a separate group. Select a concrete group to open matching Leads; up to 20 groups are shown and remaining values are combined as Other values. That aggregate and very long text groups have no direct filter. If a saved field is retired, a notice explains the fallback. Demo choices stay local.
+
+![Today: dashboard, insights and funnel — synthetic demo only](../site/assets/screenshots/dashboard-fields-demo.jpg)
 
 ### Questions
 
@@ -346,13 +352,17 @@ Members with optional import permissions and import-capable administrators
 
 2. Choose a new workbook, or choose Update this workbook on a completed import to link a revised upload to its source comparison history. Upload XLSX/CSV, map columns and choose the duplicate/update mode.
 
-3. Validate records to prepare a row-by-row comparison. Inspect existing matches, current versus workbook values, worksheet row numbers and proposed actions. Exact name and phone matches are candidates; ambiguous matches require a decision.
+3. Review Additional workbook fields. Every populated unmatched column is selected as a reusable text field by default. Rename if needed or explicitly exclude a column. Admins choose Create / reuse fields & validate; other importers must ask an Admin for setup or map/exclude those columns.
 
-4. Choose Approve clear proposals for unambiguous changes. Compare selected lead resolves a match first; then review its fields. Conflict fields start unchecked, keeping the database value unless you explicitly choose the workbook value.
+4. In Map existing statuses, Enquiry status is the default destination. Keep each original value or choose a configured replacement. Use Map statuses to for another available field; hidden Sales stage does not need to be recreated. Keep original text only applies no extra mapping.
 
-5. Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.
+5. Validate records to prepare a row-by-row comparison. Inspect existing matches, current versus workbook values, worksheet row numbers and proposed actions. Exact name and phone matches are candidates; ambiguous matches require a decision.
 
-6. Use View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
+6. Choose Approve clear proposals for unambiguous changes. Compare selected lead resolves a match first; then review its fields. Conflict fields start unchecked, keeping the database value unless you explicitly choose the workbook value.
+
+7. Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.
+
+8. Use View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
 
 The current default is skip duplicates. Review updates to existing leads is a separate mode; Keep separate enquiry rows explicitly allows distinct enquiries with repeating contacts. Stable SalesDrone lead ID mapping helps when identifiers change. A filename or worksheet row position never identifies a person.
 
@@ -370,7 +380,13 @@ Download results produces a local JSON report with permitted row details, provid
 
 Preview validity is one day before the first commit; Refresh remaining matches renews a preview. Active partial imports remain resumable. Per-route import write limits are 180 requests per minute; a rate-limit error retains progress for a later resume. Maximum 5,000 rows, 10 MB upload, 40 source columns and a 6 MiB parsed-payload budget apply.
 
-![Excel and CSV import — synthetic demo only](../site/assets/screenshots/import-review-demo.jpg)
+Text fields preserve leading zeros and codes. Repeat uploads reuse existing field IDs. Selected comment columns remain historical notes; uncheck one to import it as a field instead. Empty columns are skipped and duplicate/blank headers have positional names. Field setup is a workspace change before preview, so those fields remain even if the import is cancelled. Limits remain 40 workbook columns and 30 active custom fields; limit/conflict failures stop setup without dropping columns. When Sales stage is hidden, Enquiry status is retained without a stage mapping.
+
+Recheck positional field names when duplicate or unnamed headers move in a revised workbook. Positional defaults cannot establish which old column a moved blank header represents.
+
+Selecting a status destination does not overwrite a separate mapped column. To use that field as the destination, unmap its direct column first. Original workbook statuses remain in authorized import history even when normalized to a chosen value; old prepared jobs keep their previous mapping.
+
+![Excel and CSV import — synthetic demo only](../site/assets/screenshots/import-fields-demo.jpg)
 
 ### Questions
 

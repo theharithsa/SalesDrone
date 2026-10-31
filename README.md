@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.4.1 adds indexed Exact match filters, hardens rate-limit retention, archive history, cursor/model configuration and task reads, and adds CI linting, component regressions and maintained module skills.
+> Local v2.5.0 review adds reusable import fields, personal dashboard grouping and readable import/popup controls. Production remains v2.4.1 until publication is approved.
 > See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.4.1 · MIT**
+**Part of Avinya Enterprises · v2.5.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -163,7 +163,7 @@ Material 3 type roles use 16px body text, compact table labels and content-width
 
 ![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=d5e20f3ceaba)
 
-[Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Synthetic import preview](site/assets/screenshots/import-demo.jpg)
+[Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Import field setup](site/assets/screenshots/import-fields-demo.jpg) · [Status destination](site/assets/screenshots/status-mapping-demo.jpg) · [Personal dashboard grouping](site/assets/screenshots/dashboard-fields-demo.jpg)
 
 The v1.6.7 maintenance updates align wrapped customer names, remove duplicate lead actions/contact summaries, and make Set a reminder a regular sidebar menu item. Desktop spacing is now more compact: the synthetic 1280px review shows 8 data columns instead of 5. Open a lead to edit; the list has no Actions column. The original release tag is retained; the deployment commit and workflow identify the maintenance build.
 

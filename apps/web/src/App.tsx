@@ -445,7 +445,6 @@ export default function App() {
     });
     try {
       await request('/me', 'PATCH', {
-        ...current.preferences,
         appearance: next,
       });
     } catch (e) {
@@ -1861,6 +1860,15 @@ export default function App() {
                     : session?.identity.name.split(' ')[0] || 'Hello'
                 }
                 timezone={timezone}
+                config={fieldOptions}
+                onGroupingSaved={value=>{
+                  const owner=session?.identity.uid;
+                  setSession(current=>current && current.identity.uid===owner?{...current,preferences:{...current.preferences,dashboardField:value}}:current);
+                }}
+                onCategory={(field,value,empty)=>{
+                  setStage('');setSource('');setSearch('');setSearchDraft('');
+                  setColumnFilters([{field,op:empty?'empty':'equals',value:empty?'':value}]);go('leads');
+                }}
                 stageOrder={fieldOptions.values.stage}
                 onStage={(value) => {
                   setStage(value);
@@ -3160,6 +3168,8 @@ export default function App() {
                   !!session?.member?.capabilities.includes('imports:write')
                 }
                 canDelete={!!admin}
+                canManageFields={!!admin && !!can('members:write')}
+                onFieldOptions={setFieldOptions}
                 request={request}
                 onImported={() =>
                   notify('Import complete. Your pipeline is ready.')
