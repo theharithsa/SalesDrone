@@ -42,6 +42,8 @@ Preserve Material colour roles, Google Sans headings, Manrope body text and mono
 
 For domain controls, also load [leads](../salesdrone-leads/SKILL.md), [tasks](../salesdrone-tasks-reminders/SKILL.md), [workspace settings](../salesdrone-workspace-settings/SKILL.md) or [Book mode](../salesdrone-book-mode/SKILL.md) as applicable. [Product guide](../salesdrone-product-guide/SKILL.md) owns public captures.
 
+Shared desktop/mobile column filters expose Exact match only for source, stage and active custom dropdowns. Keep Equals available and explain literal case/spacing/Unicode matching. Changing a column resets the comparison. Preserve mobile draft Apply/Cancel/Reset and focus restoration; capture reviewed synthetic filter controls.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

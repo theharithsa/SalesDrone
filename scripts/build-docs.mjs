@@ -29,6 +29,8 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'lead-filters-demo.jpg',
+  'lead-filters-mobile-demo.jpg',
   'lead-header-mobile-demo.jpg',
   'outreach-mobile-demo.jpg',
   'outreach-demo.jpg',

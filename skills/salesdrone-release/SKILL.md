@@ -83,6 +83,8 @@ For a later explicitly authorized maintenance push, bind the record to that push
 
 Deployment BizEvents use application/cloudevent+json; CUSTOM_DEPLOYMENT markers remain application/json. Keep provider fields aligned and validate both transport paths using deployment-bizevents.test.ts. HTTP acceptance remains separate from tenant searchability.
 
+Exact match needs no lead-data migration or new IAM. Preserve default single-field equality indexes and existing index readiness gates. Internal rate-counter TTL conversion remains separate. Do not require a derived lead index readiness marker.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

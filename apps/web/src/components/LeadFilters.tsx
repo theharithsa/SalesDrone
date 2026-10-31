@@ -31,7 +31,7 @@ export function ColumnFilterFields({
     <>
       <p className="field-hint">
         Match all conditions across the full permitted lead list, not just the
-        loaded page.
+        loaded page. Equals ignores case and surrounding spaces. Exact match keeps case, spacing and Unicode as saved.
       </p>
       {value.map((f, i) => (
         <div className="lead-filter-row" key={i}>
@@ -55,6 +55,7 @@ export function ColumnFilterFields({
           >
             <option value="contains">Contains</option>
             <option value="equals">Equals</option>
+            {(['source','stage'].includes(f.field) || config.customFields.some(field=>field.id===f.field && !field.deleted && field.type==='select')) ? <option value="exact">Exact match</option> : null}
             <option value="startsWith">Starts with</option>
             <option value="empty">Is empty</option>
             <option value="notEmpty">Is not empty</option>

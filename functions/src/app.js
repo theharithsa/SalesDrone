@@ -1,3 +1,4 @@
+import { documentKey } from './store.js';
 import { createCursorCodec } from './cursors.js';
 import { rateLimitExpiry } from './rate-limit.js';
 import {
@@ -556,7 +557,8 @@ export function createApp({
         if (
           !definition ||
           (['before', 'after'].includes(filter.op) &&
-            definition.type !== 'date')
+            definition.type !== 'date') ||
+          (filter.op === 'exact' && definition.type !== 'select')
         )
           throw new AppError(
             400,
@@ -605,13 +607,25 @@ export function createApp({
     let after = req.query.cursor
       ? decodeCursor(String(req.query.cursor), binding)
       : undefined;
+    const exact = new Map();
+    let contradiction = false;
+    for (const f of filters.filter(f => f.op === 'exact')) {
+      const field = f.field.startsWith('cf_') ? 'customFields.' + f.field : f.field;
+      if (exact.has(field) && exact.get(field) !== f.value) contradiction = true;
+      exact.set(field, f.value);
+    }
+    if (contradiction) return {items:[],nextCursor:null,scanLimited:false};
+    // Default single-field indexes can merge raw equalities with document-ID order,
+    // including dynamic custom dropdown keys. No lead rewrite/backfill is needed.
+    const indexed = [...base, ...[...exact].map(([field,value])=>[field,'==',value])];
+    const order = exact.size ? '__name__' : 'id';
     const items = [];
     let scanned = 0,
       hasMore = false;
     while (items.length < n && scanned < 1000) {
       const page = await store.query(path('leads'), {
-        filters: base,
-        order: 'id',
+        filters: indexed,
+        order,
         direction: 'desc',
         after,
         limit: Math.min(100, 1000 - scanned),
@@ -623,7 +637,7 @@ export function createApp({
       for (let i = 0; i < page.length; i++) {
         const lead = page[i];
         scanned++;
-        after = [lead.id];
+        after = [exact.size ? documentKey(lead) : lead.id];
         if (matchesLead(lead, filters)) items.push(lead);
         if (items.length === n) {
           hasMore = i < page.length - 1 || page.length === 100;

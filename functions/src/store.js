@@ -1,4 +1,8 @@
 import { FieldPath } from 'firebase-admin/firestore';
+const DOCUMENT_KEY = Symbol('document-key');
+export const documentKey = value => value[DOCUMENT_KEY] ?? value.id;
+const withDocumentKey = (value, key) => Object.defineProperty(value, DOCUMENT_KEY, {value:key});
+const fieldValue = (value, field) => field === '__name__' ? documentKey(value) : field.split('.').reduce((v,key)=>v?.[key], value);
 // Both adapters expose the same transaction boundary. Buffered writes ensure all
 // Firestore reads precede writes, including policy checks and idempotency reads.
 function firestoreReader(db, transaction) {
@@ -9,8 +13,8 @@ function firestoreReader(db, transaction) {
   ) => {
     let q = db.collection(path);
     for (const [f, op, v] of filters) q = q.where(f, op, v);
-    q = q.orderBy(order, direction);
-    if (order !== 'id') q = q.orderBy('id', direction);
+    q = q.orderBy(order === '__name__' ? FieldPath.documentId() : order, direction);
+    if (order !== 'id' && order !== '__name__') q = q.orderBy('id', direction);
     if (after !== undefined) q = q.startAfter(...after);
     return q.limit(limit);
   };
@@ -35,7 +39,7 @@ function firestoreReader(db, transaction) {
     query: async (path, opts) => {
       const q = queryRef(path, opts);
       const s = transaction ? await transaction.get(q) : await q.get();
-      return s.docs.map((d) => d.data());
+      return s.docs.map((d) => opts?.order === '__name__' ? withDocumentKey(d.data(),d.id) : d.data());
     },
     count: async (path, filters = []) => {
       let q = db.collection(path);
@@ -95,27 +99,27 @@ export function memoryStore(seed = {}) {
             k.startsWith(p + '/') &&
             k.split('/').length === p.split('/').length + 1,
         )
-        .map(([, v]) => structuredClone(v))
+        .map(([key, v]) => withDocumentKey(structuredClone(v),key.split('/').at(-1)))
         .filter((v) =>
           filters.every(([f, op, x]) =>
             op === '=='
-              ? v[f] === x
+              ? fieldValue(v,f) === x
               : op === '>='
-                ? v[f] >= x
+                ? fieldValue(v,f) >= x
                 : op === '<='
-                  ? v[f] <= x
+                  ? fieldValue(v,f) <= x
                   : op === '<'
-                    ? v[f] < x
+                    ? fieldValue(v,f) < x
                     : op === '>'
-                      ? v[f] > x
+                      ? fieldValue(v,f) > x
                       : false,
           ),
         )
         .sort(
           (a, b) =>
-            (a[order] < b[order]
+            (fieldValue(a,order) < fieldValue(b,order)
               ? -1
-              : a[order] > b[order]
+              : fieldValue(a,order) > fieldValue(b,order)
                 ? 1
                 : a.id < b.id
                   ? -1
@@ -127,10 +131,10 @@ export function memoryStore(seed = {}) {
           (v) =>
             !after ||
             (direction === 'asc'
-              ? v[order] > after[0] ||
-                (v[order] === after[0] && v.id > after[1])
-              : v[order] < after[0] ||
-                (v[order] === after[0] && v.id < after[1])),
+              ? fieldValue(v,order) > after[0] ||
+                (fieldValue(v,order) === after[0] && v.id > after[1])
+              : fieldValue(v,order) < after[0] ||
+                (fieldValue(v,order) === after[0] && v.id < after[1])),
         )
         .slice(0, limit),
     set: (p, v) => map.set(p, structuredClone(v)),

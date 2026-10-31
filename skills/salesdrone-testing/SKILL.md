@@ -30,6 +30,8 @@ Report source commit, suite/case IDs, commands, passed/failed/not-run results, v
 
 Entry points: [runner](../../scripts/run-test-suite.mjs), [execution policy](../../scripts/test-plan.mjs), [runner tests](../../tests/test-plan.test.ts), [emulator integration](../../functions/test/emulator.integration.js), [testing guide](../../docs/TESTING.md). Update the catalog and owning module skill when behavior changes.
 
+Exact match regression entry points: functions/test/exact-filters.test.js and the real Firestore case in emulator.integration.js. Verify all raw predicates, nested fields, assigned scope, actual document-key cursors and unchanged Equals; component interactions alone cannot verify index behavior.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

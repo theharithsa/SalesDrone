@@ -82,6 +82,8 @@ Adjacent owners:
 - [salesdrone-imports](../salesdrone-imports/SKILL.md)
 - [salesdrone-notifications](../salesdrone-notifications/SKILL.md)
 
+Exact match is additive for source, stage and configured custom dropdowns. It compares raw case/spacing/Unicode and pushes every equality into the query; Equals remains normalized and unchanged. Residual conditions and signed filter/member-bound pagination still apply. Verify exact-filters.test.js, emulator.integration.js and desktop/mobile component interactions.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

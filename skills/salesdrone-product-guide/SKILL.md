@@ -46,6 +46,8 @@ Document editing as open lead then Edit lead; remove instructions to edit direct
 
 Document personal font styles under Appearance & time, draft preview/save timing, defaults, Book override and branding/monospace exceptions. Refresh changed activity and Appearance screenshots with synthetic data; keep unchanged captures honest. Retain self-hosted font licence/source documentation and browser-check native font selection at narrow widths.
 
+Explain Exact match separately from Equals: only source, stage and available custom dropdowns support literal case/space/Unicode matching. Curate desktop and mobile filter captures and keep unchanged historical captures honest.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

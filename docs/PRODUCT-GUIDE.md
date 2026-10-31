@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.3.2
+Version 2.4.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -94,6 +94,10 @@ Infinite scrolling loads the next page automatically as you approach the bottom 
 
 On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and the filter icon share a row. All stages provides a compact quick stage picker; desktop retains its action buttons and stage shortcuts. Small screens shorten action labels, and large mobile counts use compact notation.
 
+Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
+
+![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/lead-filters-demo.jpg)
+
 ### Questions
 
 **Why does a filter show no results?**
@@ -103,6 +107,10 @@ Clear other filters, check spelling and the selected search field, then confirm 
 **Why did my edit fail?**
 
 A newer version may exist, or your access changed. Refresh and reapply the intended change. Do not repeatedly resubmit an outdated version.
+
+**Why does Equals find a row that Exact match does not?**
+
+Equals normalizes text. Exact match requires the same saved case, spaces and Unicode representation. Check the saved value or use Equals when tolerant matching is intended.
 
 ## Batch edit existing leads
 

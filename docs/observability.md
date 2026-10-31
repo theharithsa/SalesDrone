@@ -264,3 +264,7 @@ Deployment event success now requires all seven infrastructure/application/live-
 Task page batch reads produce a value-free firestore.getAll dependency span. Transactional batch reads populate the same known-before snapshot map used by committed outbox counts. Archive activity creation reuses committed activities/leads counters and emits no customer text in telemetry. Rate-limit conversion logs contain only scanned/converted/complete counts, never keys or counter values.
 
 CI adds fixed lint/components labels and actual Vitest leaf-case results with hashed IDs and bounded duration/status. Synthetic assertions and DOM/error output stay out of exported events. A passing jsdom test does not imply browser geometry, device certification or tenant-query visibility. SDLC deployment transport migration remains tracked separately in #71.
+
+## Exact match query signals
+
+Exact match is read-only and reuses existing HTTP RED metrics, request/query spans and privacy-safe errors. Do not emit a fabricated customer business event or include filter values in telemetry. No lead-data backfill or new maintenance signal is introduced; bounded internal rate-counter TTL conversion retains its own numeric progress logging.

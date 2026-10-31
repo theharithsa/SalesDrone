@@ -101,3 +101,7 @@ The ordinary synthetic guest app also passed archive → Settings Archives → s
 `npm run lint` checks functions/src, scripts and apps/web/src. ESLint/TypeScript errors fail CI; existing hook-dependency/accessibility findings are visible warnings with a per-file/rule regression ceiling in eslint-baseline.json. New categories or increased counts fail. Remove baseline entries as findings are fixed; do not regenerate it to accept new warnings. ESLint 9 is required by the current jsx-a11y peer range; Dependabot proposes compatible updates rather than bypassing peers.
 
 The CI component reporter emits only hashed case identity, an allowlisted repository test path, status, bounded duration and finish time. It never sends names, assertion errors or DOM snapshots. components/lint are bounded CI labels. All testcase events remain distinct from production business operations.
+
+## Exact match regression coverage
+
+functions/test/exact-filters.test.js covers more than 1,000 rows, all equality predicates, assigned scope, literal Unicode/case/space differences, unchanged Equals, custom type rejection, contradictory predicates, residual conditions and cursor binding. emulator.integration.js verifies nested equality and document-ID pagination with business IDs differing from document keys. Component tests cover desktop/mobile selection. Use isolated synthetic Chromium for visual checks; jsdom is not device certification.

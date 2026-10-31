@@ -67,6 +67,8 @@ Adjacent owners:
 - [salesdrone-observability](../salesdrone-observability/SKILL.md)
 - [salesdrone-release](../salesdrone-release/SKILL.md)
 
+Exact lead queries merge default single-field raw equality indexes and sort by document ID. Preserve every authorization predicate and nested customFields key. Actual document keys use transient non-enumerable metadata, never persisted business fields. No lead backfill is required; verify real Firestore pagination where business IDs differ from document keys.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

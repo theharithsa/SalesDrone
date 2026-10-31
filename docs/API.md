@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.3.2**, OpenAPI contract **1.19.2**. All application operations
+Application release **v2.4.0**, OpenAPI contract **1.20.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -266,3 +266,7 @@ Contract 1.19.1 uses strict ArchiveInput (positive integer expectedVersion, no u
 Archive retains the strict versioned input and existing permissions. A successful first transition writes a `change` activity (`Lead archived`, actor UID and timestamp) in the same transaction. An already-archived lead with the current version returns OK without another activity. Stale versions still fail. Archive currently cancels all pending linked tasks; #15/#21 track the unresolved cancellation policy. The archive browser is read-only; restore remains #4.
 
 The managed Functions Framework can reject malformed JSON before this Express application executes. Its outer-runtime HTML 400 is tracked in #30; local parser tests do not establish production JSON error envelopes.
+
+## Exact match column filters
+
+Use `op: "exact"` for source, stage or an available custom dropdown (`cf_*`). This additive option compares saved strings literally, including case, spacing and Unicode; existing `equals` is unchanged. Unsupported fields/types return 400 FILTER. All Exact predicates are sent to Firestore along with archived/assignment scope. Exact queries use descending document-ID order and signed cursors; other conditions remain bounded residual filters. Continue sparse pages until nextCursor is null. Export uses the same filter semantics and permissions. No lead migration or new permission is required.

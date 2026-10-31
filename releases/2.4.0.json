@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "version": "2.3.2",
-  "summary": "Engineering maintenance: timestamp TTL and bounded counter conversion, atomic archive history, stable cursors, shared AI model configuration, batched task reads, CI lint/components/dependency automation and evergreen module skills.",
+  "version": "2.4.0",
+  "summary": "Deliver all 16 selected fixes: indexed Exact match without changing Equals, runtime retention/history/cursor/model/task hardening, CI tooling/components and maintained module skills.",
   "modules": [
     "salesdrone-api-integrations",
     "salesdrone-attachments",
@@ -38,13 +38,14 @@
   "settingsSections": [],
   "api": {
     "status": "changed",
-    "reason": "Archive writes one atomic timeline transition while repeated current-version archive requests remain no-ops. Pagination security and task scope remain unchanged. No new endpoint or permission.",
-    "contractVersion": "1.19.2",
+    "reason": "Add the compatible exact column-filter operator for stage, source and configured custom dropdowns. Equals keeps existing normalization; Exact conditions all use raw indexed equality and document-ID order with signed cursors. Retain archive fixes and existing policies.",
+    "contractVersion": "1.20.0",
     "permissions": "Existing Google/App Check, active membership, recipient-only tasks and leads:archive PAT scope are unchanged; batch reads still filter current lead access.",
     "tests": [
       "functions/test/app.test.js",
       "functions/test/configuration.test.js",
-      "functions/test/emulator.integration.js"
+      "functions/test/emulator.integration.js",
+      "functions/test/exact-filters.test.js"
     ]
   },
   "observability": {
@@ -112,6 +113,9 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "No visible UI layout or workflow changes: frontend edits remove unused imports/functions and use const, while synthetic component tests exercise existing controls. Preserve honestly versioned public captures. Real demo Auth/Firestore/Storage tests verify timestamp conversion, task queries and transactions; managed TTL deletion timing, physical-device/Safari behavior, live customer writes and tenant searchability are separate evidence. #36 remains pending a matching-semantics decision and is not claimed by this plan.",
-  "screenshots": []
+  "manualVerification": "26 synthetic Chromium width/theme checks passed at 390/599/600/767/768/899/900/1000/1001/1024/1280/1440/1920 CSS px in light and dark appearance. Verified actual desktop disclosure/mobile dialog, Exact apply/cancel preservation and reachable actions at 390x540. Reviewed fresh 1440x900 and 390x1100 captures. Six real Auth/Firestore/Storage emulator cases passed, including nested equality/document-ID pagination. A read-only managed query-planner probe with nonexistent values and document-name-only projection accepted combined equality predicates and returned zero documents; no customer contents/writes were used. No physical-device/Safari certification. Live version/SHA, managed TTL/index readiness, function revisions, Pages and monitoring receipts remain post-deployment gates; tenant search needs separate query access.",
+  "screenshots": [
+    "lead-filters-demo.jpg",
+    "lead-filters-mobile-demo.jpg"
+  ]
 }

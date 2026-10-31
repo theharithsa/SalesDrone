@@ -244,3 +244,16 @@ describe("import mapping", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe('Exact match filters',()=>{
+ it('offers Exact match for source/stage/custom dropdowns and preserves the entered text',async()=>{
+  const user=userEvent.setup(),apply=vi.fn();render(<LeadFilters applied={[]} onApply={apply}/>);
+  await user.click(screen.getByRole('button',{name:/Filter any column/}));await user.click(screen.getByRole('button',{name:/Add condition/}));
+  await user.selectOptions(screen.getByLabelText('Filter 1 comparison'),'exact');await user.type(screen.getByLabelText('Filter 1 value'),'Website');await user.click(screen.getByRole('button',{name:'Apply filters'}));
+  expect(apply).toHaveBeenCalledWith([{field:'source',op:'exact',value:'Website'}]);
+ });
+ it('applies Exact match in the mobile dialog without changing Equals',async()=>{
+  const user=userEvent.setup(),apply=vi.fn();render(<MobileLeadFilters config={config} sources={['Website']} applied={{searchField:'name',stage:'',source:'',filters:[]}} onApply={apply}/>);
+  await user.click(screen.getByRole('button',{name:'Filter leads'}));await user.click(screen.getByRole('button',{name:/Add condition/}));await user.selectOptions(screen.getByLabelText('Filter 1 comparison'),'exact');await user.type(screen.getByLabelText('Filter 1 value'),'Website');await user.click(screen.getByRole('button',{name:'Apply filters'}));expect(apply).toHaveBeenCalledWith(expect.objectContaining({filters:[{field:'source',op:'exact',value:'Website'}]}));
+ });
+});

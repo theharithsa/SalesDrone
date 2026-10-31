@@ -120,3 +120,7 @@ Deploy the rateLimits.expiresAt field override and wait for ACTIVE as well as co
 GEMINI_MODEL defaults once in functions/src/model-config.js and is resolved through the Firebase runtime parameter by all AI adapters. The workflow does not write another default. Optional repository variable GEMINI_MODEL supplies an explicit override; leave it unset to use the shared default. API initialization requires the bound CURSOR_SECRET; Functions discovery defers secret reads and scheduled exports do not require that secret.
 
 Dependabot opens reviewed weekly dependency/action PRs; it grants no auto-merge or deployment bypass. The lint gate and component tests execute in verification before production secrets are available.
+
+## Exact match rollout
+
+The additive Exact operator requires no lead-data migration. Retain existing default single-field indexes for source, stage and customFields keys; do not exempt these fields. The existing index-readiness gate still runs. A read-only managed planner probe with nonexistent values and document-name-only projection accepted combined equality predicates and returned no documents. The rate-limit TTL conversion is separate internal maintenance, not a lead rewrite.

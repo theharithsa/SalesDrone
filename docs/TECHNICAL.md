@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **2.3.2** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **2.4.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -184,3 +184,7 @@ Rate-limit expiresAt is a Date serialized by the Admin SDK as a Firestore Timest
 CURSOR_SECRET is required by the production API initialization hook and never logged. Both adapters share functions/src/model-config.js and resolve the Firebase GEMINI_MODEL parameter lazily; changing a model override requires deploying affected api/analyzeNotes/leadIntelligence functions. No workflow fallback overrides the parameter.
 
 GET tasks reuses each queried task record and performs one positional batch read of distinct linked leads, then applies current access policy. Missing/deleted/unreadable leads are excluded; standalone tasks remain creator-private. This reduces RPC overhead; Firestore still bills individual document reads and pages are not a multi-request snapshot.
+
+## Indexed Exact match
+
+Every raw Exact condition for source, stage and configured custom select fields is pushed into Firestore. Default single-field equality indexes merge with document-ID order, including nested customFields keys. The store exposes the actual document key through non-enumerable transient metadata for stable signed cursors; it is never persisted or serialized. Contradictory exact values produce an empty page. Existing Equals retains normalization and its bounded scan. No derived lead fields or backfill are introduced.

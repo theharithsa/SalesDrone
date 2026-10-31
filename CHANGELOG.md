@@ -3,18 +3,10 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+## [2.4.0] - 2026-10-31
 
-
-
-
-
-
-
-
-
-
-
-## [2.3.2] - 2026-10-30
+### Added
+- #36: Add case-sensitive Exact match for source, sales stage and custom dropdowns. Push every Exact condition into indexed Firestore equality queries; retain existing Equals semantics, assigned scope, report filters and signed pagination. No lead-data rewrite or backfill is needed.
 
 ### Fixed
 - #6: Store rate-limit expiry as Firestore timestamps, enable TTL, convert legacy counter strings in bounded resumable batches and wait for the policy to be active during deployment. Import-detail retention is unchanged.
@@ -34,7 +26,6 @@ API contract versions are independent from application versions.
 - #51: Generate all 23 module catalog entries with the skill tree and reject stale catalogs.
 - #52: Give skill prompts module-specific invariants and runnable verification commands.
 - #53: Link unresolved module gaps and explicitly distinguish current archive behavior from pending restore/cancellation decisions.
-
 
 ## [2.3.1] - 2026-10-30
 
