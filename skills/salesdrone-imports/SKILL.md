@@ -92,3 +92,5 @@ These are tracked follow-ups, not implemented behavior: [#24](https://github.com
 Import details and source baselines remain until explicit Admin deletion; #25 must not add automatic import-detail TTL.
 
 List mapped destinations as well as unmapped compatible fields. Block browser validation until a direct-column conflict or additional-field reuse collision is resolved; focus the relevant mapping/name control. Preserve unused source columns for field review or explicit exclusion. Recheck resolved target IDs against fresh configuration before any schema write; server STATUS_COLUMN protection stays authoritative.
+
+A 503 LEAD_DATA_RESET means cleanup is still active, not workbook validation failure. Return fixed public guidance and Retry-After:60; wait for Completed in Settings, then retry the same mapping/job. Preserve locking, idempotency and generic redaction for unrelated server errors. Cover blocked preview/no job and successful retry in lead-data-reset.test.js.

@@ -31,3 +31,7 @@ Legacy jobs retain their stored chunk sizes and owner replay. Non-admin writers 
 ## Verification boundaries
 
 `functions/test/import-review.test.js` covers matching, three-way decisions, permissions, stale work, revisions, retention, deliberate clears and a 1,000-row re-import. Real Auth/Firestore integration checks stored baselines, restricted rows, concurrent executors and deletion. Synthetic component captures demonstrate presentation only; they do not prove a production import. Telemetry contains safe lifecycle counts/outcomes, never names, contact values, filenames, cells or comments.
+
+## Temporary cleanup lock
+
+If validation or resume returns HTTP 503 with `LEAD_DATA_RESET`, lead-data cleanup is still active. Wait for Settings → Lead data management to show Completed, then retry. `Retry-After: 60` advises a delay; it does not mean cleanup is guaranteed to finish within a minute. A blocked preview does not create an import job. Keep the workbook/mapping or resume the existing job; do not create parallel imports to work around the lock. The lock protects against records being deleted during cleanup. Other server errors remain redacted.

@@ -2539,9 +2539,13 @@ export function createApp({
             }
           : null;
     const status = parserError?.status || err.status || 500;
+    // Cleanup is an expected temporary lock, not an opaque server failure.
+    // Use fixed public copy; never expose arbitrary provider error messages.
+    const leadDataReset =
+      err instanceof AppError && status === 503 && err.code === 'LEAD_DATA_RESET';
     if (status === 401)
       res.set('WWW-Authenticate', 'Bearer realm="SalesDrone"');
-    if (status === 429) res.set('Retry-After', '60');
+    if (status === 429 || leadDataReset) res.set('Retry-After', '60');
     if (status >= 500)
       console.error(
         JSON.stringify({
@@ -2555,7 +2559,9 @@ export function createApp({
         code: parserError?.code || err.code || 'INTERNAL',
         message:
           parserError?.message ||
-          (status >= 500 ? 'Something went wrong. Please retry.' : err.message),
+          (leadDataReset
+            ? 'Lead data cleanup is still running. Wait for cleanup to finish in Settings, then retry this action.'
+            : status >= 500 ? 'Something went wrong. Please retry.' : err.message),
         details: parserError ? undefined : err.details,
         requestId: req.requestId,
       },

@@ -92,8 +92,6 @@ Every saved net configuration change now carries auditEvents.settingsChanges and
 
 FontStyle is personal, defaults to standard and preserves older clients. Keep Book/branding exceptions and committed key-only audit behavior; see [font operations](references/operations.md).
 
-Reviewed import field setup reuses the existing Admin-only expectedVersion boundary and retains all current definitions. It never promotes import access into schema-write access. PATCH /me now supports partial preferences and dashboardField; merge defaults/omitted keys, validate available categories and emit key-only dashboard.visualization audit evidence. Document the direct Today control in the personal settings guide.
-
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
@@ -101,3 +99,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#16](https://github.com/theharithsa/SalesDrone/issues/16), [#18](https://github.com/theharithsa/SalesDrone/issues/18). Check their current status before changing the contract.
+
+Cleanup blocks use fixed 503 LEAD_DATA_RESET copy and Retry-After:60; preserve the lock and provider-error privacy. See operations for import/schema and recovery checks.

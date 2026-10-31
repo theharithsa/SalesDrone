@@ -278,3 +278,5 @@ Personal dashboardField changes use dashboard.visualization in settings audit, c
 Explicit import status destinations and sourceStatus stay in authorized import details, never telemetry. Destination validation reuses request/error spans; no field label or source status is added to metric dimensions or events.
 
 Field-aware dashboard copy and import mapping-conflict focus are presentation only. They add no business event, metric dimension or request payload field. Existing approved field setup/import writes retain their audit/outbox paths. Never emit configured field labels, workbook headers or status values as telemetry attributes.
+
+Cleanup-lock feedback reuses the existing `LEAD_DATA_RESET` code, sanitized HTTP 503 logs/request spans/RED metrics and reset lifecycle events. The fixed client message and Retry-After header introduce no event, dimension or customer payload. Failed preview writes create no import committed event; unrelated provider errors remain redacted.

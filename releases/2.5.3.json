@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "version": "2.5.3",
+  "summary": "Explain temporary cleanup blocking for imports without weakening the maintenance lock or exposing provider errors.",
+  "modules": [
+    "salesdrone-imports",
+    "salesdrone-workspace-settings"
+  ],
+  "documentation": [
+    "docs/IMPORTS.md",
+    "docs/LEAD-DATA-MANAGEMENT.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/observability.md",
+    "CHANGELOG.md"
+  ],
+  "settingsSections": [
+    "data"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Existing 503 LEAD_DATA_RESET and error shape are unchanged; fixed public copy and Retry-After guidance clarify an existing temporary maintenance condition. API stays 1.21.0.",
+    "contractVersion": "1.21.0",
+    "permissions": "Existing Google/App Check, membership and capability checks precede the maintenance response. No writes or policy bypass during cleanup.",
+    "tests": [
+      "functions/test/lead-data-reset.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing safe HTTP status/operation logs, spans, RED metrics and reset lifecycle/outbox events remain authoritative. Client retry guidance adds no event or customer data.",
+      "tests": [
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing safe HTTP status/operation logs, spans, RED metrics and reset lifecycle/outbox events remain authoritative. Client retry guidance adds no event or customer data.",
+      "tests": [
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing safe HTTP status/operation logs, spans, RED metrics and reset lifecycle/outbox events remain authoritative. Client retry guidance adds no event or customer data.",
+      "tests": [
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing safe HTTP status/operation logs, spans, RED metrics and reset lifecycle/outbox events remain authoritative. Client retry guidance adds no event or customer data.",
+      "tests": [
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing safe HTTP status/operation logs, spans, RED metrics and reset lifecycle/outbox events remain authoritative. Client retry guidance adds no event or customer data.",
+      "tests": [
+        "functions/test/lead-data-reset.test.js",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Response-only backend change; no layout or screenshot changes. Synthetic API regression covers cleanup 503, fixed message/header, no preview job, retry after lock removal and generic unrelated 503 redaction. Do not run production resets or customer imports as tests. Publication and post-deploy evidence remain separate."
+}

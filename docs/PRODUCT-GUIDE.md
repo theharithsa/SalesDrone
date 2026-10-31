@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.5.2
+Version 2.5.3
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -385,6 +385,8 @@ Text fields preserve leading zeros and codes. Repeat uploads reuse existing fiel
 Recheck positional field names when duplicate or unnamed headers move in a revised workbook. Positional defaults cannot establish which old column a moved blank header represents.
 
 If a destination already uses a workbook column, Review existing column focuses its mapping. Remap that column elsewhere or choose Not mapped. Otherwise unused populated data appears in Additional workbook fields: retain it under a reviewed field name or explicitly exclude it. An additional field cannot reuse the status destination. Original workbook statuses remain in authorized import history; server overwrite guards and prepared jobs keep their existing contracts.
+
+If an import says lead-data cleanup is still running, wait for Settings → Lead data management to show Completed, then retry. This temporary pause prevents newly imported records being deleted by cleanup; keep the same workbook/mapping or resume the existing job. Retry guidance does not promise completion within a minute.
 
 ![Excel and CSV import — synthetic demo only](../site/assets/screenshots/import-fields-demo.jpg)
 

@@ -7,6 +7,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.5.3] - 2026-10-31
+
+### Fixed
+- #90: Explain that lead-data cleanup temporarily blocks imports and other lead writes instead of showing an opaque server failure. Return a safe fixed message and Retry-After guidance while preserving the cleanup lock and redaction of unrelated server errors.
+
 ## [2.5.2] - 2026-10-31
 
 ### Fixed
