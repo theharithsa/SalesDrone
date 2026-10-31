@@ -509,3 +509,11 @@ test('research outcomes retain atomic private outboxes without the SDK, exclude 
   await assert.rejects(store.run(async tx=>{const r=await tx.get(path('assistantRequests','synthetic-request'));tx.set(path('assistantRequests','synthetic-request'),{...r,status:'Failed'});throw Error('rollback');}));
   assert.equal((await base.query(path('telemetryOutbox'),{limit:100})).length,2);
 });
+
+test('restores produce one committed lifecycle outcome without contact data and rollback atomically',async()=>{
+ const base=memoryStore(),store=observableStore(base,()=>null);
+ await base.run(async tx=>tx.set(path('leads','restore-synthetic'),{id:'restore-synthetic',archived:true,phone:'PRIVATE',version:1}));
+ await store.run(async tx=>{const l=await tx.get(path('leads','restore-synthetic'));tx.set(path('leads',l.id),{...l,archived:false,version:2});});
+ const events=await base.query(path('telemetryOutbox'),{limit:100});assert.equal(events.length,1);assert.equal(events[0].event.data['records.restored'],1);assert.ok(!JSON.stringify(events).includes('PRIVATE'));
+ await assert.rejects(store.run(async tx=>{const l=await tx.get(path('leads','restore-synthetic'));tx.set(path('leads',l.id),{...l,archived:true});throw Error('rollback');}));assert.equal((await base.query(path('telemetryOutbox'),{limit:100})).length,1);
+});

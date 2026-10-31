@@ -32,6 +32,7 @@ Form or scoped API → field and contact validation → member/lead policy → a
 - GET /api/v1/leads/{id}
 - PATCH /api/v1/leads/{id}
 - POST /api/v1/leads/{id}/archive
+- POST /api/v1/leads/{id}/restore
 - PATCH /api/v1/leads/{id}/assignment
 
 Read the exact request/response/error schemas in [OpenAPI](../../docs/openapi.json)
@@ -95,3 +96,5 @@ These are tracked follow-ups, not implemented behavior: [#4](https://github.com/
 When PATCH retains an existing normalized contact key, allow other existing owners from separate imports; only newly acquired keys need duplicate rejection. Preserve every other owner in atomic dedupe rewrites, expectedVersion, scope and stage history. Cover shared stage edits, stale saves, rejected new duplicates and releasing one shared owner in API/Firestore tests.
 
 Stage edits validate against current Admin-configured values, including custom replacements. Never hardcode STAGES in edit controls. Refresh workspace reloads field options with identity-generation protection so another session’s changes can be picked up.
+
+Archive/restore uses current leads:edit scope and expectedVersion. Restore retains suppression, assignment, stage and shared contact owners, repairs missing self references and rejects newly acquired conflicts. Record one restore activity and committed restored lifecycle event; never reschedule cancelled outreach. DUPLICATE_ARCHIVED is disclosed only when every matching source is accessible and archived. Test app.test.js, archived-leads.test.js and emulator.integration.js.

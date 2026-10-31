@@ -204,3 +204,7 @@ Dashboard presentation uses the effective configured grouping label throughout h
 Lead/activities writes atomically advance a source epoch and enqueue researchIndexJobs independently of telemetry. The existing leadIntelligence worker advances private hygieneScans/findings/evidence, assistantConversations/requests/contributions and bounded researchChunks backfill/update jobs, with a separate research time budget and failure boundary. Gemini embeddings (768 dimensions) feed ACL-prefiltered Firestore cosine queries; authoritative sources are rechecked before bounded prompts/citations. Counts use full deterministic authorized scans, never vector top-k. The app conservatively marks artifacts stale after source edits. Reset deletes derived collections and suppresses re-queueing. External direct database writes require explicit index rebuilding; all app writes use the shared wrapper.
 
 Research analytics and contact-index diagnostics use adapter field projections to keep read payloads bounded and avoid loading unrelated notes. Projected snapshots are excluded from known-before lifecycle comparisons. Private task changes have a separate Hygiene freshness epoch; they are never retrieved into Assistant context.
+
+## API transport boundary
+
+See [API-INGRESS.md](API-INGRESS.md) for the separately deployed Cloud Run gateway, fixed upstream, bounded decoding, runtime/build IAM, privacy exclusion and Hosting cutover. Domain storage, Auth and policy remain in the existing API Function.

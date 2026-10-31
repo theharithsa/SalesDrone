@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.1",
+  "summary": "Restore archived leads safely, enforce correction authorship, cancel outreach only and normalize API parser errors through a dedicated ingress with compatible SPA security policy.",
+  "modules": [
+    "salesdrone-api-ingress",
+    "salesdrone-leads",
+    "salesdrone-conversations",
+    "salesdrone-tasks-reminders",
+    "salesdrone-api-integrations",
+    "salesdrone-data-platform",
+    "salesdrone-observability",
+    "salesdrone-interface",
+    "salesdrone-product-guide",
+    "salesdrone-release",
+    "salesdrone-release-readiness",
+    "salesdrone-testing"
+  ],
+  "documentation": [
+    "docs/SETTINGS.md",
+    "docs/API.md",
+    "docs/observability.md",
+    "docs/API-INGRESS.md",
+    "docs/CORRECTNESS-2.6.1-PLAN.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/TECHNICAL.md",
+    "CHANGELOG.md",
+    "docs/REVIEW-2.6.1.md"
+  ],
+  "settingsSections": [
+    "archives"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "API 1.23.0 adds scoped optimistic restoration and correction authorship; Hosting parser errors are normalized before the managed provider.",
+    "contractVersion": "1.23.0",
+    "permissions": "Restore requires leads:edit/current scope and existing PAT leads:archive. Corrections require original actorUid or Admin plus current activity capability/lead scope.",
+    "tests": [
+      "functions/test/app.test.js",
+      "functions/test/archived-leads.test.js",
+      "functions/test/emulator.integration.js",
+      "functions/test/api-portal.test.js",
+      "services/ingress/test/gateway.test.js",
+      "tests/spa-security.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Ingress reuses bounded HTTP outcome/duration metrics with revision identity and finite parser error categories, without URL or identity dimensions.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "services/ingress/test/gateway.test.js",
+        "tests/deployment-outcome.test.ts",
+        "services/ingress/test/telemetry.test.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Real ingress server/forwarding spans propagate SDK context to the fixed API backend; existing domain tracing remains authoritative.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "services/ingress/test/gateway.test.js",
+        "tests/deployment-outcome.test.ts",
+        "services/ingress/test/telemetry.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Sanitized OTel completion/error and bounded platform outcomes exclude URLs/queries/headers/contacts/bodies; automatic ingress request access logs are excluded.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "services/ingress/test/gateway.test.js",
+        "tests/deployment-outcome.test.ts",
+        "services/ingress/test/telemetry.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Restoration adds one atomic restored lifecycle outcome, durable when the SDK is unavailable. Proxy rejections create no domain events.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "services/ingress/test/gateway.test.js",
+        "tests/deployment-outcome.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Actual ingress case receipts join existing lifecycle telemetry; build/revision/parser validation is a required deployment phase with separate metadata.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "services/ingress/test/gateway.test.js",
+        "tests/deployment-outcome.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts",
+    "ingress-parser",
+    "spa-security-headers"
+  ],
+  "manualVerification": "Review synthetic archive cards and confirmation at measured phone/desktop widths and shared breakpoints. Rehearse report-only then enforced CSP on a local build. Inspect live Google/RUM startup without customer sign-in. Verify Hosting malformed JSON/no-store/request/version and all five Functions plus ingress separately. Physical devices and tenant-query linkage remain separate unverified boundaries.",
+  "milestone": {
+    "number": 6,
+    "title": "v2.6.1 — Correctness & security",
+    "issues": [
+      4,
+      14,
+      15,
+      21,
+      27,
+      30
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "archives-demo.jpg",
+    "archives-mobile.jpg"
+  ]
+}

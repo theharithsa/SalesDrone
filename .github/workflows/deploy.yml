@@ -106,6 +106,9 @@ jobs:
       - name: Deploy Cloud Functions
         id: functions
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only functions:salesdrone --non-interactive
+      - name: Deploy and verify API ingress before cutover
+        id: ingress
+        run: node scripts/deploy-ingress.mjs
       - name: Deploy Firebase Hosting
         id: hosting
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only hosting --non-interactive
@@ -129,6 +132,7 @@ jobs:
           DEPLOY_INDEXES: ${{ steps.wait_indexes.outcome }}
           DEPLOY_STORAGE: ${{ steps.storage.outcome }}
           DEPLOY_FUNCTIONS: ${{ steps.functions.outcome }}
+          DEPLOY_INGRESS: ${{ steps.ingress.outcome }}
           DEPLOY_HOSTING: ${{ steps.hosting.outcome }}
           DEPLOY_PUBLISHED: ${{ steps.published.outcome }}
           DEPLOY_POSTCHECK: ${{ steps.postcheck.outcome }}
@@ -140,6 +144,7 @@ jobs:
         with:
           name: salesdrone-deployment-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
+            ingress-deployment.json
             deployment.json
             release-verification.json
             monitoring.json

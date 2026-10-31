@@ -406,3 +406,20 @@ it('rejects destination reuse from fresh field configuration before any schema o
  expect(request.mock.calls.some(([p,m])=>p==='/field-options'&&m==='PATCH')).toBe(false);
  expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(false);
 });
+
+describe('archive restore policy and confirmation',()=>{
+ it('readers can view retained leads without a restore action',async()=>{
+  const {default:Archives}=await import('../src/features/ArchivedLeadsSettings');
+  const request=vi.fn().mockResolvedValue({items:[{...lead,archived:true}],nextCursor:null});
+  render(<Archives request={request}/>);await screen.findByText(lead.name);expect(screen.queryByRole('button',{name:'Restore lead'})).not.toBeInTheDocument();
+ });
+ it('cancellation does not write; confirmation sends the current version and removes only the restored card',async()=>{
+  const {default:Archives}=await import('../src/features/ArchivedLeadsSettings');
+  const request=vi.fn().mockImplementation(async(path:string)=>path.startsWith('/archived-leads')?{items:[{...lead,archived:true}],nextCursor:null}:{...lead,archived:false});
+  const refreshed=vi.fn();const user=userEvent.setup();
+  render(<Archives request={request} canRestore onRestored={refreshed}/>);
+  await user.click(await screen.findByRole('button',{name:'Restore lead'}));await user.click(within(screen.getByRole('dialog')).getByRole('button',{name:'Cancel'}));expect(request).toHaveBeenCalledTimes(1);
+  await user.click(screen.getByRole('button',{name:'Restore lead'}));await user.click(within(screen.getByRole('dialog')).getByRole('button',{name:'Confirm restore'}));
+  await screen.findByText('No archived leads');expect(request).toHaveBeenCalledWith('/leads/'+lead.id+'/restore','POST',{expectedVersion:lead.version});expect(refreshed).toHaveBeenCalledTimes(1);
+ });
+});

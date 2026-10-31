@@ -70,6 +70,7 @@ const metadata = {
   runUrl: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
   changelogUrl: `https://github.com/${process.env.GITHUB_REPOSITORY}/blob/${release.commit}/CHANGELOG.md`,
   functions,
+  ingress: await readFile('ingress-deployment.json','utf8').then(JSON.parse).catch(()=>({state:'unverified'})),
 };
 await writeFile('deployment.json', JSON.stringify(metadata, null, 2));
 console.log(

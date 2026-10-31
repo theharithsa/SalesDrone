@@ -83,6 +83,7 @@ export function lifecycleCounts(domain, before, after) {
   }
   if (domain === 'leads') {
     if (!before.archived && after.archived) result.archived = 1;
+    if (before.archived && after.archived === false) result.restored = 1;
     if (!before.doNotContact && after.doNotContact) result.suppressed = 1;
     if (before.doNotContact && after.doNotContact === false)
       result.unsuppressed = 1;
@@ -157,7 +158,7 @@ export function observableStore(base, getTelemetry = () => null) {
               summaries = new Map();
             for (const [p, v] of written) {
               const d = domain(p, v);
-              if (!d || (!available?.enabled && !['hygieneScans','assistantConversations','assistantRequests'].includes(d))) continue;
+              if (!d || (!available?.enabled && !['hygieneScans','assistantConversations','assistantRequests'].includes(d) && !(d==='leads' && lifecycleCounts(d,known.get(p),v).restored))) continue;
               const s = summaries.get(d) || {
                 written: 0,
                 created: 0,

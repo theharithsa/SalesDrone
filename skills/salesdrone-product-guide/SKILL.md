@@ -48,7 +48,7 @@ Document personal font styles under Appearance & time, draft preview/save timing
 
 Explain Exact match separately from Equals: only source, stage and available custom dropdowns support literal case/space/Unicode matching. Curate desktop and mobile filter captures and keep unchanged historical captures honest.
 
-Explain Admin field setup before import preview, schema persistence on cancellation, explicit exclusions, duplicate/blank headers and stable field reuse. Explain the Today personal grouping selector and automatic hidden-stage fallback, bounded groups and unchanged KPIs. Refresh affected desktop/mobile import, category and popup captures without relabelling unchanged historical assets.
+For import and grouping captures, follow [operations](references/operations.md).
 
 ## Conditional reference
 
@@ -61,3 +61,5 @@ These are tracked follow-ups, not implemented behavior: [#4](https://github.com/
 Capture Source, Zone and custom-field selections with configured labels, mapped import destinations/conflicts, and empty groups. Keep primary/helper rows separate; refresh affected states without restamping unchanged captures.
 
 Research workflows: [guide notes](references/research.md).
+
+Archives now exposes Restore lead to current lead editors. Explain preserved suppression/contact ownership, current version/scope and no restarted outreach. Corrections are original-author/Admin only. Refresh archives screenshots with fictional records and visible restore controls.

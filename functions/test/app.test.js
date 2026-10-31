@@ -813,3 +813,47 @@ test('stage and detail edits retain shared imported contacts; newly acquired dup
   assert.deepEqual((await s.store.get(path('dedupeKeys',contactKeys(moved)[0]))).leadIds,[second.id]);
   assert.equal((await s.store.get(path('leads',first.id))).stage,'New');
 });
+
+test('corrections require original author or Admin in addition to current lead access', async () => {
+ const s=setup();await bootstrap(s);await grant(s,'sdr');await grant(s,'viewer','SDR');
+ const l=await createLead(s);
+ const settings=(await s.call('admin','get','/workspace-settings').expect(200)).body;
+ await s.call('admin','patch','/workspace-settings',{expectedVersion:settings.version,exportsEnabled:settings.exportsEnabled,assignedOnly:false}).expect(200);
+ await s.store.run(async tx=>{const m=await tx.get(path('members','sdr'));tx.set(path('members','sdr'),{...m,scope:'all'});const v=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...v,scope:'all'});});
+ const a=(await s.call('sdr','post',`/leads/${l.id}/activities`,{type:'note',notes:'Synthetic original',expectedVersion:l.version},randomUUID()).expect(200)).body.activity;
+ const correction={type:'note',notes:'Synthetic corrected',expectedRevision:1};
+ const denied=await s.call('viewer','post',`/activities/${a.id}/corrections`,correction,randomUUID()).expect(403);assert.equal(denied.body.error.code,'ACTIVITY_AUTHOR');
+ await s.call('sdr','post',`/activities/${a.id}/corrections`,correction,randomUUID()).expect(200);
+ await s.call('admin2','post',`/activities/${a.id}/corrections`,{...correction,expectedRevision:2},randomUUID()).expect(200);
+ await s.store.run(async tx=>{const activity=await tx.get(path('activities',a.id));delete activity.actorUid;tx.set(path('activities',a.id),activity);});
+ await s.call('sdr','post',`/activities/${a.id}/corrections`,{...correction,expectedRevision:3},randomUUID()).expect(403);
+ await s.call('admin','post',`/activities/${a.id}/corrections`,{...correction,expectedRevision:3},randomUUID()).expect(200);
+});
+
+test('archived duplicate disclosure requires current access and restore preserves contact owners', async()=>{
+ const s=setup();await bootstrap(s);await grant(s,'sdr');
+ const first=await createLead(s,91);
+ await s.call('admin','post',`/leads/${first.id}/archive`,{expectedVersion:first.version}).expect(200);
+ const visible=await s.call('admin','post','/leads',lead(91),randomUUID()).expect(409);assert.equal(visible.body.error.code,'DUPLICATE_ARCHIVED');
+ const hidden=await s.call('sdr','post','/leads',lead(91),randomUUID()).expect(409);assert.equal(hidden.body.error.code,'DUPLICATE');assert.ok(!JSON.stringify(hidden.body).includes(first.id));
+ const {contactKeys}=await import('../src/leads.js');const key=contactKeys(first)[0];
+ await s.store.run(async tx=>{tx.set(path('dedupeKeys',key),{id:key,leadIds:[first.id,'other-synthetic']});});
+ const restored=(await s.call('admin','post',`/leads/${first.id}/restore`,{expectedVersion:2}).expect(200)).body;
+ assert.deepEqual(new Set((await s.store.get(path('dedupeKeys',key))).leadIds),new Set([first.id,'other-synthetic']));
+ await s.call('admin','post',`/leads/${first.id}/archive`,{expectedVersion:restored.version}).expect(200);
+ await s.store.run(async tx=>tx.set(path('dedupeKeys',key),{id:key,leadIds:['other-synthetic']}));
+ await s.call('admin','post',`/leads/${first.id}/restore`,{expectedVersion:4}).expect(409);
+ assert.equal((await s.store.get(path('leads',first.id))).archived,true);
+});
+
+test('single and batch reassignment preserve private administrative tasks', async()=>{
+ const s=setup();await bootstrap(s);await grant(s,'sdr');
+ for(const batch of [false,true]){
+ const l=await createLead(s,batch?94:93);
+ await s.store.run(async tx=>{for(const kind of ['outreach','administrative'])tx.set(path('tasks',l.id+kind),{id:l.id+kind,leadId:l.id,kind,state:'Pending',version:1,recipientUid:'admin'});});
+ if(batch)await s.call('admin','post','/leads/batch',{items:[{id:l.id,expectedVersion:l.version}],changes:{},assignedToUid:'sdr'},randomUUID()).expect(200);
+ else await s.call('admin','patch',`/leads/${l.id}/assignment`,{expectedVersion:l.version,assignedToUid:'sdr'}).expect(200);
+ assert.equal((await s.store.get(path('tasks',l.id+'outreach'))).state,'Cancelled');
+ const task=await s.store.get(path('tasks',l.id+'administrative'));assert.equal(task.state,'Pending');assert.equal(task.version,1);assert.equal(task.recipientUid,'admin');
+ }
+});

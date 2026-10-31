@@ -83,3 +83,5 @@ Lead Assistant follow-up reads require tasks:read as well as assistant:query and
 current lead access. Only the requester's Pending outreach reminders in the explicit
 reporting-calendar range qualify; suppressed/review/archived leads are excluded.
 Duplicate reminders count a lead once. Task edits invalidate saved reminder results.
+
+Archive and single/batch reassignment query/cancel only Pending outreach tasks. Administrative tasks remain private and unchanged, with existing access/delivery eligibility. TASK_LIMIT counts cancellation work only. Missing historic task kinds are not guessed. Restore never resurrects cancelled outreach. Keep the leadId/state/kind/id index READY.

@@ -1,0 +1,16 @@
+**
+!package.json
+!package-lock.json
+!functions/
+!functions/package.json
+!functions/src/
+!functions/src/**
+!apps/
+!apps/web/
+!apps/web/package.json
+!services/
+!services/ingress/
+!services/ingress/**
+services/ingress/test/**
+**/.env*
+**/*-debug.log

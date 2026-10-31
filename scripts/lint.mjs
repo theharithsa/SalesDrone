@@ -5,6 +5,7 @@ const eslint = new ESLint();
 const results = await eslint.lintFiles([
   "functions/src",
   "scripts",
+  "services/ingress/src",
   "apps/web/src",
 ]);
 const formatter = await eslint.loadFormatter("stylish");

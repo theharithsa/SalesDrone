@@ -242,22 +242,22 @@
   {
     "file": "archives-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5dc5ea63df31a7798a45416d01a44e6f9371c20504945a008351d78b261fe993",
-    "capturedAt": "2026-10-29T13:02:50.939492+00:00",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.1.0",
-    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Scoped archives design; fictional records and stubbed paging. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+    "sha256": "30996157ca0792f4c4e4aa57e4830b923ce2f24338624e2a2e0dc29909c3b853",
+    "capturedAt": "2026-10-31T22:56:11.761316+00:00",
+    "viewport": "1828 x 1028 CSS pixels; isolated in-app Chromium; measured devicePixelRatio 1.4",
+    "capturePixels": "1807 x 1016",
+    "version": "2.6.1",
+    "review": "Fresh 2.6.1 synthetic archive review with visible restore controls and no horizontal overflow. Material confirmation Cancel and Confirm restore checked against stubbed data only; no live API/customer data. Not physical-device certification."
   },
   {
     "file": "archives-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ad0cfd7a82511fe8bbbf91132091128985aa6231b11d74d58c799ef5cb2c7fc0",
-    "capturedAt": "2026-10-29T13:02:51.139846+00:00",
-    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "d8ccf4a230dcfcb6ece36d7725dc24eccfde99b10b87c724e71d885165f8277d",
+    "capturedAt": "2026-10-31T22:56:11.780469+00:00",
+    "viewport": "390 x 844 CSS pixels; isolated in-app Chromium; archive-panel crop; browser zoom 70% compensated capture",
     "capturePixels": "390 x 844",
-    "version": "2.1.0",
-    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Phone archive cards; fictional records and stubbed paging. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+    "version": "2.6.1",
+    "review": "Fresh 2.6.1 synthetic archive review with visible restore controls and no horizontal overflow. Material confirmation Cancel and Confirm restore checked against stubbed data only; no live API/customer data. Not physical-device certification."
   },
   {
     "file": "lead-data-reset-demo.jpg",

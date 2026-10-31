@@ -2,6 +2,8 @@
 
 Machine-readable source: [skill-tree.json](skill-tree.json). Generated from module skills and skills/intent-map.json. Load the shared contract and relevant module; load release readiness for every feature or version release. Routing is advisory, not permission to spawn agents or deploy.
 
+- [salesdrone-api-ingress](skills/salesdrone-api-ingress/SKILL.md) — API ingress, malformed JSON, managed parser, Cloud Run gateway, proxy body limit.
+  Related: salesdrone-release-readiness.
 - [salesdrone-api-integrations](skills/salesdrone-api-integrations/SKILL.md) — swagger, openapi, personal access token, api key, api scopes.
   Related: salesdrone-release, salesdrone-authentication, salesdrone-people-permissions, salesdrone-data-platform.
 - [salesdrone-attachments](skills/salesdrone-attachments/SKILL.md) — attachments, upload lead files, lead photos, Firebase Storage, file download, Files tab.

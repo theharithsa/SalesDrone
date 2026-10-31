@@ -1163,6 +1163,7 @@ export function createApp({
         const id = uid();
         const prepared = await prepareLead(tx, input, {
           uid: m.uid,
+          member: m,
           id,
           now: now(),
         });
@@ -1440,6 +1441,7 @@ export function createApp({
         filters: [
           ['leadId', '==', l.id],
           ['state', '==', 'Pending'],
+          ['kind', '==', 'outreach'],
         ],
         limit: 101,
       });
@@ -1470,6 +1472,20 @@ export function createApp({
       return { ok: true };
     }),
   );
+  route('post', '/leads/:id/restore', 'leads:edit', req =>
+    mutate(req,'leads:edit',async(tx,m)=>{
+      const input=parse(ArchiveInput,req.body),lead=await leadAccess(tx,m,req.params.id);
+      assertVersion(lead,input.expectedVersion);
+      if(!lead.archived)return lead;
+      const keys=contactKeys(lead),indexes=await tx.getAll(keys.map(key=>path('dedupeKeys',key)));
+      for(let i=0;i<keys.length;i++)if(!indexes[i]?.leadIds?.includes(lead.id)&&indexes[i]?.leadIds?.some(id=>id!==lead.id))throw new AppError(409,'DUPLICATE','A contact index conflict needs Admin review before restoration');
+      const updated={...lead,archived:false,archivedAt:null,restoredAt:now(),updatedAt:now(),version:lead.version+1};
+      for(let i=0;i<keys.length;i++)tx.set(path('dedupeKeys',keys[i]),{id:keys[i],leadIds:[...new Set([...(indexes[i]?.leadIds||[]),lead.id])]});
+      tx.set(path('leads',lead.id),updated);
+      const id=uid();tx.set(path('activities',id),{id,leadId:lead.id,type:'change',notes:'Lead restored; cancelled outreach was not rescheduled',actorUid:m.uid,createdAt:now()});
+      return updated;
+    }),
+  );
   route('patch', '/leads/:id/assignment', 'assignments:write', (req) =>
     mutate(req, 'assignments:write', async (tx, m) => {
       const input = parse(AssignmentPatch, req.body);
@@ -1497,6 +1513,7 @@ export function createApp({
         filters: [
           ['leadId', '==', l.id],
           ['state', '==', 'Pending'],
+          ['kind', '==', 'outreach'],
         ],
         limit: 101,
       });
@@ -1656,6 +1673,8 @@ export function createApp({
         const old = await tx.get(path('activities', req.params.id));
         if (!old) throw new AppError(404, 'NOT_FOUND', 'Activity not found');
         const lead = await leadAccess(tx, m, old.leadId);
+        if (m.role !== 'Admin' && old.actorUid !== m.uid)
+          throw new AppError(403,'ACTIVITY_AUTHOR','Only the original author or an Admin may correct this entry');
         const latest = await tx.query(path('activities'), {
           filters: [
             ['leadId', '==', old.leadId],

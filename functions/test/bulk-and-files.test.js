@@ -465,6 +465,7 @@ test('batch task/write budget rejects oversized cancellation work without a part
         tx.set(path('tasks', id), {
           id,
           leadId: l.id,
+          kind: 'outreach',
           state: 'Pending',
           version: 1,
         });

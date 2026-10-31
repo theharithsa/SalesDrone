@@ -14,7 +14,7 @@ export const TOKEN_SCOPES = [
   ['leads:read', 'Read leads and stage history', 'leads:read'],
   ['leads:create', 'Create enquiries', 'leads:create'],
   ['leads:edit', 'Update lead details', 'leads:edit'],
-  ['leads:archive', 'Archive leads (no permanent deletion)', 'leads:edit'],
+  ['leads:archive', 'Archive or restore leads (no permanent deletion)', 'leads:edit'],
   [
     'assignments:write',
     'Assign leads to permitted members',
@@ -61,6 +61,7 @@ export const PAT_ROUTES = {
   'post /leads': 'leads:create',
   'patch /leads/:id': 'leads:edit',
   'post /leads/:id/archive': 'leads:archive',
+  'post /leads/:id/restore': 'leads:archive',
   'patch /leads/:id/assignment': 'assignments:write',
   'get /leads/:id/activities': 'activities:read',
   'post /leads/:id/activities': 'activities:write',

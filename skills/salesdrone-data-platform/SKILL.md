@@ -82,3 +82,5 @@ Lead research adds an atomic source epoch and durable index jobs independent of 
 Index declarations must be unique after canonical object-key normalization. The
 release preflight rejects duplicates before Firebase can issue concurrent create
 requests and fail HTTP 409. Field ordering remains semantically significant.
+
+Outreach cancellation queries require the tasks leadId/state/kind/id composite index. Restore commits lead, contact-owner repairs, timeline and lifecycle outbox atomically; transaction rollback must retain the archived record. Keep shared contact ownership and no-network-in-transaction rules.

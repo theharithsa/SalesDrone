@@ -1,6 +1,6 @@
 import { recordStage } from './journey.js';
 import { AppError, LeadInput, parse } from './contracts.js';
-import { hash, path } from './policy.js';
+import { hash, path, canReadLead } from './policy.js';
 export function normalizeLead(value) {
   const l = parse(LeadInput, value);
   if (!l.needsReview && (!l.name || !l.enquiryDate))
@@ -35,19 +35,18 @@ export const contactKeys = (l) =>
   ]
     .filter(Boolean)
     .map(hash);
-export async function prepareLead(tx, input, { uid, id, now }) {
+export async function prepareLead(tx, input, { uid, id, now, member }) {
   const lead = normalizeLead(input);
   const keys = contactKeys(lead);
   const matches = await Promise.all(
     keys.map((k) => tx.get(path('dedupeKeys', k))),
   );
   const duplicateIds = [...new Set(matches.flatMap((x) => x?.leadIds || []))];
-  if (duplicateIds.length && !lead.allowDuplicate)
-    throw new AppError(
-      409,
-      'DUPLICATE',
-      'A lead with this contact already exists',
-    );
+  if (duplicateIds.length && !lead.allowDuplicate) {
+    const records=member?await tx.getAll(duplicateIds.slice(0,100).map(id=>path('leads',id))):[];
+    const archived=member?.capabilities?.includes('leads:read') && duplicateIds.length<=100 && records.length===duplicateIds.length && records.every(record=>record&&record.archived&&canReadLead(member,record));
+    throw new AppError(409,archived?'DUPLICATE_ARCHIVED':'DUPLICATE',archived?'An archived enquiry uses this contact. Review Archives to restore it.':'A lead with this contact already exists');
+  }
   const { allowDuplicate, ...fields } = lead;
   const record = {
     ...fields,

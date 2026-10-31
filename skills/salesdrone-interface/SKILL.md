@@ -64,3 +64,5 @@ Lead Assistant uses the dedicated Material conversation surface with on-demand h
 Its fixed history sheet divides viewport dimensions by interface-scale; verify both
 zoom and short windows. Composer insets account for bottom navigation only inside
 the app shell, so standalone synthetic previews do not inherit a phantom nav gap.
+
+Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use existing Material buttons and narrow-card wrapping.

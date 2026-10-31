@@ -5,6 +5,7 @@ export const deploymentPhases = [
   'indexes',
   'storage',
   'functions',
+  'ingress',
   'hosting',
   'published',
   'postcheck',

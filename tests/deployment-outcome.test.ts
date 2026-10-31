@@ -7,6 +7,7 @@ const success = {
   indexes: 'success',
   storage: 'success',
   functions: 'success',
+  ingress: 'success',
   hosting: 'success',
   published: 'success',
   postcheck: 'success',

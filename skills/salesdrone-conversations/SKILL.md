@@ -78,3 +78,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#14](https://github.com/theharithsa/SalesDrone/issues/14), [#17](https://github.com/theharithsa/SalesDrone/issues/17), [#59](https://github.com/theharithsa/SalesDrone/issues/59). Check their current status before changing the contract.
+
+Corrections require original actorUid or Admin in addition to activities:write, current lead access and expectedRevision. Historic missing authors are Admin-only. Hide unavailable correction controls; retain revisions and reminder invalidation atomically. Verify app.test.js author/Admin/other-member cases.

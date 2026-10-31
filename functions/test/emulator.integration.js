@@ -921,6 +921,7 @@ test('archive Settings API persists dates and paginates with actual Firestore as
       });
     tx.set(path('tasks', 'archive_emulator_pending'), {
       id: 'archive_emulator_pending',
+      kind: 'outreach',
       leadId: 'archive_emulator_0',
       recipientUid: identity.uid,
       state: 'Pending',
@@ -954,6 +955,11 @@ test('archive Settings API persists dates and paginates with actual Firestore as
     ),
   );
   await call('get', '/leads/archive_emulator_3').expect(404);
+  await call('post','/leads/archive_emulator_3/restore',{expectedVersion:1}).expect(404);
+  await call('post','/leads/archive_emulator_0/restore',{expectedVersion:1}).expect(409);
+  await call('post','/leads/archive_emulator_0/restore',{expectedVersion:2}).expect(200);
+  assert.equal((await store.get(path('tasks','archive_emulator_pending'))).state,'Cancelled');
+  assert.equal((await store.get(path('leads','archive_emulator_0'))).archived,false);
 });
 
 test('reviewed imports persist source baselines and permission-filtered outcomes in actual Auth/Firestore transactions', async () => {
@@ -1443,4 +1449,23 @@ test('Lead research uses real scoped Firestore pages, private API history, sourc
   assert.equal((await call(repToken,'get','/lead-assistant/requests/'+stop.id).expect(200)).body.status,'Cancelled');
   await call(repToken,'delete','/lead-assistant/conversations/'+chat.id,{expectedVersion:(await store.get(path('assistantConversations',chat.id))).version}).expect(200);
   await call(repToken,'get','/lead-assistant/conversations/'+chat.id+'/messages').expect(404);
+});
+
+test('correction authorship is enforced with real Auth and atomic Firestore revision history',async(t)=>{
+ const store=firestoreStore(db),settingsPath='workspaces/avinyatech/settings/workspace',prior=await store.get(settingsPath);
+ t.after(async()=>{await store.run(async tx=>{if(prior)tx.set(settingsPath,prior);else tx.delete(settingsPath);});});
+ const identities=[];for(const email of ['correction-author@example.com','correction-peer@example.com','correction-admin@example.com']){const token=await signIn(email);identities.push({token,identity:await auth.verifyIdToken(token)});}
+ const app=createApp({store,verifyToken:token=>auth.verifyIdToken(token,true)});
+ const call=(who,method,url,body)=>{let r=request(app)[method]('/api/v1'+url).set('Authorization','Bearer '+identities[who].token).set('Idempotency-Key',randomUUID());return body?r.send(body):r;};
+ await store.run(async tx=>{
+  tx.set(settingsPath,{version:(prior?.version||1)+1,exportsEnabled:true,assignedOnly:false});
+  for(const [i,{identity}]of identities.entries())tx.set(path('members',identity.uid),{id:identity.uid,uid:identity.uid,active:true,role:i===2?'Admin':'SDR',scope:'all',capabilities:['leads:read','leads:edit','activities:write'],version:1});
+  tx.set(path('leads','correction-lead'),{id:'correction-lead',name:'Synthetic correction',stage:'New',assignedToUid:identities[0].identity.uid,archived:false,version:1});
+ });
+ const a=(await call(0,'post','/leads/correction-lead/activities',{type:'note',notes:'Synthetic original',expectedVersion:1}).expect(200)).body.activity;
+ const input={type:'note',notes:'Synthetic correction',expectedRevision:1};
+ const denial=await call(1,'post','/activities/'+a.id+'/corrections',input).expect(403);assert.equal(denial.body.error.code,'ACTIVITY_AUTHOR');
+ await call(0,'post','/activities/'+a.id+'/corrections',input).expect(200);
+ await call(2,'post','/activities/'+a.id+'/corrections',{...input,expectedRevision:2}).expect(200);
+ const revisions=await store.query(path('activityRevisions'),{filters:[['activityId','==',a.id]],limit:10});assert.equal(revisions.length,2);
 });

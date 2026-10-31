@@ -54,6 +54,7 @@ async function setup() {
     });
     tx.set(path('tasks', 'pending'), {
       id: 'pending',
+      kind: 'outreach',
       leadId: 'live',
       state: 'Pending',
       recipientUid: 'rep',
@@ -128,4 +129,24 @@ test('archive retains the record and date, cancels pending reminders and rejects
     (await call('rep', 'get', '/leads').expect(200)).body.items.length,
     0,
   );
+});
+
+test('restore preserves suppression and cancelled outreach, repairs ownership and rejects stale versions', async () => {
+  const { store, call } = await setup();
+  await store.run(async tx => {
+    const l = await tx.get(path('leads', 'live'));
+    tx.set(path('leads', l.id), { ...l, doNotContact: true, suppressionReason: 'Synthetic restriction' });
+    tx.set(path('tasks', 'admin-task'), { id: 'admin-task', leadId: l.id, kind: 'administrative', state: 'Pending', recipientUid: 'rep', version: 1 });
+  });
+  await call('rep', 'post', '/leads/live/archive', { expectedVersion: 1 }).expect(200);
+  assert.equal((await store.get(path('tasks', 'admin-task'))).state, 'Pending');
+  await call('rep', 'post', '/leads/live/restore', { expectedVersion: 1 }).expect(409);
+  await call('other', 'post', '/leads/live/restore', { expectedVersion: 2 }).expect(404);
+  const restored = (await call('rep', 'post', '/leads/live/restore', { expectedVersion: 2 }).expect(200)).body;
+  assert.equal(restored.archived, false); assert.equal(restored.doNotContact, true); assert.equal(restored.version, 3);
+  assert.equal((await store.get(path('tasks', 'pending'))).state, 'Cancelled');
+  assert.equal((await store.get(path('tasks', 'admin-task'))).state, 'Pending');
+  await call('rep', 'post', '/leads/live/restore', { expectedVersion: 3 }).expect(200);
+  const events = await store.query(path('activities'), { filters: [['leadId', '==', 'live']], limit: 20 });
+  assert.equal(events.filter(x => x.notes.startsWith('Lead restored')).length, 1);
 });
