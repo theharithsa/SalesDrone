@@ -50,3 +50,8 @@ LeadFieldManager stacks field names/supporting text and uses named trash/restore
 ## Personal font preferences
 
 FontStyle is an optional allowlisted personal preference (standard/inter/source-sans/lora), default standard. GET /me defaults it and PATCH merges omissions, preserving old clients. Settings drafts preview locally and apply only after a successful save. Keep Google/App Check self scope and PAT denial. Include fontStyle when saving other settings so a mounted form cannot reset it. Track its key in appearance settings-audit defaults/definitions; export no values. Test font-style.test.js and real emulator persistence/audit isolation.
+
+
+Reviewed import field setup reuses the existing Admin-only expectedVersion boundary and retains all current definitions. It never promotes import access into schema-write access. PATCH /me now supports partial preferences and dashboardField; merge defaults/omitted keys, validate available categories and emit key-only dashboard.visualization audit evidence. Document the direct Today control in the personal settings guide.
+
+Blocked lead-data writes during cleanup expose only fixed 503 LEAD_DATA_RESET guidance and Retry-After:60. Do not weaken the lock, promise completion in a minute or expose arbitrary provider messages. Settings cleanup status remains authoritative; test a blocked import creates no job and retry works after the lock clears.

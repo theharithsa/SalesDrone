@@ -638,6 +638,23 @@ tbody tr:last-child td {
   cursor: pointer;
   font-weight: 500;
 }
+.score-factor {
+  padding: 10px 0;
+}
+.score-factor-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.score-factor-heading strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.score-factor-heading b {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
 .score-evidence li {
   padding: 8px 0;
 }

@@ -6,7 +6,7 @@ import { memoryStore } from '../src/store.js';
 import { observableStore } from '../src/observable-store.js';
 import { createApp } from '../src/app.js';
 import { path } from '../src/policy.js';
-import { PRESETS } from '../src/contracts.js';
+import { AppError, PRESETS } from '../src/contracts.js';
 import { generateToken } from '../src/personal-access-tokens.js';
 import {
   advanceLeadReset,
@@ -257,6 +257,32 @@ test('reset requires current Google Admin, fresh owner-bound preview, strict con
   await s
     .call('admin', 'post', '/lead-data-reset', started.input, started.key)
     .expect(403);
+});
+test('import preview explains the cleanup lock, retains no job and succeeds after cleanup; other server errors stay private', async () => {
+  const s = await setup();
+  await s.raw.run(async tx => tx.set(RESET_STATE, { active: true }));
+  const input = {
+    filename: 'synthetic.csv', sheet: 'CSV', reviewed: true,
+    duplicateMode: 'keep', dateOrder: 'DMY', statusField: 'none', statusMap: {},
+    rows: [{ name: 'Synthetic enquiry', phone: '5551234567', enquiryDate: '2026-10-29' }],
+  };
+  const before = await s.raw.count(path('imports'));
+  const blocked = await s.call('admin', 'post', '/imports/preview', input, randomUUID()).expect(503);
+  assert.equal(blocked.body.error.code, 'LEAD_DATA_RESET');
+  assert.match(blocked.body.error.message, /cleanup is still running.*Settings.*retry/);
+  assert.equal(blocked.headers['retry-after'], '60');
+  assert.equal(await s.raw.count(path('imports')), before);
+  await s.raw.run(async tx => tx.set(RESET_STATE, { active: false }));
+  const ready = await s.call('admin', 'post', '/imports/preview', input, randomUUID()).expect(200);
+  assert.equal(ready.body.total, 1);
+  assert.equal(ready.body.invalid, 0);
+  const privateApp = createApp({
+    store: { ...s.store, get: async () => { throw new AppError(503, 'PROVIDER_UNAVAILABLE', 'private provider detail'); } },
+    verifyToken: async () => ({ uid:'admin', email:'admin@example.com', email_verified:true, firebase:{sign_in_provider:'google.com'} }),
+  });
+  const hidden = await request(privateApp).get('/api/v1/imports').set('Authorization', 'Bearer admin').expect(503);
+  assert.equal(hidden.body.error.message, 'Something went wrong. Please retry.');
+  assert.equal(hidden.headers['retry-after'], undefined);
 });
 test('resumable cleanup removes all lead data/files/caches, preserves configuration/personal reminders/audit and prevents resurrection', async () => {
   const s = await setup();

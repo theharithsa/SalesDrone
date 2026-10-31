@@ -79,3 +79,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#39](https://github.com/theharithsa/SalesDrone/issues/39). Check their current status before changing the contract.
+
+Keep unknown/conflicting factor points hidden and unscored component totals as dashes; retain legitimate reported zero/positive points in spaced, wrapping rows and avoid negative-zero risk. This is presentation only, never change stored evidence/calculations. Focused component cases: lead score evidence values in workflows.test.tsx.

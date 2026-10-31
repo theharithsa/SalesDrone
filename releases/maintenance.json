@@ -1,8 +1,8 @@
 {
-  "version": "1.6.7",
-  "baseCommit": "ee92a973aded44965c8089eeb12ea1f362a7ce02",
+  "version": "2.5.2",
+  "baseCommit": "e9a76203b484e6f8122034d75b16f130a31692e7",
   "authorizedByUser": true,
-  "date": "2026-10-26",
-  "instruction": "The overall UI still feels too large at 100% zoom. Make the desktop layout more compact while keeping text readable. Remove row edit controls. Keep version 1.6.7.",
-  "reason": "User explicitly authorizes another v1.6.7 maintenance deployment for desktop density and editing only from opened lead details. Preserve the original release tag; identify this deployment by commit/run."
+  "date": "2026-10-31",
+  "instruction": "See htis why that 0 is here? DOn't do lot of tests. Quickly change this and deploy. Just isssue bug, pr and merge, deploy. No version change.",
+  "reason": "Explicit same-version production maintenance for score evidence presentation, together with the already requested import cleanup feedback fix. Preserve the v2.5.2 tag and identify this one deployment by commit/run."
 }

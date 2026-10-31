@@ -587,7 +587,7 @@ After acceptance the operation cannot be cancelled. Lead changes and background 
 
 Status refreshes while this section is open. Waiting, Running, Blocked and Completed are persisted. You may leave and return; cleanup continues independently of the browser.
 
-Refresh status checks progress immediately. A failure retains the pause and cursor. After fixing service/storage access, an Admin can Retry cleanup with its current version. There is no automatic rollback or cancellation after partial deletion. Counts reflect acknowledged batch work; provider deletes retried after a crash may be undercounted.
+Refresh status checks progress immediately. A failure retains the pause and cursor. After fixing service/storage access, an Admin can Retry cleanup with its current version. There is no automatic rollback or cancellation after partial deletion. Counts reflect acknowledged batch work; provider deletes retried after a crash may be undercounted. Imports and other lead-data writes pause with a cleanup-in-progress message and Retry-After guidance. Wait for Completed before retrying; the delay is not an estimated completion time.
 
 **Example:** A network error does not mean cleanup was rejected. Refresh status or retry the same confirmation request; stable operation IDs prevent another reset.
 

@@ -196,7 +196,8 @@
         "functions/test/import-review.test.js",
         "apps/web/test/workflows.test.tsx",
         "tests/import-fields.test.ts",
-        "functions/test/import-status.test.js"
+        "functions/test/import-status.test.js",
+        "functions/test/lead-data-reset.test.js"
       ],
       "manualCases": [
         {
@@ -223,6 +224,11 @@
           "id": "IMPORT-MAPPED-DESTINATION-01",
           "expected": "Already-mapped categories/custom text-dropdown fields remain selectable. Conflicts disable validation until the column is remapped or explicitly excluded/preserved under a distinct reviewed field. Review links focus the correct controls; fresh field setup cannot reuse the selected destination ID.",
           "fixture": "fictional CSV and stubbed Admin preview; no production imports"
+        },
+        {
+          "id": "IMPORT-CLEANUP-LOCK-01",
+          "expected": "An active synthetic cleanup blocks import preview with an explicit cleanup message and retry guidance, creates no import, and permits retry after completion. Other server error details stay private.",
+          "fixture": "synthetic API/store fixtures only; never start a production reset for testing"
         }
       ]
     },

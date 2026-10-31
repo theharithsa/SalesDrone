@@ -154,13 +154,13 @@ export default function LeadScore({
         <>
           <div className="score-components">
             <span>
-              Fit <b>{report.fit || 0}</b>
+              Fit <b>{report.score == null ? '—' : report.fit || 0}</b>
             </span>
             <span>
-              Intent <b>{report.intent || 0}</b>
+              Intent <b>{report.score == null ? '—' : report.intent || 0}</b>
             </span>
             <span>
-              Risk <b>−{report.penalty || 0}</b>
+              Risk <b>{report.score == null ? '—' : report.penalty ? `−${report.penalty}` : 0}</b>
             </span>
           </div>
           <p className="field-hint">
@@ -173,13 +173,13 @@ export default function LeadScore({
                 Factors & evidence <ChevronDown size={14} />
               </summary>
               {report.factors.map((f: Entity) => (
-                <div key={f.id}>
-                  <div>
+                <div key={f.id} className="score-factor">
+                  <div className="score-factor-heading">
                     <strong>{f.label}</strong>
-                    <b>
+                    {['present', 'not_met'].includes(f.state) ? <b>
                       {f.points > 0 ? '+' : ''}
                       {f.points}
-                    </b>
+                    </b> : null}
                   </div>
                   <small>
                     {f.state === 'present'

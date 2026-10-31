@@ -1,4 +1,5 @@
 import DashboardPage from '../src/features/DashboardPage';
+import LeadScore from '../src/components/LeadScore';
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -27,6 +28,24 @@ const lead = {
   doNotContact: false,
   needsReview: false,
 } satisfies Lead;
+describe('lead score evidence values', () => {
+  it('omits points for unknown factors and shows unknown component totals', async () => {
+    const request = vi.fn().mockResolvedValue({status:'Ready',score:null,fit:0,intent:0,penalty:0,knownFactors:0,totalFactors:1,factors:[{id:'unknown',label:'Synthetic unknown factor',state:'unknown',points:0}]});
+    const {container} = render(<LeadScore leadId="synthetic" version={1} request={request} canRefresh={false} timezone="UTC" />);
+    await screen.findByText('Synthetic unknown factor');
+    expect(screen.getByText('Not recorded')).toBeInTheDocument();
+    expect(container.querySelector('.score-factor-heading')?.textContent).toBe('Synthetic unknown factor');
+    expect(container.querySelector('.score-factor-heading b')).toBeNull();
+    expect([...container.querySelectorAll('.score-components b')].map(e=>e.textContent)).toEqual(['—','—','—']);
+  });
+  it('retains reported zero and positive points without negative-zero risk', async () => {
+    const request = vi.fn().mockResolvedValue({status:'Ready',score:0,fit:0,intent:0,penalty:0,factors:[{id:'known-zero',label:'Synthetic zero factor',state:'not_met',points:0},{id:'known-positive',label:'Synthetic positive factor',state:'present',points:4}]});
+    const {container} = render(<LeadScore leadId="synthetic" version={1} request={request} canRefresh={false} timezone="UTC" />);
+    await screen.findByText('Synthetic zero factor');
+    expect([...container.querySelectorAll('.score-factor-heading b')].map(e=>e.textContent)).toEqual(['0','+4']);
+    expect([...container.querySelectorAll('.score-components b')].map(e=>e.textContent)).toEqual(['0','0','0']);
+  });
+});
 describe("lead inspector", () => {
   it("supports expand, Escape and focus restoration on close", async () => {
     const user = userEvent.setup(),
