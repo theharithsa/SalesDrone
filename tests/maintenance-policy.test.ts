@@ -42,11 +42,12 @@ test('release gate rejects an undeclared same-version push and scopes the overri
     await mkdir(join(root, 'apps/web'), { recursive: true });
     await mkdir(join(root, 'functions'));
     await mkdir(join(root, 'releases'));
-    for (const script of ['check-release.mjs', 'maintenance-policy.mjs'])
+    for (const script of ['check-release.mjs', 'maintenance-policy.mjs','index-readiness.mjs','candidate-recovery.mjs'])
       await copyFile(
         new URL('../scripts/' + script, import.meta.url),
         join(root, 'scripts', script),
       );
+    await writeFile(join(root,'firestore.indexes.json'),JSON.stringify({indexes:[],fieldOverrides:[]}));
     for (const name of [
       'package.json',
       'apps/web/package.json',
@@ -87,7 +88,8 @@ test('release gate rejects an undeclared same-version push and scopes the overri
       join(root, 'releases/maintenance.json'),
       JSON.stringify({ ...record, baseCommit: base }),
     );
-    assert.equal(check(base).status, 0);
+    const accepted=check(base);
+    assert.equal(accepted.status, 0, accepted.stderr);
     git(['add', '.']);
     git([
       '-c',
