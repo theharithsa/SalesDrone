@@ -315,8 +315,11 @@ describe('personal dashboard categories',()=>{
   render(<DashboardPage demo config={{...config,labels:{...config.labels,zone:'Delivery region'},customFields:[{id:'cf_campaign',label:'Campaign',type:'text',options:[],required:false,deleted:false}],hiddenFields:['stage']}} request={request} firstName="Explorer" timezone="UTC" sample={{leads:[{...lead,legacyStatus:'Quoted',source:'Website',zone:'North',customFields:{cf_campaign:'Spring'}}],tasks:[],activities:[]}} refreshKey={0} stageOrder={config.values.stage} onStage={vi.fn()} onCategory={onCategory} onTasks={vi.fn()} onLead={async()=>{}} onTask={async()=>{}}/>);
   const picker=await screen.findByLabelText('Dashboard visualization field');
   await waitFor(()=>expect(picker).toBeEnabled());
-  expect(screen.queryByRole('option',{name:'Sales stage'})).not.toBeInTheDocument();
+  expect(screen.getByRole('option',{name:'Sales stage'})).toBeInTheDocument();
   expect(screen.getByText('Currently using Enquiry status')).toBeInTheDocument();
+  await user.selectOptions(picker,'stage');
+  expect(await screen.findByRole('heading',{name:'Leads by Sales stage'})).toBeInTheDocument();
+  expect(localStorage.getItem('salesdrone.demo.dashboard-field')).toBe('stage');
   await user.selectOptions(picker,'source');
   await waitFor(()=>expect(screen.getByText('Currently using Enquiry source')).toBeInTheDocument());
   expect(localStorage.getItem('salesdrone.demo.dashboard-field')).toBe('source');

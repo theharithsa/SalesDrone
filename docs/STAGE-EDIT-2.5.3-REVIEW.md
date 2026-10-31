@@ -20,3 +20,5 @@ Closed dialog selects use CSS appearance:none and the shared filled sizing/chevr
 Phone captures: [stage selection](../site/assets/screenshots/dashboard-stage-mobile-demo.jpg) and [dialog fields](../site/assets/screenshots/lead-form-selects-mobile-demo.jpg). Unchanged captures keep their original version/provenance.
 
 Admin stage choices are read from current field configuration, not a fixed built-in list. The focused Firestore case replaces default choices, updates a shared-contact lead to Samples Given, replaces that choice with Review, then updates the lead and verifies the dashboard follows Review. Admin saves update local controls immediately; Refresh workspace reloads field configuration for changes from another session, guarded against account changes.
+
+The dashboard component regression explicitly selects a hidden form stage after verifying Automatic falls back; it checks the field-aware heading and persisted demo choice, then the other categories/drillthrough. Its former absent-stage assertion was updated to match the requested availability.
