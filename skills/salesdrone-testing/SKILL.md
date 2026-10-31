@@ -40,7 +40,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#44](https://github.com/theharithsa/SalesDrone/issues/44), [#45](https://github.com/theharithsa/SalesDrone/issues/45), [#46](https://github.com/theharithsa/SalesDrone/issues/46). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#44](https://github.com/theharithsa/SalesDrone/issues/44), [#45](https://github.com/theharithsa/SalesDrone/issues/45), [#46](https://github.com/theharithsa/SalesDrone/issues/46). Check their current status before changing the contract.
 
 Field-aware workflow cases cover Source, renamed Zone and custom-field switching, drill-through and no new AI request. Mapped import destinations stay visible; test explicit non-admin exclusion and Admin preservation/rename without target-ID reuse. UI-only changes need focused local checks and honest browser geometry, not repeated broad local domain suites.
 

@@ -91,7 +91,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#4](https://github.com/theharithsa/SalesDrone/issues/4), [#15](https://github.com/theharithsa/SalesDrone/issues/15), [#21](https://github.com/theharithsa/SalesDrone/issues/21), [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#35](https://github.com/theharithsa/SalesDrone/issues/35), [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#54](https://github.com/theharithsa/SalesDrone/issues/54), [#55](https://github.com/theharithsa/SalesDrone/issues/55). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#35](https://github.com/theharithsa/SalesDrone/issues/35), [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#54](https://github.com/theharithsa/SalesDrone/issues/54), [#55](https://github.com/theharithsa/SalesDrone/issues/55). Check their current status before changing the contract.
 
 When PATCH retains an existing normalized contact key, allow other existing owners from separate imports; only newly acquired keys need duplicate rejection. Preserve every other owner in atomic dedupe rewrites, expectedVersion, scope and stage history. Cover shared stage edits, stale saves, rejected new duplicates and releasing one shared owner in API/Firestore tests.
 

@@ -86,6 +86,6 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#27](https://github.com/theharithsa/SalesDrone/issues/27), [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#35](https://github.com/theharithsa/SalesDrone/issues/35), [#57](https://github.com/theharithsa/SalesDrone/issues/57). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#35](https://github.com/theharithsa/SalesDrone/issues/35), [#57](https://github.com/theharithsa/SalesDrone/issues/57). Check their current status before changing the contract.
 
 API 1.23.0 adds POST /leads/{id}/restore under existing PAT leads:archive and current lead editor scope. Supported Hosting API parser normalization now belongs to the separately registered ingress module; native Functions URLs retain provider-level transport behavior. See API-INGRESS.md.

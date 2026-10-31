@@ -14,7 +14,8 @@
     "salesdrone-product-guide",
     "salesdrone-release",
     "salesdrone-release-readiness",
-    "salesdrone-testing"
+    "salesdrone-testing",
+    "salesdrone-documentation"
   ],
   "documentation": [
     "docs/SETTINGS.md",
@@ -25,7 +26,9 @@
     "docs/PRODUCT-GUIDE.md",
     "docs/TECHNICAL.md",
     "CHANGELOG.md",
-    "docs/REVIEW-2.6.1.md"
+    "docs/REVIEW-2.6.1.md",
+    "README.md",
+    "site/index.html"
   ],
   "settingsSections": [
     "archives"

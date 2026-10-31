@@ -48,7 +48,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
 
 Current release plans require a milestone reference with numeric scope and readiness. Planning state holds publication; CI checks live GitHub milestone/issue assignments and PR closing scope. Main publication requires completed issue states. See docs/RELEASE-GOVERNANCE.md and milestone-policy.test.ts; local review iterations do not advance SemVer.
 
