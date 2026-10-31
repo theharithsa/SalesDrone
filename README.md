@@ -1,7 +1,7 @@
 # SalesDrone by AvinyaTech
 
-> Local v2.5.2 review makes dashboard copy follow the selected field and shows mapped import destinations with explicit conflict resolution. Production remains v2.5.1 pending approval.
-> See [import review](docs/IMPORT-FIELDS-2.5.0-REVIEW.md) and [chart label review](docs/DASHBOARD-MISSING-2.5.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
+> v2.5.2 makes dashboard copy follow the selected field and shows mapped import destinations with explicit conflict resolution.
+> See [field-aware review](docs/FIELD-AWARE-2.5.2-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
 filled forms, a resizable lead inspector and automatic lead-list pagination.
