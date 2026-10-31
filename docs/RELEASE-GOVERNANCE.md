@@ -75,3 +75,18 @@ npm run release -- patch
 The first command verifies GitHub scope and writes a new plan without changing versions; it refuses to overwrite an existing plan. The second rechecks the real milestone before touching package/changelog files. Use concrete numeric IDs. Current 2.6.0 review work keeps its existing version; do not run another bump.
 
 CI receives only a read-only GitHub token for milestone checks. PR checks validate closing scope; main/publication checks require completed issue states. The plan remains `planning` while required work is unfinished.
+
+## Unpublished v2.6.0 index-deployment recovery
+
+The first main run 41221586874 failed at Firestore index creation (HTTP 409): an
+Assistant request composite was declared twice. Functions/Hosting were skipped and
+production remained 2.5.3. Issue #100 joins the same milestone; it is not a new feature
+release. No 2.6.0 tag or GitHub release was published.
+
+The recovery record pins failed commit 5b328cd829344d4e067feafc0d5fa8c9870171d5,
+run/job, and the previous live identity. CI checks the failed main/deploy outcomes,
+skipped app deployment steps, current older live version/SHA, and absent candidate
+tag/release before allowing the same candidate on that immediate base. A different
+base, live identity, partial app publication or existing tag/release rejects recovery.
+After publication this path cannot replace the explicit maintenance/forward-version
+rules. Recovery still passes a new PR, milestone completion and all deployment gates.

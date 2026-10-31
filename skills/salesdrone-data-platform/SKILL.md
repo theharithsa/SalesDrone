@@ -78,3 +78,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#35](https://github.com/theharithsa/SalesDrone/issues/35). Check their current status before changing the contract.
 
 Lead research adds an atomic source epoch and durable index jobs independent of telemetry. The Firestore adapter converts numeric embeddings to VectorValue only at flush; semantic queries use bounded cosine nearest-neighbor search with ACL prefilters. Reset blocks/clears derived collections and suppresses source re-queueing during cleanup. Wait for all composite/vector indexes before deployment.
+
+Index declarations must be unique after canonical object-key normalization. The
+release preflight rejects duplicates before Firebase can issue concurrent create
+requests and fail HTTP 409. Field ordering remains semantically significant.

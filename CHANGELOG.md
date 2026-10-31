@@ -20,6 +20,9 @@ Milestone #5: Lead Hygiene, Lead Assistant and release governance. Publication r
 - Lead Assistant: validated standard/custom-field filters, paginated matching leads, recipient-private calendar reminder queries, exact distributions, versioned cancellation and private retained chats, exact scoped lead/conversion counts and source-verified semantic retrieval for recorded-note insights. General knowledge, web access and data mutations are outside its scope.
 - Admin settings for outcome-stage meanings, inactivity thresholds, reporting timezone and opt-in knowledge indexing. Members need explicit scoped feature grants; Admins receive access by default.
 
+### Fixed
+- #100: Remove a duplicate Assistant request index that blocked the first deployment before Functions/Hosting. Reject duplicate index declarations locally and in CI. Recovery retains the unpublished candidate version only after verifying the exact failed run, older live release and absent candidate tag/release.
+
 ### Security and operations
 - Milestone-scoped release planning holds publication while required issue scope remains unfinished; review iterations retain one candidate version.
 - Current membership, assignment, source/configuration revisions and reset locks invalidate stale research results. Reports/chats remain until explicit deletion; reset clears derived records.

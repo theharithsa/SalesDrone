@@ -61,6 +61,12 @@ A funnel is a current stage distribution, not evidence of historic conversion.
   Publication requires completed milestone scope and required PR/CI checks. Old issues
   remain open until actual fix evidence or explicit carryover decisions; moving them is
   not completion. See docs/RELEASE-GOVERNANCE.md and issue #98.
+- An unpublished candidate may recover from a failed index-only deployment at the same
+  version only with releases/candidate-recovery.json bound to the immediate failed
+  main commit/run/job, skipped Functions/Hosting, older live identity and absent
+  candidate tag/release. CI verifies that evidence; the record cannot authorize a
+  later base or maintenance of a published version. Recovery still requires its
+  milestone issue and a new checked PR.
 - Production deploys come from pushes to main through .github/workflows/deploy.yml.
   PRs run verification without deployment secrets. Do not bypass failed checks.
 - Use GitHub OIDC / Workload Identity Federation. Do not create service-account keys.

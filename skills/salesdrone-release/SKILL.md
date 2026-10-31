@@ -98,3 +98,8 @@ These are tracked follow-ups, not implemented behavior: [#27](https://github.com
 Before promoting a reviewed feature release, remove local-only README notices after explicit deployment approval. Keep local review evidence historical and distinguish it from the exact main SHA, workflow run and post-deploy artifacts; do not restamp screenshot metadata or rerun local domain suites for this wording-only promotion. Required PR/main verification still runs.
 
 Plan the versioned GitHub milestone and assign scoped issues before the candidate bump. Use release:plan; release.mjs rechecks the real milestone and preserves its impact plan. Keep the same version through local review. CI validates PR coverage and requires completed milestone issue states before main publication. See docs/RELEASE-GOVERNANCE.md; unfinished old issues are not completion evidence.
+
+Unpublished candidate recovery is bound to the exact failed base/run/deploy job,
+skipped Functions/Hosting, older live version/SHA and absent candidate tag/release.
+check-release verifies this with read-only GitHub/Hosting evidence; the record cannot
+authorize another base or published maintenance. See candidate-recovery.mjs/tests.

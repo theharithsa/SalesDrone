@@ -132,3 +132,8 @@ Build the exact release, then run `node scripts/write-function-env.mjs`. The opt
 ## Milestone-scoped versions
 
 Create the target GitHub milestone and assign its issues before advancing a candidate. Use `npm run release:plan -- patch|minor|major --milestone NUMBER --issues ISSUE1,ISSUE2`, complete the plan, then bump once. Local refinements and PR review keep that version. The helper preserves existing plans and refuses unplanned bumps. CI validates milestone scope, PR closing references and completed issue states before publication. Read [the carryover audit and governance contract](RELEASE-GOVERNANCE.md); old milestone issues remain open until real completion or explicit retargeting.
+
+An index-only failed unpublished candidate can recover without consuming another
+version via the exact-base candidate-recovery record and read-only evidence checks
+in check-release. See RELEASE-GOVERNANCE.md and tests/candidate-recovery.test.ts.
+Duplicate index definitions fail release preflight before any cloud operation.

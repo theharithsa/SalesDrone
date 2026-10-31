@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.0",
+  "baseCommit": "5b328cd829344d4e067feafc0d5fa8c9870171d5",
+  "priorPublishedVersion": "2.5.3",
+  "priorPublishedCommit": "3ebd2f104a1939dcbcef9b4a41338f926713dde3",
+  "failedRun": 41221586874,
+  "failedJob": 124597732095,
+  "reason": "Duplicate Assistant request index caused Firestore HTTP 409; Functions and Hosting were skipped. Recover the same unpublished milestone candidate through the issue #100 recovery PR."
+}

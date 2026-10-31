@@ -42,7 +42,8 @@
     "tests": [
       "functions/test/lead-research.test.js",
       "functions/test/emulator.integration.js",
-      "functions/test/api-portal.test.js"
+      "functions/test/api-portal.test.js",
+      "tests/candidate-recovery.test.ts"
     ]
   },
   "observability": {
@@ -119,7 +120,8 @@
     "issues": [
       95,
       96,
-      98
+      98,
+      100
     ],
     "readiness": "ready"
   }
