@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.5.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.5.3**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -86,7 +86,7 @@ Save preferences. Manual reminder forms label the device timezone they use; alre
 
 **Default:** Automatic: first available category field.
 
-Set directly on the Today dashboard. Choose Enquiry status, Sales stage, source, sector, location or an active custom text/dropdown field. Hidden/retired fields are excluded; Automatic falls back to Enquiry status when Sales stage is hidden.
+Set directly on the Today dashboard. Choose Enquiry status, Sales stage, source, sector, location or an active custom text/dropdown field. Sales stage remains explicitly selectable for analytics even when hidden from forms. Other hidden/retired fields are excluded; Automatic keeps its visible-field fallback.
 
 Personal account preference through GET/PATCH /me and GET /dashboard. Changes apply immediately to the two lead distribution charts. Partial/older preference saves preserve the choice. Workflow stages, KPI definitions and AI brief inputs remain unchanged. Show up to 20 groups plus Other values; aggregates and values exceeding filter limits have no direct drill-through. Demo saves are browser-local. Headings, descriptions and notes follow the effective configured field label.
 

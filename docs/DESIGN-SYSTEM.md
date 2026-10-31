@@ -188,3 +188,5 @@ Shared action buttons use a unitless line height (20/14) so multiline labels gro
 ## Lead workflow and chart geometry (2.2.1)
 
 The lead header owns workflow spacing: stage/assignment labels and controls share type, margins and full width; section padding/dividers do not apply inside this group. A 36rem content-container threshold stacks them. Trend Y ticks share the SVG gridline coordinate transform, with a dynamic text gutter and the dates in the plot column. Do not apply the HTML layout grid to the SVG element.
+
+Modal selects retain appearance:none on the closed control, the shared chevron and filled-field dimensions/padding. Their open menu stays native to avoid modal Escape conflicts. Do not restore appearance:auto on the closed select: native macOS sizing can collapse its inset label/value area.

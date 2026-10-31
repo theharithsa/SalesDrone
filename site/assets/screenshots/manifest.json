@@ -538,5 +538,45 @@
     "capturePixels": "1440 x 1000",
     "version": "2.5.2",
     "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+  },
+  {
+    "file": "dashboard-stage-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "8bed0f8f48d8eef35f88e5146391788f7b9f439b3ec224329deb3a9389af8c8a",
+    "capturedAt": "2026-10-31T12:29:21.081721+00:00",
+    "viewport": "1440 x 800 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 800",
+    "version": "2.5.3",
+    "review": "Visually/privacy reviewed. Synthetic Admin fixture only, no live API or writes. Stage analytics with hidden form stage or filled Country code/custom Product dialog. No customer data or credentials. Browser viewport only; native popup keyboard selection and physical-device/Safari behavior are not certified."
+  },
+  {
+    "file": "dashboard-stage-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "2b1a261cc496e8aa67ce91e8cb9c7b692a9a67042dee4d45c2e3eb13d7b582b4",
+    "capturedAt": "2026-10-31T12:29:21.081721+00:00",
+    "viewport": "390 x 800 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 800",
+    "version": "2.5.3",
+    "review": "Visually/privacy reviewed. Synthetic Admin fixture only, no live API or writes. Stage analytics with hidden form stage or filled Country code/custom Product dialog. No customer data or credentials. Browser viewport only; native popup keyboard selection and physical-device/Safari behavior are not certified."
+  },
+  {
+    "file": "lead-form-selects-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "e1444055882fbf56a968ddf0da6a79f1ca0e5b216a9c79ed29e089bba18c0543",
+    "capturedAt": "2026-10-31T12:29:21.081721+00:00",
+    "viewport": "1440 x 800 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 800",
+    "version": "2.5.3",
+    "review": "Visually/privacy reviewed. Synthetic Admin fixture only, no live API or writes. Stage analytics with hidden form stage or filled Country code/custom Product dialog. No customer data or credentials. Browser viewport only; native popup keyboard selection and physical-device/Safari behavior are not certified."
+  },
+  {
+    "file": "lead-form-selects-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "3697d55fc93efedd551bc2a6eb6b65987d0582c6c46cc6f8029d41ca1744479e",
+    "capturedAt": "2026-10-31T12:29:21.081721+00:00",
+    "viewport": "390 x 800 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 800",
+    "version": "2.5.3",
+    "review": "Visually/privacy reviewed. Synthetic Admin fixture only, no live API or writes. Stage analytics with hidden form stage or filled Country code/custom Product dialog. No customer data or credentials. Browser viewport only; native popup keyboard selection and physical-device/Safari behavior are not certified."
   }
 ]

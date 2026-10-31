@@ -101,3 +101,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#16](https://github.com/theharithsa/SalesDrone/issues/16), [#18](https://github.com/theharithsa/SalesDrone/issues/18). Check their current status before changing the contract.
 
 Cleanup blocks use fixed 503 LEAD_DATA_RESET copy and Retry-After:60; preserve the lock and provider-error privacy. See operations for import/schema and recovery checks.
+
+Personal stage grouping remains selectable when stage is hidden in forms; Automatic still uses visible fallback fields. This does not unhide forms or import destinations. Validate stage preferences through dashboardFields with includeHiddenStage:true.

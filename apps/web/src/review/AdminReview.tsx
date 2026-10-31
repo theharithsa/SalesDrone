@@ -167,6 +167,7 @@ function AdminReview() {
       () => {
         const fields=structuredClone(defaultFieldOptions);
         const query=new URLSearchParams(location.search);
+        if(query.get('preview')==='lead-form-selects')fields.customFields.push({id:'cf_preview_product',label:'Product',type:'select',options:['Sample board','Sample panel'],required:false,deleted:false});
         if(['dashboard-fields','import-fields'].includes(query.get('preview')||'')){
           fields.labels={...fields.labels,zone:'Zone'};
           fields.values.zone=['North','South'];

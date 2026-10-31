@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.5.2 maintenance clarifies cleanup pauses and unrecorded lead-score evidence.
+> v2.5.3 restores stage analytics, shared-contact editing and aligned dialog dropdowns.
 > See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.5.2 · MIT**
+**Part of Avinya Enterprises · v2.5.3 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -235,3 +235,5 @@ Column filters include an indexed **Exact match** option for enquiry source, sal
 [Reviewed mobile filter example](site/assets/screenshots/lead-filters-mobile-demo.jpg) (fictional demo data).
 
 Review the [available import destinations](site/assets/screenshots/status-mapping-options-demo.jpg) and [mapped-column conflict](site/assets/screenshots/status-mapping-demo.jpg) with fictional data.
+
+Reviewed synthetic fixes: [Sales Stage dashboard](site/assets/screenshots/dashboard-stage-demo.jpg), [filled enquiry dropdowns](site/assets/screenshots/lead-form-selects-demo.jpg), and the [focused review and limits](docs/STAGE-EDIT-2.5.3-REVIEW.md).
