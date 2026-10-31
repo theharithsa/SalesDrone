@@ -11,11 +11,11 @@ async function files(dir) {
   ).flat();
 }
 for (const file of await files(root)) {
-  if (/design-(admin|review)\.html$|AdminReview|ImportReviewFixture/.test(file))
+  if (/design-(admin|review)\.html$|AdminReview|ImportReviewFixture|ResearchFixture|LeadAssistantPrototype/.test(file))
     throw Error('Development review entry leaked into application build');
   if (
     file.endsWith('.js') &&
-    /Fictional admin workspace|Fictional review preview/.test(await readFile(file, 'utf8'))
+    /Fictional admin workspace|Fictional review preview|Synthetic adapter for real research components/.test(await readFile(file, 'utf8'))
   )
     throw Error('Admin design fixture leaked into application bundle');
 }

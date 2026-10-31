@@ -252,10 +252,16 @@ export function createTelemetry({
   const ciDuration = meter.createHistogram('salesdrone.ci.duration', {
     unit: 's',
   });
+  const researchOperations=meter.createCounter('salesdrone.research.operations',{unit:'{operation}'});
+  const researchDuration=meter.createHistogram('salesdrone.research.duration',{unit:'s'});
   let flushing;
   const self = {
     enabled: true,
     diagnostics: () => structuredClone(health),
+    researchOperation(kind,outcome,seconds) {
+      if(!['plan','themes','embedding','batch'].includes(kind)||!['success','failure'].includes(outcome)||!Number.isFinite(seconds)||seconds<0)return;
+      try {researchOperations.add(1,{kind,outcome});researchDuration.record(seconds,{kind,outcome});} catch {}
+    },
     outboxHealth(counts, age) {
       if (
         ['Pending', 'Sending', 'Rejected'].every(

@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.5.3
+Version 2.6.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -755,3 +755,77 @@ Accepted work continues in the scheduled worker. Refresh status before starting 
 **Will my users or workspace settings disappear?**
 
 No. Reset is limited to lead data and its related operational records; workspace configuration and people are retained.
+
+## Lead Hygiene
+
+Admins and explicitly granted members within current lead scope
+
+1. Open Lead Hygiene from navigation. Admins have access by default; members need explicit grants.
+
+2. Choose Run scan. Work continues in resumable pages; reopen the report from Previous reports.
+
+3. Review shared phone/email groups and field issues. Open matching leads to compare enquiries; a shared contact does not prove duplication.
+
+4. If configured, review archive candidates in the existing lead workflow. Scanning never archives or deletes leads.
+
+5. Optionally summarize findings with AI. Admins can delete a report and its retained evidence without deleting leads.
+
+Reports cover the full accessible active lead list rather than a dashboard sample. Contact-group members have separate pagination.
+
+Lead, note, field, permission or reporting-rule changes can make a report stale. Run a fresh scan; stale results are hidden rather than exposed with old access.
+
+Archive review needs configured stages, inactivity threshold, actual recorded last contact and no pending task. Other members’ task contents are never displayed.
+
+Reports remain private to their creator and retained until explicitly deleted. Reset clears derived research data.
+
+![Lead Hygiene — synthetic demo only](../site/assets/screenshots/hygiene-demo.jpg)
+
+### Questions
+
+**Why is the scan stale?**
+
+The source data, settings or your access changed. Run a new scan under current permissions.
+
+**Will Hygiene delete duplicate leads?**
+
+No. It shows review evidence; it never merges, archives, repairs indexes or deletes leads automatically.
+
+## Lead Assistant
+
+Admins and explicitly granted members within current lead scope
+
+1. Open Lead Assistant and ask in the dedicated conversation page. Members need the Assistant grant. History opens from the header.
+
+2. Ask for matching leads, custom-field counts, calls next week, monthly conversions or patterns in failed-lead notes. Approval questions use actual configured fields and values.
+
+3. Review the cohort, reporting timezone, coverage and cited lead sources. Missing historical conversion dates remain unknown.
+
+4. Admins configure stage meanings and optionally enable the knowledge index under Settings → AvinyaIntelligence → Lead research.
+
+5. Open prior chats from history or delete your own chat. History remains until deletion, subject to current source access.
+
+The Assistant answers only about workspace leads. It cannot browse the web, reveal secrets, run code, contact people or change records.
+
+Counts use complete deterministic scans. Note insights use bounded retrieval with permission filters, source revision checks and exact quoted evidence, not a full-database prompt.
+
+Calendar months run from the first day to the first day of the next month, end exclusive, in the configured timezone. Each lead counts at most once per requested month when a recorded transition enters a converted group from outside it.
+
+Conversion answers are observed history, not complete historical totals: spreadsheet imports may lack transition dates. Current failed counts differ from historical became-failed counts. Unsupported filters, rankings, unavailable business meanings and missing event dates require clarification.
+
+Indexing is disabled by default and managed in Settings; counts and structured lists work without it. Note themes represent retrieved evidence, not proven causes. Calls next week require task access and use only your own eligible Pending outreach reminders, with each lead counted once. Use View matching leads to page through results; Stop prevents pending answer publication.
+
+![Lead Assistant — synthetic demo only](../site/assets/screenshots/assistant-demo.jpg)
+
+### Questions
+
+**Why does it show Setup required?**
+
+An Admin must configure outcome-stage meanings; SalesDrone does not infer them from names such as Won or Lost.
+
+**Why did an earlier answer become stale?**
+
+Current source/settings access is authoritative. Ask again after data or permissions change.
+
+**Can another Admin read my chats?**
+
+The app’s conversation APIs expose only your own chats. Admin status alone does not grant another person’s chat history.

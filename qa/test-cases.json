@@ -146,7 +146,6 @@
           "expected": "Sales stage is explicitly selectable even if hidden in forms. Automatic keeps visible-field fallback; saved stage choice and counts remain personal and scope-filtered. Import destinations do not gain hidden stage.",
           "fixture": "synthetic grouping/API plus isolated dashboard fixture"
         }
-
       ]
     },
     {
@@ -305,7 +304,6 @@
           "expected": "Country code/custom dropdown closed controls keep filled height and separated inset labels/values. Native open menus remain available; inspect phone/desktop and both palettes.",
           "fixture": "isolated fictional lead-form-selects fixture; no live writes"
         }
-
       ]
     },
     {
@@ -414,7 +412,6 @@
           "expected": "Separate imported enquiries sharing a contact can edit stage/details. New duplicate acquisition and stale versions fail atomically; leaving one shared key retains other owners.",
           "fixture": "synthetic API and demo-salesdrone Auth/Firestore only"
         }
-
       ]
     },
     {
@@ -674,6 +671,36 @@
             "Go back and open a different lead; verify All is selected."
           ],
           "fixture": "synthetic guest application only; no production lead or file writes"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-lead-hygiene",
+      "ownerSkill": "skills/salesdrone-lead-hygiene/SKILL.md",
+      "automatedTests": [
+        "functions/test/lead-research.test.js",
+        "functions/test/emulator.integration.js"
+      ],
+      "manualCases": [
+        {
+          "id": "LEAD-HYGIENE-01",
+          "expected": "Private scoped history, current-source evidence and read-only interactions remain usable across phone/tablet/desktop.",
+          "fixture": "Synthetic research review fixture; no live provider or customer data"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-lead-assistant",
+      "ownerSkill": "skills/salesdrone-lead-assistant/SKILL.md",
+      "automatedTests": [
+        "functions/test/lead-research.test.js",
+        "functions/test/emulator.integration.js"
+      ],
+      "manualCases": [
+        {
+          "id": "LEAD-ASSISTANT-01",
+          "expected": "Private scoped history, current-source evidence and read-only interactions remain usable across phone/tablet/desktop.",
+          "fixture": "Synthetic research review fixture; no live provider or customer data"
         }
       ]
     }

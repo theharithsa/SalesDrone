@@ -276,6 +276,67 @@
       "apiOperations": []
     },
     {
+      "id": "salesdrone-lead-assistant",
+      "path": "skills/salesdrone-lead-assistant/SKILL.md",
+      "description": "Maintain the lead-only Assistant, exact analytics and permission-filtered retrieval. Use for guarded lead questions and RAG; it cannot mutate leads or answer general knowledge.",
+      "matchTerms": [
+        "lead assistant",
+        "chatbot",
+        "RAG",
+        "converted this month",
+        "failure patterns",
+        "agent mode",
+        "calls next week",
+        "approved orders"
+      ],
+      "related": [
+        "salesdrone-release-readiness",
+        "salesdrone-people-permissions",
+        "salesdrone-leads",
+        "salesdrone-observability"
+      ],
+      "apiOperations": [
+        "GET /api/v1/lead-research-settings",
+        "PATCH /api/v1/lead-research-settings",
+        "GET /api/v1/lead-assistant/index",
+        "POST /api/v1/lead-assistant/index",
+        "POST /api/v1/lead-assistant/conversations",
+        "GET /api/v1/lead-assistant/conversations",
+        "GET /api/v1/lead-assistant/conversations/{id}/messages",
+        "POST /api/v1/lead-assistant/conversations/{id}/questions",
+        "GET /api/v1/lead-assistant/requests/{id}",
+        "GET /api/v1/lead-assistant/requests/{id}/leads",
+        "POST /api/v1/lead-assistant/requests/{id}/cancel",
+        "DELETE /api/v1/lead-assistant/conversations/{id}"
+      ]
+    },
+    {
+      "id": "salesdrone-lead-hygiene",
+      "path": "skills/salesdrone-lead-hygiene/SKILL.md",
+      "description": "Maintain scoped full-list Lead Hygiene scans, shared-contact evidence and archive-review findings. Use for hygiene checks; merging, deletion and outreach remain outside this module.",
+      "matchTerms": [
+        "lead hygiene",
+        "shared phone numbers",
+        "data quality",
+        "archive review"
+      ],
+      "related": [
+        "salesdrone-release-readiness",
+        "salesdrone-people-permissions",
+        "salesdrone-leads",
+        "salesdrone-observability"
+      ],
+      "apiOperations": [
+        "POST /api/v1/lead-hygiene/scans",
+        "GET /api/v1/lead-hygiene/scans",
+        "GET /api/v1/lead-hygiene/scans/{id}",
+        "GET /api/v1/lead-hygiene/scans/{id}/findings",
+        "GET /api/v1/lead-hygiene/scans/{id}/findings/{findingId}/leads",
+        "DELETE /api/v1/lead-hygiene/scans/{id}",
+        "POST /api/v1/lead-hygiene/scans/{id}/summary"
+      ]
+    },
+    {
       "id": "salesdrone-lead-journey",
       "path": "skills/salesdrone-lead-journey/SKILL.md",
       "description": "Maintain SalesDrone recorded stage transitions and current-stage journey UI. Use for flow/history changes; aggregate funnel and lead mutations belong to dashboard and leads.",

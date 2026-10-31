@@ -11,6 +11,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify:
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -34,6 +38,7 @@ jobs:
         env:
           VITE_USE_EMULATORS: 'false'
           VITE_ENABLE_RUM: 'false'
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Archive safe verification results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

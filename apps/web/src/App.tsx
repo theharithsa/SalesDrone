@@ -1,3 +1,5 @@
+import { Sparkles } from 'lucide-react';
+import './research.css';
 import LeadFiles from './features/LeadFiles';
 import InfiniteLeadLoader from './components/InfiniteLeadLoader';
 import { appendUniqueRows } from './lib/lead-pagination';
@@ -110,6 +112,8 @@ import {
 } from './components/Forms';
 const DashboardPage = lazy(() => import('./features/DashboardPage'));
 
+const LeadAssistantPage = lazy(() => import('./features/LeadAssistantPage'));
+const ResearchPage = lazy(() => import('./features/ResearchPage'));
 const ImportPage = lazy(() => import('./features/ImportPage'));
 const SettingsPage = lazy(() => import('./features/SettingsPage'));
 type Page =
@@ -117,6 +121,8 @@ type Page =
   | 'leads'
   | 'tasks'
   | 'notifications'
+  | 'hygiene'
+  | 'assistant'
   | 'imports'
   | 'members'
   | 'settings';
@@ -1176,7 +1182,7 @@ export default function App() {
         detailEpoch.current++;
         setSelected(null);
         const p = window.location.pathname.slice(1);
-        if (['today', 'leads', 'tasks', 'settings', 'imports'].includes(p))
+        if (['today', 'leads', 'tasks', 'settings', 'imports', 'hygiene', 'assistant'].includes(p))
           setPage(p as Page);
       }
     };
@@ -1236,6 +1242,8 @@ export default function App() {
         'leads',
         'tasks',
         'notifications',
+        'hygiene',
+        'assistant',
         'imports',
         'settings',
       ].includes(p)
@@ -1585,6 +1593,10 @@ export default function App() {
             </nav>
           </>
         ) : null}
+        {(can('hygiene:read') || can('assistant:query')) ? <nav aria-label="Lead research">
+          {can('hygiene:read') ? <button className={'nav-item '+(page==='hygiene'?'active':'')} aria-current={page==='hygiene'?'page':undefined} onClick={()=>go('hygiene')}><ShieldCheck size={19}/><span>Lead Hygiene</span></button>:null}
+          {can('assistant:query') ? <button className={'nav-item '+(page==='assistant'?'active':'')} aria-current={page==='assistant'?'page':undefined} onClick={()=>go('assistant')}><Sparkles size={19}/><span>Lead Assistant</span></button>:null}
+        </nav>:null}
         <div className="sidebar-bottom">
           {can('tasks:write') ? (
             <button
@@ -1696,6 +1708,8 @@ export default function App() {
                   tasks: 'Tasks',
                   notifications: 'Notifications',
                   settings: 'Settings',
+                  hygiene: 'Lead Hygiene',
+                  assistant: 'Lead Assistant',
                   imports: 'Import enquiries',
                   members: 'Settings',
                 }[page]
@@ -3183,6 +3197,9 @@ export default function App() {
                 }
               />
             ) : null}
+            {(page==='hygiene' || page==='assistant') ? (
+              can(page==='hygiene'?'hygiene:read':'assistant:query') ? page==='assistant'?<LeadAssistantPage key={(session?.identity.uid||'demo')+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} request={request} demo={demo}/>:<ResearchPage key={(session?.identity.uid||'demo')+page+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} mode={page} request={request} demo={demo} canRun={!!can('hygiene:run')} canAI={!!can('hygiene:ai')} admin={!!admin}/>:<div className="panel"><h2>Access required</h2><p>Ask an Admin to grant access to this feature.</p></div>
+            ):null}
             {page === 'settings' || page === 'members' ? (
               <SettingsPage
                 onOpenLead={(lead) => {

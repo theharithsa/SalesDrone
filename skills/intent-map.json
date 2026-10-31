@@ -185,5 +185,21 @@
     "Firebase Storage",
     "file download",
     "Files tab"
+  ],
+  "salesdrone-lead-hygiene": [
+    "lead hygiene",
+    "shared phone numbers",
+    "data quality",
+    "archive review"
+  ],
+  "salesdrone-lead-assistant": [
+    "lead assistant",
+    "chatbot",
+    "RAG",
+    "converted this month",
+    "failure patterns",
+    "agent mode",
+    "calls next week",
+    "approved orders"
   ]
 }

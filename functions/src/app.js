@@ -1,3 +1,9 @@
+import { ResearchSettingsPatch, RESEARCH_SETTINGS_PATH, readResearchSettings, validateResearchSettings } from './lead-research-settings.js';
+import { researchMember, researchAccessKey } from './lead-research-access.js';
+import { ScanInput, ResearchVersion, scanEpoch, createHygieneScan, readHygieneScan, deleteHygieneScan } from './lead-hygiene.js';
+import { ConversationInput, QuestionInput, readConversation, createConversation, createQuestion, readAssistantRequest } from './lead-assistant.js';
+import { INDEX_STATE_PATH, queueIndexBackfill } from './lead-research-index.js';
+import { researchStore } from './lead-research-store.js';
 import { dashboardFields } from './dashboard-grouping.js';
 import { documentKey } from './store.js';
 import { createCursorCodec } from './cursors.js';
@@ -144,7 +150,7 @@ export function createApp({
   now = () => new Date().toISOString(),
 }) {
   const maintenanceStore = store.maintenanceStore || store;
-  store = guardLeadData(store);
+  store = guardLeadData(researchStore(store,()=>telemetry()?.capture()?.traceparent));
   const { encode: encodeCursor, decode: decodeCursor } = createCursorCodec(
     cursorSecret,
     {
@@ -248,7 +254,7 @@ export function createApp({
         telemetry()?.operation(method.toUpperCase() + ' ' + url);
         if (
           method !== 'get' &&
-          /^\/(leads|tasks|activities|imports|dashboard)(\/|$)/.test(url) &&
+          /^\/(leads|tasks|activities|imports|dashboard|lead-hygiene|lead-assistant)(\/|$)/.test(url) &&
           resetActive(await store.get(RESET_STATE))
         )
           throw new AppError(
@@ -328,6 +334,12 @@ export function createApp({
         if (req.path.startsWith('/imports') && prior.result?.id) {
           const job = await readImport(tx, member, prior.result.id);
           return job.formatVersion === 3 ? importSummary(job) : prior.result;
+        }
+        if (req.path.startsWith('/lead-hygiene/scans') && prior.result?.id)
+          return readHygieneScan(tx,req.identity,prior.result.id);
+        if (req.path.startsWith('/lead-assistant/conversations') && prior.result?.id) {
+          if(req.path.endsWith('/questions')) return readAssistantRequest(tx,req.identity,prior.result.id);
+          return readConversation(tx,req.identity,prior.result.id);
         }
         return prior.result;
       }
@@ -910,6 +922,144 @@ export function createApp({
       return updated;
     });
   });
+  route('get', '/lead-research-settings', 'leads:read', () => readResearchSettings(store));
+  route('patch', '/lead-research-settings', 'members:write', req => {
+    const input=parse(ResearchSettingsPatch,req.body);
+    return mutate(req,'members:write',async(tx,m)=>{
+      if(m.role!=='Admin')throw new AppError(403,'FORBIDDEN','Only Admins can change research settings');
+      if(input.indexingEnabled&&m.scope!=='all')throw new AppError(403,'FORBIDDEN','Workspace-wide Admin access is required to enable knowledge indexing');
+      const current=await readResearchSettings(tx);assertVersion(current,input.expectedVersion);
+      await validateResearchSettings(tx,input);
+      const {expectedVersion,...values}=input;
+      if(JSON.stringify({...current,version:undefined})===JSON.stringify({...values,version:undefined}))return current;
+      const updated={...values,version:current.version+1};
+      tx.set(RESEARCH_SETTINGS_PATH,updated);
+      if(input.indexingEnabled&&!current.indexingEnabled)await queueIndexBackfill(tx,req.identity);
+      return updated;
+    });
+  });
+  // Private paging binds cursors to current grants/scope and optional source epoch.
+  async function researchList(req,collection,filters,access,project=async row=>row,epoch=null,order='id') {
+    const limit=Number(req.query.limit || 30);
+    if(!Number.isInteger(limit)||limit<1||limit>100)throw new AppError(400,'LIMIT','Limit must be 1–100');
+    const binding=hash(JSON.stringify([req.identity.uid,access,collection,filters,epoch,order]));
+    const after=req.query.cursor?decodeCursor(req.query.cursor,binding):undefined;
+    const rows=await store.query(path(collection),{filters,order,direction:'desc',after,limit});
+    const items=[];
+    for(const row of rows){const value=await project(row);if(value)items.push(value);}
+    if(epoch!==null&&await scanEpoch(store)!==epoch)throw new AppError(409,'STALE_SOURCE','Lead data changed. Run the report again.');
+    return {items,nextCursor:rows.length===limit?encodeCursor(order==='id'?[rows.at(-1).id]:[rows.at(-1)[order],rows.at(-1).id],binding):null};
+  }
+  route('post', '/lead-hygiene/scans', 'hygiene:run', req => {
+    const input=parse(ScanInput,req.body);
+    return mutate(req,'hygiene:run',tx=>createHygieneScan(tx,req.identity,uid(),now(),{...input,traceparent:telemetry()?.capture()?.traceparent||null}),{idempotent:true});
+  });
+  route('get', '/lead-hygiene/scans', 'hygiene:read', async req => {
+    const m=await researchMember(store,req.identity,['hygiene:read']);
+    const epoch=await scanEpoch(store);
+    const result=await researchList(req,'hygieneScans',[['ownerUid','==',m.uid]],researchAccessKey(m),async row=>{
+      if(row.status==='Deleting')return null;
+      try{return await readHygieneScan(store,req.identity,row.id);}catch(e){if(e.code==='STALE_ACCESS')return {id:row.id,status:'Stale',createdAt:row.createdAt,version:row.version};throw e;}
+    },epoch);
+    await researchMember(store,req.identity,['hygiene:read'],researchAccessKey(m));return result;
+  });
+  route('get', '/lead-hygiene/scans/:id', 'hygiene:read', req => readHygieneScan(store,req.identity,req.params.id));
+  route('get', '/lead-hygiene/scans/:id/findings', 'hygiene:read', async req => {
+    const job=await readHygieneScan(store,req.identity,req.params.id);
+    if(job.status!=='Completed')throw new AppError(409,'REPORT_NOT_READY','This report is incomplete or stale. Run a new scan.');
+    const result=await researchList(req,'hygieneFindings',[['jobId','==',job.id]],job.access,
+      async row=>row.kind==='SharedContact'&&row.count<2?null:row,job.epoch);
+    const current=await readHygieneScan(store,req.identity,job.id);if(current.status!=='Completed')throw new AppError(409,'STALE_SOURCE','The report changed. Run a fresh scan.');return result;
+  });
+  route('get', '/lead-hygiene/scans/:id/findings/:findingId/leads', 'hygiene:read', async req => {
+    const job=await readHygieneScan(store,req.identity,req.params.id);
+    if(job.status!=='Completed')throw new AppError(409,'REPORT_NOT_READY','Run a current report first');
+    const finding=await store.get(path('hygieneFindings',req.params.findingId));
+    if(!finding||finding.jobId!==job.id)throw new AppError(404,'NOT_FOUND','Finding not found');
+    const result=await researchList(req,'hygieneEvidence',[['findingId','==',finding.id]],job.access,async row=>row.lead,job.epoch);
+    const current=await readHygieneScan(store,req.identity,job.id);if(current.status!=='Completed')throw new AppError(409,'STALE_SOURCE','The report changed. Run a fresh scan.');return result;
+  });
+  route('delete', '/lead-hygiene/scans/:id', 'hygiene:read', req => {
+    const input=parse(ResearchVersion,req.body);
+    return mutate(req,'hygiene:read',tx=>deleteHygieneScan(tx,req.identity,req.params.id,input.expectedVersion,now()));
+  });
+  route('post', '/lead-hygiene/scans/:id/summary', 'hygiene:ai', req => {
+    const input=parse(ResearchVersion,req.body);
+    return mutate(req,'hygiene:ai',async tx=>{
+      await researchMember(tx,req.identity,['hygiene:read','hygiene:ai']);
+      const job=await readHygieneScan(tx,req.identity,req.params.id);assertVersion(job,input.expectedVersion);
+      if(job.status!=='Completed')throw new AppError(409,'REPORT_NOT_READY','Run a current report first');
+      if(['Pending','Completed'].includes(job.summaryStatus))return job;
+      const updated={...job,summaryStatus:'Pending',summary:null,version:job.version+1,updatedAt:now()};
+      tx.set(path('hygieneScans',job.id),updated);return updated;
+    });
+  });
+  route('get', '/lead-assistant/index', 'assistant:query', async req => {
+    const m=await researchMember(store,req.identity,['assistant:query']);
+    const state=await store.get(INDEX_STATE_PATH),settings=await readResearchSettings(store);
+    return {enabled:settings.indexingEnabled,canManage:m.role==='Admin'&&m.scope==='all',status:state?.status||'NotStarted',...(m.role==='Admin'&&m.scope==='all'?{
+      scanned:state?.scanned||0,pending:await store.count(path('researchIndexJobs'),[['status','==','Pending']]),failed:await store.count(path('researchIndexJobs'),[['status','==','Failed']])}:{}),
+      note:'Only currently accessible, source-verified evidence can be used. Indexing may lag edits.'};
+  });
+  route('post', '/lead-assistant/index', 'members:write', req => {
+    parse(ConversationInput,req.body);
+    return mutate(req,'members:write',async(tx,m)=>{
+      if(m.role!=='Admin')throw new AppError(403,'FORBIDDEN','Only Admins can build the knowledge index');
+      if(!(await readResearchSettings(tx)).indexingEnabled)throw new AppError(409,'SETUP_REQUIRED','Enable indexing in Lead research settings first');
+      return queueIndexBackfill(tx,req.identity);
+    });
+  });
+  route('post', '/lead-assistant/conversations', 'assistant:query', req => {
+    parse(ConversationInput,req.body);
+    return mutate(req,'assistant:query',tx=>createConversation(tx,req.identity,uid(),now()),{idempotent:true});
+  });
+  route('get', '/lead-assistant/conversations', 'assistant:query', async req => {
+    const m=await researchMember(store,req.identity,['assistant:query']);
+    const result=await researchList(req,'assistantConversations',[['ownerUid','==',m.uid]],researchAccessKey(m),async row=>row.status!=='Deleting'?{id:row.id,version:row.version,status:row.access===researchAccessKey(m)?row.status:'Stale',createdAt:row.createdAt,updatedAt:row.updatedAt}:null,null,'createdAt');
+    await researchMember(store,req.identity,['assistant:query'],researchAccessKey(m));return result;
+  });
+  route('get', '/lead-assistant/conversations/:id/messages', 'assistant:query', async req => {
+    const c=await readConversation(store,req.identity,req.params.id);
+    const epoch=await scanEpoch(store),fields=await readFieldOptions(store),settings=await readResearchSettings(store);
+    const result=await researchList(req,'assistantRequests',[['jobId','==',c.id]],c.access,async row=>readAssistantRequest(store,req.identity,row.id),epoch,'createdAt');
+    if((await readFieldOptions(store)).version!==fields.version||(await readResearchSettings(store)).version!==settings.version)throw new AppError(409,'STALE_SOURCE','Reporting settings changed. Refresh the conversation.');
+    const current=await readConversation(store,req.identity,c.id);return {...result,conversation:current};
+  });
+  route('post', '/lead-assistant/conversations/:id/questions', 'assistant:query', req => {
+    const input=parse(QuestionInput,req.body);
+    return mutate(req,'assistant:query',tx=>createQuestion(tx,req.identity,req.params.id,input,uid(),now(),telemetry()?.capture()?.traceparent||null),{idempotent:true});
+  });
+  route('get', '/lead-assistant/requests/:id', 'assistant:query', req => readAssistantRequest(store,req.identity,req.params.id));
+  route('get', '/lead-assistant/requests/:id/leads', 'assistant:query', async req => {
+    const r=await readAssistantRequest(store,req.identity,req.params.id);
+    if(r.status!=='Completed'||!r.answer?.hasResults)throw new AppError(409,'RESULTS_UNAVAILABLE','Ask again for current completed lead results.');
+    const m=await researchMember(store,req.identity,['assistant:query'],r.access);
+    const result=await researchList(req,'assistantContributions',[['requestId','==',r.id]],r.access,async row=>{
+      const lead=await store.get(path('leads',row.leadId));
+      if(!canReadLead(m,lead)||lead.archived)throw new AppError(409,'STALE_SOURCE','Lead data changed. Ask again.');
+      return row.lead;
+    },r.epoch);
+    const current=await readAssistantRequest(store,req.identity,r.id);if(current.status!=='Completed')throw new AppError(409,'STALE_SOURCE','Data changed. Ask again.');
+    return result;
+  });
+  route('post', '/lead-assistant/requests/:id/cancel', 'assistant:query', req => {
+    const input=parse(ResearchVersion,req.body);
+    return mutate(req,'assistant:query',async tx=>{
+      const r=await readAssistantRequest(tx,req.identity,req.params.id);assertVersion(r,input.expectedVersion);
+      if(r.status!=='Pending')throw new AppError(409,'REQUEST_FINISHED','The answer has already finished.');
+      const next={...r,status:'Cancelled',answer:{state:'Unavailable',text:'Answer stopped.'},version:r.version+1,updatedAt:now()};
+      tx.set(path('assistantRequests',r.id),next);return {id:r.id,status:next.status,version:next.version};
+    });
+  });
+  route('delete', '/lead-assistant/conversations/:id', 'assistant:query', req => {
+    const input=parse(ResearchVersion,req.body);
+    return mutate(req,'assistant:query',async tx=>{
+      const c=await readConversation(tx,req.identity,req.params.id);assertVersion(c,input.expectedVersion);
+      tx.set(path('assistantConversations',c.id),{...c,status:'Deleting',version:c.version+1,updatedAt:now()});
+      return {id:c.id,status:'Deleting'};
+    });
+  });
+
   route('get', '/lead-data-reset', 'members:write', async (req) => {
     await resetAdmin(maintenanceStore, req.identity);
     return resetStatus(maintenanceStore);

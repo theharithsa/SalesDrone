@@ -284,3 +284,11 @@ Cleanup-lock feedback reuses the existing `LEAD_DATA_RESET` code, sanitized HTTP
 Score-factor spacing/unknown-value presentation reuses existing safe reads and refresh signals; no canonical event, value, quote or metric dimension is added. The authorized v2.5.2 maintenance is identified by commit/run while preserving its original tag.
 
 Stage/detail saves retain existing authorized HTTP/Firestore spans, logs/RED metrics and committed lead/journey/activity outbox events. Retained shared contact keys do not add new telemetry. Personal stage grouping uses existing key-only preference audit. Dialog control sizing is presentation only; no contact values, labels, screenshots or new dimensions/events are exported.
+
+## Lead research signals
+
+Research uses existing HTTP RED metrics, safe Firestore/Gemini dependency spans and the shared scheduled worker. Count-only research logs report processed/indexed/failed work; prompts/questions, notes, names, contact values, replies, chunks and vectors are excluded. Committed hygieneScans/assistantConversations/assistantRequests domain events include completed/failed/stale/deleting transitions. ai.research settings audits export changed control keys only. Index maintenance produces no fabricated customer business event. The release checks all five deployed functions and separate signal receipts; tenant searchability requires actual query evidence.
+
+Research adds `salesdrone.research.operations` ({operation}) and `salesdrone.research.duration` (s), with only kind=plan/themes/embedding/batch and outcome=success/failure. Durations measure active calls/batches, not invented spans across asynchronous idle time. Where available, worker steps link the real originating request traceparent; no synthetic trace IDs are generated. New Async jobs do not establish native RUM linkage without separate live verification.
+
+Research outcome outboxes remain atomic when the OTel SDK is unavailable. Missing attempt attribution is explicit (`request.id=unavailable`, system actor, genuine transaction ID, no trace parent); later delivery does not fabricate a historic source trace. Telemetry bodies still exclude all questions/answers/evidence.

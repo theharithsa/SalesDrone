@@ -29,6 +29,11 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'hygiene-demo.jpg',
+  'hygiene-mobile-demo.jpg',
+  'assistant-demo.jpg',
+  'assistant-mobile-demo.jpg',
+  'research-settings-demo.jpg',
   'dashboard-stage-demo.jpg',
   'dashboard-stage-mobile-demo.jpg',
   'lead-form-selects-demo.jpg',

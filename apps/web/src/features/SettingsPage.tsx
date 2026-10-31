@@ -1,3 +1,4 @@
+import ResearchSettings from './ResearchSettings';
 import LeadDataSettings from './LeadDataSettings';
 import ArchivedLeadsSettings from './ArchivedLeadsSettings';
 import { displayScales, normalizeDisplayScale } from '../lib/display-scale';
@@ -78,6 +79,7 @@ export default function SettingsPage({
     ai: SlidersHorizontal,
     reminders: Bell,
     scoring: SlidersHorizontal,
+    research: SlidersHorizontal,
     developer: CodeXml,
     access: ShieldCheck,
     about: Info,
@@ -89,7 +91,7 @@ export default function SettingsPage({
   const fieldSections = sections.filter(
     (item) => item.group === 'manageFields',
   );
-  const aiIds = ['ai', 'reminders', 'scoring'];
+  const aiIds = ['ai', 'reminders', 'scoring', 'research'];
   const aiSections = sections
     .filter((item) => aiIds.includes(item.id))
     .sort((a, b) => aiIds.indexOf(a.id) - aiIds.indexOf(b.id));
@@ -767,6 +769,7 @@ export default function SettingsPage({
           {isAdmin && section === 'ai' ? (
             <AIPersonalizationSettings request={request} />
           ) : null}
+          {isAdmin && section === 'research' ? <ResearchSettings request={request} fieldOptions={fieldOptions}/>:null}
           {isAdmin && section === 'scoring' ? (
             <ScoringSettings request={request} />
           ) : null}

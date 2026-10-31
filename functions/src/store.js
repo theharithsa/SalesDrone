@@ -1,4 +1,4 @@
-import { FieldPath } from 'firebase-admin/firestore';
+import { FieldPath, FieldValue } from 'firebase-admin/firestore';
 const DOCUMENT_KEY = Symbol('document-key');
 export const documentKey = value => value[DOCUMENT_KEY] ?? value.id;
 const withDocumentKey = (value, key) => Object.defineProperty(value, DOCUMENT_KEY, {value:key});
@@ -9,13 +9,14 @@ function firestoreReader(db, transaction) {
   const writes = [];
   const queryRef = (
     path,
-    { filters = [], order = 'id', direction = 'asc', after, limit = 50 } = {},
+    { filters = [], order = 'id', direction = 'asc', after, limit = 50, fields } = {},
   ) => {
     let q = db.collection(path);
     for (const [f, op, v] of filters) q = q.where(f, op, v);
     q = q.orderBy(order === '__name__' ? FieldPath.documentId() : order, direction);
     if (order !== 'id' && order !== '__name__') q = q.orderBy('id', direction);
     if (after !== undefined) q = q.startAfter(...after);
+    if(fields)q=q.select(...fields);
     return q.limit(limit);
   };
   return {
@@ -30,10 +31,11 @@ function firestoreReader(db, transaction) {
       const s = transaction ? await transaction.get(ref) : await ref.get();
       return s.exists ? s.data() : null;
     },
-    getAll: async (paths) => {
+    getAll: async (paths, fields) => {
       if (!paths.length) return [];
       const refs = paths.map(p => db.doc(p));
-      const snapshots = transaction ? await transaction.getAll(...refs) : await db.getAll(...refs);
+      const args=fields?[...refs,{fieldMask:fields}]:refs;
+      const snapshots = transaction ? await transaction.getAll(...args) : await db.getAll(...args);
       return snapshots.map(s => s.exists ? s.data() : null);
     },
     query: async (path, opts) => {
@@ -50,7 +52,10 @@ function firestoreReader(db, transaction) {
     delete: (path) => writes.push(['delete', path]),
     flush: () => {
       for (const [op, path, data] of writes) {
-        if (op === 'set') transaction.set(db.doc(path), data);
+        if (op === 'set') {
+          if (path.split('/')[2] === 'researchChunks' && Array.isArray(data.embedding)) data.embedding = FieldValue.vector(data.embedding);
+          transaction.set(db.doc(path), data);
+        }
         else transaction.delete(db.doc(path));
       }
     },
@@ -60,6 +65,12 @@ export function firestoreStore(db) {
   const reader = firestoreReader(db);
   return {
     ...reader,
+    nearest: async (path, {filters = [], vector, limit = 12}) => {
+      let q = db.collection(path);
+      for (const [f, op, v] of filters) q = q.where(f, op, v);
+      const result = await q.findNearest({vectorField:'embedding',queryVector:vector,limit,distanceMeasure:'COSINE'}).get();
+      return result.docs.map(d => { const value=d.data(); delete value.embedding; return value; });
+    },
     run: (fn) =>
       db.runTransaction(async (tx) => {
         const r = firestoreReader(db, tx);
@@ -88,10 +99,10 @@ export function memoryStore(seed = {}) {
         .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
         .slice(0, limit),
     get: async (p) => structuredClone(map.get(p) || null),
-    getAll: async (paths) => paths.map(p => structuredClone(map.get(p) || null)),
+    getAll: async (paths,fields) => paths.map(p => {const value=structuredClone(map.get(p)||null);return value&&fields?Object.fromEntries(fields.filter(f=>f in value).map(f=>[f,value[f]])):value;}),
     query: async (
       p,
-      { filters = [], order = 'id', direction = 'asc', after, limit = 50 } = {},
+      { filters = [], order = 'id', direction = 'asc', after, limit = 50, fields } = {},
     ) =>
       [...map.entries()]
         .filter(
@@ -102,7 +113,9 @@ export function memoryStore(seed = {}) {
         .map(([key, v]) => withDocumentKey(structuredClone(v),key.split('/').at(-1)))
         .filter((v) =>
           filters.every(([f, op, x]) =>
-            op === '=='
+            op === 'in'
+              ? Array.isArray(x) && x.includes(fieldValue(v,f))
+              : op === '=='
               ? fieldValue(v,f) === x
               : op === '>='
                 ? fieldValue(v,f) >= x
@@ -136,7 +149,8 @@ export function memoryStore(seed = {}) {
               : fieldValue(v,order) < after[0] ||
                 (fieldValue(v,order) === after[0] && v.id < after[1])),
         )
-        .slice(0, limit),
+        .slice(0, limit)
+        .map(value=>fields?withDocumentKey(Object.fromEntries(fields.filter(f=>f in value).map(f=>[f,value[f]])),documentKey(value)):value),
     set: (p, v) => map.set(p, structuredClone(v)),
     delete: (p) => map.delete(p),
     count: async (p, f) =>
@@ -149,6 +163,13 @@ export function memoryStore(seed = {}) {
   });
   return {
     ...reader(data),
+    nearest: async (p, {filters = [], vector, limit = 12}) => {
+      const rows = await reader(data).query(p,{filters,limit:Number.MAX_SAFE_INTEGER});
+      const norm = v => Math.sqrt(v.reduce((n,x)=>n+x*x,0));
+      return rows.filter(r=>Array.isArray(r.embedding)&&r.embedding.length===vector.length)
+        .map(r=>({r,score:r.embedding.reduce((n,x,i)=>n+x*vector[i],0)/(norm(r.embedding)*norm(vector)||1)}))
+        .sort((a,b)=>b.score-a.score).slice(0,limit).map(({r})=>{delete r.embedding;return r;});
+    },
     run: (fn) => {
       const result = tail.then(async () => {
         const next = new Map(data);

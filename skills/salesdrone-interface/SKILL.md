@@ -57,3 +57,10 @@ These are tracked follow-ups, not implemented behavior: [#4](https://github.com/
 Field-dependent dashboard copy must remain readable with 80-character configured labels at narrow widths and larger display scales. Import conflict messages use local focus links to existing controls; do not silently change column mappings or discard their data.
 
 Modal closed selects use appearance:none so filled heights and inset labels remain CSS-controlled, including Country code/custom dropdowns. Keep the shared chevron and native open menu; appearance:auto belongs only to the picker pseudo-element. Check label/value separation in actual synthetic dialogs.
+
+Lead Hygiene and Lead Assistant are capability-gated navigation destinations with responsive private history/results, explicit loading/stale states and source links. Demo is isolated and disables live scans/AI. The shared ResearchPage marks private content for masking. Keep controls usable at narrow widths and protect async component state across identity/mode changes.
+
+Lead Assistant uses the dedicated Material conversation surface with on-demand history.
+Its fixed history sheet divides viewport dimensions by interface-scale; verify both
+zoom and short windows. Composer insets account for bottom navigation only inside
+the app shell, so standalone synthetic previews do not inherit a phantom nav gap.

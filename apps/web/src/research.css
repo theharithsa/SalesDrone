@@ -1,0 +1,146 @@
+.research-page {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.research-page .page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.research-page .page-heading p {
+  max-width: 66ch;
+  color: var(--muted);
+}
+.research-layout {
+  display: grid;
+  grid-template-columns: minmax(210px, 280px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.research-history,
+.research-results {
+  min-width: 0;
+}
+.research-page h2 {
+  font-size: 1.3rem;
+}
+.research-page h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+.research-history-item {
+  display: grid;
+  width: 100%;
+  text-align: left;
+  padding: 14px;
+  gap: 4px;
+  margin: 8px 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  color: var(--text);
+  white-space: normal;
+}
+.research-history-item.active {
+  background: var(--accent-soft);
+  color: var(--md-sys-color-on-primary-container);
+}
+.research-history-item small {
+  color: inherit;
+  opacity: 0.85;
+}
+.research-finding,
+.research-message {
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.research-finding ul {
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+.research-finding .mono {
+  white-space: normal;
+}
+.research-empty {
+  padding: 32px 8px;
+  max-width: 60ch;
+}
+.research-composer {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+.research-composer textarea {
+  min-height: 112px;
+  width: 100%;
+  resize: vertical;
+}
+.research-page blockquote {
+  margin: 16px 0;
+  padding: 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: 0 12px 12px 0;
+}
+.research-page small {
+  display: block;
+  line-height: 1.5;
+}
+.research-stage-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.research-settings form {
+  display: grid;
+  gap: 20px;
+}
+.research-settings fieldset {
+  min-width: 0;
+}
+.research-settings legend {
+  font-weight: 600;
+}
+.research-settings label {
+  overflow-wrap: anywhere;
+}
+.research-page .section-heading {
+  align-items: flex-start;
+}
+@media (max-width: 900px) {
+  .research-layout {
+    grid-template-columns: 1fr;
+  }
+  .research-history {
+    max-height: 280px;
+    overflow: auto;
+  }
+  .research-stage-groups {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .research-page {
+    gap: 12px;
+  }
+  .research-page .panel {
+    padding: 20px;
+  }
+  .research-page .page-heading {
+    gap: 12px;
+  }
+  .research-page .page-heading > .button {
+    width: 100%;
+  }
+  .research-composer .button {
+    width: 100%;
+  }
+}

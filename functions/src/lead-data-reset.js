@@ -20,6 +20,15 @@ const phases = [
   'leadTransitions',
   'noteAnalyses',
   'leadScores',
+  'hygieneScans',
+  'hygieneFindings',
+  'hygieneEvidence',
+  'assistantConversations',
+  'assistantRequests',
+  'assistantMessages',
+  'assistantContributions',
+  'researchIndexJobs',
+  'researchChunks',
   'imports',
   'importChunks',
   'importBaselines',
@@ -184,6 +193,7 @@ export async function startReset({ store, identity, input, key, now }) {
       leaseUntil: null,
       lastError: null,
     };
+    tx.delete(path('maintenance','leadResearchIndex'));
     tx.set(RESET_STATE, {
       id: 'lead-data-reset',
       active: true,

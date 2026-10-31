@@ -1495,6 +1495,454 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "leads",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "assignedToUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "archived",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneScans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneScans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "summaryStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneScans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ownerUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneScans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ownerUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneFindings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneFindings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneEvidence",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "findingId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hygieneEvidence",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantConversations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ownerUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantConversations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ownerUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantContributions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "researchChunks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sourceKey",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "researchChunks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "leadId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "researchIndexJobs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "researchChunks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "active",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "embedding",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
+    },
+    {
+      "collectionGroup": "researchChunks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "active",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "assignedToUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "embedding",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
+    },
+    {
+      "collectionGroup": "researchChunks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "active",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "stage",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "embedding",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
+    },
+    {
+      "collectionGroup": "researchChunks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "active",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "assignedToUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "stage",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "embedding",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantContributions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "requestId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantConversations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ownerUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assistantRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "jobId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": [

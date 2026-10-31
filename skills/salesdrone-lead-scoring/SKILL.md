@@ -81,3 +81,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#39](https://github.com/theharithsa/SalesDrone/issues/39). Check their current status before changing the contract.
 
 Keep unknown/conflicting factor points hidden and unscored component totals as dashes; retain legitimate reported zero/positive points in spaced, wrapping rows and avoid negative-zero risk. This is presentation only, never change stored evidence/calculations. Focused component cases: lead score evidence values in workflows.test.tsx.
+
+The shared leadIntelligence scheduled function now also advances bounded lead research/index work. Separate research failures from scoring; no research exception may prevent the scoring pass. Research has a finite per-invocation time budget and no additional independently deployed function.

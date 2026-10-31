@@ -70,6 +70,13 @@
     "admin": true
   },
   {
+    "id": "research",
+    "label": "Lead research",
+    "description": "Configure outcome meanings, archive review and the knowledge index.",
+    "group": "intelligence",
+    "admin": true
+  },
+  {
     "id": "developer",
     "label": "Developer settings",
     "description": "Personal Access Tokens and the Swagger API portal.",

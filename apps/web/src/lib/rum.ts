@@ -22,6 +22,8 @@ let lastPage = '';
 export const safePage = (path: string) => {
   const p = path.split('?')[0].split('/').filter(Boolean)[0] || 'login';
   return [
+    'hygiene',
+    'assistant',
     'today',
     'leads',
     'tasks',
@@ -54,6 +56,9 @@ export const safeOperation = (path: string, method: string) => {
     'field-options',
     'workspace-settings',
     'ai-settings',
+    'lead-research-settings',
+    'lead-hygiene',
+    'lead-assistant',
     'activities',
     'summary',
   ].includes(kind)
@@ -65,6 +70,13 @@ export const safeOperation = (path: string, method: string) => {
     .slice(2)
     .map((v) =>
       [
+        'scans',
+        'findings',
+        'conversations',
+        'requests',
+        'questions',
+        'messages',
+        'index',
         'attachments',
         'content',
         'activities',

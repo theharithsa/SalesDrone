@@ -1,4 +1,5 @@
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { requireMilestoneReference, readMilestoneWithGh, validateMilestoneSnapshot } from './milestone-policy.mjs';
+import { readFileSync, writeFileSync } from 'node:fs';
 const bump = process.argv[2],
   index = { major: 0, minor: 1, patch: 2 }[bump];
 if (index === undefined)
@@ -8,6 +9,12 @@ const current = JSON.parse(readFileSync('package.json', 'utf8')).version,
 parts[index]++;
 for (let i = index + 1; i < 3; i++) parts[i] = 0;
 const version = parts.join('.');
+let planned;
+try {planned=JSON.parse(readFileSync('releases/'+version+'.json','utf8'));}
+catch {throw Error('Create the GitHub milestone, assign scoped issues, then run release:plan before advancing '+version);}
+requireMilestoneReference(planned,version);
+const snapshot=readMilestoneWithGh(planned.milestone.number);
+validateMilestoneSnapshot(planned,snapshot.milestone,snapshot.issues,{mode:'prepare'});
 for (const f of [
   'package.json',
   'apps/web/package.json',
@@ -45,23 +52,4 @@ console.log(
   `Version advanced ${current} → ${version}. Complete CHANGELOG.md before pushing.`,
 );
 
-mkdirSync('releases', { recursive: true });
-const template = JSON.parse(
-  readFileSync(
-    'skills/salesdrone-release-readiness/assets/release-plan.template.json',
-    'utf8',
-  ),
-);
-template.version = version;
-template.api.contractVersion = JSON.parse(
-  readFileSync('docs/openapi.json', 'utf8'),
-).info.version;
-writeFileSync(
-  'releases/' + version + '.json',
-  JSON.stringify(template, null, 2) + '\n',
-);
-console.log(
-  'Complete releases/' +
-    version +
-    '.json, regenerate docs:settings and verify release:readiness.',
-);
+console.log('Preserved the existing milestone-scoped release impact plan.');

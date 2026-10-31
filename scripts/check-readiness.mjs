@@ -1,3 +1,4 @@
+import { requireMilestoneReference, verifyGitHubMilestone } from './milestone-policy.mjs';
 import { spawnSync } from 'node:child_process';
 import { readFile, readdir, access } from 'node:fs/promises';
 import {
@@ -23,6 +24,14 @@ validateScreenshotEvidence(
   plan,
   await read('site/assets/screenshots/manifest.json'),
 );
+if(plan.milestone){
+  requireMilestoneReference(plan);
+  if(plan.milestone.readiness!=='ready')throw Error('Milestone #'+plan.milestone.number+' is still in planning; production publication is held');
+  if(process.env.GITHUB_ACTIONS==='true'){
+    const event=process.env.GITHUB_EVENT_PATH?JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH,'utf8')):{};
+    await verifyGitHubMilestone(plan,{repository:process.env.GITHUB_REPOSITORY,token:process.env.GITHUB_TOKEN,mode:process.env.GITHUB_EVENT_NAME==='pull_request'?'pull_request':'publication',body:event.pull_request?.body||'',apiUrl:process.env.GITHUB_API_URL});
+  }
+}else if((Number(version.split('.')[0])>2||(Number(version.split('.')[0])===2&&Number(version.split('.')[1])>=6)))throw Error('Current releases require a scoped milestone reference');
 validateReleasePlan(plan, {
   version,
   contractVersion: spec.info.version,
