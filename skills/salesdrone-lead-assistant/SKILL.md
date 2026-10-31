@@ -83,3 +83,6 @@ The model emits a strict composable plan. Server metadata, literal filter ground
 current permissions and source/task epochs gate execution. Lists page via signed
 request-bound cursors; exact counts scan complete scope. Cancel uses expectedVersion
 and blocks later worker publication. Active never implies the New stage.
+
+Workspace queue admission is bounded (50 Assistant requests / 10 unfinished scans);
+429 WORKSPACE_BUSY exposes no owner data. Keep provider and worker time limits.

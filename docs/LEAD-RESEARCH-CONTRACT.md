@@ -160,3 +160,8 @@ matching the caller, Pending outreach tasks, and current eligible accessible lea
 Weeks are Monday–Sunday in the saved reporting timezone. Multiple matching reminders
 count a lead once; current task changes invalidate prior answers. Approval timing must
 use an explicit recorded date; createdAt/updatedAt cannot substitute for approval dates.
+
+Admission limits: at most 50 queued Assistant requests and 10 unfinished Hygiene
+scans per workspace, alongside five questions/minute and five scans/hour per owner.
+A full queue returns 429 WORKSPACE_BUSY without exposing other owners or queue contents.
+Workers retain bounded turns/time; opening history never starts paid inference.

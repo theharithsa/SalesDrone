@@ -108,6 +108,16 @@ export async function createQuestion(
     ],
     limit: 1,
   });
+  const queue = await tx.query(path("assistantRequests"), {
+    filters: [["status", "==", "Pending"]],
+    limit: 50,
+  });
+  if (queue.length >= 50)
+    throw new AppError(
+      429,
+      "WORKSPACE_BUSY",
+      "The Assistant is busy. Please try again after an answer finishes.",
+    );
   const currentEpoch = await scanEpoch(tx);
   if (pending.some((r) => r.epoch === currentEpoch && r.access === c.access))
     throw new AppError(409, "REQUEST_PENDING", "Wait for the current answer");

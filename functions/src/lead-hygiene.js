@@ -27,6 +27,16 @@ export async function createHygieneScan(tx, identity, id, at, options = {}) {
     direction: "desc",
     limit: 5,
   });
+  const queue = await tx.query(path("hygieneScans"), {
+    filters: [["status", "in", ["Pending", "Running"]]],
+    limit: 10,
+  });
+  if (queue.length >= 10)
+    throw new AppError(
+      429,
+      "WORKSPACE_BUSY",
+      "Hygiene is busy. Please try again after a report finishes.",
+    );
   const sourceEpoch = await scanEpoch(tx);
   if (
     recent.some(
@@ -136,7 +146,16 @@ export function inspectLead(lead, fields) {
   if (lead.needsReview) issues.push("needs_review");
   if (!fields.values.stage.includes(lead.stage)) issues.push("retired_stage");
   try {
-    validateCustomValues(fields, Object.fromEntries(Object.entries(lead.customFields||{}).filter(([id])=>!fields.customFields.some(f=>f.id===id&&f.deleted))), {}, true);
+    validateCustomValues(
+      fields,
+      Object.fromEntries(
+        Object.entries(lead.customFields || {}).filter(
+          ([id]) => !fields.customFields.some((f) => f.id === id && f.deleted),
+        ),
+      ),
+      {},
+      true,
+    );
   } catch {
     issues.push("custom_fields_need_review");
   }
@@ -510,7 +529,7 @@ export async function summarizeHygiene({
       id: r.id,
       text:
         r.kind === "SharedContact"
-          ? `${r.count} ${r.archived?"archived":"active"} enquiries share a ${r.field}. Shared contact is not proof of duplicate enquiries.`
+          ? `${r.count} ${r.archived ? "archived" : "active"} enquiries share a ${r.field}. Shared contact is not proof of duplicate enquiries.`
           : `Review flags: ${r.issues.join(", ")}.`,
     }));
   const raw = await provider.themes({

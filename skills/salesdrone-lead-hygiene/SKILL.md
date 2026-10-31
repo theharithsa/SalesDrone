@@ -62,3 +62,6 @@ Adjacent owners: [people permissions](../salesdrone-people-permissions/SKILL.md)
 - [UI](../../apps/web/src/features/ResearchPage.tsx) and [Admin settings](../../apps/web/src/features/ResearchSettings.tsx).
 
 Reports scan active accessible leads and contact-index references in resumable pages. Shared-contact details paginate independently. Archive review needs configured stages/threshold, real recorded contact and no pending task; no task details are exposed. A source epoch or policy/configuration change invalidates the entire report. Admin deletion hides the report immediately and background cleanup removes its findings/evidence.
+
+Workspace queue admission is bounded (50 Assistant requests / 10 unfinished scans);
+429 WORKSPACE_BUSY exposes no owner data. Keep provider and worker time limits.

@@ -299,3 +299,11 @@ test('unsupported mutation tools and provider faults fail closed without editing
   const fields=await readFieldOptions(store),config=await store.get(RESEARCH_SETTINGS_PATH);
   assert.throws(()=>validateAgentPlan(toolPlan({dateField:'createdAt',period:{unit:'month',offset:0,startDate:'',endDate:''}}),fields,config,at,'Orders approved this month'),e=>e.code==='AGENT_CLARIFY');
 });
+
+test('workspace admission bounds queued AI requests and scans without exposing other owners',async()=>{
+  const {store}=await prepared();await store.run(tx=>createConversation(tx,{uid:'rep'},'queue-chat',at));
+  await store.run(tx=>{for(let i=0;i<50;i++)tx.set(path('assistantRequests','queued-'+i),{id:'queued-'+i,status:'Pending',jobId:'other',ownerUid:'other'});for(let i=0;i<10;i++)tx.set(path('hygieneScans','queued-'+i),{id:'queued-'+i,status:'Pending',ownerUid:'other'});});
+  await assert.rejects(store.run(tx=>createQuestion(tx,{uid:'rep'},'queue-chat',{question:'Count leads'},'rejected',at)),e=>e.code==='WORKSPACE_BUSY');
+  await assert.rejects(store.run(tx=>createHygieneScan(tx,{uid:'rep'},'rejected',at)),e=>e.code==='WORKSPACE_BUSY');
+  assert.equal(await store.get(path('assistantRequests','rejected')),null);assert.equal(await store.get(path('hygieneScans','rejected')),null);
+});
