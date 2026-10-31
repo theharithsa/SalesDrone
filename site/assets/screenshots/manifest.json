@@ -398,5 +398,25 @@
     "capturePixels": "390 x 1000",
     "version": "2.3.0",
     "review": "Visually/privacy reviewed fictional CSV mapping or import row-review component. No API transport, customer data or database writes. Mobile comparison capture is scrolled to the first row in dark mode. Browser emulation, not physical-device/Safari certification."
+  },
+  {
+    "file": "lead-filters-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "1e64033b3dd1205b153ca5ae3172fc690489a044a10bf31a5926936bb100ba40",
+    "capturedAt": "2026-10-31T06:52:40.189476+00:00",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.4.0",
+    "review": "Visually/privacy reviewed. Fictional guest data; Exact match selected in the actual desktop disclosure/mobile dialog. No server writes, customer data or credentials. Browser viewport, not physical-device/Safari certification."
+  },
+  {
+    "file": "lead-filters-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "13aec33340300f53612c4819101c926179be7921f1e55366362a500fba2bcdb4",
+    "capturedAt": "2026-10-31T06:52:40.423675+00:00",
+    "viewport": "390 x 1100 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 1100",
+    "version": "2.4.0",
+    "review": "Visually/privacy reviewed. Fictional guest data; Exact match selected in the actual desktop disclosure/mobile dialog. No server writes, customer data or credentials. Browser viewport, not physical-device/Safari certification."
   }
 ]

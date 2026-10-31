@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Public documentation and illustrations"
   short_description: "Maintain public documentation and illustrations in SalesDrone"
-  default_prompt: "Use $salesdrone-documentation to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-documentation for this module change. Public screenshots must use synthetic demo data or public schemas only. Never publish imported workbooks, private captures, tokens or real lead records. Verify with `node --test functions/test/api-portal.test.js` and report remaining evidence limits."

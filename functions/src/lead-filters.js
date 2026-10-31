@@ -36,6 +36,7 @@ export const LeadFilters = z
         op: z.enum([
           'contains',
           'equals',
+          'exact',
           'startsWith',
           'empty',
           'notEmpty',
@@ -63,7 +64,9 @@ export function parseLeadFilters(raw) {
   }
   const filters = parse(LeadFilters, data);
   for (const f of filters) {
-    if (!['empty', 'notEmpty'].includes(f.op) && !f.value.trim())
+    if (f.op === 'exact' && !['stage','source'].includes(f.field) && !f.field.startsWith('cf_'))
+      throw new AppError(400, 'FILTER', 'Exact match supports source, stage and custom dropdown fields');
+    if (!['empty', 'notEmpty'].includes(f.op) && !(f.op === 'exact' ? f.value.length : f.value.trim()))
       throw new AppError(400, 'FILTER', 'Enter a filter value');
     if (
       ['before', 'after'].includes(f.op) &&
@@ -93,6 +96,7 @@ export function matchesLead(lead, filters) {
           : f.field.startsWith('cf_')
             ? lead.customFields?.[f.field]
             : lead[f.field];
+    if (f.op === 'exact') return raw === f.value;
     const value = normalized(raw),
       term = normalized(f.value);
     if (f.op === 'empty') return !value;

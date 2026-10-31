@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone product guide"
   short_description: "Maintain workflows, FAQs and current demo screenshots"
-  default_prompt: "Use $salesdrone-product-guide to update the SalesDrone product handbook and affected synthetic screenshots from the current UI."
+  default_prompt: "Use $salesdrone-product-guide for this module change. Use fictional captures and never relabel historical screenshots. Verify with `node --test tests/product-guide.test.ts` and report remaining evidence limits."

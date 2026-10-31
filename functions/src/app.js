@@ -1,3 +1,6 @@
+import { documentKey } from './store.js';
+import { createCursorCodec } from './cursors.js';
+import { rateLimitExpiry } from './rate-limit.js';
 import {
   ImportVersion,
   ImportDecision,
@@ -83,12 +86,7 @@ import {
   FIELD_SETTINGS_PATH,
 } from './field-options.js';
 import express from 'express';
-import {
-  randomUUID,
-  randomBytes,
-  createHmac,
-  timingSafeEqual,
-} from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import {
   AppError,
   parse,
@@ -108,10 +106,8 @@ import {
   DeviceInput,
   ImportInput,
   PRESETS,
-  STAGES,
 } from './contracts.js';
 import {
-  ROOT,
   path,
   hash,
   googleIdentity,
@@ -132,40 +128,10 @@ import { prepareLead, normalizeLead, contactKeys } from './leads.js';
 import { IMPORT_CHUNK_SIZE, previewRows } from './imports.js';
 import { makeTask, queueTask } from './tasks.js';
 import { enqueueAnalysis, AUTO_DEFAULTS } from './automatic-reminders.js';
-const cursorSecret =
-  process.env.CURSOR_SECRET || randomBytes(32).toString('hex');
 const uid = () => Date.now().toString(36) + '_' + randomUUID();
-const sign = (v) =>
-  createHmac('sha256', cursorSecret).update(v).digest('base64url');
-const encodeCursor = (after, binding) => {
-  const v = Buffer.from(JSON.stringify({ after, binding })).toString(
-    'base64url',
-  );
-  return `${v}.${sign(v)}`;
-};
-function decodeCursor(value, binding) {
-  try {
-    const [v, s] = value.split('.');
-    const expected = sign(v);
-    if (
-      !s ||
-      s.length !== expected.length ||
-      !timingSafeEqual(Buffer.from(s), Buffer.from(expected))
-    )
-      throw Error();
-    const c = JSON.parse(Buffer.from(v, 'base64url').toString());
-    if (c.binding !== binding || !Array.isArray(c.after)) throw Error();
-    return c.after;
-  } catch {
-    throw new AppError(
-      400,
-      'CURSOR',
-      'Invalid or expired cursor for these filters',
-    );
-  }
-}
 export function createApp({
   store,
+  cursorSecret = process.env.CURSOR_SECRET,
   telemetry = () => null,
   verifyToken,
   verifyAppCheck,
@@ -178,6 +144,14 @@ export function createApp({
 }) {
   const maintenanceStore = store.maintenanceStore || store;
   store = guardLeadData(store);
+  const { encode: encodeCursor, decode: decodeCursor } = createCursorCodec(
+    cursorSecret,
+    {
+      allowEphemeral:
+        process.env.FUNCTIONS_EMULATOR === 'true' ||
+        (!process.env.K_SERVICE && process.env.NODE_ENV !== 'production'),
+    },
+  );
   const app = express();
   app.disable('x-powered-by');
   app.use((req, res, next) => {
@@ -374,7 +348,7 @@ export function createApp({
       const settingsChanges = await tracking.changes();
       tx.set(ratePath, {
         count: (rate?.count || 0) + 1,
-        expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+        expiresAt: rateLimitExpiry(now()),
       });
       const id = uid();
       const audit = {
@@ -583,7 +557,8 @@ export function createApp({
         if (
           !definition ||
           (['before', 'after'].includes(filter.op) &&
-            definition.type !== 'date')
+            definition.type !== 'date') ||
+          (filter.op === 'exact' && definition.type !== 'select')
         )
           throw new AppError(
             400,
@@ -632,13 +607,25 @@ export function createApp({
     let after = req.query.cursor
       ? decodeCursor(String(req.query.cursor), binding)
       : undefined;
+    const exact = new Map();
+    let contradiction = false;
+    for (const f of filters.filter(f => f.op === 'exact')) {
+      const field = f.field.startsWith('cf_') ? 'customFields.' + f.field : f.field;
+      if (exact.has(field) && exact.get(field) !== f.value) contradiction = true;
+      exact.set(field, f.value);
+    }
+    if (contradiction) return {items:[],nextCursor:null,scanLimited:false};
+    // Default single-field indexes can merge raw equalities with document-ID order,
+    // including dynamic custom dropdown keys. No lead rewrite/backfill is needed.
+    const indexed = [...base, ...[...exact].map(([field,value])=>[field,'==',value])];
+    const order = exact.size ? '__name__' : 'id';
     const items = [];
     let scanned = 0,
       hasMore = false;
     while (items.length < n && scanned < 1000) {
       const page = await store.query(path('leads'), {
-        filters: base,
-        order: 'id',
+        filters: indexed,
+        order,
         direction: 'desc',
         after,
         limit: Math.min(100, 1000 - scanned),
@@ -650,7 +637,7 @@ export function createApp({
       for (let i = 0; i < page.length; i++) {
         const lead = page[i];
         scanned++;
-        after = [lead.id];
+        after = [exact.size ? documentKey(lead) : lead.id];
         if (matchesLead(lead, filters)) items.push(lead);
         if (items.length === n) {
           hasMore = i < page.length - 1 || page.length === 100;
@@ -804,7 +791,7 @@ export function createApp({
         );
       tx.set(p, {
         count: (rate?.count || 0) + 1,
-        expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+        expiresAt: rateLimitExpiry(now()),
       });
     });
     const config = await readFieldOptions(store);
@@ -1290,6 +1277,7 @@ export function createApp({
       const input = parse(ArchiveInput, req.body);
       const l = await leadAccess(tx, m, req.params.id);
       assertVersion(l, input.expectedVersion);
+      if (l.archived) return { ok: true };
       const tasks = await tx.query(path('tasks'), {
         filters: [
           ['leadId', '==', l.id],
@@ -1305,6 +1293,15 @@ export function createApp({
         archivedAt: l.archivedAt || now(),
         version: l.version + 1,
         updatedAt: now(),
+      });
+      const activityId = uid();
+      tx.set(path('activities', activityId), {
+        id: activityId,
+        leadId: l.id,
+        type: 'change',
+        notes: 'Lead archived',
+        actorUid: m.uid,
+        createdAt: now(),
       });
       for (const t of tasks)
         tx.set(path('tasks', t.id), {
@@ -1687,15 +1684,16 @@ export function createApp({
       filters.push(['leadId', '==', String(req.query.leadId)]);
     return list(req, 'tasks', filters, undefined, 'dueAt', 'asc').then(
       async (result) => {
-        const items = [];
-        for (const t of result.items) {
-          try {
-            await readTask(store, req.member, t.id);
-            items.push(t);
-          } catch (e) {
-            if (e.status !== 404) throw e;
-          }
-        }
+        const leadIds = [
+          ...new Set(result.items.filter(t => !t.deleted && t.leadId).map(t => t.leadId)),
+        ];
+        const records = await store.getAll(leadIds.map(id => path('leads', id)));
+        const leads = new Map(leadIds.map((id, i) => [id, records[i]]));
+        const items = result.items.filter(t =>
+          !t.deleted && (t.leadId
+            ? canReadLead(req.member, leads.get(t.leadId))
+            : t.creatorUid === req.member.uid),
+        );
         return { ...result, items };
       },
     );

@@ -1,3 +1,4 @@
+import { rateLimitExpiry } from './rate-limit.js';
 import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { AppError } from './contracts.js';
@@ -107,7 +108,7 @@ export async function authenticatePersonalToken(store, bearer, now) {
         p,
         {
           count: (r?.count || 0) + 1,
-          expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+          expiresAt: rateLimitExpiry(now()),
         },
       ]);
     }

@@ -24,4 +24,4 @@ add('activities',[('actorUid','ASCENDING'),('type','ASCENDING'),('outcome','ASCE
 add('reminderDeliveries',[('status','ASCENDING'),('nextAttemptAt','ASCENDING'),('id','ASCENDING')])
 add('noteAnalyses',[('status','ASCENDING'),('nextAttemptAt','ASCENDING'),('id','ASCENDING')])
 add('devices',[('enabled','ASCENDING'),('id','ASCENDING')])
-Path('firestore.indexes.json').write_text(json.dumps({'indexes':indexes,'fieldOverrides':[]},indent=2)+'\n')
+Path('firestore.indexes.json').write_text(json.dumps({'indexes':indexes,'fieldOverrides':[{'collectionGroup':'rateLimits','fieldPath':'expiresAt','ttl':True,'indexes':[]}]},indent=2)+'\n')

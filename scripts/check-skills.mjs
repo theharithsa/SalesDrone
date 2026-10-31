@@ -1,7 +1,8 @@
+import { checkEntrypoint, checkDiscovery } from './skill-guard.mjs';
 import { spawnSync } from 'node:child_process';
 import { assertSkillUpdate } from './skill-release-policy.mjs';
 // Repository skill integrity and complete primary API ownership; no dependencies.
-import { readFile, readdir, stat, realpath } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { dirname, resolve, basename, relative } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const skillRoot = resolve(root, 'skills');
@@ -39,6 +40,7 @@ const markdown = [
 for (const folder of folders) {
   const entry = resolve(skillRoot, folder.name, 'SKILL.md');
   const text = await readFile(entry, 'utf8');
+  checkEntrypoint(text, folder.name);
   const header = text.match(/^---\n([\s\S]*?)\n---\n/);
   if (!header) fail('Missing frontmatter: ' + entry);
   const name = header[1].match(/^name: ([a-z0-9-]+)$/m)?.[1];
@@ -81,6 +83,9 @@ for (const folder of folders) {
     owners.set(operation, name);
   }
   markdown.push(entry);
+  const references = resolve(dirname(entry), 'references');
+  for (const ref of await readdir(references, {recursive:true}).catch(()=>[]))
+    if (ref.endsWith('.md')) markdown.push(resolve(references, ref));
 }
 for (const file of markdown) {
   const text = await readFile(file, 'utf8');
@@ -101,11 +106,7 @@ for (const file of markdown) {
 }
 for (const operation of expected)
   if (!owners.has(operation)) fail('Missing primary API owner: ' + operation);
-if (
-  (await realpath(resolve(root, '.agents/skills'))) !==
-  (await realpath(skillRoot))
-)
-  fail('Project skill discovery must resolve to canonical skills/');
+await checkDiscovery(root);
 console.log(
   `Validated ${folders.length} module skills, metadata, links, project discovery and ${owners.size} API operation owners.`,
 );

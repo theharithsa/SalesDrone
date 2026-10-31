@@ -1,0 +1,30 @@
+{
+  "reason": "Existing hook-dependency and interaction findings in the pre-refactor UI; #44, #45 and #46 track the structural follow-ups. CI rejects errors and any per-file/rule warning increase. Reduce counts as findings are resolved; never regenerate to accept new warnings.",
+  "counts": {
+    "apps/web/src/App.tsx::react-hooks/exhaustive-deps": 3,
+    "apps/web/src/App.tsx::jsx-a11y/click-events-have-key-events": 2,
+    "apps/web/src/App.tsx::jsx-a11y/no-static-element-interactions": 3,
+    "apps/web/src/App.tsx::jsx-a11y/no-noninteractive-element-interactions": 1,
+    "apps/web/src/components/Forms.tsx::jsx-a11y/no-autofocus": 4,
+    "apps/web/src/components/LeadBlade.tsx::jsx-a11y/no-noninteractive-element-interactions": 2,
+    "apps/web/src/components/LeadBlade.tsx::jsx-a11y/no-noninteractive-tabindex": 2,
+    "apps/web/src/components/LeadJourney.tsx::jsx-a11y/no-noninteractive-tabindex": 1,
+    "apps/web/src/components/LeadTaskTab.tsx::react-hooks/exhaustive-deps": 2,
+    "apps/web/src/components/NotificationOverlay.tsx::react-hooks/exhaustive-deps": 1,
+    "apps/web/src/components/TaskEditForm.tsx::jsx-a11y/no-autofocus": 1,
+    "apps/web/src/components/WorksheetLeads.tsx::jsx-a11y/no-noninteractive-tabindex": 1,
+    "apps/web/src/features/AIPersonalizationSettings.tsx::jsx-a11y/label-has-associated-control": 2,
+    "apps/web/src/features/ArchivedLeadsSettings.tsx::react-hooks/exhaustive-deps": 2,
+    "apps/web/src/features/DashboardPage.tsx::react-hooks/exhaustive-deps": 5,
+    "apps/web/src/features/DeveloperSettings.tsx::jsx-a11y/label-has-associated-control": 1,
+    "apps/web/src/features/FieldOptionsEditor.tsx::react-hooks/exhaustive-deps": 1,
+    "apps/web/src/features/ImportPage.tsx::react-hooks/exhaustive-deps": 1,
+    "apps/web/src/features/ImportReviewPanel.tsx::react-hooks/exhaustive-deps": 3,
+    "apps/web/src/features/LeadBatchEditor.tsx::react-hooks/exhaustive-deps": 1,
+    "apps/web/src/features/LeadFieldManager.tsx::jsx-a11y/no-autofocus": 2,
+    "apps/web/src/features/LeadFiles.tsx::react-hooks/exhaustive-deps": 2,
+    "apps/web/src/features/MembersPage.tsx::jsx-a11y/no-autofocus": 1,
+    "apps/web/src/features/WorkspacePolicySettings.tsx::react-hooks/exhaustive-deps": 1,
+    "apps/web/src/features/WorkspacePolicySettings.tsx::jsx-a11y/label-has-associated-control": 2
+  }
+}

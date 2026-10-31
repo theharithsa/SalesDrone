@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "npm run dev -w apps/web",
     "build": "npm run build:metadata && npm run build -w apps/web",
-    "test": "npm test -w functions && node --test tests/*.test.ts",
+    "test": "npm test -w functions && node --test tests/*.test.ts && npm run test:components",
     "check": "npm run check -w apps/web",
     "api:docs": "node scripts/openapi.mjs",
     "emulators": "firebase emulators:start --project demo-salesdrone",
@@ -30,11 +30,24 @@
     "design:check": "node --test tests/material-design.test.ts && npm run design:forms && npm run check && npm run build && node scripts/check-design-build.mjs",
     "design:dev": "node scripts/design-dev.mjs",
     "design:forms": "node scripts/check-material-forms.mjs",
-    "review:mobile": "node scripts/review-mobile.mjs"
+    "review:mobile": "node scripts/review-mobile.mjs",
+    "lint": "node scripts/lint.mjs",
+    "test:components": "vitest run"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "eslint": "^9.39.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "firebase-tools": "^15.34.1",
-    "typescript": "^5.9.3"
+    "globals": "^17.13.0",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^4.1.12"
   },
   "engines": {
     "node": ">=22.18.0 <25"
@@ -45,5 +58,5 @@
       "uuid": "^11.1.1"
     }
   },
-  "version": "2.3.1"
+  "version": "2.4.0"
 }

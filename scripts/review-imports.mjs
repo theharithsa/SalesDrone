@@ -8,7 +8,6 @@ import {
   click,
   screenshot,
   close,
-  delay,
   send,
   wait,
 } from './local-browser.mjs';

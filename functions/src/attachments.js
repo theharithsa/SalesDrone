@@ -13,6 +13,7 @@ export const AttachmentInput = z
       .min(1)
       .max(180)
       .refine(
+        // eslint-disable-next-line no-control-regex -- Reject control characters in untrusted text.
         (v) => !/[\x00-\x1f\x7f/\\]/.test(v),
         'Use a filename without paths or control characters',
       ),

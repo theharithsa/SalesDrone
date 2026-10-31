@@ -1033,7 +1033,7 @@ for (const e of endpoints) {
         'application/json': { schema: ref('LeadFilters'), example: [] },
       },
       description:
-        'AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. Uses a bounded scan of authorized lead pages, with a signed continuation cursor. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment.',
+        'AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. The additive exact operator supports source, stage and configured custom dropdowns only: raw case, spaces and Unicode must match saved values. Every exact predicate uses indexed equality with document-ID ordering; other conditions retain bounded residual scanning. Existing equals behavior is unchanged. Signed continuation cursors bind all filters and identity. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment.',
     });
   if (e.method === 'get' && e.url === '/tasks')
     for (const name of ['state', 'leadId'])
@@ -1074,6 +1074,7 @@ for (const e of endpoints) {
         },
       },
     };
+  if (e.url.endsWith('/archive')) operation.description += ' The first archive transition atomically records an actor-attributed Lead archived activity. Repeating with the current archived version returns OK without another activity. Existing pending-task cancellation remains unchanged.';
   if (e.url.endsWith('/archive'))
     operation.requestBody = {
       required: true,
@@ -1200,7 +1201,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.19.1',
+    version: '1.20.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

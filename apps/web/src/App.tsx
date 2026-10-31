@@ -72,7 +72,6 @@ import {
   Check,
   Clock,
   CalendarDays,
-  Command,
   ArrowRight,
   RefreshCw,
   FileText,
@@ -82,27 +81,14 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Menu,
-  CheckCheck,
-  Inbox,
   LoaderCircle,
   PhoneCall,
-  TrendingUp,
-  UserRound,
   Filter,
   X,
 } from 'lucide-react';
 import { auth, login, redirectLogin, finishRedirect } from './lib/firebase';
 import { api, ApiError, revokeThisDevice } from './lib/api';
-import {
-  Lead,
-  Task,
-  Entity,
-  Session,
-  stages,
-  displayDate,
-  dateOnly,
-  initials,
-} from './lib/types';
+import {Lead, Task, Entity, Session, displayDate} from './lib/types';
 import { demoData, demoSummary } from './lib/demo';
 import {
   Avatar,
@@ -841,7 +827,7 @@ export default function App() {
         }
         if (page === 'tasks') params.set('state', taskFilter);
         if (append && nextCursor) params.set('cursor', nextCursor);
-        let endpoint =
+        const endpoint =
           page === 'leads'
             ? '/leads'
             : page === 'tasks'
@@ -3575,14 +3561,7 @@ export default function App() {
     </div>
   );
 }
-function greeting() {
-  const hour = new Date().getHours();
-  return hour < 12
-    ? 'Good morning'
-    : hour < 17
-      ? 'Good afternoon'
-      : 'Good evening';
-}
+
 function GoogleIcon() {
   return (
     <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
@@ -3605,70 +3584,7 @@ function GoogleIcon() {
     </svg>
   );
 }
-function LeadTable({
-  leads,
-  selectedId,
-  onSelect,
-}: {
-  leads: Lead[];
-  selectedId: string | null;
-  onSelect: (l: Lead) => void;
-}) {
-  return (
-    <div className="table-scroll">
-      <table className="lead-table">
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Company</th>
-            <th>Stage</th>
-            <th>Source</th>
-            <th>Enquiry date</th>
-            <th>
-              <span className="sr-only">Open lead</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {leads.map((l) => (
-            <tr key={l.id} className={selectedId === l.id ? 'selected' : ''}>
-              <td>
-                <button className="contact-button" onClick={() => onSelect(l)}>
-                  <Avatar name={l.name} small />
-                  <span>
-                    <strong>
-                      <LeadName name={l.name} />
-                    </strong>
-                    <small>
-                      {l.location || l.email || 'Location not added'}
-                    </small>
-                  </span>
-                </button>
-              </td>
-              <td>{l.company || '—'}</td>
-              <td>
-                <Badge stage={l.stage} />
-              </td>
-              <td>
-                <span className="source-cell">{l.source}</span>
-              </td>
-              <td>{displayDate(l.enquiryDate)}</td>
-              <td>
-                <button
-                  className="icon-button"
-                  onClick={() => onSelect(l)}
-                  aria-label={'Open ' + l.name}
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+
 function TaskRow({
   task,
   lead,

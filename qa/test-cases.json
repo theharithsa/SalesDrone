@@ -138,7 +138,10 @@
       "automatedTests": [
         "functions/test/app.test.js",
         "functions/test/emulator.integration.js",
-        "functions/test/workbook-and-filters.test.js"
+        "functions/test/workbook-and-filters.test.js",
+        "functions/test/configuration.test.js",
+        "tests/skill-guard.test.ts",
+        "functions/test/exact-filters.test.js"
       ],
       "manualCases": [
         {
@@ -179,7 +182,8 @@
         "functions/test/emulator.integration.js",
         "functions/test/workbook-and-filters.test.js",
         "tests/import-mapping.test.ts",
-        "functions/test/import-review.test.js"
+        "functions/test/import-review.test.js",
+        "apps/web/test/workflows.test.tsx"
       ],
       "manualCases": [
         {
@@ -212,7 +216,8 @@
         "tests/import-mapping.test.ts",
         "tests/lead-fields.test.ts",
         "tests/material-design.test.ts",
-        "scripts/check-material-forms.mjs"
+        "scripts/check-material-forms.mjs",
+        "apps/web/test/workflows.test.tsx"
       ],
       "manualCases": [
         {
@@ -322,7 +327,10 @@
         "tests/import-mapping.test.ts",
         "functions/test/bulk-and-files.test.js",
         "tests/lead-pagination.test.ts",
-        "functions/test/archived-leads.test.js"
+        "functions/test/archived-leads.test.js",
+        "apps/web/test/workflows.test.tsx",
+        "functions/test/configuration.test.js",
+        "functions/test/exact-filters.test.js"
       ],
       "manualCases": [
         {
@@ -532,7 +540,10 @@
       "ownerSkill": "skills/salesdrone-testing/SKILL.md",
       "automatedTests": [
         "functions/test/emulator.integration.js",
-        "tests/test-plan.test.ts"
+        "tests/test-plan.test.ts",
+        "tests/skill-guard.test.ts",
+        "apps/web/test/workflows.test.tsx",
+        "functions/test/exact-filters.test.js"
       ],
       "manualCases": [
         {

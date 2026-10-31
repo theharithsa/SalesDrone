@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Firestore data platform"
   short_description: "Maintain firestore data platform in SalesDrone"
-  default_prompt: "Use $salesdrone-data-platform to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-data-platform for this module change. Buffered store writes permit all transactional reads before flush. Maintain rollback and memory/Firestore parity; never move network inference or push inside transactions. Verify with `node --test functions/test/app.test.js` and report remaining evidence limits."

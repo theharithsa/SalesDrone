@@ -39,6 +39,8 @@ Workspace-root domain collections plus private users/{uid} subcollections; path(
 - Do not hard-delete production data, migrate schemas or reassign records as a side effect of a query repair. Design compatibility and recovery before an authorized migration.
 - Memory tests are insufficient for Firestore query/transaction validity. Deny-all client rules remain a required security boundary.
 
+Rate-limit expiry uses Date/Timestamp values and an active Firestore TTL policy. Keep scripts/indexes.py aligned so regenerating indexes retains that policy. The reminders worker converts legacy counter strings in bounded resumable transactions; customer/import retention is unchanged. Task pages use positional batch lead reads with current-access filtering. Production cursors require a stable Secret Manager key; ephemeral keys are local/emulator only. Verify configuration.test.js and the real emulator.
+
 ## Change and diagnosis
 
 Reproduce index errors, transaction write-limit failures, tie pagination and membership changes in demo-salesdrone. Compare actual index readiness to required query shape; do not remove scope predicates to make a query succeed.
@@ -65,12 +67,12 @@ Adjacent owners:
 - [salesdrone-observability](../salesdrone-observability/SKILL.md)
 - [salesdrone-release](../salesdrone-release/SKILL.md)
 
-Settings audit snapshots are requested immediately before each first tracked write, before memory-adapter mutation and before buffered Firestore flush. Keep snapshot read failures transactional and observe the final net write. Do not move audit/outbox writes outside the transaction or depend on OTel enabled state. Real emulator tests verify the adapter boundary.
+Exact lead queries merge default single-field raw equality indexes and sort by document ID. Preserve every authorization predicate and nested customFields key. Actual document keys use transient non-enumerable metadata, never persisted business fields. No lead backfill is required; verify real Firestore pagination where business IDs differ from document keys.
 
-## Lead-data reset (2.1)
+## Conditional reference
 
-Store adapters expose scan(collection,{after,limit}) by document ID and return {id,data}, including records missing an id field. It is an internal bounded cleanup primitive, not a client API. guardLeadData wraps the observable store in index and createApp; reset uses maintenanceStore to bypass only its own lock. Preserve transaction read-before-write buffering and raw document IDs. Cleanup leases/cursors/tombstones are durable; do not delete/reset locks to fix a blocked job.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-## Collaborative imports (2.3)
+## Known gaps
 
-Reviewed imports add dataset-scoped importBaselines and padded chunk IDs. Deploy import history/chunk/baseline/name indexes and wait for READY. Transactions validate all rows before domain writes and bound comment/write budgets. Lead reset deletes baselines as well as jobs/chunks. Preserve legacy chunk handling. Emulator tests cover concurrent executors and baseline deletion.
+These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#35](https://github.com/theharithsa/SalesDrone/issues/35). Check their current status before changing the contract.

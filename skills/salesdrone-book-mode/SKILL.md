@@ -41,13 +41,10 @@ Book mode shares the all-screen semantic sizes, available-width grids and dialog
 
 Interface font selection is orthogonal to Book mode. Store the selected font but never override --reading-font with it. Turning Book mode off restores the selected family; all Book content retains its serif stack except existing monospace phone rules. Activity role sizes now come from typography.css, loaded last, and must match standard mode without truncating history.
 
-## Material 3 v2 local-review guidance
+## Conditional reference
 
-Material v2 owns day/night paper palettes in material/tokens.css and uses the same geometry as Standard. Do not re-import the legacy book-mode.css override cascade. Serif body/headings and the existing monospace identifier exception remain. Check every field/control and personal font restoration in both palettes.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-### Mobile layout and scale
+## Known gaps
 
-Book mode inherits rounded controls, full-width lead cards, compact navigation and
-mobile display zoom without a separate geometry override. Preserve serif roles and
-paper/night colours. Review both palettes at narrow widths and restore 100% after
-zoom rehearsal; do not replace saved personal preferences with a global small font.
+These are tracked follow-ups, not implemented behavior: [#46](https://github.com/theharithsa/SalesDrone/issues/46). Check their current status before changing the contract.

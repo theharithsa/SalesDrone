@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { mkdir, readFile, writeFile, readdir } from 'node:fs/promises';
+import { mkdir, writeFile, readdir } from 'node:fs/promises';
 import { executePlan } from './test-plan.mjs';
 await mkdir('test-results', { recursive: true });
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
@@ -28,6 +28,8 @@ const commands = {
   version: [npm, ['run', 'release:check']],
   functions: await tests('functions', 'functions/test', 'js'),
   web: await tests('web', 'tests', 'ts'),
+  lint: [npm, ['run', 'lint']],
+  components: [npm, ['run', 'test:components']],
   types: [npm, ['run', 'check']],
   forms: [npm, ['run', 'design:forms']],
   contracts: [npm, ['run', 'api:docs']],

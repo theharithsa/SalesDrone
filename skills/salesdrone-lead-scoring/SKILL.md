@@ -42,6 +42,8 @@ settings/scoring, settings/score-worker lease and scan cursor, leadScores keyed 
 
 Configuration is under Settings → AvinyaIntelligence → Lead scoring, visible to Admins only. Dashboard insight generation mode does not disable background scoring.
 
+Gemini model selection comes from the shared model-config default and the runtime GEMINI_MODEL parameter. Both adapters resolve the same parameter lazily; do not add a second workflow/environment fallback.
+
 ## Change and diagnosis
 
 Inspect rule hash, source/lead version, worker cursor/lease and verified signal states before changing weights. Test quote mismatch, contradictions, unknown-only data, weight-only changes, stale caches and assigned-only reads.
@@ -70,6 +72,10 @@ Read for detailed behavior:
 
 - [docs/INTELLIGENCE.md](../../docs/INTELLIGENCE.md)
 
-## v1.8 operating notes
+## Conditional reference
 
-ScoreRing adds a small decorative SVG to an accessible numeric ScoreBadge. Unknown is dashed/Unscored; known zero is empty solid; progress clamps finite numbers0..100. Retain risk warning icon/label. Header and details share report updates through an id-guarded stable callback; never start duplicate fetch/poll loops or show a stale previous-lead score. Tests: tests/display-scale.test.ts.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
+
+## Known gaps
+
+These are tracked follow-ups, not implemented behavior: [#39](https://github.com/theharithsa/SalesDrone/issues/39). Check their current status before changing the contract.

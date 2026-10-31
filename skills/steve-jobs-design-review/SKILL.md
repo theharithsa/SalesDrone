@@ -1,6 +1,7 @@
 ---
 name: steve-jobs-design-review
-description: 'Review designs, products, and features with Steve Jobs'' standards: ruthless simplicity, focus, and end-to-end excellence. Use when the user mentions "Steve Jobs review", "design review", "product review", "what would Steve do", "insanely great", "this feels too complicated", "too many features", "product taste", "saying no", or "is this good enough to ship". Also trigger when critiquing a UI, feature, or roadmap for focus and simplicity, cutting scope to the essential, or pressure-testing the whole experience from first run to daily use. Covers the simplicity audit, the no list, design-is-how-it-works, end-to-end ownership, demo culture, and a Jobs-style review protocol with binary verdicts. For visual design fundamentals, see refactoring-ui. For usability audits, see ux-heuristics. For detail polish, see microinteractions.'
+description: "Apply a Steve Jobs-style product critique when that specific review lens is requested. Routine SalesDrone interface reviews belong to salesdrone-interface."
+
 license: MIT
 metadata:
   author: wondelai

@@ -71,6 +71,10 @@ Adjacent owners:
 
 Opening or reloading the overlay clears prior cached rows before fetching; generation guards prevent read/navigation completions from acting on a different open/account context. Preserve focus return to the bell and read/unread semantics; clearing UI cache must not modify server read state.
 
-## Material 3 v2 local-review guidance
+## Conditional reference
 
-Material v2 styles the existing Radix overlay and tonal unread rows. Keep modal focus/Escape and read/unread actions; verify the notification-row selector, narrow overlay bounds and scroll containment. No inbox API or push registration policy changes.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
+
+## Known gaps
+
+These are tracked follow-ups, not implemented behavior: [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#39](https://github.com/theharithsa/SalesDrone/issues/39), [#40](https://github.com/theharithsa/SalesDrone/issues/40). Check their current status before changing the contract.

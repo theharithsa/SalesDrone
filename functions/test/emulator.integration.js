@@ -1299,3 +1299,31 @@ test('lead reset uses real Auth/Firestore/Storage, tombstones retries and preser
 });
 
 after(() => db.terminate());
+
+test('real Firestore stores TTL timestamps and batch reads preserve missing positions',async()=>{
+ const {rateLimitExpiry,backfillRateLimitExpiry}=await import('../src/rate-limit.js');
+ const {ROOT}=await import('../src/policy.js');const store=firestoreStore(db);
+ const id='ttl-'+randomUUID(),legacy='legacy-'+id;
+ await store.run(async tx=>{
+  tx.set(path('rateLimits',id),{id,count:2,expiresAt:rateLimitExpiry('2026-10-30T00:00:00Z')});
+  tx.set(path('rateLimits',legacy),{id:legacy,count:3,expiresAt:'2026-10-29T00:00:00Z'});
+ });
+ const [row,missing]=await store.getAll([path('rateLimits',id),path('rateLimits','missing-'+id)]);
+ assert.equal(row.expiresAt.toDate().toISOString(),'2026-10-31T00:00:00.000Z');assert.equal(missing,null);
+ // A fresh maintenance cursor exercises the actual transactional read/write adapter.
+ await store.run(async tx=>tx.delete(`${ROOT}/maintenance/rateLimitExpiry`));
+ let result;do{result=await backfillRateLimitExpiry(store,ROOT)}while(!result.complete);
+ assert.equal((await store.get(path('rateLimits',legacy))).expiresAt.toDate().toISOString(),'2026-10-29T00:00:00.000Z');
+ await store.run(async tx=>{tx.delete(path('rateLimits',id));tx.delete(path('rateLimits',legacy));});
+});
+
+test('Exact match uses merged raw equality indexes and document-ID cursors in real Firestore',async()=>{
+ const {documentKey}=await import('../src/store.js');const store=firestoreStore(db),prefix='exact-'+randomUUID();
+ const ids=[prefix+'a',prefix+'b'];
+ await store.run(async tx=>{for(const id of ids)tx.set(path('leads',id),{id:'business-'+id,source:'Website',stage:'New',archived:false,assignedToUid:prefix,customFields:{cf_product:'Retail'}})});
+ const filters=[['archived','==',false],['assignedToUid','==',prefix],['source','==','Website'],['stage','==','New'],['customFields.cf_product','==','Retail']];
+ const first=await store.query(path('leads'),{filters,order:'__name__',direction:'desc',limit:1});assert.equal(documentKey(first[0]),ids[1]);
+ const next=await store.query(path('leads'),{filters,order:'__name__',direction:'desc',after:[documentKey(first[0])],limit:1});assert.equal(documentKey(next[0]),ids[0]);assert.ok(!JSON.stringify(first).includes('document-key'));
+ assert.equal((await store.query(path('leads'),{filters:filters.map(f=>f[0]==='source'?['source','==','website']:f),order:'__name__'})).length,0);
+ await store.run(async tx=>{for(const id of ids)tx.delete(path('leads',id))});
+});

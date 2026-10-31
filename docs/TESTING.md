@@ -93,3 +93,15 @@ prove signed-in account persistence or physical-device/Safari behavior.
 functions/test/archived-leads.test.js covers scope, pagination/cursor bindings, validation, stale versions and retained state/date/reminder cancellation. The emulator suite adds actual Auth/Firestore archive persistence and assigned paging. Local review: 22 Chromium viewport/theme cases (320–1920px), load-more 30→35 and refresh→30 using isolated AdminReview stubs. These do not certify physical devices, Safari or production. Reset tests additionally cover durable batched removal, retained configuration, locks and retry-safe recovery in memory and real emulators.
 
 The ordinary synthetic guest app also passed archive → Settings Archives → same retained record navigation without a reload. Reset confirmation and API cleanup remain separate UI-stub and real-emulator evidence.
+
+## Component and lint gates
+
+`npm test` includes Vitest/Testing Library interaction tests in apps/web/test/workflows.test.tsx. `npm run test:components` runs them separately. They use synthetic records and mocked transport; jsdom does not certify viewport geometry, Safari, physical devices or production writes. Cases cover blade Escape/expand/focus restoration, desktop/mobile filter draft confirmation/cancel/reset, batch review invalidation and CSV mapping/read-only import access.
+
+`npm run lint` checks functions/src, scripts and apps/web/src. ESLint/TypeScript errors fail CI; existing hook-dependency/accessibility findings are visible warnings with a per-file/rule regression ceiling in eslint-baseline.json. New categories or increased counts fail. Remove baseline entries as findings are fixed; do not regenerate it to accept new warnings. ESLint 9 is required by the current jsx-a11y peer range; Dependabot proposes compatible updates rather than bypassing peers.
+
+The CI component reporter emits only hashed case identity, an allowlisted repository test path, status, bounded duration and finish time. It never sends names, assertion errors or DOM snapshots. components/lint are bounded CI labels. All testcase events remain distinct from production business operations.
+
+## Exact match regression coverage
+
+functions/test/exact-filters.test.js covers more than 1,000 rows, all equality predicates, assigned scope, literal Unicode/case/space differences, unchanged Equals, custom type rejection, contradictory predicates, residual conditions and cursor binding. emulator.integration.js verifies nested equality and document-ID pagination with business IDs differing from document keys. Component tests cover desktop/mobile selection. Use isolated synthetic Chromium for visual checks; jsdom is not device certification.

@@ -1,11 +1,7 @@
 import { Badge } from './UI';
 import { ScoreBadge } from './LeadScore';
 import { Lead, displayDate } from '../lib/types';
-import {
-  defaultFieldOptions,
-  FieldOptions,
-  labelFor,
-} from '../lib/field-options';
+import {defaultFieldOptions, FieldOptions} from '../lib/field-options';
 import { leadTableColumns } from '../lib/lead-table';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

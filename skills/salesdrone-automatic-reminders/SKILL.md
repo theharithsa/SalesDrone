@@ -40,6 +40,8 @@ Settings → AvinyaIntelligence → Automatic reminders remains a personal prefe
 
 Raw owner memberships must pass through effectiveMember before eligibility checks. The workspace assignedOnly cap applies to existing all-scope non-admin owners, including previously queued analyses.
 
+Gemini model selection comes from the shared model-config default and the runtime GEMINI_MODEL parameter. Both adapters resolve the same parameter lazily; do not add a second workflow/environment fallback.
+
 ## Change and diagnosis
 
 For “call in 5 minutes,” trace saved activity → noteAnalyses enqueue/status/lease → extraction validation → task commit → task query visibility → delivery. Separate inference delay from due-time alert delay. Reproduce with injected extractor + fixed clock before a controlled live test.
@@ -68,3 +70,6 @@ Adjacent owners:
 Read for detailed behavior:
 
 - [docs/AUTOMATIC-REMINDERS.md](../../docs/AUTOMATIC-REMINDERS.md)
+## Known gaps
+
+These are tracked follow-ups, not implemented behavior: [#39](https://github.com/theharithsa/SalesDrone/issues/39). Check their current status before changing the contract.

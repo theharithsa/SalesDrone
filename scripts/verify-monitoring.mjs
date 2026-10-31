@@ -1,6 +1,6 @@
 import {APP_VERSION} from '../functions/src/version.js';
 // Synthetic transport verification; secrets and OTLP payloads stay in memory.
-import {createServer} from 'node:http';import {once} from 'node:events';import {readFile} from 'node:fs/promises';import protobuf from 'protobufjs';import {cloud} from './cloud-access.mjs';import {createTelemetry} from '../functions/src/telemetry.js';
+import {createServer} from 'node:http';import {once} from 'node:events';import {} from 'node:fs/promises';import protobuf from 'protobufjs';import {cloud} from './cloud-access.mjs';import {createTelemetry} from '../functions/src/telemetry.js';
 const tenant='https://indiacs.live.dynatrace.com',buffers=[];const server=createServer(async(req,res)=>{const chunks=[];for await(const c of req)chunks.push(c);buffers.push({path:req.url,body:Buffer.concat(chunks)});res.writeHead(200,{'Content-Type':'application/x-protobuf'});res.end();});server.listen(0,'127.0.0.1');await once(server,'listening');
 const t=createTelemetry({tenant:'http://127.0.0.1:'+server.address().port,key:'synthetic-not-a-credential',service:'salesdrone-validation',environment:'verification',allowLocalTest:true});let traceparent;
 await t.worker('validation',async()=>{traceparent=t.capture().traceparent;t.log('instrumentation.validation',{outcome:'success'});return {processed:0};});await t.flush();await t.shutdown();server.close();await once(server,'close');

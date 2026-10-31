@@ -35,7 +35,7 @@ const results = CI_CHECKS.filter(
     check: r.id,
     finishedAt: r.finishedAt || report.finishedAt,
   }));
-for (const check of ['functions', 'web']) {
+for (const check of ['functions', 'web', 'components']) {
   // Only read cases when the corresponding command actually ran; no stale local artifacts.
   if (!results.some((r) => r.check === check && r.status !== 'not-run'))
     continue;

@@ -45,7 +45,7 @@ Document the Reports & lead access settings, selected-column filtered XLSX workf
 
 Every release regenerates docs/SETTINGS.md and publishes settings.html from the shared section/control catalogs, including every control’s default, scope, permissions, API, effect and example. The public API count comes from OpenAPI, not a hardcoded number. docs:check rejects stale settings and skill-tree outputs. No recursive publication of engineering docs or private evidence.
 
-Document the local-only lead blade width, pointer/keyboard controls, reset, 500px journey reflow and mobile/reduced-motion behavior in LEAD-BLADE.md. The appearance guide points to this gesture preference without presenting it as a server-side account setting. Use synthetic captures and state measured viewport limits.
+Document the local-only lead blade width, pointer/keyboard controls, reset, content-driven journey reflow and mobile/reduced-motion behavior in LEAD-BLADE.md. The appearance guide points to this gesture preference without presenting it as a server-side account setting. Use synthetic captures and state measured viewport limits.
 
 ## Change and diagnosis
 
@@ -77,11 +77,10 @@ Same-version maintenance remains visible in changelog/commit history. Document i
 
 Public guide builds stamp the exact source commit and hash-version reviewed screenshot URLs. Post-deploy guide checks require commit as well as version, including same-version maintenance, so stale Pages HTML cannot satisfy the release gate.
 
-## Material 3 v2 publication
+## Conditional reference
 
-Use current synthetic captures for every changed surface, retaining actual widths,
-privacy review and hashes in the manifest. Update README/technical/product/settings
-references together and remove obsolete local-approval holds after the explicit
-user approval. The v2 review guide records browser measurements and remaining
-limits; do not replace these with a blanket E2E claim. Documentation builds and
-Pages postchecks must use exact release version and source commit.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
+
+## Known gaps
+
+These are tracked follow-ups, not implemented behavior: [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.

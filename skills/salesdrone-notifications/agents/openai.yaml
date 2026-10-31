@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Notification service"
   short_description: "Maintain notification service in SalesDrone"
-  default_prompt: "Use $salesdrone-notifications to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-notifications for this module change. Lead creation/assignment writes inbox and push job atomically, targeting the assigned person. Unchanged assignment must not enqueue a new alert. Verify with `node --test functions/test/notifications.test.js` and report remaining evidence limits."

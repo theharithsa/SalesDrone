@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **2.0.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **2.4.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -27,7 +27,7 @@ illustrations. `scripts` contains release, contract, security and operator tooli
 
 ## Module skills and agent ownership
 
-The [module skill catalog](../skills/README.md) covers 19 logical domains and
+The [module skill catalog](../skills/README.md) covers 23 logical domains and
 platform modules. Each entry maps source files, primary API ownership, state,
 invariants, diagnosis, tests and deployment impact. The [shared contract](../skills/SHARED.md)
 keeps policy and release rules consistent. Project discovery uses .agents/skills,
@@ -176,3 +176,15 @@ They have no live data transport and cannot generate real tokens or grant access
 ### Archives Settings (2.1)
 
 Archive is retained state, not physical deletion. Settings uses a dedicated read-only /archived-leads collection endpoint over archived=true and current scope, with existing signed pagination. New archives retain archivedAt; old missing timestamps stay unknown. No new Firestore composite query shape is introduced beyond the existing archived/assignee/id index. Admin lead-data reset is described in docs/LEAD-DATA-MANAGEMENT.md; it preserves configuration and users.
+
+## Counter retention and runtime configuration
+
+Rate-limit expiresAt is a Date serialized by the Admin SDK as a Firestore Timestamp. The collection-group TTL policy is limited to rateLimits; deletion is asynchronous and is not the admission-control clock. The reminders worker converts at most 100 legacy counter strings per transaction, preserves counts and checkpoints progress in maintenance/rateLimitExpiry. It never changes import details or customer data. Deployment waits for the TTL policy ACTIVE and composite indexes READY. Emulator tests prove timestamp storage and conversion, not managed TTL deletion timing.
+
+CURSOR_SECRET is required by the production API initialization hook and never logged. Both adapters share functions/src/model-config.js and resolve the Firebase GEMINI_MODEL parameter lazily; changing a model override requires deploying affected api/analyzeNotes/leadIntelligence functions. No workflow fallback overrides the parameter.
+
+GET tasks reuses each queried task record and performs one positional batch read of distinct linked leads, then applies current access policy. Missing/deleted/unreadable leads are excluded; standalone tasks remain creator-private. This reduces RPC overhead; Firestore still bills individual document reads and pages are not a multi-request snapshot.
+
+## Indexed Exact match
+
+Every raw Exact condition for source, stage and configured custom select fields is pushed into Firestore. Default single-field equality indexes merge with document-ID order, including nested customFields keys. The store exposes the actual document key through non-enumerable transient metadata for stable signed cursors; it is never persisted or serialized. Contradictory exact values produce an empty page. Existing Equals retains normalization and its bounded scan. No derived lead fields or backfill are introduced.

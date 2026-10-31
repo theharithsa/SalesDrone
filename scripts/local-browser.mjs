@@ -3,7 +3,7 @@
  * Start Chromium with a fresh profile and --remote-debugging-port=9337.
  * Outputs remain in test-results for review before curated screenshot publication.
  */
-import { writeFile, readFile } from 'node:fs/promises';
+import { writeFile, } from 'node:fs/promises';
 const targets = await (await fetch('http://127.0.0.1:9337/json/list')).json();
 const target = targets.find(
   (t) =>

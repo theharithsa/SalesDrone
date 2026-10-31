@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Lead scoring and qualification"
   short_description: "Maintain lead scoring and qualification in SalesDrone"
-  default_prompt: "Use $salesdrone-lead-scoring to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-lead-scoring for this module change. Gemini extracts signals with exact contiguous source quotes and IDs; the server computes weighted positive evidence minus penalties, normalized/clamped to 0\u2013100. Verify with `node --test functions/test/intelligence.test.js` and report remaining evidence limits."

@@ -83,28 +83,12 @@ For a later explicitly authorized maintenance push, bind the record to that push
 
 Deployment BizEvents use application/cloudevent+json; CUSTOM_DEPLOYMENT markers remain application/json. Keep provider fields aligned and validate both transport paths using deployment-bizevents.test.ts. HTTP acceptance remains separate from tenant searchability.
 
-## v1.9 operating notes
+Exact match needs no lead-data migration or new IAM. Preserve default single-field equality indexes and existing index readiness gates. Internal rate-counter TTL conversion remains separate. Do not require a derived lead index readiness marker.
 
-Private lead attachments add storage.rules and Firebase Storage to the emulator suite and main deployment workflow. Deploy deny-all Storage rules and wait for attachment indexes before API/Hosting. Existing api/reminders function exports own upload and bounded cleanup; do not create an untracked sixth function. Verify bucket public-access prevention, runtime object permissions, API contract 1.16 and no permanent download links. No service-account credentials belong in source.
+## Conditional reference
 
-## v2.0 release procedure
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-The v2 design has explicit user approval dated 26 October 2026. Run the complete
-gates and use current reviewed screenshots before the main push. Verify that
-design:forms and check-design-build execute in CI, and that dev-only HTML/admin
-fixtures never reach Hosting. Record exact main SHA in postchecks; API stays1.16.
-A synthetic browser session is not live Google, push or private Storage verification.
+## Known gaps
 
-All changes must go through a GitHub pull request before merging into main, per
-the human's standing instruction. Push the working branch, open and attach its
-PR, wait for required verification, then merge through the PR. Never push commits
-directly to main or bypass failed checks. Production still deploys from the
-resulting main commit via the normal workflow.
-
-## Lead-data reset (2.1)
-
-For lead reset deploy all shared Functions exports so API and background producers share the reset lock. Verify runtime Storage list/delete access without broadening IAM implicitly. Do not roll back or remove the cleanup worker while a reset is active; forward-fix/recover its cursor/lease. Postdeploy verification uses read-only status/metadata; do not execute destructive customer writes for evidence. Follow docs/LEAD-DATA-MANAGEMENT.md.
-
-## API and deployment hardening (2.3.1)
-
-Pages now depends on verify and deploy and requires deploy success; a failed/cancelled deploy must not publish a newer guide. Notify uses scripts/deployment-outcome.mjs with explicit rules, index readiness, Storage, Functions, Hosting, published-version and postcheck outcomes. Missing/skipped/cancelled phases report failed, even if later phases succeeded. Tests exercise every required phase; do not intentionally fail production to test the DAG.
+These are tracked follow-ups, not implemented behavior: [#27](https://github.com/theharithsa/SalesDrone/issues/27), [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.

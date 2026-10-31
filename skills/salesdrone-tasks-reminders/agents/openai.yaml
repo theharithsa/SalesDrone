@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Tasks and reminder delivery"
   short_description: "Maintain tasks and reminder delivery in SalesDrone"
-  default_prompt: "Use $salesdrone-tasks-reminders to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-tasks-reminders for this module change. Manual and automatic tasks use makeTask/queueTask and the same delivery contract. Task edits invalidate old versioned jobs. Verify with `node --test functions/test/app.test.js` and report remaining evidence limits."

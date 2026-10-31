@@ -59,3 +59,6 @@ Adjacent owners:
 - [salesdrone-interface](../salesdrone-interface/SKILL.md)
 
 Noncritical import-session cleanup uses guarded browser-storage helpers. A browser blocking storage must not abort an otherwise successful session bootstrap or sign-out. This fallback grants no membership/access and persists no customer notes.
+## Known gaps
+
+These are tracked follow-ups, not implemented behavior: [#18](https://github.com/theharithsa/SalesDrone/issues/18), [#27](https://github.com/theharithsa/SalesDrone/issues/27), [#28](https://github.com/theharithsa/SalesDrone/issues/28). Check their current status before changing the contract.

@@ -71,18 +71,10 @@ All is the initial full-page view and includes every loaded activity, contact/fo
 
 The All/Comments/Calls timeline shares compact type roles from typography.css: title15px, body15px desktop/16px narrow, metadata13px with1.5 body leading and12–16px card padding. Every interface family and Book mode uses the same hierarchy. Preserve full note text/newlines, imports, correction revisions, pagination, inline drafts and reminder analysis; visual density must never collapse or silently trim content.
 
-## Material 3 v2 local-review guidance
+## Conditional reference
 
-Material v2 puts the inline composer and compact timeline in an independently sized activity pane, beside details on wide screens. Do not let long qualification details stretch tab/action row heights. All/Comments/Calls/Review semantics, pagination and revision history remain unchanged.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-### Local v2 spacing and form corrections
+## Known gaps
 
-The inline composer is inside `.lead-composer-region`, not a direct child of the
-work panel. Keep its 24px desktop/16px compact inline padding, helper/footer gaps
-and timeline heading alignment. Call/correction/note forms use persistent outlined
-field labels while checkbox follow-up controls and revision behavior are unchanged.
-Run design:forms and review MATERIAL-04/05; source/render checks are not visual proof.
-
-## Collaborative imports (2.3)
-
-Reviewed workbook corrections match source column label/ordinal, preserve activityRevisions and avoid duplicate notes or AI scheduling. Renamed/reordered sources need review. Reminder-linked corrections fail with DISCUSSION_REVIEW and must use the timeline to preserve reminder state. See docs/IMPORTS.md and import-review.test.js.
+These are tracked follow-ups, not implemented behavior: [#14](https://github.com/theharithsa/SalesDrone/issues/14), [#17](https://github.com/theharithsa/SalesDrone/issues/17), [#59](https://github.com/theharithsa/SalesDrone/issues/59). Check their current status before changing the contract.

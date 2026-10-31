@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone release readiness"
   short_description: "Verify feature completeness before and after release"
-  default_prompt: "Use $salesdrone-release-readiness to review this SalesDrone change and collect honest pre/post-deployment evidence."
+  default_prompt: "Use $salesdrone-release-readiness for this module change. Keep deployment and tenant verification separate and preserve permission boundaries. Verify with `node --test tests/release-readiness.test.ts` and report remaining evidence limits."

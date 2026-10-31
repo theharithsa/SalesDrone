@@ -97,6 +97,7 @@ export function observableStore(base, getTelemetry = () => null) {
   return {
     ...base,
     get: (p) => wrap('firestore.get', () => base.get(p)),
+    getAll: (paths) => wrap('firestore.getAll', () => base.getAll(paths)),
     query: (p, o) => wrap('firestore.query', () => base.query(p, o)),
     count: (p, f) => wrap('firestore.count', () => base.count(p, f)),
     scan: (p, options) => wrap('firestore.scan', () => base.scan(p, options)),
@@ -116,6 +117,11 @@ export function observableStore(base, getTelemetry = () => null) {
                 const value = await tx.get(p);
                 known.set(p, value);
                 return value;
+              },
+              getAll: async (paths) => {
+                const values = await tx.getAll(paths);
+                paths.forEach((p, i) => known.set(p, values[i]));
+                return values;
               },
               query: async (p, o) => {
                 const values = await tx.query(p, o);

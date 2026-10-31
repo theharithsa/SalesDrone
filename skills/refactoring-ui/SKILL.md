@@ -1,6 +1,7 @@
 ---
 name: refactoring-ui
-description: 'Audit and fix visual hierarchy, spacing, color, and depth in web UIs. Use when the user mentions "my UI looks off" (or amateur/unprofessional), "fix the design", "Tailwind styling", "color palette", "visual hierarchy", "design system", "spacing scale", or "component styling". Also trigger when building consistent design tokens, creating dark mode themes, improving data-visualization clarity, or polishing UI details before launch. Covers grayscale-first workflow, constrained design scales, shadows, and component styling. For typeface selection, see web-typography. For usability audits, see ux-heuristics.'
+description: "Review standalone web compositions for hierarchy, spacing and visual depth. Implement SalesDrone product changes through salesdrone-interface and docs/DESIGN-SYSTEM.md."
+
 license: MIT
 metadata:
   author: wondelai

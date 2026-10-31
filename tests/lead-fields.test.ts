@@ -103,3 +103,12 @@ test('field removal guards preserve required identity and one contact while perm
   assert.ok(fieldRemovalReason({...defaultFieldOptions, hiddenFields: ['email']}, 'phone'));
   assert.equal(fieldRemovalReason(phoneHidden, 'stage'), '');
 });
+
+test('demo Exact match preserves literal text while Equals keeps its existing flexible matching',()=>{
+ const lead={source:' Website ',stage:'New',customFields:{cf_product:'Ｒｅｔａｉｌ'}};
+ assert.equal(matchesColumnFilters(lead,[{field:'source',op:'equals',value:'website'}]),true);
+ assert.equal(matchesColumnFilters(lead,[{field:'source',op:'exact',value:'Website'}]),false);
+ assert.equal(matchesColumnFilters(lead,[{field:'source',op:'exact',value:' Website '}]),true);
+ assert.equal(matchesColumnFilters(lead,[{field:'cf_product',op:'exact',value:'Retail'}]),false);
+ assert.equal(matchesColumnFilters(lead,[{field:'cf_product',op:'exact',value:'Ｒｅｔａｉｌ'}]),true);
+});

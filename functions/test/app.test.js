@@ -737,3 +737,57 @@ test('malformed and oversized JSON have stable private errors with request/versi
     assert.equal(r.body.error.details, undefined);
   }
 });
+
+test('archive records one actor-attributed timeline transition atomically', async () => {
+  const s=setup(); await bootstrap(s); const l=await createLead(s,81);
+  await s.call('admin','post',`/leads/${l.id}/archive`,{expectedVersion:l.version}).expect(200);
+  const saved=await s.store.get(path('leads',l.id));
+  const events=await s.store.query(path('activities'),{filters:[['leadId','==',l.id]],limit:100});
+  const archived=events.filter(e=>e.notes==='Lead archived');
+  assert.equal(archived.length,1); assert.equal(archived[0].actorUid,'admin');assert.equal(archived[0].createdAt,s.now());
+  await s.call('admin','post',`/leads/${l.id}/archive`,{expectedVersion:l.version}).expect(409);
+  await s.call('admin','post',`/leads/${l.id}/archive`,{expectedVersion:saved.version}).expect(200);
+  assert.equal((await s.store.query(path('activities'),{filters:[['leadId','==',l.id]],limit:100})).filter(e=>e.notes==='Lead archived').length,1);
+});
+
+test('mutation rate-limit expiry is a Date rather than an ISO string', async()=>{
+  const s=setup();await bootstrap(s);await createLead(s,82);
+  const counters=Object.entries(s.store.dump()).filter(([p])=>p.includes('/rateLimits/')).map(([,v])=>v);
+  assert.ok(counters.length);for(const c of counters){assert.ok(c.expiresAt instanceof Date);assert.equal(c.expiresAt.toISOString(),'2026-10-25T12:00:00.000Z');}
+});
+
+test('task listing batch-reads each distinct lead without task re-reads and preserves visibility', async()=>{
+  const s=setup();await bootstrap(s);
+  const originalGet=s.store.get,originalGetAll=s.store.getAll;const reads=[],batches=[];
+  s.store.get=async p=>{reads.push(p);return originalGet(p)};
+  s.store.getAll=async paths=>{batches.push(paths);return originalGetAll(paths)};
+  const l=await createLead(s,83);
+  const dueAt='2026-10-25T12:00:00.000Z';
+  for(const id of ['a','b']) await s.store.set(path('tasks',id),{id,leadId:l.id,recipientUid:'admin',creatorUid:'admin',title:'Synthetic',dueAt,state:'Pending'});
+  await s.store.set(path('tasks','missing'),{id:'missing',leadId:'absent',recipientUid:'admin',creatorUid:'admin',dueAt,state:'Pending'});
+  await s.store.set(path('tasks','personal'),{id:'personal',leadId:null,recipientUid:'admin',creatorUid:'admin',dueAt,state:'Pending'});
+  await s.store.set(path('tasks','other'),{id:'other',leadId:null,recipientUid:'admin',creatorUid:'admin2',dueAt,state:'Pending'});
+  reads.length=0;batches.length=0;
+  const instrumented=createApp({store:s.store,verifyToken:async()=>people.admin,now:s.now});
+  const result=(await request(instrumented).get('/api/v1/tasks').set('Authorization','Bearer admin').expect(200)).body;
+  assert.deepEqual(result.items.map(t=>t.id).sort(),['a','b','personal']);
+  assert.equal(batches.length,1);assert.equal(new Set(batches[0]).size,2);
+  assert.equal(reads.filter(p=>p.includes('/tasks/')||p.includes('/leads/')).length,0);
+});
+
+test('task batch lookup still excludes leads outside current assigned scope', async()=>{
+ const s=setup();await bootstrap(s);await grant(s,'sdr');const mine=await createLead(s,84),other=await createLead(s,85);
+ await s.store.run(async tx=>tx.set(path('leads',mine.id),{...mine,assignedToUid:'sdr'}));
+ for(const [id,leadId] of [['mine',mine.id],['other',other.id]])await s.store.set(path('tasks',id),{id,leadId,recipientUid:'sdr',creatorUid:'sdr',dueAt:'2026-10-25T12:00:00Z',state:'Pending'});
+ const result=(await s.call('sdr','get','/tasks').expect(200)).body;assert.deepEqual(result.items.map(t=>t.id),['mine']);
+});
+
+test('archive timeline failure rolls back the lead and every linked write',async()=>{
+ const s=setup();await bootstrap(s);const lead=await createLead(s,86);const before=s.store.dump();
+ const failing={...s.store,run:fn=>s.store.run(tx=>fn({...tx,set:(p,value)=>{
+  if(value.notes==='Lead archived')throw Error('synthetic storage failure');tx.set(p,value);
+ }}))};
+ const app=createApp({store:failing,verifyToken:async()=>people.admin,now:s.now});
+ await request(app).post(`/api/v1/leads/${lead.id}/archive`).set('Authorization','Bearer admin').send({expectedVersion:lead.version}).expect(500);
+ assert.deepEqual(s.store.dump(),before);
+});

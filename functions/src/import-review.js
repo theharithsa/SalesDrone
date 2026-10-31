@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { AppError, LeadInput, parse } from './contracts.js';
+import { AppError, LeadInput, } from './contracts.js';
 import {
   path,
   hash,

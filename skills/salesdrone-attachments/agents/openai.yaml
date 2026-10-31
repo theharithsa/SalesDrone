@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Lead attachments"
   short_description: "Manage private lead uploads and downloads"
-  default_prompt: "Use $salesdrone-attachments to inspect private lead files, permissions, upload/download behavior, cleanup and regression evidence."
+  default_prompt: "Use $salesdrone-attachments. Recheck current membership and lead scope after private byte transport; never publish object URLs. Verify with `node --test functions/test/bulk-and-files.test.js` and report evidence limits."

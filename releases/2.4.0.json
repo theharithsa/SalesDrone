@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "version": "2.4.0",
+  "summary": "Deliver all 16 selected fixes: indexed Exact match without changing Equals, runtime retention/history/cursor/model/task hardening, CI tooling/components and maintained module skills.",
+  "modules": [
+    "salesdrone-api-integrations",
+    "salesdrone-attachments",
+    "salesdrone-authentication",
+    "salesdrone-automatic-reminders",
+    "salesdrone-book-mode",
+    "salesdrone-conversations",
+    "salesdrone-dashboard",
+    "salesdrone-data-platform",
+    "salesdrone-documentation",
+    "salesdrone-imports",
+    "salesdrone-interface",
+    "salesdrone-lead-journey",
+    "salesdrone-lead-scoring",
+    "salesdrone-leads",
+    "salesdrone-notifications",
+    "salesdrone-observability",
+    "salesdrone-people-permissions",
+    "salesdrone-product-guide",
+    "salesdrone-release",
+    "salesdrone-release-readiness",
+    "salesdrone-tasks-reminders",
+    "salesdrone-testing",
+    "salesdrone-workspace-settings"
+  ],
+  "documentation": [
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/TESTING.md",
+    "docs/RELEASE.md",
+    "docs/observability.md",
+    "skills/README.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "changed",
+    "reason": "Add the compatible exact column-filter operator for stage, source and configured custom dropdowns. Equals keeps existing normalization; Exact conditions all use raw indexed equality and document-ID order with signed cursors. Retain archive fixes and existing policies.",
+    "contractVersion": "1.20.0",
+    "permissions": "Existing Google/App Check, active membership, recipient-only tasks and leads:archive PAT scope are unchanged; batch reads still filter current lead access.",
+    "tests": [
+      "functions/test/app.test.js",
+      "functions/test/configuration.test.js",
+      "functions/test/emulator.integration.js",
+      "functions/test/exact-filters.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Bounded CI lint/components labels join existing outcome/duration reporting; no customer or case identifiers become metric dimensions.",
+      "tests": [
+        "tests/skill-guard.test.ts",
+        "functions/test/observability.test.js",
+        "functions/test/configuration.test.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "One value-free firestore.getAll dependency span replaces per-task document RPCs; existing request and worker spans remain.",
+      "tests": [
+        "tests/skill-guard.test.ts",
+        "functions/test/observability.test.js",
+        "functions/test/configuration.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Bounded legacy counter conversion emits numeric counts and completion only. Test errors, DOM snapshots and private values stay local.",
+      "tests": [
+        "tests/skill-guard.test.ts",
+        "functions/test/observability.test.js",
+        "functions/test/configuration.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Archive activity reuses atomic domain outboxes. Vitest emits hashed leaf-case outcomes through existing trusted CI event transport, separate from customer business events.",
+      "tests": [
+        "tests/skill-guard.test.ts",
+        "functions/test/observability.test.js",
+        "functions/test/configuration.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing deployment signal transport and exact-version/SHA verification remain. SDLC transport and tenant bucket changes are separate issue #71.",
+      "tests": [
+        "tests/skill-guard.test.ts",
+        "functions/test/observability.test.js",
+        "functions/test/configuration.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "26 synthetic Chromium width/theme checks passed at 390/599/600/767/768/899/900/1000/1001/1024/1280/1440/1920 CSS px in light and dark appearance. Verified actual desktop disclosure/mobile dialog, Exact apply/cancel preservation and reachable actions at 390x540. Reviewed fresh 1440x900 and 390x1100 captures. Six real Auth/Firestore/Storage emulator cases passed, including nested equality/document-ID pagination. A read-only managed query-planner probe with nonexistent values and document-name-only projection accepted combined equality predicates and returned zero documents; no customer contents/writes were used. No physical-device/Safari certification. Live version/SHA, managed TTL/index readiness, function revisions, Pages and monitoring receipts remain post-deployment gates; tenant search needs separate query access.",
+  "screenshots": [
+    "lead-filters-demo.jpg",
+    "lead-filters-mobile-demo.jpg"
+  ]
+}

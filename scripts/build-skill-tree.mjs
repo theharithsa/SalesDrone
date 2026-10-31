@@ -29,7 +29,7 @@ const tree = {
   readinessSkill: 'salesdrone-release-readiness',
   sharedContract: 'skills/SHARED.md',
   selectionPolicy:
-    'Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.',
+    'For SalesDrone web design and generic design reviews, prefer salesdrone-interface and Material 3; imported native/experimental design references are conditional. Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.',
   nodes,
 };
 validateSkillTree(tree, names);
@@ -42,7 +42,13 @@ const markdown =
     )
     .join('\n') +
   '\n';
+const catalogPath = 'skills/README.md';
+const catalog = '<!-- module-catalog:start -->\n| Skill | Responsibility |\n| --- | --- |\n' + nodes.map(n => `| [${n.id}](${n.id}/SKILL.md) | ${n.description.replaceAll('|', '\\|')} |`).join('\n') + '\n<!-- module-catalog:end -->';
+const readme = await readFile(catalogPath, 'utf8');
+const updated = readme.replace(/<!-- module-catalog:start -->[\s\S]*?<!-- module-catalog:end -->/, catalog);
+if (updated === readme && !readme.includes(catalog)) throw Error('Missing module catalog markers');
 for (const [p, value] of [
+  [catalogPath, updated],
   ['skill-tree.json', JSON.stringify(tree, null, 2) + '\n'],
   ['skill-tree.md', markdown],
 ]) {

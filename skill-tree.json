@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "readinessSkill": "salesdrone-release-readiness",
   "sharedContract": "skills/SHARED.md",
-  "selectionPolicy": "Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.",
+  "selectionPolicy": "For SalesDrone web design and generic design reviews, prefer salesdrone-interface and Material 3; imported native/experimental design references are conditional. Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.",
   "nodes": [
     {
       "id": "salesdrone-api-integrations",
@@ -258,11 +258,20 @@
         "wide screen",
         "responsive audit",
         "lead header redesign",
-        "display zoom"
+        "display zoom",
+        "design review",
+        "Material 3",
+        "make my site stunning",
+        "Tailwind styling",
+        "Awwwards",
+        "responsive UI"
       ],
       "related": [
-        "salesdrone-release-readiness",
-        "salesdrone-release"
+        "salesdrone-leads",
+        "salesdrone-tasks-reminders",
+        "salesdrone-workspace-settings",
+        "salesdrone-book-mode",
+        "salesdrone-product-guide"
       ],
       "apiOperations": []
     },
@@ -329,8 +338,7 @@
         "salesdrone-conversations",
         "salesdrone-lead-journey",
         "salesdrone-imports",
-        "salesdrone-notifications",
-        "salesdrone-attachments"
+        "salesdrone-notifications"
       ],
       "apiOperations": [
         "GET /api/v1/leads",

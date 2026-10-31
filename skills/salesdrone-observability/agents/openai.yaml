@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Application observability"
   short_description: "Maintain application observability in SalesDrone"
-  default_prompt: "Use $salesdrone-observability to investigate and implement the requested SalesDrone module change, verify its boundaries, and report deployment impact."
+  default_prompt: "Use $salesdrone-observability for this module change. Browser RUM is client-observed. Canonical business events come only from committed server transactions; retain at-least-once event IDs for deduplication. Verify with `node --test functions/test/observability.test.js` and report remaining evidence limits."

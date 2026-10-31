@@ -42,6 +42,8 @@ Scoped current lead/activity aggregates, current user’s outstanding tasks, use
 
 Workspace accessPolicyVersion and effective scope participate in brief source fingerprints and publication rechecks. A policy change while Gemini runs must reject the old brief, including when membership.version is unchanged.
 
+Gemini model selection comes from the shared model-config default and the runtime GEMINI_MODEL parameter. Both adapters resolve the same parameter lazily; do not add a second workflow/environment fallback.
+
 ## Change and diagnosis
 
 Compare deterministic API aggregates to filters/membership before debugging chart geometry. Test no data, custom stage order, backlog, inaccessible tasks and invalid AI citations; verify a stage click opens matching leads.
@@ -73,15 +75,10 @@ Read for detailed behavior:
 
 Chart reading uses HTML y-axis/date labels and a centered HTML ring total; retain SVG accessible descriptions and authorized aggregate data. A native Chart day selector provides a touch/keyboard alternative to the dots. Clamp selectedIndex when data shrinks; an empty chart has a disabled fallback. Selecting a day changes local presentation only: no new Gemini request, API scope or conversion event. Check first/last/empty selection, resizing and both palettes/Book mode. Dashboard content-container thresholds govern chart columns, not outer-window width.
 
-## Material 3 v2 local-review guidance
+## Conditional reference
 
-Material v2 places metric cards before the briefing, uses horizontal stage cards and one chart hierarchy. Current-stage counts are still snapshots, not historic conversion. Manual/automatic AI generation policy is unchanged. Review the redesigned chart labels, small-screen scrolling and both palettes before approval.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-The outreach chart's Day select uses a rounded filled surface, vertically centered
-value and reserved right padding for the shared chevron. Keep the full date on one
-line; allow the caption metrics to wrap independently. Retain the native select,
-Chart day name, keyboard focus and existing local day-selection behavior.
+## Known gaps
 
-## Header and chart review (2.2.1)
-
-The outreach trend wrapper owns a grid with a content-sized HTML Y-axis gutter and the SVG plot. Position each tick at the same normalized Y coordinate as its gridline; preserveAspectRatio=none makes the fixed-height SVG coordinate transform consistent across widths. Reserve gutter width from data-maximum rather than a fixed digit count. Date endpoints occupy the plot column. Keep native day selection and SVG circle keyboard actions; geometry is presentation-only, with no changed aggregates, API or telemetry.
+These are tracked follow-ups, not implemented behavior: [#16](https://github.com/theharithsa/SalesDrone/issues/16), [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.

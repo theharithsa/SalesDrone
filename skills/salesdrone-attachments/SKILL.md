@@ -37,20 +37,10 @@ List only Ready files with signed, scope-bound pagination. Never expose objectPa
 
 [bulk-and-files.test.js](../../functions/test/bulk-and-files.test.js) covers authorization, byte validation, immutable retries, revocation, quota and safe events. [emulator.integration.js](../../functions/test/emulator.integration.js) exercises real Auth/Firestore/Storage and direct-client denial. Use [testing](../salesdrone-testing/SKILL.md), [observability](../salesdrone-observability/SKILL.md), [release readiness](../salesdrone-release-readiness/SKILL.md) and [release](../salesdrone-release/SKILL.md). Deploy Storage rules and ready indexes before Functions/Hosting. Runtime SA needs object access to this bucket; never create service-account keys. Verify bucket public-access prevention and retain source for forward-version rollback.
 
-The desktop inspector has a visible Files shortcut that opens the full lead Files tab. On narrow layouts the six workspace tabs fit using compact inline padding while retaining 44px minimum targets and optional local scrolling. Do not hide Files behind an unlabeled expand icon.
+## Conditional reference
 
-When expanding the inspector into the full lead route, preserve the requested Files
-tab through asynchronous lead loading. New/different leads start at All. Verify the
-shortcut after the data request finishes, not just immediately after navigation.
+For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-## Material 3 v2 local-review guidance
+## Known gaps
 
-Material v2 keeps the private Files API/limits intact while adopting shared file-row, progress and confirmation surfaces. Its inspector shortcut must preserve Files after asynchronous loading. Validate layout and keyboard flow separately from Storage byte/authorization tests.
-
-## Lead-data reset (2.1)
-
-The global lead reset waits five minutes past current function request deadlines, deletes metadata-associated objects then sweeps the fixed workspaces/avinyatech/lead-files/ prefix via bounded firebaseFiles.list. No caller-controlled prefix, filenames or network calls in transactions. Listing/deletion failure blocks completion and retains the data-write pause; storage operations are idempotent. Provider soft-delete/backups are outside the application's undo/erasure promise.
-
-## API and deployment hardening (2.3.1)
-
-The binary PUT pre-middleware must initialize the exact attachments:write PAT requirement before requireMember and before parsing bytes. The generic route wrapper sets it again; neither check expands scopes. Test the token reserve→PUT→GET→DELETE flow, read-only denial and post-upload revocation with bulk-and-files.test.js and the real Storage emulator.
+These are tracked follow-ups, not implemented behavior: [#4](https://github.com/theharithsa/SalesDrone/issues/4), [#54](https://github.com/theharithsa/SalesDrone/issues/54). Check their current status before changing the contract.

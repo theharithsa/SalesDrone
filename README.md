@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.3.1 fixes token file uploads, API validation/privacy and deployment reporting; v2.3 adds collaborative import history and reviewed workbook updates.
+> v2.4.0 adds indexed Exact match filters, hardens rate-limit retention, archive history, cursor/model configuration and task reads, and adds CI linting, component regressions and maintained module skills.
 > See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
@@ -20,7 +20,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.3.1 · MIT**
+**Part of Avinya Enterprises · v2.4.0 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
@@ -229,3 +229,7 @@ Stage and assignment stack on compact lead surfaces. Outreach tick labels share 
 ## Collaborative imports (2.3)
 
 Collaborative import review supports history, visible duplicate matches and linked workbook updates preserving team edits. Admins can grant member import access and explicitly delete retained details. See [Imports](docs/IMPORTS.md).
+
+Column filters include an indexed **Exact match** option for enquiry source, sales stage and custom dropdowns. It compares the saved case, spacing and Unicode literally; existing **Equals** retains tolerant matching. See the [product handbook](docs/PRODUCT-GUIDE.md#leads).
+
+[Reviewed mobile filter example](site/assets/screenshots/lead-filters-mobile-demo.jpg) (fictional demo data).
