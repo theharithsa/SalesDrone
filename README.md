@@ -1,7 +1,7 @@
 # SalesDrone by AvinyaTech
 
-> Local v2.5.0 review adds reusable import fields, personal dashboard grouping and readable import/popup controls. Production remains v2.4.1 until publication is approved.
-> See [review evidence](docs/MOBILE-2.0.1-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
+> v2.5.0 adds reusable import fields, configurable status mapping, personal dashboard grouping and readable import/popup controls.
+> See [review evidence](docs/IMPORT-FIELDS-2.5.0-REVIEW.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
 filled forms, a resizable lead inspector and automatic lead-list pagination.
