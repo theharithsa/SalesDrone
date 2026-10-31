@@ -1,3 +1,7 @@
+import DashboardCategoryPicker from '../components/DashboardCategoryPicker';
+import { dashboardGrouping } from '../../../../functions/src/dashboard-grouping.js';
+import { defaultFieldOptions, type FieldOptions } from '../lib/field-options';
+import { readStored, writeStored } from '../lib/browser-storage';
 import PipelineFunnel from '../components/PipelineFunnel';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import {
@@ -52,7 +56,7 @@ function Ring({ data, label }: { data: any[]; label: string }) {
             used += length;
             return (
               <circle
-                key={d.label}
+                key={d.key || d.label}
                 cx="90"
                 cy="90"
                 r={r}
@@ -81,7 +85,7 @@ function Ring({ data, label }: { data: any[]; label: string }) {
       </div>
       <div className="chart-legend">
         {data.map((d, i) => (
-          <div key={d.label}>
+          <div key={d.key || d.label}>
             <i
               style={{
                 background: d.label.includes('risk')
@@ -89,7 +93,7 @@ function Ring({ data, label }: { data: any[]; label: string }) {
                   : colors[i % colors.length],
               }}
             />
-            <span>{d.label}</span>
+            <span>{d.label}{d.empty?<small>Missing value</small>:null}</span>
             <strong>{d.value}</strong>
           </div>
         ))}
@@ -106,7 +110,7 @@ function Bars({ data, kind }: { data: any[]; kind?: string }) {
     <div className="chart-bars">
       {values.length ? (
         values.map((d, i) => (
-          <div key={d.label}>
+          <div key={d.key || d.label}>
             <div>
               <span>{d.label}</span>
               <strong>{d.value}</strong>
@@ -370,6 +374,9 @@ export default function DashboardPage({
   onTasks,
   stageOrder,
   onStage,
+  config = defaultFieldOptions,
+  onCategory,
+  onGroupingSaved,
 }: {
   request: (p: string, m?: string, b?: any) => Promise<any>;
   demo: boolean;
@@ -381,6 +388,9 @@ export default function DashboardPage({
   onLead: (id: string) => Promise<void>;
   onTask: (id: string) => Promise<void>;
   onTasks: () => void;
+  onGroupingSaved?: (value:string)=>void;
+  config?: FieldOptions;
+  onCategory?: (field: string, value: string, empty: boolean) => void;
   stageOrder: string[];
   onStage: (stage: string) => void;
 }) {
@@ -390,6 +400,9 @@ export default function DashboardPage({
     [briefBusy, setBriefBusy] = useState(false),
     [error, setError] = useState(''),
     [briefError, setBriefError] = useState(''),
+    [categoryBusy, setCategoryBusy] = useState(false),
+    [categoryError, setCategoryError] = useState(''),
+    [demoField, setDemoField] = useState(()=>readStored('localStorage','salesdrone.demo.dashboard-field')||'auto'),
     [geography, setGeography] = useState<'sectors' | 'cities'>('sectors');
   const loadEpoch = useRef(0);
   const load = useCallback(async () => {
@@ -398,7 +411,7 @@ export default function DashboardPage({
     setError('');
     try {
       const d = demo
-        ? demoSnapshot(sample, timezone)
+        ? {...demoSnapshot(sample, timezone),visualization:dashboardGrouping(sample.leads,config,demoField)}
         : await request('/dashboard');
       if (epoch === loadEpoch.current) setSnapshot(d);
     } catch (e) {
@@ -410,10 +423,19 @@ export default function DashboardPage({
     request,
     demo,
     timezone,
+    config,
+    demoField,
     demo ? sample.leads : null,
     demo ? sample.tasks : null,
     demo ? sample.activities : null,
   ]);
+  async function changeCategory(value:string){
+    setCategoryBusy(true);setCategoryError('');
+    try{
+      if(demo){setDemoField(value);if(!writeStored('localStorage','salesdrone.demo.dashboard-field',value))setCategoryError('Browser storage is unavailable; the choice lasts for this visit.');}
+      else{await request('/me','PATCH',{dashboardField:value});onGroupingSaved?.(value);await load();}
+    }catch(e){setCategoryError((e as Error).message);}finally{setCategoryBusy(false);}
+  }
   useEffect(() => {
     void load();
     return () => {
@@ -643,23 +665,31 @@ export default function DashboardPage({
               ))}
             </div>
           ) : null}
-          <PipelineFunnel
+          <DashboardCategoryPicker
+            visualization={snapshot.visualization}
+            busy={categoryBusy}
+            error={categoryError}
+            onChange={value=>void changeCategory(value)}
+          />
+          {snapshot.visualization?.field ? <PipelineFunnel
             counts={snapshot.stages}
             order={snapshot.stageOrder || stageOrder}
-            onStage={onStage}
-          />
+            groups={snapshot.visualization.groups}
+            fieldLabel={snapshot.visualization.label}
+            onStage={(value,empty)=>onCategory?onCategory(snapshot.visualization.field,value,!!empty):onStage(value)}
+          /> : <section className="panel"><p>No category fields are available. Ask an Admin to enable a field for dashboard charts.</p></section>}
           <div className="dashboard-chart-grid">
             <section className="panel chart-panel">
               <div className="chart-heading">
                 <div>
                   <span className="eyebrow">PIPELINE COMPOSITION</span>
-                  <h2>Pipeline stages</h2>
+                  <h2>{snapshot.visualization?.label || 'Pipeline distribution'}</h2>
                 </div>
                 <BarChart3 size={21} />
               </div>
-              <Ring data={snapshot.stages} label="Pipeline stages" />
+              <Ring data={snapshot.visualization?.groups||[]} label={snapshot.visualization?.label||'Pipeline distribution'} />
               <p className="chart-note">
-                Stage distribution across {snapshot.coverage.leadsScanned}{' '}
+                Current distribution across {snapshot.coverage.leadsScanned}{' '}
                 visible leads. This is a snapshot, not a conversion funnel.
               </p>
             </section>

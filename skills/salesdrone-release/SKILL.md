@@ -94,3 +94,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#27](https://github.com/theharithsa/SalesDrone/issues/27), [#30](https://github.com/theharithsa/SalesDrone/issues/30), [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
+
+Before promoting a reviewed feature release, remove local-only README notices after explicit deployment approval. Keep local review evidence historical and distinguish it from the exact main SHA, workflow run and post-deploy artifacts; do not restamp screenshot metadata or rerun local domain suites for this wording-only promotion. Required PR/main verification still runs.

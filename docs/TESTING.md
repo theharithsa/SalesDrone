@@ -105,3 +105,9 @@ The CI component reporter emits only hashed case identity, an allowlisted reposi
 ## Exact match regression coverage
 
 functions/test/exact-filters.test.js covers more than 1,000 rows, all equality predicates, assigned scope, literal Unicode/case/space differences, unchanged Equals, custom type rejection, contradictory predicates, residual conditions and cursor binding. emulator.integration.js verifies nested equality and document-ID pagination with business IDs differing from document keys. Component tests cover desktop/mobile selection. Use isolated synthetic Chromium for visual checks; jsdom is not device certification.
+
+## Import fields and dashboard grouping
+
+import-fields.test.ts checks populated-column coverage, blanks/comments, duplicate headers, stable ID reuse, mapping collisions and caps. Component workflows verify Admin creation with literal codes/comments and non-admin exclusion. dashboard-grouping.test.js verifies hidden-stage fallback, custom text caps/totals, empty buckets, self-owned persistence, scope, audit and old-client merging. The real emulator scenario creates schema as Admin, rejects non-admin/stale writes, imports/replays/updates custom values while preserving hidden workflow, then persists personal chart fields. Browser review covers import row hierarchy, actual open pickers, multiple widths/themes, scrolling and field switching; it does not certify physical devices/Safari.
+
+For v2.5.0, customizable category pickers are measured open; modal selects use native platform pickers to avoid modal Escape conflicts. Measure their closed geometry and parent-dialog Escape behavior separately; do not claim CSS control over OS popup rendering.

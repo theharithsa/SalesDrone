@@ -1,3 +1,4 @@
+import { dashboardGrouping } from './dashboard-grouping.js';
 import { readAISettings } from './ai-settings.js';
 import { readFieldOptions } from './field-options.js';
 import { z } from 'zod';
@@ -248,6 +249,7 @@ export async function dashboardSnapshot(
       callsScanned: callScan.items.length,
       callsTruncated: callScan.truncated,
     },
+    visualization: dashboardGrouping(leads,fields,prefs?.dashboardField||'auto'),
     stageOrder: fields.values.stage,
     stages: counts(leads, 'stage'),
     sectors: counts(leads, 'zone'),

@@ -4,6 +4,18 @@ Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
 
+
+## [2.5.0] - 2026-10-31
+
+### Added
+- #83: Discover every populated unmatched import column, review reusable text-field names, reuse existing IDs on repeat uploads and create missing fields through Admin-only versioned field settings. Preserve literal codes, comments and reviewed import updates; non-admin importers must map or explicitly exclude unknown columns.
+- #84: Save a personal pipeline grouping on Today. Use Enquiry status when Sales stage is hidden, with active custom text/dropdown fields, scoped counts, missing-value filters and a bounded Other values bucket. Existing workflow/KPI semantics stay unchanged.
+
+### Fixed
+- #82: Separate import column headers from position metadata with compact selectable rows. Constrain customizable popup menus to their trigger/viewport, give desktop filter-dialog selects adequate width and use native pickers inside modal dialogs for keyboard compatibility.
+- Default new import status mapping to Enquiry status, with a selector for another available category/custom field, original text in import history and compatibility for existing jobs/API clients.
+- Preserve enquiry-status text without requiring stage mapping when Sales stage is hidden; blank stage cells and status-only updates do not reset existing workflow stages.
+
 ## [2.4.1] - 2026-10-31
 
 ### Fixed

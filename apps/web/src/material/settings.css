@@ -1200,3 +1200,25 @@ button[role='switch'][aria-checked='true'] > span {
   padding: 0;
   border: 0;
 }
+
+/* Import choices keep the source header distinct from positional metadata. */
+.comment-column-picker, .import-new-fields {min-width:0;margin:24px 0;padding:20px;border:1px solid var(--line);border-radius:16px;}
+.comment-column-picker legend, .import-new-fields legend {padding:0 8px;font-family:var(--heading-font);font-weight:500;}
+.comment-column-picker > p, .import-new-fields > p {max-width:75ch;color:var(--muted);line-height:1.6;margin:8px 0 16px;}
+.comment-column-options {gap:10px;}
+.comment-column-options > label {display:flex;align-items:center;gap:12px;min-height:72px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);cursor:pointer;}
+.comment-column-options > label:has(input:checked) {background:var(--md-sys-color-secondary-container);border-color:var(--accent);}
+.comment-column-options > label > span, .import-new-field-list .checkbox-row > span {display:grid;gap:4px;min-width:0;overflow-wrap:anywhere;}
+.comment-column-options strong, .import-new-field-list strong {font-size:.875rem;font-weight:500;line-height:1.45;}
+.comment-column-options small, .import-new-field-list small {display:block;color:var(--muted);font-size:.75rem;line-height:1.4;}
+.import-new-field-list {display:grid;gap:12px;}
+.import-new-field-list > div {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:12px;}
+.import-new-field-list > div > label:last-child {display:grid;gap:6px;min-width:0;font-size:.75rem;color:var(--muted);}
+@media(max-width:599.99px){.comment-column-picker,.import-new-fields{padding:14px;}.comment-column-options,.import-new-field-list > div{grid-template-columns:minmax(0,1fr);}}
+
+.import-status-mapping{margin:24px 0;}
+.import-status-mapping > label{max-width:440px;}
+.import-status-mapping > p{max-width:75ch;line-height:1.6;}
+
+.mapping-grid label{overflow-wrap:anywhere;}
+.import-status-source{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;}

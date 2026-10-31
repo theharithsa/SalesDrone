@@ -3,6 +3,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import SettingsPage from '../features/SettingsPage';
 import ImportPage from '../features/ImportPage';
+import DashboardPage from '../features/DashboardPage';
 import ImportReviewFixture from './ImportReviewFixture';
 import { Avatar, Brand, LeadName, Loading, Modal } from '../components/UI';
 import LeadBlade from '../components/LeadBlade';
@@ -300,7 +301,7 @@ function AdminReview() {
       <div className="review-admin-banner">
         <strong>Fictional admin workspace</strong>
         <span>
-          In-memory settings preview. No live API calls, tokens or real access
+          Synthetic settings / mapping preview. Use fictional files only. No live API calls, tokens or real access
           grants.
         </span>
         <button className="text-button" onClick={() => setImporting((v) => !v)}>
@@ -358,8 +359,10 @@ function AdminReview() {
           />
         ) : null}
       </Modal>
-      {new URLSearchParams(location.search).get('preview') === 'import-review' ? (<ImportReviewFixture />) : importing ? (
-        <ImportPage demo request={request} onImported={() => {}} />
+      {new URLSearchParams(location.search).get('preview') === 'dashboard-fields' ? (
+        <DashboardPage demo config={{...config,hiddenFields:[...new Set([...config.hiddenFields,'stage'])]}} request={request} firstName="Explorer" timezone="Asia/Kolkata" sample={(()=>{const data=demoData();return {...data,leads:data.leads.map((lead,i)=>({...lead,legacyStatus:['Awaiting drawings','Quoted','Under review'][i%3]}))}})()} refreshKey={0} stageOrder={config.values.stage} onStage={()=>{}} onCategory={()=>{}} onLead={async()=>{}} onTask={async()=>{}} onTasks={()=>{}}/>
+      ) : new URLSearchParams(location.search).get('preview') === 'import-review' ? (<ImportReviewFixture />) : importing || new URLSearchParams(location.search).get('preview') === 'import-fields' ? (
+        <><p className="notice">Mapping preview only. Use fictional files. Field setup stays in memory; server import validation and commits are unavailable.</p><ImportPage demo={false} config={config} canManageFields onFieldOptions={setConfig} request={request} onImported={() => {}} /></>
       ) : (
         <SettingsPage
           session={session}

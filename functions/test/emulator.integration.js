@@ -1327,3 +1327,28 @@ test('Exact match uses merged raw equality indexes and document-ID cursors in re
  assert.equal((await store.query(path('leads'),{filters:filters.map(f=>f[0]==='source'?['source','==','website']:f),order:'__name__'})).length,0);
  await store.run(async tx=>{for(const id of ids)tx.delete(path('leads',id))});
 });
+
+test('Admin-created import fields persist through replay/update and personal dashboard grouping in real Auth/Firestore',async()=>{
+ const store=firestoreStore(db),token=await signIn('spraghav@gmail.com'),memberToken=await signIn('new-fields-member@example.test');
+ const identity=await auth.verifyIdToken(memberToken),app=createApp({store,verifyToken:t=>auth.verifyIdToken(t,true)});
+ const call=(method,url,body,credential=token)=>{const r=request(app)[method]('/api/v1'+url).set('Authorization','Bearer '+credential).set('Idempotency-Key',randomUUID());return body===undefined?r:r.send(body)};
+ await call('get','/me').expect(200);
+ const {PRESETS}=await import('../src/contracts.js');await store.run(tx=>tx.set(path('members',identity.uid),{id:identity.uid,uid:identity.uid,email:identity.email,role:'SDR',scope:'assigned',active:true,version:1,capabilities:PRESETS.SDR}));
+ let config=(await call('get','/field-options').expect(200)).body;const fieldId='cf_import_'+randomUUID().replaceAll('-','');
+ const schema={expectedVersion:config.version,values:config.values,hiddenFields:[...new Set([...config.hiddenFields,'stage'])],customFields:[...config.customFields,{id:fieldId,label:'Synthetic product '+randomUUID().slice(0,8),type:'text',options:[],required:false,deleted:false}]};
+ await call('patch','/field-options',schema,memberToken).expect(403);config=(await call('patch','/field-options',schema).expect(200)).body;await call('patch','/field-options',schema).expect(409);
+ const data={name:'Synthetic new field import',phone:'+12025559876',enquiryDate:'2026-10-31',legacyStatus:'Awaiting drawings',[fieldId]:'0012',importComments:[]};
+ async function prepare(rows,extra={}){
+ let j=(await call('post','/imports/preview',{filename:'synthetic-fields.csv',sheet:'CSV',rows,reviewed:true,dateOrder:'DMY',statusMap:{},statusField:'legacyStatus',...extra}).expect(200)).body;
+ while(j.status==='Preparing')j=(await call('post','/imports/'+j.id+'/plan',{expectedVersion:j.version}).expect(200)).body;
+ while(j.reviewOffset<j.total)j=(await call('post','/imports/'+j.id+'/review',{expectedVersion:j.version}).expect(200)).body;
+ return j;
+ }
+ let job=await prepare([data]);const sourceRows=(await call('get','/imports/'+job.id+'/rows').expect(200)).body.items;assert.equal(sourceRows[0].sourceStatus,'Awaiting drawings');job=(await call('post','/imports/'+job.id+'/commit',{expectedVersion:job.version}).expect(200)).body;assert.equal(job.imported,1);
+ const lead=(await store.query(path('leads'),{filters:[['importId','==',job.id]],limit:5}))[0];assert.equal(lead.customFields[fieldId],'0012');assert.equal(lead.legacyStatus,'Awaiting drawings');assert.equal(lead.stage,'New');
+ await call('post','/imports/'+job.id+'/commit',{expectedVersion:job.version}).expect(200);
+ await call('patch','/leads/'+lead.id,{expectedVersion:lead.version,stage:'Won'}).expect(200);
+ let update=await prepare([{...data,leadId:lead.id,[fieldId]:'0034'}],{duplicateMode:'update',sourceImportId:job.id});update=(await call('post','/imports/'+update.id+'/commit',{expectedVersion:update.version}).expect(200)).body;assert.equal(update.updated,1);assert.equal((await store.get(path('leads',lead.id))).customFields[fieldId],'0034');assert.equal((await store.get(path('leads',lead.id))).stage,'Won');
+ await call('patch','/me',{dashboardField:fieldId}).expect(200);const dashboard=(await call('get','/dashboard').expect(200)).body;assert.equal(dashboard.visualization.field,fieldId);assert.ok(dashboard.visualization.groups.some(g=>g.label==='0034'&&g.value===1));
+ await call('patch','/me',{dashboardField:'legacyStatus'},memberToken).expect(200);assert.equal((await call('get','/me',undefined,memberToken).expect(200)).body.preferences.dashboardField,'legacyStatus');
+});

@@ -78,6 +78,10 @@ Read for detailed behavior:
 
 - [docs/WORKBOOK-ALIGNMENT.md](../../docs/WORKBOOK-ALIGNMENT.md)
 
+Discover all populated source columns: mapped fields/comments retain their paths; unmatched columns are reviewed text fields, created/reused through Admin-only versioned field-options before preview. Non-admin importers must map or explicitly exclude them. Field setup persists if preview/import is cancelled. Preserve blank-update behavior, duplicate/blank positional labels, limits and source baselines. Hidden Sales stage is excluded as a destination, and status-only updates must not reset workflow. Test import-fields.test.ts, component workflows and the real schema/import/dashboard emulator scenario.
+
+New browser imports default statusField to legacyStatus (Enquiry status); offer only available category/custom text/dropdown targets and none. Explicit mappings must not overwrite another mapped column. Preserve sourceStatus through planning and authorized row history, and retain legacy behavior when old clients omit statusField. Use import-status.test.js and status-destination component cases.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

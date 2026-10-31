@@ -1,3 +1,4 @@
+import { dashboardFields } from './dashboard-grouping.js';
 import { documentKey } from './store.js';
 import { createCursorCodec } from './cursors.js';
 import { rateLimitExpiry } from './rate-limit.js';
@@ -452,6 +453,7 @@ export function createApp({
           appearance: 'system',
           bookMode: false,
           fontStyle: 'standard',
+          dashboardField: 'auto',
           displayScale: 100,
           ...AUTO_DEFAULTS,
           ...prefs,
@@ -526,9 +528,14 @@ export function createApp({
   });
   route('patch', '/me', null, (req) => {
     const input = parse(Preferences, req.body);
-    validateTimezone(input.timezone);
+    if(input.timezone!==undefined)validateTimezone(input.timezone);
     return mutate(req, null, async (tx) => {
+      if(input.dashboardField && input.dashboardField!=='auto' && !dashboardFields(await readFieldOptions(tx)).some(f=>f.field===input.dashboardField))
+        throw new AppError(400,'DASHBOARD_FIELD','Choose an available dashboard category field');
       const prefs = {
+        timezone: 'Asia/Kolkata',
+        appearance: 'system',
+        dashboardField: 'auto',
         bookMode: false,
         fontStyle: 'standard',
         displayScale: 100,
@@ -2046,6 +2053,7 @@ export function createApp({
   );
   route('post', '/imports/preview', 'imports:write', async (req) => {
     const input = parse(ImportInput, req.body);
+    if(input.statusField!==undefined && !input.reviewed)throw new AppError(400,'IMPORT_MODE','Selectable status mapping requires reviewed import mode');
     if (input.reviewed) {
       if (req.identity.personalAccess)
         throw new AppError(
@@ -2069,7 +2077,7 @@ export function createApp({
         'Updates require reviewed import mode',
       );
     const options = await readFieldOptions(store);
-    const rows = previewRows(input, options.values.stage);
+    const rows = previewRows(input, options.values.stage, {stageHidden:options.hiddenFields.includes('stage')});
     const fingerprintData = [
       input.sheet,
       input.rows,

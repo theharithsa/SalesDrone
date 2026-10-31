@@ -14,6 +14,7 @@ const personalDefaults = {
   bookMode: false,
   fontStyle: 'standard',
   displayScale: 100,
+  dashboardField: 'auto',
   ...AUTO_DEFAULTS,
 };
 const definitions = {
@@ -24,6 +25,7 @@ const definitions = {
     'displayScale',
     'timezone',
   ],
+  'dashboard.visualization': ['dashboardField'],
   reminders: [
     'automaticReminders',
     'reminderTime',
@@ -46,7 +48,7 @@ const definitions = {
   'notifications.devices': ['enabled', 'token', 'label'],
 };
 function sections(p) {
-  if (/^users\/[^/]+$/.test(p)) return ['appearance', 'reminders'];
+  if (/^users\/[^/]+$/.test(p)) return ['appearance', 'reminders', 'dashboard.visualization'];
   if (/^users\/[^/]+\/devices\/[^/]+$/.test(p))
     return ['notifications.devices'];
   if (!p.startsWith(ROOT + '/')) return [];
@@ -71,7 +73,7 @@ function sections(p) {
 }
 async function normalized(section, value) {
   const reader = { get: async () => value };
-  if (['appearance', 'reminders'].includes(section))
+  if (['appearance', 'reminders', 'dashboard.visualization'].includes(section))
     return { ...personalDefaults, ...value };
   if (section === 'reports-access') return readWorkspaceSettings(reader);
   if (section === 'ai.insights') return readAISettings(reader);

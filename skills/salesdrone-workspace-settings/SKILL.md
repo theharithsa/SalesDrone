@@ -90,7 +90,9 @@ Personal Appearance includes optional boolean bookMode (default false), independ
 
 Every saved net configuration change now carries auditEvents.settingsChanges and atomic settings.audit.committed outbox evidence through settings-audit.js, including /me preferences. Audit keys and hashed targets only, no values; default normalization avoids false changes on first saves. No-op/replayed/denied operations emit no change event. Preserve before-write snapshots, rollback, 40-key chunks and current self/Admin authorization. [Book mode](../salesdrone-book-mode/SKILL.md) owns reading typography; this skill retains primary /me ownership. See [audit guide](../../docs/SETTINGS-AUDIT.md).
 
-FontStyle is an optional allowlisted personal preference (standard/inter/source-sans/lora), default standard. GET /me defaults it and PATCH merges omissions, preserving old clients. Settings drafts preview locally and apply only after a successful save. Keep Google/App Check self scope and PAT denial. Include fontStyle when saving other settings so a mounted form cannot reset it. Track its key in appearance settings-audit defaults/definitions; export no values. Test font-style.test.js and real emulator persistence/audit isolation.
+FontStyle is personal, defaults to standard and preserves older clients. Keep Book/branding exceptions and committed key-only audit behavior; see [font operations](references/operations.md).
+
+Reviewed import field setup reuses the existing Admin-only expectedVersion boundary and retains all current definitions. It never promotes import access into schema-write access. PATCH /me now supports partial preferences and dashboardField; merge defaults/omitted keys, validate available categories and emit key-only dashboard.visualization audit evidence. Document the direct Today control in the personal settings guide.
 
 ## Conditional reference
 
