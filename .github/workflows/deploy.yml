@@ -85,7 +85,7 @@ jobs:
       - name: Build exact release
         run: |
           npm run build
-          node --input-type=module -e "import{writeFileSync}from'node:fs';if(/[\r\n]/.test(process.env.GEMINI_MODEL||''))throw Error('Invalid GEMINI_MODEL');writeFileSync('functions/.env.'+process.env.GCP_PROJECT_ID,'SDR_REGION=asia-south1\nAPP_CHECK_MODE=enforce\nDYNATRACE_TENANT_URL='+process.env.DYNATRACE_TENANT_URL+'\n'+(process.env.GEMINI_MODEL?'GEMINI_MODEL='+process.env.GEMINI_MODEL+'\n':''))"
+          node scripts/write-function-env.mjs
       - name: Deployment started
         run: echo 'DEPLOY_ATTEMPTED=true' >> "$GITHUB_ENV"
       - name: Deploy Firestore rules and indexes

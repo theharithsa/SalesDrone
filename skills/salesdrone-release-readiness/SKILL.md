@@ -40,6 +40,8 @@ Separately verify affected read-only production UI and the browser RUM identity 
 
 Use [salesdrone-release](../salesdrone-release/SKILL.md) for publishing mechanics. Do not bypass a failing gate; change implementation or state the actual external blocker.
 
+Firebase CLI non-interactive deployments require explicit dotenv parameter values even when the SDK declares a default. scripts/write-function-env.mjs materializes the model from the shared model-config.js constant or optional GitHub override; keep defaults centralized and verify function-environment.test.ts before deployment.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.

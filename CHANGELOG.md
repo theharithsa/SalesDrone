@@ -3,7 +3,16 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+
+## [2.4.1] - 2026-10-31
+
+### Fixed
+- Resolve the non-interactive Firebase deployment model from the shared runtime default when the optional GitHub override is unset. Reject missing/invalid deployment parameters and cover Firebase CLI parameter resolution directly (#34).
+- Publish the 16 fixes described under 2.4.0. Its first deployment activated rules/indexes/TTL but stopped before updating Functions or Hosting.
+
 ## [2.4.0] - 2026-10-31
+
+Source changes merged; the initial application deployment did not complete. These changes ship with 2.4.1.
 
 ### Added
 - #36: Add case-sensitive Exact match for source, sales stage and custom dropdowns. Push every Exact condition into indexed Firestore equality queries; retain existing Equals semantics, assigned scope, report filters and signed pagination. No lead-data rewrite or backfill is needed.

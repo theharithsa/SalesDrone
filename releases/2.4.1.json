@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "version": "2.4.1",
+  "summary": "Recover the initial application rollout by materializing the shared Gemini default for non-interactive Firebase deployment; publish the 16 selected fixes without changing domain behavior.",
+  "modules": [
+    "salesdrone-release",
+    "salesdrone-release-readiness",
+    "salesdrone-automatic-reminders"
+  ],
+  "documentation": [
+    "docs/RELEASE.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "CHANGELOG.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "No API or permission change in this recovery patch; contract 1.20.0 and the Exact operator from the source release remain unchanged.",
+    "contractVersion": "1.20.0",
+    "permissions": "Existing Google/App Check, member scope and PAT policies remain unchanged.",
+    "tests": [
+      "tests/function-environment.test.ts",
+      "functions/test/configuration.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing workflow/deployment telemetry records failed and successful attempts separately. This build-configuration recovery adds no domain mutation, new signal, secret or metric dimension.",
+      "tests": [
+        "tests/function-environment.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing workflow/deployment telemetry records failed and successful attempts separately. This build-configuration recovery adds no domain mutation, new signal, secret or metric dimension.",
+      "tests": [
+        "tests/function-environment.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing workflow/deployment telemetry records failed and successful attempts separately. This build-configuration recovery adds no domain mutation, new signal, secret or metric dimension.",
+      "tests": [
+        "tests/function-environment.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing workflow/deployment telemetry records failed and successful attempts separately. This build-configuration recovery adds no domain mutation, new signal, secret or metric dimension.",
+      "tests": [
+        "tests/function-environment.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing workflow/deployment telemetry records failed and successful attempts separately. This build-configuration recovery adds no domain mutation, new signal, secret or metric dimension.",
+      "tests": [
+        "tests/function-environment.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Reproduce missing dotenv rejection with the installed Firebase CLI non-interactive resolver, then verify both shared-default and explicit-override resolution. Existing 26-width/theme browser evidence and synthetic 2.4.0 captures remain accurate: no UI change in this patch and no screenshot restamping. Verify exact live version/SHA, five active functions, API 1.20.0, Pages, TTL and transport receipts after the authorized deployment. Tenant search requires unavailable query access; no device/Safari claim.",
+  "screenshots": []
+}

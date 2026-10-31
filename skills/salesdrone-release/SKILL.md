@@ -85,6 +85,8 @@ Deployment BizEvents use application/cloudevent+json; CUSTOM_DEPLOYMENT markers 
 
 Exact match needs no lead-data migration or new IAM. Preserve default single-field equality indexes and existing index readiness gates. Internal rate-counter TTL conversion remains separate. Do not require a derived lead index readiness marker.
 
+Firebase CLI non-interactive deployments require explicit dotenv parameter values even when the SDK declares a default. scripts/write-function-env.mjs materializes the model from the shared model-config.js constant or optional GitHub override; keep defaults centralized and verify function-environment.test.ts before deployment.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
