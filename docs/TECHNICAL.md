@@ -1,6 +1,6 @@
 # SalesDrone technical guide
 
-Current application: **2.5.1** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
+Current application: **2.5.2** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
 Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
 
 ## Stack and repository
@@ -196,3 +196,5 @@ Frontend import-fields.ts accounts for populated columns and resolves reviewed n
 Dashboard-grouping.js is a shared pure category projection used by live and guest dashboards. It filters hidden/deleted/inappropriate fields, follows configured category order, normalizes consistently with Equals and distinguishes missing buckets by stable keys. Text fields are eligible; 20 categories plus an aggregate cap long legends while preserving scanned totals. Personal dashboardField is merged through /me, with dashboard.visualization key-only committed audit events. No field values enter telemetry. AI grounding/fingerprints and deterministic KPI semantics do not change when selecting a chart category.
 
 Import-status.js validates explicit per-import status destinations against current available category fields. New clients send legacyStatus by default; absent fields retain the legacy API path. It transforms before custom-value validation, preserves original sourceStatus outside the lead document, prevents mapped-column overwrites and tracks only explicitly affected fields. Planning retains source metadata and existing scope projections redact restricted rows. Field-version guards and target rechecks protect commit/recovery.
+
+Dashboard presentation uses the effective configured grouping label throughout headings, descriptions and notes. Import status destinations reuse the available-category policy without hiding mapped fields; local conflict resolution focuses existing mapping/field-name controls and preserves source-column review. Server transformation, concurrency, scopes and overwrite checks are unchanged.

@@ -276,3 +276,5 @@ Admin import field setup reuses manage-fields audit metadata and atomic settings
 Personal dashboardField changes use dashboard.visualization in settings audit, changed key dashboardField only, with no selected field ID/value. Default normalization avoids false first-save changes and older clients preserve omission. Read-only dashboard category counts reuse existing HTTP RED/query spans and create no business-commit event. Popup/typography changes add no API/telemetry event.
 
 Explicit import status destinations and sourceStatus stay in authorized import details, never telemetry. Destination validation reuses request/error spans; no field label or source status is added to metric dimensions or events.
+
+Field-aware dashboard copy and import mapping-conflict focus are presentation only. They add no business event, metric dimension or request payload field. Existing approved field setup/import writes retain their audit/outbox paths. Never emit configured field labels, workbook headers or status values as telemetry attributes.

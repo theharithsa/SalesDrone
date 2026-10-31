@@ -6,6 +6,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.5.2] - 2026-10-31
+
+### Fixed
+- #88: Make dashboard titles, descriptions and notes follow the selected field label, including Zone, Enquiry source and custom fields. Describe current distributions without pipeline-movement wording; wrap long labels on narrow screens.
+- #88: Keep all compatible active status destinations visible, including fields already mapped to workbook columns. Show mapping conflicts with direct focus links, block validation until resolved, and prevent additional-field setup from reusing the selected destination. Preserve source data through reviewed fields or explicit exclusions.
+
 ## [2.5.1] - 2026-10-31
 
 ### Fixed

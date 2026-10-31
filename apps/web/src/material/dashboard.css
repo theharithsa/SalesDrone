@@ -675,3 +675,8 @@
 .funnel-stage button:disabled{opacity:1;cursor:default;}
 
 .dashboard-category-control label > small{font-weight:400;color:var(--muted);font-size:.75rem;}
+
+.dashboard-category-control h2,.funnel-heading h2,.chart-heading h2{overflow-wrap:anywhere;}
+.dashboard-category-control,.pipeline-funnel,.chart-panel .chart-heading,.chart-panel .chart-note{overflow-wrap:anywhere;}
+.funnel-heading > div,.chart-heading > div{min-width:0;}
+.dashboard-category-control select{overflow:hidden;text-overflow:ellipsis;}

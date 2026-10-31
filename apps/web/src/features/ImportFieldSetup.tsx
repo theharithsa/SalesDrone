@@ -35,6 +35,7 @@ export default function ImportFieldSetup({
             <label>
               Field name
               <input
+                id={`import-new-label-${index}`}
                 aria-label={`New field name for column ${index + 1}`}
                 value={label}
                 maxLength={80}

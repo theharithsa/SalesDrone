@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.5.1
+Version 2.5.2
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -34,11 +34,11 @@ Your identity is authenticated, but workspace membership is missing or inactive.
 
 No. Phone and email links open your device’s handler. Call logging, reminders and AI analysis help you record and plan outreach; they do not place calls.
 
-## Today: dashboard, insights and funnel
+## Today: charts, insights and lead breakdown
 
 Members with access to the underlying leads
 
-1. Open Today to review your accessible pipeline and outstanding work. Check due or overdue tasks before starting outreach.
+1. Open Today to review your accessible leads and outstanding work. Check due or overdue tasks before starting outreach.
 
 2. Use Get insights to request a grounded outreach brief in manual mode. If automatic insights are enabled by an administrator, the button is hidden and the brief is requested when you visit the dashboard.
 
@@ -46,9 +46,9 @@ Members with access to the underlying leads
 
 4. Use Chart day below the outreach chart to select a date. Its summary and highlighted point update from the already loaded data; this does not request AI insights.
 
-5. Choose Group leads by for your pipeline distribution charts. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions.
+5. Choose Group leads by for your lead distribution charts. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions.
 
-Graphs describe currently accessible records and aggregates. The pipeline distribution counts leads in the selected field. It does not prove historical stage movement or measure conversion.
+Charts describe current accessible records. The lead breakdown groups counts by your selected field; headings, descriptions and notes use its configured label, whether Zone, Enquiry source or a custom field. Recorded stage history remains in the lead journey.
 
 AvinyaIntelligence uses reported workspace evidence. Insights are suggestions, not guaranteed sales outcomes. Missing information is not proof of disinterest. Administrator instructions shape the brief but do not bypass access controls. Manual mode avoids requesting a new summary on every dashboard visit.
 
@@ -56,7 +56,7 @@ Changing the lead list, completing tasks or refreshing may update aggregates. If
 
 Available categories include configured built-ins and active custom text/dropdown fields. Missing values are a separate group. Select a concrete group to open matching Leads; up to 20 groups are shown and remaining values are combined as Other values. That aggregate and very long text groups have no direct filter. If a saved field is retired, a notice explains the fallback. Demo choices stay local.
 
-![Today: dashboard, insights and funnel — synthetic demo only](../site/assets/screenshots/dashboard-fields-demo.jpg)
+![Today: charts, insights and lead breakdown — synthetic demo only](../site/assets/screenshots/dashboard-fields-demo.jpg)
 
 ### Questions
 
@@ -64,7 +64,7 @@ Available categories include configured built-ins and active custom text/dropdow
 
 Automatic mode may be enabled, or your identity does not have access to that feature. Check Settings > AvinyaIntelligence > Insights.
 
-**Can I use the funnel as a conversion report?**
+**Does this breakdown show historic conversion?**
 
 Use it for current distribution only. Recorded stage history on a lead is the evidence of its actual transitions.
 
@@ -354,7 +354,7 @@ Members with optional import permissions and import-capable administrators
 
 3. Review Additional workbook fields. Every populated unmatched column is selected as a reusable text field by default. Rename if needed or explicitly exclude a column. Admins choose Create / reuse fields & validate; other importers must ask an Admin for setup or map/exclude those columns.
 
-4. In Map existing statuses, Enquiry status is the default destination. Keep each original value or choose a configured replacement. Use Map statuses to for another available field; hidden Sales stage does not need to be recreated. Keep original text only applies no extra mapping.
+4. In Map existing statuses, Enquiry status is the default destination. Map statuses to lists all compatible active category and custom text/dropdown fields, including fields already mapped to workbook columns. Hidden or retired fields are excluded. Keep original text only applies no extra mapping.
 
 5. Validate records to prepare a row-by-row comparison. Inspect existing matches, current versus workbook values, worksheet row numbers and proposed actions. Exact name and phone matches are candidates; ambiguous matches require a decision.
 
@@ -384,7 +384,7 @@ Text fields preserve leading zeros and codes. Repeat uploads reuse existing fiel
 
 Recheck positional field names when duplicate or unnamed headers move in a revised workbook. Positional defaults cannot establish which old column a moved blank header represents.
 
-Selecting a status destination does not overwrite a separate mapped column. To use that field as the destination, unmap its direct column first. Original workbook statuses remain in authorized import history even when normalized to a chosen value; old prepared jobs keep their previous mapping.
+If a destination already uses a workbook column, Review existing column focuses its mapping. Remap that column elsewhere or choose Not mapped. Otherwise unused populated data appears in Additional workbook fields: retain it under a reviewed field name or explicitly exclude it. An additional field cannot reuse the status destination. Original workbook statuses remain in authorized import history; server overwrite guards and prepared jobs keep their existing contracts.
 
 ![Excel and CSV import — synthetic demo only](../site/assets/screenshots/import-fields-demo.jpg)
 
@@ -405,6 +405,10 @@ Select its completed job from history. If its source comparison values were neve
 **Can I stop and return later?**
 
 Yes. The server retains the job and reviewed rows. Reopen it from history and resume. Version checks prevent two collaborators from applying the same stale chunk. Already committed rows are retained if later work blocks.
+
+**Why is validation disabled after I choose a status destination?**
+
+Resolve the displayed column conflict first. A separate column and status values cannot fill the same field. Use the review button to reach the existing mapping or additional-field name. Other importers can map existing fields or explicitly exclude columns; only Admins create new fields.
 
 ## Filtered Excel reports
 

@@ -29,6 +29,7 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'status-mapping-options-demo.jpg',
   'dashboard-missing-demo.jpg',
   'dashboard-missing-mobile-demo.jpg',
   'import-fields-demo.jpg',

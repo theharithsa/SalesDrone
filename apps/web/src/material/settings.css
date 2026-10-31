@@ -1222,3 +1222,9 @@ button[role='switch'][aria-checked='true'] > span {
 
 .mapping-grid label{overflow-wrap:anywhere;}
 .import-status-source{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;}
+
+.import-status-conflict{display:grid;gap:8px;align-items:start;margin:16px 0;}
+.import-status-conflict p{margin:0;overflow-wrap:anywhere;}
+.import-status-conflict .text-button{justify-self:start;}
+.import-status-mapping{overflow-wrap:anywhere;min-width:0;}
+.import-status-mapping select{overflow:hidden;text-overflow:ellipsis;}

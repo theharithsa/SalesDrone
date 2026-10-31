@@ -1,7 +1,8 @@
 type Target = { field: string; label: string; order?: string[] };
 export default function ImportStatusMapping({
-  targets, field, statuses, mapping, onField, onValue,
+  targets, field, statuses, mapping, onField, onValue, conflict,
 }: {
+  conflict?: { message: string; reviewLabel: string; onReview: () => void };
   targets: Target[];
   field: string;
   statuses: string[];
@@ -14,7 +15,7 @@ export default function ImportStatusMapping({
   return (
     <section className="import-status-mapping">
       <h3>Map existing statuses</h3>
-      <p className="field-hint">Choose where workbook statuses belong. Enquiry status keeps the original text by default. Original workbook text remains in import history.</p>
+      <p className="field-hint">{target ? `Map workbook status values into ${target.label}.` : 'Choose where workbook status values belong.'} Original workbook text remains in import history.</p>
       <label>
         Map statuses to
         <select aria-label="Status mapping field" value={field} onChange={e=>onField(e.target.value)}>
@@ -23,7 +24,11 @@ export default function ImportStatusMapping({
           {targets.map(t=><option key={t.field} value={t.field}>{t.label}</option>)}
         </select>
       </label>
-      {field==='none'?<p className="field-hint">Original Enquiry status text is retained; no additional status mapping is applied.</p>:target?<div className="mapping-grid">
+      {conflict ? <div className="notice import-status-conflict" role="status">
+        <p>{conflict.message}</p>
+        <button type="button" className="text-button" onClick={conflict.onReview}>{conflict.reviewLabel}</button>
+      </div> : null}
+      {field==='none'?<p className="field-hint">Original workbook status text is retained; no additional status mapping is applied.</p>:target?<div className="mapping-grid">
         {statuses.map(status=>{
           const value=Object.hasOwn(mapping,status)?mapping[status]:keepOriginal||(target.order||[]).includes(status)?status:'';
           return <label key={status}>

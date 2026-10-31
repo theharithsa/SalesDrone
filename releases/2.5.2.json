@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "version": "2.5.2",
+  "summary": "Use field-aware chart descriptions and expose every compatible import destination with explicit mapped-column/additional-field conflict resolution.",
+  "modules": [
+    "salesdrone-dashboard",
+    "salesdrone-imports",
+    "salesdrone-interface",
+    "salesdrone-testing",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "docs/FIELD-AWARE-2.5.2-REVIEW.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SETTINGS.md",
+    "docs/TESTING.md",
+    "docs/observability.md",
+    "CHANGELOG.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Presentation and browser preflight only: existing statusField destinations, request/response schema, reviewed import transformation, server STATUS_COLUMN/STATUS_FIELD checks and API 1.21.0 stay unchanged.",
+    "contractVersion": "1.21.0",
+    "permissions": "Existing import capabilities, lead scope and Admin-only schema creation remain authoritative; personal grouping remains self-only. Local focus/conflict resolution adds no privilege or server operation.",
+    "tests": [
+      "functions/test/import-status.test.js",
+      "functions/test/dashboard-grouping.test.js",
+      "tests/import-fields.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Field-dependent copy and local conflict/focus controls add no business mutation, event, metric dimension or telemetry payload. Existing authorized field setup/import/preferences operations retain safe HTTP, audit/outbox and deployment reporting. Never export field labels, workbook headers or source values.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-status.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Field-dependent copy and local conflict/focus controls add no business mutation, event, metric dimension or telemetry payload. Existing authorized field setup/import/preferences operations retain safe HTTP, audit/outbox and deployment reporting. Never export field labels, workbook headers or source values.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-status.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Field-dependent copy and local conflict/focus controls add no business mutation, event, metric dimension or telemetry payload. Existing authorized field setup/import/preferences operations retain safe HTTP, audit/outbox and deployment reporting. Never export field labels, workbook headers or source values.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-status.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Field-dependent copy and local conflict/focus controls add no business mutation, event, metric dimension or telemetry payload. Existing authorized field setup/import/preferences operations retain safe HTTP, audit/outbox and deployment reporting. Never export field labels, workbook headers or source values.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-status.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Field-dependent copy and local conflict/focus controls add no business mutation, event, metric dimension or telemetry payload. Existing authorized field setup/import/preferences operations retain safe HTTP, audit/outbox and deployment reporting. Never export field labels, workbook headers or source values.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/import-status.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Local measured cases and limits are recorded in docs/FIELD-AWARE-2.5.2-REVIEW.md. Review selected Source/Zone/custom labels, mapped destination choices, focus and explicit source-column preservation/exclusion in synthetic fixtures. Required PR CI remains the broader regression gate. No deployment, customer writes, physical-device/Safari or tenant-query acceptance is claimed; verify exact live version/SHA and monitoring only after publication approval.",
+  "screenshots": [
+    "dashboard-fields-demo.jpg",
+    "dashboard-fields-mobile-demo.jpg",
+    "dashboard-missing-demo.jpg",
+    "dashboard-missing-mobile-demo.jpg",
+    "dashboard-demo.jpg",
+    "journey-demo.jpg",
+    "import-fields-demo.jpg",
+    "import-fields-mobile-demo.jpg",
+    "import-comments-demo.jpg",
+    "import-comments-mobile-demo.jpg",
+    "status-mapping-demo.jpg",
+    "status-mapping-mobile-demo.jpg",
+    "status-mapping-options-demo.jpg"
+  ]
+}

@@ -90,3 +90,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#54](https://github.com/theharithsa/SalesDrone/issues/54). Check their current status before changing the contract.
 Import details and source baselines remain until explicit Admin deletion; #25 must not add automatic import-detail TTL.
+
+List mapped destinations as well as unmapped compatible fields. Block browser validation until a direct-column conflict or additional-field reuse collision is resolved; focus the relevant mapping/name control. Preserve unused source columns for field review or explicit exclusion. Recheck resolved target IDs against fresh configuration before any schema write; server STATUS_COLUMN protection stays authoritative.

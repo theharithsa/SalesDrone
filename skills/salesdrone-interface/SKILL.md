@@ -53,3 +53,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#4](https://github.com/theharithsa/SalesDrone/issues/4), [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#45](https://github.com/theharithsa/SalesDrone/issues/45), [#46](https://github.com/theharithsa/SalesDrone/issues/46), [#59](https://github.com/theharithsa/SalesDrone/issues/59). Check their current status before changing the contract.
+
+Field-dependent dashboard copy must remain readable with 80-character configured labels at narrow widths and larger display scales. Import conflict messages use local focus links to existing controls; do not silently change column mappings or discard their data.

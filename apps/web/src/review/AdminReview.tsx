@@ -164,7 +164,16 @@ function AdminReview() {
   const closeForm = () => setFormPreview('');
   const [session, setSession] = useState(initialSession),
     [config, setConfig] = useState<FieldOptions>(
-      structuredClone(defaultFieldOptions),
+      () => {
+        const fields=structuredClone(defaultFieldOptions);
+        const query=new URLSearchParams(location.search);
+        if(['dashboard-fields','import-fields'].includes(query.get('preview')||'')){
+          fields.labels={...fields.labels,zone:'Zone'};
+          fields.values.zone=['North','South'];
+          fields.customFields.push({id:'cf_preview_campaign',label:query.has('longLabels')?('Campaign '+ 'segmentation'.repeat(6)).slice(0,80):'Campaign',type:'text',options:[],required:false,deleted:false});
+        }
+        return fields;
+      },
     ),
     [importing, setImporting] = useState(false);
   useEffect(() => {
@@ -360,7 +369,7 @@ function AdminReview() {
         ) : null}
       </Modal>
       {new URLSearchParams(location.search).get('preview') === 'dashboard-fields' ? (
-        <DashboardPage demo config={{...config,hiddenFields:[...new Set([...config.hiddenFields,'stage'])]}} request={request} firstName="Explorer" timezone="Asia/Kolkata" sample={(()=>{const data=demoData();return {...data,leads:data.leads.map((lead,i)=>({...lead,legacyStatus:['Awaiting drawings','Quoted','Under review'][i%3]}))}})()} refreshKey={0} stageOrder={config.values.stage} onStage={()=>{}} onCategory={()=>{}} onLead={async()=>{}} onTask={async()=>{}} onTasks={()=>{}}/>
+        <DashboardPage demo config={{...config,hiddenFields:[...new Set([...config.hiddenFields,'stage'])]}} request={request} firstName="Explorer" timezone="Asia/Kolkata" sample={(()=>{const data=demoData();return {...data,leads:data.leads.map((lead,i)=>({...lead,zone:['North','South'][i%2],legacyStatus:['Awaiting drawings','Quoted','Under review'][i%3],customFields:{...lead.customFields,cf_preview_campaign:['Spring','Partner'][i%2]}}))}})()} refreshKey={0} stageOrder={config.values.stage} onStage={()=>{}} onCategory={()=>{}} onLead={async()=>{}} onTask={async()=>{}} onTasks={()=>{}}/>
       ) : new URLSearchParams(location.search).get('preview') === 'import-review' ? (<ImportReviewFixture />) : importing || new URLSearchParams(location.search).get('preview') === 'import-fields' ? (
         <><p className="notice">Mapping preview only. Use fictional files. Field setup stays in memory; server import validation and commits are unavailable.</p><ImportPage demo={false} config={config} canManageFields onFieldOptions={setConfig} request={request} onImported={() => {}} /></>
       ) : (

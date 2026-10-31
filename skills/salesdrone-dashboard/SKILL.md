@@ -86,3 +86,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#16](https://github.com/theharithsa/SalesDrone/issues/16), [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.
 
 Missing groups need separate primary-label and helper elements in cards and the composition legend. Clamp only the primary text; keep Missing value on its own line with a visible gap so literal Not recorded values remain distinguishable. Browser-check the empty group, not only populated fixtures.
+
+Selected-field headings, supporting copy and chart notes must use the effective configured label without lowercasing acronyms. Use neutral current-distribution language for Source, Zone and custom fields; no pipeline movement/conversion wording. Wrap long configured labels in headings, descriptions and selection hints.
