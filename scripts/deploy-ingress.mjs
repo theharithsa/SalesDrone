@@ -1,3 +1,4 @@
+import {checkIngress} from './ingress-checks.mjs';
 import { spawnSync } from 'node:child_process';
 import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -28,9 +29,7 @@ try {
   const health = await fetch(url + '/healthz', { signal: AbortSignal.timeout(30000), redirect: 'error' });
   const identity = await health.json();
   if (!health.ok || identity.version !== release.version || identity.commit !== release.commit) throw Error('Ingress identity mismatch before Hosting cutover');
-  const malformed = await fetch(url + '/api/v1/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{', signal: AbortSignal.timeout(15000) });
-  const denial = await malformed.json();
-  if (malformed.status !== 400 || denial.error?.code !== 'BAD_JSON' || !denial.error?.requestId || malformed.headers.get('x-app-version') !== release.version) throw Error('Ingress parser boundary failed before cutover');
-  await writeFile('ingress-deployment.json', JSON.stringify({ service, region, image, uri: url, revision: deployed.status.latestReadyRevisionName, version: identity.version, commit: identity.commit, parserBoundary: 'passed' }, null, 2));
+  const transportChecks=await checkIngress(url,release);
+  await writeFile('ingress-deployment.json', JSON.stringify({ service, region, image, uri: url, revision: deployed.status.latestReadyRevisionName, version: identity.version, commit: identity.commit, parserBoundary: 'passed',transportChecks }, null, 2));
   console.log('Ingress identity and real parser boundary verified before Hosting cutover.');
 } finally { await rm(dir, { recursive: true, force: true }); }

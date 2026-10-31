@@ -38,3 +38,13 @@ Local evidence, 1 November 2026. This is not a production success certificate.
   lint ratchet, release impact and secret scanning are local gates. Required exact-head
   PR CI and main deployment/live checks must still pass. Ingest receipts do not prove
   tenant searchability or native RUM-to-trace links; no Dynatrace query MCP is available.
+
+Follow-up review before merge: CSP checks parse directive token sets and HTML rather
+than substring/regex filtering. The meta policy precedes all scripts. Oversized
+requests drain within the bounded transport ceiling before 413, avoiding an early
+connection reset while the client uploads; stalled bodies receive a safe deadline.
+The shared pre-cutover/live probe checks all five parser/denial cases without any
+customer credential or write. The app deadline is 55 seconds, before Hosting’s 60.
+Private Cloud Build df998655-995c-468e-87e9-070b94a7d8ae built the pinned container
+and loaded locked production telemetry/gateway modules successfully. That preflight
+certifies packaging, not production traffic or the later merge SHA.

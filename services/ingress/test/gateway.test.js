@@ -1,3 +1,5 @@
+import {checkIngress} from '../../../scripts/ingress-checks.mjs';
+import {randomUUID} from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -61,4 +63,18 @@ test('plain oversized requests and unsupported encodings fail without forwarding
 });
 test('slow upstream is bounded and does not expose internal socket errors',async t=>{
  const f=await fixture(t,()=>{});const r=await fetch(f.url+'/api/v1/leads');assert.equal(r.status,504);assert.equal((await r.json()).error.code,'REQUEST_TIMEOUT');
+});
+
+test('an incomplete request body gets a bounded safe timeout without reaching backend',async t=>{
+ const f=await fixture(t);
+ const result=await new Promise((resolve,reject)=>{
+  const req=http.request(f.url+'/api/v1/leads',{method:'POST',headers:{'content-type':'application/json','content-length':'100'}},async res=>{const chunks=[];for await(const c of res)chunks.push(c);resolve({status:res.statusCode,body:JSON.parse(Buffer.concat(chunks).toString())});});
+  req.on('error',reject);t.after(()=>req.destroy());req.write('{');
+ });
+ assert.equal(result.status,504);assert.equal(result.body.error.code,'REQUEST_TIMEOUT');assert.equal(f.calls.length,0);
+});
+
+test('production probes exercise real ingress denial/parser boundaries without authenticated writes',async t=>{
+ const f=await fixture(t,(_req,res)=>{const requestId=randomUUID();res.statusCode=401;res.setHeader('X-Request-Id',requestId);res.setHeader('Content-Type','application/json');res.end(JSON.stringify({error:{code:'UNAUTHENTICATED',requestId}}));});
+ const results=await checkIngress(f.url,{version:'2.6.1'});assert.equal(results.length,5);assert.ok(results.every(r=>r.status==='passed'));assert.equal(f.calls.length,2);assert.ok(f.calls.every(call=>!call.headers.authorization));
 });

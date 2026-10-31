@@ -42,3 +42,13 @@ Keep tests for malformed/compressed/oversized JSON, binary forwarding, auth head
 fixed-target enforcement, safe errors, upstream failures and no business side effects.
 Use synthetic local fixtures and read-only live denial/parser probes. Preserve old
 backend compatibility for rollback; never roll back customer data.
+
+## Regression and rollout entry points
+
+- [gateway transport cases](../../services/ingress/test/gateway.test.js): actual HTTP parser, compressed/raw limits, auth/binary preservation, stalled requests and safe upstream failures.
+- [decoded OTel](../../services/ingress/test/telemetry.test.js): real client/server context, finite error categories and private-value exclusion. Flush only after the forwarding operation settles; serialize subsequent flush requests.
+- [live probes](../../scripts/ingress-checks.mjs): unauthenticated malformed/strict/compressed JSON, binary and oversized requests; never add customer credentials or IDs.
+- [deployment](../../scripts/deploy-ingress.mjs) and [provisioning](../../scripts/provision-ingress.mjs): immutable images, least privilege, staged health/transport proof before Hosting.
+
+Drain supported oversized wire bodies without buffering (up to the platform ceiling)
+before returning 413. Keep the application deadline below Hosting's 60 seconds.

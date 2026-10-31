@@ -6,12 +6,13 @@ import { pipeline } from 'node:stream/promises';
 
 export const JSON_LIMIT = 12 * 1024 * 1024;
 export const BINARY_LIMIT = 8 * 1024 * 1024;
+const WIRE_LIMIT=32 * 1024 * 1024;
 const forwarding = ['authorization', 'x-firebase-appcheck', 'idempotency-key', 'content-type', 'content-encoding', 'accept', 'if-none-match'];
 const hop = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade']);
 const failure = (status, code) => Object.assign(new Error(code), { status, code });
 const messages = { BAD_JSON: 'Invalid JSON body', PAYLOAD_TOO_LARGE: 'Request body is too large', UNSUPPORTED_ENCODING: 'Unsupported content encoding', NOT_FOUND: 'Route not found', UPSTREAM_UNAVAILABLE: 'API temporarily unavailable', REQUEST_TIMEOUT: 'Request timed out' };
 
-export function createGateway({ upstream, version, commit, telemetry, timeoutMs = 65000, allowLocalTest = false, log = console.log }) {
+export function createGateway({ upstream, version, commit, telemetry, timeoutMs = 55000, allowLocalTest = false, log = console.log }) {
   const target = new URL(upstream);
   if (target.username || target.password || target.search || target.hash || target.pathname !== '/' || (target.protocol !== 'https:' && !(allowLocalTest && target.protocol === 'http:' && target.hostname === '127.0.0.1'))) throw Error('A fixed HTTPS upstream origin is required');
   const transport = target.protocol === 'https:' ? https : http;
@@ -59,15 +60,19 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
         const json = /^application\/(?:[a-z0-9.+-]+\+)?json(?:\s*;|$)/i.test(req.headers['content-type'] || '');
         const limit = json ? JSON_LIMIT : BINARY_LIMIT;
         const length = req.headers['content-length'];
-        if (length && Number(length) > limit) throw failure(413, 'PAYLOAD_TOO_LARGE');
-        const chunks = []; let size = 0;
+        const declaredOversize=length && Number(length)>limit;
+        const chunks = []; let size = 0,tooLarge=false;
         // Do not destroy the incoming socket before the safe error can be returned.
         for await (const chunk of req.iterator({ destroyOnReturn: false })) {
           size += chunk.length;
-          if (size > limit) throw failure(413, 'PAYLOAD_TOO_LARGE');
+          if (size > WIRE_LIMIT) throw failure(413, 'PAYLOAD_TOO_LARGE');
+          // Drain supported wire sizes without buffering an oversized payload.
+          // Closing while the client is still uploading can obscure the 413.
+          if(declaredOversize || size>limit){tooLarge=true;chunks.length=0;continue;}
           if (controller.signal.aborted) throw failure(504, 'REQUEST_TIMEOUT');
           chunks.push(chunk);
         }
+        if(tooLarge)throw failure(413,'PAYLOAD_TOO_LARGE');
         const body = Buffer.concat(chunks);
         if (json && body.length) {
           let decoded = body;

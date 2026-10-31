@@ -1,3 +1,4 @@
+import {checkIngress} from './ingress-checks.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 import {
   checkPublishedVersion,
@@ -112,11 +113,7 @@ try {
     await check('live-ingress-parser', async () => {
       const metadata=JSON.parse(await readFile('ingress-deployment.json','utf8'));
       if(metadata.version!==expected.version || metadata.commit!==expected.commit || !metadata.revision || metadata.parserBoundary!=='passed')throw Error('Ingress revision not verified');
-      for(const body of ['{','null']){
-        const response=await fetch('https://sales-drone-avinya.firebaseapp.com/api/v1/leads',{method:'POST',headers:{'Content-Type':'application/json'},body,redirect:'error',signal:AbortSignal.timeout(15000)});
-        const value=await response.json();
-        if(response.status!==400 || value.error?.code!=='BAD_JSON' || !value.error.requestId || response.headers.get('x-app-version')!==expected.version || response.headers.get('cache-control')!=='no-store')throw Error('Live parser contract mismatch');
-      }
+      await checkIngress('https://sales-drone-avinya.firebaseapp.com',expected);
     });
     await check('spa-security-headers',async()=>{
       for(const path of ['/','/leads','/settings']){

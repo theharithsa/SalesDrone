@@ -48,7 +48,7 @@ References: [Functions Framework parser](https://github.com/GoogleCloudPlatform/
 [Hosting Cloud Run rewrites](https://firebase.google.com/docs/hosting/cloud-run).
 
 Runtime resources: one CPU, 1 GiB, concurrency 2, min 0/max 3 instances, 75-second
-platform timeout and a 65-second application deadline. CPU remains allocated while
+platform timeout and a 55-second application deadline. CPU remains allocated while
 an instance is alive to permit bounded post-response OTel flushing. This adds a
 separate scale-to-zero Cloud Run workload; it is not a free-tier guarantee. The
 private build-source bucket expires build archives after seven days, without
@@ -62,3 +62,8 @@ style support. SPA header routes plus an index meta policy cover fallback paths;
 reserved Firebase Auth helpers keep provider behavior. API docs retain their
 stricter separate policy. A local report-only/enforced probe is separate from
 Google sign-in and live RUM acceptance.
+
+Oversized supported bodies are drained without buffering up to the 32 MiB HTTP/1
+platform ceiling before returning 413, so closing during upload does not hide the
+envelope. Larger wire/framing errors remain outside the application contract. The
+55-second deadline precedes Hosting’s 60-second limit.

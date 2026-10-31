@@ -7,7 +7,8 @@
       "ownerSkill": "skills/salesdrone-api-ingress/SKILL.md",
       "automatedTests": [
         "services/ingress/test/gateway.test.js",
-        "tests/deployment-outcome.test.ts"
+        "tests/deployment-outcome.test.ts",
+        "services/ingress/test/telemetry.test.js"
       ],
       "manualCases": [
         {
