@@ -795,15 +795,16 @@ test('archive timeline failure rolls back the lead and every linked write',async
 test('stage and detail edits retain shared imported contacts; newly acquired duplicate contacts stay blocked', async () => {
   const s = setup();
   await bootstrap(s);
+  await s.store.set(path('settings','fields'),{version:1,values:{stage:['New','Intro','Samples Given']}});
   const first = (await s.call('admin', 'post', '/leads', lead(80), randomUUID()).expect(200)).body;
   const second = (await s.call('admin', 'post', '/leads', {...lead(80), name:'Separate synthetic enquiry', allowDuplicate:true}, randomUUID()).expect(200)).body;
   const third = (await s.call('admin', 'post', '/leads', lead(81), randomUUID()).expect(200)).body;
-  const edited = (await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:second.version,stage:'Qualified',company:'Changed company'}).expect(200)).body;
-  assert.equal(edited.stage,'Qualified');
+  const edited = (await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:second.version,stage:'Samples Given',company:'Changed company'}).expect(200)).body;
+  assert.equal(edited.stage,'Samples Given');
   assert.equal(edited.phone,second.phone);
   await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:edited.version,phone:third.phone}).expect(409);
   assert.equal((await s.store.get(path('leads',second.id))).version,edited.version);
-  await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:second.version,stage:'Won'}).expect(409);
+  await s.call('admin', 'patch', '/leads/'+second.id, {expectedVersion:second.version,stage:'Intro'}).expect(409);
   const {contactKeys} = await import('../src/leads.js');
   const sharedKey=contactKeys(edited)[0];
   assert.deepEqual(new Set((await s.store.get(path('dedupeKeys',sharedKey))).leadIds),new Set([first.id,second.id]));

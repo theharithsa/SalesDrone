@@ -968,7 +968,14 @@ export default function App() {
     setDashboardRefreshKey((k) => k + 1);
     const currentGeneration = generation.current;
     const currentDetail = detailEpoch.current;
-    await loadRef.current();
+    const [, fields] = await Promise.allSettled([
+      loadRef.current(),
+      demo ? Promise.resolve(null) : request('/field-options'),
+    ]);
+    if (currentGeneration !== generation.current) return;
+    if (fields.status === 'fulfilled') {
+      if (fields.value) setFieldOptions(fields.value);
+    } else setError((fields.reason as Error).message);
     if (selected && selectedIdRef.current === selected.id)
       try {
         const [l, a, t] = await Promise.all([

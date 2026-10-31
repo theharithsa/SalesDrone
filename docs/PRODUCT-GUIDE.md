@@ -54,7 +54,7 @@ AvinyaIntelligence uses reported workspace evidence. Insights are suggestions, n
 
 Changing the lead list, completing tasks or refreshing may update aggregates. If a brief seems stale, request another in manual mode. AI availability depends on the server configuration and provider.
 
-Sales stage remains explicitly selectable even when hidden from enquiry forms. Automatic still uses the visible-field fallback. Other available categories include configured built-ins and active custom text/dropdown fields. Missing values are a separate group. Select a concrete group to open matching Leads; up to 20 groups are shown and remaining values are combined as Other values. That aggregate and very long text groups have no direct filter. If a saved field is retired, a notice explains the fallback. Demo choices stay local.
+Sales stage remains explicitly selectable even when hidden from enquiry forms. Stage choices and chart groups use the Admin-configured list. After another session changes choices, use Refresh workspace to reload them. Automatic still uses the visible-field fallback. Other available categories include configured built-ins and active custom text/dropdown fields. Missing values are a separate group. Select a concrete group to open matching Leads; up to 20 groups are shown and remaining values are combined as Other values. That aggregate and very long text groups have no direct filter. If a saved field is retired, a notice explains the fallback. Demo choices stay local.
 
 ![Today: charts, insights and lead breakdown — synthetic demo only](../site/assets/screenshots/dashboard-stage-demo.jpg)
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "2.5.3",
-  "summary": "Restore explicit stage analytics, retained shared-contact edits and filled dialog-select geometry.",
+  "summary": "Restore dynamic Admin-configured stage analytics/edits, refresh shared field choices and align dialog dropdowns.",
   "modules": [
     "salesdrone-dashboard",
     "salesdrone-leads",
@@ -98,7 +98,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Focused synthetic browser cases and exact limits in docs/STAGE-EDIT-2.5.3-REVIEW.md. Phone/desktop selected stage and four dialog width/theme geometry cases passed; native popup keyboard automation failed and remains uncertified. New real Firestore case and targeted API regressions passed; no production data edits/backfill or broad repeated local suites. Publication/live evidence remains separate.",
+  "manualVerification": "Focused synthetic browser cases and exact limits in docs/STAGE-EDIT-2.5.3-REVIEW.md. Phone/desktop selected stage and four dialog width/theme geometry cases passed; native popup keyboard automation failed and remains uncertified. New real Firestore case and targeted API regressions passed; no production data edits/backfill or broad repeated local suites. Publication/live evidence remains separate. The updated targeted emulator case replaces Admin stage choices, saves a shared-contact lead to custom values, replaces an option again and verifies current chart counts. Refresh workspace reloads schema with account-generation protection. No historical backfill requested.",
   "screenshots": [
     "dashboard-stage-demo.jpg",
     "dashboard-stage-mobile-demo.jpg",
