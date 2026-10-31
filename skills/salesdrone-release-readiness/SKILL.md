@@ -61,3 +61,5 @@ For verified unpublished recovery, impact coverage uses the proven prior publish
 commit rather than only the index-fix PR base. The live evidence gate runs first.
 
 The supported API now also requires the registered Cloud Run ingress identity/parser checks before Hosting cutover and live parser probes afterward. CSP source review must preserve Google/App Check/RUM and managed HSTS. Do not close #30 using only inner Express tests.
+
+If Functions already activated but Hosting was held, index-only recovery is ineligible. Preserve the failed deployment and plan a new forward PATCH milestone/issue before bumping; never recycle a partially deployed version. Shared managed-health validation must precede Hosting cutover.

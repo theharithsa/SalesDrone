@@ -50,3 +50,5 @@ cover IME/Shift-Enter and literal evidence rendering. Include short-window/zoom 
 sheet geometry; document overflow alone cannot establish dialog bounds or focus.
 
 Ingress transport cases run in npm test and CI with individual receipts. Use real HTTP servers for pre-parser rejection, compression bounds, auth/binary preservation, upstream failures and timeouts; live Hosting probes are separate. Archives/correction/cancellation tests include Firestore restoration with no task resurrection.
+
+Managed ingress regression includes shared non-reserved health, safe HTML/status rejection and exact version/SHA checks. Keep local-container packaging proof distinct from live Cloud Run routing; all five denial/parser cases remain required before Hosting cutover.

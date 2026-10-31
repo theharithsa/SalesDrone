@@ -102,3 +102,5 @@ OneAgent/host agent, tenant SLO/alert policy or IAM privilege is implied by this
 workflow. Add such systems only for a concrete supported requirement and the
 appropriate authorization. All-signal validation is bounded by available query,
 RUM/session and tenant configuration evidence, not asserted from successful HTTP.
+
+Keep operational ingress health on the shared non-reserved path, with its own bounded route label. A provider HTML/status failure is failed readiness, never an ingest or app success. Preserve partial deployment history when the forward patch completes rollout.

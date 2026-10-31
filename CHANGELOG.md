@@ -11,9 +11,22 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.2] - 2026-11-01
+
+Milestone #12, issue #106: complete the six-fix milestone #6 rollout from PR #104.
+
+### Fixed
+- Move ingress identity checks from Cloud Run's reserved `/healthz` path to shared `/ingress-health`. Reject provider HTML/status and mismatched version/SHA safely before Hosting cutover.
+- Complete safe archive restoration, author/Admin corrections, outreach-only cancellation, SPA CSP and pre-parser ingress normalization introduced in the partially activated 2.6.1 candidate below.
+
+### Delivery history
+- The first 2.6.1 attempt deployed the five Functions and ingress, then stopped at the managed health-path check before Hosting. Hosting stayed on 2.6.0 and no 2.6.1 Git tag/release was published. This forward patch preserves that history and all parser, security, revision and telemetry gates.
+- All five unauthenticated transport probes passed against the deployed 2.6.1 ingress during diagnosis. Tenant searches remain separate from HTTP receipts; the configured CLI OAuth credential is missing.
+
 ## [2.6.1] - 2026-11-01
 
-Milestone #6: correctness and security fixes (#4, #14, #15, #21, #27, #30).
+Milestone #6: correctness and security fixes (#4, #14, #15, #21, #27, #30). This candidate was partially activated but not published as an app release; the completed rollout is 2.6.2.
 
 ### Fixed
 - Restore archived leads from Settings with current access/version checks, retained contact ownership and suppression, an attributed timeline entry and no restarted outreach. Accessible archived duplicates point to Archives without disclosing inaccessible records.

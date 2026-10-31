@@ -86,3 +86,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
 
 Public release summaries include safe Archives restoration, author/Admin correction policy and the independently deployed API ingress before Hosting cutover. Keep README app version current; engineering ingress limits and native-provider boundaries belong in API-INGRESS.md. Preserve historical screenshot/release identities.
+
+Record partially activated deployment history and the forward repair explicitly in changelog/release notes. Unchanged UI captures retain their original reviewed candidate version/hash; operational health fixes do not authorize relabelling images.

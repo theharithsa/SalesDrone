@@ -15,6 +15,11 @@
           "id": "INGRESS-01",
           "expected": "Malformed/oversized JSON is rejected before managed parsing; auth and binary uploads retain their contracts.",
           "fixture": "synthetic local transport; read-only live parser/denial probes; no customer writes"
+        },
+        {
+          "id": "INGRESS-02",
+          "expected": "The shared non-reserved operational health path returns exact version/SHA; managed HTML or stale identities hold Hosting cutover.",
+          "fixture": "synthetic local server plus read-only deployed ingress identity; no credentials/customer data"
         }
       ]
     },

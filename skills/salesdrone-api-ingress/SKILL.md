@@ -52,3 +52,5 @@ backend compatibility for rollback; never roll back customer data.
 
 Drain supported oversized wire bodies without buffering (up to the platform ceiling)
 before returning 413. Keep the application deadline below Hosting's 60 seconds.
+
+Use the shared HEALTH_PATH `/ingress-health`; never `/healthz` or other Cloud Run reserved paths. Check status/content type before JSON, then exact version/SHA. Provider HTML must hold Hosting cutover. Separate this operational route from API request metrics. See issue #106 and API-INGRESS.md for the first managed-boundary failure.

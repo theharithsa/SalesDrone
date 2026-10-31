@@ -100,3 +100,5 @@ For approval promotion and unpublished recovery, follow [the operational referen
 Plan the versioned GitHub milestone and assign scoped issues before the candidate bump. Use release:plan; release.mjs rechecks the real milestone and preserves its impact plan. Keep the same version through local review. CI validates PR coverage and requires completed milestone issue states before main publication. See docs/RELEASE-GOVERNANCE.md; unfinished old issues are not completion evidence.
 
 Deploy/verify ingress after Functions and before Hosting cutover; require its revision/parser evidence alongside all five Functions. Follow [API-INGRESS.md](../../docs/API-INGRESS.md).
+
+For managed health and partial-rollout handling, read [operations](references/operations.md).

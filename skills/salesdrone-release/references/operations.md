@@ -31,3 +31,5 @@ Unpublished candidate recovery is bound to the exact failed base/run/deploy job,
 skipped Functions/Hosting, older live version/SHA and absent candidate tag/release.
 check-release verifies this with read-only GitHub/Hosting evidence; the record cannot
 authorize another base or published maintenance. See candidate-recovery.mjs/tests.
+
+Ingress readiness uses shared /ingress-health, avoiding Cloud Run reserved suffixes. Non-JSON provider errors hold cutover. Functions already activated requires a forward patch with its planned issue/milestone; the index-only recovery exception does not apply.
