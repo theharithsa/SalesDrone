@@ -427,3 +427,20 @@ test('my leads does not accidentally restrict file ownership and file bytes stay
  const r=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'files',ownOnly:true})]},'my-lead-files','Show file metadata for my leads');assert.equal(r.answer.count,1);
  const rows=await store.query(path('assistantContributions'),{filters:[['requestId','==','my-lead-files:0']],limit:10});assert.ok(!JSON.stringify(rows).includes('PRIVATE-BINARY-PATH'));
 });
+
+test('business report ownership, transition scope and stale score masking are enforced before projection',async()=>{
+ const {store,raw}=await prepared();const rep=await raw.get(path('members','rep'));await raw.set(path('members','rep'),{...rep,capabilities:[...rep.capabilities,'hygiene:read']});
+ await store.run(tx=>{
+  tx.set(path('leads','score-lead'),sourceLead('score-lead',{version:3}));
+  tx.set(path('leadScores','score-lead'),{id:'score-lead',status:'Ready',sourceVersion:1,score:99,band:'STALE-BAND',version:1});
+  tx.set(path('hygieneScans','other-report'),{id:'other-report',ownerUid:'other',status:'Completed',findings:99});
+  tx.set(path('leadTransitions','transition'),{id:'transition',leadId:'score-lead',actorUid:'rep',from:'New',to:'Supplied',reason:'Recorded stage change',createdAt:at});
+ });
+ const {businessRecord}=await import('../src/business-records.js');const m=await researchMember(store,{uid:'rep'},['assistant:query']);
+ assert.equal(await businessRecord(store,m,'reports','other-report'),null);
+ const score=await businessRecord(store,m,'scores','score-lead');assert.equal(score.values.status,'Stale');assert.equal(score.values.score,null);assert.equal(score.values.band,null);assert.ok(!JSON.stringify(score.result).includes('STALE-BAND'));
+ assert.equal((await businessRecord(store,m,'transitions','transition')).values.to,'Supplied');
+ await store.run(tx=>tx.set(path('leads','score-lead'),sourceLead('score-lead',{assignedToUid:'other'})));
+ assert.equal(await businessRecord(store,m,'transitions','transition'),null);
+ assert.equal(await businessRecord(store,m,'scores','score-lead'),null);
+});

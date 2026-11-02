@@ -59,7 +59,7 @@ export async function businessRecord(db,m,dataset,id){
   try{row=await readHygieneScan(db,{uid:m.uid},id);}catch(e){if(['NOT_FOUND','STALE_ACCESS'].includes(e.code))return null;throw e;}
  }
  if(dataset==='files'&&row.state!=='Ready')return null;
- if(dataset==='scores')row={...row,...scoreView(await readScoring(db),lead,row)};
+ if(dataset==='scores'){const view=scoreView(await readScoring(db),lead,row);row={...row,band:null,...view};}
  const personId=dataset==='tasks'?row.recipientUid:dataset==='files'?row.createdByUid:row.actorUid;
  const member=personId?await db.get(path('members',personId)):null;
  const person=typeof member?.name==='string'&&!member.name.includes('@')?member.name:'Not recorded';
