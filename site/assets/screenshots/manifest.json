@@ -572,42 +572,42 @@
   {
     "file": "hygiene-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "58ebb501f8c2f27fcde5c95dd275aaf70bb395db36bf37035b0498a067290787",
-    "capturedAt": "2026-10-31T14:28:24.978432+00:00",
-    "viewport": "1280 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1280 x 900",
-    "version": "2.6.0",
-    "review": "Visually/privacy reviewed. Fictional in-memory research/Admin fixture or isolated application demo; no live API, provider inference, customer records or credentials. Mobile captures show scrolled report/conversation results. Browser review is not physical-device or Safari certification."
+    "sha256": "b3847c685178277c6a9ed687b4d3c163f94f46a04263c5c963f00e41e4bdf7fd",
+    "capturedAt": "2026-11-02T07:32:29.407687+00:00",
+    "viewport": "1280 x 900 measured CSS pixels; 70% browser zoom with compensated viewport; full-page fixture capture",
+    "capturePixels": "65536 x 4292542531",
+    "version": "2.6.6",
+    "review": "Visually and privacy reviewed. Real component with development-only fictional Admin adapter; no live API/provider/customer data. Assistant shows one concise compound reply; Hygiene shows shared outer gutters. Native image dimensions differ from measured CSS viewport and may include full-page space. Dark/125% and short-window geometry checked separately; no physical-device/Safari certification."
   },
   {
     "file": "hygiene-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "e6b8f469d23b4ed9678ab552b6c446d75ea227b02a3c528eefcc45dfe7ffbf55",
-    "capturedAt": "2026-10-31T14:28:24.979751+00:00",
-    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 900",
-    "version": "2.6.0",
-    "review": "Visually/privacy reviewed. Fictional in-memory research/Admin fixture or isolated application demo; no live API, provider inference, customer records or credentials. Mobile captures show scrolled report/conversation results. Browser review is not physical-device or Safari certification."
+    "sha256": "e6c2971367c61dd7f641e82341f04b1a1fe3d158f082458200f929b14d641d11",
+    "capturedAt": "2026-11-02T07:32:29.432066+00:00",
+    "viewport": "390 x 900 measured CSS pixels; 70% browser zoom with compensated viewport; full-page fixture capture",
+    "capturePixels": "65536 x 4292542531",
+    "version": "2.6.6",
+    "review": "Visually and privacy reviewed. Real component with development-only fictional Admin adapter; no live API/provider/customer data. Assistant shows one concise compound reply; Hygiene shows shared outer gutters. Native image dimensions differ from measured CSS viewport and may include full-page space. Dark/125% and short-window geometry checked separately; no physical-device/Safari certification."
   },
   {
     "file": "assistant-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1b4ae80668ea72a9cdfd60d4800ab78ed088915ed31ab2e8f8a959eb4cb6d47b",
-    "capturedAt": "2026-11-02T06:12:32.785711+00:00",
-    "viewport": "1280 x 900 measured CSS pixels; 70% browser zoom, compensated viewport override",
-    "capturePixels": "1829 x 1286",
-    "version": "2.6.4",
-    "review": "Actual Assistant component with development-only fictional compound-answer adapter; light palette visually/privacy reviewed. Fictional counts and no live API/model/customer writes. Native capture pixels are distinct from measured CSS size. Short-window/page scrolling, dark palette and 125% app display scale reviewed separately; no physical-device/Safari certification."
+    "sha256": "38f1139fdb52e343fd8b2a66b3712f7e813fae66a6f9032c61dad5b5e36b64cc",
+    "capturedAt": "2026-11-02T07:32:29.341111+00:00",
+    "viewport": "1280 x 900 measured CSS pixels; 70% browser zoom with compensated viewport; full-page fixture capture",
+    "capturePixels": "65536 x 4292542531",
+    "version": "2.6.6",
+    "review": "Visually and privacy reviewed. Real component with development-only fictional Admin adapter; no live API/provider/customer data. Assistant shows one concise compound reply; Hygiene shows shared outer gutters. Native image dimensions differ from measured CSS viewport and may include full-page space. Dark/125% and short-window geometry checked separately; no physical-device/Safari certification."
   },
   {
     "file": "assistant-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "7aca7fe4080537dabd1275c21559052c746b7f2afd5f83a556a0206059ef637b",
-    "capturedAt": "2026-11-02T06:12:32.786056+00:00",
-    "viewport": "390 x 1100 measured CSS pixels; 70% browser zoom, compensated viewport override",
-    "capturePixels": "527 x 1571",
-    "version": "2.6.4",
-    "review": "Actual Assistant component with development-only fictional compound-answer adapter; light palette visually/privacy reviewed. Fictional counts and no live API/model/customer writes. Native capture pixels are distinct from measured CSS size. Short-window/page scrolling, dark palette and 125% app display scale reviewed separately; no physical-device/Safari certification."
+    "sha256": "c39b83935c37f8f2f7d5f75e374cd90098f102899a78a3d945dc50cb9c68f1e3",
+    "capturedAt": "2026-11-02T07:32:29.367267+00:00",
+    "viewport": "390 x 1100 measured CSS pixels; 70% browser zoom with compensated viewport; full-page fixture capture",
+    "capturePixels": "65536 x 4292542531",
+    "version": "2.6.6",
+    "review": "Visually and privacy reviewed. Real component with development-only fictional Admin adapter; no live API/provider/customer data. Assistant shows one concise compound reply; Hygiene shows shared outer gutters. Native image dimensions differ from measured CSS viewport and may include full-page space. Dark/125% and short-window geometry checked separately; no physical-device/Safari certification."
   },
   {
     "file": "research-settings-demo.jpg",

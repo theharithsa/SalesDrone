@@ -15,6 +15,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.6] - 2026-11-02
+
+### Fixed
+- Show compound Lead Assistant results in one conversational reply, with scope and supporting details tucked into an optional disclosure. Preserve partial/setup messages and independently paged matching lists.
+- Restore the shared responsive page gutters for Lead Hygiene so headings, options and report panels align inside the workspace.
+
 ## [2.6.5] - 2026-11-02
 
 ### Fixed

@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.6",
+  "summary": "Present compound Assistant insights in one natural reply and restore responsive Lead Hygiene page gutters.",
+  "modules": [
+    "salesdrone-lead-assistant",
+    "salesdrone-lead-hygiene",
+    "salesdrone-interface",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/REVIEW-2.6.6.md",
+    "docs/DESIGN-SYSTEM.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Presentation-only repair uses existing scoped answer/count/coverage fields; no new API, business event, provider call or permissions.",
+    "contractVersion": "1.24.0",
+    "permissions": "Existing creator-private conversation ownership and current membership/scope checks; stale answers remain redacted.",
+    "tests": [
+      "tests/assistant-presentation.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "unchanged",
+      "reason": "Existing safe Assistant request and release telemetry cover this UI-only presentation change. No new domain writes or emitted customer values.",
+      "tests": [
+        "tests/assistant-presentation.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "unchanged",
+      "reason": "Existing safe Assistant request and release telemetry cover this UI-only presentation change. No new domain writes or emitted customer values.",
+      "tests": [
+        "tests/assistant-presentation.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "unchanged",
+      "reason": "Existing safe Assistant request and release telemetry cover this UI-only presentation change. No new domain writes or emitted customer values.",
+      "tests": [
+        "tests/assistant-presentation.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "unchanged",
+      "reason": "Existing safe Assistant request and release telemetry cover this UI-only presentation change. No new domain writes or emitted customer values.",
+      "tests": [
+        "tests/assistant-presentation.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "unchanged",
+      "reason": "Existing safe Assistant request and release telemetry cover this UI-only presentation change. No new domain writes or emitted customer values.",
+      "tests": [
+        "tests/assistant-presentation.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review one Assistant answer per question, collapsed details, independent matching-result controls and source disclosures. Measure Hygiene workspace gutters and overflow at phone, tablet, laptop, desktop and wide sizes, short windows and 125% dark scale. Browser review uses fictional Admin fixtures at measured CSS dimensions with browser zoom compensation; no physical-device/Safari certification.",
+  "milestone": {
+    "number": 16,
+    "title": "v2.6.6 \u2014 Natural Assistant replies and research spacing",
+    "issues": [
+      115
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "assistant-demo.jpg",
+    "assistant-mobile-demo.jpg",
+    "hygiene-demo.jpg",
+    "hygiene-mobile-demo.jpg"
+  ]
+}

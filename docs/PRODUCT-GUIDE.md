@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.6.5
+Version 2.6.6
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -798,13 +798,13 @@ Admins and explicitly granted members within current lead scope
 
 2. Ask for matching leads, custom-field counts, calls next week, monthly conversions or patterns in failed-lead notes. Approval questions use actual configured fields and values.
 
-3. Review the cohort, reporting timezone, coverage and cited lead sources. Missing historical conversion dates remain unknown.
+3. Read the concise answer, then open Answer details for scope, dates and supporting context or Sources for cited records. Missing historical conversion dates remain unknown.
 
 4. Admins configure stage meanings and optionally enable the knowledge index under Settings → AvinyaIntelligence → Lead research.
 
 5. Open prior chats from history or delete your own chat. History remains until deletion, subject to current source access.
 
-6. Ask compound lead questions such as how many leads you have and how many are closed. Each part shows its own current-data answer or a focused setup explanation; exact counts follow your access and configured stage meanings.
+6. Ask compound lead questions such as how many leads you have and how many are closed. The Assistant combines results into one reply; exact counts follow your access and configured stage meanings. Missing setup or incomplete data is still explained.
 
 The Assistant answers only about workspace leads. It cannot browse the web, reveal secrets, run code, contact people or change records.
 
