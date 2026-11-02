@@ -416,6 +416,7 @@ test('business task aliases are explicit, overdue uses the due instant, and inva
  });
  const r=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'tasks',overdueOnly:true,filters:[{field:'state',operator:'equals',value:'Pending'}]})]},'overdue-business','Show open overdue tasks');assert.equal(r.answer.count,1);
  const {validateBusinessPlan,matchesBusiness}=await import('../src/business-records.js');
+ assert.equal(validateBusinessPlan(toolPlan({tool:'query_business_records',dataset:'tasks'}),null,'Show tasks','Asia/Kolkata').ownOnly,false);
  const p=toolPlan({tool:'query_business_records',dataset:'tasks',filters:[{field:'dueAt',operator:'before',value:'2026-02-30'}]});
  assert.throws(()=>validateBusinessPlan(p,null,'Before 2026-02-30','Asia/Kolkata'),e=>e.code==='AGENT_CLARIFY');
  assert.throws(()=>validateBusinessPlan({...p,filters:[],selectFields:['secret']},null,'Show tasks','Asia/Kolkata'),e=>e.code==='AGENT_CLARIFY');

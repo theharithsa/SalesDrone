@@ -34,7 +34,7 @@ export function validateBusinessPlan(plan,window,question,timezone){
   if(type==='date'&&(!/^\d{4}-\d{2}-\d{2}$/.test(f.value)||!Number.isFinite(Date.parse(f.value+'T00:00:00Z'))||new Date(f.value+'T00:00:00Z').toISOString().slice(0,10)!==f.value))throw new AppError(400,'AGENT_CLARIFY','Specify the recorded calendar date as YYYY-MM-DD.');
   if(type==='number'&&!Number.isFinite(Number(f.value)))throw new AppError(400,'AGENT_CLARIFY','Specify a valid numeric value.');
  }
- const ownOnly=plan.ownOnly&&!( /\bmy (?:accessible )?leads\b/i.test(question)&&! /\b(my tasks|my calls|my notes|my imports|my files|assigned to me|by me|I logged|I uploaded)\b/i.test(question));
+ const ownOnly=Boolean(plan.ownOnly)&&!( /\bmy (?:accessible )?leads\b/i.test(question)&&! /\b(my tasks|my calls|my notes|my imports|my files|assigned to me|by me|I logged|I uploaded)\b/i.test(question));
  return {...plan,ownOnly,window,timezone};
 }
 export async function businessRecord(db,m,dataset,id){
