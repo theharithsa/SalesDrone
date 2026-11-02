@@ -18,6 +18,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.7.1] - 2026-11-02
+
+### Fixed
+- Document signed pagination and the mandatory retry header on shared lead task endpoints in Swagger, preserving typed task responses. Runtime task permissions and behaviour are unchanged.
+
 ## [2.7.0] - 2026-11-02
 
 ### Added

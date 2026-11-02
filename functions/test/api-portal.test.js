@@ -88,6 +88,9 @@ test('shared task routes publish the bounded Task page and strict versioned muta
  const spec=JSON.parse(await read('docs/openapi.json'));
  const readOp=spec.paths['/api/v1/leads/{id}/tasks'].get;
  assert.ok(JSON.stringify(readOp.responses['200']).includes('Task'));
+ assert.deepEqual(readOp.parameters.filter(p=>p.in==='query').map(p=>p.name).sort(),['cursor','limit','state']);
+ assert.equal(readOp.parameters.find(p=>p.name==='limit').schema.maximum,100);
  const change=spec.paths['/api/v1/leads/{id}/tasks/{taskId}'].patch;
  assert.equal(change.requestBody.content['application/json'].schema.$ref,'#/components/schemas/SharedTaskPatch');
+ const retry=change.parameters.find(p=>p.name==='Idempotency-Key');assert.equal(retry.in,'header');assert.equal(retry.required,true);assert.equal(retry.schema.format,'uuid');
 });

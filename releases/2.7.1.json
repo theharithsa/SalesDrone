@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "version": "2.7.1",
+  "summary": "Correct shared lead task Swagger pagination and mandatory retry-header declarations.",
+  "modules": [
+    "salesdrone-api-integrations",
+    "salesdrone-tasks-reminders"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "changed",
+    "reason": "Correct documentation-only pagination and UUID retry header declarations for existing shared lead task behavior. Preserve typed Task responses and unchanged authorization.",
+    "contractVersion": "1.26.1",
+    "permissions": "No permission changes: Google/App Check, current lead read/edit scope and runtime version/replay guards remain authoritative.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Inspect generated public contract parameters and typed responses. No visual UI or business behavior changes; prior reviewed synthetic captures remain historical. Production version/contract/denial and telemetry are verified separately.",
+  "milestone": {
+    "number": 19,
+    "title": "v2.7.1 — Shared task contract correction",
+    "issues": [
+      122
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

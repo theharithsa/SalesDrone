@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.7.0**, OpenAPI contract **1.26.0**. All application operations
+Application release **v2.7.1**, OpenAPI contract **1.26.1**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -317,12 +317,14 @@ remain outside this normalized Hosting contract. No authentication is bypassed.
 
 Completed answers may contain `parts` (one to four independent answer objects). Each part carries its own count, current-access coverage, grouping, sources or focused clarification. `GET /api/v1/lead-assistant/requests/{id}/leads?part=0` selects the zero-based result set; valid indices are 0–3 and must exist. Omit part for existing single-answer requests. Non-list or stale results return 409; invalid part returns 400. Signed cursors are bound to identity, source epoch, request and selected part. Membership, field/outcome settings and task-source checks apply to the whole answer. No source mutation is available.
 
-## Current lead context in task lists (1.26.0)
+## Current lead context in task lists (1.26.1)
 
 GET `/api/v1/tasks` adds an optional `lead` summary containing only `{id, name, company}`, or null for personal reminders. The summary is joined from current lead records after recipient and current lead-scope checks, independent of the browser’s paginated Leads collection. Unavailable/out-of-scope linked tasks remain excluded. Cursor, page bounds, ordering, permissions and errors are unchanged; other Task responses may omit the summary. The existing PATCH task operation still requires the current version and task owner, and atomically replaces versioned reminder delivery work. UI rescheduling forwards its stable idempotency key. No contact details are added to this summary or telemetry.
 
-## Shared lead work and Assistant business reads (1.26.0)
+## Shared lead work and Assistant business reads (1.26.1)
 
 `GET /leads/{id}/tasks` requires `leads:read` and current lead scope. It uses bounded signed-cursor pagination and optional state, returning current responsible member id/name plus `sharedLeadContext` and `canManage`. It never includes unlinked personal reminders. `PATCH /leads/{id}/tasks/{taskId}` requires `leads:edit`, current lead scope, expectedVersion and Idempotency-Key. Supply either state Completed or a new dueAt (optional timezone). It only changes Pending tasks belonging to that lead; stale versions conflict and terminal tasks return TASK_FINISHED. Shared editors cannot delete, retitle or reassign another recipient's task. Existing /tasks remains recipient-oriented and notification delivery is unchanged.
 
 Assistant queries still require Google membership, assistant:query and current lead access. The model proposes a static read plan; the server authorizes each source record and validates fields, literal filters, dates and projections. Supported sources are lead tasks (not personal reminders), notes, calls, recorded stage transitions, import job summaries (imports:read plus existing job sharing), the requester's Hygiene reports (hygiene:read), Ready attachment metadata (not file bodies), and current score views. Existing lead-field counts and note RAG remain available. Exact scans page 100 records at a time, capped at 25,000 source records; reaching that limit is explicitly Partial. Up to 100 groups plus overflow are reported. Matching-record pages reauthorize source versions and return only server-owned links. Source/access changes invalidate saved answers. No credentials, private chats, account records, original workbooks or arbitrary collection queries are exposed to Gemini.
+
+Contract 1.26.1 corrects Swagger parameter declarations for shared lead tasks: GET exposes limit/cursor/state and PATCH exposes the required UUID Idempotency-Key. These inputs were already enforced at runtime; no route, permission or task behavior changed.
