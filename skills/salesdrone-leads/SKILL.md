@@ -98,3 +98,5 @@ When PATCH retains an existing normalized contact key, allow other existing owne
 Stage edits validate against current Admin-configured values, including custom replacements. Never hardcode STAGES in edit controls. Refresh workspace reloads field options with identity-generation protection so another session’s changes can be picked up.
 
 Archive/restore uses current leads:edit scope and expectedVersion. Restore retains suppression, assignment, stage and shared contact owners, repairs missing self references and rejects newly acquired conflicts. Record one restore activity and committed restored lifecycle event; never reschedule cancelled outreach. DUPLICATE_ARCHIVED is disclosed only when every matching source is accessible and archived. Test app.test.js, archived-leads.test.js and emulator.integration.js.
+
+Lead headers use LeadHeaderContext to wrap company/Independent enquiry and a masked monospace tel link. Shared lead Tasks exposes responsibility and completion to current lead editors; personal reminders are excluded. Regress header links, shared task versions and current access before publishing.

@@ -9,3 +9,5 @@ Assistant captures should show one natural compound reply and the collapsed Answ
 Assistant compound answers preserve each requested part, current-state scope and available facts even if another part needs setup. Refresh assistant desktop/mobile captures with the reported total/closed question and fictional counts. Record measured CSS viewport and actual capture pixels, including browser zoom compensation. Do not relabel other historical screenshots.
 
 Task list captures show the linked Lead column and direct Reschedule action. Phone captures stack lead name/company and time above the action. Use fictional task/lead summaries, and distinguish preview-only reschedule updates from server persistence.
+
+Explain shared lead Tasks separately from personal Tasks: current lead readers see responsibility; lead editors complete/reschedule Pending tasks; original recipient still receives notifications. Show header phone tel links. Describe Assistant business-source coverage and metadata-only file/import limits honestly; update fictional lead header/task captures.

@@ -142,7 +142,7 @@ Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/pr
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
-The full lead page opens in **All**: loaded activity and review information. Your private task list stays in **Tasks**. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
+The full lead page opens in **All**: loaded activity and review information. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
 
 **v1.6.2** standardized Dynatrace CloudEvents delivery and added a sunrise/sunset theme control. [Book mode is available in v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
 

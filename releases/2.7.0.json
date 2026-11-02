@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "version": "2.7.0",
+  "summary": "Shared lead work, tappable header contacts and scoped read-only Assistant business queries.",
+  "modules": [
+    "salesdrone-leads",
+    "salesdrone-interface",
+    "salesdrone-people-permissions",
+    "salesdrone-lead-assistant",
+    "salesdrone-product-guide",
+    "salesdrone-testing",
+    "salesdrone-tasks-reminders"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/REVIEW-2.7.0.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "access"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Add lead-scoped shared task list and versioned completion/rescheduling; extend server-validated Assistant read plans without arbitrary model database access.",
+    "contractVersion": "1.26.0",
+    "permissions": "Current lead readers see linked tasks; current lead editors complete/reschedule Pending work. Independent source policies gate Assistant business datasets. Personal reminders, chats, credentials and account data stay private.",
+    "tests": [
+      "functions/test/custom-fields-and-tasks.test.js",
+      "functions/test/lead-research.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse allowlisted route/request telemetry, atomic task mutation outboxes and Assistant job lifecycle signals. No customer fields, prompts or task titles enter telemetry. Business epochs invalidate source-derived results; release CI emits actual case outcomes.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Reuse allowlisted route/request telemetry, atomic task mutation outboxes and Assistant job lifecycle signals. No customer fields, prompts or task titles enter telemetry. Business epochs invalidate source-derived results; release CI emits actual case outcomes.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Reuse allowlisted route/request telemetry, atomic task mutation outboxes and Assistant job lifecycle signals. No customer fields, prompts or task titles enter telemetry. Business epochs invalidate source-derived results; release CI emits actual case outcomes.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Reuse allowlisted route/request telemetry, atomic task mutation outboxes and Assistant job lifecycle signals. No customer fields, prompts or task titles enter telemetry. Business epochs invalidate source-derived results; release CI emits actual case outcomes.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Reuse allowlisted route/request telemetry, atomic task mutation outboxes and Assistant job lifecycle signals. No customer fields, prompts or task titles enter telemetry. Business epochs invalidate source-derived results; release CI emits actual case outcomes.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/lead-research.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review fictional header phone links and shared task responsibility/completion/rescheduling across measured responsive widths and dark/large-text states. Verify source policies with unit and real Auth/Firestore tests. Production verification remains read-only; browser emulation is not physical-device or Safari certification.",
+  "milestone": {
+    "number": 18,
+    "title": "v2.7.0 — Shared lead work and scoped business insights",
+    "issues": [
+      119,
+      120
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "lead-workspace-demo.jpg",
+    "lead-overlay-demo.jpg",
+    "lead-header-mobile-demo.jpg",
+    "lead-tasks-demo.jpg"
+  ]
+}

@@ -1,3 +1,4 @@
+import {businessCatalog} from './business-records.js';
 import {
   AgentPlan,
   AgentBatchPlan,
@@ -8,7 +9,7 @@ import {
   agentAnswer,
   matchesAgentLead,
 } from "./lead-assistant-tools.js";
-import { RESEARCH_TASK_EPOCH_PATH } from "./lead-research-store.js";
+import { RESEARCH_TASK_EPOCH_PATH, RESEARCH_BUSINESS_EPOCH_PATH } from "./lead-research-store.js";
 import { readFieldOptions } from "./field-options.js";
 import { z } from "zod";
 import { AppError } from "./contracts.js";
@@ -42,7 +43,7 @@ const LegacyPlan = z
   })
   .strict();
 export const AssistantPlan = z.union([AgentBatchPlan, AgentPlan, LegacyPlan]);
-const taskSensitive=r=>[r.agentPlan,...(r.agentSteps||[]).map(s=>s.plan)].some(p=>['find_own_followups','read_hygiene_findings'].includes(p?.tool));
+const taskSensitive=r=>[r.agentPlan,...(r.agentSteps||[]).map(s=>s.plan)].some(p=>['find_own_followups','read_hygiene_findings','query_business_records'].includes(p?.tool));
 export const AssistantThemes = z
   .object({
     themes: z
@@ -148,6 +149,7 @@ export async function createQuestion(
     access: c.access,
     epoch: currentEpoch,
     taskEpoch: (await tx.get(RESEARCH_TASK_EPOCH_PATH))?.version || 0,
+    businessEpoch: (await tx.get(RESEARCH_BUSINESS_EPOCH_PATH))?.version || 0,
     settingsVersion: config.version,
     fieldsVersion: fields.version,
     traceparent,
@@ -181,6 +183,7 @@ export async function readAssistantRequest(store, identity, id) {
     throw new AppError(409, "STALE_ACCESS", "Access changed. Ask again.");
   if (
     r.epoch !== (await scanEpoch(store)) ||
+    (taskSensitive(r)&&r.businessEpoch!==((await store.get(RESEARCH_BUSINESS_EPOCH_PATH))?.version||0)) ||
     (taskSensitive(r) &&
       r.taskEpoch !==
         ((await store.get(RESEARCH_TASK_EPOCH_PATH))?.version || 0)) ||
@@ -198,7 +201,7 @@ export async function readAssistantRequest(store, identity, id) {
         text: "Lead data or reporting settings changed. Ask again for current results.",
       },
     };
-  return r;
+  return r.agentSteps?.some(s=>s.plan?.tool==='query_business_records')||r.agentPlan?.tool==='query_business_records' ? {...r,scanned:r.accessibleScanned||0,after:null} : r;
 }
 async function context(tx, r) {
   const m = await researchMember(
@@ -212,6 +215,7 @@ async function context(tx, r) {
   const config = await readResearchSettings(tx);
   if (
     (await scanEpoch(tx)) !== r.epoch ||
+    (taskSensitive(r)&&r.businessEpoch!==((await tx.get(RESEARCH_BUSINESS_EPOCH_PATH))?.version||0)) ||
     (taskSensitive(r) &&
       r.taskEpoch !==
         ((await tx.get(RESEARCH_TASK_EPOCH_PATH))?.version || 0)) ||
@@ -267,7 +271,7 @@ export async function processAssistantRequest({
         const parts=[...(current.partAnswers||[]),answer];
         const nextIndex=r.partIndex+1,next=r.agentSteps[nextIndex];
         if(next){
-          tx.set(path('assistantRequests',id),{...current,partAnswers:parts,partIndex:nextIndex,agentPlan:next.plan,phase:!next.plan||next.plan.tool==='retrieve_evidence'?'Answer':'Tools',matched:0,scanned:0,groups:{},groupOverflow:0,after:null,version:current.version+1,updatedAt:now()});
+          tx.set(path('assistantRequests',id),{...current,partAnswers:parts,partIndex:nextIndex,agentPlan:next.plan,phase:!next.plan||next.plan.tool==='retrieve_evidence'?'Answer':'Tools',matched:0,scanned:0,accessibleScanned:0,limited:false,groups:{},groupOverflow:0,after:null,version:current.version+1,updatedAt:now()});
           return {processed:1};
         }
         answer=parts.length===1?{...parts[0],parts}:{
@@ -318,6 +322,7 @@ export async function processAssistantRequest({
       await provider.plan({
         question: r.question,
         history,
+        businessDatasets: businessCatalog(ctx.m),
         timezone: config.timezone,
         asOf: r.createdAt,
         fields: assistantFields(await readFieldOptions(store)),
@@ -328,9 +333,10 @@ export async function processAssistantRequest({
       }),
     );
     if(plan.steps){
-      if(plan.steps.some(p=>p.tool==='out_of_scope'))return publish({state:'OutOfScope',text:'I can only read and explain accessible lead data. I cannot answer general questions or change records.'});
+      if(plan.steps.some(p=>p.tool==='out_of_scope'))return publish({state:'OutOfScope',text:'I can read and explain SalesDrone business records within your access. I cannot answer general questions or change records.'});
       const fields=await readFieldOptions(store);
       const agentSteps=plan.steps.map(proposal=>{
+        if(proposal.tool==='query_business_records'&&!businessCatalog(ctx.m).some(d=>d.id===proposal.dataset))return {plan:null,answer:{state:'Clarify',text:'Your current permissions do not include that business data. Other permitted parts can still be answered.'}};
         const needed=proposal.tool==='find_own_followups'?'tasks:read':proposal.tool==='read_hygiene_findings'?'hygiene:read':null;
         if(needed&&!ctx.m.capabilities.includes(needed))return {plan:null,answer:{state:'Clarify',text:`${needed==='tasks:read'?'Task':'Hygiene'} read access is required for this part. Other accessible lead questions can still be answered.`}};
         if(proposal.tool==='clarify')return {plan:null,answer:{...agentClarification(proposal),fields:assistantFields(fields)}};
@@ -349,11 +355,12 @@ export async function processAssistantRequest({
         return {processed:1};
       });
     }
+    if(plan.tool==='query_business_records'&&!businessCatalog(ctx.m).some(d=>d.id===plan.dataset))return publish({state:'Clarify',text:'Your current permissions do not include that business data.'});
     if (plan.tool) {
       if (plan.tool === "out_of_scope")
         return publish({
           state: "OutOfScope",
-          text: "I can only read and explain accessible lead data. I cannot answer general questions or change records.",
+          text: "I can read and explain SalesDrone business records within your access. I cannot answer general questions or change records.",
         });
       if (plan.tool === "clarify")
         return publish({

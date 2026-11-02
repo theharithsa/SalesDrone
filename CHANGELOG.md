@@ -17,6 +17,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.7.0] - 2026-11-02
+
+### Added
+- Show a tappable phone number beside the company or Independent enquiry in lead headers.
+- Share lead-linked tasks with everyone who can read that lead, show the responsible member, and let lead editors complete or reschedule pending work. Personal reminders and delivery recipients stay private.
+- Extend the read-only Lead Assistant with permission-filtered business queries across lead tasks, notes, calls, stage changes, import summaries, personal Hygiene reports, file metadata and current scores. Private chats, reminders, credentials and account data are excluded; saved results are invalidated when source data or access changes.
+
 ## [2.6.7] - 2026-11-02
 
 ### Fixed

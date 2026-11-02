@@ -32,12 +32,15 @@ Task create/edit → atomic task+versioned delivery queue → reminders every mi
 Read the exact request/response/error schemas in [OpenAPI](../../docs/openapi.json)
 and the route handler in [app.js](../../functions/src/app.js) when changing an API.
 
+- GET /api/v1/leads/{id}/tasks
+- PATCH /api/v1/leads/{id}/tasks/{taskId}
+
 ## Data and invariants
 
 tasks, version-keyed reminderDeliveries, per-device deviceDeliveries; users/{uid}/notifications and devices.
 
 - Manual and automatic tasks use makeTask/queueTask and the same delivery contract. Task edits invalidate old versioned jobs.
-- Tasks are recipient-private: another Admin does not gain permission to edit/delete someone else’s lead-linked task. Deletion is soft and preserves audit.
+- Personal reminders and delivery remain recipient-private. Lead-linked tasks are readable by current lead readers through the lead-scoped API; lead editors may complete or reschedule Pending work with expectedVersion and a stable idempotency key. Recipient ownership still controls title edits and deletion; no shared reassignment or private-reminder exposure.
 - Store due instants with IANA timezone context; reject DST gaps/ambiguity and invalid/past timing according to current schemas.
 - Claim jobs transactionally, send FCM outside transactions, recheck recipient/membership/lead/suppression before every external send, and retry only failed devices.
 - Outreach stops for suppressed/review/archived/inaccessible leads; administrative tasks have separate rules. Never resurrect completed/deleted/stale work.
@@ -86,4 +89,4 @@ Duplicate reminders count a lead once. Task edits invalidate saved reminder resu
 
 Archive and single/batch reassignment query/cancel only Pending outreach tasks. Administrative tasks remain private and unchanged, with existing access/delivery eligibility. TASK_LIMIT counts cancellation work only. Missing historic task kinds are not guessed. Restore never resurrects cancelled outreach. Keep the leadId/state/kind/id index READY.
 
-Task lists return a minimal current authorized lead summary (id/name/company) after recipient/scope checks. Do not join names only from the browser's paginated Leads cache or persist copied names on tasks. TaskRow owns a linked Lead column, stacked context on narrow containers and direct Reschedule for Pending tasks. Personal reminders have no lead link. Retain task owner/version checks and stable reschedule idempotency keys. Regress privacy/current renames with custom-fields-and-tasks.test.js, actual Firestore integration and task-row.test.tsx; extract shared row styles without changing other lead-task cards.
+Task lists return a minimal current authorized lead summary (id/name/company) after recipient/scope checks. Do not join names only from the browser's paginated Leads cache or persist copied names on tasks. TaskRow owns a linked Lead column, stacked context on narrow containers and direct Reschedule for Pending tasks. Personal reminders have no lead link. Retain recipient ownership on legacy edits/deletion and lead-editor/version checks on shared completion/rescheduling, with stable idempotency keys. Regress privacy/current renames with custom-fields-and-tasks.test.js, actual Firestore integration and task-row.test.tsx; extract shared row styles without changing other lead-task cards.

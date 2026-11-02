@@ -13,7 +13,7 @@ test('published contract covers every route with explicit PAT or Google/App Chec
     ),
   ].map((m) => [m[1], m[2]]);
   endpoints.push(['get', '/me'], ['post', '/invitations/:id/accept']);
-  assert.equal(endpoints.length, 92);
+  assert.equal(endpoints.length, 94);
   for (const [method, url] of endpoints) {
     const op =
       spec.paths['/api/v1' + url.replace(/:([a-zA-Z]+)/g, '{$1}')][method];
@@ -82,4 +82,12 @@ test('credential portal is self-hosted, nonpersistent and restricted to its own 
       ),
     );
   }
+});
+
+test('shared task routes publish the bounded Task page and strict versioned mutation schema',async()=>{
+ const spec=JSON.parse(await read('docs/openapi.json'));
+ const readOp=spec.paths['/api/v1/leads/{id}/tasks'].get;
+ assert.ok(JSON.stringify(readOp.responses['200']).includes('Task'));
+ const change=spec.paths['/api/v1/leads/{id}/tasks/{taskId}'].patch;
+ assert.equal(change.requestBody.content['application/json'].schema.$ref,'#/components/schemas/SharedTaskPatch');
 });

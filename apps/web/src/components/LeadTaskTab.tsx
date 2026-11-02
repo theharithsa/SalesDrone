@@ -10,7 +10,7 @@ export default function LeadTaskTab({
 }: {
   leadId: string;
   refreshKey: number;
-  request: (p: string) => Promise<any>;
+  request: (p: string, method?:string, body?:any, key?:string) => Promise<any>;
   timezone: string;
   onOpen: (t: Task) => void;
 }) {
@@ -19,16 +19,25 @@ export default function LeadTaskTab({
     [state, setState] = useState(''),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
-  const epoch = useRef(0);
+  const epoch = useRef(0), completionKeys=useRef(new Map<string,string>());
+  const [changing,setChanging]=useState(false);
+  async function complete(task:Task){
+    const turn=epoch.current, keyId=task.id+':'+task.version;
+    let key=completionKeys.current.get(keyId);if(!key){key=crypto.randomUUID();completionKeys.current.set(keyId,key);}
+    setChanging(true);setError('');
+    try{await request('/leads/'+encodeURIComponent(leadId)+'/tasks/'+encodeURIComponent(task.id),'PATCH',{expectedVersion:task.version,state:'Completed'},key);if(turn===epoch.current){completionKeys.current.delete(keyId);setChanging(false);await load();}}
+    catch(e){if(turn===epoch.current)setError((e as Error).message);}
+    finally{if(turn===epoch.current)setChanging(false);}
+  }
   async function load(next?: string) {
     const current = ++epoch.current;
     setBusy(true);
     setError('');
     try {
-      const q = new URLSearchParams({ leadId, limit: '50' });
+      const q = new URLSearchParams({ limit: '50' });
       if (state) q.set('state', state);
       if (next) q.set('cursor', next);
-      const r = await request('/tasks?' + q);
+      const r = await request('/leads/' + encodeURIComponent(leadId) + '/tasks?' + q);
       if (current === epoch.current) {
         setItems((old) => (next ? [...old, ...r.items] : r.items));
         setCursor(r.nextCursor);
@@ -40,6 +49,7 @@ export default function LeadTaskTab({
     }
   }
   useEffect(() => {
+    setChanging(false);
     setItems([]);
     setCursor(null);
     void load();
@@ -51,8 +61,8 @@ export default function LeadTaskTab({
     <div className="lead-task-workspace">
       <div className="lead-task-toolbar">
         <div>
-          <h3>Your tasks for this lead</h3>
-          <p>Private to you, including completed and cancelled work.</p>
+          <h3>Tasks for this lead</h3>
+          <p>Shared with everyone who can access this lead.</p>
         </div>
         <label>
           Task status
@@ -73,17 +83,13 @@ export default function LeadTaskTab({
         <p>No tasks match this status. Use Remind me to add a follow-up.</p>
       ) : null}
       {items.map((t) => (
-        <button
-          className="lead-task task-work-card"
-          key={t.id}
-          onClick={() => onOpen(t)}
-        >
-          <span>
-            <strong>{t.title}</strong>
-            <small>{displayDate(t.dueAt, timezone)}</small>
-          </span>
-          <span className="task-state">{t.state}</span>
-        </button>
+        <div className="lead-task-shared-row" key={t.id}>
+          <button className="lead-task task-work-card" onClick={()=>onOpen(t)}>
+            <span><strong>{t.title}</strong><small>{displayDate(t.dueAt,timezone)}</small><small>Responsible: {t.responsible?.name || 'Member unavailable'}</small></span>
+            <span className="task-state">{t.state}</span>
+          </button>
+          {t.state==='Pending'&&t.canManage ? <button className="button" disabled={changing||busy} onClick={()=>void complete(t)}>Complete task</button> : null}
+        </div>
       ))}
       {cursor ? (
         <button

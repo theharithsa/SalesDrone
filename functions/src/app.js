@@ -1,3 +1,4 @@
+import {businessRecord} from './business-records.js';
 import { ResearchSettingsPatch, RESEARCH_SETTINGS_PATH, readResearchSettings, validateResearchSettings } from './lead-research-settings.js';
 import { researchMember, researchAccessKey } from './lead-research-access.js';
 import { ScanInput, ResearchVersion, scanEpoch, createHygieneScan, readHygieneScan, deleteHygieneScan } from './lead-hygiene.js';
@@ -106,6 +107,7 @@ import {
   AutomaticReminderAction,
   TaskInput,
   TaskPatch,
+  SharedTaskPatch,
   TaskDelete,
   GrantInput,
   MemberPatch,
@@ -278,7 +280,7 @@ export function createApp({
                 ]
               : url === '/imports'
                 ? ['limit', 'cursor', 'status', 'uploader', 'from', 'to']
-                : url === '/tasks'
+                : (url === '/tasks' || url === '/leads/:id/tasks')
                   ? ['limit', 'cursor', 'state', 'leadId']
                   : ['limit', 'cursor'];
         for (const [key, value] of Object.entries(req.query))
@@ -1039,6 +1041,7 @@ export function createApp({
     if(r.status!=='Completed'||!answer?.hasResults)throw new AppError(409,'RESULTS_UNAVAILABLE','Ask again for current completed lead results.');
     const m=await researchMember(store,req.identity,['assistant:query'],r.access);
     const result=await researchList(req,'assistantContributions',[['requestId','==',r.agentSteps?r.id+':'+part:r.id]],r.access,async row=>{
+      if(row.business){const current=await businessRecord(store,m,row.business.dataset,row.business.id);if(!current||current.version!==row.business.version)throw new AppError(409,'STALE_SOURCE','Business data changed. Ask again.');return current.result;}
       const lead=await store.get(path('leads',row.leadId));
       if(!canReadLead(m,lead)||lead.archived)throw new AppError(409,'STALE_SOURCE','Lead data changed. Ask again.');
       return row.lead;
@@ -1910,16 +1913,7 @@ export function createApp({
       { idempotent: true },
     );
   });
-  route('patch', '/tasks/:id', 'tasks:write', (req) => {
-    const input = parse(TaskPatch, req.body);
-    return mutate(req, 'tasks:write', async (tx, m) => {
-      const old = await readTask(tx, m, req.params.id);
-      if (old.recipientUid !== m.uid)
-        throw new AppError(
-          403,
-          'TASK_OWNER',
-          'Only the recipient can update this task',
-        );
+  async function applyTaskChange(tx, m, old, input) {
       assertVersion(old, input.expectedVersion);
       if (input.timezone) validateTimezone(input.timezone);
       const { expectedVersion, ...fields } = input;
@@ -1962,7 +1956,35 @@ export function createApp({
           });
       }
       return t;
+  }
+  route('patch', '/tasks/:id', 'tasks:write', (req) => {
+    const input = parse(TaskPatch, req.body);
+    return mutate(req, 'tasks:write', async (tx,m) => {
+      const old=await readTask(tx,m,req.params.id);
+      if(old.recipientUid!==m.uid)throw new AppError(403,'TASK_OWNER','Only the recipient can update this task');
+      return applyTaskChange(tx,m,old,input);
     });
+  });
+  route('get','/leads/:id/tasks','leads:read',async req=>{
+    await leadAccess(store,req.member,req.params.id);
+    const filters=[['leadId','==',req.params.id]];
+    if(req.query.state)filters.push(['state','==',String(req.query.state)]);
+    const page=await list(req,'tasks',filters,undefined,'dueAt','asc');
+    const rows=page.items.filter(t=>!t.deleted);
+    const ids=[...new Set(rows.map(t=>t.recipientUid))];
+    const members=await store.getAll(ids.map(id=>path('members',id)));
+    const names=new Map(ids.map((id,i)=>[id,typeof members[i]?.name==='string'&&!members[i].name.includes('@')?members[i].name:'Member unavailable']));
+    return {...page,items:rows.map(t=>({...t,responsible:{id:t.recipientUid,name:names.get(t.recipientUid)},sharedLeadContext:req.params.id,canManage:req.member.capabilities.includes('leads:edit')}))};
+  });
+  route('patch','/leads/:id/tasks/:taskId','leads:edit',req=>{
+    const input=parse(SharedTaskPatch,req.body);
+    return mutate(req,'leads:edit',async(tx,m)=>{
+      await leadAccess(tx,m,req.params.id);
+      const old=await readTask(tx,m,req.params.taskId);
+      if(old.leadId!==req.params.id)throw new AppError(404,'NOT_FOUND','Task not found');
+      if(old.state!=='Pending')throw new AppError(409,'TASK_FINISHED','Only pending tasks can be completed or rescheduled.');
+      return applyTaskChange(tx,m,old,input);
+    },{idempotent:true});
   });
   route('delete', '/tasks/:id', 'tasks:write', (req) => {
     const input = parse(TaskDelete, req.body);

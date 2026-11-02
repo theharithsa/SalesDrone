@@ -65,3 +65,5 @@ Task-list, research and one-reply Assistant/Hygiene capture guidance: [guide not
 Archives now exposes Restore lead to current lead editors. Explain preserved suppression/contact ownership, current version/scope and no restarted outreach. Corrections are original-author/Admin only. Refresh archives screenshots with fictional records and visible restore controls.
 
 Keep compound-answer coverage and historical capture metadata accurate; see the research guide notes.
+
+Shared lead-work and Assistant coverage: see [research guide notes](references/research.md).

@@ -146,7 +146,7 @@ for Firebase setup and SECURITY.md for deployment trust boundaries.
 
 Release readiness is the cross-module completion owner. Shared settings catalogs generate the full reference, and skill-tree.json routes prompts to the 21 module skills. CI validates impact plans and retains post-deployment/telemetry acceptance separately from manual and tenant-query evidence. See RELEASE.md.
 
-Browser lead routing uses /leads/{id} with history state and current API authorization. Desktop quick inspection is fixed above the unchanged table; full pages separate paginated conversations, recipient-private tasks and loaded-activity review. Product handbook JSON generates both Markdown and searchable public HTML. Changed-screen captures carry reviewed hashes and release versions; readiness validates those declared in the release plan.
+Browser lead routing uses /leads/{id} with history state and current API authorization. Desktop quick inspection is fixed above the unchanged table; full pages separate paginated conversations, shared lead-linked tasks and loaded-activity review. Product handbook JSON generates both Markdown and searchable public HTML. Changed-screen captures carry reviewed hashes and release versions; readiness validates those declared in the release plan.
 
 Settings mutations also persist per-control `settingsChanges` and atomic, chunked `settings.audit.committed` outbox records independently of OTel availability. Accepted export emits an allowlisted `settings.audit.delivered` log; values and secrets are excluded. See [settings audit coverage and delivery](SETTINGS-AUDIT.md) and the dedicated [Book mode module skill](../skills/salesdrone-book-mode/SKILL.md).
 
@@ -203,7 +203,7 @@ Dashboard presentation uses the effective configured grouping label throughout h
 
 Lead/activities writes atomically advance a source epoch and enqueue researchIndexJobs independently of telemetry. The existing leadIntelligence worker advances private hygieneScans/findings/evidence, assistantConversations/requests/contributions and bounded researchChunks backfill/update jobs, with a separate research time budget and failure boundary. Gemini embeddings (768 dimensions) feed ACL-prefiltered Firestore cosine queries; authoritative sources are rechecked before bounded prompts/citations. Counts use full deterministic authorized scans, never vector top-k. The app conservatively marks artifacts stale after source edits. Reset deletes derived collections and suppresses re-queueing. External direct database writes require explicit index rebuilding; all app writes use the shared wrapper.
 
-Research analytics and contact-index diagnostics use adapter field projections to keep read payloads bounded and avoid loading unrelated notes. Projected snapshots are excluded from known-before lifecycle comparisons. Private task changes have a separate Hygiene freshness epoch; they are never retrieved into Assistant context.
+Research analytics and contact-index diagnostics use adapter field projections to keep read payloads bounded and avoid loading unrelated notes. Projected snapshots are excluded from known-before lifecycle comparisons. Task changes have a separate freshness epoch. Lead-linked work follows current lead access in shared task and Assistant reads; unlinked personal reminders are never retrieved. Business-source changes have a separate monotonic epoch for Assistant invalidation.
 
 ## API transport boundary
 

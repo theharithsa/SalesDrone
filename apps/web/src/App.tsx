@@ -1,3 +1,4 @@
+import LeadHeaderContext from './components/LeadHeaderContext';
 import TaskRow from './components/TaskRow';
 import { Sparkles } from 'lucide-react';
 import './research.css';
@@ -280,6 +281,7 @@ export default function App() {
       (c: string) => c === 'imports:read' || c === 'imports:write',
     );
   const generation = useRef(0);
+  const sharedTaskCompletionKeys = useRef(new Map<string,string>());
   const leadActionsRoot = useRef<HTMLDivElement>(null);
   const leadMoreTrigger = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -539,6 +541,20 @@ export default function App() {
       const collection = parts[0],
         id = parts[1];
       let result: any = { ok: true };
+      if(collection==='leads'&&id&&parts[2]==='tasks') {
+        if(method==='GET') {
+          const params=new URLSearchParams(path.split('?')[1]);
+          const rows=d.tasks.filter(t=>t.leadId===id&&(!params.get('state')||t.state===params.get('state')));
+          return {items:rows.map(t=>({...t,responsible:{id:t.recipientUid||'demo',name:'Demo member'},sharedLeadContext:id,canManage:true})),nextCursor:null};
+        }
+        if(method==='PATCH') {
+          const task=d.tasks.find(t=>t.id===parts[3]&&t.leadId===id);
+          if(!task||task.version!==body.expectedVersion)throw Error('Task changed. Refresh and try again.');
+          const updated={...task,...body,version:task.version+1};
+          d={...d,tasks:d.tasks.map(t=>t.id===task.id?updated:t)};demoRef.current=d;setData(d);return updated;
+        }
+      }
+
       if (collection === 'archived-leads' && method === 'GET') {
         const params = new URLSearchParams(path.split('?')[1]);
         const offset = Number(params.get('cursor') || 0);
@@ -2330,7 +2346,7 @@ export default function App() {
                         <h2>
                           <LeadName name={selected.name} detail />
                         </h2>
-                        <p>{selected.company || 'Independent enquiry'}</p>
+                        <LeadHeaderContext company={selected.company} phone={selected.phone}/>
                         <div className="lead-header-score">
                           <span>Lead score</span>
                           <ScoreBadge
@@ -3455,7 +3471,7 @@ export default function App() {
             task={focusedTask}
             onCancel={() => setModal(null)}
             onSave={async (d, key) => {
-              await request('/tasks/' + focusedTask.id, 'PATCH', d, key);
+              await request(focusedTask.sharedLeadContext ? '/leads/'+encodeURIComponent(focusedTask.sharedLeadContext)+'/tasks/'+encodeURIComponent(focusedTask.id) : '/tasks/' + focusedTask.id, 'PATCH', d, key);
               await refresh();
               notify('Reminder rescheduled.');
             }}
@@ -3509,7 +3525,7 @@ export default function App() {
                 </button>
               </div>
             ) : null}
-            {focusedTask.state === 'Pending' && can('tasks:write') ? (
+            {focusedTask.state === 'Pending' && (focusedTask.sharedLeadContext ? focusedTask.canManage && can('leads:edit') : can('tasks:write')) ? (
               <div className="form-footer">
                 <button
                   className="button"
@@ -3521,8 +3537,17 @@ export default function App() {
                   className="button primary"
                   disabled={mutationBusy}
                   onClick={async () => {
-                    await taskChange(focusedTask, { state: 'Completed' });
-                    setModal(null);
+                    if (!focusedTask.sharedLeadContext) { await taskChange(focusedTask,{state:'Completed'});setModal(null);return; }
+                    const operation=focusedTask.id+':'+focusedTask.version;
+                    let key=sharedTaskCompletionKeys.current.get(operation);
+                    if(!key){key=crypto.randomUUID();sharedTaskCompletionKeys.current.set(operation,key);}
+                    setMutationBusy(true);
+                    try {
+                      await request('/leads/'+encodeURIComponent(focusedTask.sharedLeadContext)+'/tasks/'+encodeURIComponent(focusedTask.id),'PATCH',{expectedVersion:focusedTask.version,state:'Completed'},key);
+                      sharedTaskCompletionKeys.current.delete(operation);
+                      await refresh();setModal(null);notify('Task completed.');
+                    } catch(e) {setError((e as Error).message);} finally {setMutationBusy(false);}
+
                   }}
                 >
                   Complete task <Check size={15} />

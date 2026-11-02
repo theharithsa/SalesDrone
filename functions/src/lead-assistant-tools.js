@@ -1,3 +1,4 @@
+import {businessPage,businessAnswer,validateBusinessPlan} from './business-records.js';
 // Model proposals are data. Only these server-validated read operations execute.
 import { z } from "zod";
 import { AppError } from "./contracts.js";
@@ -11,6 +12,7 @@ export const AgentPlan = z
   .object({
     tool: z.enum([
       "find_leads",
+      "query_business_records",
       "find_own_followups",
       "aggregate_leads",
       "aggregate_stage_history",
@@ -19,12 +21,15 @@ export const AgentPlan = z
       "clarify",
       "out_of_scope",
     ]),
+    overdueOnly: z.boolean().optional(),
+    ownOnly: z.boolean().optional(),
+    dataset: z.enum(["tasks","notes","calls","transitions","imports","reports","files","scores"]).optional(),
     filters: z
       .array(
         z
           .object({
             field: z.string().max(100),
-            operator: z.enum(["equals", "contains", "before", "after"]),
+            operator: z.enum(["equals", "contains", "before", "after", "not_equals", "not_contains"]),
             value: z.string().max(200),
           })
           .strict(),
@@ -66,7 +71,7 @@ const standard = {
 };
 export function assistantFields(config) {
   const fields = Object.entries(standard)
-    .filter(([id]) => id === "stage" || !config.hiddenFields.includes(id))
+
     .map(([id, type]) => ({
       id,
       label: config.labels[id] || ({phone:"Phone number",email:"Email",countryCode:"Country code",createdAt:"Created",updatedAt:"Last updated"})[id] || id,
@@ -155,7 +160,7 @@ export function validateAgentPlan(
   question = null,
   history = [],
 ) {
-  if(question!==null && /\b(not|except|exclude|excluding|without)\b/i.test(question))throw new AppError(400,'AGENT_CLARIFY','This query supports positive AND filters. Please specify the exact field values to include.');
+  if(plan.tool==='query_business_records')return validateBusinessPlan(plan,agentWindow(plan.period,at,config.timezone),question||'',config.timezone);
   if(question!==null && /approv/i.test(question) && plan.period.unit!=='none' && ['createdAt','updatedAt'].includes(plan.dateField))throw new AppError(400,'AGENT_CLARIFY','Approval timing requires an actual approval-date field, not creation or last-edit dates.');
   const known = assistantFields(fields),
     byId = new Map(known.map((f) => [f.id, f]));
@@ -301,6 +306,8 @@ export function matchesAgentLead(lead, plan, config) {
       b = normalize(f.value);
     if (f.operator === "equals" && a !== b) return false;
     if (f.operator === "contains" && !a.includes(b)) return false;
+    if (f.operator === "not_equals" && a === b) return false;
+    if (f.operator === "not_contains" && a.includes(b)) return false;
     if (f.operator === "before" && !(actual < f.value)) return false;
     if (f.operator === "after" && !(actual > f.value)) return false;
   }
@@ -321,6 +328,7 @@ export function leadResult(lead, detail = "") {
   };
 }
 export async function agentPage(tx, r, m, config) {
+  if(r.agentPlan.tool==='query_business_records')return businessPage(tx,r,m);
   const plan = r.agentPlan,
     followups = plan.tool === "find_own_followups",
     history = plan.tool === "aggregate_stage_history",
@@ -462,6 +470,7 @@ export async function agentPage(tx, r, m, config) {
   return next;
 }
 export function agentAnswer(r, config) {
+  if(r.agentPlan.tool==='query_business_records')return businessAnswer(r,config);
   const p = r.agentPlan;
   const coverage = {
     scanned: r.scanned,
