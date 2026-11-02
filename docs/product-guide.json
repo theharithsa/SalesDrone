@@ -251,6 +251,8 @@
       "audience": "Task recipients",
       "steps": [
         "Open Tasks to review your work. Choose New on phones or Add reminder on desktop, or use Remind me on a lead for a linked follow-up. Set the title, date/time and task kind.",
+        "Use the Lead column to open the linked lead page. On phones the same lead link appears below the task title; personal reminders have no linked lead.",
+        "For a Pending task choose Reschedule directly on its row, enter the new date and time, and save. Completed or cancelled tasks do not offer this action.",
         "Select a task title to see its details. Open its Actions menu for Edit task or Delete task; pending tasks also offer Snooze 1 hour, Reschedule and Cancel task. Use the circle beside a pending task to complete work after it is actually done.",
         "Delete only when the task is no longer needed. The application uses soft deletion and prevents old scheduled jobs from reviving the task.",
         "Choose Pending, Completed or Cancelled using the phone status picker or desktop status buttons. The loaded count describes the rows currently loaded, and the list header shows the display timezone. On the full lead page the Tasks tab narrows the same private task service to that lead."

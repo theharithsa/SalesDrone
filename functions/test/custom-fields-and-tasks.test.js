@@ -579,3 +579,27 @@ test('Admin may retire either contact field and other standard fields without er
   }).expect(200)).body;
   assert.deepEqual(restored.hiddenFields, []);
 });
+
+test('task pages project current minimal lead names without relying on lead-list pagination or exposing another recipient',async()=>{
+ const s=await setup();
+ const l=(await s.call('post','/leads',{...lead,name:'Fictional linked customer',company:'Fictional Supplies'}).expect(200)).body;
+ const own=(await s.call('post','/tasks',{...task,leadId:l.id}).expect(200)).body;
+ await s.call('post','/tasks',{...task,title:'Other private task',leadId:l.id},'other').expect(200);
+ const personal=(await s.call('post','/tasks',task).expect(200)).body;
+ let items=(await s.call('get','/tasks?state=Pending').expect(200)).body.items;
+ assert.equal(items.length,2);
+ assert.deepEqual(items.find(t=>t.id===own.id).lead,{id:l.id,name:l.name,company:l.company});
+ assert.equal(items.find(t=>t.id===personal.id).lead,null);
+ assert.equal(items.some(t=>t.title==='Other private task'),false);
+ await s.store.run(async tx=>{const current=await tx.get(path('leads',l.id));tx.set(path('leads',l.id),{...current,name:'Renamed fictional customer'});});
+ items=(await s.call('get','/tasks').expect(200)).body.items;
+ assert.equal(items.find(t=>t.id===own.id).lead.name,'Renamed fictional customer');
+ await s.store.run(async tx=>{
+  const member=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...member,scope:'assigned'});
+  const linked=await tx.get(path('tasks',own.id)),privateTask=await tx.get(path('tasks',personal.id));
+  tx.set(path('tasks','scoped-linked'),{...linked,id:'scoped-linked',recipientUid:'viewer',creatorUid:'viewer'});
+  tx.set(path('tasks','scoped-personal'),{...privateTask,id:'scoped-personal',recipientUid:'viewer',creatorUid:'viewer'});
+ });
+ items=(await s.call('get','/tasks',null,'viewer').expect(200)).body.items;
+ assert.deepEqual(items.map(t=>t.id),['scoped-personal']);
+});

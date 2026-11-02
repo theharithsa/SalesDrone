@@ -582,7 +582,8 @@
         "functions/test/app.test.js",
         "functions/test/custom-fields-and-tasks.test.js",
         "functions/test/notifications.test.js",
-        "tests/dates.test.ts"
+        "tests/dates.test.ts",
+        "apps/web/test/task-row.test.tsx"
       ],
       "manualCases": [
         {
@@ -599,6 +600,11 @@
           "id": "TASKS-MOBILE-2.0.1",
           "expected": "Compact title/New and status picker on phones; list fills content width; title, context, due date and menu align at 320 through 1920px and fractional 768px boundary. Completion symbol is smaller than the compensated target. Check all five saved zoom values, short windows, large text, light/dark/Book themes, long titles, all statuses and empty lists. Row menu supports Escape/focus/outside dismissal, edit/reschedule/delete dialogs and synthetic completion/cancellation without exposing another recipient task.",
           "fixture": "isolated synthetic guest demo; review:mobile; no customer data or real delivery"
+        },
+        {
+          "id": "TASK-LEAD-RESCHEDULE-01",
+          "expected": "Task lead names are current and linked without loading the Leads collection. Direct Reschedule is available only for writable Pending tasks; save updates time, cancel preserves it. Narrow layouts stack context; personal reminders have no lead link.",
+          "fixture": "Fictional task screen, real RescheduleForm, and real Auth/Firestore task-list integration"
         }
       ]
     },

@@ -122,22 +122,22 @@
   {
     "file": "mobile-tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "54d5d673533d04d51e17a2ef214fa0c4fed0fe5dab11080c0e3bb89a6edbe660",
-    "capturedAt": "2026-10-26T16:41:00.585Z",
-    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest task collection; no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "sha256": "33909765dc5d41dcc23e42c12c0f088964b11b1cb68bc1b09daa88185e265ae7",
+    "capturedAt": "2026-11-02T08:46:44.286803+00:00",
+    "viewport": "390 x 900 measured CSS pixels; compensated 70% browser zoom",
+    "capturePixels": "65536 x 4292542531",
+    "version": "2.6.7",
+    "review": "Visually/privacy reviewed. Fictional task/lead rows with the actual TaskRow and RescheduleForm, no live API or customer data. Linked Lead column and direct Pending rescheduling; native capture dimensions separate from measured viewport. Synthetic save, dark 125% and short-window/menu checks recorded separately. No physical-device/Safari certification."
   },
   {
     "file": "tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "e6aff74b417453ed0eca5664f6aba54b5f8e6e899596dd65d72ecb3dccc1d6c4",
-    "capturedAt": "2026-10-26T16:41:01.100Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest task collection; no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "sha256": "fc65c279895cce293b34cb77af7aff7592d7ea0bf75f1fcddd98663ea4a1282c",
+    "capturedAt": "2026-11-02T08:46:44.264660+00:00",
+    "viewport": "1440 x 900 measured CSS pixels; compensated 70% browser zoom",
+    "capturePixels": "65536 x 4292542531",
+    "version": "2.6.7",
+    "review": "Visually/privacy reviewed. Fictional task/lead rows with the actual TaskRow and RescheduleForm, no live API or customer data. Linked Lead column and direct Pending rescheduling; native capture dimensions separate from measured viewport. Synthetic save, dark 125% and short-window/menu checks recorded separately. No physical-device/Safari certification."
   },
   {
     "file": "notifications-demo.jpg",

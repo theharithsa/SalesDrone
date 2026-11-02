@@ -16,6 +16,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.7] - 2026-11-02
+
+### Fixed
+- Show current linked lead names and company details in a dedicated Tasks column, with links to the full lead page and a stacked phone layout. Names no longer depend on the currently loaded Leads page.
+- Make Reschedule directly available on pending task rows. Preserve private ownership, optimistic versions and stable retry identity when saving a new time.
+
 ## [2.6.6] - 2026-11-02
 
 ### Fixed

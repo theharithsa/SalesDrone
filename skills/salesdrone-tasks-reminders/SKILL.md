@@ -85,3 +85,5 @@ reporting-calendar range qualify; suppressed/review/archived leads are excluded.
 Duplicate reminders count a lead once. Task edits invalidate saved reminder results.
 
 Archive and single/batch reassignment query/cancel only Pending outreach tasks. Administrative tasks remain private and unchanged, with existing access/delivery eligibility. TASK_LIMIT counts cancellation work only. Missing historic task kinds are not guessed. Restore never resurrects cancelled outreach. Keep the leadId/state/kind/id index READY.
+
+Task lists return a minimal current authorized lead summary (id/name/company) after recipient/scope checks. Do not join names only from the browser's paginated Leads cache or persist copied names on tasks. TaskRow owns a linked Lead column, stacked context on narrow containers and direct Reschedule for Pending tasks. Personal reminders have no lead link. Retain task owner/version checks and stable reschedule idempotency keys. Regress privacy/current renames with custom-fields-and-tasks.test.js, actual Firestore integration and task-row.test.tsx; extract shared row styles without changing other lead-task cards.

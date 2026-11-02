@@ -17,6 +17,7 @@ export type Lead = Entity & {
   needsReview: boolean;
 };
 export type Task = Entity & {
+  lead?: {id: string; name: string; company: string} | null;
   title: string;
   dueAt: string;
   timezone: string;

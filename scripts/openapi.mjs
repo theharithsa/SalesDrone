@@ -405,6 +405,7 @@ schemas.Lead = object(
 );
 delete schemas.Lead.properties.allowDuplicate;
 schemas.Task = object({
+  lead: {type: ['object', 'null'], description: 'Task list only: current authorized linked lead summary, independent of the loaded lead page. Null for personal reminders.', required: ['id', 'name', 'company'], additionalProperties: false, properties: {id: string, name: string, company: string}},
   ...schemas.TaskInput.properties,
   id: string,
   leadId: { type: ['string', 'null'] },
@@ -1252,7 +1253,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.24.0',
+    version: '1.25.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

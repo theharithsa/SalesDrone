@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.7",
+  "summary": "Repair linked lead names in task lists and expose the existing rescheduling action directly.",
+  "modules": [
+    "salesdrone-tasks-reminders",
+    "salesdrone-interface",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/REVIEW-2.6.7.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "changed",
+    "reason": "Add an optional minimal current lead summary to the existing bounded Task list, after existing recipient and assigned-scope filtering. No added endpoint or mutation permission.",
+    "contractVersion": "1.25.0",
+    "permissions": "Recipient-private tasks and current lead access still gate every row and its name. Unavailable/out-of-scope linked tasks remain excluded. Existing owner/version/idempotency requirements gate rescheduling.",
+    "tests": [
+      "functions/test/custom-fields-and-tasks.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "unchanged",
+      "reason": "Reuse safe task-list read and committed task-rescheduling/delivery lifecycle telemetry. No new business mutation or contact/name values in telemetry; release version and probe identity distinguish delivery.",
+      "tests": [
+        "functions/test/custom-fields-and-tasks.test.js"
+      ]
+    },
+    "traces": {
+      "status": "unchanged",
+      "reason": "Reuse safe task-list read and committed task-rescheduling/delivery lifecycle telemetry. No new business mutation or contact/name values in telemetry; release version and probe identity distinguish delivery.",
+      "tests": [
+        "functions/test/custom-fields-and-tasks.test.js"
+      ]
+    },
+    "logs": {
+      "status": "unchanged",
+      "reason": "Reuse safe task-list read and committed task-rescheduling/delivery lifecycle telemetry. No new business mutation or contact/name values in telemetry; release version and probe identity distinguish delivery.",
+      "tests": [
+        "functions/test/custom-fields-and-tasks.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "unchanged",
+      "reason": "Reuse safe task-list read and committed task-rescheduling/delivery lifecycle telemetry. No new business mutation or contact/name values in telemetry; release version and probe identity distinguish delivery.",
+      "tests": [
+        "functions/test/custom-fields-and-tasks.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "unchanged",
+      "reason": "Reuse safe task-list read and committed task-rescheduling/delivery lifecycle telemetry. No new business mutation or contact/name values in telemetry; release version and probe identity distinguish delivery.",
+      "tests": [
+        "functions/test/custom-fields-and-tasks.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review Task/Lead/Due/Actions columns, actual lead hrefs and stacked rows on phones, tablets, laptops and wide displays. Open and save/cancel the real rescheduling form with fictional tasks; check dark 125% short-window bounds and Escape/focus on the task menu. Current-scope metadata and recipient privacy require actual API and real Auth/Firestore checks. Browser emulation is not physical-device/Safari certification.",
+  "milestone": {
+    "number": 17,
+    "title": "v2.6.7 \u2014 Task lead links and visible rescheduling",
+    "issues": [
+      117
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "tasks-demo.jpg",
+    "mobile-tasks-demo.jpg"
+  ]
+}

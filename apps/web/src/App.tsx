@@ -1,9 +1,10 @@
+import TaskRow from './components/TaskRow';
 import { Sparkles } from 'lucide-react';
 import './research.css';
 import LeadFiles from './features/LeadFiles';
 import InfiniteLeadLoader from './components/InfiniteLeadLoader';
 import { appendUniqueRows } from './lib/lead-pagination';
-import { normalizeDisplayScale, scaleFromCSS } from './lib/display-scale';
+import { normalizeDisplayScale } from './lib/display-scale';
 import { normalizeFontStyle } from './lib/fonts';
 import { resolveVisualPreferences } from './lib/appearance';
 import { readStored, writeStored, removeStored } from './lib/browser-storage';
@@ -3085,6 +3086,9 @@ export default function App() {
                     <Clock size={14} aria-hidden="true" />
                     <span>Times in {timezone}</span>
                   </div>
+                  <div className="task-list-head" aria-hidden="true">
+                    <span /><span>Task</span><span>Lead</span><span>Due</span><span>Actions</span>
+                  </div>
                   {loading && !visibleTasks.length ? (
                     <Loading />
                   ) : visibleTasks.length ? (
@@ -3092,7 +3096,7 @@ export default function App() {
                       <TaskRow
                         key={t.id}
                         task={t}
-                        lead={data.leads.find((l) => l.id === t.leadId)}
+                        lead={t.lead || data.leads.find((l) => l.id === t.leadId)}
                         timezone={timezone}
                         onOpen={() => openTask(t)}
                         onComplete={() => taskChange(t, { state: 'Completed' })}
@@ -3450,8 +3454,8 @@ export default function App() {
           <RescheduleForm
             task={focusedTask}
             onCancel={() => setModal(null)}
-            onSave={async (d) => {
-              await request('/tasks/' + focusedTask.id, 'PATCH', d);
+            onSave={async (d, key) => {
+              await request('/tasks/' + focusedTask.id, 'PATCH', d, key);
               await refresh();
               notify('Reminder rescheduled.');
             }}
@@ -3619,195 +3623,5 @@ function GoogleIcon() {
         d="M12 5.9c1.5 0 2.8.5 3.9 1.5l2.9-2.9A9.6 9.6 0 0 0 12 2a10.1 10.1 0 0 0-9 5.4L6.4 10A5.9 5.9 0 0 1 12 5.9Z"
       />
     </svg>
-  );
-}
-
-function TaskRow({
-  task,
-  lead,
-  timezone,
-  onOpen,
-  onComplete,
-  onSnooze,
-  onCancel,
-  onReschedule,
-  onEdit,
-  onDelete,
-  disabled,
-}: {
-  task: Task;
-  lead?: Lead;
-  timezone: string;
-  onOpen: () => void;
-  onComplete: () => void;
-  onSnooze: () => void;
-  onCancel?: () => void;
-  onReschedule?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  disabled: boolean;
-}) {
-  const menuRef = useRef<HTMLDetailsElement>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => {
-    if (!menuOpen) return;
-    const outside = (event: PointerEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node))
-        menuRef.current.open = false;
-    };
-    document.addEventListener('pointerdown', outside);
-    return () => document.removeEventListener('pointerdown', outside);
-  }, [menuOpen]);
-  const overdue =
-    task.state === 'Pending' && Date.parse(task.dueAt) < Date.now();
-  return (
-    <div className="task-row" data-state={task.state}>
-      <button
-        className={
-          'task-check ' + (task.state === 'Completed' ? 'complete' : '')
-        }
-        aria-label={
-          (task.state === 'Completed'
-            ? 'Completed: '
-            : task.state === 'Cancelled'
-              ? 'Cancelled: '
-              : 'Complete ') + task.title
-        }
-        disabled={disabled || task.state !== 'Pending'}
-        onClick={onComplete}
-      >
-        <span className="task-check-symbol" aria-hidden="true">
-          {task.state === 'Completed' ? (
-            <Check size={14} />
-          ) : task.state === 'Cancelled' ? (
-            <X size={14} />
-          ) : null}
-        </span>
-      </button>
-      <button className="task-body" onClick={onOpen} aria-label={task.title}>
-        <span className="task-title">{task.title}</span>
-        <span className="task-context">
-          {lead ? (
-            <LeadName name={lead.name} />
-          ) : task.leadId ? (
-            'Lead follow-up'
-          ) : (
-            'Personal reminder'
-          )}
-          {lead?.company ? (
-            <>
-              <i>·</i>
-              {lead.company}
-            </>
-          ) : null}
-        </span>
-      </button>
-      <div className="task-time">
-        <span className={overdue ? 'overdue' : ''}>
-          {overdue ? <span className="overdue-dot" /> : <Clock size={12} />}{' '}
-          <time dateTime={task.dueAt}>{displayDate(task.dueAt, timezone)}</time>
-        </span>
-        {overdue ? (
-          <small>Overdue</small>
-        ) : task.state !== 'Pending' ? (
-          <small>{task.state}</small>
-        ) : null}
-      </div>
-      {task.state === 'Pending' || onEdit || onDelete ? (
-        <details
-          ref={menuRef}
-          className="task-menu"
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              event.currentTarget.open = false;
-              event.currentTarget.querySelector('summary')?.focus();
-              event.stopPropagation();
-            }
-          }}
-          onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget as Node))
-              event.currentTarget.open = false;
-          }}
-          onToggle={(event) => {
-            const details = event.currentTarget;
-            setMenuOpen(details.open);
-            if (!details.open) return;
-            const menu = details.querySelector(
-              ':scope > div',
-            ) as HTMLElement | null;
-            const trigger = details.querySelector('summary');
-            if (!menu || !trigger) return;
-            details.dataset.placement = 'below';
-            const anchor = trigger.getBoundingClientRect();
-            const top = Math.max(
-              0,
-              document.querySelector('.topbar')?.getBoundingClientRect()
-                .bottom || 0,
-            );
-            const navigation = document
-              .querySelector('.bottom-nav')
-              ?.getBoundingClientRect();
-            const bottom =
-              navigation && navigation.height
-                ? navigation.top
-                : window.innerHeight;
-            const above = Math.max(0, anchor.top - top - 8);
-            const below = Math.max(0, bottom - anchor.bottom - 8);
-            const placeAbove =
-              menu.scrollHeight *
-                scaleFromCSS(getComputedStyle(document.documentElement).zoom) >
-                below && above > below;
-            details.dataset.placement = placeAbove ? 'above' : 'below';
-            menu.style.setProperty(
-              '--task-menu-room',
-              Math.max(
-                1,
-                (placeAbove ? above : below) /
-                  scaleFromCSS(getComputedStyle(document.documentElement).zoom),
-              ) + 'px',
-            );
-          }}
-          onClick={(event) => {
-            if ((event.target as HTMLElement).closest('button')) {
-              event.currentTarget.open = false;
-              event.currentTarget.querySelector('summary')?.focus();
-            }
-          }}
-        >
-          <summary aria-label={'Actions for ' + task.title}>
-            <MoreHorizontal size={18} />
-          </summary>
-          <div>
-            {onEdit ? (
-              <button onClick={onEdit} disabled={disabled}>
-                Edit task
-              </button>
-            ) : null}
-            {task.state === 'Pending' ? (
-              <>
-                <button onClick={onSnooze} disabled={disabled}>
-                  Snooze 1 hour
-                </button>
-                {onReschedule ? (
-                  <button onClick={onReschedule} disabled={disabled}>
-                    Reschedule
-                  </button>
-                ) : null}
-                {onCancel ? (
-                  <button onClick={onCancel} disabled={disabled}>
-                    Cancel task
-                  </button>
-                ) : null}
-              </>
-            ) : null}
-            {onDelete ? (
-              <button className="danger" onClick={onDelete} disabled={disabled}>
-                Delete task
-              </button>
-            ) : null}
-          </div>
-        </details>
-      ) : null}
-    </div>
   );
 }

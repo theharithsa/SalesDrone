@@ -501,6 +501,10 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     }).expect(200)
   ).body;
   assert.equal(edit.title, 'Edited emulator task');
+  const listedTask=(await req('get','/tasks?state=Pending').expect(200)).body.items.find(t=>t.id===edit.id);
+  assert.equal(listedTask.lead.id,generatedTask.leadId);
+  assert.equal(listedTask.lead.name,(await store.get('workspaces/avinyatech/leads/'+generatedTask.leadId)).name);
+  assert.deepEqual(Object.keys(listedTask.lead).sort(),['company','id','name']);
   await req('delete', '/tasks/' + edit.id, {
     expectedVersion: edit.version,
   }).expect(200);
