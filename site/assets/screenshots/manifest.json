@@ -592,22 +592,22 @@
   {
     "file": "assistant-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5b254cdef4b3fdd7a2892c1b0bb8088cd19cf1f2e83fae190b8b425df37f721d",
-    "capturedAt": "2026-10-31T16:35:12.508Z",
-    "viewport": "1280 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1280 x 900",
-    "version": "2.6.0",
-    "review": "Fresh 2.6.0 Material 3 conversation/Settings capture visually and privacy reviewed. Synthetic demo or fictional Admin adapter only; no customer records, tokens or live business writes. Browser viewport review, not physical-device certification."
+    "sha256": "1b4ae80668ea72a9cdfd60d4800ab78ed088915ed31ab2e8f8a959eb4cb6d47b",
+    "capturedAt": "2026-11-02T06:12:32.785711+00:00",
+    "viewport": "1280 x 900 measured CSS pixels; 70% browser zoom, compensated viewport override",
+    "capturePixels": "1829 x 1286",
+    "version": "2.6.4",
+    "review": "Actual Assistant component with development-only fictional compound-answer adapter; light palette visually/privacy reviewed. Fictional counts and no live API/model/customer writes. Native capture pixels are distinct from measured CSS size. Short-window/page scrolling, dark palette and 125% app display scale reviewed separately; no physical-device/Safari certification."
   },
   {
     "file": "assistant-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "a0395dbbfb0dd3da2211c421da8f484126aebbdc729a5aa06a04d6d8ddaeb7eb",
-    "capturedAt": "2026-10-31T16:35:12.509Z",
-    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 900",
-    "version": "2.6.0",
-    "review": "Fresh 2.6.0 Material 3 conversation/Settings capture visually and privacy reviewed. Synthetic demo or fictional Admin adapter only; no customer records, tokens or live business writes. Browser viewport review, not physical-device certification."
+    "sha256": "7aca7fe4080537dabd1275c21559052c746b7f2afd5f83a556a0206059ef637b",
+    "capturedAt": "2026-11-02T06:12:32.786056+00:00",
+    "viewport": "390 x 1100 measured CSS pixels; 70% browser zoom, compensated viewport override",
+    "capturePixels": "527 x 1571",
+    "version": "2.6.4",
+    "review": "Actual Assistant component with development-only fictional compound-answer adapter; light palette visually/privacy reviewed. Fictional counts and no live API/model/customer writes. Native capture pixels are distinct from measured CSS size. Short-window/page scrolling, dark palette and 125% app display scale reviewed separately; no physical-device/Safari certification."
   },
   {
     "file": "research-settings-demo.jpg",

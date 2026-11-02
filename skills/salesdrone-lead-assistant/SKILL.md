@@ -86,3 +86,6 @@ and blocks later worker publication. Active never implies the New stage.
 
 Workspace queue admission is bounded (50 Assistant requests / 10 unfinished scans);
 429 WORKSPACE_BUSY exposes no owner data. Keep provider and worker time limits.
+
+Compound questions use one to four independent validated read plans. Exact aggregates, lists, reminder joins and cited RAG retain their own coverage and focused setup errors. A missing converted-stage definition cannot discard a valid total. Default I/my wording means current accessible lead status, never actor attribution. Each result set uses ?part=0..3 and an independently bound cursor; all parts are invalidated together after lead/access/schema/settings or relevant task changes. Test multi-page counts, missing mappings, compound RAG, cursor isolation and real emulator persistence. Existing queued single-plan requests remain compatible.
+Matching-lead questions can select up to eight configured fields; server-only projections return bounded literal values after scope checks. Reject unknown/retired paths and projection requests on aggregates/reminders. No full-database model context or inferred missing values.

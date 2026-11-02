@@ -312,7 +312,7 @@
         },
         {
           "id": "THEME-CONTROL-2.0.1",
-          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320–1920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
+          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320\u20131920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
           "fixture": "isolated synthetic browser; node scripts/review-theme.mjs; no account writes"
         },
         {
@@ -480,6 +480,11 @@
           "id": "OBS-RELEASE-2.0.1",
           "expected": "Verify exact PR merge/run/version and MCP environment, projected release and actual CI case events, native trace/log IDs, process/queue/CI metric samples. Distinguish transport acceptance, tenant search and native RUM linkage; do not write customer fixtures or assume catalog/manual cases ran.",
           "fixture": "trusted main CI plus read-only Dynatrace MCP; no customer modifications"
+        },
+        {
+          "id": "OBS-CI-02",
+          "expected": "Exact commit/run Dynatrace testcase totals by each of functions/ingress/web/components/emulator match independent runner summaries and sanitized artifacts. Missing/empty evidence fails verification/reporting.",
+          "fixture": "Real CI run, sanitized metadata only; no historical fake receipts"
         }
       ]
     },
@@ -722,6 +727,11 @@
           "id": "LEAD-ASSISTANT-01",
           "expected": "Private scoped history, current-source evidence and read-only interactions remain usable across phone/tablet/desktop.",
           "fixture": "Synthetic research review fixture; no live provider or customer data"
+        },
+        {
+          "id": "LEAD-ASSISTANT-02",
+          "expected": "The reported compound total/closed question gives each exact scoped count independently; missing stage meanings preserve total and display actual stage counts without an invented outcome. Each list pages its own part; source/access changes invalidate all parts.",
+          "fixture": "Fictional compound research fixture and real Auth/Firestore emulator"
         }
       ]
     }

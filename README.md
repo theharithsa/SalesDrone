@@ -1,6 +1,6 @@
 # SalesDrone by AvinyaTech
 
-> v2.6.3 restores App Check login after correcting the browser security-policy destination.
+> v2.6.4 repairs compound Lead Assistant answers and completes CI test-case reporting.
 > Scoped Lead Hygiene and Lead Assistant were introduced in v2.6.0.
 > See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
@@ -21,7 +21,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.6.3 · MIT**
+**Part of Avinya Enterprises · v2.6.4 · MIT**
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 

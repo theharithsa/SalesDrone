@@ -14,3 +14,21 @@ describe('Assistant conversation interaction',()=>{
     expect(screen.getByText('<img src=x onerror=alert(1)>')).toBeInTheDocument();
   });
 });
+
+describe('Compound Assistant answers',()=>{
+ it('renders each grounded part and requests only its own matching result set',async()=>{
+  const {default:LeadAssistantPage}=await import('../src/features/LeadAssistantPage');
+  const request=vi.fn(async(p:string,m?:string)=>{
+   if(p.endsWith('/messages'))return {conversation:{id:'chat'},items:[{id:'answer',createdAt:'2026-11-02T00:00:00Z',status:'Completed',question:'How many leads and which are closed?',answer:{parts:[{state:'Grounded',text:'2 active leads.',count:2,hasResults:true},{state:'Grounded',text:'1 closed lead.',count:1,hasResults:true}]}}]};
+   if(p.includes('/requests/'))return {items:[{id:'fictional',name:'Fictional record',stage:'Won'}],nextCursor:null};
+   if(m==='POST')return {id:'chat'};
+   return {items:[],nextCursor:null};
+  });
+  render(<LeadAssistantPage request={request} demo={false}/>);
+  fireEvent.change(screen.getByRole('textbox',{name:'Ask about your leads'}),{target:{value:'How many leads and which are closed?'}});
+  fireEvent.keyDown(screen.getByRole('textbox',{name:'Ask about your leads'}),{key:'Enter'});
+  await screen.findByText('2 active leads.');await screen.findByText('1 closed lead.');
+  fireEvent.click(screen.getByRole('button',{name:'View matching leads (1)'}));
+  await screen.findByText('Fictional record');expect(request).toHaveBeenCalledWith('/lead-assistant/requests/answer/leads?part=1');
+ });
+});

@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.6.3**, OpenAPI contract **1.23.0**. All application operations
+Application release **v2.6.4**, OpenAPI contract **1.24.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -312,3 +312,7 @@ Firebase's managed parser. Syntax/strict JSON failures return 400 BAD_JSON, and
 bounded payload failures return 413 PAYLOAD_TOO_LARGE, with no-store and request/app
 version metadata. Native provider URLs and platform HTTP/network hard-limit errors
 remain outside this normalized Hosting contract. No authentication is bypassed.
+
+## Compound Assistant answers (1.24.0)
+
+Completed answers may contain `parts` (one to four independent answer objects). Each part carries its own count, current-access coverage, grouping, sources or focused clarification. `GET /api/v1/lead-assistant/requests/{id}/leads?part=0` selects the zero-based result set; valid indices are 0–3 and must exist. Omit part for existing single-answer requests. Non-list or stale results return 409; invalid part returns 400. Signed cursors are bound to identity, source epoch, request and selected part. Membership, field/outcome settings and task-source checks apply to the whole answer. No source mutation is available.

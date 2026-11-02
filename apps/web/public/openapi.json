@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SalesDrone by AvinyaTech API",
-    "version": "1.23.0",
+    "version": "1.24.0",
     "description": "Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data."
   },
   "servers": [
@@ -10392,6 +10392,17 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "part",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3,
+              "default": 0
+            },
+            "description": "Zero-based answer part. The signed cursor is bound to this result set; a different part cannot reuse it."
           }
         ],
         "responses": {
@@ -39553,6 +39564,15 @@
                 }
               }
             }
+          },
+          "parts": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "items": {
+              "$ref": "#/components/schemas/AssistantAnswer"
+            },
+            "description": "Independent grounded answers or focused clarifications for a compound question. Result pagination uses the zero-based part index."
           }
         }
       },

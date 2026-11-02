@@ -1,6 +1,6 @@
 {
   "name": "@salesdrone/functions",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "private": true,
   "type": "module",
   "main": "src/index.js",
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "node --test test/*.test.js",
-    "test:emulator": "node --test test/emulator.integration.js"
+    "test:emulator": "node ../scripts/emulator-tests.mjs"
   },
   "dependencies": {
     "express": "^5.1.0",

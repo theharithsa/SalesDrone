@@ -263,7 +263,7 @@ export function createApp({
             'Lead data is being cleared. Try again after cleanup finishes.',
           );
         const allowed =
-          url === '/lead-scores'
+          url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
             ? ['ids']
             : url === '/leads'
               ? [
@@ -1032,9 +1032,13 @@ export function createApp({
   route('get', '/lead-assistant/requests/:id', 'assistant:query', req => readAssistantRequest(store,req.identity,req.params.id));
   route('get', '/lead-assistant/requests/:id/leads', 'assistant:query', async req => {
     const r=await readAssistantRequest(store,req.identity,req.params.id);
-    if(r.status!=='Completed'||!r.answer?.hasResults)throw new AppError(409,'RESULTS_UNAVAILABLE','Ask again for current completed lead results.');
+    if(r.status!=='Completed')throw new AppError(409,'RESULTS_UNAVAILABLE','Ask again for current completed lead results.');
+    const part=Number(req.query.part??0);
+    if(!Number.isInteger(part)||part<0||part>3||(!r.agentSteps&&part!==0)|| (r.agentSteps&&part>=r.agentSteps.length))throw new AppError(400,'RESULT_PART','Choose a valid answer part.');
+    const answer=r.answer?.parts?r.answer.parts[part]:r.answer;
+    if(r.status!=='Completed'||!answer?.hasResults)throw new AppError(409,'RESULTS_UNAVAILABLE','Ask again for current completed lead results.');
     const m=await researchMember(store,req.identity,['assistant:query'],r.access);
-    const result=await researchList(req,'assistantContributions',[['requestId','==',r.id]],r.access,async row=>{
+    const result=await researchList(req,'assistantContributions',[['requestId','==',r.agentSteps?r.id+':'+part:r.id]],r.access,async row=>{
       const lead=await store.get(path('leads',row.leadId));
       if(!canReadLead(m,lead)||lead.archived)throw new AppError(409,'STALE_SOURCE','Lead data changed. Ask again.');
       return row.lead;

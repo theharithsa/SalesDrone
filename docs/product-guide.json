@@ -698,7 +698,8 @@
         "Ask for matching leads, custom-field counts, calls next week, monthly conversions or patterns in failed-lead notes. Approval questions use actual configured fields and values.",
         "Review the cohort, reporting timezone, coverage and cited lead sources. Missing historical conversion dates remain unknown.",
         "Admins configure stage meanings and optionally enable the knowledge index under Settings → AvinyaIntelligence → Lead research.",
-        "Open prior chats from history or delete your own chat. History remains until deletion, subject to current source access."
+        "Open prior chats from history or delete your own chat. History remains until deletion, subject to current source access.",
+        "Ask compound lead questions such as how many leads you have and how many are closed. Each part shows its own current-data answer or a focused setup explanation; exact counts follow your access and configured stage meanings."
       ],
       "details": [
         "The Assistant answers only about workspace leads. It cannot browse the web, reveal secrets, run code, contact people or change records.",

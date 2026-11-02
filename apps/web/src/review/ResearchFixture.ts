@@ -163,6 +163,7 @@ export function researchFixture(path: string, method: string, body: any) {
         createdAt: at,
         question: body.question,
         answer: {
+          ...(/closed/i.test(body.question)?{parts:[{state:'Grounded',text:'96 matching active leads.',count:96,coverage:{cohort:'Currently active leads within your current access',asOf:at,timezone:'Asia/Kolkata'}},{state:'Grounded',text:'12 matching leads currently in configured converted/closed stages. This is current stage status, not a claim about who closed them or when.',count:12,coverage:{cohort:'Current configured converted stages · Synthetic records',asOf:at,timezone:'Asia/Kolkata'}}]}:{}),
           ...( /call|next week/i.test(body.question)?{state:'Grounded',count:3,hasResults:true,coverage:{cohort:'Your recorded pending outreach reminders',timezone:'Asia/Kolkata',window:{startDate:'2026-11-02',endDate:'2026-11-09'}}}:{}),
           state: "Partial",
           text: /call|next week/i.test(body.question)?"3 matching leads with recorded pending outreach reminders.":"Synthetic preview only. Live questions use scoped analytics and retrieved evidence.",

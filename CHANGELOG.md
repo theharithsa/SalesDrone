@@ -13,6 +13,15 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.4] - 2026-11-02
+
+### Changed
+- Return requested configured field values directly from current scoped matching records, with bounded projections and explicit missing values.
+- Answer compound Lead Assistant questions with up to four validated read operations, independent exact counts/lists or focused setup clarifications, and separate paginated result sets. Keep dynamic field/stage meanings, current access and source checks, and bounded cited RAG.
+- Include actual ingress and emulator case results in CI telemetry. Reconcile every test suite against runner totals and fail incomplete/empty/malformed receipt evidence instead of silently accepting it.
+- Publish API 1.24.0 with additive answer parts and a result-part selector; preserve existing single-answer requests and privacy controls.
+
 ## [2.6.3] - 2026-11-02
 
 ### Changed

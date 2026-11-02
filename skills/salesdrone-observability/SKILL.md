@@ -89,3 +89,5 @@ Lead research reuses HTTP RED, safe Firestore/Gemini dependency spans and worker
 Cloud Run salesdrone-ingress reuses the bounded OTel foundation with platform revision identity and real HTTP-to-api.forward context. Proxy rejections are operational, not business commits. Exclude raw platform request URLs, retain sanitized outcomes. Restores emit a committed restored lifecycle outcome; CI includes actual ingress case receipts and deployment metadata.
 
 For managed health and partial-rollout handling, read [operations](references/operations.md).
+
+For complete per-suite case receipts, reconciliation and export validation, read [the CI evidence runbook](references/operations.md).

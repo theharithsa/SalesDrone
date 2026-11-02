@@ -1443,6 +1443,14 @@ test('Lead research uses real scoped Firestore pages, private API history, sourc
   const matches=(await call(repToken,'get','/lead-assistant/requests/'+pending.id+'/leads?limit=1').expect(200)).body;
   assert.equal(matches.items[0].id,'research-001');assert.equal(matches.items[0].phone,undefined);
   await call(repToken,'get','/lead-assistant/conversations/'+chat.id+'/messages').expect(200);
+  await store.run(async tx=>{const lead=await tx.get(path('leads','research-001'));tx.set(path('leads','research-001'),{...lead,stage:'Won',version:2});});
+  const compound=(await call(repToken,'post','/lead-assistant/conversations/'+chat.id+'/questions',{question:'How many leads do I have and which are closed?'},randomUUID()).expect(200)).body;
+  const basePlan={filters:[],groupBy:'',outcome:'none',period:{unit:'none',offset:0,startDate:'',endDate:''},dateField:''};
+  for(let i=0;i<8;i++)await processAssistantRequest({store,id:compound.id,provider:{plan:async()=>({steps:[{...basePlan,tool:'aggregate_leads'},{...basePlan,tool:'find_leads',outcome:'converted'}]})}});
+  const compoundAnswer=(await call(repToken,'get','/lead-assistant/requests/'+compound.id).expect(200)).body;
+  assert.deepEqual(compoundAnswer.answer.parts.map(p=>p.count),[51,1]);
+  const closed=(await call(repToken,'get','/lead-assistant/requests/'+compound.id+'/leads?part=1').expect(200)).body;assert.equal(closed.items[0].id,'research-001');
+  await call(repToken,'get','/lead-assistant/requests/'+compound.id+'/leads?part=0').expect(409);
   const stop=(await call(repToken,'post','/lead-assistant/conversations/'+chat.id+'/questions',{question:'Another lead question'},randomUUID()).expect(200)).body;
   await call(repToken,'post','/lead-assistant/requests/'+stop.id+'/cancel',{expectedVersion:1}).expect(200);
   await processAssistantRequest({store,id:stop.id,provider});

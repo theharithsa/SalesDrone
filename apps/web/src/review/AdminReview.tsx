@@ -50,11 +50,11 @@ const initialSession: Session = {
     version: 1,
   },
   preferences: {
-    appearance: 'light',
+    appearance: new URLSearchParams(location.search).get('theme')==='dark'?'dark':'light',
     timezone: 'Asia/Kolkata',
     bookMode: false,
     fontStyle: 'standard',
-    displayScale: 100,
+    displayScale: new URLSearchParams(location.search).get('scale')==='125'?125:100,
     automaticReminders: true,
     reminderTime: '09:00',
     nextWeekRule: 'seven_days',

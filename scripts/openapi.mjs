@@ -725,6 +725,7 @@ schemas.ResearchLead={type:'object',required:['id'],properties:{id:{type:'string
 schemas.ResearchFinding={type:'object',required:['id','kind','count'],properties:{id:{type:'string'},kind:{type:'string',enum:['Review','SharedContact','IndexReview']},count:{type:'integer'},field:{type:'string'},value:{type:'string'},issues:{type:'array',items:{type:'string'}},leadIds:{type:'array',items:{type:'string'}},leads:{type:'array',items:{$ref:'#/components/schemas/ResearchLead'}}}};
 schemas.AssistantConversation={type:'object',required:['id','version','status'],properties:{id:{type:'string'},version:{type:'integer'},status:{type:'string',enum:['Active','Stale','Deleting']},createdAt:{type:'string'},updatedAt:{type:'string'}}};
 schemas.AssistantAnswer={type:'object',required:['state','text'],properties:{state:{type:'string',enum:['Grounded','Partial','Clarify','Insufficient','OutOfScope','Unavailable']},text:{type:'string'},count:{type:'integer'},hasResults:{type:'boolean'},groupOverflow:{type:'integer'},groups:{type:'object',additionalProperties:{type:'integer'}},fields:{type:'array',items:{type:'object',properties:{id:{type:'string'},label:{type:'string'},type:{type:'string'},options:{type:'array',items:{type:'string'}}}}},coverage:{type:'object',properties:{scanned:{type:'integer'},asOf:{type:'string'},timezone:{type:'string'},cohort:{type:'string'},window:{type:'object',properties:{startDate:{type:'string'},endDate:{type:'string'},timezone:{type:'string'}}}}},themes:{type:'array',items:researchTheme},sources:{type:'array',items:{type:'object',properties:{id:{type:'string'},leadId:{type:'string'},name:{type:'string'},text:{type:'string'}}}}}};
+schemas.AssistantAnswer.properties.parts={type:'array',minItems:1,maxItems:4,items:{$ref:'#/components/schemas/AssistantAnswer'},description:'Independent grounded answers or focused clarifications for a compound question. Result pagination uses the zero-based part index.'};
 schemas.AssistantRequest={type:'object',required:['id','status'],properties:{id:{type:'string'},jobId:{type:'string'},status:{type:'string',enum:['Pending','Completed','Failed','Stale','Cancelled']},version:{type:'integer'},question:{type:'string'},createdAt:{type:'string'},updatedAt:{type:'string'},answer:{$ref:'#/components/schemas/AssistantAnswer'}}};
 schemas.ResearchIndex={type:'object',properties:{enabled:{type:'boolean'},status:{type:'string'},scanned:{type:'integer'},pending:{type:'integer'},failed:{type:'integer'},note:{type:'string'}}};
 
@@ -1031,6 +1032,7 @@ for (const e of endpoints) {
       $ref: '#/components/schemas/Page',
     };
   }
+  if(e.url==='/lead-assistant/requests/:id/leads')operation.parameters.push({in:'query',name:'part',schema:{type:'integer',minimum:0,maximum:3,default:0},description:'Zero-based answer part. The signed cursor is bound to this result set; a different part cannot reuse it.'});
   if (e.url === '/lead-scores')
     operation.parameters.push({
       in: 'query',
@@ -1250,7 +1252,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.23.0',
+    version: '1.24.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
