@@ -18,6 +18,7 @@ API contract versions are independent from application versions.
 ### Changed
 - Restore login by allowing the exact Firebase App Check JavaScript SDK token-exchange origin in every SPA CSP header and HTML meta fallback. App Check enforcement and membership checks remain enabled.
 - Regress all SPA policies against the installed SDK endpoint; document why prior CSP-only checks missed the failure.
+- Keep the AI settings permission test on one injected clock so its fixture token cannot expire against wall time.
 
 ## [2.6.2] - 2026-11-01
 
