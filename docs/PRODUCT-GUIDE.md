@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.6.7
+Version 2.7.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -102,6 +102,10 @@ On mobile, New is the primary header action. Export Excel and permitted Import a
 
 Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
 
+The header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app.
+
+The lead header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app.
+
 ![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/lead-filters-demo.jpg)
 
 ### Questions
@@ -156,13 +160,13 @@ Members who can read the lead
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.
 
-4. All opens first and includes every loaded activity and review information. Your private linked tasks appear only in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for your linked work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.
+4. All opens first and includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.
 
 5. Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission.
 
 Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.
 
-Tasks is recipient-private. Its status filter includes Pending, Completed and Cancelled, with All statuses as the starting view. Select a card to view, edit, complete, reschedule or delete using the existing task dialog. Refresh tasks after a change; Load more tasks retrieves another page. Administrators do not automatically gain access to another person’s private tasks.
+Tasks for this lead is shared with everyone who can read the lead. Each task shows its responsible member. Lead editors can complete Pending work directly, or open the task and reschedule it. Status filtering and Load more tasks remain available. Personal reminders and notification delivery remain private; shared editors cannot retitle, delete or reassign another recipient’s task.
 
 Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.
 
@@ -188,7 +192,7 @@ Only if their current workspace membership and scope allow reading that lead. UR
 
 **Why are there fewer tasks than I expected?**
 
-The tab shows your tasks linked to this lead, subject to current access. It does not show another recipient’s private reminders. Check the status filter and Load more tasks.
+The tab shows tasks linked to this lead within your current access, including work assigned to other members. Personal reminders are excluded. Check the status filter and Load more tasks.
 
 ## Lead files and attachments
 
@@ -819,6 +823,8 @@ Calendar months run from the first day to the first day of the next month, end e
 Conversion answers are observed history, not complete historical totals: spreadsheet imports may lack transition dates. Current failed counts differ from historical became-failed counts. Unsupported filters, rankings, unavailable business meanings and missing event dates require clarification.
 
 Indexing is disabled by default and managed in Settings; counts and structured lists work without it. Note themes represent retrieved evidence, not proven causes. Calls next week require task access and use only your own eligible Pending outreach reminders, with each lead counted once. Use View matching leads to page through results; Stop prevents pending answer publication.
+
+The Assistant can also count, filter and list shared lead tasks, recorded notes and calls, stage changes, permitted import summaries, your Hygiene reports, Ready file metadata and current scores. Your existing access applies to every source. Personal reminders, private chats, credentials and account data are excluded. File contents and original workbooks are not searched. Large scans stop at 25,000 source records and say when counts are partial.
 
 ![Lead Assistant — synthetic demo only](../site/assets/screenshots/assistant-demo.jpg)
 

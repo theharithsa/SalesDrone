@@ -182,6 +182,7 @@ export default function LeadAssistantPage({
           })),
           ...(answer?.hasResults
             ? {
+                resultType: answer.resultType,
                 resultRequestId: resultId,
                 resultCount: answer.count,
                 resultsLoaded: !!results[resultId],

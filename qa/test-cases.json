@@ -312,7 +312,7 @@
         },
         {
           "id": "THEME-CONTROL-2.0.1",
-          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320\u20131920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
+          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320–1920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
           "fixture": "isolated synthetic browser; node scripts/review-theme.mjs; no account writes"
         },
         {
@@ -605,6 +605,11 @@
           "id": "TASK-LEAD-RESCHEDULE-01",
           "expected": "Task lead names are current and linked without loading the Leads collection. Direct Reschedule is available only for writable Pending tasks; save updates time, cancel preserves it. Narrow layouts stack context; personal reminders have no lead link.",
           "fixture": "Fictional task screen, real RescheduleForm, and real Auth/Firestore task-list integration"
+        },
+        {
+          "id": "TASK-SHARED-01",
+          "expected": "Current lead readers see linked task responsibility; lead editors complete/reschedule another recipient’s Pending task, with no personal-reminder exposure.",
+          "fixture": "Fictional shared tasks; no customer writes"
         }
       ]
     },
@@ -745,6 +750,11 @@
           "id": "LEAD-ASSISTANT-03",
           "expected": "One natural Assistant message per question. Details start collapsed; per-part results remain independent. Partial/setup limits stay visible.",
           "fixture": "Fictional real-component compound-answer fixture"
+        },
+        {
+          "id": "ASSIST-BUSINESS-01",
+          "expected": "Read-only business queries honor independent source permissions and current lead scope; source edits invalidate results and partial limits are explicit.",
+          "fixture": "Synthetic projected business records; no secrets or private reminders"
         }
       ]
     }

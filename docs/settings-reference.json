@@ -467,7 +467,7 @@
           "id": "memberCapabilities",
           "label": "Detailed permissions",
           "default": "Role preset unless customized",
-          "description": "Fine-tune non-administrative actions while retaining lead-read access. Import history, import writes and shared-import access can be granted separately; writes/sharing require import history permission. Lead create/edit permissions and effective lead scope still apply to import execution.",
+          "description": "Fine-tune non-administrative actions while retaining lead-read access. Lead readers can view shared lead tasks and responsibility; lead editors can complete or reschedule Pending shared work without tasks:write. Personal reminders and delivery remain private. Import history, import writes and shared-import access can be granted separately; writes/sharing require import history permission. Lead create/edit permissions and effective lead scope still apply to import execution.",
           "effect": "Removing a capability blocks subsequent relevant operations. UI visibility alone is not authorization.",
           "example": ""
         },

@@ -603,3 +603,22 @@ test('task pages project current minimal lead names without relying on lead-list
  items=(await s.call('get','/tasks',null,'viewer').expect(200)).body.items;
  assert.deepEqual(items.map(t=>t.id),['scoped-personal']);
 });
+
+test('shared lead task readers see responsibility while any current lead editor can complete without becoming recipient',async()=>{
+ const s=await setup();
+ await s.store.set(path('settings','workspace'),{version:2,assignedOnly:false,exportsEnabled:true});
+ const l=(await s.call('post','/leads',lead).expect(200)).body;
+ const t=(await s.call('post','/tasks',{...task,leadId:l.id},'other').expect(200)).body;
+ await s.call('post','/tasks',task,'other').expect(200);
+ await s.store.run(async tx=>{const m=await tx.get(path('members','other'));tx.set(path('members','other'),{...m,name:'Fictional task owner'});});
+ const list=(await s.call('get','/leads/'+l.id+'/tasks',null,'viewer').expect(200)).body.items;
+ assert.equal(list.length,1);assert.equal(list[0].responsible.name,'Fictional task owner');assert.equal(list[0].canManage,false);
+ await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:1,state:'Completed'},'viewer').expect(403);
+ await s.store.run(async tx=>{const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,capabilities:['leads:read','leads:edit'],version:2});});
+ const updated=(await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:1,state:'Completed'},'viewer').expect(200)).body;
+ assert.equal(updated.state,'Completed');assert.equal(updated.recipientUid,'other');
+ await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:2,dueAt:'2026-10-26T10:00:00Z'},'viewer').expect(409);
+ await s.call('patch','/tasks/'+t.id,{expectedVersion:2,title:'Not the owner'},'admin').expect(403);
+ await s.store.run(async tx=>{const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,scope:'assigned',version:3});});
+ await s.call('get','/leads/'+l.id+'/tasks',null,'viewer').expect(404);
+});

@@ -1,3 +1,4 @@
+import LeadHeaderContext from '../components/LeadHeaderContext';
 import TaskListPreview from './TaskListPreview';
 import LeadAssistantPage from "../features/LeadAssistantPage";
 import LeadAssistantPrototype from './LeadAssistantPrototype';
@@ -296,7 +297,7 @@ function AdminReview() {
           <button className="button detail-edit-button" aria-label="Edit lead"><Pencil size={16}/><span className="lead-action-label">Edit lead</span></button>
         </>}
         identity={<div className="detail-profile">
-          <Avatar name={headerLead.name}/><h2><LeadName name={headerLead.name} detail/></h2><p>{headerLead.company}</p>
+          <Avatar name={headerLead.name}/><h2><LeadName name={headerLead.name} detail/></h2><LeadHeaderContext company={headerLead.company} phone={headerLead.phone}/>
           <div className="lead-header-score"><span>Lead score</span><ScoreBadge/></div>
         </div>}
         workflow={<>

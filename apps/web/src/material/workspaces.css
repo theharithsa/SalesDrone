@@ -2555,3 +2555,14 @@ input[type='tel'] {
   .task-row .task-time { grid-column: 2; grid-row: 3; justify-items: start; justify-content: start; margin-top: 0; }
   .task-actions { grid-column: 2; grid-row: 4; justify-content: space-between; }
 }
+.lead-header-context { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0; }
+.lead-header-context a { color: var(--accent); overflow-wrap: anywhere; }
+.lead-task-shared-row { display: flex; align-items: center; gap: 12px; }
+.lead-task-shared-row > .lead-task { flex: 1; min-width: 0; }
+.lead-task-shared-row > .button { flex-shrink: 0; }
+@media (max-width:600px) { .lead-task-shared-row { flex-wrap: wrap; gap: 8px; margin-bottom: 16px; } .lead-task-shared-row > .lead-task { flex-basis: 100%; } }
+
+@media (max-width: 600px) {
+ .lead-task-toolbar > div { flex: 1 0 100%; }
+ .lead-task-toolbar label { min-width: 0; }
+}

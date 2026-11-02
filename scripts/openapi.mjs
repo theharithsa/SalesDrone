@@ -37,6 +37,7 @@ const names = [
   'NotificationPatch',
   'TaskInput',
   'TaskPatch',
+  'SharedTaskPatch',
   'TaskDelete',
   'ActivityInput',
   'AutomaticReminderAction',
@@ -405,6 +406,9 @@ schemas.Lead = object(
 );
 delete schemas.Lead.properties.allowDuplicate;
 schemas.Task = object({
+  responsible: {type:'object',properties:{id:string,name:string},required:['id','name']},
+  sharedLeadContext: string,
+  canManage: {type:'boolean'},
   lead: {type: ['object', 'null'], description: 'Task list only: current authorized linked lead summary, independent of the loaded lead page. Null for personal reminders.', required: ['id', 'name', 'company'], additionalProperties: false, properties: {id: string, name: string, company: string}},
   ...schemas.TaskInput.properties,
   id: string,
@@ -725,7 +729,7 @@ schemas.ResearchScan={type:'object',required:['id','status','version'],propertie
 schemas.ResearchLead={type:'object',required:['id'],properties:{id:{type:'string'},version:{type:'integer'},name:{type:'string'},company:{type:'string'}}};
 schemas.ResearchFinding={type:'object',required:['id','kind','count'],properties:{id:{type:'string'},kind:{type:'string',enum:['Review','SharedContact','IndexReview']},count:{type:'integer'},field:{type:'string'},value:{type:'string'},issues:{type:'array',items:{type:'string'}},leadIds:{type:'array',items:{type:'string'}},leads:{type:'array',items:{$ref:'#/components/schemas/ResearchLead'}}}};
 schemas.AssistantConversation={type:'object',required:['id','version','status'],properties:{id:{type:'string'},version:{type:'integer'},status:{type:'string',enum:['Active','Stale','Deleting']},createdAt:{type:'string'},updatedAt:{type:'string'}}};
-schemas.AssistantAnswer={type:'object',required:['state','text'],properties:{state:{type:'string',enum:['Grounded','Partial','Clarify','Insufficient','OutOfScope','Unavailable']},text:{type:'string'},count:{type:'integer'},hasResults:{type:'boolean'},groupOverflow:{type:'integer'},groups:{type:'object',additionalProperties:{type:'integer'}},fields:{type:'array',items:{type:'object',properties:{id:{type:'string'},label:{type:'string'},type:{type:'string'},options:{type:'array',items:{type:'string'}}}}},coverage:{type:'object',properties:{scanned:{type:'integer'},asOf:{type:'string'},timezone:{type:'string'},cohort:{type:'string'},window:{type:'object',properties:{startDate:{type:'string'},endDate:{type:'string'},timezone:{type:'string'}}}}},themes:{type:'array',items:researchTheme},sources:{type:'array',items:{type:'object',properties:{id:{type:'string'},leadId:{type:'string'},name:{type:'string'},text:{type:'string'}}}}}};
+schemas.AssistantAnswer={type:'object',required:['state','text'],properties:{state:{type:'string',enum:['Grounded','Partial','Clarify','Insufficient','OutOfScope','Unavailable']},text:{type:'string'},count:{type:'integer'},hasResults:{type:'boolean'},resultType:{type:'string',enum:['leads','records']},groupOverflow:{type:'integer'},groups:{type:'object',additionalProperties:{type:'integer'}},fields:{type:'array',items:{type:'object',properties:{id:{type:'string'},label:{type:'string'},type:{type:'string'},options:{type:'array',items:{type:'string'}}}}},coverage:{type:'object',properties:{scanned:{type:'integer'},asOf:{type:'string'},timezone:{type:'string'},cohort:{type:'string'},window:{type:'object',properties:{startDate:{type:'string'},endDate:{type:'string'},timezone:{type:'string'}}}}},themes:{type:'array',items:researchTheme},sources:{type:'array',items:{type:'object',properties:{id:{type:'string'},leadId:{type:'string'},name:{type:'string'},text:{type:'string'}}}}}};
 schemas.AssistantAnswer.properties.parts={type:'array',minItems:1,maxItems:4,items:{$ref:'#/components/schemas/AssistantAnswer'},description:'Independent grounded answers or focused clarifications for a compound question. Result pagination uses the zero-based part index.'};
 schemas.AssistantRequest={type:'object',required:['id','status'],properties:{id:{type:'string'},jobId:{type:'string'},status:{type:'string',enum:['Pending','Completed','Failed','Stale','Cancelled']},version:{type:'integer'},question:{type:'string'},createdAt:{type:'string'},updatedAt:{type:'string'},answer:{$ref:'#/components/schemas/AssistantAnswer'}}};
 schemas.ResearchIndex={type:'object',properties:{enabled:{type:'boolean'},status:{type:'string'},scanned:{type:'integer'},pending:{type:'integer'},failed:{type:'integer'},note:{type:'string'}}};
@@ -743,7 +747,7 @@ const responseFor = (method, url) => {
   if(url.startsWith('/lead-assistant/')) {
     if(method==='delete')return ref('Ok');
     if(url.endsWith('/messages'))return {...pageOf('AssistantRequest'),properties:{...pageOf('AssistantRequest').properties,conversation:ref('AssistantConversation')}};
-    if(url.endsWith('/leads'))return {type:'object',properties:{items:{type:'array',items:{type:'object',properties:{id:{type:'string'},name:{type:'string'},company:{type:'string'},stage:{type:'string'},detail:{type:'string'}}}},nextCursor:{type:['string','null']}}};
+    if(url.endsWith('/leads'))return {type:'object',properties:{items:{type:'array',items:{type:'object',properties:{id:{type:'string'},name:{type:'string'},company:{type:'string'},stage:{type:'string'},detail:{type:'string'},href:{type:'string',description:'Server-owned app detail path for the authorized source record.'}}}},nextCursor:{type:['string','null']}}};
     if(url.endsWith('/questions')||url.includes('/requests/'))return ref('AssistantRequest');
     if(url==='/lead-assistant/conversations'&&method==='get')return pageOf('AssistantConversation');
     return ref('AssistantConversation');
@@ -826,6 +830,8 @@ const responseFor = (method, url) => {
     return pageOf('Lead');
   if (url.endsWith('/archive')) return ref('Ok');
   if (url.endsWith('/restore')) return ref('Lead');
+  if(url==='/leads/:id/tasks')return pageOf('Task');
+  if(url==='/leads/:id/tasks/:taskId')return ref('Task');
   if (url.startsWith('/leads')) return ref('Lead');
   if (url === '/tasks' && method === 'get') return pageOf('Task');
   if (url.startsWith('/tasks')) return ref('Task');
@@ -902,6 +908,7 @@ const bodyFor = (m, u) =>
                                       ? 'LeadInput'
                                       : u === '/leads/:id'
                                         ? 'LeadPatch'
+                                        : u==='/leads/:id/tasks/:taskId' ? 'SharedTaskPatch'
                                         : u.endsWith('/activities')
                                           ? 'ActivityInput'
                                           : u === '/tasks'
@@ -1079,8 +1086,8 @@ for (const e of endpoints) {
       description:
         'AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. The additive exact operator supports source, stage and configured custom dropdowns only: raw case, spaces and Unicode must match saved values. Every exact predicate uses indexed equality with document-ID ordering; other conditions retain bounded residual scanning. Existing equals behavior is unchanged. Signed continuation cursors bind all filters and identity. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment.',
     });
-  if (e.method === 'get' && e.url === '/tasks')
-    for (const name of ['state', 'leadId'])
+  if (e.method === 'get' && (e.url === '/tasks'||e.url === '/leads/:id/tasks'))
+    for (const name of e.url === '/tasks' ? ['state','leadId'] : ['state'])
       operation.parameters.push({
         in: 'query',
         name,
@@ -1253,7 +1260,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.25.0',
+    version: '1.26.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

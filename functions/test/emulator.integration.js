@@ -1481,3 +1481,34 @@ test('correction authorship is enforced with real Auth and atomic Firestore revi
  await call(2,'post','/activities/'+a.id+'/corrections',{...input,expectedRevision:2}).expect(200);
  const revisions=await store.query(path('activityRevisions'),{filters:[['activityId','==',a.id]],limit:10});assert.equal(revisions.length,2);
 });
+
+test('shared lead work and business-query results persist with actual Auth, Firestore versions and source guards',async()=>{
+ const {researchStore}=await import('../src/lead-research-store.js');
+ const {processAssistantRequest}=await import('../src/lead-assistant.js');
+ const store=researchStore(firestoreStore(db)),at='2026-11-02T10:00:00Z';
+ const ownerToken=await signIn('shared-owner@example.com'),editorToken=await signIn('shared-editor@example.com');
+ const owner=(await auth.verifyIdToken(ownerToken)).uid,editor=(await auth.verifyIdToken(editorToken)).uid;
+ const leadId='shared-emulator-lead',taskId='shared-emulator-task';
+ await store.run(async tx=>{
+  tx.set(path('settings','workspace'),{version:7,assignedOnly:false,exportsEnabled:true});
+  for(const [uid,name,caps]of [[owner,'Task owner',['leads:read','tasks:write']],[editor,'Lead editor',['leads:read','leads:edit','assistant:query']]])tx.set(path('members',uid),{id:uid,uid,name,active:true,role:'SDR',scope:'all',version:1,capabilities:caps});
+  tx.set(path('leads',leadId),{id:leadId,name:'Fictional shared lead',company:'Synthetic',archived:false,assignedToUid:editor,version:1});
+  tx.set(path('tasks',taskId),{id:taskId,leadId,recipientUid:owner,creatorUid:owner,title:'Shared emulator work marker',state:'Pending',kind:'administrative',dueAt:'2030-01-01T10:00:00Z',timezone:'Asia/Kolkata',version:1});
+ });
+ const app=createApp({store,now:()=>at,verifyToken:t=>auth.verifyIdToken(t,true)});
+ const req=(method,url,body,key=randomUUID())=>{const r=request(app)[method]('/api/v1'+url).set('Authorization','Bearer '+editorToken).set('Idempotency-Key',key);return body?r.send(body):r;};
+ const rows=(await req('get','/leads/'+leadId+'/tasks?state=Pending').expect(200)).body.items;
+ assert.equal(rows[0].responsible.name,'Task owner');assert.equal(rows[0].canManage,true);
+ const key=randomUUID(),body={expectedVersion:1,state:'Completed'};
+ const completed=(await req('patch','/leads/'+leadId+'/tasks/'+taskId,body,key).expect(200)).body;
+ assert.equal(completed.recipientUid,owner);assert.equal(completed.version,2);
+ assert.equal((await req('patch','/leads/'+leadId+'/tasks/'+taskId,body,key).expect(200)).body.version,2);
+ const chat=(await req('post','/lead-assistant/conversations',{}).expect(200)).body;
+ const question=(await req('post','/lead-assistant/conversations/'+chat.id+'/questions',{question:'List tasks titled Shared emulator work marker'}).expect(200)).body;
+ const plan={tool:'query_business_records',dataset:'tasks',filters:[{field:'title',operator:'equals',value:'Shared emulator work marker'}],outcome:'none',groupBy:'state',dateField:'',period:{unit:'none',offset:0,startDate:'',endDate:''}};
+ for(let i=0;i<20;i++){if((await store.get(path('assistantRequests',question.id))).status!=='Pending')break;await processAssistantRequest({store,id:question.id,provider:{plan:async()=>({steps:[plan]})},now:()=>at});}
+ const result=(await req('get','/lead-assistant/requests/'+question.id).expect(200)).body;
+ assert.equal(result.answer.count,1);assert.equal(result.answer.groups.Completed,1);assert.equal(result.after,null);
+ const records=(await req('get','/lead-assistant/requests/'+question.id+'/leads?part=0').expect(200)).body.items;
+ assert.equal(records[0].href,'/leads/'+leadId);
+});

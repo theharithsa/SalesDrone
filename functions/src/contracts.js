@@ -141,6 +141,10 @@ export const TaskPatch = z
     state: z.enum(['Pending', 'Completed', 'Cancelled']).optional(),
   })
   .strict();
+export const SharedTaskPatch=z.union([
+ z.object({expectedVersion:z.number().int().positive(),state:z.literal('Completed')}).strict(),
+ z.object({expectedVersion:z.number().int().positive(),dueAt:instant,timezone:text(100).optional()}).strict()
+]);
 export const TaskDelete = z
   .object({ expectedVersion: z.number().int().positive() })
   .strict();

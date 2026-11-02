@@ -15,6 +15,7 @@ import {
 import { Modal } from "../components/UI";
 import "../material/assistant.css";
 export type AssistantLeadRow = {
+  href?: string;
   id: string;
   name: string;
   company: string;
@@ -33,6 +34,7 @@ export type AssistantMessage = {
   sources?: { id: string; label: string; excerpt: string }[];
   clarifications?: string[];
   fieldLabels?: string[];
+  resultType?: string;
   resultRequestId?: string;
   resultCount?: number;
   resultsLoaded?: boolean;
@@ -140,9 +142,9 @@ export default function LeadAssistantView({
                       <li key={lead.id}>
                         <div>
                           <a
-                            href={"/leads/" + encodeURIComponent(lead.id)}
+                            href={lead.href || "/leads/" + encodeURIComponent(lead.id)}
                             onClick={
-                              onOpenLead
+                              onOpenLead && !lead.href
                                 ? (event) => {
                                     event.preventDefault();
                                     onOpenLead(lead.id);
@@ -173,8 +175,8 @@ export default function LeadAssistantView({
                     onClick={() => onLoadResults(message.resultRequestId!)}
                   >
                     {message.resultsLoaded
-                      ? "More matching leads"
-                      : `View matching leads (${message.resultCount || 0})`}
+                      ? `More matching ${message.resultType==='records'?'records':'leads'}`
+                      : `View matching ${message.resultType==='records'?'records':'leads'} (${message.resultCount || 0})`}
                   </button>
                 ) : null}
                 {message.sources?.length ? (

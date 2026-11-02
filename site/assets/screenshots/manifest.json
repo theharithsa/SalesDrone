@@ -312,12 +312,12 @@
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "6c328aee2e224dce7815d7b3c1ccd393df044dcd925c1d177488337f8171f0d1",
-    "capturedAt": "2026-10-29T16:00:09.525523+00:00",
-    "viewport": "412 x 892 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "412 x 892",
-    "version": "2.2.1",
-    "review": "Visually/privacy reviewed. Isolated real-component Admin header with fictional in-memory assignment and stage controls. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+    "sha256": "ee24db7662014d7d2cbceac3b5b699e148ff1618495815e69a164e73d6e94a91",
+    "capturedAt": "2026-11-02T09:50:43.965371+00:00",
+    "viewport": "411 x 891 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "capturePixels": "411 x 891",
+    "version": "2.7.0",
+    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
   },
   {
     "file": "outreach-mobile-demo.jpg",
@@ -342,22 +342,22 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "3d99d25324acc682957a525414819702cddeeeec0703632ddde2575d2536ba13",
-    "capturedAt": "2026-10-29T16:00:10.219977+00:00",
-    "viewport": "1440 x 892 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 892",
-    "version": "2.2.1",
-    "review": "Visually/privacy reviewed. Fictional guest full lead page; no live mutation. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+    "sha256": "c1e31f2fdbe3d3c9ae36daeea09757607c68645fbd6a4f8c4f211bd1382bcb6e",
+    "capturedAt": "2026-11-02T09:50:43.878121+00:00",
+    "viewport": "1440 x 900 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "capturePixels": "1440 x 900",
+    "version": "2.7.0",
+    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
   },
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f258ce25d18f66d9529cdf47a815db92160ebe778bc7662fdd075373565f7d7e",
-    "capturedAt": "2026-10-29T16:00:10.405010+00:00",
-    "viewport": "1440 x 892 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 892",
-    "version": "2.2.1",
-    "review": "Visually/privacy reviewed. Fictional guest inspector showing responsive workflow and score placement; no live mutation. No customer data, credentials or production writes. Browser viewport only, not physical-device/Samsung/Safari certification."
+    "sha256": "4762fb1bc330c84a5fffc527ff3365778b8f42383a80bc6528c27e782693cbe6",
+    "capturedAt": "2026-11-02T09:50:43.913211+00:00",
+    "viewport": "1440 x 900 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "capturePixels": "1440 x 900",
+    "version": "2.7.0",
+    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
   },
   {
     "file": "import-review-demo.jpg",
@@ -628,5 +628,15 @@
     "capturePixels": "1440 x 900",
     "version": "2.6.0",
     "review": "Visually/privacy reviewed. Fictional in-memory research/Admin fixture or isolated application demo; no live API, provider inference, customer records or credentials. Mobile captures show scrolled report/conversation results. Browser review is not physical-device or Safari certification."
+  },
+  {
+    "file": "lead-tasks-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "f816c2975a2b42b322677768f089f986171ef4e9bf183d616d96f7967525e02b",
+    "capturedAt": "2026-11-02T09:50:43.948121+00:00",
+    "viewport": "1440 x 900 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "capturePixels": "1440 x 900",
+    "version": "2.7.0",
+    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
   }
 ]

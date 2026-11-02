@@ -72,3 +72,5 @@ The real Assistant container renders independent grounded answer parts using the
 ResearchPage uses page-body for the same responsive padding/max-width as other workspace pages. Assistant compound answers render one conversational message, with supporting context in a collapsed native details element and independent result controls beneath it. Preserve visible partial/setup warnings and use returned counts only; no additional model call is required for presentation.
 
 Tasks uses components/TaskRow.tsx with matching header/row grid columns, a minimal current lead summary and a direct Reschedule action. A container query stacks the same information below 900px of panel width; review actual row overflow, keyboard Escape and large-text dialogs. Keep pending-only scheduling and link semantics, including opening the full lead page.
+
+LeadHeaderContext wraps company and masked monospace phone links without changing first-name typography. LeadTaskTab shows shared responsibility and direct Complete task; its card opens existing rescheduling details. Review narrow/large-text/dark layouts and keyboard focus with fictional data.

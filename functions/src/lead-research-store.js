@@ -5,6 +5,7 @@ export const RESEARCH_TASK_EPOCH_PATH = path(
   "maintenance",
   "leadResearchTasks",
 );
+export const RESEARCH_BUSINESS_EPOCH_PATH=path('maintenance','leadResearchBusiness');
 export const RESEARCH_EPOCH_PATH = path("maintenance", "leadResearchEpoch");
 // Independent of telemetry: every source mutation invalidates derived answers
 // and queues index maintenance atomically with the business write, even offline.
@@ -17,12 +18,16 @@ export function researchStore(base, getTrace = () => null) {
       base.run(async (tx) => {
         const epoch = await tx.get(RESEARCH_EPOCH_PATH);
         const taskEpoch = await tx.get(RESEARCH_TASK_EPOCH_PATH);
+        const businessEpoch=await tx.get(RESEARCH_BUSINESS_EPOCH_PATH);
+        let businessChanged=false;
         let taskChanged = false;
         const reset = await tx.get(RESET_STATE);
         const sources = new Map();
         const track = (p, value) => {
           if (!p.startsWith(ROOT + "/")) return;
           const [, , collection, id] = p.split("/");
+          if(collection==='settings'&&id==='scoring')businessChanged=true;
+          if(['imports','hygieneScans','leadAttachments','leadScores','members','leadTransitions'].includes(collection))businessChanged=true;
           if (collection === "tasks") {
             taskChanged = true;
             return;
@@ -45,6 +50,7 @@ export function researchStore(base, getTrace = () => null) {
             tx.delete(p);
           },
         });
+        if(businessChanged)tx.set(RESEARCH_BUSINESS_EPOCH_PATH,{version:(businessEpoch?.version||0)+1});
         if (taskChanged)
           tx.set(RESEARCH_TASK_EPOCH_PATH, {
             version: (taskEpoch?.version || 0) + 1,

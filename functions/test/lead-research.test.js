@@ -357,3 +357,73 @@ test('requested field values are projected directly from scoped records and unkn
  assert.equal(r.answer.parts[0].count,1);const stored=await store.query(path('assistantContributions'),{filters:[['requestId','==','lookup:0']],limit:10});assert.equal(stored.length,1);assert.ok(stored[0].lead.detail.includes('5550100'));assert.ok(!JSON.stringify(stored).includes('PRIVATE-OUTSIDE'));
  const bad=await agentQuestion(store,{steps:[toolPlan({selectFields:['private.secret']})]},'bad-projection','Show private lead details');assert.equal(bad.answer.parts[0].state,'Clarify');
 });
+
+test('business tools count shared lead tasks across owners but never personal reminders or outside lead scope',async()=>{
+ const {store}=await prepared();
+ await store.run(tx=>{
+  tx.set(path('leads','visible'),sourceLead('visible'));
+  tx.set(path('leads','outside'),sourceLead('outside',{assignedToUid:'other'}));
+  for(const [id,leadId,recipientUid]of [['a','visible','other'],['b','visible','rep'],['private',null,'rep'],['hidden','outside','other']])tx.set(path('tasks',id),{id,leadId,recipientUid,title:'Fictional follow-up',state:'Pending',dueAt:at,version:1});
+ });
+ const all=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'tasks'})]},'business-tasks','List tasks for my accessible leads');
+ assert.equal(all.answer.count,2);assert.equal(all.answer.resultType,'records');
+ const saved=await store.query(path('assistantContributions'),{filters:[['requestId','==','business-tasks:0']],limit:100});
+ assert.equal(saved.length,2);assert.ok(saved.every(r=>r.lead.href==='/leads/visible'));
+ const own=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'tasks',ownOnly:true})]},'own-business-tasks','Show tasks assigned to me');
+ assert.equal(own.answer.count,1);
+ await store.run(tx=>tx.set(path('tasks','b'),{id:'b',leadId:'visible',recipientUid:'rep',state:'Completed',version:2}));
+ assert.equal((await readAssistantRequest(store,{uid:'rep'},all.id)).status,'Stale');
+});
+test('business activity queries use actual call/note data, current assignments and local calendar dates',async()=>{
+ const {store}=await prepared();await store.run(tx=>{
+  tx.set(path('leads','visible'),sourceLead('visible'));
+  tx.set(path('activities','call'),{id:'call',leadId:'visible',type:'call',notes:'Fictional callback',outcome:'Connected',createdAt:'2026-02-28T20:00:00Z',actorUid:'rep'});
+  tx.set(path('activities','note'),{id:'note',leadId:'visible',type:'note',notes:'Fictional note',createdAt:at,actorUid:'rep'});
+ });
+ const calls=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'calls',period:{unit:'month',offset:0,startDate:'',endDate:''},dateField:'createdAt',groupBy:'outcome'})]},'call-business','How many calls this month by outcome?');
+ assert.equal(calls.answer.count,1);assert.equal(calls.answer.groups.Connected,1);
+});
+test('business import/report access follows independent capabilities and projects only known business values',async()=>{
+ const {store,raw}=await prepared();
+ await store.run(tx=>tx.set(path('imports','own-import'),{id:'own-import',createdByUid:'rep',filename:'Fictional.xlsx',status:'Completed',total:7,secret:'never project',version:1}));
+ const denied=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'imports'})]},'denied-imports','How many imports?').catch(e=>e);
+ assert.equal(denied.answer.state,'Clarify');assert.equal(denied.answer.count,undefined);
+ const rep=await raw.get(path('members','rep'));await raw.set(path('members','rep'),{...rep,capabilities:[...rep.capabilities,'imports:read'],version:rep.version+1});
+ const result=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'imports'})]},'permitted-imports','How many imports?');
+ assert.equal(result.answer.count,1);
+ const rows=await store.query(path('assistantContributions'),{filters:[['requestId','==','permitted-imports:0']],limit:10});
+ assert.ok(!JSON.stringify(rows).includes('never project'));
+ await store.run(tx=>tx.set(path('imports','own-import'),{id:'own-import',createdByUid:'rep',status:'DetailsDeleted',version:2}));
+ assert.equal((await readAssistantRequest(store,{uid:'rep'},result.id)).status,'Stale');
+});
+
+test('business counts complete multiple pages and redact raw scanned positions from private source collections',async()=>{
+ const {store}=await prepared();await store.run(tx=>{
+  tx.set(path('leads','bulk'),sourceLead('bulk'));
+  for(let i=0;i<205;i++)tx.set(path('activities','bulk-'+String(i).padStart(3,'0')),{id:'bulk-'+String(i).padStart(3,'0'),leadId:'bulk',type:'note',notes:'Synthetic recorded detail',createdAt:at});
+  tx.set(path('activities','private-source'),{id:'private-source',leadId:'missing',type:'note',notes:'Not accessible'});
+ });
+ const result=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'notes'})]},'bulk-business','How many notes?');
+ assert.equal(result.answer.count,205);assert.equal(result.answer.coverage.scanned,205);assert.equal(result.after,null);
+ const {businessCatalog}=await import('../src/business-records.js');
+ assert.ok(!JSON.stringify(businessCatalog(await researchMember(store,{uid:'rep'},['assistant:query']))).includes('personalAccessTokens'));
+});
+
+test('business task aliases are explicit, overdue uses the due instant, and invalid calendars/projections are rejected',async()=>{
+ const {store}=await prepared();await store.run(tx=>{
+  tx.set(path('leads','work'),sourceLead('work'));
+  for(const [id,state,dueAt]of [['overdue','Pending','2026-03-01T00:00:00Z'],['future','Pending','2026-12-01T00:00:00Z'],['closed','Completed','2026-03-01T00:00:00Z']])tx.set(path('tasks',id),{id,leadId:'work',recipientUid:'other',state,dueAt,title:'Fictional task',version:1});
+ });
+ const r=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'tasks',overdueOnly:true,filters:[{field:'state',operator:'equals',value:'Pending'}]})]},'overdue-business','Show open overdue tasks');assert.equal(r.answer.count,1);
+ const {validateBusinessPlan,matchesBusiness}=await import('../src/business-records.js');
+ const p=toolPlan({tool:'query_business_records',dataset:'tasks',filters:[{field:'dueAt',operator:'before',value:'2026-02-30'}]});
+ assert.throws(()=>validateBusinessPlan(p,null,'Before 2026-02-30','Asia/Kolkata'),e=>e.code==='AGENT_CLARIFY');
+ assert.throws(()=>validateBusinessPlan({...p,filters:[],selectFields:['secret']},null,'Show tasks','Asia/Kolkata'),e=>e.code==='AGENT_CLARIFY');
+ assert.equal(matchesBusiness({state:'Completed'},{dataset:'tasks',filters:[{field:'state',operator:'not_equals',value:'Pending'}]}),true);
+});
+
+test('my leads does not accidentally restrict file ownership and file bytes stay excluded',async()=>{
+ const {store}=await prepared();await store.run(tx=>{tx.set(path('leads','file-lead'),sourceLead('file-lead'));tx.set(path('leadAttachments','file'),{id:'file',leadId:'file-lead',createdByUid:'other',name:'Fictional.pdf',state:'Ready',size:12,contentType:'application/pdf',storagePath:'PRIVATE-BINARY-PATH',version:1});});
+ const r=await agentQuestion(store,{steps:[toolPlan({tool:'query_business_records',dataset:'files',ownOnly:true})]},'my-lead-files','Show file metadata for my leads');assert.equal(r.answer.count,1);
+ const rows=await store.query(path('assistantContributions'),{filters:[['requestId','==','my-lead-files:0']],limit:10});assert.ok(!JSON.stringify(rows).includes('PRIVATE-BINARY-PATH'));
+});
