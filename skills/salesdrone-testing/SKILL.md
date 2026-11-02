@@ -59,3 +59,5 @@ Tests that issue and validate PATs across multiple createApp instances must shar
 CI case suites are functions, ingress, web, components and emulator. Node/Vitest runner summaries provide independent expected counts; readCaseEvidence reconciles them with emitted sanitized cases, validates suite paths/IDs/statuses and rejects empty, missing, duplicate or incomplete receipts. Each suite clears prior artifacts before running. Use scripts/emulator-tests.mjs so workspace cwd cannot erase emulator paths. Test the actual reporter on pass/fail/skip fixtures, not only a mocked mapper. Run compound Assistant/API and real Auth/Firestore regressions; do not fabricate historical missing events.
 
 Shared lead task regressions cover read-only viewers, non-recipient lead editors, legacy ownership, version/replay, terminal states and scope revocation. Business Assistant tests cover accessible multi-page counts, private-source exclusion, current ACLs and source epoch invalidation; use real Auth/Firestore integration for the shared routes.
+
+Global shared-task and computed-font regressions: see [operations](references/operations.md).

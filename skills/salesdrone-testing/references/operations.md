@@ -109,3 +109,5 @@ The quick issue batch covers PAT file round trips and read-only denial, archive 
 
 Settings audit privacy tests inject a fixed event time matching the fixture reminder time. Inspect event.data for private values; a legitimate CloudEvent envelope timestamp must not fail payload privacy assertions. Do not rerun a wall-clock collision to hide it.
 
+
+Regress accessible global task pages across owners, sparse empty pages/cursor continuation, default private view, mixed-view cursor rejection, scope revocation and PAT refusal. Verify dueAt/id production index definitions explicitly; real emulator alone cannot enforce them. Browser computed font-family must prove the phone monospace fix.

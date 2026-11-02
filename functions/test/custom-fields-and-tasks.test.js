@@ -625,5 +625,29 @@ test('shared lead task readers see responsibility while any current lead editor 
 
 test('shared task production indexes include the store adapter id ordering for unfiltered and state-filtered pages',async()=>{
  const {readFile}=await import('node:fs/promises');const config=JSON.parse(await readFile(new URL('../../firestore.indexes.json',import.meta.url),'utf8'));
- for(const fields of [['leadId','dueAt','id'],['leadId','state','dueAt','id']])assert.ok(config.indexes.some(i=>i.collectionGroup==='tasks'&&i.queryScope==='COLLECTION'&&JSON.stringify(i.fields)===JSON.stringify(fields.map(fieldPath=>({fieldPath,order:'ASCENDING'})))),'Missing production index '+fields.join(','));
+ for(const fields of [['leadId','dueAt','id'],['leadId','state','dueAt','id'],['dueAt','id'],['state','dueAt','id']])assert.ok(config.indexes.some(i=>i.collectionGroup==='tasks'&&i.queryScope==='COLLECTION'&&JSON.stringify(i.fields)===JSON.stringify(fields.map(fieldPath=>({fieldPath,order:'ASCENDING'})))),'Missing production index '+fields.join(','));
+});
+
+test('main accessible task view uses scoped sparse pages, preserves private defaults and exposes editor capabilities',async()=>{
+ const s=await setup();await s.store.set(path('settings','workspace'),{version:2,assignedOnly:false,exportsEnabled:true});
+ await s.store.run(async tx=>{
+  const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,scope:'assigned'});
+  tx.set(path('members','other'),{...(await tx.get(path('members','other'))),name:'Fictional responsible member'});
+  tx.set(path('leads','in'),{id:'in',name:'Accessible fictional lead',assignedToUid:'viewer',version:1});
+  tx.set(path('leads','out'),{id:'out',name:'Never expose this lead',assignedToUid:'other',version:1});
+  for(const [id,leadId,recipientUid,hour]of [['a','out','other','09'],['b',null,'other','10'],['c','in','other','11'],['d',null,'viewer','12']])tx.set(path('tasks',id),{...task,id,leadId,recipientUid,creatorUid:recipientUid,state:'Pending',version:1,dueAt:'2026-10-25T'+hour+':00:00Z'});
+ });
+ let cursor=null,rows=[],first;
+ do{const p=(await s.call('get','/tasks?view=accessible&state=Pending&limit=1'+(cursor?'&cursor='+encodeURIComponent(cursor):''),null,'viewer').expect(200)).body;if(!first)first=p;rows.push(...p.items);cursor=p.nextCursor;}while(cursor);
+ assert.equal(first.items.length,0);assert.ok(first.nextCursor?.startsWith('v2.'));assert.ok(!Buffer.from(first.nextCursor.split('.')[2],'base64url').includes(Buffer.from('2026-10-25')));assert.deepEqual(rows.map(t=>t.id),['c','d']);
+ assert.equal(rows[0].lead.name,'Accessible fictional lead');assert.equal(rows[0].responsible.name,'Fictional responsible member');assert.equal(rows[0].canManage,false);assert.equal(rows[0].canEditOwn,false);assert.equal(rows[0].sharedLeadContext,'in');
+ assert.deepEqual((await s.call('get','/tasks',null,'viewer').expect(200)).body.items.map(t=>t.id),['d']);
+ await s.call('get','/tasks?cursor='+encodeURIComponent(first.nextCursor),null,'viewer').expect(400);
+ await s.store.run(async tx=>{const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,version:2,capabilities:['leads:read','leads:edit']});});
+ const edit=(await s.call('get','/tasks?view=accessible',null,'viewer').expect(200)).body.items.find(t=>t.id==='c');assert.equal(edit.canManage,true);assert.equal(edit.canEditOwn,false);
+ await s.call('patch','/leads/in/tasks/c',{expectedVersion:1,dueAt:'2026-10-26T10:00:00Z'},'viewer').expect(200);
+ await s.call('patch','/tasks/c',{expectedVersion:2,title:'Cannot retitle'},'viewer').expect(403);
+ await s.store.run(async tx=>{const l=await tx.get(path('leads','in'));tx.set(path('leads','in'),{...l,assignedToUid:'other'});});
+ assert.equal((await s.call('get','/tasks?view=accessible',null,'viewer').expect(200)).body.items.some(t=>t.id==='c'),false);
+ await s.call('get','/tasks?view=unknown',null,'viewer').expect(400);
 });

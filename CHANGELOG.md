@@ -19,6 +19,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.7.2] - 2026-11-02
+
+### Fixed
+- Show accessible shared lead work on the main Tasks page, including linked lead and responsible person. Lead editors can complete or reschedule; recipient-only title/delete/cancel controls and private personal reminders retain their boundaries.
+- Use the canonical Material monospace phone utility in lead headers; the previous undefined class inherited the body font.
+
 ## [2.7.1] - 2026-11-02
 
 ### Added

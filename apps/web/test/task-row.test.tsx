@@ -9,6 +9,10 @@ describe('Task lead context and rescheduling',()=>{
   fireEvent.click(screen.getByRole('button',{name:'Reschedule'}));expect(p.onReschedule).toHaveBeenCalledOnce();expect(p.onOpen).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button',{name:'Check delivery'}));expect(p.onOpen).toHaveBeenCalledOnce();
  });
+ it('shows responsibility and leaves read-only shared work without action controls',()=>{
+ const p=props();render(<TaskRow {...p} task={{...p.task,responsible:{name:'Fictional teammate'}}} canComplete={false} onSnooze={undefined} onReschedule={undefined}/>);
+ expect(screen.getByText('Fictional teammate')).toBeInTheDocument();expect(screen.getByRole('button',{name:'Complete Check delivery'})).toBeDisabled();expect(screen.queryByRole('button',{name:'Reschedule'})).not.toBeInTheDocument();expect(screen.queryByLabelText('Actions for Check delivery')).not.toBeInTheDocument();
+ });
  it('does not offer rescheduling for completed tasks or create a link for personal reminders',()=>{
   const p=props();render(<TaskRow {...p} lead={undefined} task={{...p.task,leadId:null,state:'Completed'}}/>);
   expect(screen.queryByRole('button',{name:'Reschedule'})).not.toBeInTheDocument();expect(screen.queryByRole('link')).not.toBeInTheDocument();

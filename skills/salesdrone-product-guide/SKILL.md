@@ -66,4 +66,4 @@ Archives now exposes Restore lead to current lead editors. Explain preserved sup
 
 Keep compound-answer coverage and historical capture metadata accurate; see the research guide notes.
 
-Shared lead-work and Assistant coverage: see [research guide notes](references/research.md).
+Main shared Tasks, monospace contact captures, lead-work and Assistant coverage: see [research guide notes](references/research.md).

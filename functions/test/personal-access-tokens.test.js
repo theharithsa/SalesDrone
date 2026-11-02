@@ -470,3 +470,9 @@ test('disabled or deleted credential owners are rejected before accessing data',
   await call(token, 'get', '/leads').expect(401);
   await call('admin', 'get', '/leads').expect(200);
 });
+
+test('tasks-only PAT cannot opt into shared Google-member task browsing',async()=>{
+ const s=await setup();const issued=await s.issue(['tasks:read']);
+ await s.call(issued.token,'get','/tasks').expect(200);
+ const denied=await s.call(issued.token,'get','/tasks?view=accessible').expect(403);assert.equal(denied.body.error.code,'GOOGLE_REQUIRED');
+});

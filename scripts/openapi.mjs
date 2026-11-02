@@ -409,6 +409,7 @@ schemas.Task = object({
   responsible: {type:'object',properties:{id:string,name:string},required:['id','name']},
   sharedLeadContext: string,
   canManage: {type:'boolean'},
+  canEditOwn: {type:'boolean'},
   lead: {type: ['object', 'null'], description: 'Task list only: current authorized linked lead summary, independent of the loaded lead page. Null for personal reminders.', required: ['id', 'name', 'company'], additionalProperties: false, properties: {id: string, name: string, company: string}},
   ...schemas.TaskInput.properties,
   id: string,
@@ -1041,6 +1042,7 @@ for (const e of endpoints) {
     };
   }
   if(e.url==='/lead-assistant/requests/:id/leads')operation.parameters.push({in:'query',name:'part',schema:{type:'integer',minimum:0,maximum:3,default:0},description:'Zero-based answer part. The signed cursor is bound to this result set; a different part cannot reuse it.'});
+  if(e.method==='get'&&e.url==='/tasks'){operation.responses[200].content['application/json'].schema=pageOf('Task');operation.parameters.push({in:'query',name:'view',schema:{type:'string',enum:['accessible']},description:'Optional Google/App Check member-only accessible lead work plus own personal reminders. Omit for legacy recipient-only tasks; PAT cannot opt in. Sparse pages may continue through nextCursor. Current lead scope and mutation capabilities are rechecked.'});}
   if(e.method==='get'&&e.url==='/leads/:id/tasks')operation.parameters.push(
     {in:'query',name:'limit',schema:{type:'integer',minimum:1,maximum:100,default:30}},
     {in:'query',name:'cursor',schema:{type:'string'},description:'Opaque signed continuation bound to lead, state filter and current membership.'},
@@ -1265,7 +1267,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.26.1',
+    version: '1.27.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

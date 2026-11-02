@@ -94,3 +94,9 @@ test('shared task routes publish the bounded Task page and strict versioned muta
  assert.equal(change.requestBody.content['application/json'].schema.$ref,'#/components/schemas/SharedTaskPatch');
  const retry=change.parameters.find(p=>p.name==='Idempotency-Key');assert.equal(retry.in,'header');assert.equal(retry.required,true);assert.equal(retry.schema.format,'uuid');
 });
+
+test('main task contract documents opt-in accessible browsing and action flags without expanding PAT routes',async()=>{
+ const spec=JSON.parse(await read('docs/openapi.json')),op=spec.paths['/api/v1/tasks'].get;
+ assert.deepEqual(op.parameters.find(p=>p.name==='view').schema.enum,['accessible']);assert.equal(op['x-personal-access-token-scope'],'tasks:read');
+ assert.ok(JSON.stringify(op.responses['200']).includes('Task'));assert.ok(spec.components.schemas.Task.properties.canEditOwn);assert.ok(spec.components.schemas.Task.properties.canManage);
+});

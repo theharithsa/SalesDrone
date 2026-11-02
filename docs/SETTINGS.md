@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.7.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.7.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -577,7 +577,7 @@ Changing scope applies server-side; old cursors/cached context cannot grant broa
 
 **Default:** Role preset unless customized.
 
-Fine-tune non-administrative actions while retaining lead-read access. Lead readers can view shared lead tasks and responsibility; lead editors can complete or reschedule Pending shared work without tasks:write. Personal reminders and delivery remain private. Import history, import writes and shared-import access can be granted separately; writes/sharing require import history permission. Lead create/edit permissions and effective lead scope still apply to import execution.
+Fine-tune non-administrative actions while retaining lead-read access. Lead readers can view shared lead tasks and responsibility on Tasks and inside the lead; lead editors can complete or reschedule Pending shared work without tasks:write. Personal reminders and delivery remain private. Import history, import writes and shared-import access can be granted separately; writes/sharing require import history permission. Lead create/edit permissions and effective lead scope still apply to import execution.
 
 Removing a capability blocks subsequent relevant operations. UI visibility alone is not authorization.
 

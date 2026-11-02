@@ -1499,6 +1499,7 @@ test('shared lead work and business-query results persist with actual Auth, Fire
  const req=(method,url,body,key=randomUUID())=>{const r=request(app)[method]('/api/v1'+url).set('Authorization','Bearer '+editorToken).set('Idempotency-Key',key);return body?r.send(body):r;};
  const rows=(await req('get','/leads/'+leadId+'/tasks?state=Pending').expect(200)).body.items;
  assert.equal(rows[0].responsible.name,'Task owner');assert.equal(rows[0].canManage,true);
+ const sharedPage=(await req('get','/tasks?view=accessible&state=Pending&limit=100').expect(200)).body;const shared=sharedPage.items.find(t=>t.id===taskId);assert.equal(shared.responsible.name,'Task owner');assert.equal(shared.lead.name,'Fictional shared lead');assert.equal(shared.canManage,true);assert.equal(shared.canEditOwn,false);
  const key=randomUUID(),body={expectedVersion:1,state:'Completed'};
  const completed=(await req('patch','/leads/'+leadId+'/tasks/'+taskId,body,key).expect(200)).body;
  assert.equal(completed.recipientUid,owner);assert.equal(completed.version,2);

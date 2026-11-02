@@ -122,22 +122,22 @@
   {
     "file": "mobile-tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "33909765dc5d41dcc23e42c12c0f088964b11b1cb68bc1b09daa88185e265ae7",
-    "capturedAt": "2026-11-02T08:46:44.286803+00:00",
-    "viewport": "390 x 900 measured CSS pixels; compensated 70% browser zoom",
-    "capturePixels": "65536 x 4292542531",
-    "version": "2.6.7",
-    "review": "Visually/privacy reviewed. Fictional task/lead rows with the actual TaskRow and RescheduleForm, no live API or customer data. Linked Lead column and direct Pending rescheduling; native capture dimensions separate from measured viewport. Synthetic save, dark 125% and short-window/menu checks recorded separately. No physical-device/Safari certification."
+    "sha256": "a74f1ec9105dc8ccb2a7efa5958dde93cf51e2a6ee7cfa88e29bd851ddeed2fc",
+    "capturedAt": "2026-11-02T11:10:13.530119+00:00",
+    "viewport": "390 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
+    "capturePixels": "390 x 900",
+    "version": "2.7.2",
+    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
   },
   {
     "file": "tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "fc65c279895cce293b34cb77af7aff7592d7ea0bf75f1fcddd98663ea4a1282c",
-    "capturedAt": "2026-11-02T08:46:44.264660+00:00",
-    "viewport": "1440 x 900 measured CSS pixels; compensated 70% browser zoom",
-    "capturePixels": "65536 x 4292542531",
-    "version": "2.6.7",
-    "review": "Visually/privacy reviewed. Fictional task/lead rows with the actual TaskRow and RescheduleForm, no live API or customer data. Linked Lead column and direct Pending rescheduling; native capture dimensions separate from measured viewport. Synthetic save, dark 125% and short-window/menu checks recorded separately. No physical-device/Safari certification."
+    "sha256": "e5d032e2df79c7750c84305bf73fcc452825f0bcf751dd0695e7538bd652e1c7",
+    "capturedAt": "2026-11-02T11:10:13.510656+00:00",
+    "viewport": "1440 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
+    "capturePixels": "1440 x 900",
+    "version": "2.7.2",
+    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
   },
   {
     "file": "notifications-demo.jpg",
@@ -312,12 +312,12 @@
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ee24db7662014d7d2cbceac3b5b699e148ff1618495815e69a164e73d6e94a91",
-    "capturedAt": "2026-11-02T09:50:43.965371+00:00",
-    "viewport": "411 x 891 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "sha256": "05664ab959e8f828deed71d6203cfd5f34b3f72dfad760c49de1b10dab7e68aa",
+    "capturedAt": "2026-11-02T11:10:13.546636+00:00",
+    "viewport": "411 x 891 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
     "capturePixels": "411 x 891",
-    "version": "2.7.0",
-    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
+    "version": "2.7.2",
+    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
   },
   {
     "file": "outreach-mobile-demo.jpg",
@@ -342,22 +342,22 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "c1e31f2fdbe3d3c9ae36daeea09757607c68645fbd6a4f8c4f211bd1382bcb6e",
-    "capturedAt": "2026-11-02T09:50:43.878121+00:00",
-    "viewport": "1440 x 900 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "sha256": "5ae8db96ef7b85a329b882128dc82804b251648542259e37fa6b4ed13954946e",
+    "capturedAt": "2026-11-02T11:10:13.579869+00:00",
+    "viewport": "1440 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
     "capturePixels": "1440 x 900",
-    "version": "2.7.0",
-    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
+    "version": "2.7.2",
+    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
   },
   {
     "file": "lead-overlay-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "4762fb1bc330c84a5fffc527ff3365778b8f42383a80bc6528c27e782693cbe6",
-    "capturedAt": "2026-11-02T09:50:43.913211+00:00",
-    "viewport": "1440 x 900 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "sha256": "585795926b9d04d092e88fb62211ea1e920f1aed76b820e6a65a395d1f890645",
+    "capturedAt": "2026-11-02T11:10:13.613319+00:00",
+    "viewport": "1440 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
     "capturePixels": "1440 x 900",
-    "version": "2.7.0",
-    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
+    "version": "2.7.2",
+    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
   },
   {
     "file": "import-review-demo.jpg",
@@ -632,11 +632,11 @@
   {
     "file": "lead-tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f816c2975a2b42b322677768f089f986171ef4e9bf183d616d96f7967525e02b",
-    "capturedAt": "2026-11-02T09:50:43.948121+00:00",
-    "viewport": "1440 x 900 CSS pixels; in-app Chromium at 70% native zoom, compensated viewport",
+    "sha256": "7797879a11b0c6968939ab254177aba80d042e132335cd7dec69be4d5e2f5356",
+    "capturedAt": "2026-11-02T11:10:13.647174+00:00",
+    "viewport": "1440 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
     "capturePixels": "1440 x 900",
-    "version": "2.7.0",
-    "review": "Visually and privacy reviewed fictional demo with real lead header/task components. In-memory completion and rescheduling only; no production calls/customer data/credentials. Cropped top-left measured viewport to remove capture transport padding. Browser emulation only, not physical-device/Safari certification."
+    "version": "2.7.2",
+    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
   }
 ]
