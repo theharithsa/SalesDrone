@@ -710,7 +710,7 @@
       "manualCases": [
         {
           "id": "LEAD-HYGIENE-01",
-          "expected": "Private scoped history, current-source evidence and read-only interactions remain usable across phone/tablet/desktop.",
+          "expected": "Private scoped history, current-source evidence and read-only interactions remain usable across phone/tablet/desktop. Shared page gutters keep heading/options/panels inset at every responsive size.",
           "fixture": "Synthetic research review fixture; no live provider or customer data"
         }
       ]
@@ -720,7 +720,9 @@
       "ownerSkill": "skills/salesdrone-lead-assistant/SKILL.md",
       "automatedTests": [
         "functions/test/lead-research.test.js",
-        "functions/test/emulator.integration.js"
+        "functions/test/emulator.integration.js",
+        "tests/assistant-presentation.test.ts",
+        "apps/web/test/lead-assistant.test.tsx"
       ],
       "manualCases": [
         {
@@ -732,6 +734,11 @@
           "id": "LEAD-ASSISTANT-02",
           "expected": "The reported compound total/closed question gives each exact scoped count independently; missing stage meanings preserve total and display actual stage counts without an invented outcome. Each list pages its own part; source/access changes invalidate all parts.",
           "fixture": "Fictional compound research fixture and real Auth/Firestore emulator"
+        },
+        {
+          "id": "LEAD-ASSISTANT-03",
+          "expected": "One natural Assistant message per question. Details start collapsed; per-part results remain independent. Partial/setup limits stay visible.",
+          "fixture": "Fictional real-component compound-answer fixture"
         }
       ]
     }

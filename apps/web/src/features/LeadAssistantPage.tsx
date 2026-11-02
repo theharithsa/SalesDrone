@@ -3,6 +3,7 @@ import LeadAssistantView, {
   type AssistantMessage,
   type AssistantLeadRow,
 } from "./LeadAssistantView";
+import { presentAssistantAnswer } from "../lib/assistant-presentation";
 type Row = Record<string, any>;
 type Request = (p: string, m?: string, b?: any, k?: string) => Promise<any>;
 export default function LeadAssistantPage({
@@ -142,7 +143,7 @@ export default function LeadAssistantPage({
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
     .flatMap((r) => {
       const answers: (Row | undefined)[] = r.answer?.parts || [r.answer];
-      return [{ id: r.id + "-q", role: "user" as const, text: r.question || "" }, ...answers.map((answer, partIndex) => {
+      const parts: AssistantMessage[] = answers.map((answer, partIndex) => {
       const resultId=r.answer?.parts ? r.id + ":" + partIndex : r.id;
       const groupText = answer?.groups
         ? Object.entries(answer.groups)
@@ -159,17 +160,7 @@ export default function LeadAssistantPage({
       return {
           id: resultId,
           role: "assistant" as const,
-          text:
-            r.status === "Pending"
-              ? "Checking your accessible records…"
-              : [
-                  answer?.text || "This answer is unavailable. Ask again.",
-                  groupText,
-                  overflow,
-                  themes,
-                ]
-                  .filter(Boolean)
-                  .join("\n\n"),
+          text: [groupText, overflow, themes].filter(Boolean).join("\n\n"),
           scope: [
             answer?.coverage?.cohort,
             ...(answer?.coverage?.filterSummary || []),
@@ -207,7 +198,15 @@ export default function LeadAssistantPage({
               }
             : {}),
         };
-      })];
+      });
+      const presentation = presentAssistantAnswer(answers);
+      return [
+        { id: r.id + "-q", role: "user" as const, text: r.question || "" },
+        { id: r.id, role: "assistant" as const,
+          text: r.status === "Pending" ? "Checking your leads…" : [presentation.text,...parts.map(part=>part.text).filter(Boolean)].join("\n\n"),
+          parts: parts.map((part,index) => ({...part,detailsText:presentation.details[index]})),
+        },
+      ];
     });
   return (
     <LeadAssistantView

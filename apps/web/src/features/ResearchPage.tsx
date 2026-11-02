@@ -205,7 +205,7 @@ export default function ResearchPage({
     });
   }
   return (
-    <div className="research-page" data-dt-mask>
+    <div className="page-body research-page" data-dt-mask>
       <header className="page-heading">
         <div>
           <span className="eyebrow">

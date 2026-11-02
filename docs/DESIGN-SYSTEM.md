@@ -202,3 +202,5 @@ current Material colour roles, fonts and compensated mobile touch targets.
 The [agent plan](LEAD-ASSISTANT-AGENT-PLAN.md) distinguishes the synthetic interaction
 prototype from implemented query support. Browser review covered 390px empty/results
 and history, plus a 1280px welcome view; this is not physical-device certification.
+
+Lead Hygiene shares the page-body wrapper: desktop 32px side gutters, intermediate 24px and compact 16px. Keep the heading, archive option and report grid on those edges. Lead Assistant uses one message per question; scope and current-state context sit in collapsed Answer details, while material setup/partial-data limitations stay in the reply and each result list retains its own controls.

@@ -25,6 +25,8 @@ export type AssistantMessage = {
   id: string;
   role: "user" | "assistant";
   text: string;
+  detailsText?: string;
+  parts?: AssistantMessage[];
   scope?: string;
   period?: string;
   leads?: AssistantLeadRow[];
@@ -110,6 +112,86 @@ export default function LeadAssistantView({
   const submit = () => {
     if (draft.trim() && !busy) onSend(draft.trim());
   };
+
+  const extras = (message: AssistantMessage) => (
+    <div className="assistant-answer-results" key={message.id}>
+                {message.fieldLabels?.length ? (
+                  <details className="assistant-sources">
+                    <summary>Available lead fields</summary>
+                    <p>{message.fieldLabels.join(" · ")}</p>
+                  </details>
+                ) : null}
+                {message.clarifications ? (
+                  <div className="assistant-clarifications">
+                    {message.clarifications.map((value) => (
+                      <button
+                        className="button"
+                        key={value}
+                        onClick={() => onClarify(value)}
+                      >
+                        {value}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                {message.leads?.length ? (
+                  <ul className="assistant-lead-results">
+                    {message.leads.map((lead) => (
+                      <li key={lead.id}>
+                        <div>
+                          <a
+                            href={"/leads/" + encodeURIComponent(lead.id)}
+                            onClick={
+                              onOpenLead
+                                ? (event) => {
+                                    event.preventDefault();
+                                    onOpenLead(lead.id);
+                                  }
+                                : undefined
+                            }
+                          >
+                            {lead.name}
+                          </a>
+                          <p>{lead.company}</p>
+                        </div>
+                        <span className="assistant-result-stage">
+                          {lead.stage}
+                        </span>
+                        <span className="assistant-result-detail">
+                          {lead.detail}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                {message.resultRequestId &&
+                onLoadResults &&
+                (!message.resultsLoaded || message.hasMoreResults) ? (
+                  <button
+                    className="button"
+                    disabled={busy}
+                    onClick={() => onLoadResults(message.resultRequestId!)}
+                  >
+                    {message.resultsLoaded
+                      ? "More matching leads"
+                      : `View matching leads (${message.resultCount || 0})`}
+                  </button>
+                ) : null}
+                {message.sources?.length ? (
+                  <details className="assistant-sources">
+                    <summary>
+                      Sources · {message.sources.length} records
+                    </summary>
+                    {message.sources.map((source) => (
+                      <div key={source.id}>
+                        <strong>{source.label}</strong>
+                        <p>{source.excerpt}</p>
+                      </div>
+                    ))}
+                  </details>
+                ) : null}
+    </div>
+  );
   return (
     <section
       className={"lead-assistant " + (!messages.length ? "is-empty" : "")}
@@ -206,88 +288,18 @@ export default function LeadAssistantView({
                   </div>
                 ) : null}
                 <p className="assistant-message-text">{message.text}</p>
-                {message.scope || message.period ? (
-                  <p className="assistant-query-context">
-                    {[message.scope, message.period]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </p>
-                ) : null}
-                {message.fieldLabels?.length ? (
-                  <details className="assistant-sources">
-                    <summary>Available lead fields</summary>
-                    <p>{message.fieldLabels.join(" · ")}</p>
-                  </details>
-                ) : null}
-                {message.clarifications ? (
-                  <div className="assistant-clarifications">
-                    {message.clarifications.map((value) => (
-                      <button
-                        className="button"
-                        key={value}
-                        onClick={() => onClarify(value)}
-                      >
-                        {value}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-                {message.leads?.length ? (
-                  <ul className="assistant-lead-results">
-                    {message.leads.map((lead) => (
-                      <li key={lead.id}>
-                        <div>
-                          <a
-                            href={"/leads/" + encodeURIComponent(lead.id)}
-                            onClick={
-                              onOpenLead
-                                ? (event) => {
-                                    event.preventDefault();
-                                    onOpenLead(lead.id);
-                                  }
-                                : undefined
-                            }
-                          >
-                            {lead.name}
-                          </a>
-                          <p>{lead.company}</p>
-                        </div>
-                        <span className="assistant-result-stage">
-                          {lead.stage}
-                        </span>
-                        <span className="assistant-result-detail">
-                          {lead.detail}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-                {message.resultRequestId &&
-                onLoadResults &&
-                (!message.resultsLoaded || message.hasMoreResults) ? (
-                  <button
-                    className="button"
-                    disabled={busy}
-                    onClick={() => onLoadResults(message.resultRequestId!)}
-                  >
-                    {message.resultsLoaded
-                      ? "More matching leads"
-                      : `View matching leads (${message.resultCount || 0})`}
-                  </button>
-                ) : null}
-                {message.sources?.length ? (
-                  <details className="assistant-sources">
-                    <summary>
-                      Sources · {message.sources.length} records
-                    </summary>
-                    {message.sources.map((source) => (
-                      <div key={source.id}>
-                        <strong>{source.label}</strong>
-                        <p>{source.excerpt}</p>
+                {(message.parts || [message]).some(part => part.scope || part.period || part.detailsText) ? (
+                  <details className="assistant-sources assistant-answer-details">
+                    <summary>Answer details</summary>
+                    {(message.parts || [message]).map(part => (
+                      <div key={part.id}>
+                        {part.detailsText ? <p>{part.detailsText}</p> : null}
+                        {part.scope || part.period ? <p className="assistant-query-context">{[part.scope,part.period].filter(Boolean).join(" · ")}</p> : null}
                       </div>
                     ))}
                   </details>
                 ) : null}
+                {(message.parts || [message]).map(extras)}
               </article>
             ))}
             {busy ? (
@@ -359,7 +371,7 @@ export default function LeadAssistantView({
           </div>
         </form>
         <p className="assistant-footer-note">
-          Lead data only. Review the sources. Your records stay unchanged.
+          Answers from your lead records.
         </p>
       </div>
       <Modal

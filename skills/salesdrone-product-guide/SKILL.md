@@ -60,8 +60,8 @@ These are tracked follow-ups, not implemented behavior: [#37](https://github.com
 
 Capture Source, Zone and custom-field selections with configured labels, mapped import destinations/conflicts, and empty groups. Keep primary/helper rows separate; refresh affected states without restamping unchanged captures.
 
-Research workflows: [guide notes](references/research.md).
+Research workflows and one-reply Assistant/Hygiene capture guidance: [guide notes](references/research.md).
 
 Archives now exposes Restore lead to current lead editors. Explain preserved suppression/contact ownership, current version/scope and no restarted outreach. Corrections are original-author/Admin only. Refresh archives screenshots with fictional records and visible restore controls.
 
-Assistant compound answers preserve each requested part, current-state scope and available facts even if another part needs setup. Refresh assistant desktop/mobile captures with the reported total/closed question and fictional counts. Record measured CSS viewport and actual capture pixels, including browser zoom compensation. Do not relabel other historical screenshots.
+Keep compound-answer coverage and historical capture metadata accurate; see the research guide notes.
