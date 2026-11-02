@@ -137,3 +137,7 @@ An index-only failed unpublished candidate can recover without consuming another
 version via the exact-base candidate-recovery record and read-only evidence checks
 in check-release. See RELEASE-GOVERNANCE.md and tests/candidate-recovery.test.ts.
 Duplicate index definitions fail release preflight before any cloud operation.
+
+## App Check CSP verification
+
+The JavaScript SDK exchanges tokens at content-firebaseappcheck.googleapis.com. Include that exact origin in SPA connect-src, including the HTML meta fallback. API documentation retains its separate strict policy. Verify the installed SDK endpoint against every SPA header, then verify managed exchange in a browser after deployment. A public page loading, Google popup success or unauthenticated API denial does not prove App Check works. Record token-exchange success/failure without recording tokens or challenge payloads.

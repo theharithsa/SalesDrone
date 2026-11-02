@@ -12,6 +12,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.3] - 2026-11-02
+
+### Changed
+- Restore login by allowing the exact Firebase App Check JavaScript SDK token-exchange origin in every SPA CSP header and HTML meta fallback. App Check enforcement and membership checks remain enabled.
+- Regress all SPA policies against the installed SDK endpoint; document why prior CSP-only checks missed the failure.
+
 ## [2.6.2] - 2026-11-01
 
 Milestone #12, issue #106: complete the six-fix milestone #6 rollout from PR #104.

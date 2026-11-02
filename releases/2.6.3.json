@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.3",
+  "summary": "Restore App Check token exchange by allowing the exact installed SDK origin in SPA CSP headers and HTML fallback.",
+  "modules": [
+    "salesdrone-authentication",
+    "salesdrone-testing"
+  ],
+  "documentation": [
+    "README.md",
+    "CHANGELOG.md",
+    "docs/API.md",
+    "docs/RELEASE.md",
+    "docs/REVIEW-2.6.3.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Browser CSP repair only; existing API 1.23.0 operations unchanged.",
+    "contractVersion": "1.23.0",
+    "permissions": "Existing App Check, verified Google identity and membership checks remain enforced; no permission changes.",
+    "tests": [
+      "tests/spa-security.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse existing sanitized authentication HTTP/RUM and release telemetry; CSP allowlist repair adds no customer mutation or business event.",
+      "tests": [
+        "tests/spa-security.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Reuse existing sanitized authentication HTTP/RUM and release telemetry; CSP allowlist repair adds no customer mutation or business event.",
+      "tests": [
+        "tests/spa-security.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Reuse existing sanitized authentication HTTP/RUM and release telemetry; CSP allowlist repair adds no customer mutation or business event.",
+      "tests": [
+        "tests/spa-security.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Reuse existing sanitized authentication HTTP/RUM and release telemetry; CSP allowlist repair adds no customer mutation or business event.",
+      "tests": [
+        "tests/spa-security.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Reuse existing sanitized authentication HTTP/RUM and release telemetry; CSP allowlist repair adds no customer mutation or business event.",
+      "tests": [
+        "tests/spa-security.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Verify exact live version/SHA and CSP hostname in all SPA policies. Use a fresh managed browser to verify real App Check token exchange without exposing tokens; distinguish exchange from actual Google sign-in and membership bootstrap. No visual layout changes; existing screenshots remain honestly versioned. No customer writes. Verify release signal receipts and tenant searchability separately.",
+  "milestone": {
+    "number": 13,
+    "title": "v2.6.3 \u2014 Restore App Check login",
+    "issues": [
+      109
+    ],
+    "readiness": "ready"
+  }
+}

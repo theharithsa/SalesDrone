@@ -62,3 +62,6 @@ Noncritical import-session cleanup uses guarded browser-storage helpers. A brows
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#18](https://github.com/theharithsa/SalesDrone/issues/18), [#27](https://github.com/theharithsa/SalesDrone/issues/27), [#28](https://github.com/theharithsa/SalesDrone/issues/28). Check their current status before changing the contract.
+
+App Check token exchange uses the installed SDK origin https://content-firebaseappcheck.googleapis.com; allowing only firebaseappcheck.googleapis.com breaks browser attestation. Keep every SPA Hosting CSP and the HTML meta fallback aligned. Regress the exact SDK origin through tests/spa-security.test.ts and verify managed browser exchange separately; parser/401 checks do not certify login. Never disable enforcement to resolve a CSP denial.
+Post-deployment security-header checks reject a live policy missing this exact token-exchange destination; browser verification still remains independent.

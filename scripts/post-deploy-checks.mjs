@@ -1,4 +1,9 @@
 import { createHash } from 'node:crypto';
+export function checkAppCheckPolicy(policy) {
+  const connect = policy.split(';').map(d => d.trim().split(/\s+/)).find(d => d[0] === 'connect-src');
+  if (!new Set(connect?.slice(1)).has('https://content-firebaseappcheck.googleapis.com'))
+    throw Error('SPA CSP blocks Firebase App Check token exchange');
+}
 export function checkPublishedVersion(actual, expected) {
   if (actual.version !== expected.version || actual.commit !== expected.commit)
     throw Error('Published version/commit mismatch');
