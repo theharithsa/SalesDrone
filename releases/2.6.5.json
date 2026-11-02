@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.5",
+  "summary": "Preserve conversation chronology when stale Assistant answers are redacted.",
+  "modules": [
+    "salesdrone-lead-assistant"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/LEAD-ASSISTANT-AGENT-PLAN.md",
+    "docs/REVIEW-2.6.5.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Repair stale request projections to retain the existing documented createdAt field. No endpoint, schema, permission or business-write change.",
+    "contractVersion": "1.24.0",
+    "permissions": "Existing creator-private conversation ownership and current membership/scope checks; stale answers remain redacted.",
+    "tests": [
+      "functions/test/lead-research.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "unchanged",
+      "reason": "Existing safe request/release lifecycle telemetry covers this response projection repair. No new business mutation or customer-value telemetry.",
+      "tests": [
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "traces": {
+      "status": "unchanged",
+      "reason": "Existing safe request/release lifecycle telemetry covers this response projection repair. No new business mutation or customer-value telemetry.",
+      "tests": [
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "logs": {
+      "status": "unchanged",
+      "reason": "Existing safe request/release lifecycle telemetry covers this response projection repair. No new business mutation or customer-value telemetry.",
+      "tests": [
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "unchanged",
+      "reason": "Existing safe request/release lifecycle telemetry covers this response projection repair. No new business mutation or customer-value telemetry.",
+      "tests": [
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "unchanged",
+      "reason": "Existing safe request/release lifecycle telemetry covers this response projection repair. No new business mutation or customer-value telemetry.",
+      "tests": [
+        "functions/test/lead-research.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Reopen a private conversation after outcome settings change, then ask a current total/closed question. Both stale notice and current grounded answer must render without a crash. No visual design or geometry change; existing 2.6.4 synthetic captures remain historical. Verify exact deployed identity, protected endpoints and current scoped result.",
+  "milestone": {
+    "number": 15,
+    "title": "v2.6.5 \u2014 Assistant history recovery",
+    "issues": [
+      113
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

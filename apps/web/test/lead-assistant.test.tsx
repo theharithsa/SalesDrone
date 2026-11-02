@@ -32,3 +32,25 @@ describe('Compound Assistant answers',()=>{
   await screen.findByText('Fictional record');expect(request).toHaveBeenCalledWith('/lead-assistant/requests/answer/leads?part=1');
  });
 });
+
+// The server redacts stale answers but must preserve chronology for mixed histories.
+describe('Stale Assistant history',()=>{
+ it('renders a redacted prior answer alongside a current compound answer',async()=>{
+  const {default:LeadAssistantPage}=await import('../src/features/LeadAssistantPage');
+  const request=vi.fn(async(p:string,m?:string)=>{
+   if(p.endsWith('/messages'))return {conversation:{id:'chat'},items:[
+    {id:'current',createdAt:'2026-11-02T01:00:00Z',status:'Completed',question:'How many now?',answer:{parts:[{text:'2 active leads.'},{text:'1 closed lead.'}]}},
+    {id:'old',createdAt:'2026-11-02T00:00:00Z',status:'Stale',question:'How many before?',answer:{text:'Lead data or reporting settings changed. Ask again for current results.'}}
+   ]};
+   if(m==='POST')return {id:'chat'};
+   return {items:[],nextCursor:null};
+  });
+  render(<LeadAssistantPage request={request} demo={false}/>);
+  fireEvent.change(screen.getByRole('textbox',{name:'Ask about your leads'}),{target:{value:'How many now?'}});
+  fireEvent.keyDown(screen.getByRole('textbox',{name:'Ask about your leads'}),{key:'Enter'});
+  await screen.findByText('1 closed lead.');
+  const text=document.body.textContent!;
+  expect(text.indexOf('How many before?')).toBeLessThan(text.indexOf('How many now?'));
+  expect(screen.getByText('Lead data or reporting settings changed. Ask again for current results.')).toBeInTheDocument();
+ });
+});
