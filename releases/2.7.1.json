@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "2.7.1",
+  "summary": "Correct the shared task production index tie-breaker and Swagger pagination/retry declarations.",
+  "modules": [
+    "salesdrone-api-integrations",
+    "salesdrone-tasks-reminders"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API.md",
+    "docs/REVIEW-2.7.1.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "changed",
+    "reason": "Document existing pagination/retry inputs and deploy the missing dueAt/id tie-breaker index required by the store adapter. Runtime permissions remain unchanged.",
+    "contractVersion": "1.26.1",
+    "permissions": "No permission changes: Google/App Check, current lead read/edit scope and runtime version/replay guards remain authoritative.",
+    "tests": [
+      "functions/test/api-portal.test.js",
+      "functions/test/custom-fields-and-tasks.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "unchanged",
+      "reason": "No runtime operation or business event changes. Reuse existing task/read telemetry and normal commit/version-stamped CI, release and deployment signals.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Inspect generated typed Task responses/query parameters and UUID retry header; verify actual production shared-task index readiness and an empty synthetic-key Firestore query. No visual UI changes; historical synthetic captures remain honest. Live deployment and tenant signal searches are separate evidence.",
+  "milestone": {
+    "number": 19,
+    "title": "v2.7.1 — Shared task contract correction",
+    "issues": [
+      122
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

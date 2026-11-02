@@ -1041,6 +1041,11 @@ for (const e of endpoints) {
     };
   }
   if(e.url==='/lead-assistant/requests/:id/leads')operation.parameters.push({in:'query',name:'part',schema:{type:'integer',minimum:0,maximum:3,default:0},description:'Zero-based answer part. The signed cursor is bound to this result set; a different part cannot reuse it.'});
+  if(e.method==='get'&&e.url==='/leads/:id/tasks')operation.parameters.push(
+    {in:'query',name:'limit',schema:{type:'integer',minimum:1,maximum:100,default:30}},
+    {in:'query',name:'cursor',schema:{type:'string'},description:'Opaque signed continuation bound to lead, state filter and current membership.'},
+  );
+  if(e.method==='patch'&&e.url==='/leads/:id/tasks/:taskId')operation.parameters.push({in:'header',name:'Idempotency-Key',required:true,schema:{type:'string',format:'uuid'},description:'Reuse the same UUID and body after an uncertain response. Current lead edit access is rechecked on replay.'});
   if (e.url === '/lead-scores')
     operation.parameters.push({
       in: 'query',
@@ -1260,7 +1265,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.26.0',
+    version: '1.26.1',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

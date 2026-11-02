@@ -89,3 +89,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#35](https://github.com/theharithsa/SalesDrone/issues/35), [#57](https://github.com/theharithsa/SalesDrone/issues/57). Check their current status before changing the contract.
 
 API 1.23.0 adds POST /leads/{id}/restore under existing PAT leads:archive and current lead editor scope. Supported Hosting API parser normalization now belongs to the separately registered ingress module; native Functions URLs retain provider-level transport behavior. See API-INGRESS.md.
+
+Shared lead task OpenAPI operations must declare limit/cursor/state, preserve the typed Task page and require a UUID Idempotency-Key for PATCH. api-portal.test.js checks parameter locations, bounds and retry identity. Do not infer nested-route pagination or non-POST idempotency from generic route heuristics.
