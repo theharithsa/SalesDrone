@@ -1,23 +1,25 @@
 {
   "schemaVersion": 1,
   "version": "2.7.1",
-  "summary": "Correct shared lead task Swagger pagination and mandatory retry-header declarations.",
+  "summary": "Correct the shared task production index tie-breaker and Swagger pagination/retry declarations.",
   "modules": [
     "salesdrone-api-integrations",
     "salesdrone-tasks-reminders"
   ],
   "documentation": [
     "CHANGELOG.md",
-    "docs/API.md"
+    "docs/API.md",
+    "docs/REVIEW-2.7.1.md"
   ],
   "settingsSections": [],
   "api": {
     "status": "changed",
-    "reason": "Correct documentation-only pagination and UUID retry header declarations for existing shared lead task behavior. Preserve typed Task responses and unchanged authorization.",
+    "reason": "Document existing pagination/retry inputs and deploy the missing dueAt/id tie-breaker index required by the store adapter. Runtime permissions remain unchanged.",
     "contractVersion": "1.26.1",
     "permissions": "No permission changes: Google/App Check, current lead read/edit scope and runtime version/replay guards remain authoritative.",
     "tests": [
-      "functions/test/api-portal.test.js"
+      "functions/test/api-portal.test.js",
+      "functions/test/custom-fields-and-tasks.test.js"
     ]
   },
   "observability": {
@@ -80,7 +82,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Inspect generated public contract parameters and typed responses. No visual UI or business behavior changes; prior reviewed synthetic captures remain historical. Production version/contract/denial and telemetry are verified separately.",
+  "manualVerification": "Inspect generated typed Task responses/query parameters and UUID retry header; verify actual production shared-task index readiness and an empty synthetic-key Firestore query. No visual UI changes; historical synthetic captures remain honest. Live deployment and tenant signal searches are separate evidence.",
   "milestone": {
     "number": 19,
     "title": "v2.7.1 — Shared task contract correction",

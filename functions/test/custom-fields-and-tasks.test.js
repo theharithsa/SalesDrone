@@ -622,3 +622,8 @@ test('shared lead task readers see responsibility while any current lead editor 
  await s.store.run(async tx=>{const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,scope:'assigned',version:3});});
  await s.call('get','/leads/'+l.id+'/tasks',null,'viewer').expect(404);
 });
+
+test('shared task production indexes include the store adapter id ordering for unfiltered and state-filtered pages',async()=>{
+ const {readFile}=await import('node:fs/promises');const config=JSON.parse(await readFile(new URL('../../firestore.indexes.json',import.meta.url),'utf8'));
+ for(const fields of [['leadId','dueAt','id'],['leadId','state','dueAt','id']])assert.ok(config.indexes.some(i=>i.collectionGroup==='tasks'&&i.queryScope==='COLLECTION'&&JSON.stringify(i.fields)===JSON.stringify(fields.map(fieldPath=>({fieldPath,order:'ASCENDING'})))),'Missing production index '+fields.join(','));
+});

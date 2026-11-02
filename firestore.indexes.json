@@ -1959,23 +1959,9 @@
         {
           "fieldPath": "dueAt",
           "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "tasks",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "leadId",
-          "order": "ASCENDING"
         },
         {
-          "fieldPath": "state",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "dueAt",
+          "fieldPath": "id",
           "order": "ASCENDING"
         }
       ]
