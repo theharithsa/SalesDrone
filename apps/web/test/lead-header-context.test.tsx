@@ -6,6 +6,7 @@ describe('Lead header contact',()=>{
   render(<LeadHeaderContext phone="+91 55500 12345"/>);
   expect(screen.getByText('Independent enquiry')).toBeInTheDocument();
   expect(screen.getByRole('link',{name:'+91 55500 12345'})).toHaveAttribute('href','tel:+915550012345');
+  expect(screen.getByRole('link',{name:'+91 55500 12345'})).toHaveClass('phone-number');
  });
  it('does not invent a callable number from invalid contact data',()=>{
   render(<LeadHeaderContext company="Fictional Supplies" phone="Needs review"/>);

@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.7.1**, OpenAPI contract **1.26.1**. All application operations
+Application release **v2.7.2**, OpenAPI contract **1.27.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -330,3 +330,11 @@ Assistant queries still require Google membership, assistant:query and current l
 Contract 1.26.1 corrects Swagger parameter declarations for shared lead tasks: GET exposes limit/cursor/state and PATCH exposes the required UUID Idempotency-Key. These inputs were already enforced at runtime; no route, permission or task behavior changed.
 
 Shared task pages order by dueAt then id; production deployment requires leadId/dueAt/id and leadId/state/dueAt/id composite indexes READY. The emulator does not enforce these production indexes.
+
+## Accessible Tasks view (1.27.0)
+
+GET /tasks?view=accessible is an opt-in Google/App Check member view. It returns lead-linked tasks within current lead scope plus the requester's own personal reminders. Omitted view preserves the existing recipient-only API default; PATs cannot opt in and receive GOOGLE_REQUIRED. Unknown views return TASK_VIEW (400). Existing limit (1–100), state, leadId and signed cursor apply. The server scans at most limit+1 task records per page, batch-checks current lead access and projects minimal lead/responsible names. Sparse empty pages can still have nextCursor; continue until null. AES-GCM encrypted continuation tokens reuse the server cursor secret; private scan dates/IDs are not readable. Tokens bind view, scope, identity, membership, filters and dueAt/id ordering. No total of hidden work is returned.
+
+Rows include responsible {id,name}, lead {id,name,company} or null, canManage, canEditOwn and sharedLeadContext for linked work. Lead editors complete/reschedule through the existing lead-scoped PATCH with expectedVersion and a stable UUID retry key. Only recipients with tasks:write retain legacy title/delete/cancel controls. Own personal reminders require tasks:write to manage. Notification delivery recipients do not change. The main screen uses server action flags; stale access is rechecked at mutation time.
+
+Production queries require tasks indexes dueAt/id and state/dueAt/id, alongside the existing lead-filtered variants. Firestore emulator tests do not establish production index readiness.

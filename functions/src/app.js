@@ -153,7 +153,7 @@ export function createApp({
 }) {
   const maintenanceStore = store.maintenanceStore || store;
   store = guardLeadData(researchStore(store,()=>telemetry()?.capture()?.traceparent));
-  const { encode: encodeCursor, decode: decodeCursor } = createCursorCodec(
+  const { encode: encodeCursor, decode: decodeCursor, seal: sealCursor, open: openCursor } = createCursorCodec(
     cursorSecret,
     {
       allowEphemeral:
@@ -281,7 +281,7 @@ export function createApp({
               : url === '/imports'
                 ? ['limit', 'cursor', 'status', 'uploader', 'from', 'to']
                 : (url === '/tasks' || url === '/leads/:id/tasks')
-                  ? ['limit', 'cursor', 'state', 'leadId']
+                  ? ['limit', 'cursor', 'state', 'leadId', ...(url==='/tasks'?['view']:[])]
                   : ['limit', 'cursor'];
         for (const [key, value] of Object.entries(req.query))
           if (!allowed.includes(key) || typeof value !== 'string')
@@ -401,6 +401,7 @@ export function createApp({
     ownerPath,
     order = 'id',
     direction = 'desc',
+    bindingContext,
   ) {
     const n = Number(req.query.limit || 30);
     if (!Number.isInteger(n) || n < 1 || n > 100)
@@ -413,10 +414,11 @@ export function createApp({
         filters,
         order,
         direction,
+        ...(bindingContext?[bindingContext]:[]),
       ]),
     );
     const after = req.query.cursor
-      ? decodeCursor(String(req.query.cursor), binding)
+      ? (bindingContext?openCursor:decodeCursor)(String(req.query.cursor), binding)
       : undefined;
     const records = await store.query(ownerPath || path(collection), {
       filters,
@@ -430,7 +432,7 @@ export function createApp({
       items,
       nextCursor:
         records.length > n
-          ? encodeCursor(
+          ? (bindingContext?sealCursor:encodeCursor)(
               order === 'id'
                 ? [items.at(-1).id]
                 : [items.at(-1)[order], items.at(-1).id],
@@ -1861,7 +1863,24 @@ export function createApp({
       return updated;
     });
   });
-  route('get', '/tasks', 'leads:read', (req) => {
+  route('get', '/tasks', 'leads:read', async (req) => {
+    if(req.query.view && req.query.view!=='accessible')throw new AppError(400,'TASK_VIEW','Choose the accessible task view or omit view for your reminders.');
+    if(req.query.view==='accessible') {
+      if(req.identity.personalAccess)throw new AppError(403,'GOOGLE_REQUIRED','Shared task browsing requires Google sign-in and App Check.');
+      const filters=[];
+      if(req.query.state)filters.push(['state','==',String(req.query.state)]);
+      if(req.query.leadId)filters.push(['leadId','==',String(req.query.leadId)]);
+      const result=await list(req,'tasks',filters,undefined,'dueAt','asc','accessible:'+req.member.scope);
+      const leadIds=[...new Set(result.items.filter(t=>!t.deleted&&t.leadId).map(t=>t.leadId))];
+      const records=await store.getAll(leadIds.map(id=>path('leads',id))),leads=new Map(leadIds.map((id,i)=>[id,records[i]]));
+      const rows=result.items.filter(t=>!t.deleted&&(t.leadId?canReadLead(req.member,leads.get(t.leadId)):t.recipientUid===req.member.uid&&t.creatorUid===req.member.uid));
+      const owners=[...new Set(rows.map(t=>t.recipientUid))],members=await store.getAll(owners.map(id=>path('members',id)));
+      const names=new Map(owners.map((id,i)=>[id,typeof members[i]?.name==='string'&&!members[i].name.includes('@')?members[i].name:'Member unavailable']));
+      return {...result,items:rows.map(t=>{
+        const l=leads.get(t.leadId),own=t.recipientUid===req.member.uid&&req.member.capabilities.includes('tasks:write');
+        return {...t,lead:l?{id:l.id,name:l.name,company:l.company||''}:null,responsible:{id:t.recipientUid,name:names.get(t.recipientUid)},canManage:t.leadId?req.member.capabilities.includes('leads:edit'):own,canEditOwn:own,...(t.leadId?{sharedLeadContext:t.leadId}:{})};
+      })};
+    }
     const filters = [['recipientUid', '==', req.member.uid]];
     if (req.query.state) filters.push(['state', '==', String(req.query.state)]);
     if (req.query.leadId)

@@ -324,6 +324,11 @@
           "id": "DIALOG-FILLED-SELECT-01",
           "expected": "Country code/custom dropdown closed controls keep filled height and separated inset labels/values. Native open menus remain available; inspect phone/desktop and both palettes.",
           "fixture": "isolated fictional lead-form-selects fixture; no live writes"
+        },
+        {
+          "id": "PHONE-FONT-01",
+          "expected": "Header phone link computed font-family uses the canonical mono-font token in standard/dark and enlarged layouts.",
+          "fixture": "Synthetic lead header; no real phone calls"
         }
       ]
     },
@@ -610,6 +615,11 @@
           "id": "TASK-SHARED-01",
           "expected": "Current lead readers see linked task responsibility; lead editors complete/reschedule another recipient’s Pending task, with no personal-reminder exposure.",
           "fixture": "Fictional shared tasks; no customer writes"
+        },
+        {
+          "id": "TASK-SHARED-MAIN-01",
+          "expected": "Main Tasks shows accessible shared work with lead and responsible person; readers cannot mutate, editors complete/reschedule, personal reminders stay private.",
+          "fixture": "Fictional rows, current lead scopes and synthetic browser interactions"
         }
       ]
     },

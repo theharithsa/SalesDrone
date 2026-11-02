@@ -80,7 +80,8 @@
         "On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and the filter icon share a row. All stages provides a compact quick stage picker; desktop retains its action buttons and stage shortcuts. Small screens shorten action labels, and large mobile counts use compact notation.",
         "Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.",
         "The header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app.",
-        "The lead header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app."
+        "The lead header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app.",
+        "Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices."
       ],
       "faq": [
         [
@@ -250,19 +251,20 @@
     {
       "id": "tasks",
       "title": "Tasks, reminders and completion",
-      "audience": "Task recipients",
+      "audience": "Members with current lead access; personal reminder recipients",
       "steps": [
-        "Open Tasks to review your work. Choose New on phones or Add reminder on desktop, or use Remind me on a lead for a linked follow-up. Set the title, date/time and task kind.",
+        "Open Tasks to review shared lead work within your current lead access and your own private personal reminders. Pending, Completed and Cancelled filter the same scope.",
         "Use the Lead column to open the linked lead page. On phones the same lead link appears below the task title; personal reminders have no linked lead.",
         "For a Pending task choose Reschedule directly on its row, enter the new date and time, and save. Completed or cancelled tasks do not offer this action.",
-        "Select a task title to see its details. Open its Actions menu for Edit task or Delete task; pending tasks also offer Snooze 1 hour, Reschedule and Cancel task. Use the circle beside a pending task to complete work after it is actually done.",
+        "Select a task title for details. Lead editors can complete or reschedule Pending lead work. The Actions menu exposes only permitted actions: title edits, deletion and cancellation require recipient ownership and task-write access.",
         "Delete only when the task is no longer needed. The application uses soft deletion and prevents old scheduled jobs from reviving the task.",
-        "Choose Pending, Completed or Cancelled using the phone status picker or desktop status buttons. The loaded count describes the rows currently loaded, and the list header shows the display timezone. On the full lead page the Tasks tab narrows the same private task service to that lead."
+        "Choose Pending, Completed or Cancelled using the phone status picker or desktop status buttons. The loaded count describes the rows currently loaded, and the list header shows the display timezone. On the full lead page the Tasks tab narrows shared work to that lead."
       ],
       "details": [
         "Times are stored as instants with IANA timezone context. Invalid or ambiguous local times, including daylight-saving edge cases, may need correction. The form tells you which timezone it uses.",
         "Each edit changes the task version and invalidates old delivery work. A due task may create an inbox notification and send to eligible registered devices. A task being due does not guarantee an operating-system banner appears immediately.",
-        "Lead-linked outreach can be cancelled or suppressed by reassignment, review, do-not-contact, archiving or lost access. A private reminder is not a shared team assignment."
+        "Lead-linked outreach can be cancelled or suppressed by reassignment, review, do-not-contact, archiving or lost access. A private reminder is not a shared team assignment.",
+        "Rows show the responsible member and linked lead. Current lead editors can complete or reschedule another member’s Pending lead task. Readers see the work without those controls. Editing titles, deleting or cancelling work remains recipient-only with task-write access. Notification delivery stays with the original responsible member. An empty page can still offer Load more because inaccessible work is filtered server-side."
       ],
       "faq": [
         [
@@ -271,7 +273,7 @@
         ],
         [
           "Can an administrator edit my reminders?",
-          "Task recipient privacy remains in force. Administrator status alone does not grant editing rights to another person’s private tasks."
+          "Personal reminders remain recipient-private. Lead-linked tasks are shared with current lead readers; current lead editors can complete/reschedule Pending work. Administrator status does not grant another recipient’s title-edit or deletion rights."
         ]
       ],
       "screenshot": "tasks-demo.jpg"
@@ -479,7 +481,7 @@
       ],
       "details": [
         "The two bootstrap administrator identities remain protected. Routine sign-in does not approve membership. Server policy is authoritative for every read, write, inference input and export; hiding a button alone is not an access boundary.",
-        "Role labels and capabilities are related but not interchangeable. A task remains private to its recipient. Assigned-only policy can further restrict non-admin lead access even when other capabilities are present.",
+        "Role labels and capabilities are related but not interchangeable. Personal reminders and notification delivery remain private; lead-linked tasks follow current lead access. Assigned-only policy can further restrict non-admin lead access even when other capabilities are present.",
         "Only grant access needed for the person’s responsibility. Do not share Google sessions or personal API tokens across employees."
       ],
       "faq": [

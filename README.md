@@ -138,7 +138,7 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=3d99d25324ac)
+![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=5ae8db96ef7b)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
@@ -180,7 +180,7 @@ The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.jso
 
 Personal desktop display zoom lives in Settings → Appearance & time. The compact lead header keeps identity, score, stage and assignment together; rings distinguish a known zero from missing evidence.
 
-![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/lead-workspace-demo.jpg?sha=3d99d25324ac)
+![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/lead-workspace-demo.jpg?sha=5ae8db96ef7b)
 
 Batch edit up to 25 explicitly selected leads with a before/after review and atomic version checks. Lead pages now include a Files tab for private Firebase Storage attachments, with upload progress, retry and forced downloads. See [file architecture](docs/ATTACHMENTS.md) and [the product handbook](docs/PRODUCT-GUIDE.md).
 
@@ -194,7 +194,7 @@ Select loaded leads, preview shared changes and apply the reviewed batch. Open a
 
 ### Clearer tasks and observable releases
 
-Tasks use compact phone controls and one menu for secondary actions. CI records actual
+The main Tasks page includes accessible shared lead work, linked lead names and the responsible member. Lead editors can complete or reschedule; personal reminders remain private. Tasks use compact phone controls and one menu for secondary actions. CI records actual
 check/testcase results separately from server-committed business events; see the
 [Observability agent](skills/salesdrone-observability/SKILL.md) and [release procedure](docs/RELEASE.md).
 

@@ -11,3 +11,5 @@ Assistant compound answers preserve each requested part, current-state scope and
 Task list captures show the linked Lead column and direct Reschedule action. Phone captures stack lead name/company and time above the action. Use fictional task/lead summaries, and distinguish preview-only reschedule updates from server persistence.
 
 Explain shared lead Tasks separately from personal Tasks: current lead readers see responsibility; lead editors complete/reschedule Pending tasks; original recipient still receives notifications. Show header phone tel links. Describe Assistant business-source coverage and metadata-only file/import limits honestly; update fictional lead header/task captures.
+
+Main Tasks now includes accessible shared lead work and responsible members, plus own private reminders. Explain lead-editor completion/rescheduling versus recipient-only edits. Refresh desktop/mobile task captures and affected header captures; prove actual computed monospace font rather than only checking a class name. Keep historical unrelated captures honest.

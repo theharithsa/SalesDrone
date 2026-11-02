@@ -16,18 +16,20 @@ export default function TaskRow({
   onEdit,
   onDelete,
   disabled,
+  canComplete = true,
 }: {
   task: Task;
   lead?: Pick<Lead, "id" | "name" | "company">;
   timezone: string;
   onOpen: () => void;
   onComplete: () => void;
-  onSnooze: () => void;
+  onSnooze?: () => void;
   onCancel?: () => void;
   onReschedule?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   disabled: boolean;
+  canComplete?: boolean;
 }) {
   const menuRef = useRef<HTMLDetailsElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,7 +71,7 @@ export default function TaskRow({
               ? 'Cancelled: '
               : 'Complete ') + task.title
         }
-        disabled={disabled || task.state !== 'Pending'}
+        disabled={disabled || !canComplete || task.state !== 'Pending'}
         onClick={onComplete}
       >
         <span className="task-check-symbol" aria-hidden="true">
@@ -90,6 +92,7 @@ export default function TaskRow({
         <span className="task-lead-label">Lead</span>
         {lead ? <><a href={'/leads/' + encodeURIComponent(lead.id)}><LeadName name={lead.name}/></a>{lead.company ? <small>{lead.company}</small> : null}</> : <span className="muted">{task.leadId ? 'Lead unavailable' : '—'}</span>}
       </div>
+      <div className="task-responsible"><span className="task-lead-label">Responsible</span><span>{task.responsible?.name || 'You'}</span></div>
       <div className="task-time">
         <span className={overdue ? 'overdue' : ''}>
           {overdue ? <span className="overdue-dot" /> : <Clock size={12} />}{' '}
@@ -103,7 +106,7 @@ export default function TaskRow({
       </div>
       <div className="task-actions">
         {task.state === 'Pending' && onReschedule ? <button className="button task-reschedule" onClick={onReschedule} disabled={disabled}><CalendarClock size={16}/><span>Reschedule</span></button> : null}
-      {task.state === 'Pending' || onEdit || onDelete ? (
+      {(task.state === 'Pending' && (onSnooze || onCancel)) || onEdit || onDelete ? (
         <details
           ref={menuRef}
           className="task-menu"
@@ -163,9 +166,7 @@ export default function TaskRow({
             ) : null}
             {task.state === 'Pending' ? (
               <>
-                <button onKeyDown={closeOnEscape} onClick={() => action(onSnooze)} disabled={disabled}>
-                  Snooze 1 hour
-                </button>
+                {onSnooze ? <button onKeyDown={closeOnEscape} onClick={() => action(onSnooze)} disabled={disabled}>Snooze 1 hour</button> : null}
                 {onCancel ? (
                   <button onKeyDown={closeOnEscape} onClick={() => action(onCancel)} disabled={disabled}>
                     Cancel task

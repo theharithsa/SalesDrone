@@ -541,6 +541,10 @@ export default function App() {
       const collection = parts[0],
         id = parts[1];
       let result: any = { ok: true };
+      if(collection==='tasks'&&method==='GET'&&!id&&new URLSearchParams(path.split('?')[1]).get('view')==='accessible'){
+        const state=new URLSearchParams(path.split('?')[1]).get('state');
+        return {items:d.tasks.filter(t=>!state||t.state===state).map((t,i)=>({...t,lead:d.leads.find(l=>l.id===t.leadId)||null,responsible:{id:'fictional-member',name:i%2?'Maya Chen':'Alex Morgan'},canManage:true,canEditOwn:i===0,...(t.leadId?{sharedLeadContext:t.leadId}:{})})),nextCursor:null};
+      }
       if(collection==='leads'&&id&&parts[2]==='tasks') {
         if(method==='GET') {
           const params=new URLSearchParams(path.split('?')[1]);
@@ -850,7 +854,7 @@ export default function App() {
             params.set('field', searchField);
           }
         }
-        if (page === 'tasks') params.set('state', taskFilter);
+        if (page === 'tasks') {params.set('state', taskFilter);params.set('view','accessible');}
         if (append && nextCursor) params.set('cursor', nextCursor);
         const endpoint =
           page === 'leads'
@@ -1301,10 +1305,12 @@ export default function App() {
   async function taskChange(t: Task, patch: any) {
     setMutationBusy(true);
     try {
-      await request('/tasks/' + t.id, 'PATCH', {
-        expectedVersion: t.version,
-        ...patch,
-      });
+      const shared=t.sharedLeadContext && patch.state!=='Cancelled';
+      const operation=t.id+':'+t.version+':'+JSON.stringify(patch);
+      let key=sharedTaskCompletionKeys.current.get(operation);
+      if(shared&&!key){key=crypto.randomUUID();sharedTaskCompletionKeys.current.set(operation,key);}
+      await request(shared?'/leads/'+encodeURIComponent(t.sharedLeadContext)+'/tasks/'+encodeURIComponent(t.id):'/tasks/'+t.id,'PATCH',{expectedVersion:t.version,...patch},shared?key:undefined);
+      sharedTaskCompletionKeys.current.delete(operation);
       notify(
         patch.state === 'Completed'
           ? 'Task completed. One less thing on your list.'
@@ -1407,7 +1413,7 @@ export default function App() {
     session?.member?.version,
   ]);
   const visibleTasks = (
-    demo ? data.tasks.filter((t) => t.state === taskFilter) : data.tasks
+    demo ? data.tasks.map((t,i)=>({...t,responsible:{name:i===0?'You':i%2?'Maya Chen':'Alex Morgan'},canManage:true,canEditOwn:i===0,...(t.leadId?{sharedLeadContext:t.leadId}:{})})).filter((t) => t.state === taskFilter) : data.tasks
   ).sort((a, b) => a.dueAt.localeCompare(b.dueAt));
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
@@ -3044,7 +3050,7 @@ export default function App() {
                 <div className="page-title">
                   <div>
                     <h1>Tasks</h1>
-                    <p>Your follow-ups, organised by what needs attention.</p>
+                    <p>Shared lead work and your private reminders, organised by what needs attention.</p>
                   </div>
                   {can('tasks:write') ? (
                     <button
@@ -3103,7 +3109,7 @@ export default function App() {
                     <span>Times in {timezone}</span>
                   </div>
                   <div className="task-list-head" aria-hidden="true">
-                    <span /><span>Task</span><span>Lead</span><span>Due</span><span>Actions</span>
+                    <span /><span>Task</span><span>Lead</span><span>Responsible</span><span>Due</span><span>Actions</span>
                   </div>
                   {loading && !visibleTasks.length ? (
                     <Loading />
@@ -3116,30 +3122,31 @@ export default function App() {
                         timezone={timezone}
                         onOpen={() => openTask(t)}
                         onComplete={() => taskChange(t, { state: 'Completed' })}
-                        onEdit={() => {
+                        onEdit={t.canEditOwn ? () => {
                           setFocusedTask(t);
                           setModal('edittask');
-                        }}
-                        onDelete={() => {
+                        } : undefined}
+                        onDelete={t.canEditOwn ? () => {
                           setFocusedTask(t);
                           setModal('deletetask');
-                        }}
-                        onCancel={() => taskChange(t, { state: 'Cancelled' })}
-                        onSnooze={() =>
+                        } : undefined}
+                        onCancel={t.canEditOwn ? () => taskChange(t, { state: 'Cancelled' }) : undefined}
+                        onSnooze={(demo || t.canManage) ? () =>
                           taskChange(t, {
                             dueAt: new Date(Date.now() + 3600000).toISOString(),
-                          })
+                          }) : undefined
                         }
-                        onReschedule={() => {
+                        onReschedule={(demo || t.canManage) ? () => {
                           setFocusedTask(t);
                           setModal('reschedule');
-                        }}
-                        disabled={mutationBusy || !can('tasks:write')}
+                        } : undefined}
+                        canComplete={demo || !!t.canManage}
+                        disabled={mutationBusy}
                       />
                     ))
                   ) : (
                     <Empty title="A little breathing room.">
-                      Your {taskFilter.toLowerCase()} tasks will appear here.
+                      {nextCursor ? "No accessible tasks in this page. Load more to keep checking." : "Your "+taskFilter.toLowerCase()+" accessible tasks will appear here."}
                     </Empty>
                   )}
                   {nextCursor && !demo ? (

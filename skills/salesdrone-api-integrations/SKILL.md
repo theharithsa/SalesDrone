@@ -91,3 +91,7 @@ These are tracked follow-ups, not implemented behavior: [#24](https://github.com
 API 1.23.0 adds POST /leads/{id}/restore under existing PAT leads:archive and current lead editor scope. Supported Hosting API parser normalization now belongs to the separately registered ingress module; native Functions URLs retain provider-level transport behavior. See API-INGRESS.md.
 
 Shared lead task OpenAPI operations must declare limit/cursor/state, preserve the typed Task page and require a UUID Idempotency-Key for PATCH. api-portal.test.js checks parameter locations, bounds and retry identity. Do not infer nested-route pagination or non-POST idempotency from generic route heuristics.
+
+GET tasks optionally accepts view=accessible only for Google/App Check members; legacy default and PAT tasks:read stay recipient-oriented. Publish typed Task pages with current responsibility/action flags and document sparse signed pagination, view/scope binding and current-access checks.
+
+Accessible mixed-visibility task cursors use AES-GCM with the existing server cursor secret and binding as authenticated context. Never expose skipped private task dates/IDs in readable signed payloads. Legacy cursor format remains unchanged.
