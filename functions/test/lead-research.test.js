@@ -142,7 +142,12 @@ test('Assistant exact counts exceed the first page and source changes invalidate
   await store.run(async tx=>{for(let i=0;i<110;i++)tx.set(path('leads',String(i).padStart(3,'0')),sourceLead(String(i),{stage:'Disqualified'}));});
   const result=await answer(store,'failed');assert.equal(result.answer.count,110);
   await store.run(async tx=>tx.set(path('leads','000'),sourceLead('000',{version:2})));
-  assert.equal((await readAssistantRequest(store,{uid:'rep'},'r')).status,'Stale');
+  const stale=await readAssistantRequest(store,{uid:'rep'},'r');
+  assert.equal(stale.status,'Stale');
+  assert.equal(stale.createdAt,result.createdAt);
+  assert.equal(typeof stale.createdAt,'string');
+  assert.equal(stale.answer.count,undefined);
+  assert.equal(stale.agentPlan,undefined);
 });
 test('RAG checks source revisions and scope before model input, then invalidates on reassignment/deletion',async()=>{
   const {store}=await prepared();

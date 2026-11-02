@@ -150,3 +150,5 @@ Each list part has its own signed pagination binding and contribution namespace.
 For current outcome counts with missing mappings, return a focused Setup required explanation plus the actual current stage distribution, without assigning a closed/failed count or guessing stage meaning. This fallback is not a historical conversion answer.
 
 Matching-lead tools can select up to eight current standard/custom fields. The server projects bounded literal values into each matching record detail after current-scope validation; the planner receives schema metadata, not the whole database. Missing values read Not recorded; unknown/retired field paths clarify. Aggregates and reminder tools cannot request these extra projections.
+
+Stale request responses retain their original createdAt chronology while redacting prior answers, plans and source values. Mixed stale/current conversations must remain sortable and allow asking again after outcome-setting changes; cover both the server projection and real conversation component. No historical timestamp is fabricated.

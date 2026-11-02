@@ -14,6 +14,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.6.5] - 2026-11-02
+
+### Fixed
+- Keep Assistant conversations usable after lead/reporting settings change: redacted stale answers retain their original question timestamp, so asking again alongside prior results does not crash the workspace.
+
 ## [2.6.4] - 2026-11-02
 
 ### Changed

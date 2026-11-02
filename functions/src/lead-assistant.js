@@ -191,6 +191,7 @@ export async function readAssistantRequest(store, identity, id) {
       id: r.id,
       jobId: r.jobId,
       question: r.question,
+      createdAt: r.createdAt,
       status: "Stale",
       answer: {
         state: "Partial",
