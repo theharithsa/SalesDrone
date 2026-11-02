@@ -42,6 +42,7 @@ export const AgentPlan = z
       .strict(),
     dateField: z.string().max(100),
     clarification: z.enum(['field','date','outcome','ownership','unsupported']).optional(),
+    selectFields: z.array(z.string().max(100)).max(8).optional(),
   })
   .strict();
 export const AgentBatchPlan=z.object({steps:z.array(AgentPlan).min(1).max(4)}).strict();
@@ -51,6 +52,9 @@ export function agentClarification(plan) {
 const standard = {
   name: "text",
   company: "text",
+  phone: "text",
+  email: "text",
+  countryCode: "text",
   source: "select",
   location: "select",
   zone: "select",
@@ -65,7 +69,7 @@ export function assistantFields(config) {
     .filter(([id]) => id === "stage" || !config.hiddenFields.includes(id))
     .map(([id, type]) => ({
       id,
-      label: config.labels[id] || id,
+      label: config.labels[id] || ({phone:"Phone number",email:"Email",countryCode:"Country code",createdAt:"Created",updatedAt:"Last updated"})[id] || id,
       type,
       options: config.values[id] || [],
     }));
@@ -155,6 +159,7 @@ export function validateAgentPlan(
   if(question!==null && /approv/i.test(question) && plan.period.unit!=='none' && ['createdAt','updatedAt'].includes(plan.dateField))throw new AppError(400,'AGENT_CLARIFY','Approval timing requires an actual approval-date field, not creation or last-edit dates.');
   const known = assistantFields(fields),
     byId = new Map(known.map((f) => [f.id, f]));
+  if((plan.selectFields||[]).length && (plan.tool!=='find_leads'||plan.selectFields.some(id=>!byId.has(id))))throw new AppError(400,'AGENT_CLARIFY','Choose currently configured lead fields for the matching-lead list.');
   for (const filter of plan.filters) {
     const f = byId.get(filter.field);
     if (
@@ -270,6 +275,7 @@ export function validateAgentPlan(
     );
   return {
     ...plan,
+    selectedFields:(plan.selectFields||[]).map(id=>({id,label:byId.get(id).label})),
     filterSummary: plan.filters.map(
       (f) =>
         (byId.get(f.field)?.label || f.field) +
@@ -432,7 +438,7 @@ export async function agentPage(tx, r, m, config) {
       jobId: r.jobId,
       requestId: resultId,
       leadId: lead.id,
-      lead: leadResult(lead, detail),
+      lead: leadResult(lead,[detail,...(plan.selectedFields||[]).map(f=>f.label+': '+String(valueAt(lead,f.id)??'Not recorded').slice(0,400))].filter(Boolean).join('\n')),
     });
     next.matched = (next.matched || 0) + 1;
     if (plan.groupBy) {
@@ -467,7 +473,7 @@ export function agentAnswer(r, config) {
         : "Currently active leads within your current access",
     ...(p.window ? { window: p.window } : {}),
     filters: p.filters,
-    filterSummary: p.filterSummary,
+    filterSummary: [...(p.filterSummary||[]),...(p.outcome!=="none"?["Configured "+p.outcome+" stages: "+config[p.outcome==="converted"?"convertedStages":"failedStages"].join(", ")]:[])],
   };
   if (p.tool === "read_hygiene_findings")
     return {

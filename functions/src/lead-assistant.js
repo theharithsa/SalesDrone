@@ -269,7 +269,12 @@ export async function processAssistantRequest({
           tx.set(path('assistantRequests',id),{...current,partAnswers:parts,partIndex:nextIndex,agentPlan:next.plan,phase:!next.plan||next.plan.tool==='retrieve_evidence'?'Answer':'Tools',matched:0,scanned:0,groups:{},groupOverflow:0,after:null,version:current.version+1,updatedAt:now()});
           return {processed:1};
         }
-        answer={state:parts.every(p=>p.state==='Grounded')?'Grounded':'Partial',text:'Answers from your current accessible records.',parts,hasResults:parts.some(p=>p.hasResults)};
+        answer=parts.length===1?{...parts[0],parts}:{
+          state:parts.every(p=>p.state==='Grounded')?'Grounded':'Partial',
+          text:parts.map(p=>[p.text,...Object.entries(p.groups||{}).map(([label,count])=>`${label}: ${count}`),...(p.themes||[]).map(t=>t.label)].join('\n')).join('\n\n'),
+          parts,hasResults:!!parts[0].hasResults,
+          sources:parts.flatMap(p=>p.sources||[]),themes:parts.flatMap(p=>p.themes||[]),
+        };
       }
       tx.set(path("assistantRequests", id), {
         ...current,

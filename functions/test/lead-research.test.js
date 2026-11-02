@@ -312,7 +312,7 @@ test('compound totals and configured closure counts are exact across pages and k
  const {store}=await prepared();
  await store.run(tx=>{for(let i=0;i<205;i++)tx.set(path('leads','compound-'+String(i).padStart(3,'0')),sourceLead('compound-'+i,{stage:i<23?'Won':'New'}));tx.set(path('leads','excluded'),sourceLead('excluded',{assignedToUid:'other',stage:'Won'}));});
  const r=await agentQuestion(store,{steps:[toolPlan({tool:'aggregate_leads'}),toolPlan({tool:'aggregate_leads',outcome:'converted'})]},'compound','Can you tell me how many leads I have and how many of them I closed?');
- assert.equal(r.status,'Completed');assert.deepEqual(r.answer.parts.map(p=>p.count),[205,23]);assert.ok(r.answer.parts[1].text.includes('not a claim about who closed'));assert.equal(r.answer.state,'Grounded');
+ assert.equal(r.status,'Completed');assert.deepEqual(r.answer.parts.map(p=>p.count),[205,23]);assert.ok(r.answer.parts[1].text.includes('not a claim about who closed'));assert.equal(r.answer.state,'Grounded');assert.ok(r.answer.text.includes('205')&&r.answer.text.includes('23'));
 });
 test('missing outcome definitions clarify only the closed count while preserving the exact total',async()=>{
  const {store,raw}=await prepared();await raw.set(RESEARCH_SETTINGS_PATH,{...(await raw.get(RESEARCH_SETTINGS_PATH)),convertedStages:[]});
@@ -344,4 +344,11 @@ test('compound evidence stays retrieved and cited while exact counts never use v
  for(const job of await store.query(path('researchIndexJobs'),{limit:100}))await processIndexJob({store,job,embed:provider.embed,now:()=>at});
  const r=await agentQuestion(store,{steps:[toolPlan({tool:'aggregate_leads'}),toolPlan({tool:'retrieve_evidence'})]},'mixed','How many leads do I have and what patterns are in their notes?');
  assert.equal(r.answer.parts[0].count,1);assert.equal(r.answer.parts[1].state,'Partial');assert.equal(r.answer.parts[1].sources.length,1);assert.equal(r.answer.parts[1].sources[0].leadId,'noted');
+});
+
+test('requested field values are projected directly from scoped records and unknown field paths clarify',async()=>{
+ const {store}=await prepared();await store.run(tx=>{tx.set(path('leads','lookup'),sourceLead('lookup',{name:'Fictional Imran',phone:'5550100'}));tx.set(path('leads','outside'),sourceLead('outside',{name:'Fictional Imran',phone:'PRIVATE-OUTSIDE',assignedToUid:'other'}));});
+ const r=await agentQuestion(store,{steps:[toolPlan({selectFields:['phone'],filters:[{field:'name',operator:'contains',value:'Fictional Imran'}]})]},'lookup','What is the phone number for Fictional Imran?');
+ assert.equal(r.answer.parts[0].count,1);const stored=await store.query(path('assistantContributions'),{filters:[['requestId','==','lookup:0']],limit:10});assert.equal(stored.length,1);assert.ok(stored[0].lead.detail.includes('5550100'));assert.ok(!JSON.stringify(stored).includes('PRIVATE-OUTSIDE'));
+ const bad=await agentQuestion(store,{steps:[toolPlan({selectFields:['private.secret']})]},'bad-projection','Show private lead details');assert.equal(bad.answer.parts[0].state,'Clarify');
 });
