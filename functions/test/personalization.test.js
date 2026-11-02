@@ -30,9 +30,10 @@ async function setup() {
   const store = memoryStore(),
     inputs = [];
   let clock = Date.parse('2026-10-25T06:00:00Z');
+  const now = () => new Date(clock).toISOString();
   const app = createApp({
     store,
-    now: () => new Date(clock).toISOString(),
+    now,
     verifyToken: async (uid) => ({
       uid,
       email: uid === 'admin' ? 'spraghav@gmail.com' : uid + '@example.com',
@@ -65,6 +66,7 @@ async function setup() {
     });
   });
   return {
+    now,
     store,
     call,
     inputs,
@@ -152,6 +154,7 @@ test('AI preferences enforce Admin access, optimistic versions, bounded input an
   await request(
     createApp({
       store: s.store,
+      now: s.now,
       verifyToken: async () => {
         throw Error('not Google');
       },

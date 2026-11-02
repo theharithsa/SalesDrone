@@ -8,6 +8,7 @@ import {
   checkStorage,
   checkSettingsPage,
   checkProductPage,
+  checkAppCheckPolicy,
 } from './post-deploy-checks.mjs';
 const docs = process.argv.includes('--docs'),
   out = docs ? 'docs-verification.json' : 'release-verification.json',
@@ -119,6 +120,7 @@ try {
       for(const path of ['/','/leads','/settings']){
         const response=await get('https://sales-drone-avinya.firebaseapp.com'+path);
         const csp=response.headers.get('content-security-policy')||'';
+        checkAppCheckPolicy(csp);
         if(!response.ok || !csp.includes("object-src 'none'") || !csp.includes("script-src 'self'") || csp.includes("'unsafe-eval'") || !response.headers.get('strict-transport-security')?.includes('includeSubDomains'))throw Error('SPA security policy missing');
         await response.body?.cancel();
       }
