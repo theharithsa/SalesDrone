@@ -26,16 +26,23 @@ export function componentCase(test) {
   };
 }
 export default class ComponentReporter {
+  emitted = 0;
   async onInit() {
     await mkdir("test-results", { recursive: true });
     await writeFile("test-results/cases-components.ndjson", "");
   }
   async onTestCaseResult(test) {
     const result = componentCase(test);
-    if (result)
+    if (result) {
+      this.emitted++;
       await appendFile(
         "test-results/cases-components.ndjson",
         JSON.stringify(result) + "\n",
       );
+    }
+  }
+  async onTestRunEnd(modules) {
+    const expected=modules.reduce((n,m)=>n+[...m.children.allTests()].length,0);
+    await writeFile('test-results/cases-components.summary.json',JSON.stringify({expected,emitted:this.emitted,completed:true})+'\n');
   }
 }

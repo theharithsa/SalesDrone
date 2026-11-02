@@ -104,3 +104,7 @@ appropriate authorization. All-signal validation is bounded by available query,
 RUM/session and tenant configuration evidence, not asserted from successful HTTP.
 
 Keep operational ingress health on the shared non-reserved path, with its own bounded route label. A provider HTML/status failure is failed readiness, never an ingest or app success. Preserve partial deployment history when the forward patch completes rollout.
+
+## Per-suite case completeness
+
+CI now exports ingress and emulator testcase events as well as function/root/component cases. Archive cases-*.summary.json alongside NDJSON. Reconcile runner totals before successful verification; reporting emits available trusted check outcomes and marks caseEvidenceComplete false before failing if expected case evidence is incomplete. Project only hashes/status/duration/times; names/errors/source paths never enter Dynatrace events. Query exact commit/run totals by ci.check after deployment; acceptance is not tenant searchability. Existing #108 historical gaps are not backfilled.

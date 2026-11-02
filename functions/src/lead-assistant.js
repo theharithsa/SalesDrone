@@ -1,5 +1,7 @@
 import {
   AgentPlan,
+  AgentBatchPlan,
+  agentClarification,
   assistantFields,
   validateAgentPlan,
   agentPage,
@@ -39,7 +41,8 @@ const LegacyPlan = z
     monthOffset: z.number().int().min(-120).max(0),
   })
   .strict();
-export const AssistantPlan = z.union([AgentPlan, LegacyPlan]);
+export const AssistantPlan = z.union([AgentBatchPlan, AgentPlan, LegacyPlan]);
+const taskSensitive=r=>[r.agentPlan,...(r.agentSteps||[]).map(s=>s.plan)].some(p=>['find_own_followups','read_hygiene_findings'].includes(p?.tool));
 export const AssistantThemes = z
   .object({
     themes: z
@@ -178,8 +181,7 @@ export async function readAssistantRequest(store, identity, id) {
     throw new AppError(409, "STALE_ACCESS", "Access changed. Ask again.");
   if (
     r.epoch !== (await scanEpoch(store)) ||
-    ((r.agentPlan?.tool === "find_own_followups" ||
-      r.agentPlan?.tool === "read_hygiene_findings") &&
+    (taskSensitive(r) &&
       r.taskEpoch !==
         ((await store.get(RESEARCH_TASK_EPOCH_PATH))?.version || 0)) ||
     (await readResearchSettings(store)).version !== r.settingsVersion ||
@@ -209,9 +211,7 @@ async function context(tx, r) {
   const config = await readResearchSettings(tx);
   if (
     (await scanEpoch(tx)) !== r.epoch ||
-    (["find_own_followups", "read_hygiene_findings"].includes(
-      r.agentPlan?.tool,
-    ) &&
+    (taskSensitive(r) &&
       r.taskEpoch !==
         ((await tx.get(RESEARCH_TASK_EPOCH_PATH))?.version || 0)) ||
     config.version !== r.settingsVersion ||
@@ -260,6 +260,17 @@ export async function processAssistantRequest({
       const current = await tx.get(path("assistantRequests", id));
       if (current?.version !== r.version) return { processed: 0 };
       await context(tx, current);
+      if(r.agentSteps){
+        const setup=r.agentSteps[r.partIndex].clarification;
+        if(setup){const {count:unused,...rest}=answer;void unused;answer={...rest,state:'Clarify',text:setup+' Current stage counts are shown below; no closed or failed count has been inferred.'};}
+        const parts=[...(current.partAnswers||[]),answer];
+        const nextIndex=r.partIndex+1,next=r.agentSteps[nextIndex];
+        if(next){
+          tx.set(path('assistantRequests',id),{...current,partAnswers:parts,partIndex:nextIndex,agentPlan:next.plan,phase:!next.plan||next.plan.tool==='retrieve_evidence'?'Answer':'Tools',matched:0,scanned:0,groups:{},groupOverflow:0,after:null,version:current.version+1,updatedAt:now()});
+          return {processed:1};
+        }
+        answer={state:parts.every(p=>p.state==='Grounded')?'Grounded':'Partial',text:'Answers from your current accessible records.',parts,hasResults:parts.some(p=>p.hasResults)};
+      }
       tx.set(path("assistantRequests", id), {
         ...current,
         status: "Completed",
@@ -288,7 +299,7 @@ export async function processAssistantRequest({
           p.status === "Completed",
       )
       .slice(0, 4)
-      .map((p) => ({ question: p.question, plan: p.agentPlan || p.plan }));
+      .flatMap((p) => p.agentSteps ? p.agentSteps.filter(s=>s.plan).map(s=>({question:p.question,plan:s.plan})) : [{ question: p.question, plan: p.agentPlan || p.plan }]);
     if (
       !history.length &&
       /\b(only those|what about those|same leads)\b/i.test(r.question)
@@ -310,6 +321,28 @@ export async function processAssistantRequest({
         },
       }),
     );
+    if(plan.steps){
+      if(plan.steps.some(p=>p.tool==='out_of_scope'))return publish({state:'OutOfScope',text:'I can only read and explain accessible lead data. I cannot answer general questions or change records.'});
+      const fields=await readFieldOptions(store);
+      const agentSteps=plan.steps.map(proposal=>{
+        const needed=proposal.tool==='find_own_followups'?'tasks:read':proposal.tool==='read_hygiene_findings'?'hygiene:read':null;
+        if(needed&&!ctx.m.capabilities.includes(needed))return {plan:null,answer:{state:'Clarify',text:`${needed==='tasks:read'?'Task':'Hygiene'} read access is required for this part. Other accessible lead questions can still be answered.`}};
+        if(proposal.tool==='clarify')return {plan:null,answer:{...agentClarification(proposal),fields:assistantFields(fields)}};
+        try{return {plan:validateAgentPlan(proposal,fields,config,r.createdAt,r.question,history)};}
+        catch(e){
+          if(e.code!=='AGENT_CLARIFY')throw e;
+          if(e.message.startsWith('Setup required:')&&proposal.tool==='aggregate_leads'&&proposal.period.unit==='none')return {plan:validateAgentPlan({...proposal,outcome:'none',groupBy:'stage'},fields,config,r.createdAt,r.question,history),clarification:e.message};
+          return {plan:null,answer:{state:'Clarify',text:e.message,fields:assistantFields(fields)}};
+        }
+      });
+      return store.run(async tx=>{
+        const current=await tx.get(path('assistantRequests',id));if(current?.version!==r.version)return {processed:0};
+        await context(tx,{...current,agentSteps});
+        const first=agentSteps[0].plan;
+        tx.set(path('assistantRequests',id),{...current,agentSteps,partIndex:0,partAnswers:[],agentPlan:first,phase:!first||first.tool==='retrieve_evidence'?'Answer':'Tools',matched:0,groups:{},version:r.version+1,updatedAt:now()});
+        return {processed:1};
+      });
+    }
     if (plan.tool) {
       if (plan.tool === "out_of_scope")
         return publish({
@@ -319,7 +352,7 @@ export async function processAssistantRequest({
       if (plan.tool === "clarify")
         return publish({
           state: "Clarify",
-          text: "Please specify the lead field, value or recorded date you mean. Approval must refer to a configured field; reminder questions use your own recorded outreach tasks.",
+          ...agentClarification(plan),
           fields: assistantFields(await readFieldOptions(store)),
         });
       let agentPlan;
@@ -408,6 +441,7 @@ export async function processAssistantRequest({
       return { processed: 1 };
     });
   }
+  if(r.agentSteps && !r.agentPlan)return publish(r.agentSteps[r.partIndex].answer);
   if (r.phase === "Tools")
     return store.run(async (tx) => {
       const current = await tx.get(path("assistantRequests", id));

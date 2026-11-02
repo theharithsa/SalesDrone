@@ -140,3 +140,11 @@ Final local UI review: nine widths from 360 to 1920px in both palettes, actual m
 shell, a short 390x500 window and 125% zoom. The zoom review found and fixed an
 oversized history sheet; its measured final bounds were 360x500 within 390x500.
 Two component cases cover IME/Shift-Enter and literal source rendering/result loading.
+
+## Compound question repair
+
+The planner now proposes one to four validated operations per turn. Every requested part gets an independent server-derived result or a focused clarification. Exact counts scan the full current authorized cohort; they do not use RAG top-k. Dynamic configured fields/outcome meanings remain authoritative. “How many leads do I have and how many are closed?” yields total active accessible leads and current configured converted-stage counts. This does not assert who changed stages or when; explicit actor/time analytics need recorded supporting data. A missing outcome mapping explains the required Admin setup while preserving the total.
+
+Each list part has its own signed pagination binding and contribution namespace. The existing conversation component displays the answer parts with their own scope, dates, sources and result controls. Current access, source epoch, settings/field versions and relevant task epoch gate every page and final publication across all parts. Counts, lists, reminder joins, distributions and qualitative RAG can compose; arbitrary joins, mutations and unavailable business facts remain unsupported and receive focused explanations. This is broader lead Q&A, not a promise to answer facts absent from the data.
+
+For current outcome counts with missing mappings, return a focused Setup required explanation plus the actual current stage distribution, without assigning a closed/failed count or guessing stage meaning. This fallback is not a historical conversion answer.

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "version": "2.6.4",
+  "summary": "Repair compound grounded Lead Assistant answers and complete actual ingress/emulator CI case reporting.",
+  "modules": [
+    "salesdrone-lead-assistant",
+    "salesdrone-testing",
+    "salesdrone-observability",
+    "salesdrone-product-guide",
+    "salesdrone-interface"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/API.md",
+    "docs/LEAD-ASSISTANT-AGENT-PLAN.md",
+    "docs/observability.md",
+    "docs/REVIEW-2.6.4.md",
+    "docs/PRODUCT-GUIDE.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "changed",
+    "reason": "Additive answer parts and independently scoped result-set selector; existing single-answer requests remain supported.",
+    "contractVersion": "1.24.0",
+    "permissions": "Existing Google/App Check assistant grant and current assigned scope remain enforced for every part, source and result page. No mutation or private-task scope expansion.",
+    "tests": [
+      "functions/test/lead-research.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Complete actual case receipts for ingress and emulator suites; reconcile independent runner totals and export only sanitized stable case identities/results. Existing Assistant lifecycle telemetry stays allowlisted and contains no questions, answers or source values.",
+      "tests": [
+        "tests/ci-events.test.ts",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Complete actual case receipts for ingress and emulator suites; reconcile independent runner totals and export only sanitized stable case identities/results. Existing Assistant lifecycle telemetry stays allowlisted and contains no questions, answers or source values.",
+      "tests": [
+        "tests/ci-events.test.ts",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Complete actual case receipts for ingress and emulator suites; reconcile independent runner totals and export only sanitized stable case identities/results. Existing Assistant lifecycle telemetry stays allowlisted and contains no questions, answers or source values.",
+      "tests": [
+        "tests/ci-events.test.ts",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Complete actual case receipts for ingress and emulator suites; reconcile independent runner totals and export only sanitized stable case identities/results. Existing Assistant lifecycle telemetry stays allowlisted and contains no questions, answers or source values.",
+      "tests": [
+        "tests/ci-events.test.ts",
+        "functions/test/lead-research.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Complete actual case receipts for ingress and emulator suites; reconcile independent runner totals and export only sanitized stable case identities/results. Existing Assistant lifecycle telemetry stays allowlisted and contains no questions, answers or source values.",
+      "tests": [
+        "tests/ci-events.test.ts",
+        "functions/test/lead-research.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Query exact commit/run CI testcase events by suite against independently reconciled artifacts, including nonempty ingress/emulator totals. Verify compound Assistant results and per-part cursor isolation with synthetic data and real Auth/Firestore emulators; use a bounded real Gemini planner probe with fictional fields only. Review measured desktop/mobile/tablet/short-window layouts in both palettes and 125% app display scale; no physical-device/Safari certification.",
+  "milestone": {
+    "number": 14,
+    "title": "v2.6.4 \u2014 Grounded Assistant answers and test reporting",
+    "issues": [
+      108,
+      111
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "assistant-demo.jpg",
+    "assistant-mobile-demo.jpg"
+  ]
+}

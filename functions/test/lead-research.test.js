@@ -307,3 +307,41 @@ test('workspace admission bounds queued AI requests and scans without exposing o
   await assert.rejects(store.run(tx=>createHygieneScan(tx,{uid:'rep'},'rejected',at)),e=>e.code==='WORKSPACE_BUSY');
   assert.equal(await store.get(path('assistantRequests','rejected')),null);assert.equal(await store.get(path('hygieneScans','rejected')),null);
 });
+
+test('compound totals and configured closure counts are exact across pages and keep current-status attribution honest',async()=>{
+ const {store}=await prepared();
+ await store.run(tx=>{for(let i=0;i<205;i++)tx.set(path('leads','compound-'+String(i).padStart(3,'0')),sourceLead('compound-'+i,{stage:i<23?'Won':'New'}));tx.set(path('leads','excluded'),sourceLead('excluded',{assignedToUid:'other',stage:'Won'}));});
+ const r=await agentQuestion(store,{steps:[toolPlan({tool:'aggregate_leads'}),toolPlan({tool:'aggregate_leads',outcome:'converted'})]},'compound','Can you tell me how many leads I have and how many of them I closed?');
+ assert.equal(r.status,'Completed');assert.deepEqual(r.answer.parts.map(p=>p.count),[205,23]);assert.ok(r.answer.parts[1].text.includes('not a claim about who closed'));assert.equal(r.answer.state,'Grounded');
+});
+test('missing outcome definitions clarify only the closed count while preserving the exact total',async()=>{
+ const {store,raw}=await prepared();await raw.set(RESEARCH_SETTINGS_PATH,{...(await raw.get(RESEARCH_SETTINGS_PATH)),convertedStages:[]});
+ await store.run(tx=>tx.set(path('leads','count-me'),sourceLead('count-me')));
+ const r=await agentQuestion(store,{steps:[toolPlan({tool:'aggregate_leads'}),toolPlan({tool:'aggregate_leads',outcome:'converted'})]},'partial','How many leads do I have and how many are closed?');
+ assert.equal(r.answer.parts[0].count,1);assert.equal(r.answer.parts[1].state,'Clarify');assert.ok(r.answer.parts[1].text.includes('Setup required'));assert.equal(r.answer.parts[1].count,undefined);assert.equal(r.answer.parts[1].groups.New,1);
+});
+test('compound list result cursors are isolated per part and source changes invalidate all parts',async()=>{
+ const {store}=await prepared();await store.run(tx=>{for(let i=0;i<3;i++){tx.set(path('leads','north-'+i),sourceLead('north-'+i,{zone:'North'}));tx.set(path('leads','south-'+i),sourceLead('south-'+i,{zone:'South'}));}});
+ const r=await agentQuestion(store,{steps:['North','South'].map(value=>toolPlan({filters:[{field:'zone',operator:'equals',value}]}))},'lists','Show leads in North and a separate list for South');
+ const app=createApp({store,now:()=>at,verifyToken:async uid=>({uid,email:uid+'@example.test',email_verified:true,firebase:{sign_in_provider:'google.com'}})});
+ const get=url=>request(app).get('/api/v1/lead-assistant/requests/lists/leads'+url).set('Authorization','Bearer rep');
+ const north=(await get('?part=0&limit=2').expect(200)).body;assert.equal(north.items.length,2);assert.ok(north.items.every(l=>l.id.startsWith('north-')));
+ await get('?part=1&limit=2&cursor='+encodeURIComponent(north.nextCursor)).expect(400);
+ const south=(await get('?part=1&limit=2').expect(200)).body;assert.ok(south.items.every(l=>l.id.startsWith('south-')));await get('?part=4').expect(400);
+ await store.run(tx=>tx.set(path('leads','north-0'),sourceLead('north-0',{assignedToUid:'other',version:2})));
+ await get('?part=1').expect(409);
+});
+test('a later reminder part keeps its task epoch guard even after completing that part',async()=>{
+ const {store,raw}=await prepared();const rep=await raw.get(path('members','rep'));await raw.set(path('members','rep'),{...rep,capabilities:[...rep.capabilities,'tasks:read']});await store.run(tx=>tx.set(path('leads','call'),sourceLead('call')));
+ const r=await agentQuestion(store,{steps:[toolPlan({tool:'find_own_followups',period:{unit:'week',offset:1,startDate:'',endDate:''}}),toolPlan({tool:'aggregate_leads'})]},'task-batch','Who should I call next week and how many leads do I have?');
+ assert.equal(r.status,'Completed');
+ await store.run(tx=>tx.set(path('tasks','new-task'),{id:'new-task',recipientUid:'rep',leadId:'call',state:'Pending',kind:'outreach',dueAt:at}));
+ assert.equal((await readAssistantRequest(store,{uid:'rep'},r.id)).status,'Stale');
+});
+
+test('compound evidence stays retrieved and cited while exact counts never use vector samples',async()=>{
+ const {store}=await prepared();await store.run(tx=>tx.set(path('leads','noted'),sourceLead('noted',{comments:'The customer reported price concerns for this enquiry.'})));
+ for(const job of await store.query(path('researchIndexJobs'),{limit:100}))await processIndexJob({store,job,embed:provider.embed,now:()=>at});
+ const r=await agentQuestion(store,{steps:[toolPlan({tool:'aggregate_leads'}),toolPlan({tool:'retrieve_evidence'})]},'mixed','How many leads do I have and what patterns are in their notes?');
+ assert.equal(r.answer.parts[0].count,1);assert.equal(r.answer.parts[1].state,'Partial');assert.equal(r.answer.parts[1].sources.length,1);assert.equal(r.answer.parts[1].sources[0].leadId,'noted');
+});

@@ -63,7 +63,7 @@ export default function LeadAssistantPage({
             Object.fromEntries(
               Object.entries(old).filter(([id]) =>
                 p.items.some(
-                  (r: Row) => r.id === id && r.status === "Completed",
+                  (r: Row) => (r.id === id || id.startsWith(r.id + ":")) && r.status === "Completed",
                 ),
               ),
             ),
@@ -141,7 +141,9 @@ export default function LeadAssistantPage({
   const messages: AssistantMessage[] = [...rows]
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
     .flatMap((r) => {
-      const answer = r.answer;
+      const answers: (Row | undefined)[] = r.answer?.parts || [r.answer];
+      return [{ id: r.id + "-q", role: "user" as const, text: r.question || "" }, ...answers.map((answer, partIndex) => {
+      const resultId=r.answer?.parts ? r.id + ":" + partIndex : r.id;
       const groupText = answer?.groups
         ? Object.entries(answer.groups)
             .map(([label, count]) => `${label}: ${count}`)
@@ -154,10 +156,8 @@ export default function LeadAssistantPage({
       const evidence = (answer?.themes || []).flatMap(
         (t: Row) => t.evidence || [],
       );
-      return [
-        { id: r.id + "-q", role: "user" as const, text: r.question || "" },
-        {
-          id: r.id,
+      return {
+          id: resultId,
           role: "assistant" as const,
           text:
             r.status === "Pending"
@@ -179,7 +179,7 @@ export default function LeadAssistantPage({
           period: answer?.coverage?.window
             ? `${answer.coverage.window.startDate} to ${answer.coverage.window.endDate} (end excluded) · ${answer.coverage.timezone}`
             : undefined,
-          leads: results[r.id]?.items,
+          leads: results[resultId]?.items,
           sources: (answer?.sources || []).map((s: Row) => ({
             id: s.id,
             label: s.name,
@@ -191,10 +191,10 @@ export default function LeadAssistantPage({
           })),
           ...(answer?.hasResults
             ? {
-                resultRequestId: r.id,
+                resultRequestId: resultId,
                 resultCount: answer.count,
-                resultsLoaded: !!results[r.id],
-                hasMoreResults: !!results[r.id]?.nextCursor,
+                resultsLoaded: !!results[resultId],
+                hasMoreResults: !!results[resultId]?.nextCursor,
               }
             : {}),
           ...(answer?.state === "Clarify"
@@ -206,8 +206,8 @@ export default function LeadAssistantPage({
                 ),
               }
             : {}),
-        },
-      ];
+        };
+      })];
     });
   return (
     <LeadAssistantView
@@ -286,14 +286,12 @@ export default function LeadAssistantPage({
         void run(async () => {
           const current = epoch.current,
             old = results[id];
-          const p = await request(
-            "/lead-assistant/requests/" +
-              id +
-              "/leads" +
-              (old?.nextCursor
-                ? "?cursor=" + encodeURIComponent(old.nextCursor)
-                : ""),
-          );
+          const separator=id.lastIndexOf(":");
+          const requestId=separator<0?id:id.slice(0,separator);
+          const query=new URLSearchParams();
+          if(separator>=0)query.set('part',id.slice(separator+1));
+          if(old?.nextCursor)query.set('cursor',old.nextCursor);
+          const p = await request('/lead-assistant/requests/'+encodeURIComponent(requestId)+'/leads'+(query.size?'?'+query.toString():''));
           if (current === epoch.current)
             setResults((r) => ({
               ...r,

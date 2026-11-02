@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.6.3
+Version 2.6.4
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -803,6 +803,8 @@ Admins and explicitly granted members within current lead scope
 4. Admins configure stage meanings and optionally enable the knowledge index under Settings → AvinyaIntelligence → Lead research.
 
 5. Open prior chats from history or delete your own chat. History remains until deletion, subject to current source access.
+
+6. Ask compound lead questions such as how many leads you have and how many are closed. Each part shows its own current-data answer or a focused setup explanation; exact counts follow your access and configured stage meanings.
 
 The Assistant answers only about workspace leads. It cannot browse the web, reveal secrets, run code, contact people or change records.
 

@@ -63,3 +63,5 @@ Capture Source, Zone and custom-field selections with configured labels, mapped 
 Research workflows: [guide notes](references/research.md).
 
 Archives now exposes Restore lead to current lead editors. Explain preserved suppression/contact ownership, current version/scope and no restarted outreach. Corrections are original-author/Admin only. Refresh archives screenshots with fictional records and visible restore controls.
+
+Assistant compound answers preserve each requested part, current-state scope and available facts even if another part needs setup. Refresh assistant desktop/mobile captures with the reported total/closed question and fictional counts. Record measured CSS viewport and actual capture pixels, including browser zoom compensation. Do not relabel other historical screenshots.

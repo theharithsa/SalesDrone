@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
-import { mkdir, writeFile, readdir } from 'node:fs/promises';
+import { mkdir, writeFile, readdir, unlink } from 'node:fs/promises';
 import { executePlan } from './test-plan.mjs';
+import { CASE_SUITES, readCaseEvidence } from './ci-case-evidence.mjs';
 await mkdir('test-results', { recursive: true });
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const files = async (dir, ext) =>
@@ -55,11 +56,17 @@ const report = await executePlan(
   Object.keys(commands).map((id) => ({ id })),
   async ({ id }) => {
     const [command, args] = commands[id];
-    return new Promise((resolve) => {
-      const child = spawn(command, args, { stdio: 'inherit', shell: false });
+    if(CASE_SUITES.includes(id))for(const suffix of ['ndjson','summary.json'])await unlink(`test-results/cases-${id}.${suffix}`).catch(e=>{if(e.code!=='ENOENT')throw e;});
+    const exitCode = await new Promise((resolve) => {
+      const child = spawn(command, args, { stdio: 'inherit', shell: false, env:{...process.env,CI_CASE_ROOT:process.cwd(),...(CASE_SUITES.includes(id)?{CI_CASE_SUITE:id}:{})} });
       child.once('error', () => resolve(1));
       child.once('exit', (code) => resolve(code ?? 1));
     });
+    if (CASE_SUITES.includes(id)) {
+      try { const cases=await readCaseEvidence(id); if(exitCode===0 && cases.some(c=>c.status==='failed'))return 1; }
+      catch { console.error(`Missing or incomplete ${id} case receipts`); return 1; }
+    }
+    return exitCode;
   },
 );
 await writeFile(

@@ -311,3 +311,7 @@ in request metrics. A managed HTML/error response cannot satisfy health verifica
 The first 2.6.1 rollout stopped at this boundary; 2.6.2 completes cutover using the
 same signal contracts. Tenant query access is still independent: the installed
 indiacs-apps CLI context currently references a missing OAuth credential.
+
+## Complete test-case receipts
+
+All five actual case suites (functions, ingress, web, components, emulator) archive sanitized NDJSON and independent runner-total summaries. Verification rejects missing/empty/incomplete/duplicate receipts, rather than claiming a successful suite implies emitted events. The emulator runner uses root-relative reporter paths even when npm invokes it from functions/. Trusted reporting projects only case IDs/statuses/durations/times and marks evidence completeness separately. Verify exact run/commit testcase totals by ci.check in Dynatrace. Earlier missing ingress/emulator events remain historical gaps; do not synthesize them.

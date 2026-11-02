@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { ciEvent, sendCiEvent } from '../scripts/ci-events.mjs';
 import { testCase } from '../scripts/ci-test-reporter.mjs';
+import { readCaseEvidence } from '../scripts/ci-case-evidence.mjs';
 const meta = {
   repository: 'theharithsa/SalesDrone',
   commit: 'a'.repeat(40),
@@ -85,6 +86,8 @@ test('the real Node reporter retains pass/fail/skip without exporting failure ou
     const fs = requireFixture(dir);
     const childEnv = { ...process.env };
     delete childEnv.NODE_TEST_CONTEXT;
+    delete childEnv.CI_CASE_SUITE;
+    delete childEnv.CI_CASE_ROOT;
     const child = spawnSync(
       process.execPath,
       [
@@ -121,3 +124,20 @@ function requireFixture(dir: string) {
   );
   return file;
 }
+
+test('ingress and emulator cases survive the real reporter and reconcile with independent runner totals',async()=>{
+ const root=mkdtempSync(join(tmpdir(),'salesdrone-owned-cases-'));
+ try{
+  mkdirSync(join(root,'test-results'));mkdirSync(join(root,'services/ingress/test'),{recursive:true});mkdirSync(join(root,'functions/test'),{recursive:true});
+  writeFileSync(join(root,'package.json'),JSON.stringify({type:'module'}));
+  for(const [suite,file] of [['ingress','services/ingress/test/probe.test.js'],['emulator','functions/test/emulator.integration.js']]){
+   writeFileSync(join(root,file),"import{test}from'node:test';test('PRIVATE success',()=>{});test.skip('PRIVATE skip',()=>{});test('PRIVATE failure',()=>{throw Error('PRIVATE output')});");
+   const env={...process.env,CI_CASE_ROOT:root,CI_CASE_SUITE:suite};delete env.NODE_TEST_CONTEXT;
+   const child=spawnSync(process.execPath,['--test','--test-reporter='+resolve('scripts/ci-test-reporter.mjs'),'--test-reporter-destination='+join(root,'test-results/cases-'+suite+'.ndjson'),join(root,file)],{cwd:root,env,encoding:'utf8'});
+   assert.equal(child.status,1);const rows=await readCaseEvidence(suite,join(root,'test-results'));assert.equal(rows.length,3);assert.ok(!JSON.stringify(rows).includes('PRIVATE'));assert.deepEqual(rows.map(r=>r.status).sort(),['failed','passed','skipped']);
+   assert.equal(ciEvent(meta,rows[0]).data['ci.check'],suite);
+  }
+  writeFileSync(join(root,'test-results/cases-ingress.ndjson'),'');await assert.rejects(readCaseEvidence('ingress',join(root,'test-results')),/Incomplete/);
+  assert.equal(testCase({type:'test:pass',data:{file:join(root,'outside.test.js'),details:{type:'test'}}}),null);
+ }finally{rmSync(root,{recursive:true,force:true});}
+});

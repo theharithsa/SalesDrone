@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createTelemetry } from '../functions/src/telemetry.js';
 import { tenantOrigin } from '../functions/src/telemetry-outbox.js';
 import { ciEvent, sendCiEvent } from './ci-events.mjs';
+import { CASE_SUITES, readCaseEvidence } from './ci-case-evidence.mjs';
 const token = process.env.DYNATRACE_API_TOKEN;
 if (!token) throw Error('Missing trusted CI reporting secret');
 const tenant = tenantOrigin(
@@ -35,26 +36,13 @@ const results = CI_CHECKS.filter(
     check: r.id,
     finishedAt: r.finishedAt || report.finishedAt,
   }));
-for (const check of ['functions', 'web', 'components']) {
+const caseEvidenceFailures=[];
+for (const check of CASE_SUITES) {
   // Only read cases when the corresponding command actually ran; no stale local artifacts.
   if (!results.some((r) => r.check === check && r.status !== 'not-run'))
     continue;
-  try {
-    const text = await readFile(`test-results/cases-${check}.ndjson`, 'utf8');
-    if (text.length > 2000000) throw Error('Oversized CI case artifact');
-    for (const line of text.split('\n').filter(Boolean)) {
-      const c = JSON.parse(line);
-      results.push({
-        check,
-        status: c.status,
-        caseId: c.id,
-        durationMs: c.durationMs,
-        finishedAt: c.finishedAt,
-      });
-    }
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
-  }
+  try {results.push(...await readCaseEvidence(check));}
+  catch {caseEvidenceFailures.push(check);}
 }
 const jobOutcome = (value) =>
   ({
@@ -141,6 +129,8 @@ try {
         commit: meta.commit,
         runId: meta.runId,
         receipts,
+        caseEvidenceComplete:caseEvidenceFailures.length===0,
+        caseEvidenceFailures,
         tenantSearchability:
           'requires separate tenant query; HTTP acceptance is not searchability',
       },
@@ -150,6 +140,7 @@ try {
   );
 }
 if (
+  caseEvidenceFailures.length ||
   receipts.length !== results.length ||
   receipts.some((r) => r.status !== 202)
 )

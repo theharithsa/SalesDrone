@@ -41,8 +41,13 @@ export const AgentPlan = z
       })
       .strict(),
     dateField: z.string().max(100),
+    clarification: z.enum(['field','date','outcome','ownership','unsupported']).optional(),
   })
   .strict();
+export const AgentBatchPlan=z.object({steps:z.array(AgentPlan).min(1).max(4)}).strict();
+export function agentClarification(plan) {
+  return {state:'Clarify',text:({field:'Which configured lead field and value should I use?',date:'Which recorded date or calendar period should I use?',outcome:'An Admin must configure converted/closed and failed stages in Settings → Lead research before I can count those outcomes.',ownership:'A current stage does not show who changed it. I can count your accessible leads in configured converted/closed stages; actor-specific closing history needs recorded actor data.',unsupported:'This needs a query the current read tools cannot verify. Please narrow it to a lead count, field breakdown, matching list, recorded reminders, conversion period or evidence in notes.'})[plan.clarification] || 'Which lead field, value or date is missing? I can count accessible leads, compare configured fields, list matches and read relevant recorded notes.'};
+}
 const standard = {
   name: "text",
   company: "text",
@@ -417,14 +422,15 @@ export async function agentPage(tx, r, m, config) {
       )
     )
       continue;
-    const key = r.id + "_" + hash(lead.id),
+    const resultId=r.agentSteps ? r.id+':'+r.partIndex : r.id;
+    const key = resultId + "_" + hash(lead.id),
       existing = await tx.get(path("assistantContributions", key));
     if (existing || pageSeen.has(lead.id)) continue;
     pageSeen.add(lead.id);
     tx.set(path("assistantContributions", key), {
       id: key,
       jobId: r.jobId,
-      requestId: r.id,
+      requestId: resultId,
       leadId: lead.id,
       lead: leadResult(lead, detail),
     });
@@ -473,11 +479,12 @@ export function agentAnswer(r, config) {
       coverage,
     };
   const partial = p.tool === "aggregate_stage_history";
+  const outcomeLabel=p.outcome==='converted'?'leads currently in configured converted/closed stages':p.outcome==='failed'?'leads currently in configured failed stages':'active leads';
   return {
     state: partial ? "Partial" : "Grounded",
     text: partial
       ? `${r.matched || 0} distinct leads have a recorded conversion in this period. Imported history may be incomplete; this is an observed count.`
-      : `${r.matched || 0} matching ${p.tool === "find_own_followups" ? "leads with recorded pending outreach reminders" : "active leads"}.`,
+      : `${r.matched || 0} matching ${p.tool === "find_own_followups" ? "leads with recorded pending outreach reminders" : outcomeLabel}.${p.outcome==='converted'?' This is current stage status, not a claim about who closed them or when.':''}`,
     count: r.matched || 0,
     groups: Object.fromEntries(
       Object.values(r.groups || {}).map((g) => [g.label, g.count]),

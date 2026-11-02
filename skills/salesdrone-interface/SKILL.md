@@ -66,3 +66,5 @@ zoom and short windows. Composer insets account for bottom navigation only insid
 the app shell, so standalone synthetic previews do not inherit a phantom nav gap.
 
 Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use existing Material buttons and narrow-card wrapping.
+
+The real Assistant container renders independent grounded answer parts using the existing Material 3 conversation component and per-part result controls. Keep result state keyed by request plus part so one list/cursor cannot replace another. The development-only Admin preview accepts theme=dark and scale=125 for geometry review; its compound responses are fictional and excluded from production builds.

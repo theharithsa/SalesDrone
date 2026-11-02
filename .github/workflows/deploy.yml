@@ -48,6 +48,7 @@ jobs:
           path: |
             test-results/ci-checks.json
             test-results/cases-*.ndjson
+            test-results/cases-*.summary.json
           if-no-files-found: warn
           retention-days: 30
 
