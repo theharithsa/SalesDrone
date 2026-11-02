@@ -1,3 +1,4 @@
+import TaskListPreview from './TaskListPreview';
 import LeadAssistantPage from "../features/LeadAssistantPage";
 import LeadAssistantPrototype from './LeadAssistantPrototype';
 import '../research.css';
@@ -378,7 +379,7 @@ function AdminReview() {
           />
         ) : null}
       </Modal>
-      {['hygiene','assistant'].includes(new URLSearchParams(location.search).get('preview')||'') ? new URLSearchParams(location.search).get('preview')==='assistant'?<LeadAssistantPage request={request} demo={false}/>:<ResearchPage mode='hygiene' request={request} demo={false} canRun canAI admin/> : new URLSearchParams(location.search).get('preview') === 'dashboard-fields' ? (
+      {new URLSearchParams(location.search).get('preview')==='tasks' ? <TaskListPreview/> : ['hygiene','assistant'].includes(new URLSearchParams(location.search).get('preview')||'') ? new URLSearchParams(location.search).get('preview')==='assistant'?<LeadAssistantPage request={request} demo={false}/>:<ResearchPage mode='hygiene' request={request} demo={false} canRun canAI admin/> : new URLSearchParams(location.search).get('preview') === 'dashboard-fields' ? (
         <DashboardPage demo config={{...config,hiddenFields:[...new Set([...config.hiddenFields,'stage'])]}} request={request} firstName="Explorer" timezone="Asia/Kolkata" sample={(()=>{const data=demoData();return {...data,leads:data.leads.map((lead,i)=>({...lead,zone:['North','South'][i%2],legacyStatus:['Awaiting drawings','Quoted','Under review'][i%3],customFields:{...lead.customFields,cf_preview_campaign:['Spring','Partner'][i%2]}}))}})()} refreshKey={0} stageOrder={config.values.stage} onStage={()=>{}} onCategory={()=>{}} onLead={async()=>{}} onTask={async()=>{}} onTasks={()=>{}}/>
       ) : new URLSearchParams(location.search).get('preview') === 'import-review' ? (<ImportReviewFixture />) : importing || new URLSearchParams(location.search).get('preview') === 'import-fields' ? (
         <><p className="notice">Mapping preview only. Use fictional files. Field setup stays in memory; server import validation and commits are unavailable.</p><ImportPage demo={false} config={config} canManageFields onFieldOptions={setConfig} request={request} onImported={() => {}} /></>

@@ -1875,7 +1875,10 @@ export function createApp({
             ? canReadLead(req.member, leads.get(t.leadId))
             : t.creatorUid === req.member.uid),
         );
-        return { ...result, items };
+        return { ...result, items: items.map(t => {
+          const lead = leads.get(t.leadId);
+          return {...t, lead: lead ? {id: t.leadId, name: lead.name, company: lead.company || ''} : null};
+        }) };
       },
     );
   });

@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.6.4**, OpenAPI contract **1.24.0**. All application operations
+Application release **v2.6.7**, OpenAPI contract **1.25.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -316,3 +316,7 @@ remain outside this normalized Hosting contract. No authentication is bypassed.
 ## Compound Assistant answers (1.24.0)
 
 Completed answers may contain `parts` (one to four independent answer objects). Each part carries its own count, current-access coverage, grouping, sources or focused clarification. `GET /api/v1/lead-assistant/requests/{id}/leads?part=0` selects the zero-based result set; valid indices are 0–3 and must exist. Omit part for existing single-answer requests. Non-list or stale results return 409; invalid part returns 400. Signed cursors are bound to identity, source epoch, request and selected part. Membership, field/outcome settings and task-source checks apply to the whole answer. No source mutation is available.
+
+## Current lead context in task lists (1.25.0)
+
+GET `/api/v1/tasks` adds an optional `lead` summary containing only `{id, name, company}`, or null for personal reminders. The summary is joined from current lead records after recipient and current lead-scope checks, independent of the browser’s paginated Leads collection. Unavailable/out-of-scope linked tasks remain excluded. Cursor, page bounds, ordering, permissions and errors are unchanged; other Task responses may omit the summary. The existing PATCH task operation still requires the current version and task owner, and atomically replaces versioned reminder delivery work. UI rescheduling forwards its stable idempotency key. No contact details are added to this summary or telemetry.

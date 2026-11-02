@@ -1,0 +1,9 @@
+# Tasks: linked lead context and direct rescheduling
+
+The task screen previously searched only the currently loaded paginated lead collection for names. GET tasks already batch-read current linked leads to enforce scope; API 1.25.0 now projects only their id/name/company after that filtering. Recipient privacy, page bounds and ordering remain unchanged. Names stay current without copied task data or N additional browser requests. Personal reminders return null. No contacts enter the summary or telemetry.
+
+TaskRow is an owned component with a dedicated linked Lead column and visible Reschedule button for Pending tasks. A panel-width query stacks the same information when columns need more room; both header and rows share fixed action-column geometry. Reschedule reuses the existing dialog, task PATCH, expectedVersion and stable retry key. Existing committed task/delivery events remain authoritative; no cosmetic business event is added.
+
+Local synthetic review opens and saves a new due time through the actual RescheduleForm. Measured light viewports include 360x800, 390x500, 768x900, 966x700, 968x700, 1024x600, 1280x900 and 1920x900 CSS pixels, with no horizontal document overflow. Dark theme at 125% app display scale fits the dialog inside 390x500, and Escape closes task actions and restores trigger focus. Native browser zoom is 70%; overrides are compensated and actual dimensions recorded. Public task captures are fictional real-component previews, not production data or physical-device/Safari certification.
+
+Domain regressions cover current minimal names, renames, other recipients, assigned-scope exclusion and personal reminders. Real Auth/Firestore integration verifies the current linked summary after task edits. Component tests verify hrefs, independent title/action clicks and no rescheduling for terminal tasks. Required CI, deployment, live read-only verification and tenant searchability remain separate evidence.
