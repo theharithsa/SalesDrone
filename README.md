@@ -12,6 +12,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Verify, deploy and observe](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
 [![Latest release](https://img.shields.io/github/v/release/theharithsa/SalesDrone?color=0756a5)](https://github.com/theharithsa/SalesDrone/releases/latest)
 [![MIT licence](https://img.shields.io/github/license/theharithsa/SalesDrone?color=0756a5)](LICENSE)
+[![SalesDrone MCP](https://img.shields.io/badge/MCP-read--only-6750A4)](https://github.com/theharithsa/salesdrone-mcp)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-0756a5)](https://theharithsa.github.io/SalesDrone/)
 [![OpenAPI 3.1](https://img.shields.io/badge/OpenAPI-3.1-0756a5)](https://sales-drone-avinya.firebaseapp.com/api/docs)
 
@@ -253,4 +254,4 @@ Admins can use **Team** for current lead workload, recorded comments/calls, task
 
 ## Read SalesDrone through MCP
 
-Use [`@theharithsa/salesdrone-mcp`](packages/mcp/README.md) in a local stdio MCP client to read leads, recorded calls/comments, tasks, dashboards, Team and a minimal people directory through the same scoped API. No write tools or cloud/database credentials are included. [Setup, privacy and limits](docs/MCP.md). App/API deployment and npm publication are separate release gates.
+Use [`@theharithsa/salesdrone-mcp`](https://github.com/theharithsa/salesdrone-mcp) in a local stdio MCP client to read leads, recorded calls/comments, tasks, dashboards, Team and a minimal people directory through the same scoped API. No write tools or cloud/database credentials are included. [Standalone repository, screenshots, setup and observability](https://github.com/theharithsa/salesdrone-mcp#readme). MCP source, tests, CI and npm releases are maintained there; this repository owns the HTTP API and its policy.

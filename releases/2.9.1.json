@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "version": "2.9.1",
+  "summary": "Extract standalone MCP ownership and link its dedicated repository.",
+  "modules": [
+    "salesdrone-mcp"
+  ],
+  "documentation": [
+    "README.md",
+    "docs/MCP.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/observability.md",
+    "SECURITY.md",
+    "CHANGELOG.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Package source/CI ownership extraction only; existing HTTP endpoints, read scopes, policy and data are unchanged.",
+    "contractVersion": "1.29.0",
+    "permissions": "No membership, scope, PAT or API permission changes.",
+    "tests": [
+      "functions/test/team.test.js",
+      "functions/test/personal-access-tokens.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing API and release signals remain; independent MCP runtime/npm lifecycle observability belongs to its standalone repository. No business writes or new events in this website patch.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing API and release signals remain; independent MCP runtime/npm lifecycle observability belongs to its standalone repository. No business writes or new events in this website patch.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing API and release signals remain; independent MCP runtime/npm lifecycle observability belongs to its standalone repository. No business writes or new events in this website patch.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing API and release signals remain; independent MCP runtime/npm lifecycle observability belongs to its standalone repository. No business writes or new events in this website patch.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing API and release signals remain; independent MCP runtime/npm lifecycle observability belongs to its standalone repository. No business writes or new events in this website patch.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Verify README MCP badge/link and standalone repository; no app layout or screenshot changes. Protocol/npm verification runs in the MCP repository. Existing API identity and normal deployment evidence remain required.",
+  "milestone": {
+    "number": 25,
+    "title": "v2.9.1 \u2014 Standalone MCP ownership",
+    "issues": [
+      134
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

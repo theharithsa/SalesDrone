@@ -6,6 +6,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.9.1] - 2026-11-03
+
+### Changed
+- Move the MCP package, protocol tests and npm ownership to the standalone theharithsa/salesdrone-mcp repository.
+- Add a root MCP badge and migration link; retain all versioned API read scopes, policy and emulator coverage without customer-data changes.
+
 ## [2.9.0] - 2026-11-03
 
 ### Changed
