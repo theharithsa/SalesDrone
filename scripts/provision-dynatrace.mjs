@@ -18,4 +18,5 @@ const now=new Date().toISOString(),id='salesdrone-observability-check-'+Date.now
 const event={specversion:'1.0',id,source:'com.avinyatech.salesdrone.validation',type:'com.avinyatech.salesdrone.instrumentation.validated',time:now,data:{'event.id':id,'event.authority':'server-confirmed','schema.version':1,'app.version':'1.0.0','validation.synthetic':true}};
 const accepted=await fetch(tenant+'/api/v2/bizevents/ingest',{method:'POST',redirect:'error',headers:{Authorization:'Api-Token '+token,'Content-Type':'application/json'},body:JSON.stringify(event),signal:AbortSignal.timeout(15000)});
 console.log(JSON.stringify({secretNames:['DYNATRACE_API_TOKEN',...(cursor?['CURSOR_SECRET']:[])],githubSecretConfigured:true,bizEventProbe:{status:accepted.status,eventId:id},tenant}));
+// eslint-disable-next-line no-useless-assignment -- Release this reference after use; immutable strings cannot be zeroized.
 token='';

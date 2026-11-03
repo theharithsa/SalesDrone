@@ -646,7 +646,8 @@
         "tests/function-environment.test.ts",
         "tests/import-fields.test.ts",
         "functions/test/dashboard-grouping.test.js",
-        "functions/test/import-status.test.js"
+        "functions/test/import-status.test.js",
+        "tests/toolchain.test.ts"
       ],
       "manualCases": [
         {
@@ -658,6 +659,11 @@
           "id": "TESTING-02",
           "expected": "Reports contain status/timing only, and browser evidence is explicitly separate.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "TESTING-TOOLCHAIN-01",
+          "expected": "Native TypeScript 7 rejects invalid assignments; ESLint core/hooks and the isolated accessibility pass both enforce policy. Vite 8 Fast Refresh preserves component state; the built bundle loads lazy routes without console errors.",
+          "fixture": "synthetic demo; temporary source edit restored before build; measured phone/desktop browser review, not physical-device certification"
         }
       ]
     },

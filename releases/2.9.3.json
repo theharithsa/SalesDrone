@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "version": "2.9.3",
+  "summary": "Coordinated Vite 8, native TypeScript 7 and ESLint 10 migration with supported lint compatibility boundaries.",
+  "modules": [
+    "salesdrone-release",
+    "salesdrone-testing"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/TOOLCHAIN-MIGRATION.md",
+    "docs/DEPENDENCY-REVIEW.md",
+    "docs/TESTING.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Build/lint tooling only; API 1.29.0, permissions, payloads and stored data remain unchanged.",
+    "contractVersion": "1.29.0",
+    "permissions": "No access, App Check, Firestore rules, IAM or secret-binding change.",
+    "tests": [
+      "tests/toolchain.test.ts",
+      "tests/spa-security.test.ts",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse existing release/CI/runtime signals; compiler/lint migration introduces no business mutation or new telemetry dimensions. Reconcile actual runner case receipts after migration.",
+      "tests": [
+        "tests/toolchain.test.ts",
+        "tests/ci-events.test.ts",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Reuse existing release/CI/runtime signals; compiler/lint migration introduces no business mutation or new telemetry dimensions. Reconcile actual runner case receipts after migration.",
+      "tests": [
+        "tests/toolchain.test.ts",
+        "tests/ci-events.test.ts",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Reuse existing release/CI/runtime signals; compiler/lint migration introduces no business mutation or new telemetry dimensions. Reconcile actual runner case receipts after migration.",
+      "tests": [
+        "tests/toolchain.test.ts",
+        "tests/ci-events.test.ts",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Reuse existing release/CI/runtime signals; compiler/lint migration introduces no business mutation or new telemetry dimensions. Reconcile actual runner case receipts after migration.",
+      "tests": [
+        "tests/toolchain.test.ts",
+        "tests/ci-events.test.ts",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Reuse existing release/CI/runtime signals; compiler/lint migration introduces no business mutation or new telemetry dimensions. Reconcile actual runner case receipts after migration.",
+      "tests": [
+        "tests/toolchain.test.ts",
+        "tests/ci-events.test.ts",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Synthetic Vite 8 dev Fast Refresh with state preservation and source restoration, built preview startup/lazy navigation at phone and desktop widths; preserve Vite 7 targets. No intended UI change, so public screenshot versions remain unchanged. Read-only production startup and exact release identity after deployment; separate tenant reconciliation. No customer writes or physical-device certification.",
+  "milestone": {
+    "number": 27,
+    "title": "v2.9.3 \u2014 Toolchain migrations",
+    "issues": [
+      138
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

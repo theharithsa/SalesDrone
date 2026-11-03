@@ -60,3 +60,6 @@ security/reporting tests and 14 real emulator cases passed. Type checking, produ
 build, lint (zero errors; existing 46 warnings), docs, skills, release readiness and
 secret scan passed. The Vite demo dashboard and Leads page started without console
 errors. Full PR/main CI and production acceptance remain separate gates.
+
+The later v2.9.3 [toolchain migration](TOOLCHAIN-MIGRATION.md) resolves the three
+holds above using supported compatibility boundaries; the table records the earlier review.

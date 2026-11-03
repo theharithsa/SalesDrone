@@ -58,5 +58,6 @@ export default defineConfig(({ command }) => ({
       },
     },
   },
-  build: { chunkSizeWarningLimit: 750 },
+  // Preserve Vite 7 browser support rather than implicitly raising it in Vite 8.
+  build: { target: ['chrome107', 'edge107', 'firefox104', 'safari16'], chunkSizeWarningLimit: 750 },
 }));

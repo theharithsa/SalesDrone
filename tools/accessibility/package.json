@@ -1,0 +1,11 @@
+{
+  "name": "@salesdrone/accessibility-tools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated ESLint 9 peer boundary for the current JSX accessibility plugin.",
+  "dependencies": {
+    "eslint": "^9.39.5",
+    "eslint-plugin-jsx-a11y": "6.10.2"
+  }
+}
