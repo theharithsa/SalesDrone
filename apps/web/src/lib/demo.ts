@@ -53,7 +53,7 @@ export function demoData() {
         zone: 'South',
         comments:
           'Synthetic sample enquiry. This is a fictional contact for exploring SalesDrone.',
-        assignedToUid: 'demo',
+        assignedToUid: i%5===0?null:['demo','demo-maya','demo-jordan'][i%3],
         version: 1,
         createdAt: new Date(Date.now() - i * 3600000).toISOString(),
         doNotContact: false,

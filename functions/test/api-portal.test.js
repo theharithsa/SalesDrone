@@ -13,7 +13,7 @@ test('published contract covers every route with explicit PAT or Google/App Chec
     ),
   ].map((m) => [m[1], m[2]]);
   endpoints.push(['get', '/me'], ['post', '/invitations/:id/accept']);
-  assert.equal(endpoints.length, 94);
+  assert.equal(endpoints.length, 97);
   for (const [method, url] of endpoints) {
     const op =
       spec.paths['/api/v1' + url.replace(/:([a-zA-Z]+)/g, '{$1}')][method];
@@ -100,3 +100,5 @@ test('main task contract documents opt-in accessible browsing and action flags w
  assert.deepEqual(op.parameters.find(p=>p.name==='view').schema.enum,['accessible']);assert.equal(op['x-personal-access-token-scope'],'tasks:read');
  assert.ok(JSON.stringify(op.responses['200']).includes('Task'));assert.ok(spec.components.schemas.Task.properties.canEditOwn);assert.ok(spec.components.schemas.Task.properties.canManage);
 });
+
+test('Team contract exposes typed admin-only reporting and literal assignment export filtering',async()=>{const spec=JSON.parse(await read('docs/openapi.json'));assert.equal(spec.info.version,'1.28.0');for(const p of ['/team','/team/members/{uid}/activities','/lead-assignees'])assert.equal(spec.paths['/api/v1'+p].get['x-personal-access-token-scope'],null);assert.ok(spec.paths['/api/v1/team'].get.parameters.some(p=>p.name==='days'));assert.ok(spec.components.schemas.LeadExportInput.properties.assignedToUid);});

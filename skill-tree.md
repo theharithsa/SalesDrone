@@ -17,7 +17,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-conversations](skills/salesdrone-conversations/SKILL.md) — call comment, lead note, timeline comment, call outcome, activity text size, comment typography.
   Related: salesdrone-release, salesdrone-leads, salesdrone-imports, salesdrone-automatic-reminders, salesdrone-tasks-reminders, salesdrone-lead-journey.
 - [salesdrone-dashboard](skills/salesdrone-dashboard/SKILL.md) — dashboard, insights, funnel graph.
-  Related: salesdrone-release, salesdrone-lead-scoring, salesdrone-leads, salesdrone-lead-journey, salesdrone-interface.
+  Related: salesdrone-release, salesdrone-lead-scoring, salesdrone-leads, salesdrone-lead-journey, salesdrone-interface, salesdrone-team.
 - [salesdrone-data-platform](skills/salesdrone-data-platform/SKILL.md) — firestore, index, transaction, cursor.
   Related: salesdrone-release, salesdrone-leads, salesdrone-imports, salesdrone-tasks-reminders, salesdrone-observability.
 - [salesdrone-documentation](skills/salesdrone-documentation/SKILL.md) — readme, documentation, settings guide, screenshots.
@@ -41,7 +41,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-observability](skills/salesdrone-observability/SKILL.md) — dynatrace, rum, telemetry, trace, metric, logs, bizevent, settings audit, audit logs, audit delivery.
   Related: salesdrone-release, salesdrone-data-platform, salesdrone-api-integrations.
 - [salesdrone-people-permissions](skills/salesdrone-people-permissions/SKILL.md) — people access, permissions, assign lead, member role, assigned only.
-  Related: salesdrone-release, salesdrone-authentication, salesdrone-leads, salesdrone-notifications, salesdrone-api-integrations.
+  Related: salesdrone-release, salesdrone-authentication, salesdrone-leads, salesdrone-notifications, salesdrone-api-integrations, salesdrone-team.
 - [salesdrone-product-guide](skills/salesdrone-product-guide/SKILL.md) — product handbook, user manual, feature walkthrough, faq, refresh screenshots.
   Related: salesdrone-documentation, salesdrone-interface, salesdrone-release-readiness.
 - [salesdrone-release](skills/salesdrone-release/SKILL.md) — deploy, release, version, changelog, rollback.
@@ -50,6 +50,8 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release.
 - [salesdrone-tasks-reminders](skills/salesdrone-tasks-reminders/SKILL.md) — edit task, delete task, manual reminder, snooze.
   Related: salesdrone-release, salesdrone-automatic-reminders, salesdrone-notifications, salesdrone-people-permissions.
+- [salesdrone-team](skills/salesdrone-team/SKILL.md) — team dashboard, SDR performance, team stats, member activity, team workload.
+  Related: salesdrone-release-readiness, salesdrone-people-permissions, salesdrone-leads, salesdrone-interface, salesdrone-dashboard.
 - [salesdrone-testing](skills/salesdrone-testing/SKILL.md) — testing, test cases, regression tests, QA handoff, test runner, test agent.
   Related: salesdrone-release-readiness, salesdrone-release.
 - [salesdrone-workspace-settings](skills/salesdrone-workspace-settings/SKILL.md) — manage fields, lead fields, dropdown choices, settings, custom fields, book mode preference, interface font, font preference, font style.

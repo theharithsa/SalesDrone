@@ -99,3 +99,6 @@ Explain linked updates, three-way conflicts, actual duplicate candidates, option
 
 
 Explain Admin field setup before import preview, schema persistence on cancellation, explicit exclusions, duplicate/blank headers and stable field reuse. Explain the Today personal grouping selector and automatic hidden-stage fallback, bounded groups and unchanged KPIs. Refresh affected desktop/mobile import, category and popup captures without relabelling unchanged historical assets.
+
+
+Document Admin Team workload versus authored activity, UTC periods, responsibility-based task completion, membership versus presence, imported-note exclusions and bounded-report failures. Refresh the affected shell/lead-filter captures plus Team overview/activity; never use live member/comment data in public assets.

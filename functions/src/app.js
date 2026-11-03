@@ -1,3 +1,4 @@
+import {teamSnapshot, teamDays, teamSince, assertTeamAccess, authoredActivity} from './team.js';
 import {businessRecord} from './business-records.js';
 import { ResearchSettingsPatch, RESEARCH_SETTINGS_PATH, readResearchSettings, validateResearchSettings } from './lead-research-settings.js';
 import { researchMember, researchAccessKey } from './lead-research-access.js';
@@ -265,7 +266,7 @@ export function createApp({
             'Lead data is being cleared. Try again after cleanup finishes.',
           );
         const allowed =
-          url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
+          url === '/team' ? ['days'] : url === '/team/members/:uid/activities' ? ['days','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
             ? ['ids']
             : url === '/leads'
               ? [
@@ -609,13 +610,14 @@ export function createApp({
     }
     const base = [...scopeFilters(req.member), ['archived', '==', false]];
     if (req.query.assignedToUid) {
+      if(String(req.query.assignedToUid).length>128)throw new AppError(400,'FILTER','Invalid assignee');
       if (req.member.role !== 'Admin')
         throw new AppError(
           403,
           'SCOPE',
           'Only admins can filter other assignees',
         );
-      base.push(['assignedToUid', '==', req.query.assignedToUid]);
+      base.push(['assignedToUid', '==', req.query.assignedToUid==='__unassigned__'?null:req.query.assignedToUid]);
     }
     const binding = hash(
       JSON.stringify([
@@ -1118,13 +1120,14 @@ export function createApp({
     if (req.query.source)
       filters.push(['source', '==', String(req.query.source)]);
     if (req.query.assignedToUid) {
+      if(String(req.query.assignedToUid).length>128)throw new AppError(400,'FILTER','Invalid assignee');
       if (req.member.role !== 'Admin')
         throw new AppError(
           403,
           'SCOPE',
           'Only admins can filter other assignees',
         );
-      filters.push(['assignedToUid', '==', String(req.query.assignedToUid)]);
+      filters.push(['assignedToUid', '==', req.query.assignedToUid==='__unassigned__'?null:String(req.query.assignedToUid)]);
     }
     if (req.query.search) {
       const field = req.query.field || 'name';
@@ -2045,6 +2048,30 @@ export function createApp({
         });
       return { ok: true };
     });
+  });
+  route('get','/lead-assignees','members:write',async req=>{
+    await assertTeamAccess(store,req.identity,req.member);
+    const result=await list(req,'members');
+    const current=await assertTeamAccess(store,req.identity,req.member);
+    return {...result,items:result.items.map(m=>({id:m.uid||m.id,name:typeof m.name==='string'&&!m.name.includes('@')?m.name:'Member unavailable',active:!!m.active})),accessVersion:current.version};
+  });
+  route('get','/team','members:write',async req=>{
+    await assertTeamAccess(store,req.identity,req.member);
+    const result=await teamSnapshot(store,req.member,now(),teamDays(req.query.days));
+    await assertTeamAccess(store,req.identity,req.member);
+    return result;
+  });
+  route('get','/team/members/:uid/activities','members:write',async req=>{
+    await assertTeamAccess(store,req.identity,req.member);
+    const days=teamDays(req.query.days),since=teamSince(now(),days);
+    if(!await store.get(path('members',req.params.uid)))throw new AppError(404,'NOT_FOUND','Member not found');
+    const result=await list(req,'activities',[['actorUid','==',req.params.uid],['createdAt','>=',since]],undefined,'createdAt','desc','team:'+days);
+    const ids=[...new Set(result.items.map(a=>a.leadId).filter(Boolean))];
+    const records=await store.getAll(ids.map(id=>path('leads',id)),['id','name','assignedToUid']);
+    const leads=new Map(ids.map((id,i)=>[id,records[i]]));
+    const items=result.items.filter(a=>authoredActivity(a)&&a.createdAt<=now()&&leads.get(a.leadId)&&canReadLead(req.member,leads.get(a.leadId))).map(a=>({id:a.id,type:a.type,notes:String(a.notes||'').slice(0,4000),outcome:a.outcome||null,createdAt:a.createdAt,revision:a.revision||1,lead:{id:a.leadId,name:leads.get(a.leadId).name}}));
+    await assertTeamAccess(store,req.identity,req.member);
+    return {...result,items};
   });
   route('get', '/members', 'members:write', (req) => list(req, 'members'));
   route('get', '/invitations', 'members:write', (req) =>

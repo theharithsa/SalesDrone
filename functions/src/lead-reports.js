@@ -12,6 +12,7 @@ export const LeadExportInput = z
     filters: LeadFilters.default([]),
     stage: z.string().max(100).optional(),
     source: z.string().max(100).optional(),
+    assignedToUid: z.string().min(1).max(128).optional(),
     search: z.string().max(200).optional(),
     field: z
       .enum(['name', 'company', 'phone', 'email', 'location', 'zone'])

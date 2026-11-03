@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.7.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.8.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -545,7 +545,7 @@ Authorization stays in tab memory. Clear it when finished, especially on shared 
 
 **Who/where:** Workspace access; Admin only.
 
-**API:** GET /api/v1/members; GET/POST /api/v1/invitations; DELETE /api/v1/invitations/{id}; PATCH /api/v1/members/{uid}.
+**API:** GET /api/v1/members; GET/POST /api/v1/invitations; DELETE /api/v1/invitations/{id}; PATCH /api/v1/members/{uid}; GET /api/v1/lead-assignees; GET /api/v1/team; GET /api/v1/team/members/{uid}/activities.
 
 **Permissions:** members:write + Google/App Check; PAT access denied.
 
@@ -561,7 +561,7 @@ The invitation binds to the verified identity that accepts it. Merely signing in
 
 **Default:** Viewer or SDR chosen for each grant.
 
-Viewer can read leads. SDR can also create/edit leads, record activity and manage tasks. Administrative capabilities are reserved for protected administrators. Lead editors may batch edit permitted records and upload/remove their lead files; readers may list/download permitted Ready files. Effective assigned-only policy applies to files as well.
+Viewer can read leads. SDR can also create/edit leads, record activity and manage tasks. Administrative capabilities are reserved for protected administrators. Lead editors may batch edit permitted records and upload/remove their lead files; readers may list/download permitted Ready files. Effective assigned-only policy applies to files as well. Admins can open Team insights and read member workload/authored activity within current lead scope. Team defaults to a 30-day UTC window, with 7/90-day alternatives; this is a local page selection and is not a grantable SDR capability. Active membership is distinct from online status. No PAT access or personal reminder visibility is added.
 
 This screen does not promote other users to Admin or edit protected bootstrap admins.
 

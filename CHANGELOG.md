@@ -3,22 +3,14 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+## [2.8.0] - 2026-11-03
 
+### Added
+- Admin Team overview with current workload, recorded comments/calls, distinct leads worked, stage changes, task progress and member activity linked to leads. UTC period controls, inactive membership, bounded reads and fresh access checks preserve reporting meaning and privacy.
+- Named Assigned to filtering on desktop/mobile Leads, including Unassigned and inactive members, with matching literal assignment filtering in exports.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### Changed
+- Compact Material 3 sidebar with grouped product navigation, shared quick-navigation/route registry, independent product scrolling and retained phone touch targets. Team subviews stay inside one destination for future module growth.
 
 ## [2.7.2] - 2026-11-02
 

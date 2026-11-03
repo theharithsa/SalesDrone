@@ -208,3 +208,5 @@ Research analytics and contact-index diagnostics use adapter field projections t
 ## API transport boundary
 
 See [API-INGRESS.md](API-INGRESS.md) for the separately deployed Cloud Run gateway, fixed upstream, bounded decoding, runtime/build IAM, privacy exclusion and Hosting cutover. Domain storage, Auth and policy remain in the existing API Function.
+
+Admin Team reporting is a bounded read module in functions/src/team.js, with TeamPage.tsx and a shared grouped navigation registry. See [TEAM.md](TEAM.md) for current-assignment versus authored-history semantics, scan bounds and index requirements.

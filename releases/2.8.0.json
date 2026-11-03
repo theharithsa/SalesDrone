@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "version": "2.8.0",
+  "summary": "Admin Team workload and authored activity, named assigned-lead filtering and compact scalable Material 3 navigation.",
+  "modules": [
+    "salesdrone-team",
+    "salesdrone-people-permissions",
+    "salesdrone-leads",
+    "salesdrone-interface",
+    "salesdrone-api-integrations",
+    "salesdrone-testing",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API.md",
+    "docs/TEAM.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/REVIEW-2.8.0.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "access"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Add bounded Admin-only Team overview, encrypted member activity pages, minimal assignee directory and literal assignment export filtering. No mutation or PAT grant.",
+    "contractVersion": "1.28.0",
+    "permissions": "Google/App Check Admin plus members:write; current lead scope and fresh membership publication checks. Non-admin assignee filter restrictions and private reminders unchanged.",
+    "tests": [
+      "functions/test/team.test.js",
+      "functions/test/api-portal.test.js",
+      "functions/test/personal-access-tokens.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Team/report/directory and assignment reads reuse fixed route metrics, traces and logs. No new committed business event for reads/UI. Never export members, notes, task titles, report contents, raw queries or cursor data. Existing version/commit/run-bound actual test, workflow and deployment telemetry remains authoritative.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Team/report/directory and assignment reads reuse fixed route metrics, traces and logs. No new committed business event for reads/UI. Never export members, notes, task titles, report contents, raw queries or cursor data. Existing version/commit/run-bound actual test, workflow and deployment telemetry remains authoritative.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Team/report/directory and assignment reads reuse fixed route metrics, traces and logs. No new committed business event for reads/UI. Never export members, notes, task titles, report contents, raw queries or cursor data. Existing version/commit/run-bound actual test, workflow and deployment telemetry remains authoritative.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Team/report/directory and assignment reads reuse fixed route metrics, traces and logs. No new committed business event for reads/UI. Never export members, notes, task titles, report contents, raw queries or cursor data. Existing version/commit/run-bound actual test, workflow and deployment telemetry remains authoritative.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Team/report/directory and assignment reads reuse fixed route metrics, traces and logs. No new committed business event for reads/UI. Never export members, notes, task titles, report contents, raw queries or cursor data. Existing version/commit/run-bound actual test, workflow and deployment telemetry remains authoritative.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review Team overview/member activity, lead links, named/Unassigned filters, phone Apply/Cancel/Reset with pinned actions and grouped sidebar/rail/whole-drawer short-window fallback. Measure phone/tablet/laptop/wide, fractional boundaries, themes and 125% display scale. Production verification is read-only; synthetic browser results are not physical-device/Safari certification.",
+  "milestone": {
+    "number": 21,
+    "title": "v2.8.0 \u2014 Team insights and navigation",
+    "issues": [
+      126
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "team-demo.jpg",
+    "team-mobile-demo.jpg",
+    "team-activity-demo.jpg",
+    "lead-filters-demo.jpg",
+    "lead-filters-mobile-demo.jpg",
+    "leads-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "tasks-demo.jpg",
+    "mobile-tasks-demo.jpg",
+    "dashboard-demo.jpg",
+    "laptop-demo.jpg",
+    "tablet-demo.jpg"
+  ]
+}

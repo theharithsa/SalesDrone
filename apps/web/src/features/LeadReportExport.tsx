@@ -9,6 +9,7 @@ type Criteria = {
   filters: ColumnFilter[];
   stage?: string;
   source?: string;
+  assignedToUid?: string;
   search?: string;
   field?: string;
 };

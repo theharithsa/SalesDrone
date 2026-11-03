@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Team Insights"
+  short_description: "Maintain Admin workload and recorded team activity"
+  default_prompt: "Use $salesdrone-team to update Team reporting. Preserve Admin and current lead scope, separate authored activity from imported history and current assignment, and verify real Auth/Firestore pagination before publication."

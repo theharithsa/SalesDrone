@@ -727,6 +727,10 @@ for(const [name,schema]of Object.entries(researchSchemas))schemas[name]=z.toJSON
 schemas.ResearchSettings=z.toJSONSchema(z.object(Object.fromEntries(Object.entries(ResearchSettingsPatch.shape).filter(([key])=>key!=='expectedVersion'))).extend({version:z.number().int().positive()}));
 const researchTheme={type:'object',required:['label','evidence'],properties:{label:{type:'string'},evidence:{type:'array',items:{type:'object',required:['sourceId','quote'],properties:{sourceId:{type:'string'},quote:{type:'string'}}}}}};
 schemas.ResearchScan={type:'object',required:['id','status','version'],properties:{id:{type:'string'},status:{type:'string',enum:['Pending','Running','Completed','Stale','Deleting']},version:{type:'integer'},scanned:{type:['integer','null']},findings:{type:['integer','null']},createdAt:{type:'string'},updatedAt:{type:'string'},summaryStatus:{type:['string','null'],enum:['Pending','Completed','Failed',null]},summary:{type:['object','null'],properties:{themes:{type:'array',items:researchTheme},sampledFindings:{type:'integer'},totalFindings:{type:'integer'}}}}};
+schemas.TeamMember={type:'object',required:['id','name','role','active','assigned','comments','calls','leadsWorked','stageChanges','pending','overdue','completed'],properties:{id:{type:'string'},name:{type:'string'},role:{type:'string'},active:{type:'boolean'},...Object.fromEntries(['assigned','comments','calls','connected','leadsWorked','stageChanges','pending','overdue','completed'].map(k=>[k,{type:'integer',minimum:0}])),lastActivityAt:{type:['string','null'],format:'date-time'},stages:{type:'array',items:{type:'object',properties:{label:{type:'string'},value:{type:'integer'}}}}}};
+schemas.TeamSnapshot={type:'object',required:['generatedAt','since','days','timezone','members','trend','unassigned','unlistedAssigned','limits'],properties:{generatedAt:{type:'string',format:'date-time'},since:{type:'string',format:'date-time'},days:{type:'integer',enum:[7,30,90]},timezone:{type:'string',const:'UTC'},members:{type:'array',maxItems:200,items:{$ref:'#/components/schemas/TeamMember'}},unassigned:{type:'integer'},unlistedAssigned:{type:'integer'},trend:{type:'array',maxItems:90,items:{type:'object',properties:{date:{type:'string',format:'date'},comments:{type:'integer'},calls:{type:'integer'}}}},limits:{type:'object',additionalProperties:{type:'integer'}}}};
+schemas.TeamActivity={type:'object',required:['id','type','notes','createdAt','lead','revision'],properties:{id:{type:'string'},type:{type:'string',enum:['note','call']},notes:{type:'string',maxLength:4000},outcome:{type:['string','null']},createdAt:{type:'string',format:'date-time'},revision:{type:'integer'},lead:{type:'object',properties:{id:{type:'string'},name:{type:'string'}}}}};
+schemas.LeadAssignee={type:'object',required:['id','name','active'],properties:{id:{type:'string'},name:{type:'string'},active:{type:'boolean'}}};
 schemas.ResearchLead={type:'object',required:['id'],properties:{id:{type:'string'},version:{type:'integer'},name:{type:'string'},company:{type:'string'}}};
 schemas.ResearchFinding={type:'object',required:['id','kind','count'],properties:{id:{type:'string'},kind:{type:'string',enum:['Review','SharedContact','IndexReview']},count:{type:'integer'},field:{type:'string'},value:{type:'string'},issues:{type:'array',items:{type:'string'}},leadIds:{type:'array',items:{type:'string'}},leads:{type:'array',items:{$ref:'#/components/schemas/ResearchLead'}}}};
 schemas.AssistantConversation={type:'object',required:['id','version','status'],properties:{id:{type:'string'},version:{type:'integer'},status:{type:'string',enum:['Active','Stale','Deleting']},createdAt:{type:'string'},updatedAt:{type:'string'}}};
@@ -1020,6 +1024,7 @@ for (const e of endpoints) {
       '/workspace-settings',
       '/scoring-settings',
       '/dashboard',
+      '/team',
       '/field-options',
     ].includes(e.url)
   ) {
@@ -1041,6 +1046,13 @@ for (const e of endpoints) {
       $ref: '#/components/schemas/Page',
     };
   }
+  if(e.url==='/team'||e.url==='/team/members/:uid/activities'){
+    operation.description+=' Admin role and members:write required. Recorded activity uses UTC calendar days (7/30/90; default 30), bounded scans and current lead scope. Imported text, deleted-source activities and personal reminders are excluded. No employee rating or online status. Counts are current reads, not a transactional snapshot. Access is rechecked before publication. 413 TEAM_LIMIT rejects oversized reports rather than partial totals; 409 TEAM_STALE requires refresh.';
+    operation.parameters.push({in:'query',name:'days',schema:{type:'integer',enum:[7,30,90],default:30}});
+    operation.responses[200].content['application/json'].schema=e.url==='/team'?ref('TeamSnapshot'):pageOf('TeamActivity');
+    if(e.url!=='/team')operation.parameters.push({in:'query',name:'limit',schema:{type:'integer',minimum:1,maximum:100,default:30}},{in:'query',name:'cursor',schema:{type:'string'},description:'Encrypted continuation bound to member, period, requester and current access. Sparse pages can continue.'});
+  }
+  if(e.url==='/lead-assignees'){operation.description+=' Admin-only minimal assignee directory, including inactive members. No account email or capabilities are returned.';operation.responses[200].content['application/json'].schema=pageOf('LeadAssignee');}
   if(e.url==='/lead-assistant/requests/:id/leads')operation.parameters.push({in:'query',name:'part',schema:{type:'integer',minimum:0,maximum:3,default:0},description:'Zero-based answer part. The signed cursor is bound to this result set; a different part cannot reuse it.'});
   if(e.method==='get'&&e.url==='/tasks'){operation.responses[200].content['application/json'].schema=pageOf('Task');operation.parameters.push({in:'query',name:'view',schema:{type:'string',enum:['accessible']},description:'Optional Google/App Check member-only accessible lead work plus own personal reminders. Omit for legacy recipient-only tasks; PAT cannot opt in. Sparse pages may continue through nextCursor. Current lead scope and mutation capabilities are rechecked.'});}
   if(e.method==='get'&&e.url==='/leads/:id/tasks')operation.parameters.push(
@@ -1267,7 +1279,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.27.0',
+    version: '1.28.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

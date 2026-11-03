@@ -2568,3 +2568,10 @@ input[type='tel'] {
  .lead-task-toolbar > div { flex: 1 0 100%; }
  .lead-task-toolbar label { min-width: 0; }
 }
+/* Keep filter actions in view while additional assignee/column conditions scroll. */
+.dialog:has(.mobile-lead-filter-form) {display:flex;flex-direction:column;overflow:hidden;}
+.dialog:has(.mobile-lead-filter-form) .dialog-heading {flex-shrink:0;}
+.mobile-lead-filter-form {display:flex;flex-direction:column;min-height:0;}
+.mobile-filter-scroll {overflow-y:auto;overscroll-behavior:contain;min-height:0;padding-right:3px;}
+.mobile-lead-filter-form .form-footer {flex-shrink:0;flex-wrap:nowrap;gap:8px;margin-top:16px;}
+.mobile-lead-filter-form .form-footer>div {display:flex;gap:8px;}

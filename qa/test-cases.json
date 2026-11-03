@@ -312,7 +312,7 @@
         },
         {
           "id": "THEME-CONTROL-2.0.1",
-          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320–1920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
+          "expected": "Login and workspace share the sun/moon pill with active-mode indicator. Toggle with touch, Enter and Space; focus remains, action label changes and local guest choice persists. System follows emulated device changes until an explicit choice. Reduced motion removes indicator transition. Verify 320\u20131920px, five stored zoom fixtures, Book palettes, no sibling overlap and minimum touch size.",
           "fixture": "isolated synthetic browser; node scripts/review-theme.mjs; no account writes"
         },
         {
@@ -613,7 +613,7 @@
         },
         {
           "id": "TASK-SHARED-01",
-          "expected": "Current lead readers see linked task responsibility; lead editors complete/reschedule another recipient’s Pending task, with no personal-reminder exposure.",
+          "expected": "Current lead readers see linked task responsibility; lead editors complete/reschedule another recipient\u2019s Pending task, with no personal-reminder exposure.",
           "fixture": "Fictional shared tasks; no customer writes"
         },
         {
@@ -765,6 +765,33 @@
           "id": "ASSIST-BUSINESS-01",
           "expected": "Read-only business queries honor independent source permissions and current lead scope; source edits invalidate results and partial limits are explicit.",
           "fixture": "Synthetic projected business records; no secrets or private reminders"
+        }
+      ]
+    },
+    {
+      "module": "salesdrone-team",
+      "ownerSkill": "skills/salesdrone-team/SKILL.md",
+      "automatedTests": [
+        "functions/test/team.test.js",
+        "functions/test/personal-access-tokens.test.js",
+        "functions/test/emulator.integration.js",
+        "apps/web/test/team.test.tsx"
+      ],
+      "manualCases": [
+        {
+          "id": "TEAM-01",
+          "expected": "Admin sees workload, authored comments/calls and current member stages; imported source text/private reminders are excluded. Period/member switches and sparse Load more remain correct.",
+          "fixture": "fictional local demo; read-only production verification only"
+        },
+        {
+          "id": "TEAM-02",
+          "expected": "Team assigned-count links open matching Leads; named and Unassigned picker compose with other filters, mobile Apply/Cancel/Reset and exports.",
+          "fixture": "synthetic members/leads only"
+        },
+        {
+          "id": "NAV-TEAM-01",
+          "expected": "Compact grouped sidebar, collapsed rail, short-window scrolling, permission gates and Quick navigation keep all allowed modules reachable; phone targets retain 48px.",
+          "fixture": "synthetic demo across phone/tablet/laptop/wide, short windows, themes and large text"
         }
       ]
     }
