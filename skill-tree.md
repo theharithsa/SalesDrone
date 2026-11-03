@@ -37,7 +37,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report, batch edit, bulk edit, select leads.
   Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications.
 - [salesdrone-mcp](skills/salesdrone-mcp/SKILL.md) — MCP, MCP server, npm package, stdio, read-only integration.
-  Related: salesdrone-release-readiness, salesdrone-api-integrations, salesdrone-team, salesdrone-people-permissions, salesdrone-leads.
+  Related: salesdrone-release-readiness, salesdrone-api-integrations, salesdrone-team, salesdrone-people-permissions.
 - [salesdrone-notifications](skills/salesdrone-notifications/SKILL.md) — push notification, notification bell, read unread, fcm.
   Related: salesdrone-release, salesdrone-tasks-reminders, salesdrone-leads, salesdrone-authentication, salesdrone-interface.
 - [salesdrone-observability](skills/salesdrone-observability/SKILL.md) — dynatrace, rum, telemetry, trace, metric, logs, bizevent, settings audit, audit logs, audit delivery.

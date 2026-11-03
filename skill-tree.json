@@ -436,7 +436,7 @@
     {
       "id": "salesdrone-mcp",
       "path": "skills/salesdrone-mcp/SKILL.md",
-      "description": "Maintain the read-only SalesDrone stdio MCP npm package, its fixed HTTP adapter, scoped access, protocol tests and npm publication. Use for MCP tools or client setup; HTTP domain policy remains with API, Team and people owners.",
+      "description": "Maintain SalesDrone HTTP integration compatibility with the standalone read-only MCP repository. Use for MCP API scopes and policy; adapter source, telemetry, tests and npm publishing belong to the separate MCP repository.",
       "matchTerms": [
         "MCP",
         "MCP server",
@@ -448,8 +448,7 @@
         "salesdrone-release-readiness",
         "salesdrone-api-integrations",
         "salesdrone-team",
-        "salesdrone-people-permissions",
-        "salesdrone-leads"
+        "salesdrone-people-permissions"
       ],
       "apiOperations": []
     },

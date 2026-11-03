@@ -804,14 +804,14 @@
       "module": "salesdrone-mcp",
       "ownerSkill": "skills/salesdrone-mcp/SKILL.md",
       "automatedTests": [
-        "tests/mcp.test.ts",
         "functions/test/team.test.js",
+        "functions/test/personal-access-tokens.test.js",
         "functions/test/emulator.integration.js"
       ],
       "manualCases": [
         {
           "id": "MCP-01",
-          "expected": "Install the exact reviewed/published package in an isolated MCP host; initialize, list read-only tools, fetch one bounded lead page, follow a sparse cursor, verify missing-scope denial and Admin Team/people reads without business writes.",
+          "expected": "Verify root MCP badge/link resolves to the standalone repository; protocol/package/runtime and npm checks are maintained there. API reads retain existing policy and explicit scopes.",
           "fixture": "synthetic protocol/API fixture; authorized read-only live probe; never put real tokens/customer output in public evidence"
         }
       ]

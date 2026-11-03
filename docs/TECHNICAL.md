@@ -213,4 +213,4 @@ Admin Team reporting is a bounded read module in functions/src/team.js, with Tea
 
 ## Local MCP integration
 
-`packages/mcp` is an independently versioned public stdio npm adapter over the same `/api/v1` API, with no direct Firestore access. Fixed GET-only tools retain token scopes, current membership/lead policy, sparse cursors and bounded results. Team/people read scopes are opt-in Admin reads; Google administration remains separate. See [MCP architecture, tests and publication](MCP.md).
+[theharithsa/salesdrone-mcp](https://github.com/theharithsa/salesdrone-mcp) is the independently maintained public stdio npm adapter over the same `/api/v1` API, with no direct Firestore access. Fixed GET-only tools retain token scopes, current membership/lead policy, sparse cursors and bounded results. Team/people read scopes are opt-in Admin reads; Google administration remains separate. See [MCP architecture, tests and publication](MCP.md).
