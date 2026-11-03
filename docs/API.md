@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.7.2**, OpenAPI contract **1.27.0**. All application operations
+Application release **v2.9.0**, OpenAPI contract **1.29.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -354,3 +354,7 @@ Swagger defaults, including the OpenAPI 3.1 JSON Schema renderer and SVG paths.
 After a Swagger upgrade inspect expanded operations and the Authorize dialog,
 not just the introductory card. See [the portal review](API-PORTAL-REVIEW.md).
 This presentation change adds no API, permission, stored preference or business event.
+
+## Read-only MCP clients
+
+Use [the npm MCP adapter](MCP.md) for local stdio tools over the same HTTP API. New explicit PAT scopes `team:read` and `people:read` allow Admin Team reports/activity and the minimal id/name/active directory; they never grant people/security administration. Existing Google sessions still require members:write. New scopes are opt-in; existing tokens are unchanged. `GET /leads/{id}/tasks` accepts tasks:read under current lead scope; `/tasks` stays recipient-oriented. Supply read-only tokens and preserve sparse page continuations. Team is recorded work, not presence or an employee rating.

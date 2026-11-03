@@ -1047,12 +1047,12 @@ for (const e of endpoints) {
     };
   }
   if(e.url==='/team'||e.url==='/team/members/:uid/activities'){
-    operation.description+=' Admin role and members:write required. Recorded activity uses UTC calendar days (7/30/90; default 30), bounded scans and current lead scope. Imported text, deleted-source activities and personal reminders are excluded. No employee rating or online status. Counts are current reads, not a transactional snapshot. Access is rechecked before publication. 413 TEAM_LIMIT rejects oversized reports rather than partial totals; 409 TEAM_STALE requires refresh.';
+    operation.description+=' Admin role is always required; Google sessions also require members:write. PATs require explicit team:read scope. Recorded activity uses UTC calendar days (7/30/90; default 30), bounded scans and current lead scope. Imported text, deleted-source activities and personal reminders are excluded. No employee rating or online status. Counts are current reads, not a transactional snapshot. Access is rechecked before publication. 413 TEAM_LIMIT rejects oversized reports rather than partial totals; 409 TEAM_STALE requires refresh.';
     operation.parameters.push({in:'query',name:'days',schema:{type:'integer',enum:[7,30,90],default:30}});
     operation.responses[200].content['application/json'].schema=e.url==='/team'?ref('TeamSnapshot'):pageOf('TeamActivity');
     if(e.url!=='/team')operation.parameters.push({in:'query',name:'limit',schema:{type:'integer',minimum:1,maximum:100,default:30}},{in:'query',name:'cursor',schema:{type:'string'},description:'Encrypted continuation bound to member, period, requester and current access. Sparse pages can continue.'});
   }
-  if(e.url==='/lead-assignees'){operation.description+=' Admin-only minimal assignee directory, including inactive members. No account email or capabilities are returned.';operation.responses[200].content['application/json'].schema=pageOf('LeadAssignee');}
+  if(e.url==='/lead-assignees'){operation.description+=' Admin-only minimal assignee directory, including inactive members. Google sessions require members:write; PATs require explicit people:read scope. No account email or capabilities are returned.';operation.responses[200].content['application/json'].schema=pageOf('LeadAssignee');}
   if(e.url==='/lead-assistant/requests/:id/leads')operation.parameters.push({in:'query',name:'part',schema:{type:'integer',minimum:0,maximum:3,default:0},description:'Zero-based answer part. The signed cursor is bound to this result set; a different part cannot reuse it.'});
   if(e.method==='get'&&e.url==='/tasks'){operation.responses[200].content['application/json'].schema=pageOf('Task');operation.parameters.push({in:'query',name:'view',schema:{type:'string',enum:['accessible']},description:'Optional Google/App Check member-only accessible lead work plus own personal reminders. Omit for legacy recipient-only tasks; PAT cannot opt in. Sparse pages may continue through nextCursor. Current lead scope and mutation capabilities are rechecked.'});}
   if(e.method==='get'&&e.url==='/leads/:id/tasks')operation.parameters.push(
@@ -1279,7 +1279,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.28.0',
+    version: '1.29.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

@@ -35,7 +35,8 @@
         "salesdrone-release",
         "salesdrone-authentication",
         "salesdrone-people-permissions",
-        "salesdrone-data-platform"
+        "salesdrone-data-platform",
+        "salesdrone-mcp"
       ],
       "apiOperations": [
         "GET /api/v1/personal-access-tokens",
@@ -433,6 +434,26 @@
       ]
     },
     {
+      "id": "salesdrone-mcp",
+      "path": "skills/salesdrone-mcp/SKILL.md",
+      "description": "Maintain the read-only SalesDrone stdio MCP npm package, its fixed HTTP adapter, scoped access, protocol tests and npm publication. Use for MCP tools or client setup; HTTP domain policy remains with API, Team and people owners.",
+      "matchTerms": [
+        "MCP",
+        "MCP server",
+        "npm package",
+        "stdio",
+        "read-only integration"
+      ],
+      "related": [
+        "salesdrone-release-readiness",
+        "salesdrone-api-integrations",
+        "salesdrone-team",
+        "salesdrone-people-permissions",
+        "salesdrone-leads"
+      ],
+      "apiOperations": []
+    },
+    {
       "id": "salesdrone-notifications",
       "path": "skills/salesdrone-notifications/SKILL.md",
       "description": "Maintain SalesDrone owner-only inbox, read/unread state, lead-assignment alerts, FCM registration and notification overlay. Use for push/inbox/overlay bugs; task scheduling belongs to tasks-reminders.",
@@ -498,7 +519,8 @@
         "salesdrone-leads",
         "salesdrone-notifications",
         "salesdrone-api-integrations",
-        "salesdrone-team"
+        "salesdrone-team",
+        "salesdrone-mcp"
       ],
       "apiOperations": [
         "GET /api/v1/members",
@@ -605,7 +627,8 @@
         "salesdrone-people-permissions",
         "salesdrone-leads",
         "salesdrone-interface",
-        "salesdrone-dashboard"
+        "salesdrone-dashboard",
+        "salesdrone-mcp"
       ],
       "apiOperations": [
         "GET /api/v1/team",

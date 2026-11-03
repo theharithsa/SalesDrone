@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.8.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.9.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -482,7 +482,7 @@ Names are metadata, not secrets or unique identifiers.
 
 **Default:** Explicit selection required.
 
-Select only needed data operations. Scopes intersect the current owner’s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write.
+Select only needed data operations. Scopes intersect the current owner’s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write. Read-only MCP tokens can select team:read and people:read for Admin Team reports and the minimal id/name/active directory. Existing tokens gain no scopes automatically. These scopes do not grant member administration. tasks:read also reads shared tasks on an accessible lead; unrelated personal reminders remain private.
 
 Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route’s scope. See the generated scope catalog below.
 
@@ -520,6 +520,8 @@ Authorization stays in tab memory. Clear it when finished, especially on shared 
 
 ### API token scope catalog
 
+- **team:read** — Read Admin Team workload and recorded activity.
+- **people:read** — Read the minimal Admin people directory.
 - **attachments:read** — List and download permitted lead files.
 - **attachments:write** — Upload and remove permitted lead files.
 - **leads:bulk-edit** — Preview and apply atomic batch lead edits.

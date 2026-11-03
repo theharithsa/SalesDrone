@@ -2049,19 +2049,19 @@ export function createApp({
       return { ok: true };
     });
   });
-  route('get','/lead-assignees','members:write',async req=>{
+  route('get','/lead-assignees','leads:read',async req=>{
     await assertTeamAccess(store,req.identity,req.member);
     const result=await list(req,'members');
     const current=await assertTeamAccess(store,req.identity,req.member);
     return {...result,items:result.items.map(m=>({id:m.uid||m.id,name:typeof m.name==='string'&&!m.name.includes('@')?m.name:'Member unavailable',active:!!m.active})),accessVersion:current.version};
   });
-  route('get','/team','members:write',async req=>{
+  route('get','/team','leads:read',async req=>{
     await assertTeamAccess(store,req.identity,req.member);
     const result=await teamSnapshot(store,req.member,now(),teamDays(req.query.days));
     await assertTeamAccess(store,req.identity,req.member);
     return result;
   });
-  route('get','/team/members/:uid/activities','members:write',async req=>{
+  route('get','/team/members/:uid/activities','leads:read',async req=>{
     await assertTeamAccess(store,req.identity,req.member);
     const days=teamDays(req.query.days),since=teamSince(now(),days);
     if(!await store.get(path('members',req.params.uid)))throw new AppError(404,'NOT_FOUND','Member not found');

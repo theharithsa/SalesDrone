@@ -322,3 +322,7 @@ The accessible main Tasks view reuses bounded GET /tasks HTTP metrics/logs/trace
 
 ### Team reporting
 Team overview/activity/directory and assignee filtering reuse fixed HTTP route metrics, traces and logs. They do not mutate business state, so no new committed business event is emitted for a read. Never attach member names/IDs, comments, task titles, per-person dashboard contents, raw query values or cursors to telemetry. Normal release/test-case events remain commit-bound. The Team feed returns literal text only to authorized Admins and never sends it to Gemini.
+
+## Local read-only MCP boundary
+
+MCP requests reuse fixed API GET route labels and existing safe HTTP metrics, traces and logs. The package does not export separate analytics, credentials, arguments, results or customer text. Read tools do not commit business changes, so no new canonical business event is needed; authentication rate/last-used metadata can change on reads. Root CI records actual MCP protocol cases under the existing web suite and normal deployment/CI signals remain distinct from npm publication. See [MCP verification](MCP.md).

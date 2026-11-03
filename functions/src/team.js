@@ -12,7 +12,7 @@ export const teamSince = (now, days) =>
     Date.parse(now.slice(0, 10) + "T00:00:00Z") - (days - 1) * 86400000,
   ).toISOString();
 export async function assertTeamAccess(store, identity, before) {
-  const current = await requireMember(store, identity, "members:write");
+  const current = await requireMember(store, identity, identity.personalAccess ? "leads:read" : "members:write");
   assertAdmin(current);
   if (before && !sameAccess(current, before))
     throw new AppError(409, "TEAM_STALE", "Access changed. Refresh Team.");

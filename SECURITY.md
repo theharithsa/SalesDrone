@@ -113,3 +113,7 @@ bytes, object paths and checksums are excluded from telemetry. Integration token
 need explicit attachments scopes; existing tokens gain no file access implicitly.
 Bulk edits require explicit selected IDs, optimistic versions and current policy
 for every lead, with no partial transaction on conflict.
+
+## Read-only MCP adapter
+
+The local npm adapter calls fixed GET API routes and accepts only a process-memory PAT. It has no database/cloud credentials, arbitrary request tool, write tool, redirect following or independent telemetry exporter. Explicit team:read and people:read scopes remain Admin-only; directory output excludes email/security fields. They never grant member administration. Untrusted lead/import/model text is data, never instructions. The operator chooses the MCP host/model receiving authorized data. See [transport and publication limits](docs/MCP.md).

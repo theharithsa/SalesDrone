@@ -88,3 +88,5 @@ Main Tasks opt-in browsing follows current lead read scope plus own personal rem
 - GET /api/v1/lead-assignees
 
 The Admin-only minimal assignee directory returns paged id/name/active values without account email or capabilities. Fresh membership checks prevent in-flight directory disclosure after downgrade. Team reporting requires Admin plus members:write and preserves current lead scope; it grants no new member/PAT access. See [Team](../salesdrone-team/SKILL.md).
+
+Read-only MCP integration uses explicit `team:read` and `people:read` PAT scopes for Admin owners. Existing tokens gain no new permissions. Team/directory reads recheck token validity and current access before publication; Google sessions still require members:write. PATs cannot read full membership/security records or mutate people. See [MCP adapter](../salesdrone-mcp/SKILL.md) and [integration contract](../../docs/MCP.md). Shared lead task reads accept tasks:read without exposing unrelated personal reminders.

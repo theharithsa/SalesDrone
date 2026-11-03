@@ -381,7 +381,7 @@ test('scope map is explicit, bounded and all defined scopes are used', () => {
   );
   assert.ok(
     !Object.keys(PAT_ROUTES).some(
-      (k) => k.includes('personal-access-tokens') || k.includes('/members'),
+      (k) => k.includes('personal-access-tokens') || /^(get|post|patch|delete) \/members(?:\/|$)/.test(k),
     ),
   );
 });
@@ -477,4 +477,4 @@ test('tasks-only PAT cannot opt into shared Google-member task browsing',async()
  const denied=await s.call(issued.token,'get','/tasks?view=accessible').expect(403);assert.equal(denied.body.error.code,'GOOGLE_REQUIRED');
 });
 
-test('PAT cannot read admin Team reports, comments or directory',async()=>{const s=await setup();const {token}=await s.issue();for(const url of ['/team','/team/members/admin/activities','/lead-assignees']){const r=await s.call(token,'get',url).expect(403);assert.equal(r.body.error.code,'GOOGLE_REQUIRED');}});
+test('existing PAT without explicit read scopes cannot read Team or people',async()=>{const s=await setup();const {token}=await s.issue();for(const url of ['/team','/team/members/admin/activities','/lead-assignees']){const r=await s.call(token,'get',url).expect(403);assert.equal(r.body.error.code,'TOKEN_SCOPE');}});

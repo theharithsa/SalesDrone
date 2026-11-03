@@ -250,3 +250,7 @@ Review shared contacts and incomplete enquiries in Lead Hygiene. Ask lead-only q
 Admins can use **Team** for current lead workload, recorded comments/calls, task progress and member activity linked to leads. Named **Assigned to** filters narrow Leads and matching exports. The compact grouped Material 3 sidebar supports additional modules while preserving phone targets. See the [Team contract](docs/TEAM.md) and [product handbook](docs/PRODUCT-GUIDE.md#team-insights).
 
 ![Admin Team overview — fictional demo data](site/assets/screenshots/team-demo.jpg?sha=2bc1a7dab8c1)
+
+## Read SalesDrone through MCP
+
+Use [`@theharithsa/salesdrone-mcp`](packages/mcp/README.md) in a local stdio MCP client to read leads, recorded calls/comments, tasks, dashboards, Team and a minimal people directory through the same scoped API. No write tools or cloud/database credentials are included. [Setup, privacy and limits](docs/MCP.md). App/API deployment and npm publication are separate release gates.
