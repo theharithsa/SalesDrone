@@ -7,7 +7,7 @@ use `/api/v1`; version numbers for the app and contract are independent.
 - [Download OpenAPI 3.1 JSON](https://sales-drone-avinya.firebaseapp.com/openapi.json)
 - [Public source contract](openapi.json)
 
-The portal documents all **94 supported operations**, including GET (read), POST
+The portal documents all **97 supported operations**, including GET (read), POST
 (create or an explicit action), PATCH (update), PUT (attachment bytes) and DELETE (removal/revocation).
 Workspace lead-data reset is a separate Admin-only, previewed operation. Try it out performs
 real operations against the signed-in credential's workspace. Use synthetic test
@@ -342,3 +342,15 @@ Production queries require tasks indexes dueAt/id and state/dueAt/id, alongside 
 ## Team and assignment reporting (contract 1.28.0)
 
 Admin-only GET `/team`, GET `/team/members/{uid}/activities` and GET `/lead-assignees` require Google/App Check; PAT access is denied. The [Team contract](TEAM.md) defines UTC windows, original-author attribution, task responsibility, bounded totals, encrypted feed pagination, scope/revocation and limits. GET `/leads` and POST `/leads/export` accept Admin `assignedToUid` with reserved `__unassigned__` for null assignment. No new mutation or access grant is added.
+
+
+### Portal readability
+
+The API portal always uses a light Material 3 surface, including code examples,
+regardless of device appearance. Endpoint paths, filter values, parameters, schema
+tabs and authorization fields use paired surface/text colors. The main workspace
+keeps its separate appearance preferences. Portal CSS is ID-scoped to outrank
+Swagger defaults, including the OpenAPI 3.1 JSON Schema renderer and SVG paths.
+After a Swagger upgrade inspect expanded operations and the Authorize dialog,
+not just the introductory card. See [the portal review](API-PORTAL-REVIEW.md).
+This presentation change adds no API, permission, stored preference or business event.

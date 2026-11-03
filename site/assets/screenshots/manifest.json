@@ -232,12 +232,12 @@
   {
     "file": "api-portal-demo.jpg",
     "mode": "public-contract",
-    "sha256": "68899b07319b4b1e1162f61c3ebf92818729e59b88ab619a48eff815926d53ac",
-    "capturedAt": "2026-10-29T13:02:52.465957+00:00",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.1.0",
-    "review": "Fresh local 2.1.0 capture visually/privacy reviewed. Local public OpenAPI 1.17 task schemas only; no token, account or customer API request. Isolated preview/public schema only; no production data, secrets or real deletion. Browser viewport, not physical-device certification."
+    "sha256": "0d15117a8870355c62f41a63b7dbe3e8dd805390b370e8a8fdaaba732c2ff7c2",
+    "capturedAt": "2026-11-03T14:05:01.897713+00:00",
+    "viewport": "1828 x 1028 CSS pixels; isolated in-app Chromium; devicePixelRatio 1.4",
+    "capturePixels": "1807 x 1016",
+    "version": "2.8.2",
+    "review": "Visually/privacy reviewed always-light Material 3 portal, public OpenAPI 1.28 task schemas only, GET/POST/PATCH/DELETE paths and entered filter text. No authorization, token or customer request. Browser-only evidence, not physical-device/Safari certification."
   },
   {
     "file": "archives-demo.jpg",

@@ -4,6 +4,12 @@ Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
 
+
+## [2.8.2] - 2026-11-03
+
+### Changed
+- Use a consistent light Material 3 API portal with readable endpoint paths, filter input, labels, schema tabs, code examples, icons and authorization controls. Keep narrow operation rows and long schema text readable without changing API contracts or credentials.
+
 ## [2.8.1] - 2026-11-03
 
 ### Fixed
