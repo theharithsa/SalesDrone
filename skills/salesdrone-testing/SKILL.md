@@ -63,3 +63,5 @@ Shared lead task regressions cover read-only viewers, non-recipient lead editors
 Global shared-task and computed-font regressions: see [operations](references/operations.md).
 
 Team reporting guidance is in [operations](references/operations.md).
+
+Vitest 5 retains the component reporter hooks used here; verify actual leaf receipts and summary counts after upgrades, not just a green runner exit. Ignore .vitest generated artifacts. Firebase SDK reviews include the real client Google credential, forced refresh, unapproved /me isolation and sign-out emulator case in emulator.integration.js; this does not certify browser popup/App Check/provider configuration.

@@ -54,7 +54,8 @@
       "ownerSkill": "skills/salesdrone-authentication/SKILL.md",
       "automatedTests": [
         "functions/test/app.test.js",
-        "functions/test/custom-fields-and-tasks.test.js"
+        "functions/test/custom-fields-and-tasks.test.js",
+        "functions/test/emulator.integration.js"
       ],
       "manualCases": [
         {
@@ -66,6 +67,11 @@
           "id": "AUTHENTICATION-02",
           "expected": "Sign-out/account switch clears stale lead views and resets personal fallback boundaries.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "AUTHENTICATION-03",
+          "expected": "After a Firebase SDK update, Auth client emulator Google credentials and forced ID-token refresh retain Google provider claims; an unapproved /me identity stays demo; client sign-out clears currentUser. Separately inspect actual browser startup/App Check without weakening policy.",
+          "fixture": "synthetic demo-salesdrone Auth emulator and read-only browser startup; no customer writes or provider-console changes"
         }
       ]
     },

@@ -102,3 +102,5 @@ Plan the versioned GitHub milestone and assign scoped issues before the candidat
 Deploy/verify ingress after Functions and before Hosting cutover; require its revision/parser evidence alongside all five Functions. Follow [API-INGRESS.md](../../docs/API-INGRESS.md).
 
 For managed health and partial-rollout handling, read [operations](references/operations.md).
+
+Dependency gates: [review](../../docs/DEPENDENCY-REVIEW.md).

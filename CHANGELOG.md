@@ -7,6 +7,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.9.2] - 2026-11-04
+
+### Changed
+- Integrate reviewed SHA-pinned GitHub Actions updates, Vitest 5.0.5, Firebase JS 13.1.0 and Firebase CLI 15.34.2. Keep Node 22, Vite 7, TypeScript 5 and ESLint 9; leave coupled major migrations open.
+- Verify the Firebase client Google sign-in, forced token refresh, unapproved-member isolation and sign-out against the Auth emulator; preserve individual component-test reporting.
+
 ## [2.9.1] - 2026-11-03
 
 ### Changed

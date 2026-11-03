@@ -65,3 +65,5 @@ These are tracked follow-ups, not implemented behavior: [#18](https://github.com
 
 App Check token exchange uses the installed SDK origin https://content-firebaseappcheck.googleapis.com; allowing only firebaseappcheck.googleapis.com breaks browser attestation. Keep every SPA Hosting CSP and the HTML meta fallback aligned. Regress the exact SDK origin through tests/spa-security.test.ts and verify managed browser exchange separately; parser/401 checks do not certify login. Never disable enforcement to resolve a CSP denial.
 Post-deployment security-header checks reject a live policy missing this exact token-exchange destination; browser verification still remains independent.
+
+Firebase JS SDK major upgrades must preserve the used app/auth/app-check/messaging entrypoints. The Auth emulator case in emulator.integration.js exercises actual client Google credentials, forced token refresh, unapproved /me isolation and sign-out. The installed App Check SDK endpoint is independently checked against all SPA CSPs; real browser popup/redirect and attestation remain separate checks. Client AI Logic APIs are unused; Gemini remains server-side.

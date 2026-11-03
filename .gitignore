@@ -50,3 +50,6 @@ docs-verification.json
 monitoring.json
 
 ingress-deployment.json
+
+# Vitest 5 default generated report/artifact directory.
+.vitest/
