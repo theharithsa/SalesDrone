@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "version": "2.8.1",
+  "summary": "Correct two handbook captures to their stated Leads view.",
+  "modules": [
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/PRODUCT-GUIDE.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Curated documentation captures only; existing Team and lead HTTP contracts unchanged.",
+    "contractVersion": "1.28.0",
+    "permissions": "No permission, schema, API behavior or customer write change.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Documentation capture correction does not mutate business state or require a new business event. Existing version/commit-bound lifecycle telemetry and safe runtime instrumentation remain unchanged.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Documentation capture correction does not mutate business state or require a new business event. Existing version/commit-bound lifecycle telemetry and safe runtime instrumentation remain unchanged.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Documentation capture correction does not mutate business state or require a new business event. Existing version/commit-bound lifecycle telemetry and safe runtime instrumentation remain unchanged.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Documentation capture correction does not mutate business state or require a new business event. Existing version/commit-bound lifecycle telemetry and safe runtime instrumentation remain unchanged.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Documentation capture correction does not mutate business state or require a new business event. Existing version/commit-bound lifecycle telemetry and safe runtime instrumentation remain unchanged.",
+      "tests": [
+        "functions/test/team.test.js",
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "New fictional Leads captures verified by actual heading, dimensions and full-image inspection at 1280x900 and 768x900; correct table-local scrolling and compact sidebar/rail. Production validation remains read-only.",
+  "milestone": {
+    "number": 22,
+    "title": "v2.8.1 \u2014 Handbook capture correction",
+    "issues": [
+      128
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "laptop-demo.jpg",
+    "tablet-demo.jpg"
+  ]
+}

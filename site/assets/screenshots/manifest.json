@@ -22,22 +22,22 @@
   {
     "file": "tablet-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d3b7ffd1c5017616aca920523d7e8403c77bed019930923a261d71d4030e2ec2",
-    "capturedAt": "2026-11-03T12:08:43.331247+00:00",
-    "viewport": "768 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
+    "sha256": "773bd27d18c85a4c65f0538780e3a45760b732ef336c7220b9beec551254b177",
+    "capturedAt": "2026-11-03T12:41:18.750706+00:00",
+    "viewport": "768 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application scale 100%",
     "capturePixels": "768 x 900",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "version": "2.8.1",
+    "review": "Fresh fictional Leads page capture; heading and local table scrolling verified, matching the handbook caption. No live data or server writes. Only blank transport padding trimmed. Browser viewport is not physical-device certification."
   },
   {
     "file": "laptop-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "679506cba08c8726dd7c652d87c844f77d528339cbdda0843ca415ac3f2cfbbf",
-    "capturedAt": "2026-11-03T12:08:43.330651+00:00",
-    "viewport": "1280 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
+    "sha256": "f6da044cb4d47fdca80e3d656af8e3427457e771d66a95f0ba960c036c13b807",
+    "capturedAt": "2026-11-03T12:41:18.749501+00:00",
+    "viewport": "1280 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application scale 100%",
     "capturePixels": "1280 x 900",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "version": "2.8.1",
+    "review": "Fresh fictional Leads page capture; heading and local table scrolling verified, matching the handbook caption. No live data or server writes. Only blank transport padding trimmed. Browser viewport is not physical-device certification."
   },
   {
     "file": "leads-demo.jpg",
