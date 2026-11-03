@@ -41,6 +41,11 @@
           "id": "API-INTEGRATIONS-02",
           "expected": "Personal preferences reject PAT writes, identity spoofing and invalid scales/fonts.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "API-INTEGRATIONS-03",
+          "expected": "API portal always uses light Material 3, even on a dark OS. Paths, entered filter text, parameters, schema tabs/code and authorization labels remain readable at phone/tablet/laptop/wide widths, short windows and enlarged text; no page overflow or credentials required. Inspect computed colors against loaded vendor CSS, including OpenAPI 3.1 schemas.",
+          "fixture": "local public OpenAPI schemas, RUM off; no authorization or customer requests"
         }
       ]
     },

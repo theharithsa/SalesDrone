@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "version": "2.8.2",
+  "summary": "Use a consistent light Material 3 API portal with readable documentation and responsive controls.",
+  "modules": [
+    "salesdrone-api-integrations"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API.md",
+    "docs/API-PORTAL-REVIEW.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Presentation-only portal CSS; all 97 operations and API 1.28.0 remain unchanged.",
+    "contractVersion": "1.28.0",
+    "permissions": "No authorization, scope, credential persistence or data behavior changes.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Static API documentation styling only. Portal remains free of RUM/analytics; no business write or new event. Existing release CI/deployment signals retain exact version and commit.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Static API documentation styling only. Portal remains free of RUM/analytics; no business write or new event. Existing release CI/deployment signals retain exact version and commit.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Static API documentation styling only. Portal remains free of RUM/analytics; no business write or new event. Existing release CI/deployment signals retain exact version and commit.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Static API documentation styling only. Portal remains free of RUM/analytics; no business write or new event. Existing release CI/deployment signals retain exact version and commit.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Static API documentation styling only. Portal remains free of RUM/analytics; no business write or new event. Existing release CI/deployment signals retain exact version and commit.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Public-schema browser review of the always-light portal on a dark OS: expanded paths, filter text, response/schema and blank authorization dialogs. Measured viewports and limits recorded in docs/API-PORTAL-REVIEW.md; production read-only recheck after deployment.",
+  "milestone": {
+    "number": 23,
+    "title": "v2.8.2 \u2014 API portal readability",
+    "issues": [
+      130
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "api-portal-demo.jpg"
+  ]
+}

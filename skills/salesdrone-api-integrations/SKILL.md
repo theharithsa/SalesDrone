@@ -49,7 +49,7 @@ Report data uses POST /api/v1/leads/export with leads:export, an explicit scope 
 
 ## Change and diagnosis
 
-Test expiry/revoke, disabled/deleted/downgraded owner, tasks-only access, cross-owner cursors and revoke-between-admission-and-commit. For Swagger failure separate CSP/asset/version mismatch from API authorization errors.
+Test expiry/revoke, disabled/deleted/downgraded owner, tasks-only access, cross-owner cursors and revoke-between-admission-and-commit. For Swagger failure separate CSP/asset/version mismatch from API authorization errors. Portal theme overrides are rooted at #swagger-ui to outrank nested vendor selectors; inspect path/filter/tab/schema/auth foreground-background pairs and SVG paths. The portal is always light Material 3, independent of OS/workspace theme; code examples use a paired light surface. Follow qa API-INTEGRATIONS-03 and docs/API-PORTAL-REVIEW.md; never enter live credentials for visual checks.
 
 ## Verification
 
