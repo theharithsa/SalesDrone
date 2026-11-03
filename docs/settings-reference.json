@@ -395,7 +395,7 @@
           "id": "tokenScopes",
           "label": "Permission scopes",
           "default": "Explicit selection required",
-          "description": "Select only needed data operations. Scopes intersect the current owner\u2019s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write.",
+          "description": "Select only needed data operations. Scopes intersect the current owner\u2019s capabilities and effective lead scope. Read leads and Export leads are separate. Batch editing has its own leads:bulk-edit scope. Lead files use attachments:read and attachments:write; old tokens do not gain these scopes automatically. Reassignment in a batch also requires assignments:write. Read-only MCP tokens can select team:read and people:read for Admin Team reports and the minimal id/name/active directory. Existing tokens gain no scopes automatically. These scopes do not grant member administration. tasks:read also reads shared tasks on an accessible lead; unrelated personal reminders remain private.",
           "effect": "Tokens cannot manage people, workspace settings, devices, other tokens or AI generation. The live Swagger portal lists each route\u2019s scope. See the generated scope catalog below.",
           "example": ""
         },

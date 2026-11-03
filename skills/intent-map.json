@@ -215,5 +215,12 @@
     "team stats",
     "member activity",
     "team workload"
+  ],
+  "salesdrone-mcp": [
+    "MCP",
+    "MCP server",
+    "npm package",
+    "stdio",
+    "read-only integration"
   ]
 }

@@ -15,7 +15,7 @@ export default [
     ],
   },
   {
-    files: ["functions/src/**/*.js", "scripts/**/*.mjs", "services/ingress/src/**/*.js"],
+    files: ["functions/src/**/*.js", "scripts/**/*.mjs", "services/ingress/src/**/*.js", "packages/mcp/src/**/*.js"],
     ...js.configs.recommended,
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
@@ -56,7 +56,7 @@ export default [
     },
   },
   {
-    files: ["functions/src/**/*.js", "scripts/**/*.mjs", "services/ingress/src/**/*.js"],
+    files: ["functions/src/**/*.js", "scripts/**/*.mjs", "services/ingress/src/**/*.js", "packages/mcp/src/**/*.js"],
     rules: {
       "no-empty": ["error", { allowEmptyCatch: true }],
       "no-unused-vars": [

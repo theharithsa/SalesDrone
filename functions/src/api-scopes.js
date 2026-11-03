@@ -1,4 +1,6 @@
 export const TOKEN_SCOPES = [
+  ['team:read', 'Read Admin Team workload and recorded activity', 'leads:read'],
+  ['people:read', 'Read the minimal Admin people directory', 'leads:read'],
   ['attachments:read', 'List and download permitted lead files', 'leads:read'],
   ['attachments:write', 'Upload and remove permitted lead files', 'leads:edit'],
   [
@@ -45,6 +47,9 @@ export const TOKEN_SCOPES = [
   ],
 ].map(([id, description, capability]) => ({ id, description, capability }));
 export const PAT_ROUTES = {
+  'get /team': 'team:read',
+  'get /team/members/:uid/activities': 'team:read',
+  'get /lead-assignees': 'people:read',
   'post /leads/:id/attachments': 'attachments:write',
   'put /leads/:id/attachments/:attachmentId/content': 'attachments:write',
   'get /leads/:id/attachments': 'attachments:read',
@@ -67,6 +72,7 @@ export const PAT_ROUTES = {
   'post /leads/:id/activities': 'activities:write',
   'post /activities/:id/corrections': 'activities:write',
   'get /tasks': 'tasks:read',
+  'get /leads/:id/tasks': 'tasks:read',
   'get /tasks/:id': 'tasks:read',
   'post /tasks': 'tasks:write',
   'patch /tasks/:id': 'tasks:write',

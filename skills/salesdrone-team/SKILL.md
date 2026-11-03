@@ -21,7 +21,7 @@ Read [SHARED.md](../SHARED.md), [release readiness](../salesdrone-release-readin
 
 ## Reporting semantics
 
-Google/App Check Admin role plus members:write is required; PATs are denied. Current lead scope still applies. Recheck current membership/policy before publishing; a downgrade or scope change discards an in-flight report. Responses are no-store. Never return account emails, credentials, private chats or personal reminder content.
+Google/App Check Admin role plus members:write is required; PATs require explicit team:read; Google sessions retain members:write. Current lead scope still applies. Recheck current membership/policy before publishing; a downgrade or scope change discards an in-flight report. Responses are no-store. Never return account emails, credentials, private chats or personal reminder content.
 
 Activity periods are the last 7/30/90 UTC calendar days, default 30, including today up to generatedAt. Current workload counts unarchived assigned leads; inactive membership is separate from recorded work and never means offline. Leads worked is a distinct union of authored notes/calls and recorded stage changes by actor, regardless of later reassignment. Imported workbook notes do not count as authored work. Corrections keep original attribution and count once. Stage changes need a recorded from-stage; initial/import transitions are excluded. Never infer conversions or historical work from current stage labels.
 
@@ -38,3 +38,5 @@ Deploy api plus Hosting through the normal checked PR/workflow. Required activit
 Reads reuse allowlisted HTTP metrics, traces and logs with fixed route templates. No new committed business event is required because reporting does not mutate business state. Never attach names, notes, member IDs, counts by person or raw queries to telemetry.
 
 Adjacent owners: [permissions](../salesdrone-people-permissions/SKILL.md), [leads](../salesdrone-leads/SKILL.md), [interface](../salesdrone-interface/SKILL.md), [dashboard](../salesdrone-dashboard/SKILL.md).
+
+Read-only MCP integration uses explicit `team:read` and `people:read` PAT scopes for Admin owners. Existing tokens gain no new permissions. Team/directory reads recheck token validity and current access before publication; Google sessions still require members:write. PATs cannot read full membership/security records or mutate people. See [MCP adapter](../salesdrone-mcp/SKILL.md) and [integration contract](../../docs/MCP.md). Shared lead task reads accept tasks:read without exposing unrelated personal reminders.

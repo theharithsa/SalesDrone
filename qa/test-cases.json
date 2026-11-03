@@ -799,6 +799,22 @@
           "fixture": "synthetic demo across phone/tablet/laptop/wide, short windows, themes and large text"
         }
       ]
+    },
+    {
+      "module": "salesdrone-mcp",
+      "ownerSkill": "skills/salesdrone-mcp/SKILL.md",
+      "automatedTests": [
+        "tests/mcp.test.ts",
+        "functions/test/team.test.js",
+        "functions/test/emulator.integration.js"
+      ],
+      "manualCases": [
+        {
+          "id": "MCP-01",
+          "expected": "Install the exact reviewed/published package in an isolated MCP host; initialize, list read-only tools, fetch one bounded lead page, follow a sparse cursor, verify missing-scope denial and Admin Team/people reads without business writes.",
+          "fixture": "synthetic protocol/API fixture; authorized read-only live probe; never put real tokens/customer output in public evidence"
+        }
+      ]
     }
   ]
 }

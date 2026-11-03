@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone Read-only MCP"
+  short_description: "Maintain scoped MCP reads and npm publication"
+  default_prompt: "Use $salesdrone-mcp to maintain the read-only stdio adapter. Preserve API policy, GET-only tools, bounded pages, token privacy and independent package versions. Verify real protocol and packed-package behavior before publication."

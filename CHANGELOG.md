@@ -5,6 +5,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.9.0] - 2026-11-03
+
+### Changed
+- Add the independently versioned @theharithsa/salesdrone-mcp 1.0.0 stdio package with 21 read-only HTTP tools, bounded pagination, strict inputs and redacted failures.
+- Add opt-in Admin team:read and people:read token scopes plus scoped shared-lead task reads; preserve Google-only people administration and recipient-private reminders.
+- Verify real MCP protocol/API access, revocation, packed contents and Auth/Firestore policy using synthetic data.
+
 ## [2.8.2] - 2026-11-03
 
 ### Changed

@@ -6,6 +6,7 @@ import { memoryStore } from "../src/store.js";
 import { path } from "../src/policy.js";
 import { PRESETS } from "../src/contracts.js";
 import { teamSnapshot } from "../src/team.js";
+import { generateToken } from "../src/personal-access-tokens.js";
 const now = "2026-11-03T12:00:00.000Z";
 async function fixture() {
   const store = memoryStore();
@@ -140,7 +141,12 @@ async function fixture() {
     request(app)
       .get("/api/v1" + url)
       .set("Authorization", "Bearer " + uid);
-  return { store, put, get, app };
+  const pat = async (scopes) => {
+    const issued = generateToken('admin', {name:'Synthetic read adapter', scopes, expiresInDays:7}, now);
+    await put('personalAccessTokens', issued.record.id, issued.record);
+    return issued;
+  };
+  return { store, put, get, app, pat };
 }
 test("Team aggregates current workload separately from authored activity and private reminders", async () => {
   const { get } = await fixture();
@@ -310,4 +316,39 @@ test("Assigned lead report export preserves literal member IDs and unassigned se
     (await exportPage("__unassigned__")).rows.map((i) => i.id),
     ["b"],
   );
+});
+
+test('read adapter scopes permit only Admin Team and minimal people reads', async () => {
+  const {get,app,pat}=await fixture();
+  const team=await pat(['team:read']),people=await pat(['people:read']),lead=await pat(['leads:read']);
+  const snapshot=await get('/team?days=7',team.token).expect(200);
+  assert.equal(snapshot.body.members.find(m=>m.id==='sdr').calls,1);
+  await get('/team/members/sdr/activities?days=7',team.token).expect(200);
+  const directory=await get('/lead-assignees',people.token).expect(200);
+  assert.ok(directory.body.items.every(m=>Object.keys(m).sort().join(',')==='active,id,name'));
+  for(const [token,url] of [[lead.token,'/team'],[lead.token,'/lead-assignees'],[team.token,'/lead-assignees'],[people.token,'/team'],[team.token,'/leads']]) await get(url,token).expect(403);
+  for(const url of ['/members','/personal-access-tokens','/invitations']) await get(url,team.token).expect(403);
+  await request(app).patch('/api/v1/leads/a').set('Authorization','Bearer '+team.token).send({expectedVersion:1,stage:'New'}).expect(403);
+});
+test('read adapter preserves assigned scope, owner role and token revocation during reads', async () => {
+  const {store,get,pat}=await fixture();
+  const issued=await pat(['team:read','people:read']);
+  await store.run(async tx=>{const m=await tx.get(path('members','admin'));tx.set(path('members','admin'),{...m,scope:'assigned',version:2});});
+  const scoped=await get('/team',issued.token).expect(200);
+  assert.equal(scoped.body.members.reduce((n,m)=>n+m.assigned,0),0);
+  const original=store.query;
+  let revoked=false;
+  store.query=async(...args)=>{const result=await original(...args);if(!revoked&&args[0]===path('tasks')){revoked=true;await store.run(async tx=>{const token=await tx.get(path('personalAccessTokens',issued.record.id));tx.set(path('personalAccessTokens',issued.record.id),{...token,active:false});});}return result;};
+  const revocationApp=createApp({store,now:()=>now,verifyToken:async()=>{throw Error('No browser auth');}});
+  await request(revocationApp).get('/api/v1/team').set('Authorization','Bearer '+issued.token).expect(401);
+  const next=await pat(['team:read']);
+  await store.run(async tx=>{const m=await tx.get(path('members','admin'));tx.set(path('members','admin'),{...m,role:'SDR',version:3});});
+  await get('/team',next.token).expect(401);
+});
+test('read-only task scope can read shared lead work but cannot change it',async()=>{
+ const {app,get,pat}=await fixture();const issued=await pat(['tasks:read']);
+ const tasks=await get('/leads/a/tasks',issued.token).expect(200);
+ assert.ok(tasks.body.items.every(t=>t.leadId==='a'&&!t.canManage));
+ assert.ok(!JSON.stringify(tasks.body).includes('PRIVATE'));
+ await request(app).patch('/api/v1/leads/a/tasks/pending').set('Authorization','Bearer '+issued.token).set('Idempotency-Key','11111111-1111-4111-8111-111111111111').send({expectedVersion:1,state:'Completed'}).expect(403);
 });

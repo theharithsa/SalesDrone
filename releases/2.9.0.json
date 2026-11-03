@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "version": "2.9.0",
+  "summary": "Read-only stdio MCP npm integration with explicit Admin reporting scopes.",
+  "modules": [
+    "salesdrone-mcp",
+    "salesdrone-api-integrations",
+    "salesdrone-team",
+    "salesdrone-people-permissions"
+  ],
+  "documentation": [
+    "docs/MCP.md",
+    "packages/mcp/README.md",
+    "docs/API.md",
+    "docs/SETTINGS.md",
+    "docs/TECHNICAL.md",
+    "SECURITY.md",
+    "README.md",
+    "CHANGELOG.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "developer"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Add opt-in Team/people read PAT scopes and shared lead task read allowlist using existing policy/handlers. No mutation API or database schema change.",
+    "contractVersion": "1.29.0",
+    "permissions": "Active Admin owner and explicit team:read/people:read scopes; current lead scope and revocation rechecked. Google sessions retain members:write. No membership administration via PAT.",
+    "tests": [
+      "functions/test/team.test.js",
+      "functions/test/personal-access-tokens.test.js",
+      "functions/test/emulator.integration.js",
+      "tests/mcp.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing bounded API GET RED metrics/traces/logs and CI/deployment signals apply. MCP adds no exporter or customer-data telemetry; read tools create no canonical business writes/events. npm publication is separately verified.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/mcp.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing bounded API GET RED metrics/traces/logs and CI/deployment signals apply. MCP adds no exporter or customer-data telemetry; read tools create no canonical business writes/events. npm publication is separately verified.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/mcp.test.ts"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing bounded API GET RED metrics/traces/logs and CI/deployment signals apply. MCP adds no exporter or customer-data telemetry; read tools create no canonical business writes/events. npm publication is separately verified.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/mcp.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing bounded API GET RED metrics/traces/logs and CI/deployment signals apply. MCP adds no exporter or customer-data telemetry; read tools create no canonical business writes/events. npm publication is separately verified.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/mcp.test.ts"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing bounded API GET RED metrics/traces/logs and CI/deployment signals apply. MCP adds no exporter or customer-data telemetry; read tools create no canonical business writes/events. npm publication is separately verified.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/mcp.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Verify packed and published stdio CLI using synthetic data, then exact app/API identity and scoped read-only live MCP calls. No layout changes or existing captures of the scope picker are affected; no screenshot refresh or physical-device/Safari certification is claimed. npm login/ownership and registry publication are separate gates.",
+  "milestone": {
+    "number": 24,
+    "title": "v2.9.0 \u2014 Read-only MCP integration",
+    "issues": [
+      132
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

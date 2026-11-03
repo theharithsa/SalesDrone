@@ -5,7 +5,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-api-ingress](skills/salesdrone-api-ingress/SKILL.md) — API ingress, malformed JSON, managed parser, Cloud Run gateway, proxy body limit.
   Related: salesdrone-release-readiness.
 - [salesdrone-api-integrations](skills/salesdrone-api-integrations/SKILL.md) — swagger, openapi, personal access token, api key, api scopes.
-  Related: salesdrone-release, salesdrone-authentication, salesdrone-people-permissions, salesdrone-data-platform.
+  Related: salesdrone-release, salesdrone-authentication, salesdrone-people-permissions, salesdrone-data-platform, salesdrone-mcp.
 - [salesdrone-attachments](skills/salesdrone-attachments/SKILL.md) — attachments, upload lead files, lead photos, Firebase Storage, file download, Files tab.
   Related: salesdrone-testing, salesdrone-observability, salesdrone-release-readiness, salesdrone-release.
 - [salesdrone-authentication](skills/salesdrone-authentication/SKILL.md) — google login, sign in, authentication, app check.
@@ -36,12 +36,14 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-dashboard, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-people-permissions.
 - [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report, batch edit, bulk edit, select leads.
   Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications.
+- [salesdrone-mcp](skills/salesdrone-mcp/SKILL.md) — MCP, MCP server, npm package, stdio, read-only integration.
+  Related: salesdrone-release-readiness, salesdrone-api-integrations, salesdrone-team, salesdrone-people-permissions, salesdrone-leads.
 - [salesdrone-notifications](skills/salesdrone-notifications/SKILL.md) — push notification, notification bell, read unread, fcm.
   Related: salesdrone-release, salesdrone-tasks-reminders, salesdrone-leads, salesdrone-authentication, salesdrone-interface.
 - [salesdrone-observability](skills/salesdrone-observability/SKILL.md) — dynatrace, rum, telemetry, trace, metric, logs, bizevent, settings audit, audit logs, audit delivery.
   Related: salesdrone-release, salesdrone-data-platform, salesdrone-api-integrations.
 - [salesdrone-people-permissions](skills/salesdrone-people-permissions/SKILL.md) — people access, permissions, assign lead, member role, assigned only.
-  Related: salesdrone-release, salesdrone-authentication, salesdrone-leads, salesdrone-notifications, salesdrone-api-integrations, salesdrone-team.
+  Related: salesdrone-release, salesdrone-authentication, salesdrone-leads, salesdrone-notifications, salesdrone-api-integrations, salesdrone-team, salesdrone-mcp.
 - [salesdrone-product-guide](skills/salesdrone-product-guide/SKILL.md) — product handbook, user manual, feature walkthrough, faq, refresh screenshots.
   Related: salesdrone-documentation, salesdrone-interface, salesdrone-release-readiness.
 - [salesdrone-release](skills/salesdrone-release/SKILL.md) — deploy, release, version, changelog, rollback.
@@ -51,7 +53,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-tasks-reminders](skills/salesdrone-tasks-reminders/SKILL.md) — edit task, delete task, manual reminder, snooze.
   Related: salesdrone-release, salesdrone-automatic-reminders, salesdrone-notifications, salesdrone-people-permissions.
 - [salesdrone-team](skills/salesdrone-team/SKILL.md) — team dashboard, SDR performance, team stats, member activity, team workload.
-  Related: salesdrone-release-readiness, salesdrone-people-permissions, salesdrone-leads, salesdrone-interface, salesdrone-dashboard.
+  Related: salesdrone-release-readiness, salesdrone-people-permissions, salesdrone-leads, salesdrone-interface, salesdrone-dashboard, salesdrone-mcp.
 - [salesdrone-testing](skills/salesdrone-testing/SKILL.md) — testing, test cases, regression tests, QA handoff, test runner, test agent.
   Related: salesdrone-release-readiness, salesdrone-release.
 - [salesdrone-workspace-settings](skills/salesdrone-workspace-settings/SKILL.md) — manage fields, lead fields, dropdown choices, settings, custom fields, book mode preference, interface font, font preference, font style.

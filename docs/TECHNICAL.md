@@ -210,3 +210,7 @@ Research analytics and contact-index diagnostics use adapter field projections t
 See [API-INGRESS.md](API-INGRESS.md) for the separately deployed Cloud Run gateway, fixed upstream, bounded decoding, runtime/build IAM, privacy exclusion and Hosting cutover. Domain storage, Auth and policy remain in the existing API Function.
 
 Admin Team reporting is a bounded read module in functions/src/team.js, with TeamPage.tsx and a shared grouped navigation registry. See [TEAM.md](TEAM.md) for current-assignment versus authored-history semantics, scan bounds and index requirements.
+
+## Local MCP integration
+
+`packages/mcp` is an independently versioned public stdio npm adapter over the same `/api/v1` API, with no direct Firestore access. Fixed GET-only tools retain token scopes, current membership/lead policy, sparse cursors and bounded results. Team/people read scopes are opt-in Admin reads; Google administration remains separate. See [MCP architecture, tests and publication](MCP.md).

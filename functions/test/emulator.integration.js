@@ -1534,3 +1534,19 @@ test('Admin Team statistics and assignee filters use actual Auth and Firestore w
  const filtered=(await get('/leads?filters=[]&assignedToUid='+repUid).expect(200)).body.items;assert.ok(filtered.some(l=>l.id==='team-lead'));assert.ok(filtered.every(l=>l.assignedToUid===repUid));
  const dir=(await get('/lead-assignees?limit=100').expect(200)).body.items;assert.ok(dir.some(m=>m.id===repUid&&m.name==='Synthetic Team SDR'));assert.ok(dir.every(m=>Object.keys(m).sort().join(',')==='active,id,name'));
 });
+
+test('MCP read scopes use real Auth owners, Firestore policy and revocation without member administration',async()=>{
+ const store=firestoreStore(db),at='2026-11-03T11:00:00.000Z';
+ const google=await signIn('mcp-owner@example.com'),uid=(await auth.verifyIdToken(google)).uid;
+ await store.run(async tx=>tx.set(path('members',uid),{id:uid,uid,name:'Synthetic MCP Admin',role:'Admin',scope:'assigned',active:true,version:1,capabilities:['leads:read','members:write']}));
+ const app=createApp({store,now:()=>at,verifyToken:t=>auth.verifyIdToken(t,true),verifyPersonalTokenOwner:async uid=>{const u=await auth.getUser(uid);return !u.disabled&&u.providerData.some(p=>p.providerId==='google.com');}});
+ const issue=await request(app).post('/api/v1/personal-access-tokens').set('Authorization','Bearer '+google).send({name:'Synthetic MCP read access',scopes:['team:read','people:read'],expiresInDays:7}).expect(200);
+ const pat=issue.body.token,id=issue.body.personalAccessToken.id;
+ const get=url=>request(app).get('/api/v1'+url).set('Authorization','Bearer '+pat);
+ const team=(await get('/team?days=7').expect(200)).body;assert.equal(team.members.reduce((n,m)=>n+m.assigned,0),0);
+ const people=(await get('/lead-assignees').expect(200)).body;assert.ok(people.items.every(m=>Object.keys(m).sort().join(',')==='active,id,name'));
+ await get('/members').expect(403);await get('/leads').expect(403);
+ const stored=await store.get(path('personalAccessTokens',id));assert.equal(stored.token,undefined);assert.match(stored.tokenHash,/^[a-f0-9]{64}$/);
+ await request(app).delete('/api/v1/personal-access-tokens/'+id).set('Authorization','Bearer '+google).send({}).expect(200);
+ await get('/team').expect(401);
+});
