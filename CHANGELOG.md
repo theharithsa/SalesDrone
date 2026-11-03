@@ -3,6 +3,12 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+
+## [2.8.1] - 2026-11-03
+
+### Fixed
+- Correct the laptop/tablet handbook captures to show Leads, matching their captions and demonstrating the compact grouped navigation.
+
 ## [2.8.0] - 2026-11-03
 
 ### Added

@@ -162,7 +162,7 @@ Layouts and typography across phones, tablets, laptops and desktops follow the [
 
 Material 3 type roles use 16px body text, compact table labels and content-width forms while preserving personal font choices. The [v2.0 review](docs/MATERIAL-3-REVIEW.md) records measured layouts from 360 to 1920px, real infinite-scroll behavior, form checks and browser-only verification limits.
 
-![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=679506cba08c)
+![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=f6da044cb4d4)
 
 [Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Import field setup](site/assets/screenshots/import-fields-demo.jpg) · [Status destination](site/assets/screenshots/status-mapping-demo.jpg) · [Personal dashboard grouping](site/assets/screenshots/dashboard-fields-demo.jpg)
 

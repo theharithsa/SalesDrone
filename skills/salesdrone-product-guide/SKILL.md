@@ -69,3 +69,5 @@ Keep compound-answer coverage and historical capture metadata accurate; see the 
 Main shared Tasks, monospace contact captures, lead-work and Assistant coverage: see [research guide notes](references/research.md).
 
 Team reporting guidance is in [operations](references/operations.md).
+
+Capture checks must verify the actual module heading as well as viewport/hash. Entering the demo opens Today even from an initial Leads URL; explicitly navigate to Leads before recording laptop/tablet lead-list images. Review image content against its handbook caption before publication.
