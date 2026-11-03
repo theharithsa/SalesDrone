@@ -1550,3 +1550,35 @@ test('MCP read scopes use real Auth owners, Firestore policy and revocation with
  await request(app).delete('/api/v1/personal-access-tokens/'+id).set('Authorization','Bearer '+google).send({}).expect(200);
  await get('/team').expect(401);
 });
+
+test('upgraded Firebase client SDK signs in with Google, refreshes tokens and signs out against Auth emulator', async () => {
+  const { initializeApp: initializeClient, deleteApp } = await import('firebase/app');
+  const { getAuth: getClientAuth, connectAuthEmulator, GoogleAuthProvider, signInWithCredential, signOut } = await import('firebase/auth');
+  const client = initializeClient({ apiKey: 'fake', projectId, authDomain: 'localhost' }, 'sdk-review-' + randomUUID());
+  const clientAuth = getClientAuth(client);
+  connectAuthEmulator(clientAuth, 'http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST, { disableWarnings: true });
+  const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
+  const email = 'sdk-upgrade@example.com';
+  const googleToken = encode({ alg: 'none', typ: 'JWT' }) + '.' + encode({
+    sub: email, email, email_verified: true, name: 'Synthetic SDK review',
+    iss: 'https://accounts.google.com', aud: projectId,
+    iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 3600,
+  }) + '.';
+  try {
+    const result = await signInWithCredential(clientAuth, GoogleAuthProvider.credential(googleToken));
+    const initial = await result.user.getIdToken();
+    const refreshed = await result.user.getIdToken(true);
+    for (const token of [initial, refreshed]) {
+      const claims = await auth.verifyIdToken(token, true);
+      assert.equal(claims.uid, result.user.uid);
+      assert.equal(claims.firebase.sign_in_provider, 'google.com');
+    }
+    const app = createApp({ store: firestoreStore(db), verifyToken: t => auth.verifyIdToken(t, true) });
+    const profile = await request(app).get('/api/v1/me').set('Authorization', 'Bearer ' + refreshed).expect(200);
+    assert.equal(profile.body.mode, 'demo', 'unapproved SDK identity must not gain workspace membership');
+    await signOut(clientAuth);
+    assert.equal(clientAuth.currentUser, null);
+  } finally {
+    await deleteApp(client);
+  }
+});
