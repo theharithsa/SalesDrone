@@ -84,3 +84,7 @@ Admins receive Hygiene and Assistant capabilities by default, including existing
 Lead-linked task reads follow leads:read and current scope; shared completion/rescheduling follows leads:edit rather than tasks:write. Personal reminders and delivery remain private, legacy retitle/delete remains recipient-only. Assistant business reads reuse each dataset policy and never grant Gemini direct database or credential access.
 
 Main Tasks opt-in browsing follows current lead read scope plus own personal reminders. Shared completion/rescheduling requires lead edit; recipient-only title/delete/cancel actions retain task write. No PAT expansion or notification recipient change. Task action flags are hints; mutations reauthorize.
+
+- GET /api/v1/lead-assignees
+
+The Admin-only minimal assignee directory returns paged id/name/active values without account email or capabilities. Fresh membership checks prevent in-flight directory disclosure after downgrade. Team reporting requires Admin plus members:write and preserves current lead scope; it grants no new member/PAT access. See [Team](../salesdrone-team/SKILL.md).

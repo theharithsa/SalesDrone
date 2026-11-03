@@ -95,3 +95,5 @@ Shared lead task OpenAPI operations must declare limit/cursor/state, preserve th
 GET tasks optionally accepts view=accessible only for Google/App Check members; legacy default and PAT tasks:read stay recipient-oriented. Publish typed Task pages with current responsibility/action flags and document sparse signed pagination, view/scope binding and current-access checks.
 
 Accessible mixed-visibility task cursors use AES-GCM with the existing server cursor secret and binding as authenticated context. Never expose skipped private task dates/IDs in readable signed payloads. Legacy cursor format remains unchanged.
+
+API 1.28 adds Google/Admin-only Team overview, paged member comment/call feed and minimal lead-assignee directory. No PAT scopes are added. Team snapshots reject over-limit scans instead of publishing incomplete totals; activity cursors bind member, period and current access. __unassigned__ is reserved for the Admin lead filter’s null assignment selection.

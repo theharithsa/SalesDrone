@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.7.2
+Version 2.8.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -23,6 +23,8 @@ Navigation includes Today, Leads, Tasks, Notifications, Documentation and Settin
 Use the bottom sidebar control to collapse or expand desktop navigation. Icons retain the same alignment and accessible labels. On narrow screens, use the menu or bottom navigation. The top-right appearance control switches theme; Settings also offers system appearance. Reduced-motion preferences reduce movement.
 
 Set a reminder is a regular sidebar menu shortcut when you have task-writing permission. It opens the manual reminder form without a promotional banner; on phones it is available in the navigation menu.
+
+The compact sidebar groups Workspace, Insights and Manage. Group headings collapse sections on desktop or in the phone drawer; the rail keeps destinations reachable. The product list scrolls independently from the profile and utilities, and Quick navigation uses the same registered modules. Team is Admin-only; unavailable modules stay hidden. Coarse-pointer targets remain at least 48px.
 
 ### Questions
 
@@ -68,6 +70,42 @@ Automatic mode may be enabled, or your identity does not have access to that fea
 
 Use it for current distribution only. Recorded stage history on a lead is the evidence of its actual transitions.
 
+## Team insights
+
+Workspace administrators
+
+1. Open Team under Insights. Overview shows current lead assignment, comments, recorded calls and completed lead tasks. The page defaults to the last 30 UTC calendar days; choose 7 or 90 days or Refresh team.
+
+2. Compare Current workload and Recorded outreach, then review People & progress. Select a member to open their activity, or an assigned count to open their Leads with Assigned to applied.
+
+3. In Member activity, choose a person to read their authored comments and calls, with current corrected text and links to each lead. Load more until no continuation remains.
+
+4. Use the member’s current stage chips to see their assigned lead distribution. Open View assigned leads to work with those records.
+
+This page is Admin-only and follows current lead scope. It does not grant access to private reminders, account credentials or chats. Active/inactive means membership; there is no online-status tracker or employee score.
+
+Assigned leads and stage distribution show current unarchived records. Leads worked counts distinct leads with an authored note, call or recorded stage change in the selected UTC period, even if reassigned later. Imported workbook text and initial/import stage transitions do not count as authored work. Corrections count once under the original author.
+
+Task completion follows the responsible member even when a teammate closes the task. Personal reminders and deleted tasks are excluded. Last recorded work refers to the selected period, not login. Counts are current reads and can change between refreshes.
+
+Reports are bounded to 200 members, 5,000 scoped leads, 10,000 activities, 5,000 tasks and 10,000 stage transitions. An over-limit report fails explicitly rather than presenting partial totals. Choose a shorter period for activity volume or contact an administrator for larger workloads.
+
+![Team insights — synthetic demo only](../site/assets/screenshots/team-demo.jpg)
+
+### Questions
+
+**Why are imported comments missing from work counts?**
+
+Workbook history is preserved on the lead, but uploading it does not prove the importer authored the comments or performed historic calls.
+
+**Why can I not open Team?**
+
+Team requires an active Admin membership with members:write and Google/App Check. It cannot be enabled through a Personal Access Token.
+
+**Are the stage figures conversion rates?**
+
+No. Stage chips show current assignment, and recorded stage-change counts show actual changes. They do not reconstruct missing history or judge performance.
+
 ## Leads: capture, search, filters and editing
 
 Members; actions depend on capability
@@ -107,6 +145,8 @@ The header shows the primary phone beside the company or Independent enquiry. Se
 The lead header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app.
 
 Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices.
+
+Admins can choose Assigned to in desktop Filters or the phone filter dialog. Choose All assignees, Unassigned or a named member, including inactive members whose leads remain assigned. It composes with other conditions and applies to exports. Apply commits a phone draft; Cancel preserves current filters; Reset clears the assignee. Team workload links open Leads with that assignee and clear unrelated conditions.
 
 ![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/lead-filters-demo.jpg)
 

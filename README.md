@@ -156,13 +156,13 @@ Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with saf
 
 Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Material 3 while retaining personal font and Book mode preferences. Open Filters for advanced search options; opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
 
-![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=2eb9af3bd249)
+![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=337808038573)
 
 ## Reviewed across screen sizes
 
 Material 3 type roles use 16px body text, compact table labels and content-width forms while preserving personal font choices. The [v2.0 review](docs/MATERIAL-3-REVIEW.md) records measured layouts from 360 to 1920px, real infinite-scroll behavior, form checks and browser-only verification limits.
 
-![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=d5e20f3ceaba)
+![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=679506cba08c)
 
 [Tablet workspace](site/assets/screenshots/tablet-demo.jpg) · [Login](site/assets/screenshots/login-demo.jpg) · [Import field setup](site/assets/screenshots/import-fields-demo.jpg) · [Status destination](site/assets/screenshots/status-mapping-demo.jpg) · [Personal dashboard grouping](site/assets/screenshots/dashboard-fields-demo.jpg)
 
@@ -246,3 +246,7 @@ Review shared contacts and incomplete enquiries in Lead Hygiene. Ask lead-only q
 ![Synthetic Lead Hygiene report](site/assets/screenshots/hygiene-demo.jpg)
 
 ![Synthetic Lead Assistant evidence and citations](site/assets/screenshots/assistant-demo.jpg)
+
+Admins can use **Team** for current lead workload, recorded comments/calls, task progress and member activity linked to leads. Named **Assigned to** filters narrow Leads and matching exports. The compact grouped Material 3 sidebar supports additional modules while preserving phone targets. See the [Team contract](docs/TEAM.md) and [product handbook](docs/PRODUCT-GUIDE.md#team-insights).
+
+![Admin Team overview — fictional demo data](site/assets/screenshots/team-demo.jpg?sha=2bc1a7dab8c1)

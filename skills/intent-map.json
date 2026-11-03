@@ -208,5 +208,12 @@
     "managed parser",
     "Cloud Run gateway",
     "proxy body limit"
+  ],
+  "salesdrone-team": [
+    "team dashboard",
+    "SDR performance",
+    "team stats",
+    "member activity",
+    "team workload"
   ]
 }

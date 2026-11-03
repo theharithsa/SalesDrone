@@ -204,3 +204,7 @@ prototype from implemented query support. Browser review covered 390px empty/res
 and history, plus a 1280px welcome view; this is not physical-device certification.
 
 Lead Hygiene shares the page-body wrapper: desktop 32px side gutters, intermediate 24px and compact 16px. Keep the heading, archive option and report grid on those edges. Lead Assistant uses one message per question; scope and current-state context sit in collapsed Answer details, while material setup/partial-data limitations stay in the reply and each result list retains its own controls.
+
+## Compact product navigation and Team
+
+The sidebar retains its 232px drawer / 88px rail but uses 36px pointer rows, 18px icons, 8px selection shape and compact group headings. Phone/coarse controls retain at least 48px targets. WorkspaceNavigation registers capability-gated Workspace, Insights and Manage destinations for sidebar, quick navigation and route discovery; subviews stay in their module. The product list scrolls independently from branding and profile/utilities. Rail mode keeps destinations reachable after drawer-group collapse. Team uses tonal view switches, four summary cards, count-scaled charts and a comparison table; phones use member cards and a stacked chart layout. See [TEAM.md](TEAM.md).

@@ -111,3 +111,9 @@ Settings audit privacy tests inject a fixed event time matching the fixture remi
 
 
 Regress accessible global task pages across owners, sparse empty pages/cursor continuation, default private view, mixed-view cursor rejection, scope revocation and PAT refusal. Verify dueAt/id production index definitions explicitly; real emulator alone cannot enforce them. Browser computed font-family must prove the phone monospace fix.
+
+
+Team cases: functions/test/team.test.js covers deterministic attribution, imported/private exclusions, window/cursor binding, scan limits and mid-read revocation. Actual Auth/Firestore integration covers scoped reporting and the member feed; component cases cover period/member navigation and assignee Apply/Cancel/Reset. Review sidebar group/rail/short-window behavior with actual geometry, not jsdom.
+
+
+CI case suites are functions, ingress, web, components and emulator. Node/Vitest runner summaries provide independent expected counts; readCaseEvidence reconciles them with emitted sanitized cases, validates suite paths/IDs/statuses and rejects empty, missing, duplicate or incomplete receipts. Each suite clears prior artifacts before running. Use scripts/emulator-tests.mjs so workspace cwd cannot erase emulator paths. Test the actual reporter on pass/fail/skip fixtures, not only a mocked mapper. Run compound Assistant/API and real Auth/Firestore regressions; do not fabricate historical missing events.

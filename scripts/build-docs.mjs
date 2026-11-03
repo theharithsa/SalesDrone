@@ -29,6 +29,9 @@ function stamp(html) {
     });
 }
 const screenshots = [
+  'team-demo.jpg',
+  'team-mobile-demo.jpg',
+  'team-activity-demo.jpg',
   'lead-tasks-demo.jpg',
   'hygiene-demo.jpg',
   'hygiene-mobile-demo.jpg',

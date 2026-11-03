@@ -90,3 +90,5 @@ Missing groups need separate primary-label and helper elements in cards and the 
 Selected-field headings, supporting copy and chart notes must use the effective configured label without lowercasing acronyms. Use neutral current-distribution language for Source, Zone and custom fields; no pipeline movement/conversion wording. Wrap long configured labels in headings, descriptions and selection hints.
 
 Expose stage as an explicit analytics choice even when hidden from enquiry forms. Use includeHiddenStage only for dashboard grouping/preference validation; default dashboardFields remains strict for import destinations. Automatic keeps its existing visible-field fallback and scoped counts. Cover hidden-stage explicit selection plus assigned-scope persistence.
+
+Admin team workload and authored-work reporting is owned by [Team](../salesdrone-team/SKILL.md), separate from the scoped personal dashboard. Current stage distributions and recorded change counts must not become inferred conversion/performance scores.

@@ -1513,3 +1513,24 @@ test('shared lead work and business-query results persist with actual Auth, Fire
  const records=(await req('get','/lead-assistant/requests/'+question.id+'/leads?part=0').expect(200)).body.items;
  assert.equal(records[0].href,'/leads/'+leadId);
 });
+
+test('Admin Team statistics and assignee filters use actual Auth and Firestore with private-source exclusion',async()=>{
+ const store=firestoreStore(db),at='2026-11-03T10:00:00.000Z';
+ const adminToken=await signIn('team-admin@example.com'),repToken=await signIn('team-rep@example.com');
+ const adminUid=(await auth.verifyIdToken(adminToken)).uid,repUid=(await auth.verifyIdToken(repToken)).uid;
+ await store.run(async tx=>{
+  tx.set(path('settings','workspace'),{version:8,assignedOnly:true,exportsEnabled:true});
+  for(const [uid,role,caps]of [[adminUid,'Admin',['leads:read','members:write']],[repUid,'SDR',['leads:read']]])tx.set(path('members',uid),{id:uid,uid,name:'Synthetic Team '+role,role,scope:'all',active:true,version:1,capabilities:caps});
+  tx.set(path('leads','team-lead'),{id:'team-lead',name:'Synthetic team lead',assignedToUid:repUid,stage:'Custom stage',archived:false});
+  tx.set(path('activities','team-note'),{id:'team-note',leadId:'team-lead',actorUid:repUid,type:'note',notes:'Synthetic authored comment',createdAt:at,revision:1});
+  tx.set(path('activities','team-import'),{id:'team-import',leadId:'team-lead',actorUid:repUid,type:'note',notes:'Synthetic imported comment',createdAt:at,imported:true});
+  tx.set(path('tasks','team-private'),{id:'team-private',leadId:null,recipientUid:repUid,state:'Pending',dueAt:at,title:'Synthetic private reminder'});
+ });
+ const app=createApp({store,now:()=>at,verifyToken:t=>auth.verifyIdToken(t,true)});
+ const get=(url,token=adminToken)=>request(app).get('/api/v1'+url).set('Authorization','Bearer '+token);
+ const result=(await get('/team?days=7').expect(200)).body,m=result.members.find(m=>m.id===repUid);assert.equal(m.comments,1);assert.equal(m.leadsWorked,1);assert.equal(m.assigned,1);assert.equal(m.pending,0);
+ const activities=(await get('/team/members/'+repUid+'/activities?days=7').expect(200)).body.items;assert.equal(activities.length,1);assert.equal(activities[0].notes,'Synthetic authored comment');
+ await get('/team',repToken).expect(403);
+ const filtered=(await get('/leads?filters=[]&assignedToUid='+repUid).expect(200)).body.items;assert.ok(filtered.some(l=>l.id==='team-lead'));assert.ok(filtered.every(l=>l.assignedToUid===repUid));
+ const dir=(await get('/lead-assignees?limit=100').expect(200)).body.items;assert.ok(dir.some(m=>m.id===repUid&&m.name==='Synthetic Team SDR'));assert.ok(dir.every(m=>Object.keys(m).sort().join(',')==='active,id,name'));
+});

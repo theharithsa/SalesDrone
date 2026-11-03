@@ -169,7 +169,8 @@
         "salesdrone-lead-scoring",
         "salesdrone-leads",
         "salesdrone-lead-journey",
-        "salesdrone-interface"
+        "salesdrone-interface",
+        "salesdrone-team"
       ],
       "apiOperations": [
         "GET /api/v1/dashboard",
@@ -496,7 +497,8 @@
         "salesdrone-authentication",
         "salesdrone-leads",
         "salesdrone-notifications",
-        "salesdrone-api-integrations"
+        "salesdrone-api-integrations",
+        "salesdrone-team"
       ],
       "apiOperations": [
         "GET /api/v1/members",
@@ -504,7 +506,8 @@
         "POST /api/v1/invitations",
         "DELETE /api/v1/invitations/{id}",
         "PATCH /api/v1/members/{uid}",
-        "POST /api/v1/invitations/{id}/accept"
+        "POST /api/v1/invitations/{id}/accept",
+        "GET /api/v1/lead-assignees"
       ]
     },
     {
@@ -584,6 +587,29 @@
         "DELETE /api/v1/tasks/{id}",
         "GET /api/v1/leads/{id}/tasks",
         "PATCH /api/v1/leads/{id}/tasks/{taskId}"
+      ]
+    },
+    {
+      "id": "salesdrone-team",
+      "path": "skills/salesdrone-team/SKILL.md",
+      "description": "Maintain SalesDrone Admin Team dashboards, workload and recorded member activity. Use for SDR team statistics and activity drill-downs; individual account grants belong to people-permissions and conversion analytics to dashboard.",
+      "matchTerms": [
+        "team dashboard",
+        "SDR performance",
+        "team stats",
+        "member activity",
+        "team workload"
+      ],
+      "related": [
+        "salesdrone-release-readiness",
+        "salesdrone-people-permissions",
+        "salesdrone-leads",
+        "salesdrone-interface",
+        "salesdrone-dashboard"
+      ],
+      "apiOperations": [
+        "GET /api/v1/team",
+        "GET /api/v1/team/members/{uid}/activities"
       ]
     },
     {

@@ -1,6 +1,8 @@
+import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
+import AssigneeFilter, { type Assignee } from './components/AssigneeFilter';
+import { teamDemo, demoAssignees } from './lib/team-demo';
 import LeadHeaderContext from './components/LeadHeaderContext';
 import TaskRow from './components/TaskRow';
-import { Sparkles } from 'lucide-react';
 import './research.css';
 import LeadFiles from './features/LeadFiles';
 import InfiniteLeadLoader from './components/InfiniteLeadLoader';
@@ -112,22 +114,14 @@ import {
   RescheduleForm,
   CorrectionForm,
 } from './components/Forms';
+const TeamPage = lazy(() => import('./features/TeamPage'));
 const DashboardPage = lazy(() => import('./features/DashboardPage'));
 
 const LeadAssistantPage = lazy(() => import('./features/LeadAssistantPage'));
 const ResearchPage = lazy(() => import('./features/ResearchPage'));
 const ImportPage = lazy(() => import('./features/ImportPage'));
 const SettingsPage = lazy(() => import('./features/SettingsPage'));
-type Page =
-  | 'today'
-  | 'leads'
-  | 'tasks'
-  | 'notifications'
-  | 'hygiene'
-  | 'assistant'
-  | 'imports'
-  | 'members'
-  | 'settings';
+type Page = NavigationPage | 'members' | 'settings';
 type Data = {
   leads: Lead[];
   tasks: Task[];
@@ -191,6 +185,10 @@ export default function App() {
     [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]),
     [stage, setStage] = useState(''),
     [source, setSource] = useState(''),
+    [assignee, setAssignee] = useState(''),
+    [assignees, setAssignees] = useState<Assignee[]>([]),
+    [assigneesLoading, setAssigneesLoading] = useState(false),
+    [assigneesError, setAssigneesError] = useState(''),
     [taskFilter, setTaskFilter] = useState('Pending'),
     [nextCursor, setNextCursor] = useState<string | null>(null),
     [demoLeadLimit, setDemoLeadLimit] = useState(30),
@@ -537,6 +535,8 @@ export default function App() {
         }
       }
       let d = demoRef.current;
+      if(method==='GET'&&path.startsWith('/lead-assignees'))return {items:demoAssignees,nextCursor:null};
+      if(method==='GET'&&path.startsWith('/team')){const parts=path.split('?')[0].split('/');return teamDemo(d.leads,Number(new URLSearchParams(path.split('?')[1]).get('days')||30),parts[3]);}
       const parts = path.split('?')[0].split('/').filter(Boolean);
       const collection = parts[0],
         id = parts[1];
@@ -849,6 +849,7 @@ export default function App() {
           params.set('filters', JSON.stringify(columnFilters));
           if (stage) params.set('stage', stage);
           if (source) params.set('source', source);
+          if (assignee) params.set('assignedToUid',assignee);
           if (search) {
             params.set('search', search);
             params.set('field', searchField);
@@ -916,6 +917,7 @@ export default function App() {
       page,
       stage,
       source,
+      assignee,
       search,
       searchField,
       columnFilters,
@@ -924,6 +926,13 @@ export default function App() {
       request,
     ],
   );
+  useEffect(()=>{
+    let alive=true;setAssignee('');setAssignees([]);setAssigneesError('');
+    if(!active||(!admin&&!demo)){setAssigneesLoading(false);setAssignee('');return;}
+    setAssigneesLoading(true);
+    (async()=>{let cursor:string|null=null;const rows:Assignee[]=[];do{const r=await request('/lead-assignees?limit=100'+(cursor?'&cursor='+encodeURIComponent(cursor):''));rows.push(...r.items);cursor=r.nextCursor;if(rows.length>1000)throw Error('The team directory is too large to load.');}while(cursor&&alive);if(alive)setAssignees(rows.sort((a,b)=>a.name.localeCompare(b.name)));})().catch(e=>{if(alive)setAssigneesError(e.message);}).finally(()=>{if(alive)setAssigneesLoading(false);});
+    return()=>{alive=false;};
+  },[active,admin,demo,request,session?.identity.uid,session?.member?.version]);
   const loadRef = useRef(load);
   loadRef.current = load;
   useEffect(() => {
@@ -936,6 +945,7 @@ export default function App() {
     page,
     stage,
     source,
+    assignee,
     search,
     searchField,
     columnFilters,
@@ -1206,7 +1216,7 @@ export default function App() {
         detailEpoch.current++;
         setSelected(null);
         const p = window.location.pathname.slice(1);
-        if (['today', 'leads', 'tasks', 'settings', 'imports', 'hygiene', 'assistant'].includes(p))
+        if ([...navigationPages,'settings'].includes(p))
           setPage(p as Page);
       }
     };
@@ -1261,16 +1271,7 @@ export default function App() {
         : window.location.pathname.slice(1)
     ) as Page;
     if (
-      [
-        'today',
-        'leads',
-        'tasks',
-        'notifications',
-        'hygiene',
-        'assistant',
-        'imports',
-        'settings',
-      ].includes(p)
+      [...navigationPages,'settings'].includes(p)
     )
       setPage(p);
   }, []);
@@ -1349,6 +1350,7 @@ export default function App() {
           matchesColumnFilters(l, columnFilters) &&
           (!stage || l.stage === stage) &&
           (!source || l.source === source) &&
+          (!assignee || (assignee==='__unassigned__'?!l.assignedToUid:l.assignedToUid===assignee)) &&
           (!search ||
             String(l[searchField] || '')
               .toLowerCase()
@@ -1363,6 +1365,7 @@ export default function App() {
     demo,
     stage,
     source,
+    assignee,
     search,
     searchField,
     columnFilters,
@@ -1581,48 +1584,7 @@ export default function App() {
           <span>Quick navigation</span>
           <kbd>⌘ K</kbd>
         </button>
-        <span className="nav-section">WORKSPACE</span>
-        <nav aria-label="Main navigation">
-          {nav.map((n) => (
-            <button
-              key={n.id}
-              aria-label={n.label}
-              title={n.label}
-              className={page === n.id ? 'nav-item active' : 'nav-item'}
-              onClick={() => go(n.id)}
-              aria-current={page === n.id ? 'page' : undefined}
-            >
-              <n.icon size={19} />
-              <span>{n.label}</span>
-              {n.id === 'tasks' && todayTasks.length ? (
-                <small>{todayTasks.length}</small>
-              ) : null}
-              {n.id === 'notifications' && inboxHasUnread ? (
-                <i className="notification-dot" />
-              ) : null}
-            </button>
-          ))}
-        </nav>
-        {importAccess ? (
-          <>
-            <span className="nav-section second">MANAGE</span>
-            <nav aria-label="Administration">
-              <button
-                aria-label="Import enquiries"
-                title="Import enquiries"
-                className={'nav-item ' + (page === 'imports' ? 'active' : '')}
-                onClick={() => go('imports')}
-              >
-                <Upload size={19} />
-                <span>Import enquiries</span>
-              </button>
-            </nav>
-          </>
-        ) : null}
-        {(can('hygiene:read') || can('assistant:query')) ? <nav aria-label="Lead research">
-          {can('hygiene:read') ? <button className={'nav-item '+(page==='hygiene'?'active':'')} aria-current={page==='hygiene'?'page':undefined} onClick={()=>go('hygiene')}><ShieldCheck size={19}/><span>Lead Hygiene</span></button>:null}
-          {can('assistant:query') ? <button className={'nav-item '+(page==='assistant'?'active':'')} aria-current={page==='assistant'?'page':undefined} onClick={()=>go('assistant')}><Sparkles size={19}/><span>Lead Assistant</span></button>:null}
-        </nav>:null}
+        <WorkspaceNavigation page={page} onNavigate={id=>go(id as Page)} admin={!!(admin||demo)} imports={!!importAccess} can={c=>!!can(c)} taskCount={todayTasks.length} unread={inboxHasUnread}/>
         <div className="sidebar-bottom">
           {can('tasks:write') ? (
             <button
@@ -1730,6 +1692,7 @@ export default function App() {
               {
                 {
                   today: 'Today',
+                  team: 'Team',
                   leads: 'Leads',
                   tasks: 'Tasks',
                   notifications: 'Notifications',
@@ -1890,6 +1853,8 @@ export default function App() {
         ) : null}
         <main id="main-content">
           <Suspense fallback={<Loading />}>
+            {page==='team' ? (admin||demo ? <TeamPage key={(session?.identity.uid||'demo')+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} request={request} demo={!!demo} onLeads={id=>{setAssignee(id);setStage('');setSource('');setSearch('');setSearchDraft('');setColumnFilters([]);go('leads');}}/> : <div className="page-body"><ErrorMessage error="Team insights are available to workspace administrators."/></div>) : null}
+
             {page === 'today' ? (
               <DashboardPage
                 key={
@@ -2041,6 +2006,7 @@ export default function App() {
                                 config={fieldOptions}
                                 criteria={{
                                   filters: columnFilters,
+                                  ...(assignee?{assignedToUid:assignee}:{}),
                                   ...(stage ? { stage } : {}),
                                   ...(source ? { source } : {}),
                                   ...(search
@@ -2112,31 +2078,37 @@ export default function App() {
                     key={session?.identity.uid || 'demo'}
                     config={fieldOptions}
                     sources={sourceOptions}
+                    assignees={admin||demo?assignees:undefined}
+                    assigneesLoading={assigneesLoading}
+                    assigneesError={assigneesError}
                     applied={{
                       searchField,
                       stage,
                       source,
+                      assignee,
                       filters: columnFilters,
                     }}
                     onApply={(values) => {
                       setSearchField(values.searchField);
                       setStage(values.stage);
                       setSource(values.source);
+                      setAssignee(values.assignee||'');
                       setColumnFilters(values.filters);
                     }}
                   />
                   <details className="lead-filters-disclosure">
                     <summary>
                       <Filter size={16} /> Filters
-                      {columnFilters.length || stage || source ? (
+                      {columnFilters.length || stage || source || assignee ? (
                         <span className="filter-count">
                           {columnFilters.length +
                             Number(!!stage) +
-                            Number(!!source)}{' '}
+                            Number(!!source) + Number(!!assignee)}{' '}
                           active
                         </span>
                       ) : null}
                     </summary>
+                    {admin||demo?<><ErrorMessage error={assigneesError}/><AssigneeFilter value={assignee} onChange={setAssignee} members={assignees} loading={assigneesLoading}/></>:null}
                     <div className="leads-toolbar">
                       <select
                         aria-label="Search field"
@@ -2249,7 +2221,7 @@ export default function App() {
                         title={
                           nextCursor
                             ? 'More records remain to scan.'
-                            : columnFilters.length || search || stage || source
+                            : columnFilters.length || search || stage || source || assignee
                               ? 'No leads match these filters.'
                               : 'No leads here yet.'
                         }
@@ -3166,6 +3138,7 @@ export default function App() {
             ) : null}
             {page === 'notifications' ? (
               <Suspense fallback={<Loading />}>
+
                 <NotificationsPage
                   items={data.notifications}
                   loading={loading}
@@ -3300,7 +3273,7 @@ export default function App() {
           </button>
         ))}
         <button
-          className={page === 'settings' ? 'active' : ''}
+          className={!['today','leads','tasks'].includes(page) ? 'active' : ''}
           onClick={() => setMenu(true)}
         >
           <MoreHorizontal size={21} />
@@ -3602,11 +3575,8 @@ export default function App() {
       >
         <div className="command-list">
           {[
-            ...nav,
+            ...availableNavigation(!!(admin||demo),!!importAccess,c=>!!can(c)).flatMap(g=>g.items),
             { id: 'settings', label: 'Settings', icon: Settings },
-            ...(importAccess
-              ? [{ id: 'imports', label: 'Imports and history', icon: Upload }]
-              : []),
             ...(admin
               ? [
                   {

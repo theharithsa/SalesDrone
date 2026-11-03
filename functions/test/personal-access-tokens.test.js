@@ -476,3 +476,5 @@ test('tasks-only PAT cannot opt into shared Google-member task browsing',async()
  await s.call(issued.token,'get','/tasks').expect(200);
  const denied=await s.call(issued.token,'get','/tasks?view=accessible').expect(403);assert.equal(denied.body.error.code,'GOOGLE_REQUIRED');
 });
+
+test('PAT cannot read admin Team reports, comments or directory',async()=>{const s=await setup();const {token}=await s.issue();for(const url of ['/team','/team/members/admin/activities','/lead-assignees']){const r=await s.call(token,'get',url).expect(403);assert.equal(r.body.error.code,'GOOGLE_REQUIRED');}});

@@ -338,3 +338,7 @@ GET /tasks?view=accessible is an opt-in Google/App Check member view. It returns
 Rows include responsible {id,name}, lead {id,name,company} or null, canManage, canEditOwn and sharedLeadContext for linked work. Lead editors complete/reschedule through the existing lead-scoped PATCH with expectedVersion and a stable UUID retry key. Only recipients with tasks:write retain legacy title/delete/cancel controls. Own personal reminders require tasks:write to manage. Notification delivery recipients do not change. The main screen uses server action flags; stale access is rechecked at mutation time.
 
 Production queries require tasks indexes dueAt/id and state/dueAt/id, alongside the existing lead-filtered variants. Firestore emulator tests do not establish production index readiness.
+
+## Team and assignment reporting (contract 1.28.0)
+
+Admin-only GET `/team`, GET `/team/members/{uid}/activities` and GET `/lead-assignees` require Google/App Check; PAT access is denied. The [Team contract](TEAM.md) defines UTC windows, original-author attribution, task responsibility, bounded totals, encrypted feed pagination, scope/revocation and limits. GET `/leads` and POST `/leads/export` accept Admin `assignedToUid` with reserved `__unassigned__` for null assignment. No new mutation or access grant is added.
