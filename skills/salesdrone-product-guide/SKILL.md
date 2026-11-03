@@ -44,7 +44,6 @@ When removing repeated UI, expand disclosures before capturing/verifying: count 
 
 Document editing as open lead then Edit lead; remove instructions to edit directly in table/card rows. For desktop-density claims distinguish data columns from former sticky Actions, quote measured viewport/fixture counts and keep custom-schema limits. Refresh desktop shell/table captures and mobile-list captures when row actions change; unchanged login/isolated-component images can retain honest prior metadata.
 
-Document personal font styles under Appearance & time, draft preview/save timing, defaults, Book override and branding/monospace exceptions. Refresh changed activity and Appearance screenshots with synthetic data; keep unchanged captures honest. Retain self-hosted font licence/source documentation and browser-check native font selection at narrow widths.
 
 Explain Exact match separately from Equals: only source, stage and available custom dropdowns support literal case/space/Unicode matching. Curate desktop and mobile filter captures and keep unchanged historical captures honest.
 
@@ -70,4 +69,4 @@ Main shared Tasks, monospace contact captures, lead-work and Assistant coverage:
 
 Team reporting guidance is in [operations](references/operations.md).
 
-Capture checks must verify the actual module heading as well as viewport/hash. Entering the demo opens Today even from an initial Leads URL; explicitly navigate to Leads before recording laptop/tablet lead-list images. Review image content against its handbook caption before publication.
+Verify each capture heading against its caption; see [operations](references/operations.md).

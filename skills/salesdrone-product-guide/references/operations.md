@@ -102,3 +102,8 @@ Explain Admin field setup before import preview, schema persistence on cancellat
 
 
 Document Admin Team workload versus authored activity, UTC periods, responsibility-based task completion, membership versus presence, imported-note exclusions and bounded-report failures. Refresh the affected shell/lead-filter captures plus Team overview/activity; never use live member/comment data in public assets.
+
+Capture checks must verify the actual module heading as well as viewport/hash. Entering the demo opens Today even from an initial Leads URL; explicitly navigate to Leads before recording laptop/tablet lead-list images. Review image content against its handbook caption before publication.
+
+
+Document personal font styles under Appearance & time, draft preview/save timing, defaults, Book override and branding/monospace exceptions. Refresh changed activity and Appearance screenshots with synthetic data; keep unchanged captures honest. Retain self-hosted font licence/source documentation and browser-check native font selection at narrow widths.
