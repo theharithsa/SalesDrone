@@ -103,4 +103,4 @@ Deploy/verify ingress after Functions and before Hosting cutover; require its re
 
 For managed health and partial-rollout handling, read [operations](references/operations.md).
 
-Dependency gates: [review](../../docs/DEPENDENCY-REVIEW.md).
+Toolchain gates: [migration](../../docs/TOOLCHAIN-MIGRATION.md).

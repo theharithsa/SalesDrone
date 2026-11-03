@@ -1,13 +1,15 @@
 import { ESLint } from "eslint";
 import { readFile } from "node:fs/promises";
 import { warningCounts, newWarnings } from "./lint-policy.mjs";
-const eslint = new ESLint();
-const results = await eslint.lintFiles([
+import { accessibilityLinter } from "../tools/accessibility/lint.mjs";
+const eslint = new ESLint({ overrideConfigFile: new URL("../eslint.config.mjs", import.meta.url).pathname });
+const results = [...await eslint.lintFiles([
   "functions/src",
   "scripts",
   "services/ingress/src",
+  "tools/accessibility/*.mjs",
   "apps/web/src",
-]);
+]), ...await accessibilityLinter().lintFiles(["apps/web/src"])];
 const formatter = await eslint.loadFormatter("stylish");
 console.log(formatter.format(results));
 const baseline = JSON.parse(await readFile("eslint-baseline.json", "utf8"));

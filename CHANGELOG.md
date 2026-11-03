@@ -8,6 +8,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.9.3] - 2026-11-04
+
+### Changed
+- Migrate the shared frontend pipeline to Vite 8.3.5 / React plugin 6.2.1 with Rolldown/Oxc, preserving prior browser targets.
+- Use native TypeScript 7.0.2 for app checking/builds with explicit compiler selection and the supported TypeScript 6 API alias for lint tooling.
+- Migrate main lint to ESLint 10.14.0; retain every accessibility check in a supported ESLint 9 workspace and combine both passes under the unchanged warning baseline. Add real compiler, hooks and accessibility rejection regressions.
+
 ## [2.9.2] - 2026-11-04
 
 ### Changed

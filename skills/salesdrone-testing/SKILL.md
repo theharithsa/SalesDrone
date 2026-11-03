@@ -64,4 +64,4 @@ Global shared-task and computed-font regressions: see [operations](references/op
 
 Team reporting guidance is in [operations](references/operations.md).
 
-Vitest 5 retains the component reporter hooks used here; verify actual leaf receipts and summary counts after upgrades, not just a green runner exit. Ignore .vitest generated artifacts. Firebase SDK reviews include the real client Google credential, forced refresh, unapproved /me isolation and sign-out emulator case in emulator.integration.js; this does not certify browser popup/App Check/provider configuration.
+Toolchain upgrades must preserve real leaf receipts, the lint baseline and accessibility/hooks checks. Follow [migration](../../docs/TOOLCHAIN-MIGRATION.md), including native compiler rejection and isolated lint regression cases. Firebase client Auth emulator coverage does not certify browser popup/App Check/provider configuration.
