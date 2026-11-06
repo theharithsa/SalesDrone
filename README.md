@@ -2,6 +2,7 @@
 
 > v2.6.4 repairs compound Lead Assistant answers and completes CI test-case reporting.
 > Scoped Lead Hygiene and Lead Assistant were introduced in v2.6.0.
+> See the [monitoring handoff](observability/README.md) for offline queries/notebook and owner-managed Dynatrace setup.
 > See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,

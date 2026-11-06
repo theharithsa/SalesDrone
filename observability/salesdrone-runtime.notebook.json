@@ -1,0 +1,363 @@
+{
+  "name": "SalesDrone — release and runtime investigation",
+  "type": "notebook",
+  "content": {
+    "version": "7",
+    "defaultTimeframe": {
+      "from": "now()-2h",
+      "to": "now()"
+    },
+    "sections": [
+      {
+        "id": "intro",
+        "type": "markdown",
+        "markdown": "# SalesDrone — release and runtime investigation\nProduction-only telemetry. Detector inputs are lookback summaries, not installed alerts. Review thresholds and use the operator guide. Runtime latency is a mean; optional histogram p95 requires tenant bucket ingestion. No tenant resource IDs or notification destinations are included.\n\nDeployment and runtime sections use explicit documented lookbacks; change them together when investigating a release."
+      },
+      {
+        "id": "87c9a36c60ffead8f683f37bbab8c04c",
+        "type": "dql",
+        "title": "http error rate",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries total=sum(salesdrone.http.requests), failed=sum(salesdrone.http.requests, filter:{http.status_class==\"5xx\"}, default:0), by:{service.name,operation}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-2h, interval:5m, union:true\n| fieldsAdd server_error_percent=if(total[]>0,100.0*failed[]/total[],else:null), server_success_percent=if(total[]>0,100.0*(total[]-failed[])/total[],else:null)\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "3bd3334e9daae0e8b95689619283c9c0",
+        "type": "dql",
+        "title": "runtime latency",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries mean_duration_s=avg(salesdrone.http.duration), by:{service.name,operation}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-2h, interval:5m\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "d4d44d140b3a3953bb63865198a2860c",
+        "type": "dql",
+        "title": "http detector",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries total=sum(salesdrone.http.requests, scalar:true), failed=sum(salesdrone.http.requests, filter:{http.status_class==\"5xx\"}, default:0, scalar:true), by:{service.name,operation}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-10m, union:true\n| fieldsAdd observations=total, value=if(total>0,100.0*failed/total,else:null)\n\n| fieldsAdd eligible = isNotNull(value) and value>=0 and observations>=20\n| fieldsAdd breach = if(eligible,value>5,else:null)\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "31f6e3a04512bd7ac101403b12405968",
+        "type": "dql",
+        "title": "rejected outbox",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries value=max(salesdrone.outbox.records, scalar:true), by:{service.name}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\" and state==\"Rejected\"}, from:now()-5m\n\n| fieldsAdd eligible = isNotNull(value) and value>=0\n| fieldsAdd breach = if(eligible,value>0,else:null)\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "cc1b2f5f4a893ed19031bebef4983ab8",
+        "type": "dql",
+        "title": "export failures",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries value=sum(salesdrone.telemetry.exports, scalar:true), by:{service.name,signal}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\" and outcome==\"failure\"}, from:now()-5m\n\n| fieldsAdd eligible = isNotNull(value) and value>=0\n| fieldsAdd breach = if(eligible,value>0,else:null)\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "8ce73bd57104fb9cf281ea235880b461",
+        "type": "dql",
+        "title": "reminder due age",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries value=max(salesdrone.queue.oldest_due_age, scalar:true), by:{service.name,queue}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\" and queue==\"reminders\"}, from:now()-5m\n\n| fieldsAdd eligible = isNotNull(value) and value>=0\n| fieldsAdd breach = if(eligible,value>300,else:null)\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "02eb99ce91ad058b968ec8b61418b8dc",
+        "type": "dql",
+        "title": "gemini failure rate",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries total=sum(salesdrone.gen_ai.requests, scalar:true), failed=sum(salesdrone.gen_ai.requests, filter:{outcome==\"failure\"}, default:0, scalar:true), by:{service.name,model,operation}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-10m, union:true\n| fieldsAdd observations=total, value=if(total>0,100.0*failed/total,else:null)\n\n| fieldsAdd eligible = isNotNull(value) and value>=0 and observations>=10\n| fieldsAdd breach = if(eligible,value>20,else:null)\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "27d4a38c64f8908bd15e23e3a6303b4b",
+        "type": "dql",
+        "title": "queue backlog",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries backlog=max(salesdrone.queue.backlog), oldest_due_age_s=max(salesdrone.queue.oldest_due_age), by:{service.name,queue}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-2h, interval:5m, union:true\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "fcf65708116b3cab2cda51f79f68d3eb",
+        "type": "dql",
+        "title": "outbox health",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries records=max(salesdrone.outbox.records), by:{service.name,state}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-2h, interval:5m\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "3dc64f6480b5f1607daa67d5c89766c7",
+        "type": "dql",
+        "title": "database latency",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries mean_duration_s=avg(salesdrone.db.duration), by:{service.name,operation,collection}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-2h, interval:5m\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "af0bcddc7ca2b0f26d9be8ffc5ce1255",
+        "type": "dql",
+        "title": "gemini latency",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries mean_duration_s=avg(salesdrone.gen_ai.duration), by:{service.name,model,operation,outcome}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-2h, interval:5m\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "21fa3553262ed8261145911001c9576c",
+        "type": "dql",
+        "title": "deployment overlay",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "fetch events, from:now()-24h\n| filter event.kind == \"SDLC_EVENT\" and event.type == \"deployment\" and event.status == \"finished\"\n| filter service.namespace == \"avinyatech\" and deployment.environment.name == \"production\"\n| fields timestamp, event.id, service.version, build.commit, github.run.id, pipeline.run.url, cicd.deployment.status, dt.system.bucket\n| sort timestamp desc\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "60dad7387e7efab8c43b5d06e0b33ae1",
+        "type": "dql",
+        "title": "journey errors",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "fetch logs, from:now()-1h\n| filter service.namespace == \"avinyatech\" and startsWith(service.name, \"salesdrone-\")\n| filter deployment.environment.name == \"production\"\n| filter isNotNull(error.type)\n| summarize failures=count(), by:{operation,error.type,loglevel}\n| sort failures desc\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "7484836fa077f566fde999b8829274b3",
+        "type": "dql",
+        "title": "rum native requests",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "fetch user.events, from:now()-1h\n| filter in(url.domain,array(\"sales-drone-avinya.web.app\",\"sales-drone-avinya.firebaseapp.com\"))\n| filter startsWith(url.path,\"/api/v1/\") and isNotNull(trace.id)\n| fields start_time, trace.id, span.id, request.trace_context_hint\n| sort start_time desc\n| limit 20\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      },
+      {
+        "id": "4cbb2965792f4e798602c98d8a5cbfc8",
+        "type": "dql",
+        "title": "http latency p95 buckets",
+        "showTitle": true,
+        "showInput": true,
+        "state": {
+          "input": {
+            "value": "timeseries estimated_request_p95_s=percentile(salesdrone.http.duration_bucket,95), by:{service.name,operation}, filter:{service.namespace==\"avinyatech\" and startsWith(service.name,\"salesdrone-\") and deployment.environment.name==\"production\"}, from:now()-2h, interval:5m\n"
+          },
+          "visualization": "table",
+          "visualizationSettings": {
+            "autoSelectVisualization": true,
+            "chartSettings": {}
+          },
+          "querySettings": {
+            "maxResultRecords": 1000,
+            "defaultScanLimitGbytes": 1,
+            "maxResultMegaBytes": 1,
+            "enableSampling": false
+          }
+        }
+      }
+    ]
+  }
+}

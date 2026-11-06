@@ -1,0 +1,1 @@
+timeseries mean_duration_s=avg(salesdrone.db.duration), by:{service.name,operation,collection}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production"}, from:now()-2h, interval:5m

@@ -1,14 +1,106 @@
 {
-  "schemaVersion":1,
-  "state":"reviewable definitions; not installed tenant alerts",
-  "filter":{"service.namespace":"avinyatech","deployment.environment.name":"production"},
-  "rules":[
-    {"id":"http-server-errors","metric":"salesdrone.http.requests","condition":"5xx / all requests > 5% with at least 20 requests over 10 minutes","groupBy":["service.name","operation"]},
-    {"id":"rejected-business-events","metric":"salesdrone.outbox.records","condition":"state Rejected > 0 over 5 minutes","groupBy":["service.name"]},
-    {"id":"telemetry-export-failure","metric":"salesdrone.telemetry.exports","condition":"positive delta with outcome failure over 5 minutes","groupBy":["service.name","signal"]},
-    {"id":"late-reminders","metric":"salesdrone.worker.lag","condition":"p95 > 300 seconds over 10 minutes for worker reminders","groupBy":["service.name","worker"]},
-    {"id":"gemini-failures","metric":"salesdrone.gen_ai.requests","condition":"outcome failure / all requests > 20% with at least 10 calls over 10 minutes","groupBy":["service.name","model","operation"]}
+  "schemaVersion": 2,
+  "state": "operator-owned setup; no installed tenant resources",
+  "filter": {
+    "service.namespace": "avinyatech",
+    "service.name": "salesdrone-*",
+    "deployment.environment.name": "production"
+  },
+  "rules": [
+    {
+      "id": "http-server-errors",
+      "query": "queries/http-detector.dql",
+      "metric": "salesdrone.http.requests",
+      "unit": "percent",
+      "threshold": 5,
+      "minimumVolume": 20,
+      "windowMinutes": 10,
+      "groupBy": [
+        "service.name",
+        "operation"
+      ],
+      "comparison": "above",
+      "violatingEvaluations": 3,
+      "recoveryEvaluations": 3,
+      "evaluateEverySeconds": 60,
+      "missingData": "unknown; reset consecutive streaks; never synthesize healthy zero"
+    },
+    {
+      "id": "rejected-business-events",
+      "query": "queries/rejected-outbox.dql",
+      "metric": "salesdrone.outbox.records",
+      "unit": "record",
+      "threshold": 0,
+      "minimumVolume": null,
+      "windowMinutes": 5,
+      "groupBy": [
+        "service.name"
+      ],
+      "comparison": "above",
+      "violatingEvaluations": 3,
+      "recoveryEvaluations": 3,
+      "evaluateEverySeconds": 60,
+      "missingData": "unknown; reset consecutive streaks; never synthesize healthy zero"
+    },
+    {
+      "id": "telemetry-export-failure",
+      "query": "queries/export-failures.dql",
+      "metric": "salesdrone.telemetry.exports",
+      "unit": "batch",
+      "threshold": 0,
+      "minimumVolume": null,
+      "windowMinutes": 5,
+      "groupBy": [
+        "service.name",
+        "signal"
+      ],
+      "comparison": "above",
+      "violatingEvaluations": 3,
+      "recoveryEvaluations": 3,
+      "evaluateEverySeconds": 60,
+      "missingData": "unknown; reset consecutive streaks; never synthesize healthy zero"
+    },
+    {
+      "id": "late-reminders",
+      "query": "queries/reminder-due-age.dql",
+      "metric": "salesdrone.queue.oldest_due_age",
+      "unit": "s",
+      "threshold": 300,
+      "minimumVolume": null,
+      "windowMinutes": 5,
+      "groupBy": [
+        "service.name",
+        "queue"
+      ],
+      "comparison": "above",
+      "violatingEvaluations": 3,
+      "recoveryEvaluations": 3,
+      "evaluateEverySeconds": 60,
+      "missingData": "unknown; reset consecutive streaks; never synthesize healthy zero"
+    },
+    {
+      "id": "gemini-failures",
+      "query": "queries/gemini-failure-rate.dql",
+      "metric": "salesdrone.gen_ai.requests",
+      "unit": "percent",
+      "threshold": 20,
+      "minimumVolume": 10,
+      "windowMinutes": 10,
+      "groupBy": [
+        "service.name",
+        "model",
+        "operation"
+      ],
+      "comparison": "above",
+      "violatingEvaluations": 3,
+      "recoveryEvaluations": 3,
+      "evaluateEverySeconds": 60,
+      "missingData": "unknown; reset consecutive streaks; never synthesize healthy zero"
+    }
   ],
-  "notificationRouting":"Requires tenant owner selection; no contact channel invented",
-  "deploymentOverlay":"queries/deployment-overlay.dql"
+  "notificationRouting": "Owner configures destination; no channel or recipient included",
+  "deploymentOverlay": "queries/deployment-overlay.dql",
+  "histogramPrerequisite": "builtin:histogram-metrics opt-in is tenant-owned; explicit delta buckets are already exported",
+  "thresholdPolicy": "Reviewable starting thresholds; not tenant-baselined or automatically approved",
+  "evaluation": "Evaluate each complete lookback window once per minute. Preserve group identity across release revisions; 3 consecutive eligible breaches open, 3 eligible non-breaches recover. Missing/low-volume results reset streaks and retain an open alert as unknown."
 }

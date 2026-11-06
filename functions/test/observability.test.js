@@ -265,6 +265,21 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
     assert.ok(metrics.some(m => m.name === 'otel.sdk.processor.log.queue.capacity'));
     assert.equal(counter.sum.aggregationTemporality, 1);
     assert.equal(hist.unit, 's');
+    // Bucket-bearing delta data is already sent. Tenant opt-in controls whether
+    // Dynatrace retains _bucket series; a mean/rollup cannot prove request p95.
+    for(const name of ['salesdrone.http.duration','salesdrone.worker.lag']){
+      const histograms=metrics.filter(m=>m.name===name&&m.histogram);
+      assert.ok(histograms.length>0,name);
+      for(const m of histograms){assert.equal(m.unit,'s');assert.equal(m.histogram.aggregationTemporality,1);
+       for(const p of m.histogram.dataPoints){
+        assert.ok(p.explicitBounds.length>0);assert.equal(p.bucketCounts.length,p.explicitBounds.length+1);
+        const counts=p.bucketCounts.map(v=>Number(v));assert.equal(counts.reduce((a,b)=>a+b,0),Number(p.count));
+        assert.ok(p.explicitBounds.every((v,i,a)=>Number.isFinite(v)&&v>=0&&(i===0||v>a[i-1])));
+        assert.ok(Number.isFinite(p.sum)&&p.sum>=0);
+       }
+      }
+    }
+
     assert.ok(
       hist.histogram.dataPoints.some((p) => p.explicitBounds.length > 0),
     );

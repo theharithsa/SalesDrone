@@ -56,7 +56,7 @@ Managed ingress regression includes shared non-reserved health, safe HTML/status
 App Check token exchange uses the installed SDK origin https://content-firebaseappcheck.googleapis.com; allowing only firebaseappcheck.googleapis.com breaks browser attestation. Keep every SPA Hosting CSP and the HTML meta fallback aligned. Regress the exact SDK origin through tests/spa-security.test.ts and verify managed browser exchange separately; parser/401 checks do not certify login. Never disable enforcement to resolve a CSP denial.
 Tests that issue and validate PATs across multiple createApp instances must share the injected now function; otherwise a fixed-date fixture expires against wall time before its intended authorization assertion.
 
-Detailed CI receipt reconciliation is covered in [operations](references/operations.md).
+CI receipts and monitoring policy/export regressions: [operations](references/operations.md).
 
 Shared lead task regressions cover read-only viewers, non-recipient lead editors, legacy ownership, version/replay, terminal states and scope revocation. Business Assistant tests cover accessible multi-page counts, private-source exclusion, current ACLs and source epoch invalidation; use real Auth/Firestore integration for the shared routes.
 

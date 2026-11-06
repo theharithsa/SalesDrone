@@ -49,3 +49,7 @@ Reviewed imports reuse committed domain outboxes with safe import_created/import
 
 Deployment reporting now computes outcome from seven required phases through deployment-outcome.mjs; missing/index/Storage failures cannot report succeeded. Event schema and classic marker transport stay unchanged (#71 remains separate). Application-owned parser failures return bounded codes/messages while HTTP spans/metrics record actual 400/413 statuses. Outer Functions Framework parse failures can bypass Express instrumentation and remain tracked in #30. Duplicate conflicts emit no inaccessible IDs; successful token uploads reuse existing committed attachment lifecycle events.
 
+
+## RUM identity boundary
+
+Approved live workspace members now use their verified email as the RUM user tag, per the application owner's explicit privacy choice. Demo/unapproved users remain anonymous; backend telemetry still hashes UIDs and excludes emails. createRumIdentity handles account switches/sign-out and the late salesdrone:rum-ready event after bounded polling. A DOM diagnostic exposes only email/pseudonymous/anonymous mode, never the tag value. Test rum-identity.test.ts. An API call returning without error is not proof of tenant ingestion/searchability; query credentials can differ from ingest credentials.

@@ -330,3 +330,7 @@ MCP requests reuse fixed API GET route labels and existing safe HTTP metrics, tr
 ## Application journey contract
 
 The current [journey contract](OBSERVABILITY-JOURNEYS.md) supersedes older completion-only logging, classic deployment-marker and RUM outcome guidance. It defines the privacy allowlists, finite errors, DB/dependency and worker metrics, atomic semantic/audit outboxes, SDLC routing, browser property setup and separate runtime acceptance gates. See observability/queries and observability/detections.json for production-only views and reviewable detection definitions.
+
+## Monitoring operator handoff
+
+[The monitoring pack](../observability/README.md) contains generated offline notebook content, production-only rate/bucket queries, versioned detection policies and read-only validation. No tenant documents, detectors, notification routes, histogram settings or IAM are installed by the app. Use `obs:check` to reject drift, `obs:verify` for read-only query evidence and `verify-monitoring-inputs.mjs` for explicitly synthetic OTLP failure/recovery proof. True histogram p95 uses the `_bucket` series; the summary metric supports mean, not request p95. Tenant bucket storage remains owner-controlled.
