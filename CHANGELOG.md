@@ -11,6 +11,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.9.6] - 2026-11-06
+
+### Fixed
+- Replace count-only HTTP error reporting and summary-metric percentiles with weighted rate queries, mean latency and explicit-bucket p95.
+- Deliver a generated offline runtime/deployment notebook, versioned detection policies, read-only tenant validation and a synthetic failure/recovery signal probe. Tenant installation and notification routing remain owner-managed.
+
 ## [2.9.5] - 2026-11-06
 
 ### Fixed

@@ -484,7 +484,8 @@
         "tests/deployment-bizevents.test.ts",
         "apps/web/test/rum-api.test.tsx",
         "tests/rum-property-contract.test.ts",
-        "functions/test/semantic-telemetry.test.js"
+        "functions/test/semantic-telemetry.test.js",
+        "tests/observability-pack.test.ts"
       ],
       "manualCases": [
         {

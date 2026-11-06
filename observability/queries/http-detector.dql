@@ -1,0 +1,2 @@
+timeseries total=sum(salesdrone.http.requests, scalar:true), failed=sum(salesdrone.http.requests, filter:{http.status_class=="5xx"}, default:0, scalar:true), by:{service.name,operation}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production"}, from:now()-10m, union:true
+| fieldsAdd observations=total, value=if(total>0,100.0*failed/total,else:null)

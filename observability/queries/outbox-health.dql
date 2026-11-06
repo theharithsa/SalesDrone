@@ -1,0 +1,1 @@
+timeseries records=max(salesdrone.outbox.records), by:{service.name,state}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production"}, from:now()-2h, interval:5m

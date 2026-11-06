@@ -39,7 +39,7 @@ telemetryOutbox committed CloudEvents; safe service/version/request context; pri
 - Exporter failure must not roll back customer operations. Preserve bounded retries, leases, stable event IDs and rejected/pending work for repair.
 - HTTP 202/201 proves ingest acceptance only, not tenant searchability, retention or native RUM-to-trace navigation. Verify each claim at its actual boundary.
 
-Approved live workspace members now use their verified email as the RUM user tag, per the application owner's explicit privacy choice. Demo/unapproved users remain anonymous; backend telemetry still hashes UIDs and excludes emails. createRumIdentity handles account switches/sign-out and the late salesdrone:rum-ready event after bounded polling. A DOM diagnostic exposes only email/pseudonymous/anonymous mode, never the tag value. Test rum-identity.test.ts. An API call returning without error is not proof of tenant ingestion/searchability; query credentials can differ from ingest credentials.
+Owner-approved member email RUM tags remain separate from hashed backend UIDs and anonymous demo identity. Preserve account-switch/sign-out and late-agent handling; regress rum-identity.test.ts. Details remain in the operational references.
 
 Each deployment probes real SDK-generated OTLP traces, logs and metrics under salesdrone-deployment-check and validates rejected counts, then records separate deployment BizEvent/marker acceptance. monitoring.json is safe CI evidence, not proof of tenant searchability. Use deployment-signals.mjs and release-readiness.test.ts for missing/partial/malformed responses; a reporting failure cannot undo customer operations.
 
@@ -86,6 +86,6 @@ Lead research reuses HTTP RED, safe Firestore/Gemini dependency spans and worker
 
 Cloud Run salesdrone-ingress reuses the bounded OTel foundation with platform revision identity and real HTTP-to-api.forward context. Proxy rejections are operational, not business commits. Exclude raw platform request URLs, retain sanitized outcomes. Restores emit a committed restored lifecycle outcome; CI includes actual ingress case receipts and deployment metadata.
 
-For managed health and partial-rollout handling, read [operations](references/operations.md).
+For source-owned detector policies, offline notebook, weighted rates, `_bucket` p95 and read-only validation, follow [the operator handoff](../../observability/README.md). Never auto-install tenant resources; missing data must not resolve an incident. Regress obs:check and observability-pack.test.ts; use verify-monitoring-inputs.mjs only for labelled synthetic transport proof.
 
 For complete per-suite case receipts, reconciliation and export validation, read [the CI evidence runbook](references/operations.md).

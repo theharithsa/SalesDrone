@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "version": "2.9.6",
+  "summary": "Repair monitoring queries and provide validated source-owned detection policies, offline notebook and owner setup handoff.",
+  "modules": [
+    "salesdrone-observability",
+    "salesdrone-testing"
+  ],
+  "documentation": [
+    "observability/README.md",
+    "docs/observability.md",
+    "docs/OBSERVABILITY-JOURNEYS.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Only monitoring assets and validation scripts change; no runtime API schemas.",
+    "contractVersion": "1.29.0",
+    "permissions": "Existing API/member/lead-scope permissions retained; no tenant access expansion.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Correct consumer-side weighted rate and explicit bucket queries, with due-age detector semantics and decoded export checks; source metric names/dimensions remain unchanged.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "tests/observability-pack.test.ts"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing correlated SDK signals and normal release reporting are retained; no new runtime business events or metric dimensions.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing correlated SDK signals and normal release reporting are retained; no new runtime business events or metric dimensions.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing correlated SDK signals and normal release reporting are retained; no new runtime business events or metric dimensions.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing correlated SDK signals and normal release reporting are retained; no new runtime business events or metric dimensions.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "No visible app change. Verify production query inputs, native deployment event and synthetic OTLP phase transport separately. Tenant installation/notification routes remain explicitly owner-managed; no new screenshot needed.",
+  "milestone": {
+    "number": 30,
+    "title": "v2.9.6 \u2014 Observability operator handoff",
+    "issues": [
+      141
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

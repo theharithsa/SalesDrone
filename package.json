@@ -34,7 +34,10 @@
     "review:mobile": "node scripts/review-mobile.mjs",
     "lint": "node scripts/lint.mjs",
     "test:components": "vitest run",
-    "release:plan": "node scripts/plan-release.mjs"
+    "release:plan": "node scripts/plan-release.mjs",
+    "obs:build": "node scripts/observability-pack.mjs",
+    "obs:check": "node scripts/observability-pack.mjs --check",
+    "obs:verify": "node scripts/validate-observability-pack.mjs --tenant"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -62,5 +65,5 @@
       "uuid": "^11.1.1"
     }
   },
-  "version": "2.9.5"
+  "version": "2.9.6"
 }

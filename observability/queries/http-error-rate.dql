@@ -1,1 +1,2 @@
-timeseries requests=sum(salesdrone.http.requests), by:{service.name,operation,error.type}, filter:{service.namespace=="avinyatech" and deployment.environment.name=="production"}, interval:5m
+timeseries total=sum(salesdrone.http.requests), failed=sum(salesdrone.http.requests, filter:{http.status_class=="5xx"}, default:0), by:{service.name,operation}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production"}, from:now()-2h, interval:5m, union:true
+| fieldsAdd server_error_percent=if(total[]>0,100.0*failed[]/total[],else:null), server_success_percent=if(total[]>0,100.0*(total[]-failed[])/total[],else:null)

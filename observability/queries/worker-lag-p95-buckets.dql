@@ -1,0 +1,1 @@
+timeseries estimated_processed_job_lag_p95_s=percentile(salesdrone.worker.lag_bucket,95), by:{service.name,worker}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production"}, from:now()-2h, interval:5m

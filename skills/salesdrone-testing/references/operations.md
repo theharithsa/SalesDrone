@@ -117,3 +117,7 @@ Team cases: functions/test/team.test.js covers deterministic attribution, import
 
 
 CI case suites are functions, ingress, web, components and emulator. Node/Vitest runner summaries provide independent expected counts; readCaseEvidence reconciles them with emitted sanitized cases, validates suite paths/IDs/statuses and rejects empty, missing, duplicate or incomplete receipts. Each suite clears prior artifacts before running. Use scripts/emulator-tests.mjs so workspace cwd cannot erase emulator paths. Test the actual reporter on pass/fail/skip fixtures, not only a mocked mapper. Run compound Assistant/API and real Auth/Firestore regressions; do not fabricate historical missing events.
+
+## Monitoring policy and histogram verification
+
+Monitoring policy regressions: observability-pack.test.ts exercises minimum volumes, strict threshold boundaries, unknown/idle input, debounce and recovery. observability.test.js independently decodes delta histogram bucket counts; obs:verify only reads tenant queries, and no-data is distinct from health or installed-alert validation.

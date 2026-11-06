@@ -1,0 +1,1 @@
+timeseries backlog=max(salesdrone.queue.backlog), oldest_due_age_s=max(salesdrone.queue.oldest_due_age), by:{service.name,queue}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production"}, from:now()-2h, interval:5m, union:true

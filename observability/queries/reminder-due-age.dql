@@ -1,0 +1,1 @@
+timeseries value=max(salesdrone.queue.oldest_due_age, scalar:true), by:{service.name,queue}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production" and queue=="reminders"}, from:now()-5m

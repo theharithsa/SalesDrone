@@ -1,0 +1,1 @@
+timeseries value=sum(salesdrone.telemetry.exports, scalar:true), by:{service.name,signal}, filter:{service.namespace=="avinyatech" and startsWith(service.name,"salesdrone-") and deployment.environment.name=="production" and outcome=="failure"}, from:now()-5m
