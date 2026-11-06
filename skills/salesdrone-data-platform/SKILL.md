@@ -84,3 +84,5 @@ release preflight rejects duplicates before Firebase can issue concurrent create
 requests and fail HTTP 409. Field ordering remains semantically significant.
 
 Outreach cancellation queries require the tasks leadId/state/kind/id composite index. Restore commits lead, contact-owner repairs, timeline and lifecycle outbox atomically; transaction rollback must retain the archived record. Keep shared contact ownership and no-network-in-transaction rules.
+
+Committed summaries, audit and semantic projections are atomic even without the SDK. Count actual transaction attempts; propagate optional internal job origin as native span links, never fabricated parents. See [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md); verify retry/rollback and real emulator behavior.

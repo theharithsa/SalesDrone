@@ -108,3 +108,7 @@ Keep operational ingress health on the shared non-reserved path, with its own bo
 ## Per-suite case completeness
 
 CI now exports ingress and emulator testcase events as well as function/root/component cases. Archive cases-*.summary.json alongside NDJSON. Reconcile runner totals before successful verification; reporting emits available trusted check outcomes and marks caseEvidenceComplete false before failing if expected case evidence is incomplete. Project only hashes/status/duration/times; names/errors/source paths never enter Dynatrace events. Query exact commit/run totals by ci.check after deployment; acceptance is not tenant searchability. Existing #108 historical gaps are not backfilled.
+
+## Current journey instrumentation
+
+Follow [the journey contract](../../../docs/OBSERVABILITY-JOURNEYS.md). Classic RUM action-property keys use app_version, operation_outcome, request_id, http_status_class, error_code and interaction_intent; dotted backend attribute names are not valid RUM declaration keys. Preserve W3C tracestate as well as traceparent. Grouped PendingBatch/SendingBatch outboxes retain per-event checkpoints and must not be relabelled Pending for an older consumer. The synthetic journey verifier writes only to memory and labels transport evidence explicitly; it never modifies production leads.

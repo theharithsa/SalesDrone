@@ -1,3 +1,4 @@
+import {APP_VERSION} from '../functions/src/version.js';
 // Read the provided token from hidden terminal input. Never echo or write it to disk.
 import {cloud} from './cloud-access.mjs';
 import {spawnSync} from 'node:child_process';
@@ -15,8 +16,8 @@ const result=spawnSync('gh',['secret','set','DYNATRACE_API_TOKEN','--repo',repo]
 const envPath=new URL('../functions/.env.sales-drone-avinya',import.meta.url);let env=await readFile(envPath,'utf8');const cursor=env.match(/^CURSOR_SECRET=(.*)$/m)?.[1]?.trim().replace(/^['"]|['"]$/g,'');if(cursor){await secret('CURSOR_SECRET',cursor);env=env.replace(/^CURSOR_SECRET=.*\r?\n?/m,'');await writeFile(envPath,env,{mode:0o600});}
 const tenant='https://indiacs.live.dynatrace.com';
 const now=new Date().toISOString(),id='salesdrone-observability-check-'+Date.now();
-const event={specversion:'1.0',id,source:'com.avinyatech.salesdrone.validation',type:'com.avinyatech.salesdrone.instrumentation.validated',time:now,data:{'event.id':id,'event.authority':'server-confirmed','schema.version':1,'app.version':'1.0.0','validation.synthetic':true}};
-const accepted=await fetch(tenant+'/api/v2/bizevents/ingest',{method:'POST',redirect:'error',headers:{Authorization:'Api-Token '+token,'Content-Type':'application/json'},body:JSON.stringify(event),signal:AbortSignal.timeout(15000)});
+const event={specversion:'1.0',id,source:'com.avinyatech.salesdrone.validation',type:'com.avinyatech.salesdrone.instrumentation.validated',time:now,data:{'event.id':id,'event.provider':'com.avinyatech.salesdrone.validation','service.name':'salesdrone-validation','service.namespace':'avinyatech','deployment.environment.name':'verification','event.authority':'synthetic-verification','schema.version':1,'app.version':APP_VERSION,'validation.synthetic':true}};
+const accepted=await fetch(tenant+'/api/v2/bizevents/ingest',{method:'POST',redirect:'error',headers:{Authorization:'Api-Token '+token,'Content-Type':'application/cloudevent+json'},body:JSON.stringify(event),signal:AbortSignal.timeout(15000)});
 console.log(JSON.stringify({secretNames:['DYNATRACE_API_TOKEN',...(cursor?['CURSOR_SECRET']:[])],githubSecretConfigured:true,bizEventProbe:{status:accepted.status,eventId:id},tenant}));
 // eslint-disable-next-line no-useless-assignment -- Release this reference after use; immutable strings cannot be zeroized.
 token='';

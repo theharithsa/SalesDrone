@@ -1,3 +1,4 @@
+import { errorType as telemetryErrorType } from './observability-contract.js';
 import {teamSnapshot, teamDays, teamSince, assertTeamAccess, authoredActivity} from './team.js';
 import {businessRecord} from './business-records.js';
 import { ResearchSettingsPatch, RESEARCH_SETTINGS_PATH, readResearchSettings, validateResearchSettings } from './lead-research-settings.js';
@@ -219,6 +220,7 @@ export function createApp({
           await verifyAppCheck(req.headers['x-firebase-appcheck']);
       }
       telemetry()?.identify(req.identity.uid);
+      telemetry()?.stage?.('authenticated');
       for (const p of req.path.split('/').filter(Boolean))
         if (!/^[A-Za-z0-9_.:-]+$/.test(p))
           throw new AppError(400, 'PATH', 'Invalid path');
@@ -230,6 +232,7 @@ export function createApp({
   const route = (method, url, capability, handler) =>
     router[method](url, async (req, res, next) => {
       try {
+        telemetry()?.operation?.(method.toUpperCase()+' '+url);
         if (req.identity.personalAccess) {
           const scope = PAT_ROUTES[method + ' ' + url];
           if (!scope)
@@ -254,7 +257,7 @@ export function createApp({
           }
         }
         req.member = await requireMember(store, req.identity, capability);
-        telemetry()?.operation(method.toUpperCase() + ' ' + url);
+        telemetry()?.stage?.('authorized');
         if (
           method !== 'get' &&
           /^\/(leads|tasks|activities|imports|dashboard|lead-hygiene|lead-assistant)(\/|$)/.test(url) &&
@@ -291,7 +294,10 @@ export function createApp({
               'FILTER',
               'Unknown or invalid query parameter: ' + key,
             );
+        telemetry()?.stage?.('validated',{'field.count':Object.keys(req.body||{}).length});
+        telemetry()?.stage?.('executing');
         const result = await handler(req, res);
+        telemetry()?.stage?.('responded');
         if (res.headersSent) return;
         res.json(result ?? { ok: true });
       } catch (e) {
@@ -322,6 +328,7 @@ export function createApp({
             'IDEMPOTENCY_CONFLICT',
             'This key was already used for a different request',
           );
+        const replayed=async value=>{const result=await value;telemetry()?.stage?.('replayed');return result;};
         if (req.path === '/leads/batch')
           for (const item of req.body.items)
             await leadAccess(tx, member, item.id);
@@ -336,15 +343,15 @@ export function createApp({
           await leadAccess(tx, member, prior.result.leadId);
         if (req.path.startsWith('/imports') && prior.result?.id) {
           const job = await readImport(tx, member, prior.result.id);
-          return job.formatVersion === 3 ? importSummary(job) : prior.result;
+          return replayed(job.formatVersion === 3 ? importSummary(job) : prior.result);
         }
         if (req.path.startsWith('/lead-hygiene/scans') && prior.result?.id)
-          return readHygieneScan(tx,req.identity,prior.result.id);
+          return replayed(readHygieneScan(tx,req.identity,prior.result.id));
         if (req.path.startsWith('/lead-assistant/conversations') && prior.result?.id) {
-          if(req.path.endsWith('/questions')) return readAssistantRequest(tx,req.identity,prior.result.id);
-          return readConversation(tx,req.identity,prior.result.id);
+          if(req.path.endsWith('/questions')) return replayed(readAssistantRequest(tx,req.identity,prior.result.id));
+          return replayed(readConversation(tx,req.identity,prior.result.id));
         }
-        return prior.result;
+        return replayed(prior.result);
       }
       const ratePath = path(
         'rateLimits',
@@ -2784,6 +2791,9 @@ export function createApp({
             }
           : null;
     const status = parserError?.status || err.status || 500;
+    req.telemetryErrorType=telemetryErrorType(parserError||err);
+    telemetry()?.stage?.('rejected',{'error.type':req.telemetryErrorType,'http.status_code':status});
+    telemetry()?.log(status>=500?'http.failed':'http.rejected',{'error.type':req.telemetryErrorType,'http.status_code':status},status>=500?'ERROR':'WARN');
     // Cleanup is an expected temporary lock, not an opaque server failure.
     // Use fixed public copy; never expose arbitrary provider error messages.
     const leadDataReset =
@@ -2791,14 +2801,6 @@ export function createApp({
     if (status === 401)
       res.set('WWW-Authenticate', 'Bearer realm="SalesDrone"');
     if (status === 429 || leadDataReset) res.set('Retry-After', '60');
-    if (status >= 500)
-      console.error(
-        JSON.stringify({
-          requestId: req.requestId,
-          code: err.code || 'INTERNAL',
-          message: 'Request failed',
-        }),
-      );
     res.status(status).json({
       error: {
         code: parserError?.code || err.code || 'INTERNAL',

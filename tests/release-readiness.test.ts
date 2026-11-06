@@ -126,8 +126,8 @@ test('Dynatrace receipts require every signal and reject partial, malformed or m
       otlpReceipt(signal, 200, new Uint8Array()),
     ),
     bizEventStatus: 202,
-    deploymentMarkerStatus: 201,
-    markerResults: [{ status: 'OK' }],
+    sdlcEventStatus:202,
+    sdlcEventId:'a'.repeat(64),
   };
   assertDeploymentReceipts(receipt);
   for (const signal of ['traces', 'logs', 'metrics'])
@@ -151,7 +151,7 @@ test('Dynatrace receipts require every signal and reject partial, malformed or m
   assert.throws(() =>
     assertDeploymentReceipts({
       ...receipt,
-      markerResults: [{ status: 'ERROR' }],
+      sdlcEventStatus:403,
     }),
   );
   assert.throws(() =>

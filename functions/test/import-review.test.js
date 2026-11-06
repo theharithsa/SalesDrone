@@ -561,10 +561,13 @@ test('import committed telemetry contains lifecycle counts but no workbook or co
     });
   });
   const events = await base.query(path('telemetryOutbox'));
-  assert.equal(events.length, 1);
-  assert.equal(events[0].event.data['records.import_created'], 2);
-  assert.equal(events[0].event.data['records.import_updated'], 1);
-  assert.equal(events[0].event.data['records.import_completed'], 1);
+  assert.equal(events.length, 2);
+  const summary=events.find(e=>e.event.type.endsWith('imports.committed')),completed=events.find(e=>e.event.type.endsWith('imports.completed'));
+  assert.equal(summary.event.data['records.import_created'], 2);
+  assert.equal(summary.event.data['records.import_updated'], 1);
+  assert.equal(summary.event.data['records.import_completed'], 1);
+  assert.equal(completed.event.data['rows.created'],2);
+  assert.equal(completed.event.data['rows.updated'],1);
   assert.ok(!JSON.stringify(events).includes('PRIVATE-'));
 });
 

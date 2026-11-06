@@ -83,3 +83,5 @@ These are tracked follow-ups, not implemented behavior: [#39](https://github.com
 Keep unknown/conflicting factor points hidden and unscored component totals as dashes; retain legitimate reported zero/positive points in spaced, wrapping rows and avoid negative-zero risk. This is presentation only, never change stored evidence/calculations. Focused component cases: lead score evidence values in workflows.test.tsx.
 
 The shared leadIntelligence scheduled function now also advances bounded lead research/index work. Separate research failures from scoring; no research exception may prevent the scoring pass. Research has a finite per-invocation time budget and no additional independently deployed function.
+
+Gemini diagnostics retain finite provider/schema causes and reported token usage; never evidence text. Worker summaries include research failures without stopping scoring. Scoring is a scan, so no fictional Pending backlog is published. See [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md).

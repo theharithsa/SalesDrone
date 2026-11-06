@@ -9,6 +9,15 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.9.4] - 2026-11-06
+
+### Changed
+- Add correlated application stages, typed API/vendor errors, database collection/attempt timing, Gemini usage and worker backlog/lag reporting; suppress idle completion noise.
+- Preserve transactional audit capture during telemetry SDK outages and add privacy-safe semantic lead, activity, task and import events with genuine asynchronous trace links.
+- Fix browser API outcome reporting and record bounded user intents, caught/render/global failures without exporting customer text; use valid underscore RUM property keys and preserve W3C tracestate through the ingress.
+- Replace classic deployment markers with native Dynatrace SDLC events carrying service, commit and workflow identity. Add production-filtered diagnostic queries, detection definitions and an explicit tenant/RUM verification runbook.
+
 ## [2.9.3] - 2026-11-04
 
 ### Changed

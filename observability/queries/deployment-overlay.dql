@@ -1,0 +1,5 @@
+fetch events, from:now()-24h
+| filter event.kind == "SDLC_EVENT" and event.type == "deployment" and event.status == "finished"
+| filter service.namespace == "avinyatech" and deployment.environment.name == "production"
+| fields timestamp, event.id, service.version, build.commit, github.run.id, pipeline.run.url, cicd.deployment.status, dt.system.bucket
+| sort timestamp desc

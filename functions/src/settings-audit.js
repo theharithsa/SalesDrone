@@ -203,6 +203,8 @@ export function queueSettingsAudits(tx, audit, changes, capture = {}) {
       const id = hash(audit.id + ':settings:' + i + ':' + offset / 40);
       const data = {
         'event.id': id,
+        'service.name':capture.serviceName||'salesdrone-backend',
+        'service.namespace':'avinyatech',
         'event.provider': 'com.avinyatech.salesdrone.backend',
         'event.authority': 'server-confirmed',
         'schema.version': 1,

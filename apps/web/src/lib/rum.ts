@@ -1,7 +1,11 @@
+import { rumOutcome, httpStatusClass } from './rum-outcomes';
+import { APPLICATION_ERRORS } from '../../../../functions/src/observability-contract.js';
 import { createAnonymousId, finishAction } from './rum-runtime';
 import { createRumIdentity } from './rum-identity';
 import { APP_VERSION } from './version';
 type Rum = {
+  reportCustomError?: (key:string,value:string,hint?:string,parentingInfo?:number|boolean)=>void;
+  reportError?: (error:{message:string})=>void;
   disableSessionReplay?: () => void;
   setAutomaticActionDetection?: (enabled: boolean) => void;
   enableManualPageDetection?: () => void;
@@ -142,29 +146,55 @@ export function rumPage(path: string) {
   if (!r || name === lastPage) return;
   try {
     r.setPage?.({ name, group: 'salesdrone' });
+    const action=r.enterAction?.('View '+name);
+    finishAction(r,action)({'app_version':APP_VERSION,'interaction_intent':'View '+name});
     lastPage = name;
   } catch {}
+}
+export function safeIntent(path:string,method:string){
+  if(method==='GET')return 'Read workspace';
+  const root=path.split('/').filter(Boolean)[0];
+  if(root==='imports'&&path.endsWith('/commit'))return 'Commit import';
+  if(root==='lead-assistant')return 'Ask Lead Assistant';
+  if(root==='lead-hygiene')return 'Review lead hygiene';
+  if(['field-options','workspace-settings','ai-settings','scoring-settings','lead-research-settings','me'].includes(root))return 'Save settings';
+  if(root==='leads')return method==='POST'?(path.split('?')[0]==='/leads'?'Create lead':path.includes('/activities')?'Add lead activity':'Update lead'):'Update lead';
+  if(root==='tasks')return method==='POST'?'Create task':'Update task';
+  return 'Update workspace';
 }
 export function beginRumRequest(path: string, method: string) {
   const r = rum();
   let id: number | undefined;
   try {
-    id = r?.enterAction?.('API ' + safeOperation(path, method));
+    id = r?.enterAction?.(method==='GET'?'API '+safeOperation(path,method):safeIntent(path,method));
   } catch {}
   const finish = finishAction(r, id);
-  return (outcome: string, requestId?: string) =>
+  let done=false;
+  return (outcome: string, requestId?: string, status?:number, code?:string) => {
+    if(done)return;done=true;
+    const safeCode=code&&(APPLICATION_ERRORS.has(code)||['API_UNAVAILABLE','NETWORK'].includes(code))?code:code?'INTERNAL':rumOutcome(outcome)==='network_error'?'NETWORK':'none';
+    if(rumOutcome(outcome)==='network_error'||rumOutcome(outcome)==='failure'&&(!status||status>=500||[401,403,429].includes(status)||safeCode==='API_UNAVAILABLE')) reportRumFailure(safeCode==='none'?'NETWORK':safeCode, requestId, id);
     finish({
-      'app.version': APP_VERSION,
-      'operation.outcome': [
-        'success',
-        'failure',
-        'cancelled',
-        'error',
-      ].includes(outcome)
-        ? outcome
-        : 'other',
+      'app_version': APP_VERSION,
+      'operation_outcome':rumOutcome(outcome),
+      'interaction_intent':safeIntent(path,method),
+      'http_status_class':httpStatusClass(status),
+      'error_code':safeCode,
       ...(requestId && /^[a-f0-9-]{36}$/i.test(requestId)
-        ? { 'request.id': requestId }
+        ? { 'request_id': requestId }
         : {}),
     });
+  };
+}
+
+export function reportRumFailure(code: string, requestId?:string, actionId?:number) {
+  const safe=['NETWORK','RENDER','UNHANDLED','API_UNAVAILABLE'].includes(code)||APPLICATION_ERRORS.has(code)?code:'INTERNAL';
+  const hint=requestId&&/^[a-f0-9-]{36}$/i.test(requestId)?requestId:undefined;
+  try {rum()?.reportCustomError?.('salesdrone.error',safe,hint,actionId??false);} catch { /* Monitoring never blocks the UI. */ }
+}
+export function installRumErrorHandlers() {
+  const error=()=>reportRumFailure('UNHANDLED');
+  window.addEventListener('error',error);
+  window.addEventListener('unhandledrejection',error);
+  return ()=>{window.removeEventListener('error',error);window.removeEventListener('unhandledrejection',error);};
 }

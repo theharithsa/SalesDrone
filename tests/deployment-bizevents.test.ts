@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-test('real deployment notifier uses CloudEvents for BizEvents and JSON for markers, with safe receipts', async () => {
+test('real deployment notifier uses CloudEvents for BizEvents and native SDLC events, with safe receipts', async () => {
   const root = await mkdtemp(join(tmpdir(), 'salesdrone-biz-'));
   try {
     await writeFile(
@@ -29,9 +29,9 @@ test('real deployment notifier uses CloudEvents for BizEvents and JSON for marke
       if(options.headers['Content-Type']!=='application/cloudevent+json'||body.type!=='com.avinyatech.salesdrone.deployment.succeeded'||body.source!==body.data['event.provider'])throw Error('Invalid CloudEvent');
       return new Response('',{status:202});
     }
-    if(url.endsWith('/events/ingest')){
-      if(options.headers['Content-Type']!=='application/json'||body.eventType!=='CUSTOM_DEPLOYMENT')throw Error('Invalid marker');
-      return Response.json({eventIngestResults:[{status:'OK'}]},{status:201});
+    if(url.endsWith('/platform/ingest/v1/events.sdlc')){
+      if(options.headers['Content-Type']!=='application/json'||body['event.type']!=='deployment'||body['service.namespace']!=='avinyatech'||body['event.status']!=='finished')throw Error('Invalid marker');
+      return new Response('',{status:202});
     }
     if(url.includes('/otlp/v1/'))return new Response(null,{status:200,headers:{'Content-Type':'application/x-protobuf'}});
     throw Error('Unknown operation');

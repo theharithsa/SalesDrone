@@ -1,3 +1,4 @@
+import { geminiRequest, validateProvider } from './dependency-observability.js';
 import { DEFAULT_GEMINI_MODEL, resolveModel } from './model-config.js';
 import { z } from 'zod';
 import { Extraction, localParts } from './automatic-reminders.js';
@@ -6,10 +7,11 @@ export function geminiExtractor({
   key,
   model = DEFAULT_GEMINI_MODEL,
   fetchImpl = fetch,
+  telemetry,
 }) {
   return async ({ notes, referenceAt, timezone }) => {
     const reference = localParts(referenceAt, timezone);
-    const response = await fetchImpl(
+    const response = await geminiRequest(fetchImpl,
       `https://generativelanguage.googleapis.com/v1beta/models/${resolveModel(model)}:generateContent`,
       {
         method: 'POST',
@@ -50,6 +52,7 @@ Use timing=minutes and minutes=N for 'in N minutes'; convert explicit hours to m
           },
         }),
       },
+      telemetry,
     );
     if (!response.ok) {
       const error = new Error('Gemini analysis unavailable');
@@ -58,6 +61,7 @@ Use timing=minutes and minutes=N for 'in N minutes'; convert explicit hours to m
         : response.status === 429
           ? 'GEMINI_RATE_LIMIT'
           : 'GEMINI_UNAVAILABLE';
+      error.cause=response.observabilityError;
       throw error;
     }
     const data = await response.json();
@@ -65,6 +69,6 @@ Use timing=minutes and minutes=N for 'in N minutes'; convert explicit hours to m
       ?.filter((p) => p.text && !p.thought)
       .map((p) => p.text)
       .join('');
-    return Extraction.parse(JSON.parse(text || 'null'));
+    return validateProvider(()=>Extraction.parse(JSON.parse(text || 'null')),telemetry);
   };
 }

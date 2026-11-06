@@ -25,7 +25,7 @@ Resolve the intended behavior, defaults, personal/workspace scope, data exposure
 
 The main workflow deploys rules/indexes, waits for readiness, then Functions and Hosting. Post-deploy checks require exact version/SHA, matching OpenAPI, unauthenticated API denial and ACTIVE metadata for all five functions. The documentation job independently checks the versioned settings guide on Pages. Safe JSON artifacts retain results even when checks fail.
 
-Notify Dynatrace with version, commit, run, outcome and function metadata. The workflow probes real OTLP metrics/traces/logs and checks partial-success rejection counts, then checks canonical deployment BizEvent and deployment marker acceptance. A failure after a successful app deployment is a reporting/verification failure; inspect before retrying, never blindly redeploy or roll back business data.
+Notify Dynatrace with version, commit, run, outcome and function metadata. The workflow probes real OTLP metrics/traces/logs and checks partial-success rejection counts, then checks canonical deployment BizEvent and native SDLC HTTP202 acceptance. A failure after a successful app deployment is a reporting/verification failure; inspect before retrying, never blindly redeploy or roll back business data.
 
 Separately verify affected read-only production UI and the browser RUM identity mode when applicable. Tenant searches and native cross-signal links need query access; if unavailable, report the boundary explicitly. Never mark a pending/manual check passed from a plan or an HTTP receipt. A plan names expected checks; workflow artifacts and observed behavior provide evidence.
 
@@ -48,7 +48,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
 
 Current release plans require a milestone reference with numeric scope and readiness. Planning state holds publication; CI checks live GitHub milestone/issue assignments and PR closing scope. Main publication requires completed issue states. See docs/RELEASE-GOVERNANCE.md and milestone-policy.test.ts; local review iterations do not advance SemVer.
 

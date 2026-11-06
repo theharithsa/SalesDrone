@@ -54,3 +54,5 @@ Drain supported oversized wire bodies without buffering (up to the platform ceil
 before returning 413. Keep the application deadline below Hosting's 60 seconds.
 
 Use the shared HEALTH_PATH `/ingress-health`; never `/healthz` or other Cloud Run reserved paths. Check status/content type before JSON, then exact version/SHA. Provider HTML must hold Hosting cutover. Separate this operational route from API request metrics. See issue #106 and API-INGRESS.md for the first managed-boundary failure.
+
+Preserve validated W3C traceparent **and tracestate** through native ingress/api.forward/API context, including the Dynatrace vendor entry. Forwarding only the trace ID cannot certify RUM linkage. Use decoded real HTTP telemetry.test.js and the [journey runbook](../../docs/OBSERVABILITY-JOURNEYS.md); never log raw headers.

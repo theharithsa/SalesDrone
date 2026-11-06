@@ -1,3 +1,4 @@
+import { geminiRequest, validateProvider } from './dependency-observability.js';
 import { DEFAULT_GEMINI_MODEL, resolveModel } from './model-config.js';
 import { AppError } from './contracts.js';
 import { z } from 'zod';
@@ -7,9 +8,10 @@ export function intelligenceGemini({
   key,
   model = DEFAULT_GEMINI_MODEL,
   fetchImpl = fetch,
+  telemetry,
 }) {
   async function generate(schema, instruction, input) {
-    const response = await fetchImpl(
+    const response = await geminiRequest(fetchImpl,
       `https://generativelanguage.googleapis.com/v1beta/models/${resolveModel(model)}:generateContent`,
       {
         method: 'POST',
@@ -31,20 +33,21 @@ export function intelligenceGemini({
           },
         }),
       },
+      telemetry,
     );
     if (!response.ok) {
-      throw new AppError(
+      throw Object.assign(new AppError(
         response.status === 429 ? 429 : 503,
         response.status === 429 ? 'AI_RATE_LIMIT' : 'AI_UNAVAILABLE',
         'AI analysis is temporarily unavailable',
-      );
+      ),{cause:response.observabilityError});
     }
     const data = await response.json();
     const text = data.candidates?.[0]?.content?.parts
       ?.filter((p) => p.text && !p.thought)
       .map((p) => p.text)
       .join('');
-    return schema.parse(JSON.parse(text || 'null'));
+    return validateProvider(()=>schema.parse(JSON.parse(text || 'null')),telemetry);
   }
   return {
     extract: (input) =>

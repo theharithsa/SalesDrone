@@ -64,4 +64,4 @@ Global shared-task and computed-font regressions: see [operations](references/op
 
 Team reporting guidance is in [operations](references/operations.md).
 
-Toolchain upgrades must preserve real leaf receipts, the lint baseline and accessibility/hooks checks. Follow [migration](../../docs/TOOLCHAIN-MIGRATION.md), including native compiler rejection and isolated lint regression cases. Firebase client Auth emulator coverage does not certify browser popup/App Check/provider configuration.
+Toolchain upgrades must preserve real leaf receipts, the lint baseline and accessibility/hooks checks. Follow [migration](../../docs/TOOLCHAIN-MIGRATION.md), including native compiler rejection and isolated lint regression cases. Auth emulators do not certify browser App Check. Journey coverage: observability-contract.test.js and rum-api.test.tsx; see [contract](../../docs/OBSERVABILITY-JOURNEYS.md).

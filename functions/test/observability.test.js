@@ -1,3 +1,5 @@
+import { intelligenceGemini } from '../src/intelligence-gemini.js';
+import { geminiRequest } from '../src/dependency-observability.js';
 import { APP_VERSION } from '../src/version.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -169,6 +171,24 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
       (await base.query(path('leads'), { limit: 100 })).length,
       before,
     );
+    await request(app).patch('/api/v1/leads/'+a.body.id).set('Authorization','Bearer alice').send({expectedVersion:999,stage:'New'}).expect(409);
+    const denied=await request(app).get('/api/v1/leads').expect(401);
+    t.queueHealth('analysis',12,'2026-01-01T00:00:00Z');
+    t.workItem('note-analysis','claimed','2026-01-01T00:00:00Z');
+    t.workSummary('note-analysis',{failed:2,scheduled:3});
+    await t.worker('note-analysis',async()=>({failed:1,scheduled:0}));
+    const previousDebug=process.env.TELEMETRY_DEBUG_UNTIL;
+    try {
+      delete process.env.TELEMETRY_DEBUG_UNTIL;t.log('instrumentation.validation',{outcome:'debug_off'},'DEBUG');
+      process.env.TELEMETRY_DEBUG_UNTIL=new Date(Date.now()+60000).toISOString();t.log('instrumentation.validation',{outcome:'debug_on'},'DEBUG');
+      process.env.TELEMETRY_DEBUG_UNTIL=new Date(Date.now()+960000).toISOString();t.log('instrumentation.validation',{outcome:'debug_far_off'},'DEBUG');
+    } finally {if(previousDebug===undefined)delete process.env.TELEMETRY_DEBUG_UNTIL;else process.env.TELEMETRY_DEBUG_UNTIL=previousDebug;}
+
+    t.log('instrumentation.validation',{phone:'PRIVATE SHOULD DROP','error.type':'PRIVATE_CODE'});
+    await t.span('gemini.synthetic',()=>geminiRequest(async()=>Response.json({usageMetadata:{promptTokenCount:12,candidatesTokenCount:4},candidates:[{finishReason:'MAX_TOKENS',content:{parts:[{text:'PRIVATE OUTPUT'}]}}]}),'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent',{},t));
+    const unavailable=intelligenceGemini({key:'synthetic',telemetry:t,fetchImpl:async()=>new Response('',{status:403})});
+    await assert.rejects(t.span('gemini.qualification',()=>unavailable.extract({})),error=>error.code==='AI_UNAVAILABLE');
+    await assert.rejects(t.span('gemini.timeout',()=>{throw Object.assign(Error('PRIVATE ERROR'),{name:'TimeoutError',code:23});}));
     t.researchOperation('plan','success',0.125);
     t.researchOperation('PRIVATE_UNBOUNDED','success',0.5);
     await t.flush();
@@ -209,6 +229,10 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
           Buffer.from(l.spanId).length === 8,
       ),
     );
+    assert.ok(logs.some(l=>l.body.stringValue==='worker.completed'&&l.severityText==='WARN'&&attr(l.attributes).outcome==='partial_failure'));
+    assert.ok(logs.some(l=>attr(l.attributes).outcome==='debug_on'));
+    assert.ok(!logs.some(l=>['debug_off','debug_far_off'].includes(attr(l.attributes).outcome)));
+    assert.ok(logs.some(l=>l.body.stringValue==='operation.failed'&&l.severityText==='WARN'&&attr(l.attributes)['error.type']==='STALE_VERSION'));
     const metrics = received
       .filter((r) => r.path.endsWith('metrics'))
       .flatMap((r) =>
@@ -220,8 +244,18 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
     assert.equal(researchMetric.sum.dataPoints.length,1);
     assert.deepEqual(attr(researchMetric.sum.dataPoints[0].attributes),{kind:'plan',outcome:'success'});
     assert.equal(metrics.find(m=>m.name==='salesdrone.research.duration').unit,'s');
+    assert.ok(traces.some(s=>attr(s.attributes)['http.response.status_code']===401&&attr(s.attributes)['error.type']===denied.body.error.code));
+    assert.ok(logs.some(l=>l.body.stringValue==='http.completed'&&attr(l.attributes)['error.type']===denied.body.error.code&&l.severityText==='WARN'));
+    assert.ok(traces.some(s=>s.name==='gemini.synthetic'&&attr(s.attributes)['gen_ai.usage.input_tokens']===12));
+    assert.ok(traces.some(s=>s.name==='gemini.qualification'&&attr(s.attributes)['error.type']==='GEMINI_CONFIG'));
+    assert.ok(traces.some(s=>s.name==='gemini.timeout'&&attr(s.attributes)['error.type']==='DEPENDENCY_TIMEOUT'));
+    assert.ok(metrics.some(m=>m.name==='salesdrone.queue.backlog'&&m.gauge.dataPoints.some(p=>p.asDouble===12)));
+    assert.ok(metrics.some(m=>m.name==='salesdrone.worker.lag'&&m.histogram.dataPoints.some(p=>p.sum>0)));
+    assert.ok(metrics.some(m=>m.name==='salesdrone.gen_ai.tokens'&&m.sum.dataPoints.some(p=>p.asDouble===12)));
+    assert.ok(metrics.some(m=>m.name==='salesdrone.telemetry.dropped'&&m.sum.dataPoints.some(p=>p.asDouble>0)));
     const counter = metrics.find((m) => m.name === 'salesdrone.http.requests'),
       hist = metrics.find((m) => m.name === 'salesdrone.http.duration');
+    assert.ok(counter.sum.dataPoints.some(p=>attr(p.attributes)['error.type']===denied.body.error.code));
     const runtimeMemory = metrics.find(m => m.name === 'salesdrone.runtime.memory');
     assert.equal(runtimeMemory.unit, 'By');
     assert.ok(runtimeMemory.gauge.dataPoints.some(p => attr(p.attributes).kind === 'heapUsed' && p.asDouble > 0));
@@ -244,6 +278,7 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
               'operation',
               'http.request.method',
               'http.response.status_code',
+              ...(metric===counter?['error.type']:[]),
             ].includes(k),
           ),
         );
@@ -514,6 +549,6 @@ test('restores produce one committed lifecycle outcome without contact data and 
  const base=memoryStore(),store=observableStore(base,()=>null);
  await base.run(async tx=>tx.set(path('leads','restore-synthetic'),{id:'restore-synthetic',archived:true,phone:'PRIVATE',version:1}));
  await store.run(async tx=>{const l=await tx.get(path('leads','restore-synthetic'));tx.set(path('leads',l.id),{...l,archived:false,version:2});});
- const events=await base.query(path('telemetryOutbox'),{limit:100});assert.equal(events.length,1);assert.equal(events[0].event.data['records.restored'],1);assert.ok(!JSON.stringify(events).includes('PRIVATE'));
- await assert.rejects(store.run(async tx=>{const l=await tx.get(path('leads','restore-synthetic'));tx.set(path('leads',l.id),{...l,archived:true});throw Error('rollback');}));assert.equal((await base.query(path('telemetryOutbox'),{limit:100})).length,1);
+ const events=await base.query(path('telemetryOutbox'),{limit:100});assert.equal(events.length,2);assert.equal(events.find(e=>e.event.type.endsWith('.committed')).event.data['records.restored'],1);assert.equal(events.filter(e=>e.event.type.endsWith('.leads.restored')).length,1);assert.ok(!JSON.stringify(events).includes('PRIVATE'));
+ await assert.rejects(store.run(async tx=>{const l=await tx.get(path('leads','restore-synthetic'));tx.set(path('leads',l.id),{...l,archived:true});throw Error('rollback');}));assert.equal((await base.query(path('telemetryOutbox'),{limit:100})).length,2);
 });

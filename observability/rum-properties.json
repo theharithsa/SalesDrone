@@ -1,0 +1,16 @@
+{
+  "applicationId":"APPLICATION-18B14A171E918AFC",
+  "source":"JavaScript API",
+  "dataType":"String",
+  "storage":"user action only",
+  "caseInsensitiveNaming":false,
+  "properties":[
+    {"key":"app_version","displayName":"App version"},
+    {"key":"operation_outcome","displayName":"Operation outcome"},
+    {"key":"request_id","displayName":"Request ID"},
+    {"key":"http_status_class","displayName":"HTTP status class"},
+    {"key":"error_code","displayName":"Error code"},
+    {"key":"interaction_intent","displayName":"Interaction intent"}
+  ],
+  "privacy":"Keep existing DNT/privacy controls and Replay disabled. No DOM, cookie or raw URL capture. This is an operator declaration contract, not a settings API credential or installed-state assertion."
+}

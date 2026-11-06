@@ -5,6 +5,7 @@ import { deliveryContext } from './notifications.js';
 // eligible again. Delivery IDs and per-device results survive worker retries.
 export async function dispatchReminders({
   store,
+  telemetry,
   send,
   now = () => new Date().toISOString(),
   limit = 50,
@@ -58,6 +59,8 @@ export async function dispatchReminders({
       continue;
     }
     stats.claimed++;
+    telemetry?.workItem?.('reminders','claimed',job.task?.dueAt);
+    telemetry?.stage?.('claimed');
     const devices = await store.query(`users/${job.member.uid}/devices`, {
       filters: [['enabled', '==', true]],
       limit: 100,

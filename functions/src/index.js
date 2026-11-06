@@ -1,3 +1,5 @@
+import { observeQueue } from './worker-observability.js';
+import { errorType } from './observability-contract.js';
 import { researchStore } from './lead-research-store.js';
 import { researchGemini } from './lead-research-gemini.js';
 import { researchWork } from './lead-research-worker.js';
@@ -78,6 +80,7 @@ const geminiModel = defineString('GEMINI_MODEL', {
   default: DEFAULT_GEMINI_MODEL,
 });
 const intelligence = intelligenceGemini({
+  telemetry: () => observability,
   key: () => geminiKey.value(),
   model: () => geminiModel.value(),
 });
@@ -93,7 +96,7 @@ const appCheckMode = defineString('APP_CHECK_MODE', {
 const store = guardLeadData(
   observableStore(researchStore(firestoreStore(getFirestore()),()=>observability?.capture()?.traceparent), () => observability),
 );
-const research = researchGemini({key:()=>geminiKey.value(),model:()=>geminiModel.value()});
+const research = researchGemini({telemetry:()=>observability,key:()=>geminiKey.value(),model:()=>geminiModel.value()});
 async function researchDependency(kind,fn) {
   const started=performance.now();let outcome='success';
   try {return await dependency(kind==='batch'?'lead-research.batch':'gemini.lead-'+kind,fn);}
@@ -205,10 +208,10 @@ export const reminders = onSchedule(
       try {
         const expiry = await backfillRateLimitExpiry(store, ROOT);
         if (expiry.scanned)
-          console.info(JSON.stringify({ event: 'rate_limit_expiry_backfill', ...expiry }));
-      } catch {
+          observability?.log('worker.stage',{'operation.stage':'cleanup',processed:expiry.scanned});
+      } catch(error) {
         // Internal retention maintenance must not prevent scheduled outreach delivery.
-        console.warn(JSON.stringify({ event: 'rate_limit_expiry_backfill_failed' }));
+        observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'WARN');
       }
       const reset = await advanceLeadReset({
         store,
@@ -221,22 +224,22 @@ export const reminders = onSchedule(
           removed: reset.removed,
           blocked: reset.blocked,
         };
+      await observeQueue(store,observability,'reminders');
       const stats = await dispatchReminders({
         store,
+        telemetry:observability,
         send: (message) =>
           dependency('fcm.delivery', () => getMessaging().send(message)),
       });
-      console.info(JSON.stringify({ event: 'reminder_dispatch', ...stats }));
+
       try {
         const cleanup = await cleanupAttachments({
           store,
           files: firebaseFiles(dependency),
         });
-        console.info(
-          JSON.stringify({ event: 'attachment_cleanup', ...cleanup }),
-        );
-      } catch {
-        console.warn(JSON.stringify({ event: 'attachment_cleanup_failed' }));
+        observability?.log('worker.stage',{'operation.stage':'cleanup',...cleanup},Object.values(cleanup).some(value=>typeof value==='number'&&value>0)?'INFO':'DEBUG');
+      } catch(error) {
+        observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'WARN');
       }
       return stats;
     }),
@@ -255,17 +258,20 @@ export const analyzeNotes = onSchedule(
   async () =>
     worker('note-analysis', async () => {
       if (resetActive(await store.get(RESET_STATE))) return { skipped: 1 };
+      await observeQueue(store,observability,'analysis');
       const stats = await processNotes({
         store,
+        telemetry:observability,
         extract: (input) =>
           dependency('gemini.reminder', () =>
             geminiExtractor({
+              telemetry:()=>observability,
               key: geminiKey.value(),
               model: () => geminiModel.value(),
             })(input),
           ),
       });
-      console.info(JSON.stringify({ event: 'note_analysis', ...stats }));
+
       return stats;
     }),
 );
@@ -284,17 +290,19 @@ export const leadIntelligence = onSchedule(
   async () =>
     worker('lead-intelligence', async () => {
       if (resetActive(await store.get(RESET_STATE))) return { skipped: 1 };
+      let researchStats={};
       try {
-        const researchStats = await researchDependency('batch',()=>researchWork({store,provider:observedResearch,budgetMs:40000,observe:(name,fn,parent)=>observability?observability.span('lead-research.'+name,fn,{},parent):fn()}));
-        console.info(JSON.stringify({event:'lead_research',...researchStats}));
-      } catch {console.warn(JSON.stringify({event:'lead_research_failed'}));}
+        await observeQueue(store,observability,'research');
+        researchStats = await researchDependency('batch',()=>researchWork({store,provider:observedResearch,budgetMs:40000,observe:(name,fn,parent)=>observability?observability.span('lead-research.'+name,fn,{},parent):fn()}));
+        if(researchStats.processed||researchStats.failed||researchStats.indexed)observability?.log('worker.stage',{'operation.stage':'completed',...researchStats},researchStats.failed?'WARN':'INFO');
+      } catch(error) {researchStats={failed:1};observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'ERROR');}
       const stats = await scoreLeads({
         store,
         extract: (input) =>
           dependency('gemini.qualification', () => intelligence.extract(input)),
       });
-      console.info(JSON.stringify({ event: 'lead_scoring', ...stats }));
-      return stats;
+
+      return Object.fromEntries([...new Set([...Object.keys(stats),...Object.keys(researchStats)])].map(key=>[key,Number(stats[key]||0)+Number(researchStats[key]||0)]));
     }),
 );
 
@@ -317,7 +325,7 @@ export const exportTelemetry = onSchedule(
         key: dtKey.value(),
         telemetry: observability,
       });
-      console.info(JSON.stringify({ event: 'telemetry_export', ...stats }));
+
       return stats;
     }),
 );
