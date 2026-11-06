@@ -10,6 +10,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.9.5] - 2026-11-06
+
+### Fixed
+- Preserve administrative task kinds in committed telemetry and identify manual note follow-ups from their saved result, with API-level privacy regressions.
+- Add the separate Firestore aggregate-count indexes required by worker backlog/lag health probes; keep existing delivery drain indexes.
+
 ## [2.9.4] - 2026-11-06
 
 ### Changed

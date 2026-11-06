@@ -72,3 +72,7 @@ Deployment notification uses JSON `/platform/ingest/v1/events.sdlc` with event.c
 7. Record missing config access, RUM properties/linkage or tenant alert installation as pending, retain the relevant issue open, and never substitute HTTP202 for searchability.
 
 References: [OTel log model](https://opentelemetry.io/docs/specs/otel/logs/), [sensitive data](https://opentelemetry.io/docs/security/handling-sensitive-data/), [Dynatrace SDLC](https://docs.dynatrace.com/docs/deliver/pipeline-observability-sdlc-events/sdlc-events), [deployment conventions](https://docs.dynatrace.com/docs/deliver/release-monitoring/version-detection-strategies-latest), [RUM JavaScript API](https://docs.dynatrace.com/javascriptapi/doc/types/dtrum.html).
+
+Semantic task events use the same `outreach` / `administrative` enum as HTTP validation. Activity `has_follow_up` uses saved automatic task identity or `autoReminder.status=Manual`; the request-only `followUp` is intentionally removed before storage. These describe committed facts, not note contents. Regress both through actual API saves and task completion in `semantic-telemetry.test.js`.
+
+Due backlog aggregates for reminderDeliveries and noteAnalyses require separate `(status, nextAttemptAt)` indexes. The existing `(status, nextAttemptAt, id)` drain indexes do not satisfy a count without `id` ordering. Production verification must confirm both count indexes READY and the health errors stop; emulator acceptance does not prove index coverage.
