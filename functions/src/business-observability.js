@@ -1,5 +1,5 @@
 import { hash } from './policy.js';
-import { STAGES, OUTCOMES } from './contracts.js';
+import { STAGES, OUTCOMES, TASK_KINDS } from './contracts.js';
 const fields = new Set(['name','phone','email','company','city','zone','source','stage','assignedToUid','archived','doNotContact','enquiryDate','enquiryStatus','initialDiscussion','customFields','state','dueAt','kind','deletedAt','title','active','capabilities','scope','role','status','version']);
 const ref=(kind,id)=>typeof id==='string' ? kind+':'+hash(kind+':'+id) : undefined;
 export function optionRef(kind,value) {
@@ -23,10 +23,10 @@ export function semanticChanges(domain,before,after) {
       if(before[key]!==after[key]&&(key==='assignedToUid'||after[key]===true||before[key]===true))result.push(event('leads.'+type,{'lead.id':ref('leads',after.id)}));
     return result;
   }
-  if(domain==='activities'&&!before&&['note','call'].includes(after.type))return [event('activities.logged',{'lead.id':ref('leads',after.leadId),'activity.type':after.type,outcome:optionRef('outcome',after.outcome),has_follow_up:!!after.followUp})];
+  if(domain==='activities'&&!before&&['note','call'].includes(after.type))return [event('activities.logged',{'lead.id':ref('leads',after.leadId),'activity.type':after.type,outcome:optionRef('outcome',after.outcome),has_follow_up:!!(after.autoReminder?.taskId||after.autoReminder?.status==='Manual')})];
   if(domain==='tasks'&&before&&before.state!==after.state&&['Completed','Cancelled','Pending'].includes(after.state)){
     const at=Date.parse(after.completedAt||after.cancelledAt||after.updatedAt),due=Date.parse(before.dueAt);
-    return [event('tasks.'+({Completed:'completed',Cancelled:'cancelled',Pending:'reopened'}[after.state]),{'task.id':ref('tasks',after.id),'lead.id':ref('leads',after.leadId),'task.kind':['outreach','personal'].includes(after.kind)?after.kind:'other',...(Number.isFinite(at)&&Number.isFinite(due)?{overdue:at>due,'lateness.s':Math.max(0,(at-due)/1000)}:{})})];
+    return [event('tasks.'+({Completed:'completed',Cancelled:'cancelled',Pending:'reopened'}[after.state]),{'task.id':ref('tasks',after.id),'lead.id':ref('leads',after.leadId),'task.kind':TASK_KINDS.includes(after.kind)?after.kind:'other',...(Number.isFinite(at)&&Number.isFinite(due)?{overdue:at>due,'lateness.s':Math.max(0,(at-due)/1000)}:{})})];
   }
   if(domain==='imports'&&before?.status!=='Completed'&&after.status==='Completed')return [event('imports.completed',{'import.id':ref('imports',after.id),...(Number.isFinite(Date.parse(after.completedAt))&&Number.isFinite(Date.parse(after.createdAt))?{'duration.s':Math.max(0,(Date.parse(after.completedAt)-Date.parse(after.createdAt))/1000)}:{}),...Object.fromEntries([['created','imported'],['updated','updated'],['unchanged','unchanged'],['skipped','skipped'],['total','total']].filter(([,key])=>Number.isFinite(after[key])).map(([key,source])=>['rows.'+key,after[source]]))})];
   return [];

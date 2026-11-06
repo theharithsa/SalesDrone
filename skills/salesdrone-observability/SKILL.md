@@ -80,7 +80,7 @@ For detailed UI, recovery and integration recipes, read [module recipes](referen
 
 ## Known gaps
 
-Use the [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md) for stage/error allowlists, SDK-independent audit/semantic outboxes, dependency/queue metrics, native SDLC routing and RUM provisioning. Tests include observability-contract.test.js and rum-api.test.tsx. HTTP receipts never close tenant/RUM evidence gates.
+Use the [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md) for stage/error allowlists, SDK-independent audit/semantic outboxes, dependency/queue metrics, native SDLC routing and RUM provisioning. Tests include observability-contract.test.js, semantic-telemetry.test.js (saved manual follow-up/task facts) and rum-api.test.tsx. HTTP receipts never close tenant/RUM evidence gates.
 
 Lead research reuses HTTP RED, safe Firestore/Gemini dependency spans and worker logs containing processed/indexed/failed counts only. hygieneScans, assistantConversations and assistantRequests participate in committed domain outboxes; state transitions export bounded numeric lifecycle counts. Reporting settings have key-only ai.research audit events. Research operation counters/duration histograms use finite kind/outcome dimensions; async step spans link real request context when available. Never export questions, labels, source text, contacts, replies or embeddings. Derived index writes do not create business events.
 

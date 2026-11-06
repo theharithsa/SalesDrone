@@ -122,20 +122,21 @@ export const AssignmentPatch = z
 export const NotificationPatch = z
   .object({ read: z.boolean().default(true) })
   .strict();
+export const TASK_KINDS = ['outreach', 'administrative'];
 export const TaskInput = z
   .object({
     title: text(250).min(1),
     leadId: text(100).optional(),
     dueAt: instant,
     timezone: text(100).default('Asia/Kolkata'),
-    kind: z.enum(['outreach', 'administrative']).default('outreach'),
+    kind: z.enum(TASK_KINDS).default('outreach'),
   })
   .strict();
 export const TaskPatch = z
   .object({
     expectedVersion: z.number().int().positive(),
     title: text(250).min(1).optional(),
-    kind: z.enum(['outreach', 'administrative']).optional(),
+    kind: z.enum(TASK_KINDS).optional(),
     dueAt: instant.optional(),
     timezone: text(100).optional(),
     state: z.enum(['Pending', 'Completed', 'Cancelled']).optional(),

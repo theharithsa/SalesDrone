@@ -483,7 +483,8 @@
         "functions/test/observability-contract.test.js",
         "tests/deployment-bizevents.test.ts",
         "apps/web/test/rum-api.test.tsx",
-        "tests/rum-property-contract.test.ts"
+        "tests/rum-property-contract.test.ts",
+        "functions/test/semantic-telemetry.test.js"
       ],
       "manualCases": [
         {
