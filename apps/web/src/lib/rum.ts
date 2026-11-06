@@ -173,7 +173,7 @@ export function beginRumRequest(path: string, method: string) {
   return (outcome: string, requestId?: string, status?:number, code?:string) => {
     if(done)return;done=true;
     const safeCode=code&&(APPLICATION_ERRORS.has(code)||['API_UNAVAILABLE','NETWORK'].includes(code))?code:code?'INTERNAL':rumOutcome(outcome)==='network_error'?'NETWORK':'none';
-    if(rumOutcome(outcome)!=='success'&&rumOutcome(outcome)!=='cancelled') reportRumFailure(safeCode==='none'?'NETWORK':safeCode, requestId, id);
+    if(rumOutcome(outcome)==='network_error'||rumOutcome(outcome)==='failure'&&(!status||status>=500||[401,403,429].includes(status)||safeCode==='API_UNAVAILABLE')) reportRumFailure(safeCode==='none'?'NETWORK':safeCode, requestId, id);
     finish({
       'app_version': APP_VERSION,
       'operation_outcome':rumOutcome(outcome),

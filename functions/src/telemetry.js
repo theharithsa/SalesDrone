@@ -1,4 +1,4 @@
-import { errorType, dependencyErrorType, WORK_STATS, COLLECTIONS, OPERATIONS, WORKERS, LOG_EVENTS, safeLogFields } from './observability-contract.js';
+import { errorType, dependencyErrorType, policyRejection, WORK_STATS, COLLECTIONS, OPERATIONS, WORKERS, LOG_EVENTS, safeLogFields } from './observability-contract.js';
 import { CI_CHECKS, CI_STATUSES } from './ci-contract.js';
 import { performance } from 'node:perf_hooks';
 import { monitorExporter, boundedFlush } from './telemetry-health.js';
@@ -351,7 +351,7 @@ export function createTelemetry({
         if(Array.isArray(value)) span.setAttribute('db.query.result_count',value.length);
         return value;
       },{'db.system.name':'gcp.firestore','db.operation.name':op,'db.collection.name':name});}
-      catch(error){outcome='failure';throw error;}
+      catch(error){outcome=op==='transaction'&&policyRejection(error)?'rejected':'failure';throw error;}
       finally{const attrs={operation:op,collection:name,outcome};dbOperations.add(1,attrs);dbDuration.record((performance.now()-started)/1000,{operation:op,collection:name});}
     },
     async transaction(id, fn) {
@@ -398,7 +398,8 @@ export function createTelemetry({
           } catch (e) {
             span.setStatus({ code: SpanStatusCode.ERROR });
             span.setAttribute('error.type', dependencyErrorType(e));
-            self.log('dependency.failed',{'dependency.name':name,'error.type':dependencyErrorType(e)},'ERROR');
+            const rejected=name==='firestore.transaction'&&policyRejection(e);
+            self.log(rejected?'operation.failed':'dependency.failed',{'dependency.name':name,'error.type':dependencyErrorType(e)},rejected?'WARN':'ERROR');
             throw e;
           } finally {
             span.end();

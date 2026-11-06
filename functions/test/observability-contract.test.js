@@ -19,7 +19,7 @@ test('semantic events preserve current transitions but pseudonymize custom optio
 test('audit and semantic events are durable without SDK and discarded on rollback; async links preserve source',async()=>{
  const base=memoryStore(),store=observableStore(base);
  await store.run(async tx=>{tx.set(path('auditEvents','test'),{id:'test',actorUid:'PRIVATE',action:'edit-lead',requestId:'synthetic'});tx.set(path('activities','test'),{id:'test',type:'note',leadId:'PRIVATE',notes:'PRIVATE'});});
- const events=await base.query(path('telemetryOutbox'),{limit:20});assert.ok(events.some(e=>e.event.type.endsWith('activities.logged')));assert.ok(events.some(e=>e.event.type.endsWith('audit.operation.committed')));assert.ok(!JSON.stringify(events).includes('PRIVATE'));
+ const events=await base.query(path('telemetryOutbox'),{limit:20});assert.ok(events.some(e=>e.event.type.endsWith('activities.logged')));assert.ok(events.some(e=>e.event.type.endsWith('audit.operation.committed')));assert.equal(events.find(e=>e.event.type.endsWith('audit.operation.committed')).event.data['audit.action'],'edit-lead');assert.ok(!JSON.stringify(events).includes('PRIVATE'));
  await assert.rejects(store.run(async tx=>{tx.set(path('auditEvents','rollback'),{id:'rollback'});throw Error('abort');}));assert.equal((await base.query(path('telemetryOutbox'),{limit:20})).length,events.length);
  const parent='00-'+ '1'.repeat(32)+'-'+ '2'.repeat(16)+'-01',links=[];
  const traced=observableStore(base,()=>({capture:()=>({traceparent:parent}),span:async(_name,fn)=>fn({addLink:link=>links.push(link)})}));

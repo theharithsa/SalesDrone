@@ -171,6 +171,7 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
       (await base.query(path('leads'), { limit: 100 })).length,
       before,
     );
+    await request(app).patch('/api/v1/leads/'+a.body.id).set('Authorization','Bearer alice').send({expectedVersion:999,stage:'New'}).expect(409);
     const denied=await request(app).get('/api/v1/leads').expect(401);
     t.queueHealth('analysis',12,'2026-01-01T00:00:00Z');
     t.workItem('note-analysis','claimed','2026-01-01T00:00:00Z');
@@ -231,6 +232,7 @@ test('independent protobuf receiver verifies concurrent request traces, correlat
     assert.ok(logs.some(l=>l.body.stringValue==='worker.completed'&&l.severityText==='WARN'&&attr(l.attributes).outcome==='partial_failure'));
     assert.ok(logs.some(l=>attr(l.attributes).outcome==='debug_on'));
     assert.ok(!logs.some(l=>['debug_off','debug_far_off'].includes(attr(l.attributes).outcome)));
+    assert.ok(logs.some(l=>l.body.stringValue==='operation.failed'&&l.severityText==='WARN'&&attr(l.attributes)['error.type']==='STALE_VERSION'));
     const metrics = received
       .filter((r) => r.path.endsWith('metrics'))
       .flatMap((r) =>

@@ -50,7 +50,7 @@ export async function deliverTelemetry({
     if(auditFields)telemetry?.log('settings.audit.delivered',{...auditFields,'event.id':event.id,'http.status_code':status});
     if(/\.(stage_changed|logged|completed|cancelled|archived|restored|assignment_changed|suppressed|unsuppressed|reopened|operation.committed)$/.test(event.type)){
       const data=event.data||{},origin=event.traceparent?.split('-');
-      telemetry?.log('audit.delivered',{'event.id':event.id,'event.type':event.type,'event.occurred_at':event.time,'origin.transaction.id':data['transaction.id'],'origin.operation':data.operation,'origin.actor.id':data['actor.id'],'origin.request.id':data['request.id'],'record.domain':data['record.domain'],'entity.ref':data['entity.ref'],'changed.fields':data['changed.fields']||[],...(origin?.length===4?{'origin.trace_id':origin[1],'origin.span_id':origin[2]}:{})});
+      telemetry?.log('audit.delivered',{'event.id':event.id,'event.type':event.type,'event.occurred_at':event.time,...(data['audit.action']?{'audit.action':data['audit.action']}:{}),'origin.transaction.id':data['transaction.id'],'origin.operation':data.operation,'origin.actor.id':data['actor.id'],'origin.request.id':data['request.id'],'record.domain':data['record.domain'],'entity.ref':data['entity.ref'],'changed.fields':data['changed.fields']||[],...(origin?.length===4?{'origin.trace_id':origin[1],'origin.span_id':origin[2]}:{})});
     }
   };
   for(let i=0;i<jobs.length&&Date.now()<deadline;i+=4)await Promise.all(jobs.slice(i,i+4).map(async job=>{

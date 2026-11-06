@@ -15,7 +15,7 @@ export function semanticChanges(domain,before,after) {
   if(!after)return [];
   const common={'record.domain':domain,'entity.ref':ref(domain,after.id),'record.version':Number.isFinite(after.version)?after.version:undefined,'changed.fields':changedFields(before,after)};
   const event=(type,data={})=>({type,...common,...data});
-  if(domain==='auditEvents')return [event('audit.operation.committed',{'audit.id':ref('audit',after.id),operation:after.action})];
+  if(domain==='auditEvents')return [event('audit.operation.committed',{'audit.id':ref('audit',after.id),'audit.action':after.action})];
   if(domain==='leads'&&before){
     const result=[];
     if(before.stage!==after.stage)result.push(event('leads.stage_changed',{'lead.id':ref('leads',after.id),'stage.from':optionRef('stage',before.stage),'stage.to':optionRef('stage',after.stage),'lead.source':optionRef('source',after.source)}));

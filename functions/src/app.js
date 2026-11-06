@@ -328,7 +328,7 @@ export function createApp({
             'IDEMPOTENCY_CONFLICT',
             'This key was already used for a different request',
           );
-        telemetry()?.stage?.('replayed');
+        const replayed=async value=>{const result=await value;telemetry()?.stage?.('replayed');return result;};
         if (req.path === '/leads/batch')
           for (const item of req.body.items)
             await leadAccess(tx, member, item.id);
@@ -343,15 +343,15 @@ export function createApp({
           await leadAccess(tx, member, prior.result.leadId);
         if (req.path.startsWith('/imports') && prior.result?.id) {
           const job = await readImport(tx, member, prior.result.id);
-          return job.formatVersion === 3 ? importSummary(job) : prior.result;
+          return replayed(job.formatVersion === 3 ? importSummary(job) : prior.result);
         }
         if (req.path.startsWith('/lead-hygiene/scans') && prior.result?.id)
-          return readHygieneScan(tx,req.identity,prior.result.id);
+          return replayed(readHygieneScan(tx,req.identity,prior.result.id));
         if (req.path.startsWith('/lead-assistant/conversations') && prior.result?.id) {
-          if(req.path.endsWith('/questions')) return readAssistantRequest(tx,req.identity,prior.result.id);
-          return readConversation(tx,req.identity,prior.result.id);
+          if(req.path.endsWith('/questions')) return replayed(readAssistantRequest(tx,req.identity,prior.result.id));
+          return replayed(readConversation(tx,req.identity,prior.result.id));
         }
-        return prior.result;
+        return replayed(prior.result);
       }
       const ratePath = path(
         'rateLimits',
