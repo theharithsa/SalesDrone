@@ -74,3 +74,7 @@ References: [Dynatrace CloudEvents ingestion](https://docs.dynatrace.com/docs/ob
 ## Lead-data resets (2.1)
 
 com.avinyatech.salesdrone.leadDataResets.committed records safe job writes and numeric records.reset_started/reset_completed/reset_blocked transitions, atomically with persisted job state. Existing domain committed events carry deletion counts. No files/contact content enters these events. Server acceptance, completed cleanup and searchable tenant evidence are separate states. Retain event IDs/outbox/audit during cleanup.
+
+## Semantic commit projections
+
+See [journey contract](OBSERVABILITY-JOURNEYS.md) for audit.operation.committed, lead stage/assignment/archive/suppression transitions, activities.logged, task lifecycle and imports.completed. These add transactional semantic projections alongside existing summaries, not independent customer actions. Deduplication is event.id; IDs derive from one stable transaction ID plus event type and record path, retained across database callback retries. Replay/rollback produce no extra committed action. Custom option/source values are opaque references, never exported labels. All CloudEvent data carries service identity for the existing app routing. SDK availability cannot disable outbox capture.

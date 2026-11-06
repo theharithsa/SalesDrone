@@ -38,6 +38,9 @@ try {
           traceparent: telemetry.capture().traceparent,
           data: {
             'event.id': id,
+            'service.name':'salesdrone-validation',
+            'service.namespace':'avinyatech',
+            'deployment.environment.name':'verification',
             'event.provider': 'com.avinyatech.salesdrone.validation',
             'event.authority': 'synthetic-verification',
             'validation.synthetic': true,

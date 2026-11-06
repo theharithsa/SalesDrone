@@ -96,3 +96,5 @@ Swagger must expose limit/cursor/state for the shared lead task page and the man
 Shared dueAt pagination orders by dueAt then id. Require leadId/dueAt/id and leadId/state/dueAt/id indexes READY; the latter already exists. Emulator success does not certify production index availability. Keep explicit index regressions alongside shared task policy tests.
 
 GET tasks view=accessible is a bounded Google-member view: current lead readers see shared work plus own private reminders. Default recipient/PAT behavior stays unchanged. Bind sparse cursors to view/scope; project current lead/responsible names. Main TaskRow honors canManage for complete/reschedule and canEditOwn for recipient-only edits. Require global dueAt/id and state/dueAt/id indexes READY in addition to lead variants; test cursor mixing, private rows, revocation and PAT refusal.
+
+Reminder claims publish full eligible backlog and due lag; FCM spans retain finite token/quota errors without tokens or titles. Completion/cancellation semantic outboxes share the original transaction and stable IDs. See [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md).

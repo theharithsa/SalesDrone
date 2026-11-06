@@ -1,0 +1,6 @@
+fetch logs, from:now()-1h
+| filter service.namespace == "avinyatech" and startsWith(service.name, "salesdrone-")
+| filter deployment.environment.name == "production"
+| filter isNotNull(error.type)
+| summarize failures=count(), by:{operation,error.type,loglevel}
+| sort failures desc

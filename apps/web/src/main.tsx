@@ -1,3 +1,4 @@
+import { reportRumFailure, installRumErrorHandlers } from './lib/rum';
 import '@fontsource-variable/manrope';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -10,6 +11,7 @@ class ErrorBoundary extends React.Component<
   static getDerivedStateFromError() {
     return { error: true };
   }
+  componentDidCatch() { reportRumFailure('RENDER'); }
   render() {
     return this.state.error ? (
       <div className="startup">
@@ -31,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </React.StrictMode>,
 );
+installRumErrorHandlers();
 if ('serviceWorker' in navigator)
   window.addEventListener('load', () =>
     navigator.serviceWorker

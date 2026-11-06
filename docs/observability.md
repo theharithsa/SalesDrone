@@ -326,3 +326,7 @@ Team overview/activity/directory and assignee filtering reuse fixed HTTP route m
 ## Local read-only MCP boundary
 
 MCP requests reuse fixed API GET route labels and existing safe HTTP metrics, traces and logs. Standalone MCP observability is owned by [theharithsa/salesdrone-mcp](https://github.com/theharithsa/salesdrone-mcp); it does not export credentials, arguments, results or customer text. Read tools do not commit business changes, so no new canonical business event is needed; authentication rate/last-used metadata can change on reads. Protocol/package cases and npm publishing run in the standalone repository. This repository retains API/policy cases and API deployment signals. See [MCP verification](MCP.md).
+
+## Application journey contract
+
+The current [journey contract](OBSERVABILITY-JOURNEYS.md) supersedes older completion-only logging, classic deployment-marker and RUM outcome guidance. It defines the privacy allowlists, finite errors, DB/dependency and worker metrics, atomic semantic/audit outboxes, SDLC routing, browser property setup and separate runtime acceptance gates. See observability/queries and observability/detections.json for production-only views and reviewable detection definitions.

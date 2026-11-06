@@ -70,11 +70,9 @@ Read for detailed behavior:
 
 - [docs/observability.md](../../docs/observability.md)
 
-Send outbox and deployment envelopes using application/cloudevent+json, not ordinary JSON. Keep source and data event.provider identical to avoid conflicting provider normalization; preserve IDs on retries and never replay delivered legacy events merely to rename fields. deliveryFormat=cloudevent-v1 distinguishes corrected delivery receipts. salesdrone.bizevents.delivery counts finalized attempts by bounded outcome/status class, not unique business conversions. scripts/inspect-bizevents.mjs projects queue metadata only and requires existing operator IAM; tenant search needs separate query access. Test the independent collector header, deployment notifier, stale leases and safe metric dimensions.
+Send outbox/deployment BizEvents as application/cloudevent+json; native SDLC events use JSON. Keep source and data event.provider identical to avoid conflicting provider normalization; preserve IDs on retries and never replay delivered legacy events merely to rename fields. deliveryFormat=cloudevent-v1 distinguishes corrected delivery receipts. salesdrone.bizevents.delivery counts finalized attempts by bounded outcome/status class, not unique business conversions. scripts/inspect-bizevents.mjs projects queue metadata only and requires existing operator IAM; tenant search needs separate query access. Test the independent collector header, deployment notifier, stale leases and safe metric dimensions.
 
 SettingsAuditTransaction snapshots tracked writes and emits durable per-control metadata independently of OTel availability. queueSettingsAudits shares the domain transaction; never enqueue from client intent or outside commit. Audit change events use settings.audit.committed, bounded 40-key chunks, hashed actor/target/custom IDs and no values. Accepted delivery emits allowlisted settings.audit.delivered OTel logs; logs have normal bounded buffering while the canonical event remains durable. Do not treat collection summary events, chunks and logs as independent saves. Test settings-audit.test.js plus real emulator rollback/persistence. Use verify-settings-audit.mjs only as labelled synthetic transport proof, not a real customer setting change or tenant-search proof.
-
-Font preference changes add fontStyle to normalized personal defaults and appearance audit definitions. Canonical settings.audit.committed carries changed key names only; no font choice value, preview text or comments may enter telemetry. Reuse committed outbox delivery and safe request OTel signals. Test no-op/default normalization, invalid/PAT/unapproved denials, persistence and rollback through font-style.test.js plus emulator integration.
 
 ## Conditional reference
 
@@ -82,7 +80,7 @@ For detailed UI, recovery and integration recipes, read [module recipes](referen
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
+Use the [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md) for stage/error allowlists, SDK-independent audit/semantic outboxes, dependency/queue metrics, native SDLC routing and RUM provisioning. Tests include observability-contract.test.js and rum-api.test.tsx. HTTP receipts never close tenant/RUM evidence gates.
 
 Lead research reuses HTTP RED, safe Firestore/Gemini dependency spans and worker logs containing processed/indexed/failed counts only. hygieneScans, assistantConversations and assistantRequests participate in committed domain outboxes; state transitions export bounded numeric lifecycle counts. Reporting settings have key-only ai.research audit events. Research operation counters/duration histograms use finite kind/outcome dimensions; async step spans link real request context when available. Never export questions, labels, source text, contacts, replies or embeddings. Derived index writes do not create business events.
 

@@ -30,9 +30,8 @@ export function assertDeploymentReceipts(receipts) {
   }
   if (
     receipts.bizEventStatus !== 202 ||
-    ![200, 201].includes(receipts.deploymentMarkerStatus) ||
-    !receipts.markerResults?.length ||
-    receipts.markerResults.some((r) => r.status !== 'OK')
+    receipts.sdlcEventStatus !== 202 ||
+    !/^[a-f0-9]{64}$/.test(receipts.sdlcEventId||'')
   )
     throw Error('Dynatrace did not fully accept deployment events');
 }

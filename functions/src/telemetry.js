@@ -1,3 +1,4 @@
+import { errorType, dependencyErrorType, WORK_STATS, COLLECTIONS, OPERATIONS, WORKERS, LOG_EVENTS, safeLogFields } from './observability-contract.js';
 import { CI_CHECKS, CI_STATUSES } from './ci-contract.js';
 import { performance } from 'node:perf_hooks';
 import { monitorExporter, boundedFlush } from './telemetry-health.js';
@@ -30,38 +31,6 @@ import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-proto';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-proto';
 import { APP_VERSION, BUILD_COMMIT } from './version.js';
 import { tenantOrigin } from './telemetry-outbox.js';
-const safeKeys = new Set([
-  'audit.id',
-  'settings.section',
-  'settings.changed_count',
-  'operation',
-  'outcome',
-  'error.type',
-  'http.status_code',
-  'request.id',
-  'transaction.id',
-  'operation.id',
-  'actor.id',
-  'event.id',
-  'worker',
-  'examined',
-  'removed',
-  'delivered',
-  'retried',
-  'rejected',
-  'processed',
-  'ready',
-  'failed',
-  'sent',
-  'created',
-  'cancelled',
-  'blocked',
-  'skipped',
-  'duration.ms',
-  'ci.check',
-  'ci.case.id',
-  'ci.run.id',
-]);
 export const actorId = (uid) =>
   'user:' +
   createHash('sha256')
@@ -74,8 +43,16 @@ export function validParent(value) {
     ? value
     : null;
 }
-const errorType = (e) =>
-  /^[A-Z0-9_]{1,40}$/.test(e?.code || '') ? e.code : 'APPLICATION_ERROR';
+// Propagator validates W3C format/limits. Vendor trace state is forwarded only as
+// trace context, never copied into logs, metrics or business payloads.
+export function incomingTraceHeaders(headers) {
+  const parent=validParent(headers.traceparent);
+  if(!parent)return {};
+  const carrier={traceparent:parent,...(typeof headers.tracestate==='string'?{tracestate:headers.tracestate}:{})};
+  const extracted=new W3CTraceContextPropagator().extract(ROOT_CONTEXT,carrier,{keys:o=>Object.keys(o),get:(o,k)=>o[k]});
+  const state=trace.getSpanContext(extracted)?.traceState?.serialize();
+  return {traceparent:parent,...(state?{tracestate:state}:{})};
+}
 // Explicit instrumentation: initialized once before a function handles business work.
 // No automatic HTTP hooks are installed, so exporter requests cannot recurse.
 export function createTelemetry({
@@ -255,6 +232,18 @@ export function createTelemetry({
   });
   const researchOperations=meter.createCounter('salesdrone.research.operations',{unit:'{operation}'});
   const researchDuration=meter.createHistogram('salesdrone.research.duration',{unit:'s'});
+  const dbOperations = meter.createCounter('salesdrone.db.operations');
+  const dbDuration = meter.createHistogram('salesdrone.db.duration', {unit:'s'});
+  const workerItems = meter.createCounter('salesdrone.worker.items', {unit:'{item}'});
+  const queueDepth = new Map();
+  meter.createObservableGauge('salesdrone.queue.backlog',{unit:'{item}'}).addCallback(result=>{
+    for(const [queue,value] of queueDepth) result.observe(value.count,{queue});
+  });
+  meter.createObservableGauge('salesdrone.queue.oldest_due_age',{unit:'s'}).addCallback(result=>{
+    for(const [queue,value] of queueDepth) if(value.age!==null) result.observe(value.age,{queue});
+  });
+  const jobLag=meter.createHistogram('salesdrone.worker.lag',{unit:'s'});
+  const droppedLogs=meter.createCounter('salesdrone.telemetry.dropped',{unit:'{record}'});
   let flushing;
   const self = {
     enabled: true,
@@ -290,6 +279,8 @@ export function createTelemetry({
       const s = scope.getStore() || {};
       const c = trace.getActiveSpan()?.spanContext();
       return {
+        serviceName:service,environmentName:environment,
+        ...(c?.traceState?.serialize()?{tracestate:c.traceState.serialize()}:{}),
         actorId: s.actorId || 'system',
         requestId: s.requestId || '',
         operationId: s.operationId || '',
@@ -319,25 +310,66 @@ export function createTelemetry({
       const s = scope.getStore();
       if (s) s.operation = value;
     },
-    log(name, attributes = {}, failed = false) {
+    stage(stage, attributes = {}) {
+      self.log('operation.stage', {...attributes, 'operation.stage':stage});
+    },
+    failure(error, attributes = {}) {
+      trace.getActiveSpan()?.setAttribute('error.type',errorType(error));
+      self.log('operation.failed', {...attributes,'error.type':errorType(error)}, 'ERROR');
+    },
+    log(name, attributes = {}, severity = 'INFO') {
       try {
-        const safe = Object.fromEntries(
-          Object.entries(attributes).filter(
-            ([k, v]) =>
-              safeKeys.has(k) &&
-              (typeof v === 'number' ||
-                typeof v === 'boolean' ||
-                (typeof v === 'string' && v.length <= 180)),
-          ),
-        );
-        logger.emit({
-          body: name,
-          severityNumber: failed ? SeverityNumber.ERROR : SeverityNumber.INFO,
-          severityText: failed ? 'ERROR' : 'INFO',
-          attributes: safe,
-          context: context.active(),
-        });
-      } catch {}
+        if(!LOG_EVENTS.has(name)) {droppedLogs.add(1,{reason:'event'});return;}
+        const level=severity===true?'ERROR':severity===false?'INFO':severity;
+        if(!['DEBUG','INFO','WARN','ERROR'].includes(level)) return;
+        const debugUntil=Date.parse(process.env.TELEMETRY_DEBUG_UNTIL||'');
+        if(level==='DEBUG'&&!(debugUntil>Date.now()&&debugUntil-Date.now()<=900000)) return;
+        const state=scope.getStore();
+        const {fields:safe,dropped}=safeLogFields({...attributes,...(state?{
+          'request.id':state.requestId,'operation.id':state.operationId,
+          'actor.id':attributes['actor.id']||state.actorId,operation:state.operation,
+          ...(state.transactionId?{'transaction.id':state.transactionId}:{}),
+        }:{} )});
+        if(dropped) droppedLogs.add(dropped,{reason:'attribute'});
+        if(Buffer.byteLength(JSON.stringify(safe))>8192){droppedLogs.add(1,{reason:'size'});return;}
+        const active=context.active(), span=trace.getSpanContext(active);
+        logger.emit({body:name, severityNumber:SeverityNumber[level],severityText:level,attributes:{'event.name':name,...safe},context:active});
+        // A single source-owned record goes to the platform sink and OTLP; never forward
+        // these platform copies into Dynatrace a second time.
+        const project=process.env.GCLOUD_PROJECT;
+        const record={event:name,level,severity:level,'service.name':service,'service.namespace':'avinyatech','service.version':APP_VERSION,'build.commit':BUILD_COMMIT,'deployment.environment.name':environment,...safe,...(span&&isSpanContextValid(span)?{trace_id:span.traceId,span_id:span.spanId,...(project&&/^[a-z][a-z0-9-]{4,62}$/.test(project)?{'logging.googleapis.com/trace':'projects/'+project+'/traces/'+span.traceId,'logging.googleapis.com/spanId':span.spanId,'logging.googleapis.com/trace_sampled':!!(span.traceFlags&1)}:{})}:{})};
+        const write=level==='ERROR'?console.error:level==='WARN'?console.warn:console.info;
+        write(JSON.stringify(record));
+      } catch {droppedLogs.add(1,{reason:'logger'});}
+    },
+    async database(operation, collection, fn) {
+      const op=OPERATIONS.has(operation)?operation:'get';
+      const name=COLLECTIONS.has(collection)?collection:'other';
+      const started=performance.now(); let outcome='success';
+      try {return await self.span('firestore.'+op,async span=>{
+        const value=await fn(span);
+        if(Array.isArray(value)) span.setAttribute('db.query.result_count',value.length);
+        return value;
+      },{'db.system.name':'gcp.firestore','db.operation.name':op,'db.collection.name':name});}
+      catch(error){outcome='failure';throw error;}
+      finally{const attrs={operation:op,collection:name,outcome};dbOperations.add(1,attrs);dbDuration.record((performance.now()-started)/1000,{operation:op,collection:name});}
+    },
+    async transaction(id, fn) {
+      return scope.run({...scope.getStore(),transactionId:id},()=>self.database('transaction','multiple',fn));
+    },
+    queueHealth(queue,count,oldestAt) {
+      if(!['reminders','analysis','scoring','research'].includes(queue)||!Number.isFinite(count))return;
+      const timestamp=Date.parse(oldestAt);
+      queueDepth.set(queue,{count:Math.max(0,count),age:Number.isFinite(timestamp)?Math.max(0,(Date.now()-timestamp)/1000):count===0?0:null});
+    },
+    workItem(worker,outcome,dueAt) {
+      if(!WORKERS.has(worker)||!WORK_STATS.includes(outcome))return;
+      workerItems.add(1,{worker,outcome});
+      const at=Date.parse(dueAt);if(Number.isFinite(at))jobLag.record(Math.max(0,(Date.now()-at)/1000),{worker});
+    },
+    workSummary(worker,stats) {
+      if(!WORKERS.has(worker))return;
+      for(const key of WORK_STATS)if(key!=='claimed'&&Number.isFinite(stats[key])&&stats[key]>0)workerItems.add(stats[key],{worker,outcome:key});
     },
     async span(name, fn, attributes = {}, linkedParent) {
       let links = [];
@@ -361,10 +393,12 @@ export function createTelemetry({
         },
         async (span) => {
           try {
+            if(name.startsWith('fcm.'))span.setAttributes({'messaging.system':'gcp.fcm','messaging.operation.name':'send','server.address':'fcm.googleapis.com'});
             return await fn(span);
           } catch (e) {
             span.setStatus({ code: SpanStatusCode.ERROR });
-            span.setAttribute('error.type', errorType(e));
+            span.setAttribute('error.type', dependencyErrorType(e));
+            self.log('dependency.failed',{'dependency.name':name,'error.type':dependencyErrorType(e)},'ERROR');
             throw e;
           } finally {
             span.end();
@@ -377,7 +411,7 @@ export function createTelemetry({
         parentContext = parent
           ? propagator.extract(
               ROOT_CONTEXT,
-              { traceparent: parent },
+              incomingTraceHeaders(req.headers),
               { keys: (o) => Object.keys(o), get: (o, k) => o[k] },
             )
           : ROOT_CONTEXT;
@@ -435,19 +469,21 @@ export function createTelemetry({
                     operation,
                     'http.request.method': method,
                     'http.response.status_code': status,
-                    ...(req.ingressError ? {'error.type':req.ingressError} : {}),
+                    ...(req.telemetryErrorType||req.ingressError ? {'error.type':req.telemetryErrorType||req.ingressError} : {}),
                   };
+                state.operation=operation;
                 span.updateName(operation);
                 span.setAttributes({
                   'http.route': route,
                   'http.response.status_code': status,
                   'actor.id': state.actorId,
-                  ...(req.ingressError ? {'error.type':req.ingressError} : {}),
+                  ...(req.telemetryErrorType||req.ingressError ? {'error.type':req.telemetryErrorType||req.ingressError} : {}),
                 });
                 if (status >= 500)
                   span.setStatus({ code: SpanStatusCode.ERROR });
-                requests.add(1, attrs);
-                duration.record((performance.now() - start) / 1000, attrs);
+                requests.add(1, {...attrs,'error.type':req.telemetryErrorType||req.ingressError||'none'});
+                const {'error.type':_errorType,...latencyAttrs}=attrs;
+                duration.record((performance.now() - start) / 1000, latencyAttrs);
                 self.log(
                   'http.completed',
                   {
@@ -456,12 +492,13 @@ export function createTelemetry({
                     'actor.id': state.actorId,
                     'http.status_code': status,
                     outcome: status < 400 ? 'success' : 'failure',
-                    ...(req.ingressError ? {'error.type':req.ingressError} : {}),
+                    ...(req.telemetryErrorType||req.ingressError ? {'error.type':req.telemetryErrorType||req.ingressError} : {}),
                   },
-                  status >= 500,
+                  status >= 500 ? 'ERROR' : status >= 400 ? 'WARN' : 'INFO',
                 );
                 span.end();
               });
+            self.log('http.received',{'request.has_body':Number(req.headers['content-length'])>0,'request.size':Math.max(0,Math.min(12582913,Number(req.headers['content-length'])||0)),'correlation.has_parent':!!parent});
             res.once('finish', finish);
             res.once('close', finish);
             next();
@@ -470,6 +507,7 @@ export function createTelemetry({
       );
     },
     async worker(name, fn) {
+      name=WORKERS.has(name)?name:'other';
       const requestId = randomUUID();
       return scope.run(
         {
@@ -482,12 +520,14 @@ export function createTelemetry({
           self.span('worker.' + name, async () => {
             try {
               const result = await fn();
+              self.workSummary(name,result||{});
+              const activeWork=WORK_STATS.some(key=>Number(result?.[key])>0);
               self.log('worker.completed', {
                 worker: name,
-                outcome: 'success',
+                outcome:result?.failed>0?'partial_failure':'success',
                 ...result,
-              });
-              workers.add(1, { worker: name, outcome: 'success' });
+              }, result?.failed>0?'WARN':activeWork?'INFO':'DEBUG');
+              workers.add(1, { worker: name, outcome:result?.failed>0?'partial_failure':'success' });
               return result;
             } catch (e) {
               self.log(

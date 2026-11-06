@@ -73,3 +73,5 @@ Read for detailed behavior:
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#39](https://github.com/theharithsa/SalesDrone/issues/39). Check their current status before changing the contract.
+
+Provider diagnostics record bounded model/status/usage and typed failures without notes/prompts. Claims expose eligible lag and full due backlog; missing times are not invented. Source trace links survive job handoff. See [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md) and observability-contract.test.js.

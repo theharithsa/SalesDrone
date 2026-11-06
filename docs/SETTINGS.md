@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.9.3**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.9.4**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -675,7 +675,7 @@ Refresh after a release to load current assets. This page does not change busine
 
 ## Settings audit trail
 
-Saved live changes are recorded with actor, timestamp, action and changed control keys, and queued atomically for Dynatrace. Exported identities are hashed and values, prompts, labels and credentials are excluded. Unchanged saves, failed/denied writes, read-only controls, OS-resolved changes and local demo preferences are not reported as setting changes. Send test retains action telemetry. No audit viewer or audit API scope is added; authorized operators inspect the server-side records. See the settings audit guide for coverage, retries and limits.
+Saved live changes are recorded with actor, timestamp, action and changed control keys, and queued atomically for Dynatrace. Exported identities are hashed and values, prompts, labels and credentials are excluded. Unchanged saves, failed/denied writes, read-only controls, OS-resolved changes and local demo preferences are not reported as setting changes. Send test retains action telemetry. No audit viewer or audit API scope is added; authorized operators inspect the server-side records. See the settings audit guide for coverage, retries and limits. Operator diagnostics: TELEMETRY_DEBUG_UNTIL defaults to unset/off and is scoped to one backend function runtime. Only deployment operators can set it; there is no member/Admin HTTP API or in-app control. It accepts an ISO expiry at most 15 minutes ahead, then stops DEBUG output automatically. Privacy allowlists and durable audit delivery are unchanged.
 
 See [settings audit coverage and delivery](SETTINGS-AUDIT.md).
 

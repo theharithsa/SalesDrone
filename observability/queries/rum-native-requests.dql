@@ -1,0 +1,6 @@
+fetch user.events, from:now()-1h
+| filter in(url.domain,array("sales-drone-avinya.web.app","sales-drone-avinya.firebaseapp.com"))
+| filter startsWith(url.path,"/api/v1/") and isNotNull(trace.id)
+| fields start_time, trace.id, span.id, request.trace_context_hint
+| sort start_time desc
+| limit 20

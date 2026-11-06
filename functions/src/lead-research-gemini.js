@@ -1,3 +1,4 @@
+import { geminiRequest, validateProvider } from './dependency-observability.js';
 import { AgentBatchPlan } from "./lead-assistant-tools.js";
 import { z } from "zod";
 import { AppError } from "./contracts.js";
@@ -11,10 +12,11 @@ export function researchGemini({
   key,
   model = DEFAULT_GEMINI_MODEL,
   fetchImpl = fetch,
+  telemetry,
 }) {
   async function call(name, body) {
     try {
-      const response = await fetchImpl(
+      const response = await geminiRequest(fetchImpl,
         `https://generativelanguage.googleapis.com/v1beta/models/${name}`,
         {
           method: "POST",
@@ -25,15 +27,16 @@ export function researchGemini({
           signal: AbortSignal.timeout(20000),
           body: JSON.stringify(body),
         },
+        telemetry,
       );
-      if (!response.ok) throw Error();
+      if (!response.ok) throw response.observabilityError||Error();
       return await response.json();
-    } catch {
-      throw new AppError(
+    } catch(error) {
+      throw Object.assign(new AppError(
         503,
         "PROVIDER_UNAVAILABLE",
         "Lead analysis is temporarily unavailable. Try again later.",
-      );
+      ),{cause:error});
     }
   }
   async function generate(schema, instruction, input) {
@@ -48,20 +51,20 @@ export function researchGemini({
           responseJsonSchema: z.toJSONSchema(schema, { target: "draft-7" }),
         },
       });
-      return schema.parse(
+      return validateProvider(()=>schema.parse(
         JSON.parse(
           data.candidates?.[0]?.content?.parts
             ?.filter((p) => p.text && !p.thought)
             .map((p) => p.text)
             .join("") || "null",
         ),
-      );
-    } catch {
-      throw new AppError(
+      ),telemetry);
+    } catch(error) {
+      throw Object.assign(new AppError(
         503,
         "PROVIDER_UNAVAILABLE",
         "A verified answer is temporarily unavailable. Try again later.",
-      );
+      ),{cause:error});
     }
   }
   const embed = async (input, taskType) => {

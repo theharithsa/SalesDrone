@@ -1,6 +1,10 @@
+import { validParent } from './telemetry.js';
+import { collectionName } from './observability-contract.js';
+import { semanticChanges } from './business-observability.js';
 import { randomUUID } from 'node:crypto';
 import { hash, path, ROOT } from './policy.js';
 import { APP_VERSION, BUILD_COMMIT } from './version.js';
+const asyncQueues=new Set(['noteAnalyses','reminderDeliveries','researchIndexJobs']);
 const domains = new Set([
   'leads',
   'leadDataResets',
@@ -17,6 +21,7 @@ const domains = new Set([
   'hygieneScans',
   'assistantConversations',
   'assistantRequests',
+  'auditEvents',
 ]);
 function domain(p, data) {
   const parts = p.split('/');
@@ -95,147 +100,86 @@ export function lifecycleCounts(domain, before, after) {
 }
 // Instrument the SDK boundary; never serialize document values into telemetry.
 export function observableStore(base, getTelemetry = () => null) {
-  const wrap = (name, fn) => {
-    const t = getTelemetry();
-    return t
-      ? t.span(name, fn, {
-          'db.system.name': 'gcp.firestore',
-          'db.operation.name': name.split('.')[1],
-        })
-      : fn();
+  const wrap = (operation, p, fn) => {
+    const t=getTelemetry();
+    return t?.database ? t.database(operation,collectionName(p),fn)
+      : t ? t.span('firestore.'+operation,fn,{'db.system.name':'gcp.firestore','db.operation.name':operation,'db.collection.name':collectionName(p)}) : fn();
   };
   return {
     ...base,
-    ...(base.nearest ? {nearest:(p,o)=>wrap('firestore.nearest',()=>base.nearest(p,o))}:{}),
-    get: (p) => wrap('firestore.get', () => base.get(p)),
-    getAll: (paths,fields) => wrap('firestore.getAll', () => base.getAll(paths,fields)),
-    query: (p, o) => wrap('firestore.query', () => base.query(p, o)),
-    count: (p, f) => wrap('firestore.count', () => base.count(p, f)),
-    scan: (p, options) => wrap('firestore.scan', () => base.scan(p, options)),
-    run: (fn) => {
-      const available = getTelemetry();
-      const transactionId = randomUUID();
-      // Research outcomes remain durable when the SDK is unavailable. Unknown
-      // request/trace attribution is explicit; never invent a parent span.
-      const t = available?.enabled ? available : {
-        span: async (_name, operation) => operation(),
-        capture: () => ({actorId:'system',requestId:'unavailable',operationId:transactionId,operation:'database.commit',traceparent:null}),
-      };
-      return t.span(
-        'firestore.transaction',
-        () =>
-          base.run(async (tx) => {
-            const written = new Map(),
-              known = new Map();
-            const reader = {
-              ...tx,
-              get: async (p) => {
-                const value = await tx.get(p);
-                known.set(p, value);
-                return value;
-              },
-              getAll: async (paths,fields) => {
-                const values = await tx.getAll(paths,fields);
-                if(!fields)paths.forEach((p, i) => known.set(p, values[i]));
-                return values;
-              },
-              query: async (p, o) => {
-                const values = await tx.query(p, o);
-                if(!o?.fields)for (const value of values)
-                  known.set(p + '/' + value.id, value);
-                return values;
-              },
-              set: (p, v) => {
-                tx.set(p, v);
-                written.set(p, structuredClone(v));
-              },
-              delete: (p) => {
-                tx.delete(p);
-                written.set(p, null);
-              },
+    ...(base.nearest?{nearest:(p,o)=>wrap('nearest',p,()=>base.nearest(p,o))}:{}),
+    get:p=>wrap('get',p,()=>base.get(p)),
+    getAll:(paths,fields)=>wrap('getAll',paths[0],()=>base.getAll(paths,fields)),
+    query:(p,o)=>wrap('query',p,()=>base.query(p,o)),
+    count:(p,f)=>wrap('count',p,()=>base.count(p,f)),
+    scan:(p,o)=>wrap('scan',p,()=>base.scan(p,o)),
+    run:fn=>{
+      const available=getTelemetry(), transactionId=randomUUID();
+      let attempts=0, committed=[];
+      const execute=async span=>{
+        const result=await base.run(async tx=>{
+          attempts++;
+          span?.setAttribute?.('db.transaction.attempts',attempts);
+          const written=new Map(),known=new Map();
+          const reader={...tx,
+            get:async p=>{const v=await wrap('get',p,()=>tx.get(p));known.set(p,v);if(asyncQueues.has(p.split('/')[2])&&validParent(v?.observabilityTraceparent)){const [,traceId,spanId,flags]=v.observabilityTraceparent.split('-');span?.addLink?.({context:{traceId,spanId,traceFlags:parseInt(flags,16),isRemote:true}});}return v;},
+            getAll:async(paths,fields)=>{const values=await wrap('getAll',paths[0],()=>tx.getAll(paths,fields));if(!fields)paths.forEach((p,i)=>known.set(p,values[i]));return values;},
+            query:async(p,o)=>{const values=await wrap('query',p,()=>tx.query(p,o));if(!o?.fields)for(const v of values)known.set(p+'/'+v.id,v);return values;},
+            set:(p,v)=>{let value=v;if(asyncQueues.has(p.split('/')[2])&&!v.observabilityTraceparent){const parent=available?.capture?.().traceparent;if(validParent(parent))value={...v,observabilityTraceparent:parent};}tx.set(p,value);written.set(p,structuredClone(value));},
+            delete:p=>{tx.delete(p);written.set(p,null);},
+          };
+          const value=await fn(reader),time=new Date().toISOString();
+          const capture=available?.enabled?available.capture():{actorId:'system',requestId:'unavailable',operationId:transactionId,operation:'database.commit',traceparent:null};
+          const audit=[...written].find(([p])=>p.startsWith(path('auditEvents')+'/'))?.[1];
+          if(!available?.enabled&&audit){capture.actorId=typeof audit.actorUid==='string'?'user:'+hash('salesdrone:'+audit.actorUid).slice(0,32):'system';capture.operation=audit.action;capture.requestId=audit.requestId||'unavailable';}
+          const common={
+            'event.provider':'com.avinyatech.salesdrone.backend','event.authority':'server-confirmed',
+            'service.name':capture.serviceName||'salesdrone-backend','service.namespace':'avinyatech','deployment.environment.name':capture.environmentName||'unknown',
+            'schema.version':1,'transaction.id':transactionId,'operation.id':capture.operationId,
+            'request.id':capture.requestId,operation:capture.operation,'actor.id':capture.actorId,
+            'app.version':APP_VERSION,'build.commit':BUILD_COMMIT,
+            'correlation.origin':capture.traceparent?'backend-transaction':'outbox-consumer',
+          };
+          const summaries=new Map(),pendingEvents=[];committed=[];
+          const enqueue=(id,type,data)=>{
+            const event={specversion:'1.0',id,source:'com.avinyatech.salesdrone.backend',type:'com.avinyatech.salesdrone.'+type,time,
+              data:Object.fromEntries(Object.entries({...data,...common,'event.id':id}).filter(([,v])=>v!==undefined)),
+              ...(capture.traceparent?{traceparent:capture.traceparent}:{}),
             };
-            const result = await fn(reader),
-              summaries = new Map();
-            for (const [p, v] of written) {
-              const d = domain(p, v);
-              if (!d || (!available?.enabled && !['hygieneScans','assistantConversations','assistantRequests'].includes(d) && !(d==='leads' && lifecycleCounts(d,known.get(p),v).restored))) continue;
-              const s = summaries.get(d) || {
-                written: 0,
-                created: 0,
-                changed: 0,
-                deleted: 0,
-              };
-              s.written++;
-              if (v === null) s.deleted++;
-              else if (known.has(p)) {
-                if (known.get(p) === null) s.created++;
-                else s.changed++;
-              }
-              for (const [kind, count] of Object.entries(
-                lifecycleCounts(d, known.get(p), v),
-              ))
-                s[kind] = (s[kind] || 0) + count;
-              summaries.set(d, s);
+            pendingEvents.push(event);
+            committed.push(event);
+          };
+          for(const [p,v] of written){
+            const d=domain(p,v);if(!d)continue;
+            const s=summaries.get(d)||{written:0,created:0,changed:0,deleted:0};
+            s.written++;
+            if(v===null)s.deleted++;
+            else if(known.has(p)){if(known.get(p)===null)s.created++;else s.changed++;}
+            for(const [kind,count] of Object.entries(lifecycleCounts(d,known.get(p),v)))s[kind]=(s[kind]||0)+count;
+            summaries.set(d,s);
+            for(const change of semanticChanges(d,known.get(p),v)){
+              const {type,...details}=change;
+              enqueue(hash(transactionId+':'+type+':'+p),type,details);
             }
-            const capture = t.capture(),
-              time = new Date().toISOString();
-            for (const [d, s] of summaries) {
-              const id = hash(transactionId + ':' + d);
-              const data = {
-                'event.id': id,
-                'event.provider': 'com.avinyatech.salesdrone.backend',
-                'event.authority': 'server-confirmed',
-                'schema.version': 1,
-                'transaction.id': transactionId,
-                'operation.id': capture.operationId,
-                'request.id': capture.requestId,
-                operation: capture.operation,
-                'actor.id': capture.actorId,
-                'app.version': APP_VERSION,
-                'build.commit': BUILD_COMMIT,
-                'record.domain': d,
-                'records.written': s.written,
-                'records.known_created': s.created,
-                'records.known_changed': s.changed,
-                'records.deleted': s.deleted,
-                ...Object.fromEntries(
-                  Object.entries(s)
-                    .filter(
-                      ([k]) =>
-                        !['written', 'created', 'changed', 'deleted'].includes(
-                          k,
-                        ),
-                    )
-                    .map(([k, v]) => ['records.' + k, v]),
-                ),
-                'correlation.origin': capture.traceparent
-                  ? 'backend-transaction'
-                  : 'outbox-consumer',
-              };
-              const event = {
-                specversion: '1.0',
-                id,
-                source: 'com.avinyatech.salesdrone.backend',
-                type: `com.avinyatech.salesdrone.${d}.committed`,
-                time,
-                data,
-                ...(capture.traceparent
-                  ? { traceparent: capture.traceparent }
-                  : {}),
-              };
-              tx.set(path('telemetryOutbox', id), {
-                id,
-                status: 'Pending',
-                nextAttemptAt: time,
-                attemptCount: 0,
-                createdAt: time,
-                event,
-              });
-            }
-            return result;
-          }),
-        { 'transaction.id': transactionId },
-      );
+          }
+          for(const [d,s] of summaries)enqueue(hash(transactionId+':'+d),d+'.committed',{
+            'record.domain':d,'records.written':s.written,'records.known_created':s.created,'records.known_changed':s.changed,'records.deleted':s.deleted,
+            ...Object.fromEntries(Object.entries(s).filter(([k])=>!['written','created','changed','deleted'].includes(k)).map(([k,v])=>['records.'+k,v])),
+          });
+          // Group only like-typed semantic events. New statuses isolate grouped
+          // records from older consumers during a rolling Functions deployment.
+          const groups=new Map();
+          for(const event of pendingEvents){const list=groups.get(event.type)||[];list.push(event);groups.set(event.type,list);}
+          for(const events of groups.values())for(let offset=0;offset<events.length;offset+=10){
+            const [event,...additionalEvents]=events.slice(offset,offset+10),id=event.id;
+            tx.set(path('telemetryOutbox',id),{id,status:additionalEvents.length?'PendingBatch':'Pending',nextAttemptAt:time,attemptCount:0,createdAt:time,event,...(additionalEvents.length?{additionalEvents,nextEvent:0}:{} )});
+          }
+          return value;
+        });
+        if(committed.length)available?.log?.('domain.transaction.committed',{'db.transaction.attempts':attempts,created:committed.length});
+        return result;
+      };
+      return available?.transaction?available.transaction(transactionId,execute):available?available.span('firestore.transaction',execute,{'transaction.id':transactionId}):execute();
     },
   };
 }

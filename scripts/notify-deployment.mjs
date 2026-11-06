@@ -1,3 +1,4 @@
+import { deploymentEvent } from './sdlc-events.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { probeSignals } from './probe-deployment-signals.mjs';
 import { assertDeploymentReceipts } from './deployment-signals.mjs';
@@ -56,6 +57,9 @@ const data = {
   'event.provider': 'com.avinyatech.salesdrone.github-actions',
   'event.authority': 'automation-confirmed',
   'schema.version': 1,
+  'service.name':'salesdrone-api',
+  'service.namespace':'avinyatech',
+  'deployment.environment.name':'production',
   'app.version': version,
   'deployment.outcome': outcome,
   'build.commit': metadata.commit,
@@ -83,32 +87,15 @@ const biz = await send(
   },
   'application/cloudevent+json',
 );
-const marker = await send('/api/v2/events/ingest', {
-  eventType: 'CUSTOM_DEPLOYMENT',
-  title: `SalesDrone v${version} · ${outcome}`,
-  properties: {
-    'dt.event.deployment.name': 'SalesDrone',
-    'dt.event.deployment.version': version,
-    'dt.event.deployment.release_stage': 'production',
-    'dt.event.deployment.ci_back_link': metadata.runUrl,
-    ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, String(v)])),
-  },
-});
-let result;
-try {
-  result = await marker.json();
-} catch {}
+const marker=await send('/platform/ingest/v1/events.sdlc',deploymentEvent(metadata,outcome));
 const receipts = {
   version,
   outcome,
   eventId: id,
   signals: await probeSignals(u.origin, token),
   bizEventStatus: biz.status,
-  deploymentMarkerStatus: marker.status,
-  markerResults: result?.eventIngestResults?.map((r) => ({
-    status: r.status,
-    correlationId: r.correlationId,
-  })),
+  sdlcEventStatus:marker.status,
+  sdlcEventId:deploymentEvent(metadata,outcome)['event.id'],
   tenantSearchability: 'not verified by HTTP acceptance',
 };
 let accepted = false;

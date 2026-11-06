@@ -479,7 +479,11 @@
         "functions/test/observability.test.js",
         "functions/test/telemetry-health.test.js",
         "tests/ci-events.test.ts",
-        "tests/rum-runtime.test.ts"
+        "tests/rum-runtime.test.ts",
+        "functions/test/observability-contract.test.js",
+        "tests/deployment-bizevents.test.ts",
+        "apps/web/test/rum-api.test.tsx",
+        "tests/rum-property-contract.test.ts"
       ],
       "manualCases": [
         {
@@ -501,6 +505,21 @@
           "id": "OBS-CI-02",
           "expected": "Exact commit/run Dynatrace testcase totals by each of functions/ingress/web/components/emulator match independent runner summaries and sanitized artifacts. Missing/empty evidence fails verification/reporting.",
           "fixture": "Real CI run, sanitized metadata only; no historical fake receipts"
+        },
+        {
+          "id": "OBS-JOURNEY-01",
+          "expected": "Verify finite error causes and semantic event IDs across committed transaction, audit delivery and native trace; no customer payloads.",
+          "fixture": "synthetic local/emulator and verification-labelled tenant transport only"
+        },
+        {
+          "id": "OBS-RUM-01",
+          "expected": "Read declared RUM properties and prove actual browser traceparent to native server parent; HTTP acceptance and UUID matches alone do not pass.",
+          "fixture": "read-only production navigation; no customer changes"
+        },
+        {
+          "id": "OBS-SDLC-01",
+          "expected": "Query actual deployment ID/run in salesdrone_events, preserving existing routing/retention and excluding verification from production views.",
+          "fixture": "main workflow deployment event and read-only tenant query"
         }
       ]
     },

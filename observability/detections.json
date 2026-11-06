@@ -1,0 +1,14 @@
+{
+  "schemaVersion":1,
+  "state":"reviewable definitions; not installed tenant alerts",
+  "filter":{"service.namespace":"avinyatech","deployment.environment.name":"production"},
+  "rules":[
+    {"id":"http-server-errors","metric":"salesdrone.http.requests","condition":"5xx / all requests > 5% with at least 20 requests over 10 minutes","groupBy":["service.name","operation"]},
+    {"id":"rejected-business-events","metric":"salesdrone.outbox.records","condition":"state Rejected > 0 over 5 minutes","groupBy":["service.name"]},
+    {"id":"telemetry-export-failure","metric":"salesdrone.telemetry.exports","condition":"positive delta with outcome failure over 5 minutes","groupBy":["service.name","signal"]},
+    {"id":"late-reminders","metric":"salesdrone.worker.lag","condition":"p95 > 300 seconds over 10 minutes for worker reminders","groupBy":["service.name","worker"]},
+    {"id":"gemini-failures","metric":"salesdrone.gen_ai.requests","condition":"outcome failure / all requests > 20% with at least 10 calls over 10 minutes","groupBy":["service.name","model","operation"]}
+  ],
+  "notificationRouting":"Requires tenant owner selection; no contact channel invented",
+  "deploymentOverlay":"queries/deployment-overlay.dql"
+}

@@ -1,3 +1,4 @@
+import { incomingTraceHeaders } from '../../../functions/src/telemetry.js';
 import { HEALTH_PATH } from './contract.js';
 import http from 'node:http';
 import https from 'node:https';
@@ -91,8 +92,9 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
         const forward = (span) => new Promise((resolve, reject) => {
           const headers = Object.fromEntries(forwarding.filter(k => req.headers[k] !== undefined).map(k => [k, req.headers[k]]));
           headers['content-length'] = String(body.length);
-          const parent = telemetry?.capture()?.traceparent;
-          if (parent) headers.traceparent = parent;
+          const propagated=telemetry?.capture()||incomingTraceHeaders(req.headers);
+          if(propagated.traceparent)headers.traceparent=propagated.traceparent;
+          if(propagated.tracestate)headers.tracestate=propagated.tracestate;
           const request = transport.request(target.origin + req.url, { method: req.method, headers, signal: controller.signal }, async response => {
             const connectionFields = String(response.headers.connection || '').toLowerCase().split(',').map(x => x.trim());
             for (const [key, value] of Object.entries(response.headers)) if (!hop.has(key) && !connectionFields.includes(key) && value !== undefined) res.setHeader(key, value);

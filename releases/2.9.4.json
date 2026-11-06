@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "version": "2.9.4",
+  "summary": "Correlate application stages, typed failures, dependency/worker signals and durable semantic audits; migrate deployment events to native SDLC.",
+  "modules": [
+    "salesdrone-observability",
+    "salesdrone-data-platform",
+    "salesdrone-automatic-reminders",
+    "salesdrone-lead-scoring",
+    "salesdrone-tasks-reminders",
+    "salesdrone-testing",
+    "salesdrone-release",
+    "salesdrone-api-ingress"
+  ],
+  "documentation": [
+    "docs/OBSERVABILITY-JOURNEYS.md",
+    "docs/observability.md",
+    "docs/BUSINESS-EVENTS.md",
+    "docs/RELEASE.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Instrumentation repair only; HTTP schemas, authorization and API version remain unchanged.",
+    "contractVersion": "1.29.0",
+    "permissions": "Existing verified membership, assigned lead scope, private reminders and credentials remain unchanged; no tenant IAM expansion.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Add bounded DB, worker queue/lag, Gemini usage and typed error dimensions.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/observability-contract.test.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Enrich genuine spans and link durable job origin without fabricated parents.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/observability-contract.test.js",
+        "services/ingress/test/telemetry.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Add correlated allowlisted operation stages, finite error causes and accepted audit projections.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/observability-contract.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Persist semantic/audit events atomically regardless of SDK availability; stable retry identities and privacy constraints.",
+      "tests": [
+        "functions/test/observability.test.js",
+        "functions/test/observability-contract.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Native SDLC JSON ingest with service identity and separate strict HTTP202 receipt.",
+      "tests": [
+        "tests/deployment-bizevents.test.ts",
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "No visible layout change; browser verification checks safe RUM outcomes/properties and actual traceparent/native linkage. Post-deploy tenant searches must prove new metrics/events and SDLC bucket routing; pending evidence stays explicit.",
+  "milestone": {
+    "number": 28,
+    "title": "v2.9.4 \u2014 Observable application journeys",
+    "issues": [
+      71,
+      97
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

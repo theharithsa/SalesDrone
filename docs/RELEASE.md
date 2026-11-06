@@ -26,9 +26,9 @@ builds production assets. The production job uses Google OIDC federation, deploy
 rules/indexes and waits READY, deploys the salesdrone function codebase, then the Cloud Run ingress and Hosting. Verify ingress identity and parser response before cutting over Hosting; retain ingress-deployment.json with the five Function revisions. Provision its isolated runtime/build accounts using scripts/provision-ingress.mjs before the first rollout. See API-INGRESS.md.
 Every build stamps version, commit and timestamp. The workflow collects allowlisted
 function revisions and reports the actual deployment outcome to Dynatrace as both
-a CUSTOM_DEPLOYMENT marker and a versioned CloudEvent BizEvent. The workflow's
+a native SDLC deployment event and a versioned CloudEvent BizEvent. The workflow's
 summary and artifacts preserve release metadata. Successful deployment is distinct
-from telemetry acceptance; a rejected marker can make reporting fail after the app
+from telemetry acceptance; a rejected SDLC event can make reporting fail after the app
 has already deployed. Inspect the individual steps before retrying or rolling back.
 
 Required repository variables: GCP_PROJECT_ID, GCP_WORKLOAD_IDENTITY_PROVIDER,
@@ -141,3 +141,5 @@ Duplicate index definitions fail release preflight before any cloud operation.
 ## App Check CSP verification
 
 The JavaScript SDK exchanges tokens at content-firebaseappcheck.googleapis.com. Include that exact origin in SPA connect-src, including the HTML meta fallback. API documentation retains its separate strict policy. Verify the installed SDK endpoint against every SPA header, then verify managed exchange in a browser after deployment. A public page loading, Google popup success or unauthenticated API denial does not prove App Check works. Record token-exchange success/failure without recording tokens or challenge payloads.
+
+Native SDLC ingest requires HTTP202 from /platform/ingest/v1/events.sdlc and the openpipeline.events_sdlc classic-token scope. Verify the event ID/run in salesdrone_events separately. Keep validation traffic outside production views; see [journey contract](OBSERVABILITY-JOURNEYS.md). All five functions and Hosting participate when shared instrumentation changes.

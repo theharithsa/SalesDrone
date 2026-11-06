@@ -55,6 +55,9 @@ try {
             source: 'com.avinyatech.salesdrone.validation',
             data: {
               ...row.event.data,
+              'service.name':'salesdrone-validation',
+              'service.namespace':'avinyatech',
+              'deployment.environment.name':'verification',
               'event.provider': 'com.avinyatech.salesdrone.validation',
               'event.authority': 'synthetic-verification',
               'validation.synthetic': true,

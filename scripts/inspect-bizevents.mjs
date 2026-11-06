@@ -3,7 +3,7 @@ import { cloud } from './cloud-access.mjs';
 const root =
   'https://firestore.googleapis.com/v1/projects/sales-drone-avinya/databases/(default)/documents/workspaces/avinyatech';
 const statuses = {};
-for (const status of ['Pending', 'Sending', 'Delivered', 'Rejected']) {
+for (const status of ['Pending', 'Sending', 'PendingBatch', 'SendingBatch', 'Delivered', 'Rejected']) {
   const r = await cloud(root + ':runAggregationQuery', {
     method: 'POST',
     body: JSON.stringify({

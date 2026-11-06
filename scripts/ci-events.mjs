@@ -47,6 +47,9 @@ export function ciEvent(meta, result) {
     time,
     data: {
       'event.id': id,
+      'service.name':'salesdrone-ci',
+      'service.namespace':'avinyatech',
+      'deployment.environment.name':'ci',
       'event.provider': CI_PROVIDER,
       'event.authority': 'automation-confirmed',
       'schema.version': 1,

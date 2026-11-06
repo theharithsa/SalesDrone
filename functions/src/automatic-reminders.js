@@ -276,6 +276,7 @@ async function eligible(tx, job) {
 }
 export async function analyzeNotes({
   store,
+  telemetry,
   extract,
   now = () => new Date().toISOString(),
   limit = 5,
@@ -327,6 +328,8 @@ export async function analyzeNotes({
     });
     if (!claimed) continue;
     stats.claimed++;
+    telemetry?.workItem?.('note-analysis','claimed',candidate.referenceAt);
+    telemetry?.stage?.('claimed');
     let result, errorCode;
     try {
       result = resolveExtraction(

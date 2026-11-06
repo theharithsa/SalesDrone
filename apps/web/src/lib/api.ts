@@ -1,3 +1,4 @@
+import { RUM_OUTCOMES } from './rum-outcomes';
 import { beginRumRequest } from './rum';
 import app, { auth, attestation } from './firebase';
 export class ApiError extends Error {
@@ -36,23 +37,21 @@ export async function api<T = any>(
       signal,
     });
   } catch (e) {
-    endObservation('network_error');
+    endObservation(e instanceof DOMException&&e.name==='AbortError'?RUM_OUTCOMES.cancelled:RUM_OUTCOMES.network);
     throw e;
   }
-  endObservation(
-    res.ok ? 'response_ok' : 'response_error',
-    res.headers.get('X-Request-Id') || undefined,
-  );
   let data;
   try {
     data = await res.json();
   } catch {
+    endObservation(RUM_OUTCOMES.failure,res.headers.get('X-Request-Id')||undefined,res.status,'API_UNAVAILABLE');
     throw new ApiError(
       res.status,
       'API_UNAVAILABLE',
       'The API is unavailable. Check your connection or Firebase setup.',
     );
   }
+  endObservation(res.ok?RUM_OUTCOMES.success:RUM_OUTCOMES.failure,res.headers.get('X-Request-Id')||undefined,res.status,data?.error?.code);
   if (!res.ok)
     throw new ApiError(
       res.status,
@@ -133,17 +132,15 @@ export async function uploadFileBytes(
     };
     xhr.onload = () => {
       finish();
-      end(
-        xhr.status < 400 ? 'response_ok' : 'response_error',
-        xhr.getResponseHeader('X-Request-Id') || undefined,
-      );
       let data;
       try {
         data = JSON.parse(xhr.responseText);
       } catch {
+        end(RUM_OUTCOMES.failure,xhr.getResponseHeader('X-Request-Id')||undefined,xhr.status,'API_UNAVAILABLE');
         reject(Error('The file API is unavailable.'));
         return;
       }
+      end(xhr.status>=200&&xhr.status<300?RUM_OUTCOMES.success:RUM_OUTCOMES.failure,xhr.getResponseHeader('X-Request-Id')||undefined,xhr.status,data?.error?.code);
       if (xhr.status >= 200 && xhr.status < 300) resolve(data);
       else
         reject(
@@ -156,16 +153,17 @@ export async function uploadFileBytes(
     };
     xhr.onerror = () => {
       finish();
-      end('network_error');
+      end(RUM_OUTCOMES.network);
       reject(Error('Upload interrupted. Retry the same file.'));
     };
     xhr.onabort = () => {
       finish();
-      end('network_error');
+      end(RUM_OUTCOMES.cancelled);
       reject(new DOMException('Upload cancelled', 'AbortError'));
     };
     if (signal.aborted) {
       finish();
+      end(RUM_OUTCOMES.cancelled);
       reject(new DOMException('Upload cancelled', 'AbortError'));
     } else xhr.send(file);
   });
@@ -185,20 +183,18 @@ export async function downloadFileBytes(path: string): Promise<Blob> {
       cache: 'no-store',
     });
   } catch (e) {
-    end('network_error');
+    end(RUM_OUTCOMES.network);
     throw e;
   }
-  end(
-    response.ok ? 'response_ok' : 'response_error',
-    response.headers.get('X-Request-Id') || undefined,
-  );
   if (!response.ok) {
     const data = await response.json().catch(() => null);
+    end(RUM_OUTCOMES.failure,response.headers.get('X-Request-Id')||undefined,response.status,data?.error?.code);
     throw new ApiError(
       response.status,
       data?.error?.code || 'DOWNLOAD',
       data?.error?.message || 'Download failed',
     );
   }
-  return response.blob();
+  try {const blob=await response.blob();end(RUM_OUTCOMES.success,response.headers.get('X-Request-Id')||undefined,response.status);return blob;}
+  catch(error){end(RUM_OUTCOMES.network,response.headers.get('X-Request-Id')||undefined,response.status);throw error;}
 }

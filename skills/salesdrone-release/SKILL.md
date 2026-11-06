@@ -81,7 +81,7 @@ Public guide builds stamp the exact source commit and hash-version reviewed scre
 
 For a later explicitly authorized maintenance push, bind the record to that push’s immediate parent, not the immutable original tag. github-release checks the current commit parent and verifies descent from the original tag before preserving it; an earlier maintenance record cannot authorize a subsequent push.
 
-Deployment BizEvents use application/cloudevent+json; CUSTOM_DEPLOYMENT markers remain application/json. Keep provider fields aligned and validate both transport paths using deployment-bizevents.test.ts. HTTP acceptance remains separate from tenant searchability.
+Deployment BizEvents use application/cloudevent+json; native SDLC deployment events use JSON with required HTTP202. Keep provider fields aligned and validate both transport paths using deployment-bizevents.test.ts. HTTP acceptance remains separate from tenant searchability.
 
 Exact match needs no lead-data migration or new IAM. Preserve default single-field equality indexes and existing index readiness gates. Internal rate-counter TTL conversion remains separate. Do not require a derived lead index readiness marker.
 
@@ -93,7 +93,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33), [#71](https://github.com/theharithsa/SalesDrone/issues/71). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
 
 For approval promotion and unpublished recovery, follow [the operational reference](references/operations.md). Preserve historical evidence and required PR/main checks.
 
@@ -103,4 +103,4 @@ Deploy/verify ingress after Functions and before Hosting cutover; require its re
 
 For managed health and partial-rollout handling, read [operations](references/operations.md).
 
-Toolchain gates: [migration](../../docs/TOOLCHAIN-MIGRATION.md).
+Toolchain: [migration](../../docs/TOOLCHAIN-MIGRATION.md). SDLC routing/evidence: [journeys](../../docs/OBSERVABILITY-JOURNEYS.md).
