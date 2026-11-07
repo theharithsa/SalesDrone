@@ -7,7 +7,8 @@
     "salesdrone-leads",
     "salesdrone-workspace-settings",
     "salesdrone-imports",
-    "salesdrone-product-guide"
+    "salesdrone-product-guide",
+    "salesdrone-tasks-reminders"
   ],
   "documentation": [
     "CHANGELOG.md",
@@ -86,7 +87,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Review the synthetic drawer with a touch gesture through its footer, full-page lead cards and header, independent field settings and workbook comment order. Browser evidence does not certify physical devices. Check the custom host version and commit after deployment.",
+  "manualVerification": "Review the synthetic drawer with a touch gesture through its footer, full-page lead cards and header, narrow and zoomed task actions, independent field settings and workbook comment order. Browser evidence does not certify physical devices. Check the custom host version and commit after deployment.",
   "milestone": {
     "number": 32,
     "title": "v2.10.1 — Lead layout and mobile navigation",

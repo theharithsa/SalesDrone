@@ -20,7 +20,7 @@ API contract versions are independent from application versions.
 
 ### Fixed
 - Make the whole mobile navigation drawer scroll, including Settings and the account footer.
-- Keep the interface font picker within its Settings panel at narrow widths and custom display scales.
+- Keep the interface font picker and task actions within their panels at narrow widths and custom display scales.
 - Align lead card titles and reorder controls, tighten desktop spacing, and show a lead-specific loading state.
 - Group extra lead header values beneath the name and make recognizable phone numbers tappable in the monospace phone style.
 

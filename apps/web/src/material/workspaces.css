@@ -2555,7 +2555,8 @@ input[type='tel'] {
   .task-lead-label { display: block; font-size: .75rem; color: var(--muted); margin-bottom: 2px; }
   .task-responsible {grid-column:2;grid-row:3;font-size:.8125rem;}
   .task-row .task-time { grid-column: 2; grid-row: 4; justify-items: start; justify-content: start; margin-top: 0; }
-  .task-actions { grid-column: 2; grid-row: 5; justify-content: space-between; }
+  .task-actions { grid-column: 2; grid-row: 5; flex-wrap: wrap; justify-content: space-between; }
+  .task-reschedule { max-width: 100%; white-space: normal; }
 }
 .lead-header-context {
   display: flex;

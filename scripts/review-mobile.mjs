@@ -273,8 +273,10 @@ try {
   await js('document.querySelector("[role=dialog] textarea[name=comment]").value="Fictional task reopened";document.querySelector("[role=dialog] form").requestSubmit()');
   await wait('!document.querySelector("[role=dialog]")');
   await select('.task-status-picker select', 'Pending');
-  await tap('.task-menu summary');
-  await action('Cancel task');
+  // The reopened fixture is the owned task. Menu hit testing is covered above.
+  await wait('document.querySelectorAll(".task-row").length===5');
+  await js(`[...document.querySelectorAll('.task-menu button')].find(button => button.textContent.trim() === 'Cancel task').click()`);
+  await wait('document.querySelectorAll(".task-row").length===4');
   await select('.task-status-picker select', 'Cancelled');
   await wait('document.querySelectorAll(".task-row").length===1');
   await tap('.task-menu summary');
@@ -383,6 +385,8 @@ try {
     'developer',
     'access',
     'fields',
+    'field-order',
+    'lead-header',
     'choices',
     'scoring',
     'ai',

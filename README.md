@@ -45,7 +45,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard groups current lead counts by your chosen field. Its headings and descriptions follow that field’s configured label; selecting a group opens matching leads. Recorded stage changes remain in the lead journey.
 
-![Current dashboard counts, separate from recorded lead-journey history.](site/assets/screenshots/journey-demo.jpg?sha=131b1614ba54)
+![Fictional lead journey with its current stage highlighted.](site/assets/screenshots/journey-demo.jpg?sha=131b1614ba54)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -144,7 +144,7 @@ Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/pr
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
-The full lead page opens in **All**: loaded activity and review information. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
+The full lead page opens in **Comments**. Switch to **All** to see loaded activity and review information. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
 
 **v1.6.2** standardized Dynatrace CloudEvents delivery and added a sunrise/sunset theme control. [Book mode is available in v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
 
