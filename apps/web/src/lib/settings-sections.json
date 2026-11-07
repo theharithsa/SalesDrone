@@ -36,7 +36,7 @@
   },
   {
     "id": "fields",
-    "label": "Lead fields",
+    "label": "Field definitions",
     "description": "Build an enquiry form for your business.",
     "group": "manageFields",
     "admin": true
@@ -57,7 +57,7 @@
   },
   {
     "id": "choices",
-    "label": "Dropdown choices",
+    "label": "Choice lists",
     "description": "Manage shared choices for your team.",
     "group": "manageFields",
     "admin": true

@@ -15,29 +15,28 @@ import ScoringSettings from './ScoringSettings';
 import LeadFieldManager from './LeadFieldManager';
 import FieldOptionsEditor from './FieldOptionsEditor';
 import { FieldOptions } from '../lib/field-options';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { SettingsDirectory, settingsGroups, type SettingsLocation } from './SettingsDirectory';
 import {
+  ArrowLeft,
   Bell,
   Monitor,
   BookOpen,
   Sun,
   Moon,
-  Smartphone,
   ShieldCheck,
+  Smartphone,
   Check,
   ExternalLink,
-  UserRound,
-  SlidersHorizontal,
-  ListFilter,
-  Info,
-  ChevronRight,
-  Sparkles,
-  CodeXml,
-  Archive,
 } from 'lucide-react';
 import { Session, Entity, Lead } from '../lib/types';
-import { Avatar, ErrorMessage, SaveButton, useSubmit } from '../components/UI';
+import { Avatar, ErrorMessage, Modal, SaveButton, useSubmit } from '../components/UI';
 import { enablePush, revokeThisDevice } from '../lib/api';
+const cleanDraft = { dirty: false, busy: false };
+function readSettingsLocation(): SettingsLocation {
+  const params = new URLSearchParams(window.location.search);
+  return { section: params.get('section') || undefined, group: params.get('group') || undefined };
+}
 export default function SettingsPage({
   previewOnly = false,
   onOpenLead,
@@ -68,80 +67,49 @@ export default function SettingsPage({
   onPreferences: (p: any) => void;
 }) {
   const isAdmin = !demo && session?.member?.role === 'Admin';
-  const icons: Record<string, typeof UserRound> = {
-    archives: Archive,
-    data: SlidersHorizontal,
-    profile: UserRound,
-    appearance: Monitor,
-    notifications: Smartphone,
-    workspace: ShieldCheck,
-    fields: SlidersHorizontal,
-    choices: ListFilter,
-    'field-order': ListFilter,
-    'lead-header': UserRound,
-    ai: SlidersHorizontal,
-    reminders: Bell,
-    scoring: SlidersHorizontal,
-    research: SlidersHorizontal,
-    developer: CodeXml,
-    access: ShieldCheck,
-    about: Info,
+  const sections = settingsSections.filter((item) => !item.admin || isAdmin);
+  const [location, setLocation] = useState(() => initialSection ? { section: initialSection } : readSettingsLocation());
+  const [sectionDraft, setSectionDraft] = useState(cleanDraft);
+  const navigationHandler = useRef<() => void>(() => {});
+  const settingsPath = useRef(window.location.pathname);
+  const [pendingDestination, setPendingDestination] = useState<SettingsLocation | null>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
+  const focusHeading = useRef(false);
+  const currentSection = sections.find((item) => item.id === location.section);
+  const section = currentSection?.id;
+  const group = sections.some((item) => item.group === location.group) ? location.group : undefined;
+  const href = (next: SettingsLocation) => {
+    const url = new URL(window.location.href);
+    if (url.pathname === '/members') url.pathname = '/settings';
+    url.searchParams.delete('section');
+    url.searchParams.delete('group');
+    if (next.section) url.searchParams.set('section', next.section);
+    if (next.group) url.searchParams.set('group', next.group);
+    return url.pathname + url.search + url.hash;
   };
-  const sections = settingsSections
-    .filter((item) => !item.admin || isAdmin)
-    .map((item) => ({ ...item, icon: icons[item.id] }));
-  const fieldSections = sections.filter(
-    (item) => item.group === 'manageFields',
-  );
-  const fieldIds = fieldSections.map((item) => item.id);
-  const aiIds = ['ai', 'reminders', 'scoring', 'research'];
-  const aiSections = sections
-    .filter((item) => aiIds.includes(item.id))
-    .sort((a, b) => aiIds.indexOf(a.id) - aiIds.indexOf(b.id));
-  const [section, setSection] = useState(() => {
-    const desired =
-      initialSection ||
-      new URLSearchParams(window.location.search).get('section') ||
-      'profile';
-    return sections.some((item) => item.id === desired) ? desired : 'profile';
-  });
-  const [aiExpanded, setAIExpanded] = useState(() =>
-    aiIds.includes(
-      initialSection ||
-        new URLSearchParams(window.location.search).get('section') ||
-        '',
-    ),
-  );
-  const [fieldsExpanded, setFieldsExpanded] = useState(true);
-  const currentSection = sections.find((s) => s.id === section) || sections[0];
-  const personalSections = sections.filter((item) =>
-    ['profile', 'appearance', 'notifications', 'archives'].includes(item.id),
-  );
-  const workspaceSections = sections.filter((item) =>
-    ['workspace', 'developer', 'access', 'data'].includes(item.id),
-  );
-  const chooseSection = (id: string) => {
-    setSection(id);
-    setMessage('');
-    if (aiIds.includes(id)) setAIExpanded(true);
-    if (fieldIds.includes(id)) setFieldsExpanded(true);
-  };
-  const navButton = (item: (typeof sections)[number]) => (
-    <button
-      key={item.id}
-      aria-current={currentSection.id === item.id ? 'page' : undefined}
-      onClick={() => chooseSection(item.id)}
-    >
-      <item.icon size={18} />
-      <span>{item.label}</span>
-      <ChevronRight size={15} />
-    </button>
-  );
+  useEffect(() => {
+    const next = readSettingsLocation();
+    setLocation(next.section || next.group ? next : { section: initialSection });
+  }, [initialSection]);
+  useEffect(() => {
+    const restore = () => navigationHandler.current();
+    window.addEventListener('popstate', restore);
+    return () => window.removeEventListener('popstate', restore);
+  }, []);
+  useEffect(() => {
+    if (!focusHeading.current) return;
+    focusHeading.current = false;
+    heading.current?.focus();
+    window.scrollTo(0, 0);
+  }, [location]);
+  const [demoReminderPreferences, setDemoReminderPreferences] = useState<Partial<Session['preferences']>>({});
   const preferences = (!demo && session?.preferences) || {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     appearance: 'system',
     bookMode: false,
     ...guestPreferences,
+    ...demoReminderPreferences,
   };
   const [displayScale, setDisplayScale] = useState(() =>
     normalizeDisplayScale(preferences.displayScale),
@@ -183,21 +151,79 @@ export default function SettingsPage({
     () => setAppearance(preferences.appearance),
     [preferences.appearance],
   );
-  const submit = useSubmit(async (data) => {
-    const settings = {
-      ...data,
-      bookMode,
-      fontStyle,
-      displayScale,
-      automaticReminders,
-      reminderTime,
-      nextWeekRule,
-      moveWeekends,
-    };
+  useEffect(() => setTimezone(preferences.timezone), [preferences.timezone]);
+  const reminderDefaults = {
+    automaticReminders: preferences.automaticReminders !== false,
+    reminderTime: preferences.reminderTime || '10:00',
+    nextWeekRule: preferences.nextWeekRule || 'seven_days',
+    moveWeekends: preferences.moveWeekends || false,
+  };
+  const appearanceDefaults = {
+    appearance: preferences.appearance,
+    timezone: preferences.timezone,
+    bookMode: preferences.bookMode === true,
+    fontStyle: normalizeFontStyle(preferences.fontStyle),
+    displayScale: normalizeDisplayScale(preferences.displayScale),
+  };
+  const appearanceDraft = { appearance, timezone, bookMode, fontStyle, displayScale };
+  const reminderDraft = { automaticReminders, reminderTime, nextWeekRule, moveWeekends };
+  const savingAppearance = section === 'appearance';
+  const preferenceEditor = savingAppearance || section === 'reminders';
+  const preferenceDirty = preferenceEditor && JSON.stringify(savingAppearance ? appearanceDraft : reminderDraft)
+    !== JSON.stringify(savingAppearance ? appearanceDefaults : reminderDefaults);
+  const submit = useSubmit(async (settings, _key, isCurrent) => {
     if (!demo) await request('/me', 'PATCH', settings);
-    onPreferences(settings);
-    setMessage('Preferences saved.');
+    if (isCurrent()) {
+      if (demo && !savingAppearance) setDemoReminderPreferences(settings);
+      onPreferences({ ...preferences, ...settings });
+      setMessage('Preferences saved.');
+    }
   });
+
+  function discardPreferences() {
+    setAppearance(appearanceDefaults.appearance);
+    setTimezone(appearanceDefaults.timezone);
+    setBookMode(appearanceDefaults.bookMode);
+    setFontStyle(appearanceDefaults.fontStyle);
+    setDisplayScale(appearanceDefaults.displayScale);
+    setAutomaticReminders(reminderDefaults.automaticReminders);
+    setReminderTime(reminderDefaults.reminderTime);
+    setNextWeekRule(reminderDefaults.nextWeekRule);
+    setMoveWeekends(reminderDefaults.moveWeekends);
+  }
+  function navigate(next: SettingsLocation) {
+    discardPreferences();
+    setSectionDraft(cleanDraft);
+    setMessage('');
+    setError('');
+    focusHeading.current = true;
+    window.history.pushState({}, '', href(next));
+    settingsPath.current = window.location.pathname;
+    setLocation(next);
+  }
+  function chooseDestination(next: SettingsLocation) {
+    if (next.section === section && next.group === group) return;
+    if (sectionDraft.busy || submit.busy) return;
+    if (sectionDraft.dirty || preferenceDirty) {
+      returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setPendingDestination(next);
+    } else navigate(next);
+  }
+  navigationHandler.current = () => {
+    if (window.location.pathname !== settingsPath.current) return;
+    const next = readSettingsLocation();
+    if (next.section === location.section && next.group === location.group) return;
+    if (sectionDraft.dirty || preferenceDirty || sectionDraft.busy || submit.busy) {
+      window.history.pushState({}, '', href(location));
+      chooseDestination(next);
+      return;
+    }
+    discardPreferences();
+    focusHeading.current = true;
+    setLocation(next);
+    setMessage('');
+    setError('');
+  };
   async function push() {
     if (previewOnly) return;
     setBusy(true);
@@ -229,155 +255,30 @@ export default function SettingsPage({
     }
   }
   return (
-    <div className="page-body settings-page">
-      <div className="page-title">
+    <div className="page-body settings-page" data-section={section}>
+      <header className="settings-masthead">
         <div>
-          <span className="eyebrow">MAKE IT YOURS</span>
-          <h1>Settings</h1>
-          <p>A workspace that fits the way you work.</p>
-          <a
-            className="text-button"
-            href="https://theharithsa.github.io/SalesDrone/settings.html"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Read the settings guide <ExternalLink size={14} />
-          </a>
+          <h1 ref={!section ? heading : undefined} tabIndex={-1}>Settings</h1>
+          <p>Manage your preferences and workspace.</p>
         </div>
-      </div>
+        <a className="text-button" href="https://theharithsa.github.io/SalesDrone/settings.html"
+          target="_blank" rel="noreferrer">Settings guide <ExternalLink size={14} /></a>
+      </header>
       <div className="settings-layout">
-        <label className="settings-section-select">
-          Settings section
-          <select
-            value={currentSection.id}
-            onChange={(e) => {
-              chooseSection(e.target.value);
-            }}
-          >
-            <optgroup label="Personal">
-              {personalSections.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
-                </option>
-              ))}
-            </optgroup>
-            {workspaceSections.length ? (
-              <optgroup label="Workspace · Admin">
-                {workspaceSections.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.label}
-                  </option>
-                ))}
-              </optgroup>
-            ) : null}
-            {fieldSections.length ? (
-              <optgroup label="Manage fields">
-                {fieldSections.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.label}
-                  </option>
-                ))}
-              </optgroup>
-            ) : null}
-            <optgroup label="AvinyaIntelligence">
-              {aiSections.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Product">
-              <option value="about">About SalesDrone</option>
-            </optgroup>
-          </select>
-        </label>
-        <nav className="settings-navigation" aria-label="Settings sections">
-          <span className="eyebrow">PERSONAL</span>
-          {personalSections.map(navButton)}
-          {workspaceSections.length ? (
-            <>
-              <span className="eyebrow">WORKSPACE · ADMIN</span>
-              {workspaceSections.map(navButton)}
-            </>
-          ) : null}
-          {fieldSections.length ? (
-            <div
-              className={
-                'settings-ai-group' +
-                (fieldIds.includes(currentSection.id) ? ' is-active' : '')
-              }
-            >
-              <button
-                type="button"
-                className="settings-ai-toggle"
-                aria-expanded={fieldsExpanded}
-                aria-controls="settings-field-children"
-                onClick={() => setFieldsExpanded((v) => !v)}
-              >
-                <SlidersHorizontal size={18} />
-                <span>Manage fields</span>
-                <ChevronRight
-                  size={15}
-                  className={fieldsExpanded ? 'expanded' : ''}
-                />
-              </button>
-              <div
-                id="settings-field-children"
-                className="settings-ai-children"
-                hidden={!fieldsExpanded}
-              >
-                {fieldSections.map(navButton)}
-              </div>
-            </div>
-          ) : null}
-          <div
-            className={
-              'settings-ai-group' +
-              (aiIds.includes(currentSection.id) ? ' is-active' : '')
-            }
-          >
-            <button
-              type="button"
-              className="settings-ai-toggle"
-              aria-expanded={aiExpanded}
-              aria-controls="settings-ai-children"
-              onClick={() => setAIExpanded((v) => !v)}
-            >
-              <Sparkles size={18} />
-              <span>AvinyaIntelligence</span>
-              <ChevronRight
-                size={15}
-                className={aiExpanded ? 'expanded' : ''}
-              />
-            </button>
-            <div
-              id="settings-ai-children"
-              className="settings-ai-children"
-              hidden={!aiExpanded}
-            >
-              {aiSections.map(navButton)}
-            </div>
-          </div>
-          <span className="eyebrow">PRODUCT</span>
-          {sections.filter((item) => item.id === 'about').map(navButton)}
-        </nav>
-        <div className="settings-content">
+        <SettingsDirectory sections={sections} selected={currentSection} group={group} href={href} onNavigate={chooseDestination} />
+        {currentSection && <div className="settings-content">
           <div className="settings-section-header">
-            <span className="eyebrow">
-              {fieldIds.includes(currentSection.id)
-                ? 'MANAGE FIELDS'
-                : aiIds.includes(currentSection.id)
-                  ? 'AVINYAINTELLIGENCE'
-                  : workspaceSections.some(
-                        (item) => item.id === currentSection.id,
-                      )
-                    ? 'WORKSPACE SETTINGS'
-                    : 'YOUR SETTINGS'}
-            </span>
-            <h2>{currentSection.label}</h2>
+            <a className="text-button settings-back" href={href({ group: currentSection.group })} onClick={(event) => {
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault();
+              chooseDestination({ group: currentSection.group });
+            }}>
+              <ArrowLeft size={18} aria-hidden="true" /> {settingsGroups.find((item) => item.id === currentSection.group)?.label}
+            </a>
+            <h2 ref={heading} tabIndex={-1}>{currentSection.label}</h2>
             <p>{currentSection.description}</p>
           </div>
-          {message && section !== 'notifications' ? (
+          {message && !preferenceDirty && section !== 'notifications' ? (
             <p className="success-message" role="status">
               {message}
             </p>
@@ -399,19 +300,20 @@ export default function SettingsPage({
               config={fieldOptions}
               request={request}
               onChanged={onFieldOptions}
-              onOpenLayout={chooseSection}
+              onOpenLayout={(id) => chooseDestination({ section: id })}
             />
           ) : null}
           {isAdmin && (section === 'field-order' || section === 'lead-header') ? (
             <LeadFieldLayoutSettings key={section} config={fieldOptions}
               mode={section === 'field-order' ? 'order' : 'header'}
-              request={request} onChanged={onFieldOptions} />
+              request={request} onChanged={onFieldOptions} onEditingChange={setSectionDraft} />
           ) : null}
           {isAdmin && section === 'choices' ? (
             <FieldOptionsEditor
               config={fieldOptions}
               request={request}
               onChanged={onFieldOptions}
+              onEditingChange={setSectionDraft}
             />
           ) : null}
           {section === 'profile' ? (
@@ -452,13 +354,13 @@ export default function SettingsPage({
               </dl>
             </section>
           ) : null}
-          {['appearance', 'reminders'].includes(section) ? (
+          {preferenceEditor ? (
             <section className="panel">
               <div className="section-heading">
                 <div>
                   <h2>
                     {section === 'appearance'
-                      ? 'Appearance & time'
+                      ? 'Display and regional settings'
                       : 'Reminders from your notes'}
                   </h2>
                   <p>
@@ -471,9 +373,10 @@ export default function SettingsPage({
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  submit.run({ appearance, timezone });
+                  if (preferenceDirty) void submit.run(savingAppearance ? appearanceDraft : reminderDraft);
                 }}
               >
+                <fieldset className="settings-preference-fields" disabled={submit.busy}>
                 {section === 'appearance' ? (
                   <>
                     <div className="appearance-options">
@@ -688,13 +591,20 @@ export default function SettingsPage({
                       working day when they fall on a weekend
                     </label>
                     <p className="field-hint">
-                      Automatic dates use your display timezone above. Exact
+                      Automatic dates use your display timezone in Appearance & time. Exact
                       dates and named weekdays are kept as written.
                     </p>
                   </div>
                 ) : null}
+                </fieldset>
                 <ErrorMessage error={submit.error} />
-                <SaveButton busy={submit.busy} />
+                <div className="form-footer settings-save-actions">
+                  <span>{preferenceDirty ? 'Unsaved changes' : ''}</span>
+                  <div>
+                    <button className="button" type="button" disabled={!preferenceDirty || submit.busy} onClick={discardPreferences}>Discard changes</button>
+                    <SaveButton busy={submit.busy} disabled={!preferenceDirty} />
+                  </div>
+                </div>
               </form>
             </section>
           ) : null}
@@ -854,8 +764,19 @@ export default function SettingsPage({
               </div>
             </section>
           ) : null}
-        </div>
+        </div>}
       </div>
+      <Modal open={pendingDestination !== null} onClose={() => setPendingDestination(null)}
+        title="Discard unsaved changes?" description="Your saved settings will still apply." returnFocusRef={returnFocus}>
+        <div className="form-footer settings-save-actions">
+          <button className="button" onClick={() => setPendingDestination(null)}>Keep editing</button>
+          <button className="button primary" onClick={() => {
+            if (!pendingDestination) return;
+            navigate(pendingDestination);
+            setPendingDestination(null);
+          }}>Discard changes</button>
+        </div>
+      </Modal>
     </div>
   );
 }

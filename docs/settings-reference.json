@@ -227,7 +227,7 @@
           "id": "headerFields",
           "label": "Extra lead header fields",
           "default": "None",
-          "description": "Choose up to six additional built-in or custom fields from the current enquiry layout.",
+          "description": "Choose up to six additional visible built-in or custom fields. The fictional preview shows the draft before saving.",
           "effect": "The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.",
           "example": "Show City / location and Product in the lead header."
         }

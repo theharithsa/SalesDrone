@@ -16,6 +16,7 @@ export function validateSkillTree(tree, skillNames) {
     )
       throw Error('Invalid skill route');
   if (!ids.has(tree.readinessSkill)) throw Error('Missing readiness root');
+  if (tree.finopsSkill !== 'salesdrone-finops' || !ids.has(tree.finopsSkill)) throw Error('Missing FinOps root');
 }
 export function routeSkills(prompt, tree) {
   const text = prompt.toLowerCase();

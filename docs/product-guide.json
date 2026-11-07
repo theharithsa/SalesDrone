@@ -103,7 +103,7 @@
       ],
       "details": [
         "The source worksheet naming is made readable in the application: Enquiry source, Customer name, Phone number, Company name, City / location, Sector, Enquiry date and Enquiry status. Sales stage is separate from original imported status. Serial number is not a required application field.",
-        "Administrators can customize labels and supported field options under Manage fields. Labels change presentation; stable internal field IDs keep imports and API integrations consistent. Retired fields preserve existing data rather than erasing history.",
+        "Administrators can customize labels and supported field options under Lead fields. Labels change presentation; stable internal field IDs keep imports and API integrations consistent. Retired fields preserve existing data rather than erasing history.",
         "Non-admin lead visibility follows workspace Reports & lead access policy and membership scope. Administrators can require assigned-only access. Filtering and exporting do not grant access to additional records.",
         "Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion.",
         "Search stays visible. On mobile, Filters opens a dialog for search field, stage, source and column conditions. Apply filters commits the draft and closes the dialog; Cancel or Escape keeps the existing filters. Reset clears the draft until applied. Desktop retains the inline disclosure. Stage shortcuts scroll within their row.",
@@ -112,7 +112,7 @@
         "Infinite scrolling loads the next page automatically as you approach the bottom of the lead list. The initial live page requests up to 30 leads; sparse filtered scans may contain fewer results with another cursor. Loading continues until the API returns no cursor. Load more leads remains available as a keyboard/browser fallback; failures pause automatic loading and show Retry loading leads. Changing filters starts a fresh list. Demo mode uses 96 fictional leads, revealed 30 at a time.",
         "On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and the filter icon share a row. All stages provides a compact quick stage picker; desktop retains its action buttons and stage shortcuts. Small screens shorten action labels, and large mobile counts use compact notation.",
         "Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.",
-        "The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Manage fields → Lead page header. Select a phone number to open your calling app.",
+        "The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Lead fields → Lead page header. Select a phone number to open your calling app.",
         "Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices.",
         "Admins can choose Assigned to in desktop Filters or the phone filter dialog. Choose All assignees, Unassigned or a named member, including inactive members whose leads remain assigned. It composes with other conditions and applies to exports. Apply commits a phone draft; Cancel preserves current filters; Reset clears the assignee. Team workload links open Leads with that assignee and clear unrelated conditions."
       ],
@@ -446,14 +446,14 @@
       "title": "Settings: complete control reference",
       "audience": "Personal controls for members; workspace controls for administrators",
       "steps": [
-        "Open Settings. On desktop use the left section navigation; on mobile choose a section from the dropdown.",
-        "Expand Manage fields to choose Lead fields or Dropdown choices. Expand AvinyaIntelligence to choose Insights or Lead scoring.",
+        "Open Settings and search by name or browse the available categories. Desktop shows a category rail. On a phone, open a setting and use its back link to return to the category.",
+        "Under Lead fields, choose Field definitions, Field order, Lead page header or Choice lists. Header choices show a fictional live preview.",
         "Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members\u2019 workflow.",
         "Open the complete Settings reference from this handbook for each control\u2019s default, scope, permission, API, effect, example and limitation."
       ],
       "details": [
         "Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.",
-        "Manage fields includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. Name, enquiry date and at least one contact field remain available. Dropdown choices manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.",
+        "Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. Name, enquiry date and at least one contact field remain available. Choice lists manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.",
         "Reports & lead access controls exports and assigned-only visibility for non-admins. People & permissions manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.",
         "The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.",
         "The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.",
@@ -462,11 +462,11 @@
       "faq": [
         [
           "Can I rename a built-in field?",
-          "Use Manage fields > Lead fields. A label change does not rename its stable API key, so integrations keep using the documented schema."
+          "Use Lead fields > Field definitions. A label change does not rename its stable API key, so integrations keep using the documented schema."
         ],
         [
           "Can I remove a field without losing historical data?",
-          "Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Manage fields, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded."
+          "Use the delete icon in Lead fields > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Lead fields, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded."
         ]
       ],
       "screenshot": "field-manager-demo.jpg"
@@ -476,7 +476,7 @@
       "title": "Book mode: a quieter reading workspace",
       "audience": "Every active member; personal preference",
       "steps": [
-        "Open Settings > Appearance & time. On mobile, choose that section from the section selector.",
+        "Open Settings > Personal > Appearance & time, or find it with Search settings.",
         "Enable Book mode and select Save changes. The workspace uses warm paper surfaces, ink-like text and serif fonts throughout the UI, with monospace phone numbers.",
         "Choose Light, Dark or System as usual. The top-right light/dark control changes day/night while preserving Book mode.",
         "Return to Appearance & time, disable Book mode and save to restore the standard workspace."

@@ -358,3 +358,7 @@ This presentation change adds no API, permission, stored preference or business 
 ## Read-only MCP clients
 
 Use [the npm MCP adapter](MCP.md) for local stdio tools over the same HTTP API. New explicit PAT scopes `team:read` and `people:read` allow Admin Team reports/activity and the minimal id/name/active directory; they never grant people/security administration. Existing Google sessions still require members:write. New scopes are opt-in; existing tokens are unchanged. `GET /leads/{id}/tasks` accepts tasks:read under current lead scope; `/tasks` stays recipient-oriented. Supply read-only tokens and preserve sparse page continuations. Team is recorded work, not presence or an employee rating.
+
+### Contract design for API and MCP clients
+
+Design bounded, indexed list and search operations with validated filters, minimal projections and stable cursor order. Keep exact aggregates, current snapshots and historical transitions distinct. Describe date bounds, scope and incomplete coverage in the response schema. Do not make clients walk a full list to compute a count that the server can answer with an authorized aggregate. Preserve stable error codes, Retry-After, idempotency and version checks. See [MCP tool design](MCP.md#designing-cost-effective-tools) and [operation budgets](FINOPS.md).

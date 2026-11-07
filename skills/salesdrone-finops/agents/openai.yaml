@@ -1,0 +1,4 @@
+interface:
+  display_name: "SalesDrone FinOps"
+  short_description: "Review Firebase usage and cost"
+  default_prompt: "Use $salesdrone-finops to check operation budgets, cache boundaries and release evidence."

@@ -1,8 +1,9 @@
 {
   "schemaVersion": 1,
   "readinessSkill": "salesdrone-release-readiness",
+  "finopsSkill": "salesdrone-finops",
   "sharedContract": "skills/SHARED.md",
-  "selectionPolicy": "For SalesDrone web design and generic design reviews, prefer salesdrone-interface and Material 3; imported native/experimental design references are conditional. Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.",
+  "selectionPolicy": "For SalesDrone web design and generic design reviews, prefer salesdrone-interface and Material 3; imported native/experimental design references are conditional. Match prompt intent, inspect module descriptions and load the smallest relevant set. Use FinOps with every feature review and readiness with every feature/setting release. This tree grants no deployment or delegation authority.",
   "nodes": [
     {
       "id": "salesdrone-api-ingress",
@@ -16,7 +17,8 @@
         "proxy body limit"
       ],
       "related": [
-        "salesdrone-release-readiness"
+        "salesdrone-release-readiness",
+        "salesdrone-finops"
       ],
       "apiOperations": []
     },
@@ -36,7 +38,8 @@
         "salesdrone-authentication",
         "salesdrone-people-permissions",
         "salesdrone-data-platform",
-        "salesdrone-mcp"
+        "salesdrone-mcp",
+        "salesdrone-finops"
       ],
       "apiOperations": [
         "GET /api/v1/personal-access-tokens",
@@ -194,7 +197,8 @@
         "salesdrone-leads",
         "salesdrone-imports",
         "salesdrone-tasks-reminders",
-        "salesdrone-observability"
+        "salesdrone-observability",
+        "salesdrone-finops"
       ],
       "apiOperations": []
     },
@@ -213,6 +217,28 @@
         "salesdrone-interface",
         "salesdrone-api-integrations",
         "salesdrone-product-guide"
+      ],
+      "apiOperations": []
+    },
+    {
+      "id": "salesdrone-finops",
+      "path": "skills/salesdrone-finops/SKILL.md",
+      "description": "Review SalesDrone Firebase usage, browser caching, Firestore read/write amplification and service cost. Apply to every feature review, with deeper measurement for queries, polling, jobs, MCP or infrastructure changes.",
+      "matchTerms": [
+        "finops",
+        "firebase quota",
+        "firestore reads",
+        "firestore writes",
+        "browser cache",
+        "cloud cost",
+        "cost optimization",
+        "firebase migration",
+        "read amplification"
+      ],
+      "related": [
+        "salesdrone-api-ingress",
+        "salesdrone-api-integrations",
+        "salesdrone-mcp"
       ],
       "apiOperations": []
     },
@@ -448,7 +474,8 @@
         "salesdrone-release-readiness",
         "salesdrone-api-integrations",
         "salesdrone-team",
-        "salesdrone-people-permissions"
+        "salesdrone-people-permissions",
+        "salesdrone-finops"
       ],
       "apiOperations": []
     },
@@ -665,7 +692,10 @@
         "book mode preference",
         "interface font",
         "font preference",
-        "font style"
+        "font style",
+        "settings redesign",
+        "field order",
+        "lead page header"
       ],
       "related": [
         "salesdrone-release",

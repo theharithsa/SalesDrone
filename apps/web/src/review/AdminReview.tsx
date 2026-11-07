@@ -171,12 +171,15 @@ function AdminReview() {
     throw Error('Form preview only. Nothing is saved.');
   };
   const closeForm = () => setFormPreview('');
-  const [session, setSession] = useState(initialSession),
+  const settingsOnly = new URLSearchParams(location.search).get('preview') === 'settings';
+  const [session, setSession] = useState(() => new URLSearchParams(location.search).get('role') === 'member'
+    ? { ...initialSession, member: { ...initialSession.member!, role: 'SDR', scope: 'assigned' } }
+    : initialSession),
     [config, setConfig] = useState<FieldOptions>(
       () => {
         const fields=structuredClone(defaultFieldOptions);
         const query=new URLSearchParams(location.search);
-        if(query.get('preview')==='lead-form-selects')fields.customFields.push({id:'cf_preview_product',label:'Product',type:'select',options:['Sample board','Sample panel'],required:false,deleted:false});
+        if(['lead-form-selects','settings'].includes(query.get('preview') || ''))fields.customFields.push({id:'cf_preview_product',label:'Product',type:'select',options:['Sample board','Sample panel'],required:false,deleted:false});
         if(['dashboard-fields','import-fields'].includes(query.get('preview')||'')){
           fields.labels={...fields.labels,zone:'Zone'};
           fields.values.zone=['North','South'];
@@ -347,7 +350,8 @@ function AdminReview() {
   return (
     <>
       <div className="review-admin-banner">
-        <strong>Fictional admin workspace</strong>
+        <strong>{settingsOnly ? 'Settings preview · fictional ' + (session.member?.role === 'Admin' ? 'Admin' : 'member') : 'Fictional admin workspace'}</strong>
+        {settingsOnly ? <span>Changes stay in this tab.</span> : <>
         <span>
           Synthetic settings / mapping preview. Use fictional files only. No live API calls, tokens or real access
           grants.
@@ -367,6 +371,7 @@ function AdminReview() {
         <a className="text-button" href="/">
           Back to app
         </a>
+        </>}
       </div>
       <Modal
         open={!!formPreview}

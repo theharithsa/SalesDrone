@@ -1,11 +1,11 @@
 # SalesDrone skill tree
 
-Machine-readable source: [skill-tree.json](skill-tree.json). Generated from module skills and skills/intent-map.json. Load the shared contract and relevant module; load release readiness for every feature or version release. Routing is advisory, not permission to spawn agents or deploy.
+Machine-readable source: [skill-tree.json](skill-tree.json). Generated from module skills and skills/intent-map.json. Load the shared contract and relevant module; load FinOps for every feature review and release readiness for every feature or version release. Routing is advisory, not permission to spawn agents or deploy.
 
 - [salesdrone-api-ingress](skills/salesdrone-api-ingress/SKILL.md) — API ingress, malformed JSON, managed parser, Cloud Run gateway, proxy body limit.
-  Related: salesdrone-release-readiness.
+  Related: salesdrone-release-readiness, salesdrone-finops.
 - [salesdrone-api-integrations](skills/salesdrone-api-integrations/SKILL.md) — swagger, openapi, personal access token, api key, api scopes.
-  Related: salesdrone-release, salesdrone-authentication, salesdrone-people-permissions, salesdrone-data-platform, salesdrone-mcp.
+  Related: salesdrone-release, salesdrone-authentication, salesdrone-people-permissions, salesdrone-data-platform, salesdrone-mcp, salesdrone-finops.
 - [salesdrone-attachments](skills/salesdrone-attachments/SKILL.md) — attachments, upload lead files, lead photos, Firebase Storage, file download, Files tab.
   Related: salesdrone-testing, salesdrone-observability, salesdrone-release-readiness, salesdrone-release.
 - [salesdrone-authentication](skills/salesdrone-authentication/SKILL.md) — google login, sign in, authentication, app check.
@@ -19,9 +19,11 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-dashboard](skills/salesdrone-dashboard/SKILL.md) — dashboard, insights, funnel graph.
   Related: salesdrone-release, salesdrone-lead-scoring, salesdrone-leads, salesdrone-lead-journey, salesdrone-interface, salesdrone-team.
 - [salesdrone-data-platform](skills/salesdrone-data-platform/SKILL.md) — firestore, index, transaction, cursor.
-  Related: salesdrone-release, salesdrone-leads, salesdrone-imports, salesdrone-tasks-reminders, salesdrone-observability.
+  Related: salesdrone-release, salesdrone-leads, salesdrone-imports, salesdrone-tasks-reminders, salesdrone-observability, salesdrone-finops.
 - [salesdrone-documentation](skills/salesdrone-documentation/SKILL.md) — readme, documentation, settings guide, screenshots.
   Related: salesdrone-release, salesdrone-interface, salesdrone-api-integrations, salesdrone-product-guide.
+- [salesdrone-finops](skills/salesdrone-finops/SKILL.md) — finops, firebase quota, firestore reads, firestore writes, browser cache, cloud cost, cost optimization, firebase migration, read amplification.
+  Related: salesdrone-api-ingress, salesdrone-api-integrations, salesdrone-mcp.
 - [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping, import history, revised workbook, duplicate comparison, collaborative import.
   Related: salesdrone-release, salesdrone-leads, salesdrone-conversations, salesdrone-workspace-settings, salesdrone-notifications.
 - [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit, lead header redesign, display zoom, design review, Material 3, make my site stunning, Tailwind styling, Awwwards, responsive UI.
@@ -37,7 +39,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
 - [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report, batch edit, bulk edit, select leads.
   Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications.
 - [salesdrone-mcp](skills/salesdrone-mcp/SKILL.md) — MCP, MCP server, npm package, stdio, read-only integration.
-  Related: salesdrone-release-readiness, salesdrone-api-integrations, salesdrone-team, salesdrone-people-permissions.
+  Related: salesdrone-release-readiness, salesdrone-api-integrations, salesdrone-team, salesdrone-people-permissions, salesdrone-finops.
 - [salesdrone-notifications](skills/salesdrone-notifications/SKILL.md) — push notification, notification bell, read unread, fcm.
   Related: salesdrone-release, salesdrone-tasks-reminders, salesdrone-leads, salesdrone-authentication, salesdrone-interface.
 - [salesdrone-observability](skills/salesdrone-observability/SKILL.md) — dynatrace, rum, telemetry, trace, metric, logs, bizevent, settings audit, audit logs, audit delivery.
@@ -56,5 +58,5 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release-readiness, salesdrone-people-permissions, salesdrone-leads, salesdrone-interface, salesdrone-dashboard, salesdrone-mcp.
 - [salesdrone-testing](skills/salesdrone-testing/SKILL.md) — testing, test cases, regression tests, QA handoff, test runner, test agent.
   Related: salesdrone-release-readiness, salesdrone-release.
-- [salesdrone-workspace-settings](skills/salesdrone-workspace-settings/SKILL.md) — manage fields, lead fields, dropdown choices, settings, custom fields, book mode preference, interface font, font preference, font style.
+- [salesdrone-workspace-settings](skills/salesdrone-workspace-settings/SKILL.md) — manage fields, lead fields, dropdown choices, settings, custom fields, book mode preference, interface font, font preference, font style, settings redesign, field order, lead page header.
   Related: salesdrone-release, salesdrone-imports, salesdrone-leads, salesdrone-lead-scoring, salesdrone-people-permissions, salesdrone-api-integrations, salesdrone-book-mode.

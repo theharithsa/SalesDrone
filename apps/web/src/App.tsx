@@ -1,3 +1,4 @@
+import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
 import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
 import AssigneeFilter, { type Assignee } from './components/AssigneeFilter';
@@ -316,6 +317,7 @@ export default function App() {
   const demoRef = useRef<Data>(demoData());
   const guestRef = useRef(guest);
   guestRef.current = guest;
+  const readCache = useRef(new WorkspaceReadCache());
   const sessionRef = useRef(session);
   sessionRef.current = session;
   const can = (c: string) => demo || session?.member?.capabilities.includes(c);
@@ -327,11 +329,13 @@ export default function App() {
   }, [toast]);
   const resolveSession = useCallback(async () => {
     const g = ++generation.current;
+    readCache.current.clear();
     setSessionBusy(true);
     setError('');
     try {
       const result = await api<Session>('/me');
       if (g !== generation.current) return;
+      readCache.current.clear();
       if (sessionRef.current?.identity.uid !== result.identity.uid)
         setColumnFilters([]);
       setInboxOpen(false);
@@ -361,6 +365,7 @@ export default function App() {
       if (user) void resolveSession();
       else {
         generation.current++;
+        readCache.current.clear();
         setSession(null);
         setData(guestRef.current ? demoRef.current : blank);
         setSelected(null);
@@ -372,9 +377,14 @@ export default function App() {
   }, [resolveSession]);
   useEffect(() => {
     if (!session || demo) return;
+    let running = false;
     const recheck = async () => {
+      if (running || document.visibilityState !== 'visible') return;
+      running = true;
+      const identityEpoch = generation.current;
       try {
         const next = await api<Session>('/me');
+        if (generation.current !== identityEpoch) return;
         const current = sessionRef.current;
         if (!current || current.identity.uid !== next.identity.uid) return;
         if (
@@ -385,25 +395,34 @@ export default function App() {
           next.member?.scope !== current.member?.scope
         ) {
           generation.current++;
+          readCache.current.clear();
           setData(blank);
           setSelected(null);
           setTimeline([]);
           setSession(next);
         }
       } catch (e) {
-        if (e instanceof ApiError && (e.status === 401 || e.status === 403)) {
+        if (generation.current === identityEpoch && e instanceof ApiError && (e.status === 401 || e.status === 403)) {
+          readCache.current.clear();
+          generation.current++;
           setData(blank);
           setSelected(null);
           setSession(null);
           setError(e.message);
         }
+      } finally {
+        running = false;
       }
     };
+    const onFocus = () => {
+      readCache.current.clear();
+      void recheck();
+    };
     const timer = setInterval(recheck, 60000);
-    window.addEventListener('focus', recheck);
+    window.addEventListener('focus', onFocus);
     return () => {
       clearInterval(timer);
-      window.removeEventListener('focus', recheck);
+      window.removeEventListener('focus', onFocus);
     };
   }, [session, demo]);
   const { appearance, bookMode, fontStyle, displayScale } =
@@ -531,10 +550,18 @@ export default function App() {
     async (path: string, method = 'GET', body?: any, key?: string) => {
       if (!demo) {
         try {
-          const result = await api(path, method, body, key);
+          const current = sessionRef.current;
+          const member = current?.member;
+          const scope = member && auth.currentUser?.uid === current.identity.uid
+            ? JSON.stringify([generation.current, current.identity.uid, member.version, member.accessPolicyVersion, member.scope])
+            : '';
+          const send = () => api(path, method, body, key);
+          const result = method === 'GET' ? await readCache.current.read(scope, path, send) : await send();
+          if (method !== 'GET') readCache.current.clear();
           setOnline(true);
           return result;
         } catch (e) {
+          if (e instanceof ApiError && (e.status === 401 || e.status === 403)) readCache.current.clear();
           if (
             e instanceof ApiError &&
             (e.status === 401 || e.code === 'DEMO_ONLY')
@@ -996,15 +1023,18 @@ export default function App() {
       setInboxHasUnread(false);
       return;
     }
-    if (demo || page === 'notifications') {
+    if (demo || page === 'notifications')
       setInboxHasUnread(data.notifications.some((n) => !n.readAt));
-      return;
-    }
-    let alive = true,
-      running = false;
-    async function syncInbox() {
-      if (running || document.visibilityState !== 'visible') return;
+  }, [active, demo, page, data.notifications]);
+  useEffect(() => {
+    if (!active || demo) return;
+    let alive = true, running = false;
+    let lastPoll = -Infinity;
+    setInboxHasUnread(false);
+    async function syncInbox(force = false) {
+      if (running || document.visibilityState !== 'visible' || (!force && performance.now() - lastPoll < 30_000)) return;
       running = true;
+      lastPoll = performance.now();
       try {
         const result = await request('/notifications?limit=100');
         if (alive)
@@ -1017,16 +1047,19 @@ export default function App() {
     }
     void syncInbox();
     const timer = setInterval(() => void syncInbox(), 60000);
-    window.addEventListener('focus', syncInbox);
-    window.addEventListener('salesdrone:inbox', syncInbox);
+    const onFocus = () => void syncInbox();
+    const onInboxEvent = () => void syncInbox(true);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('salesdrone:inbox', onInboxEvent);
     return () => {
       alive = false;
       clearInterval(timer);
-      window.removeEventListener('focus', syncInbox);
-      window.removeEventListener('salesdrone:inbox', syncInbox);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('salesdrone:inbox', onInboxEvent);
     };
-  }, [active, demo, page, session?.identity.uid, request, data.notifications]);
+  }, [active, demo, session?.identity.uid, session?.member?.version, session?.member?.accessPolicyVersion, request]);
   async function refresh() {
+    readCache.current.clear();
     setDashboardRefreshKey((k) => k + 1);
     const currentGeneration = generation.current;
     const currentDetail = detailEpoch.current;
@@ -1272,6 +1305,7 @@ export default function App() {
       /* Generic push previews never contain lead data. */
     } finally {
       generation.current++;
+      readCache.current.clear();
       setData(blank);
       setSelected(null);
       setTimeline([]);
@@ -1375,7 +1409,9 @@ export default function App() {
         })
         .catch(() => {});
     void get();
-    const timer = setInterval(() => void get(), 30000);
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') void get();
+    }, 60000);
     return () => {
       alive = false;
       clearInterval(timer);
