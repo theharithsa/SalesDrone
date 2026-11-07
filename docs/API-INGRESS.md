@@ -49,9 +49,12 @@ References: [Functions Framework parser](https://github.com/GoogleCloudPlatform/
 [Hosting Cloud Run rewrites](https://firebase.google.com/docs/hosting/cloud-run).
 
 Runtime resources: one CPU, 1 GiB, concurrency 2, min 0/max 3 instances, 75-second
-platform timeout and a 55-second application deadline. CPU remains allocated while
-an instance is alive to permit bounded post-response OTel flushing. This adds a
-separate scale-to-zero Cloud Run workload; it is not a free-tier guarantee. The
+platform timeout and a 55-second application deadline. Request-based billing
+allocates CPU during request processing. The ingress reserves up to four seconds
+for two bounded flush waves. Streaming forwards all but the final byte with
+backpressure, then completes traces, logs and metrics before sending the final
+byte. Export failures are handled separately from HTTP results. An interrupted
+client connection can still prevent export. The
 private build-source bucket expires build archives after seven days, without
 changing customer/import/chat retention. Images are immutable commit tags using a
 pinned Node 22 base digest and the existing functions production dependency lock.
@@ -79,3 +82,13 @@ Check HTTP status and JSON content type before decoding, then exact app version/
 and no-store metadata. A container import/localhost test does not certify managed
 routing. Keep the five unauthenticated parser/denial probes after identity, before
 Hosting cutover, and independently through the final Hosting URL afterward.
+
+## Billing rollout
+
+The deployer creates a tagged revision with zero traffic, checks CPU throttling
+and the service and revision minimums, then verifies identity and parser behavior.
+The production workflow promotes that exact revision and retains the previous
+revision for traffic rollback. Stage-only operation leaves the tag available for
+synthetic probes. Remove the stage tag after recording the results. Confirm
+traces and logs with synthetic trace IDs and metrics with `faas.version` in
+Dynatrace. Compare matched usage windows before reporting savings.

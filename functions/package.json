@@ -1,6 +1,6 @@
 {
   "name": "@salesdrone/functions",
-  "version": "2.10.3",
+  "version": "2.10.4",
   "private": true,
   "type": "module",
   "main": "src/index.js",

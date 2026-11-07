@@ -68,6 +68,18 @@ test('slow upstream is bounded and does not expose internal socket errors',async
  const f=await fixture(t,()=>{});const r=await fetch(f.url+'/api/v1/leads');assert.equal(r.status,504);assert.equal((await r.json()).error.code,'REQUEST_TIMEOUT');
 });
 
+test('a stalled one-byte response returns a bounded timeout before any bytes reach the client', async t => {
+  const f = await fixture(t, (_req, res) => {
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Length', '2');
+    res.write(Buffer.from([255]));
+  });
+  const response = await fetch(f.url + '/api/v1/leads');
+  assert.equal(response.status, 504);
+  assert.equal(response.headers.get('content-type'), 'application/json');
+  assert.equal((await response.json()).error.code, 'REQUEST_TIMEOUT');
+});
+
 test('an incomplete request body gets a bounded safe timeout without reaching backend',async t=>{
  const f=await fixture(t);
  const result=await new Promise((resolve,reject)=>{

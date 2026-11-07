@@ -4,7 +4,7 @@ import http from 'node:http';
 import https from 'node:https';
 import { randomUUID } from 'node:crypto';
 import { gunzipSync, inflateSync, brotliDecompressSync } from 'node:zlib';
-import { pipeline } from 'node:stream/promises';
+import { once } from 'node:events';
 
 export const JSON_LIMIT = 12 * 1024 * 1024;
 export const BINARY_LIMIT = 8 * 1024 * 1024;
@@ -18,14 +18,19 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
   const target = new URL(upstream);
   if (target.username || target.password || target.search || target.hash || target.pathname !== '/' || (target.protocol !== 'https:' && !(allowLocalTest && target.protocol === 'http:' && target.hostname === '127.0.0.1'))) throw Error('A fixed HTTPS upstream origin is required');
   const transport = target.protocol === 'https:' ? https : http;
-  let flushing=false,flushAgain=false;
-  const requestFlush=()=>{
-    if(!telemetry)return;
-    flushAgain=true;
-    if(flushing)return;
-    flushing=true;
-    void (async()=>{try{while(flushAgain){flushAgain=false;await telemetry.flush();}}catch{}finally{flushing=false;}})();
-  };
+  // A concurrent completion that misses the active export joins the next one.
+  let flushing = Promise.resolve(), queued;
+  function requestFlush() {
+    if (!telemetry) return;
+    if (!queued) {
+      queued = flushing.then(() => {
+        queued = undefined;
+        return telemetry.flush();
+      }).catch(() => {});
+      flushing = queued;
+    }
+    return queued;
+  }
   return http.createServer({ requestTimeout: timeoutMs, headersTimeout: Math.min(timeoutMs, 20000), maxHeaderSize: 16384 }, (req, res) => {
     req.requestId = randomUUID();
     req.route = { path: req.url===HEALTH_PATH ? HEALTH_PATH : '/api/*' };
@@ -33,28 +38,44 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
     res.setHeader('X-App-Version', version);
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    let traceparent,operationSettled=false;
+    let traceparent, finishTelemetry, completing = false, forwardingRequest = false;
     const controller = new AbortController();
+    async function complete(body) {
+      if (completing || res.destroyed) return;
+      completing = true;
+      clearTimeout(timer);
+      try {
+        finishTelemetry?.();
+        log(JSON.stringify({ event: 'ingress.request.completed', requestId: req.requestId, status: res.statusCode, version, commit, ...(traceparent ? {trace_id:traceparent.split('-')[1],span_id:traceparent.split('-')[2]} : {}) }));
+        if (telemetry) await requestFlush();
+      } catch {
+        console.warn(JSON.stringify({ event: 'ingress.telemetry.completion.failed' }));
+      }
+      if (!res.destroyed) res.end(body);
+    }
+    function rejectRequest(status, code) {
+      req.ingressError = code;
+      res.statusCode = status;
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Connection', 'close');
+      return complete(JSON.stringify({ error: { code, message: messages[code], requestId: req.requestId } }));
+    }
+    // Reserve time for two bounded 2s export batches within the response deadline.
+    const exportBudget = telemetry ? 4000 : 0;
     const timer = setTimeout(() => {
       controller.abort();
-      if (!res.headersSent) {
-        req.ingressError='REQUEST_TIMEOUT';
-        res.writeHead(504, {'Content-Type':'application/json','Connection':'close'});
-        res.end(JSON.stringify({error:{code:'REQUEST_TIMEOUT',message:messages.REQUEST_TIMEOUT,requestId:req.requestId}}));
-      }
-    }, timeoutMs);
+      if (!forwardingRequest && !res.headersSent)
+        void rejectRequest(504, 'REQUEST_TIMEOUT');
+    }, Math.max(1, timeoutMs - exportBudget));
     req.on('aborted', () => controller.abort());
     res.on('close', () => { if (!res.writableFinished) controller.abort(); });
-    res.once('finish', () => {
-      log(JSON.stringify({ event: 'ingress.request.completed', requestId: req.requestId, status: res.statusCode, version, commit, ...(traceparent ? {trace_id:traceparent.split('-')[1],span_id:traceparent.split('-')[2]} : {}) }));
-      queueMicrotask(()=>{if(operationSettled)requestFlush();});
-    });
-    const run = async () => {
+    const run = async (finish) => {
+      finishTelemetry = finish;
       traceparent=telemetry?.capture()?.traceparent;
       try {
         if (req.url === HEALTH_PATH && req.method === 'GET') {
           res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ version, commit }));
+          await complete(JSON.stringify({ version, commit }));
           return;
         }
         // Concatenate only a validated origin-relative path. Never resolve // URLs.
@@ -89,6 +110,8 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
             JSON.parse(text);
           } catch { throw failure(400, 'BAD_JSON'); }
         }
+        forwardingRequest = true;
+        let tail;
         const forward = (span) => new Promise((resolve, reject) => {
           const headers = Object.fromEntries(forwarding.filter(k => req.headers[k] !== undefined).map(k => [k, req.headers[k]]));
           headers['content-length'] = String(body.length);
@@ -96,30 +119,49 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
           if(propagated.traceparent)headers.traceparent=propagated.traceparent;
           if(propagated.tracestate)headers.tracestate=propagated.tracestate;
           const request = transport.request(target.origin + req.url, { method: req.method, headers, signal: controller.signal }, async response => {
-            const connectionFields = String(response.headers.connection || '').toLowerCase().split(',').map(x => x.trim());
-            for (const [key, value] of Object.entries(response.headers)) if (!hop.has(key) && !connectionFields.includes(key) && value !== undefined) res.setHeader(key, value);
-            res.statusCode = response.statusCode || 502;
-            span?.setAttribute('http.response.status_code',res.statusCode);
-            try { await pipeline(response, res); resolve(); } catch (error) { reject(error); }
+            const applyHeaders = () => {
+              if (res.headersSent) return;
+              const connectionFields = String(response.headers.connection || '').toLowerCase().split(',').map(x => x.trim());
+              for (const [key, value] of Object.entries(response.headers))
+                if (!hop.has(key) && !connectionFields.includes(key) && value !== undefined) res.setHeader(key, value);
+              res.statusCode = response.statusCode || 502;
+            };
+            const write = async (chunk) => {
+              controller.signal.throwIfAborted();
+              applyHeaders();
+              if (!res.write(chunk)) await once(res, 'drain', { signal: controller.signal });
+            };
+            span?.setAttribute('http.response.status_code', response.statusCode || 502);
+            try {
+              // Preserve backpressure and retain one byte so a fixed-length
+              // client cannot complete the response before telemetry is sent.
+              for await (const chunk of response) {
+                if (!chunk.length) continue;
+                if (tail) await write(tail);
+                if (chunk.length > 1) await write(chunk.subarray(0, -1));
+                tail = chunk.subarray(-1);
+              }
+              applyHeaders();
+              resolve();
+            } catch (error) { reject(error); }
           });
           request.on('error', reject);
           request.end(body);
         });
         if (telemetry) await telemetry.span('api.forward', forward, { operation: 'api.forward', 'server.address':target.hostname, 'http.request.method':['GET','POST','PUT','PATCH','DELETE'].includes(req.method)?req.method:'OTHER' });
         else await forward();
+        await complete(tail);
       } catch (error) {
-        if (res.writableEnded) return;
+        if (completing || res.destroyed) return;
         if (res.headersSent) { res.destroy(); return; }
         const code = controller.signal.aborted ? 'REQUEST_TIMEOUT' : (messages[error.code] ? error.code : 'UPSTREAM_UNAVAILABLE');
-        req.ingressError=code;
-        res.statusCode = controller.signal.aborted ? 504 : (error.status || 502);
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Connection', 'close');
-        res.end(JSON.stringify({ error: { code, message: messages[code], requestId: req.requestId } }));
+        await rejectRequest(controller.signal.aborted ? 504 : (error.status || 502), code);
         req.resume();
-      } finally { clearTimeout(timer);operationSettled=true;if(res.writableFinished)queueMicrotask(requestFlush); }
+      } finally {
+        clearTimeout(timer);
+      }
     };
-    if (telemetry) telemetry.http(req, res, run);
+    if (telemetry) telemetry.http(req, res, run, { finishBeforeResponse: true });
     else void run();
   });
 }

@@ -306,6 +306,13 @@ CI reports actual ingress cases; deployment requires and records the ingress
 revision/parser boundary separately from the five Functions. Ingestion receipts,
 tenant queries and RUM cross-signal linkage remain separate evidence.
 
+The request-billed ingress finalizes the forwarded span and server completion
+signals before a bounded export. Response completion waits for the flush.
+Concurrent completions that miss an active batch join the next one. The export
+budget is part of the request deadline, and exporter failures preserve the
+chosen response. Use a synthetic trace ID plus the Cloud Run revision to query
+the real gateway signals independently of deployment probes.
+
 The operational ingress identity path is `/ingress-health`, separated from `/api/*`
 in request metrics. A managed HTML/error response cannot satisfy health verification.
 The first 2.6.1 rollout stopped at this boundary; 2.6.2 completes cutover using the

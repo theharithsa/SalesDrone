@@ -16,7 +16,14 @@ API contract versions are independent from application versions.
 
 
 
+
 ## [Unreleased]
+
+## [2.10.4] - 2026-11-08
+
+### Changed
+- Use request-based billing with zero minimum instances for the API ingress.
+- Flush bounded ingress telemetry before completing the HTTP response. Validate the tagged revision’s billing and API contract before sending it production traffic.
 
 ## [2.10.3] - 2026-11-08
 

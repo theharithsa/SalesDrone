@@ -17,3 +17,5 @@ Read [SHARED](../SHARED.md) and [the cost and migration plan](../../docs/FINOPS.
 ## Primary API ownership
 
 None. The route's domain module owns its HTTP contract. Coordinate pagination and limits with [API integrations](../salesdrone-api-integrations/SKILL.md) and [MCP](../salesdrone-mcp/SKILL.md).
+
+Compare ingress billable instance time per request and SKU totals before and after request-based billing. Confirm both service and revision minimums are zero. Tenant searchability of ingress signals is a separate gate from cost measurement.

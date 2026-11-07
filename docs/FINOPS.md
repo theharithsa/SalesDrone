@@ -11,7 +11,7 @@ Firestore Standard lists 50,000 document reads and 20,000 writes per day in the 
 | Inbox | Up to 100 rows plus visibility checks on the minute poll. Page navigation and updates previously restarted the poll. | Local candidate keeps one poll across page navigation, limits focus-driven polling to at most once per 30 seconds and honors inbox events immediately when idle. Follow up with a scoped unread indicator that preserves older unread and assignment semantics. |
 | MCP/PAT | Every accepted token request transaction updates both token and owner rate counters. A first use in a minute can also update token metadata. | Keep durable rate limits. Measure request volume before proposing changes. Prefer a scoped aggregate over paging a full collection for a count. |
 | Background work | Four minute schedules incur idle queries, retries and telemetry/outbox writes. | Measure idle versus busy work separately. Verify due-time and delivery SLAs before changing schedules. |
-| Cloud Run ingress | Separate request hop, its own runtime and container artifacts. | Migration planned. Measure Cloud Run, Cloud Build and Artifact Registry separately from Firestore. |
+| Cloud Run ingress | Separate request hop, its own runtime and container artifacts. | Request-based billing and zero minimum instances. Compare billable instance time and request volume before and after rollout. Measure Cloud Build and Artifact Registry separately from Firestore. |
 
 The score example is a modeled operation count, including missing-document lookups. It is neither invoice data nor proof that this path caused the reported spike.
 
