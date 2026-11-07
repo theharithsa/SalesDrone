@@ -407,7 +407,7 @@ export function createTelemetry({
         },
       );
     },
-    http(req, res, next) {
+    http(req, res, next, { finishBeforeResponse = false } = {}) {
       const parent = validParent(req.headers.traceparent),
         parentContext = parent
           ? propagator.extract(
@@ -502,7 +502,7 @@ export function createTelemetry({
             self.log('http.received',{'request.has_body':Number(req.headers['content-length'])>0,'request.size':Math.max(0,Math.min(12582913,Number(req.headers['content-length'])||0)),'correlation.has_parent':!!parent});
             res.once('finish', finish);
             res.once('close', finish);
-            next();
+            return finishBeforeResponse ? next(finish) : next();
           },
         ),
       );

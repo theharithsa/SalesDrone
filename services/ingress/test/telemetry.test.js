@@ -10,16 +10,40 @@ const attributes=values=>Object.fromEntries(values.map(x=>{const key=Object.keys
 test('decoded ingress export retains parser categories, real forwarding context and no private transport values',async()=>{
  const schema=protobuf.parse(await readFile(new URL('../../../functions/test/fixtures/otlp-subset.proto',import.meta.url),'utf8')).root;
  const received=[],parents=[],states=[],outcomes=[];
- let resolveForward;const forwarded=new Promise(resolve=>{resolveForward=resolve;});
+ let resolveForward;
+ const forwarded=new Promise(resolve=>{resolveForward=resolve;});
+ let blockCollector = false, failCollector = false, releaseCollector;
+ const collectorGate = new Promise(resolve => { releaseCollector = resolve; });
  const deadline=setTimeout(()=>resolveForward(false),5000);
- const receiver=http.createServer(async(req,res)=>{const chunks=[];for await(const c of req)chunks.push(c);const name=req.url.endsWith('traces')?'ExportTraceServiceRequest':req.url.endsWith('logs')?'ExportLogsServiceRequest':'ExportMetricsServiceRequest';const data=schema.lookupType('wire.'+name).decode(Buffer.concat(chunks));received.push({name,data});if(name==='ExportTraceServiceRequest'&&data.resourceSpans.some(r=>r.scopeSpans.some(s=>s.spans.some(span=>span.name==='api.forward'))))resolveForward(true);res.setHeader('Content-Type','application/x-protobuf');res.end();}).listen(0,'127.0.0.1');await once(receiver,'listening');
+ const receiver=http.createServer(async(req,res)=>{const chunks=[];for await(const c of req)chunks.push(c);const name=req.url.endsWith('traces')?'ExportTraceServiceRequest':req.url.endsWith('logs')?'ExportLogsServiceRequest':'ExportMetricsServiceRequest';const data=schema.lookupType('wire.'+name).decode(Buffer.concat(chunks));received.push({name,data});if(name==='ExportTraceServiceRequest'&&data.resourceSpans.some(r=>r.scopeSpans.some(s=>s.spans.some(span=>span.name==='api.forward'))))resolveForward(true);if(blockCollector)await collectorGate;if(failCollector)res.statusCode=400;res.setHeader('Content-Type','application/x-protobuf');res.end();}).listen(0,'127.0.0.1');await once(receiver,'listening');
  const backend=http.createServer((req,res)=>{parents.push(req.headers.traceparent);states.push(req.headers.tracestate);req.resume();res.end('{"ok":true}');}).listen(0,'127.0.0.1');await once(backend,'listening');
  const telemetry=createTelemetry({tenant:`http://127.0.0.1:${receiver.address().port}`,key:'synthetic',service:'salesdrone-ingress-test',allowLocalTest:true});
  const gateway=createGateway({upstream:`http://127.0.0.1:${backend.address().port}`,allowLocalTest:true,version:'2.6.1',commit:'synthetic',telemetry,log:x=>outcomes.push(x)}).listen(0,'127.0.0.1');await once(gateway,'listening');
  try{
   const url=`http://127.0.0.1:${gateway.address().port}/api/v1/leads?private=PRIVATE_QUERY`;
-  let response=await fetch(url,{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer PRIVATE_AUTH'},body:'{PRIVATE_BODY'});assert.equal(response.status,400);await response.text();await telemetry.flush();
-  response=await fetch(url,{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer PRIVATE_AUTH',traceparent:'00-'+'b'.repeat(32)+'-'+'c'.repeat(16)+'-01',tracestate:'dtr=synthetic'},body:'{}'});assert.equal(response.status,200);await response.text();assert.equal(await forwarded,true);clearTimeout(deadline);await telemetry.flush();
+  let response=await fetch(url,{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer PRIVATE_AUTH'},body:'{PRIVATE_BODY'});assert.equal(response.status,400);await response.text();
+  assert.ok(received.some(x=>x.name==='ExportTraceServiceRequest'));
+  assert.ok(received.some(x=>x.name==='ExportLogsServiceRequest'));
+  assert.ok(received.some(x=>x.name==='ExportMetricsServiceRequest'));
+  blockCollector = true;
+  let bodyCompleted = false;
+  const client = fetch(url,{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer PRIVATE_AUTH',traceparent:'00-'+'b'.repeat(32)+'-'+'c'.repeat(16)+'-01',tracestate:'dtr=synthetic'},body:'{}'}).then(async res => {
+    assert.equal(res.status,200);
+    assert.equal(res.headers.get('content-length'), '11');
+    assert.equal(await res.text(), '{"ok":true}');
+    bodyCompleted = true;
+  });
+  assert.equal(await forwarded,true);
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(bodyCompleted, false, 'fixed-length body stays incomplete until telemetry has flushed');
+  releaseCollector();
+  await client;
+  clearTimeout(deadline);
+  failCollector = true;
+  response = await fetch(url, { method:'POST', headers:{'content-type':'application/json'}, body:'null' });
+  assert.equal(response.status,400);
+  assert.equal((await response.json()).error.code,'BAD_JSON');
+  assert.ok(telemetry.diagnostics().traces.failure > 0);
   const spans=received.filter(x=>x.name==='ExportTraceServiceRequest').flatMap(x=>x.data.resourceSpans.flatMap(r=>r.scopeSpans.flatMap(s=>s.spans)));
   const rejected=spans.find(s=>attributes(s.attributes)['error.type']==='BAD_JSON');assert.ok(rejected);assert.equal(rejected.name,'POST /api/*');
   assert.equal(states[0],'dtr=synthetic');
@@ -28,5 +52,5 @@ test('decoded ingress export retains parser categories, real forwarding context 
   const logs=received.filter(x=>x.name==='ExportLogsServiceRequest').flatMap(x=>x.data.resourceLogs.flatMap(r=>r.scopeLogs.flatMap(s=>s.logRecords)));assert.ok(logs.some(l=>attributes(l.attributes)['error.type']==='BAD_JSON'&&Buffer.from(l.traceId).length===16));
   const metrics=received.filter(x=>x.name==='ExportMetricsServiceRequest').flatMap(x=>x.data.resourceMetrics.flatMap(r=>r.scopeMetrics.flatMap(s=>s.metrics)));assert.ok(metrics.filter(m=>m.name==='salesdrone.http.requests').some(m=>m.sum.dataPoints.some(p=>attributes(p.attributes)['error.type']==='BAD_JSON')));
   assert.ok(!JSON.stringify(received).includes('PRIVATE'));assert.ok(!outcomes.join('').includes('PRIVATE'));assert.ok(outcomes.every(x=>JSON.parse(x).trace_id));
- }finally{clearTimeout(deadline);gateway.closeAllConnections();gateway.close();backend.closeAllConnections();backend.close();await telemetry.shutdown();receiver.closeAllConnections();receiver.close();}
+ }finally{releaseCollector();clearTimeout(deadline);gateway.closeAllConnections();gateway.close();backend.closeAllConnections();backend.close();await telemetry.shutdown();receiver.closeAllConnections();receiver.close();}
 });

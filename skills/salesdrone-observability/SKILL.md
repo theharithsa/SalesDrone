@@ -84,7 +84,7 @@ Use the [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md) for stage/error
 
 Lead research reuses HTTP RED, safe Firestore/Gemini dependency spans and worker logs containing processed/indexed/failed counts only. hygieneScans, assistantConversations and assistantRequests participate in committed domain outboxes; state transitions export bounded numeric lifecycle counts. Reporting settings have key-only ai.research audit events. Research operation counters/duration histograms use finite kind/outcome dimensions; async step spans link real request context when available. Never export questions, labels, source text, contacts, replies or embeddings. Derived index writes do not create business events.
 
-Cloud Run salesdrone-ingress reuses the bounded OTel foundation with platform revision identity and real HTTP-to-api.forward context. Proxy rejections are operational, not business commits. Exclude raw platform request URLs, retain sanitized outcomes. Restores emit a committed restored lifecycle outcome; CI includes actual ingress case receipts and deployment metadata.
+Cloud Run ingress completes HTTP-to-api.forward instrumentation and bounded export before finishing the response. Query synthetic trace IDs and revision metrics separately from deployment probes. Keep proxy rejections operational and exclude raw request URLs.
 
 For source-owned detector policies, offline notebook, weighted rates, `_bucket` p95 and read-only validation, follow [the operator handoff](../../observability/README.md). Never auto-install tenant resources; missing data must not resolve an incident. Regress obs:check and observability-pack.test.ts; use verify-monitoring-inputs.mjs only for labelled synthetic transport proof.
 

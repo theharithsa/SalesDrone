@@ -58,3 +58,5 @@ Use the shared HEALTH_PATH `/ingress-health`; never `/healthz` or other Cloud Ru
 Preserve validated W3C traceparent **and tracestate** through native ingress/api.forward/API context, including the Dynatrace vendor entry. Forwarding only the trace ID cannot certify RUM linkage. Use decoded real HTTP telemetry.test.js and the [journey runbook](../../docs/OBSERVABILITY-JOURNEYS.md); never log raw headers.
 
 A Firebase-managed replacement needs the staged parser and rollout gates in [FinOps](../salesdrone-finops/SKILL.md). A transport switch does not remove the Functions Framework pre-parser.
+
+Under request-based billing, finish forwarding and flush OTel before releasing the final response byte. Stage the tagged revision with zero traffic and confirm both minimums, CPU throttling and parser behavior before promotion.

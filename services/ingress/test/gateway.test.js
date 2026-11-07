@@ -68,6 +68,18 @@ test('slow upstream is bounded and does not expose internal socket errors',async
  const f=await fixture(t,()=>{});const r=await fetch(f.url+'/api/v1/leads');assert.equal(r.status,504);assert.equal((await r.json()).error.code,'REQUEST_TIMEOUT');
 });
 
+test('a stalled one-byte response returns a bounded timeout before any bytes reach the client', async t => {
+  const f = await fixture(t, (_req, res) => {
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Length', '2');
+    res.write(Buffer.from([255]));
+  });
+  const response = await fetch(f.url + '/api/v1/leads');
+  assert.equal(response.status, 504);
+  assert.equal(response.headers.get('content-type'), 'application/json');
+  assert.equal((await response.json()).error.code, 'REQUEST_TIMEOUT');
+});
+
 test('an incomplete request body gets a bounded safe timeout without reaching backend',async t=>{
  const f=await fixture(t);
  const result=await new Promise((resolve,reject)=>{
@@ -80,6 +92,17 @@ test('an incomplete request body gets a bounded safe timeout without reaching ba
 test('production probes exercise real ingress denial/parser boundaries without authenticated writes',async t=>{
  const f=await fixture(t,(_req,res)=>{const requestId=randomUUID();res.statusCode=401;res.setHeader('X-Request-Id',requestId);res.setHeader('Content-Type','application/json');res.end(JSON.stringify({error:{code:'UNAUTHENTICATED',requestId}}));});
  const results=await checkIngress(f.url,{version:'2.6.1'});assert.equal(results.length,5);assert.ok(results.every(r=>r.status==='passed'));assert.equal(f.calls.length,2);assert.ok(f.calls.every(call=>!call.headers.authorization));
+});
+
+test('tagged staging accepts the prior backend version only on forwarded denials', async t => {
+  const f = await fixture(t, (_req, res) => {
+    const requestId = randomUUID();
+    res.writeHead(401, {'Content-Type': 'application/json', 'X-Request-Id': requestId, 'X-App-Version': '2.6.0'});
+    res.end(JSON.stringify({error: {code: 'UNAUTHENTICATED', requestId}}));
+  });
+  await assert.rejects(checkIngress(f.url, {version: '2.6.1'}, {largeBody: false}), /compressed-json-denial/);
+  const results = await checkIngress(f.url, {version: '2.6.1'}, {largeBody: false, upstreamVersion: '2.6.0'});
+  assert.equal(results.length, 4);
 });
 
 test('operational health avoids Cloud Run reserved paths and rejects managed HTML errors',async()=>{
