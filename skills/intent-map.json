@@ -36,6 +36,17 @@
     "transaction",
     "cursor"
   ],
+  "salesdrone-finops": [
+    "finops",
+    "firebase quota",
+    "firestore reads",
+    "firestore writes",
+    "browser cache",
+    "cloud cost",
+    "cost optimization",
+    "firebase migration",
+    "read amplification"
+  ],
   "salesdrone-documentation": [
     "readme",
     "documentation",
@@ -154,7 +165,10 @@
     "book mode preference",
     "interface font",
     "font preference",
-    "font style"
+    "font style",
+    "settings redesign",
+    "field order",
+    "lead page header"
   ],
   "salesdrone-product-guide": [
     "product handbook",

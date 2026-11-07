@@ -52,13 +52,13 @@ workspaces/avinyatech/settings/fields; users/{uid} preferences; persisted lead c
 - Built-in display labels can change but keys, stored values, types and validation semantics stay fixed. Validate distinct built-in/custom names; preserve labels when older clients save only choices.
 - AI personalization is Google/App Check Admin-only. Blank guidance restores defaults; changes invalidate summary caches and in-flight older generations cannot publish. Prompts are not telemetry.
 - Apply the same configured options in forms, calls, imports, filters, journey and demo behavior. Use full “Enquiry” labels and omit serial number UI.
-- Desktop settings use section navigation; mobile uses a section selector. Preserve profile photo fallback, readable fonts and accessible labels.
+- Settings opens a permission-filtered searchable index. Desktop keeps a category rail; phones open one dedicated section with a back link. Preserve URL section IDs, focus and accessible labels.
 
-AvinyaIntelligence is an expandable settings group containing Dashboard insights (Admin), Automatic reminders (personal), and Lead scoring (Admin). Use matching optgroups in the mobile selector. Dashboard preferences support manual/automatic insightMode; omitted mode in older PATCH clients preserves the saved value, and missing records default to manual.
+Intelligence groups Dashboard insights, Automatic reminders, Lead scoring and Lead research. The directory filters Admin destinations before search. Dashboard preferences support manual/automatic insightMode; omitted mode in older PATCH clients preserves the saved value, and missing records default to manual.
 
 Settings → Reports & lead access owns [workspace-settings.js](../../functions/src/workspace-settings.js) and [WorkspacePolicySettings.tsx](../../apps/web/src/features/WorkspacePolicySettings.tsx). Admin Google/App Check writes require members:write and expectedVersion; active members can read the safe booleans. Defaults are exportsEnabled=true and assignedOnly=true. No-op saves retain the version. Saving must refresh /me so controls update immediately. Disabling assignedOnly restores configured member scopes, never promotes an assigned member to all. Verify reports-policy.test.js and the emulator integration.
 
-Manage fields groups Lead fields (fields) and Dropdown choices (choices), with an accessible desktop accordion and mobile optgroup. Preserve legacy section deep links and Admin visibility. The shared settings-sections.json catalog drives navigation and documentation; every changed control needs defaults, scope, permissions and behavior in docs/settings-reference.json. Generate docs:settings and verify docs:check.
+Lead fields groups Field definitions (fields), Field order, Lead page header and Choice lists (choices). Header preview uses fictional values and the same renderer as a lead. Save and discard controls handle only the current draft. Preserve legacy section deep links and Admin visibility. The shared settings-sections.json catalog drives navigation and documentation; every changed control needs defaults, scope, permissions and behavior in docs/settings-reference.json. Generate docs:settings and verify docs:check.
 
 ## Change and diagnosis
 
@@ -100,4 +100,4 @@ Cleanup blocks use fixed 503 LEAD_DATA_RESET copy and Retry-After:60; preserve t
 
 Lead research: [settings contract](references/research.md).
 
-Manage fields has separate Field order and Lead page header settings. Both are workspace-wide Admin controls saved through the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports up to six additional visible fields. Existing layouts keep their defaults, and retired field IDs are removed from the saved arrangement. Settings audit events include static changed control keys only.
+Lead fields has separate Field order and Lead page header settings. Both are workspace-wide Admin controls saved through the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports up to six additional visible fields. Existing layouts keep their defaults, and retired field IDs are removed from the saved arrangement. Settings audit events include static changed control keys only.

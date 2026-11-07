@@ -1,19 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import {
   FieldOptions,
   FieldKey,
   fieldLabels,
   labelFor,
 } from '../lib/field-options';
-import { ErrorMessage } from '../components/UI';
+import { ErrorMessage, SaveButton } from '../components/UI';
 export default function FieldOptionsEditor({
   config,
   request,
   onChanged,
+  onEditingChange,
 }: {
   config: FieldOptions;
   request: (p: string, m?: string, b?: any) => Promise<any>;
   onChanged: (config: FieldOptions) => void;
+  onEditingChange?: (state: { dirty: boolean; busy: boolean }) => void;
 }) {
   const [field, setField] = useState<FieldKey>('source'),
     [text, setText] = useState(config.values.source.join('\n')),
@@ -23,7 +25,16 @@ export default function FieldOptionsEditor({
   useEffect(() => {
     setText(config.values[field].join('\n'));
   }, [field, config.version]);
+  const dirty = text !== config.values[field].join('\n');
+  useLayoutEffect(() => { onEditingChange?.({ dirty, busy }); }, [busy, dirty, onEditingChange]);
+  useEffect(() => () => onEditingChange?.({ dirty: false, busy: false }), [onEditingChange]);
+  function discard() {
+    setText(config.values[field].join('\n'));
+    setError('');
+    setMessage('');
+  }
   async function save() {
+    if (!dirty) return;
     setError('');
     setMessage('');
     const list = text
@@ -82,7 +93,7 @@ export default function FieldOptionsEditor({
         <span className="role-label">Admin</span>
       </div>
       <p className="field-hint">
-        For a custom field’s dropdown choices, open Lead fields and edit that
+        For a custom field’s dropdown choices, open Field definitions and edit that
         field.
       </p>
       <form
@@ -100,7 +111,7 @@ export default function FieldOptionsEditor({
               setError('');
               setMessage('');
             }}
-            disabled={busy}
+            disabled={busy || dirty}
           >
             {(Object.entries(fieldLabels) as [FieldKey, string][]).map(
               ([key, label]) => (
@@ -116,7 +127,7 @@ export default function FieldOptionsEditor({
           <textarea
             rows={8}
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => { setText(e.target.value); setMessage(''); }}
             disabled={busy}
           />
         </label>
@@ -136,9 +147,13 @@ export default function FieldOptionsEditor({
             {message}
           </p>
         ) : null}
-        <button className="button primary" disabled={busy}>
-          {busy ? 'Saving…' : 'Save choices'}
-        </button>
+        <div className="form-footer settings-save-actions">
+          <span>{dirty ? 'Save or discard to edit another list.' : ''}</span>
+          <div>
+            <button className="button" type="button" disabled={!dirty || busy} onClick={discard}>Discard changes</button>
+            <SaveButton busy={busy} disabled={!dirty} label="Save choices" />
+          </div>
+        </div>
       </form>
     </section>
   );

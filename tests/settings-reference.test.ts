@@ -39,7 +39,7 @@ test('settings documentation escapes markup and includes defaults, permission bo
   assert.ok(output.html.includes('&lt;script&gt;'));
   assert.ok(!output.html.includes('<script>unsafe'));
   assert.ok(output.html.includes('name="salesdrone-version" content="9.8.7"'));
-  assert.ok(output.markdown.includes('Manage fields → Lead fields'));
+  assert.ok(output.markdown.includes('Lead fields → Field definitions'));
   assert.ok(output.markdown.includes('example:read'));
   assert.ok(output.markdown.includes('Operator environment configuration'));
 });

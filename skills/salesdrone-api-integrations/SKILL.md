@@ -98,4 +98,6 @@ Accessible mixed-visibility task cursors use AES-GCM with the existing server cu
 
 Team overview, paged member comment/call feed and minimal lead-assignee directory are Admin-only. API 1.29 adds opt-in team:read/people:read PAT scopes without member administration. Team snapshots reject over-limit scans instead of publishing incomplete totals; activity cursors bind member, period and current access. __unassigned__ is reserved for the Admin lead filter’s null assignment selection.
 
-Read-only MCP integration uses explicit `team:read` and `people:read` PAT scopes for Admin owners. Existing tokens gain no new permissions. Team/directory reads recheck token validity and current access before publication; Google sessions still require members:write. PATs cannot read full membership/security records or mutate people. See [MCP adapter](../salesdrone-mcp/SKILL.md) and [integration contract](../../docs/MCP.md). Shared lead task reads accept tasks:read without exposing unrelated personal reminders.
+Read-only MCP uses explicit PAT scopes for Admin owners. Recheck token validity and current access on Team/directory reads. Google sessions still require members:write. PATs cannot read full membership/security records or mutate people. See [MCP adapter](../salesdrone-mcp/SKILL.md) and [integration contract](../../docs/MCP.md). Shared lead task reads accept tasks:read without exposing unrelated personal reminders.
+
+Review [FinOps](../salesdrone-finops/SKILL.md) for API read budgets.

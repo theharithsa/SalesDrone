@@ -14,7 +14,15 @@ API contract versions are independent from application versions.
 
 
 
+
 ## [Unreleased]
+
+## [2.10.2] - 2026-11-08
+
+### Changed
+- Replace the Settings selector with a searchable Material 3 directory and focused mobile pages. Make Field order and Lead page header direct destinations, with a fictional live header preview and explicit save/discard actions.
+- Reuse eligible workspace reads briefly in tab memory, keep inbox polling stable across page changes, and pause hidden-tab score polling.
+- Add a FinOps review requirement, Firestore cost attribution and Firebase ingress migration plan, plus API and MCP design guidance.
 
 ## [2.10.1] - 2026-11-07
 

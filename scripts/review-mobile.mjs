@@ -45,6 +45,17 @@ async function select(selector, value) {
   );
   await delay(150);
 }
+async function settingsSection(section) {
+  const marker = '.settings-directory a[href*="section=' + section + '"]';
+  if (!(await js('!!document.querySelector(' + JSON.stringify(marker) + ')'))) {
+    if (await js('!!document.querySelector(".settings-section-header .settings-back")'))
+      await tap('.settings-section-header .settings-back');
+    if (await js('!!document.querySelector(".settings-directory > .settings-back")'))
+      await tap('.settings-directory > .settings-back');
+  }
+  await tap(marker);
+  await wait('new URL(location.href).searchParams.get("section")===' + JSON.stringify(section));
+}
 async function geometry(page, width) {
   await viewport(width, 844);
   await delay(100);
@@ -324,13 +335,13 @@ try {
       'JSON.stringify([...document.querySelectorAll("select")].map(e=>({cls:e.className,label:e.getAttribute("aria-label")})))',
     ),
   );
-  await select('.settings-section-select select', 'appearance');
+  await settingsSection('appearance');
   await wait(
     '!!document.querySelector("[aria-describedby=display-scale-help]")',
   );
   for (const scale of [85, 90, 100, 110, 125]) {
     await select('[aria-describedby=display-scale-help]', String(scale));
-    await action('Save changes');
+    if (await js('!!document.querySelector(".settings-save-actions button[type=submit]:enabled")')) await action('Save changes');
     await delay(200);
     const info = await js(
       '({zoom:Number(getComputedStyle(document.documentElement).zoom),overflow:Math.max(0,document.documentElement.scrollWidth-innerWidth),target:document.querySelector(".bottom-nav button").getBoundingClientRect().height,nav:document.querySelector(".bottom-nav").getBoundingClientRect().height})',
@@ -362,7 +373,7 @@ try {
     assert.ok(taskBounds.left >= 0 && taskBounds.right <= 390 && taskBounds.menuRight <= 390 && taskBounds.target >= 44, JSON.stringify({scale,...taskBounds}));
     // Return navigation is programmatic; the saved preference form and task geometry are real.
     await js("document.querySelector('.sidebar button[aria-label=Settings]').click()");
-    await select('.settings-section-select select', 'appearance');
+    await settingsSection('appearance');
 
   }
   await select('[aria-describedby=display-scale-help]', '100');
@@ -394,7 +405,7 @@ try {
     'reminders',
     'about',
   ]) {
-    await select('.settings-section-select select', section);
+    await settingsSection(section);
     for (const width of [320, 390, 600])
       await geometry('admin-' + section, width);
   }

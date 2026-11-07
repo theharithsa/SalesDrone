@@ -717,7 +717,7 @@
       "manualCases": [
         {
           "id": "SETTINGS-LEAD-LAYOUT",
-          "expected": "Reorder built-in and custom fields and select extra header fields. Verify the saved order in New/Edit Enquiry, the Leads worksheet and an Excel export.",
+          "expected": "Search Settings, open Field order and Lead page header from Lead fields, preview fictional header values, save or discard changes, and return to the group. Verify Admin-only URLs are hidden from members and saved order applies to New/Edit Enquiry, Leads and Excel.",
           "fixture": "synthetic records and current scoped access"
         },
         {

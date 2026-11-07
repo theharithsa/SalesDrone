@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.10.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.10.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -142,7 +142,7 @@ Refresh reloads the first page. Load more follows a signed, access-bound cursor.
 
 **Example:** Archive a lead from its record, then open Settings > Archives. Older archives display Date not recorded instead of inventing an archive date.
 
-## Workspace · Admin → Reports & lead access
+## Workspace → Reports & lead access
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -170,7 +170,7 @@ Applies to lists, direct links, reports, dashboards and reminder/notification el
 
 **Example:** Keep on for SDRs working separate portfolios.
 
-## Manage fields → Lead fields
+## Lead fields → Field definitions
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -224,7 +224,7 @@ Remove an unused custom field from new-entry controls without erasing historical
 
 Retired IDs cannot be reused. Create a new field for a different data type instead of rewriting existing values.
 
-## Manage fields → Field order
+## Lead fields → Field order
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -242,7 +242,7 @@ New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order
 
 **Example:** Put Phone number before Company name.
 
-## Manage fields → Lead page header
+## Lead fields → Lead page header
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -254,13 +254,13 @@ New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order
 
 **Default:** None.
 
-Choose up to six additional built-in or custom fields from the current enquiry layout.
+Choose up to six additional visible built-in or custom fields. The fictional preview shows the draft before saving.
 
 The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.
 
 **Example:** Show City / location and Product in the lead header.
 
-## Manage fields → Dropdown choices
+## Lead fields → Choice lists
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -332,7 +332,7 @@ Maintain country dialing prefixes used in contact entry.
 
 Preserves original phone input and normalized duplicate checks. Each choice list supports up to 100 distinct values of up to 100 characters.
 
-## AvinyaIntelligence → Dashboard insights
+## Intelligence → Dashboard insights
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -358,7 +358,7 @@ Applies to dashboard prose, not scoring factors or automatic reminder interpreta
 
 **Example:** Use concise Tamil bullets, focusing first on overdue callbacks and missing qualification context.
 
-## AvinyaIntelligence → Automatic reminders
+## Intelligence → Automatic reminders
 
 **Who/where:** Personal preference.
 
@@ -400,7 +400,7 @@ Moves qualifying relative dates without an explicit time from a weekend to the n
 
 Exact dates and named weekdays are kept as written; this is not a configurable holiday calendar.
 
-## AvinyaIntelligence → Lead scoring
+## Intelligence → Lead scoring
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -442,7 +442,7 @@ Add business-specific signals or remove irrelevant ones. Stable factor identity 
 
 Background scans are bounded; bulk changes are not guaranteed to finish immediately. Inspect evidence coverage, not just the score.
 
-## AvinyaIntelligence → Lead research
+## Intelligence → Lead research
 
 **Who/where:** Workspace-wide reporting rules; Admin writes.
 
@@ -498,7 +498,7 @@ Opt in to a Gemini embedding backfill and incremental private search index. Exis
 
 Enabling queues a bounded initial scan. Source edits atomically queue updates. Retrieval uses Firestore vectors with ACL prefilters and current source checks. Counts work independently of indexing. Index processing is bounded and may lag; failed jobs can be retried by an Admin rebuild.
 
-## Workspace · Admin → Developer settings
+## Workspace → Developer settings
 
 **Who/where:** Personal credentials; Admin only.
 
@@ -579,7 +579,7 @@ Authorization stays in tab memory. Clear it when finished, especially on shared 
 - **notifications:read** — Read your notification inbox.
 - **notifications:write** — Mark your notifications read or unread.
 
-## Workspace · Admin → People & access
+## Workspace → People & access
 
 **Who/where:** Workspace access; Admin only.
 
@@ -665,7 +665,7 @@ Grant Hygiene read, run or AI summaries and Lead Assistant separately in People 
 
 Every grant intersects current lead access, assigned-only workspace policy and active membership. Reports and chats remain creator-private; revocation prevents further reads and in-flight publication. No PAT access is added.
 
-## Workspace · Admin → Lead data management
+## Workspace → Lead data management
 
 **Who/where:** All active and archived lead data across the workspace.
 
@@ -693,7 +693,7 @@ Refresh status checks progress immediately. A failure retains the pause and curs
 
 **Example:** A network error does not mean cleanup was rejected. Refresh status or retry the same confirmation request; stable operation IDs prevent another reset.
 
-## Product → About SalesDrone
+## About → About SalesDrone
 
 **Who/where:** Read only.
 

@@ -27,14 +27,15 @@ for (const id of names) {
 const tree = {
   schemaVersion: 1,
   readinessSkill: 'salesdrone-release-readiness',
+  finopsSkill: 'salesdrone-finops',
   sharedContract: 'skills/SHARED.md',
   selectionPolicy:
-    'For SalesDrone web design and generic design reviews, prefer salesdrone-interface and Material 3; imported native/experimental design references are conditional. Match prompt intent, inspect module descriptions and load the smallest relevant set. Use readiness with every feature/setting release. This tree grants no deployment or delegation authority.',
+    'For SalesDrone web design and generic design reviews, prefer salesdrone-interface and Material 3; imported native/experimental design references are conditional. Match prompt intent, inspect module descriptions and load the smallest relevant set. Use FinOps with every feature review and readiness with every feature/setting release. This tree grants no deployment or delegation authority.',
   nodes,
 };
 validateSkillTree(tree, names);
 const markdown =
-  '# SalesDrone skill tree\n\nMachine-readable source: [skill-tree.json](skill-tree.json). Generated from module skills and skills/intent-map.json. Load the shared contract and relevant module; load release readiness for every feature or version release. Routing is advisory, not permission to spawn agents or deploy.\n\n' +
+  '# SalesDrone skill tree\n\nMachine-readable source: [skill-tree.json](skill-tree.json). Generated from module skills and skills/intent-map.json. Load the shared contract and relevant module; load FinOps for every feature review and release readiness for every feature or version release. Routing is advisory, not permission to spawn agents or deploy.\n\n' +
   nodes
     .map(
       (n) =>

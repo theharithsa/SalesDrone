@@ -1,16 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { labelFor, orderedFields, standardFieldLabels, type FieldOptions } from '../lib/field-options';
+import LeadHeaderContext from './LeadHeaderContext';
 import { ErrorMessage, SaveButton, useSubmit } from './UI';
 
 const fixedHeaderFields = new Set(['company', 'phone', 'name', 'stage', 'assignedToUid', 'outcome', 'disposition']);
 const headerLimit = 6;
+const examples: Record<string, string> = {
+  source: 'Referral', location: 'North district', zone: 'Commercial',
+  email: 'asha@example.com', enquiryDate: '7 Nov', legacyStatus: 'Samples sent',
+};
 
-export default function LeadFieldLayoutSettings({ config, mode, request, onChanged }: {
+export default function LeadFieldLayoutSettings({ config, mode, request, onChanged, onEditingChange }: {
   config: FieldOptions;
   mode: 'order' | 'header';
   request: (path: string, method: string, body: Record<string, unknown>) => Promise<FieldOptions>;
   onChanged: (options: FieldOptions) => void;
+  onEditingChange?: (state: { dirty: boolean; busy: boolean }) => void;
 }) {
   const custom = config.customFields.filter((field) => !field.deleted);
   const available = orderedFields(config, [
@@ -21,9 +27,14 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
   const headerFields = available.filter((key) => !fixedHeaderFields.has(key));
   const [order, setOrder] = useState(available);
   const [header, setHeader] = useState(() => headerFields.filter((key) => config.headerFields?.includes(key)));
+  const [baseline, setBaseline] = useState(() => ({ order, header }));
+  const isOrder = mode === 'order';
+  const draft = isOrder ? order : headerFields.filter((key) => header.includes(key));
+  const dirty = JSON.stringify(draft) !== JSON.stringify(isOrder ? baseline.order : baseline.header);
+  const getLabel = (key: string) => custom.find((field) => field.id === key)?.label
+    || labelFor(config, key, key === 'createdAt' ? 'Created at' : undefined);
   const [saved, setSaved] = useState(false);
   const [expectedVersion, setExpectedVersion] = useState(config.version);
-  const isOrder = mode === 'order';
   const submit = useSubmit(async (change, _key, isCurrent) => {
     const result = await request('/field-options', 'PATCH', {
       expectedVersion,
@@ -32,9 +43,26 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
     });
     if (isCurrent()) {
       setExpectedVersion(result.version);
+      setBaseline({ order, header: isOrder ? header : draft });
       onChanged(result);
       setSaved(true);
     }
+  });
+
+  useLayoutEffect(() => { onEditingChange?.({ dirty, busy: submit.busy }); }, [dirty, submit.busy, onEditingChange]);
+  useEffect(() => () => onEditingChange?.({ dirty: false, busy: false }), [onEditingChange]);
+
+  function discard() {
+    const selected = headerFields.filter((key) => config.headerFields?.includes(key));
+    setBaseline({ order: available, header: selected });
+    setExpectedVersion(config.version);
+    setOrder(available);
+    setHeader(selected);
+    setSaved(false);
+  }
+
+  useEffect(() => {
+    if (!dirty && !submit.busy && config.version > expectedVersion) discard();
   });
 
   function move(index: number, direction: number) {
@@ -49,16 +77,26 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
   return (
     <form className="panel field-layout-settings" data-mode={mode} onSubmit={(event) => {
       event.preventDefault();
+      if (!dirty) return;
       setSaved(false);
-      void submit.run(isOrder ? { fieldOrder: order } : { headerFields: header });
+      void submit.run(isOrder ? { fieldOrder: draft } : { headerFields: draft });
     }}>
       <p className="field-hint">{isOrder
         ? 'Arrange fields for enquiry forms, the Leads table and Excel exports.'
         : 'Choose up to six fields to show under the lead name and contact details. Fields appear when they have a value.'}</p>
-      {!isOrder && <p className="field-hint" role="status">{header.length} of {headerLimit} selected</p>}
+      {!isOrder && <>
+        <div className="settings-header-example">
+          <small>Live preview · fictional lead</small>
+          <h3>Asha Raman</h3>
+          <LeadHeaderContext company="Northstar Buildworks" phone="+1 202 555 0100" fields={draft.map((id) => {
+            return { id, label: getLabel(id), value: examples[id] || 'Sample ' + getLabel(id).toLowerCase() };
+          })} />
+        </div>
+        <p className="field-hint" role="status">{header.length} of {headerLimit} selected</p>
+      </>}
       <ol>
         {(isOrder ? order : headerFields).map((key, index) => {
-          const label = custom.find((field) => field.id === key)?.label || labelFor(config, key, key === 'createdAt' ? 'Created at' : undefined);
+          const label = getLabel(key);
           return (
             <li key={key} data-selected={!isOrder && header.includes(key) || undefined}>
               {isOrder ? <>
@@ -83,9 +121,12 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
         })}
       </ol>
       <ErrorMessage error={submit.error} />
-      <div className="form-footer field-layout-actions">
-        {saved && <span role="status">Saved.</span>}
-        <SaveButton busy={submit.busy} label={isOrder ? 'Save field order' : 'Save lead header'} />
+      <div className="form-footer field-layout-actions settings-save-actions">
+        <span role="status">{submit.busy ? '' : dirty ? 'Unsaved changes' : saved ? 'Saved.' : ''}</span>
+        <div>
+          <button className="button" type="button" disabled={!dirty || submit.busy} onClick={discard}>Discard changes</button>
+          <SaveButton busy={submit.busy} disabled={!dirty} label={isOrder ? 'Save field order' : 'Save lead header'} />
+        </div>
       </div>
     </form>
   );

@@ -31,3 +31,11 @@ immutable archive is retained. Standalone compatible releases use the new repo.
 Existing `npx @theharithsa/salesdrone-mcp` clients keep the same package name.
 Only the MCP repo publishes it. See its README for client/OTLP configuration,
 privacy defaults, protocol screenshots and telemetry/publication verification.
+
+## Designing cost-effective tools
+
+Prefer a tool for one intent, using the server's scoped aggregate for counts and the narrowest list/search endpoint for records. A stage distribution describes current state; a conversion metric requires recorded transitions and a date window. Return the source, effective time window, partial coverage and cursor where relevant. Never infer a total from one page or a limited scan.
+
+Preserve the versioned OpenAPI contract and each operation's actual scope. Validate allowlisted filters and dates, use stable ordering and opaque cursors, and continue through sparse pages only to an explicit page/record/deadline budget. Return the cursor to the caller when the budget is reached. Treat 401/403 as terminal and honor Retry-After for 429; bound transient retries, and classify a non-JSON upstream error without forwarding its body. Prefer typed tool inputs and outputSchema/structuredContent with compact, backward-compatible text. Reuse the app's policy and projections rather than exposing Firestore or raw URLs to the adapter.
+
+Review operation counts before adding fan-out or automatic pagination, including the two durable PAT counter writes per accepted API call. Cover assigned scope, revoked tokens, empty pages with a cursor, partial limits, malformed upstream responses and model-readable errors in the adapter's contract tests. [MCP tools specification](https://modelcontextprotocol.io/specification/2025-11-25/server/tools) · [Pagination guidance](https://google.aip.dev/158) · [Filtering guidance](https://google.aip.dev/160) · [SalesDrone FinOps](FINOPS.md)

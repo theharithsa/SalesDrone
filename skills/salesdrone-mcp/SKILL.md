@@ -43,3 +43,5 @@ Adapter protocol/package and telemetry checks run in the standalone repo. Update
 [API integration notes](../../docs/MCP.md) and the root MCP badge/link if ownership
 changes. Follow normal checked PR/app release gates for changes here; no npm publish
 from SalesDrone.
+
+For new tools, follow the [contract design](../../docs/MCP.md#designing-cost-effective-tools) and [FinOps](../salesdrone-finops/SKILL.md) budgets. Prefer scoped counts and projections to collection paging. Preserve explicit time, partial coverage and cursor evidence.

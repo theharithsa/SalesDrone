@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.10.1
+Version 2.10.2
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -122,7 +122,7 @@ Members; actions depend on capability
 
 The source worksheet naming is made readable in the application: Enquiry source, Customer name, Phone number, Company name, City / location, Sector, Enquiry date and Enquiry status. Sales stage is separate from original imported status. Serial number is not a required application field.
 
-Administrators can customize labels and supported field options under Manage fields. Labels change presentation; stable internal field IDs keep imports and API integrations consistent. Retired fields preserve existing data rather than erasing history.
+Administrators can customize labels and supported field options under Lead fields. Labels change presentation; stable internal field IDs keep imports and API integrations consistent. Retired fields preserve existing data rather than erasing history.
 
 Non-admin lead visibility follows workspace Reports & lead access policy and membership scope. Administrators can require assigned-only access. Filtering and exporting do not grant access to additional records.
 
@@ -140,7 +140,7 @@ On mobile, New is the primary header action. Export Excel and permitted Import a
 
 Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
 
-The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Manage fields → Lead page header. Select a phone number to open your calling app.
+The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Lead fields → Lead page header. Select a phone number to open your calling app.
 
 Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices.
 
@@ -522,9 +522,9 @@ Administrators can adjust the supported factors and weights. Document what each 
 
 Personal controls for members; workspace controls for administrators
 
-1. Open Settings. On desktop use the left section navigation; on mobile choose a section from the dropdown.
+1. Open Settings and search by name or browse the available categories. Desktop shows a category rail. On a phone, open a setting and use its back link to return to the category.
 
-2. Expand Manage fields to choose Lead fields or Dropdown choices. Expand AvinyaIntelligence to choose Insights or Lead scoring.
+2. Under Lead fields, choose Field definitions, Field order, Lead page header or Choice lists. Header choices show a fictional live preview.
 
 3. Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members’ workflow.
 
@@ -532,7 +532,7 @@ Personal controls for members; workspace controls for administrators
 
 Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.
 
-Manage fields includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. Name, enquiry date and at least one contact field remain available. Dropdown choices manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.
+Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. Name, enquiry date and at least one contact field remain available. Choice lists manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.
 
 Reports & lead access controls exports and assigned-only visibility for non-admins. People & permissions manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.
 
@@ -548,17 +548,17 @@ On phones, lead details stack Sales stage and Assigned to controls with matching
 
 **Can I rename a built-in field?**
 
-Use Manage fields > Lead fields. A label change does not rename its stable API key, so integrations keep using the documented schema.
+Use Lead fields > Field definitions. A label change does not rename its stable API key, so integrations keep using the documented schema.
 
 **Can I remove a field without losing historical data?**
 
-Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Manage fields, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded.
+Use the delete icon in Lead fields > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Lead fields, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded.
 
 ## Book mode: a quieter reading workspace
 
 Every active member; personal preference
 
-1. Open Settings > Appearance & time. On mobile, choose that section from the section selector.
+1. Open Settings > Personal > Appearance & time, or find it with Search settings.
 
 2. Enable Book mode and select Save changes. The workspace uses warm paper surfaces, ink-like text and serif fonts throughout the UI, with monospace phone numbers.
 
