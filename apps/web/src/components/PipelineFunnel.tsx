@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { ArrowUpRight, GitBranch } from 'lucide-react';
 type StageCount = { label: string; value: number };
 export function funnelStages(counts: StageCount[], order: string[]) {
@@ -12,12 +13,14 @@ export default function PipelineFunnel({
   onStage,
   groups,
   fieldLabel = 'Sales stage',
+  controls,
 }: {
   counts: StageCount[];
   order: string[];
   onStage: (stage: string, empty?: boolean) => void;
   groups?: {key:string;label:string;value:number;empty:boolean;aggregate?:boolean;filterable?:boolean}[];
   fieldLabel?: string;
+  controls?: ReactNode;
 }) {
   const stages = groups || funnelStages(counts, order),
     total = stages.reduce((n, s) => n + s.value, 0),
@@ -30,7 +33,7 @@ export default function PipelineFunnel({
           <h2>Leads by {fieldLabel}</h2>
           <p>Compare lead counts by {fieldLabel}. Select a group to view matching leads.</p>
         </div>
-        <GitBranch size={23} />
+        {controls ?? <GitBranch size={23} aria-hidden="true" />}
       </div>
       <div
         className="funnel-rows"

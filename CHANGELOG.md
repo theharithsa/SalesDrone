@@ -15,7 +15,15 @@ API contract versions are independent from application versions.
 
 
 
+
 ## [Unreleased]
+
+## [2.10.3] - 2026-11-08
+
+### Changed
+- Use consistent Material 3 workspace headings and place chart grouping, Team date controls and Hygiene scan scope beside the content or action they affect.
+- Link directly to import history and identify the current import step. Clarify Assistant actions and distinguish loaded notification counts from the full inbox.
+- Give full-page lead details a semantic record heading while preserving the contact layout and compact Leads and Tasks controls.
 
 ## [2.10.2] - 2026-11-08
 

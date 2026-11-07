@@ -1,3 +1,4 @@
+import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import DashboardCategoryPicker from '../components/DashboardCategoryPicker';
 import { dashboardGrouping } from '../../../../functions/src/dashboard-grouping.js';
 import { defaultFieldOptions, type FieldOptions } from '../lib/field-options';
@@ -488,32 +489,28 @@ export default function DashboardPage({
     b = brief?.status === 'Ready' ? brief.brief : null;
   return (
     <div className="page-body dashboard-page">
-      <div className="page-title">
-        <div>
-          <span className="eyebrow">SIGNALS INTO MOMENTUM</span>
-          <h1>Overview</h1>
-          <p>
-            {firstName}, here’s where your next conversation can make a
-            difference.
-          </p>
-        </div>
-        <div className="dashboard-title-actions">
-          <button
-            className="button"
-            disabled={busy}
-            onClick={() => void load()}
-          >
-            <RefreshCw size={16} className={busy ? 'spin' : ''} />
-            Refresh
-          </button>
-          {onNew ? (
-            <button className="button primary" onClick={onNew}>
-              <Plus size={16} />
-              New enquiry
+      <WorkspacePageHeader
+        title="Overview"
+        description={`${firstName}, see your pipeline, outreach and follow-ups in one place.`}
+        actions={
+          <div className="dashboard-title-actions">
+            <button
+              className="button"
+              disabled={busy}
+              onClick={() => void load()}
+            >
+              <RefreshCw size={16} className={busy ? 'spin' : ''} />
+              Refresh
             </button>
-          ) : null}
-        </div>
-      </div>
+            {onNew ? (
+              <button className="button primary" onClick={onNew}>
+                <Plus size={16} />
+                New enquiry
+              </button>
+            ) : null}
+          </div>
+        }
+      />
       <ErrorMessage error={error} />
       {!snapshot ? (
         <Loading />
@@ -592,13 +589,13 @@ export default function DashboardPage({
               <h2>
                 {briefBusy
                   ? 'Connecting the dots…'
-                  : b?.headline || 'Make room for the next right move.'}
+                  : b?.headline || 'What needs attention'}
               </h2>
               <p>
                 {briefBusy
                   ? 'Reading your outstanding reminders and outreach snapshot.'
                   : b?.summary ||
-                    `${facts.overdueTasks || 0} overdue reminders and ${facts.unscoredLeads || 0} leads still need qualification context. Start with a clear next step.`}
+                    `${facts.overdueTasks || 0} overdue · ${facts.unscoredLeads || 0} leads awaiting qualification`}
               </p>
               <div className="brief-source-line">
                 {demo
@@ -665,19 +662,30 @@ export default function DashboardPage({
               ))}
             </div>
           ) : null}
-          <DashboardCategoryPicker
-            visualization={snapshot.visualization}
-            busy={categoryBusy}
-            error={categoryError}
-            onChange={value=>void changeCategory(value)}
-          />
-          {snapshot.visualization?.field ? <PipelineFunnel
-            counts={snapshot.stages}
-            order={snapshot.stageOrder || stageOrder}
-            groups={snapshot.visualization.groups}
-            fieldLabel={snapshot.visualization.label}
-            onStage={(value,empty)=>onCategory?onCategory(snapshot.visualization.field,value,!!empty):onStage(value)}
-          /> : <section className="panel"><p>No category fields are available. Ask an Admin to enable a field for dashboard charts.</p></section>}
+          {snapshot.visualization?.field ? (
+            <PipelineFunnel
+              counts={snapshot.stages}
+              order={snapshot.stageOrder || stageOrder}
+              groups={snapshot.visualization.groups}
+              fieldLabel={snapshot.visualization.label}
+              onStage={(value, empty) => onCategory
+                ? onCategory(snapshot.visualization.field, value, !!empty)
+                : onStage(value)}
+              controls={
+                <DashboardCategoryPicker
+                  visualization={snapshot.visualization}
+                  busy={categoryBusy}
+                  error={categoryError}
+                  onChange={(value) => void changeCategory(value)}
+                />
+              }
+            />
+          ) : (
+            <section className="panel">
+              <h2>Lead breakdown</h2>
+              <p>No category fields are available. Ask an Admin to enable a field for dashboard charts.</p>
+            </section>
+          )}
           <div className="dashboard-chart-grid">
             <section className="panel chart-panel">
               <div className="chart-heading">

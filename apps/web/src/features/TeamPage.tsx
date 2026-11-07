@@ -1,3 +1,4 @@
+import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import { useEffect, useRef, useState } from "react";
 import {
   Users,
@@ -151,14 +152,11 @@ export default function TeamPage({
     }).format(new Date(v));
   return (
     <div className="page-body team-page" data-private="true">
-      <div className="page-title">
-        <div>
-          <span className="eyebrow">WORKING TOGETHER</span>
-          <h1>Team</h1>
-          <p>
-            Workload, conversations and follow-through across your workspace.
-          </p>
-        </div>
+      <WorkspacePageHeader
+        title="Team"
+        description="Review current workload and recorded activity across your workspace."
+      />
+      <div className="team-controls">
         <div className="team-toolbar">
           <label>
             Activity period
@@ -185,26 +183,26 @@ export default function TeamPage({
             <RefreshCw size={18} />
           </button>
         </div>
+        {days === 'custom' ? (
+          <form className="team-toolbar team-custom-range" onSubmit={(event) => {
+            event.preventDefault();
+            const from = range.from + 'T00:00:00.000Z', to = range.to + 'T23:59:59.999Z';
+            const duration = Date.parse(to) - Date.parse(from);
+            if (!Number.isFinite(duration) || duration <= 0 || duration > 90 * 86400000) {
+              setRangeError('Choose up to 90 days in chronological order.');
+              return;
+            }
+            setRangeError('');
+            setWindowQuery(new URLSearchParams({from, to}).toString());
+          }}>
+            <label>From (UTC)<input required type="date" value={range.from} onChange={(e) => setRange({...range, from:e.target.value})} /></label>
+            <label>Through (UTC)<input required type="date" min={range.from} value={range.to} onChange={(e) => setRange({...range, to:e.target.value})} /></label>
+            <button className="button tonal" type="submit">Apply dates</button>
+            <ErrorMessage error={rangeError} />
+          </form>
+        ) : null}
       </div>
-      {days === 'custom' ? (
-        <form className="team-toolbar" onSubmit={(event) => {
-          event.preventDefault();
-          const from = range.from + 'T00:00:00.000Z', to = range.to + 'T23:59:59.999Z';
-          const duration = Date.parse(to) - Date.parse(from);
-          if (!Number.isFinite(duration) || duration <= 0 || duration > 90 * 86400000) {
-            setRangeError('Choose up to 90 days in chronological order.');
-            return;
-          }
-          setRangeError('');
-          setWindowQuery(new URLSearchParams({from, to}).toString());
-        }}>
-          <label>From (UTC)<input required type="date" value={range.from} onChange={(e) => setRange({...range, from:e.target.value})} /></label>
-          <label>Through (UTC)<input required type="date" min={range.from} value={range.to} onChange={(e) => setRange({...range, to:e.target.value})} /></label>
-          <button className="button" type="submit">Apply dates</button>
-          <ErrorMessage error={rangeError} />
-        </form>
-      ) : null}
-      <div className="team-view-switch" aria-label="Team views">
+      <div className="team-view-switch" role="group" aria-label="Team views">
         <button
           className={"button " + (view === "overview" ? "tonal" : "")}
           aria-pressed={view === "overview"}

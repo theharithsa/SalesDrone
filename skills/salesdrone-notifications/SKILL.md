@@ -78,3 +78,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#39](https://github.com/theharithsa/SalesDrone/issues/39), [#40](https://github.com/theharithsa/SalesDrone/issues/40). Check their current status before changing the contract.
+
+The inbox shows unread counts for the loaded rows only. Keep the overlay compact and retain independent pagination.

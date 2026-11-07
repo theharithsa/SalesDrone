@@ -78,3 +78,5 @@ LeadHeaderContext uses the canonical phone-number utility; mono was undefined in
 Settings uses a searchable directory with permission-filtered categories, focused pages and draft feedback. WorkspaceNavigation shares the capability-gated sidebar and quick navigation registry. Desktop rows are 36px; phone/coarse targets are at least 48px. Phones and short rails scroll through Settings and account actions as one surface. Keep safe-area padding and all permitted links in collapsed rail mode.
 
 Use LeadPage for every lead at all breakpoints. Comments is the initial activity tab. LeadCardOrder renders Journey, Details and Activity in saved DOM order with a touch grip and keyboard/button equivalents. Card order is personal on the current browser, and reduced motion disables the animated rearrangement. Card controls share the heading row. Lead loading reserves the page shape and qualification and timeline updates fade briefly with reduced-motion support. Stage and assignee are read-only outside Edit enquiry.
+
+Use [workspace structure](../../docs/DESIGN-SYSTEM.md#workspace-structure) to align headings and contextual controls.

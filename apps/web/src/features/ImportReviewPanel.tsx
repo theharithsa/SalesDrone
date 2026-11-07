@@ -642,10 +642,10 @@ export default function ImportReviewPanel({
           </div>
         </section>
       ) : null}
-      <section className="panel import-history">
+      <section id="import-job-history" className="panel import-history" aria-labelledby="import-job-history-title" tabIndex={-1}>
         <div className="section-heading">
           <div>
-            <h2>Import history</h2>
+            <h2 id="import-job-history-title">Import history</h2>
             <p>Your jobs and shared jobs you have permission to access.</p>
           </div>
           <button

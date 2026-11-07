@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "version": "2.10.3",
+  "summary": "Bring a consistent Material 3 hierarchy and contextual controls to the SalesDrone workspace.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-dashboard",
+    "salesdrone-leads",
+    "salesdrone-tasks-reminders",
+    "salesdrone-team",
+    "salesdrone-imports",
+    "salesdrone-notifications",
+    "salesdrone-lead-hygiene",
+    "salesdrone-lead-assistant",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/product-guide.json"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Workspace layout uses the existing data and controls. It introduces no new domain actions or server requests.",
+    "contractVersion": "1.30.0",
+    "permissions": "Existing workspace membership, scope and feature capabilities still control all modules and mutations.",
+    "tests": [
+      "tests/material-design.test.ts",
+      "functions/test/observability.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Workspace layout uses the existing data and controls. It introduces no new domain actions or server requests.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Workspace layout uses the existing data and controls. It introduces no new domain actions or server requests.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Workspace layout uses the existing data and controls. It introduces no new domain actions or server requests.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Workspace layout uses the existing data and controls. It introduces no new domain actions or server requests.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Retain exact release metadata and current transport receipts for deployment and CI reporting.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review synthetic Dashboard, Leads, lead details, Tasks, Team, Imports, Notifications, Hygiene and Assistant at compact, wide and short Chromium viewport sizes. Check chart controls, mobile custom dates, import history focus, dark mode and 125% zoom. Validate the published version and protected API after deployment.",
+  "milestone": {
+    "number": 34,
+    "title": "v2.10.3 — Workspace layout",
+    "issues": [
+      159
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "dashboard-demo.jpg",
+    "mobile-demo.jpg",
+    "dashboard-stage-mobile-demo.jpg",
+    "dashboard-stage-demo.jpg",
+    "leads-demo.jpg",
+    "laptop-demo.jpg",
+    "tablet-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "lead-header-mobile-demo.jpg",
+    "tasks-demo.jpg",
+    "mobile-tasks-demo.jpg",
+    "team-demo.jpg",
+    "team-mobile-demo.jpg",
+    "team-activity-demo.jpg",
+    "hygiene-demo.jpg",
+    "hygiene-mobile-demo.jpg",
+    "assistant-demo.jpg",
+    "assistant-mobile-demo.jpg",
+    "import-demo.jpg",
+    "dashboard-fields-demo.jpg",
+    "dashboard-fields-mobile-demo.jpg",
+    "notifications-demo.jpg"
+  ]
+}
