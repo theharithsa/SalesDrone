@@ -1,3 +1,5 @@
+import LeadFieldLayoutSettings from '../src/components/LeadFieldLayoutSettings';
+
 import { LeadForm } from '../src/components/Forms';
 import DashboardPage from '../src/features/DashboardPage';
 import LeadScore from '../src/components/LeadScore';
@@ -442,5 +444,22 @@ describe('configured enquiry form order', () => {
     await user.type(screen.getByRole('textbox', { name: 'Phone number' }), '+12025550147');
     await user.click(screen.getByRole('button', { name: 'Create enquiry' }));
     await waitFor(() => expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ name: '', phone: '+12025550147', source: 'Website' }), expect.any(String)));
+  });
+});
+
+describe('lead layout settings', () => {
+  it('saves header choices independently from field order', async () => {
+    const user = userEvent.setup();
+    const request = vi.fn().mockResolvedValue({ ...config, version: 2, headerFields: ['location'] });
+    const onChanged = vi.fn();
+    render(<LeadFieldLayoutSettings mode="header" config={{ ...config, fieldOrder: ['location', 'name'] }}
+      request={request} onChanged={onChanged} />);
+    await user.click(screen.getByRole('checkbox', { name: 'City / location' }));
+    await user.click(screen.getByRole('button', { name: 'Save lead header' }));
+    await screen.findByText('Saved.');
+    expect(request).toHaveBeenCalledWith('/field-options', 'PATCH', {
+      expectedVersion: config.version, values: config.values, headerFields: ['location'],
+    });
+    expect(onChanged).toHaveBeenCalledOnce();
   });
 });

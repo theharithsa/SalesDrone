@@ -15,19 +15,37 @@ export async function buildReportWorkbook(
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'SalesDrone by AvinyaTech';
   const sheet = workbook.addWorksheet('Leads');
-  sheet.columns = columns.map((c) => ({
-    header: c.label,
-    key: c.key,
-    width: ['latestComment', 'comments'].includes(c.key) ? 55 : 24,
-  }));
-  for (const row of rows)
-    sheet.addRow(
-      row.values.map((v) => (typeof v === 'number' ? v : String(v))),
-    );
+  const comments = data.comments ?? [];
+  if (comments.length > 10000) throw Error('More than 10,000 comments match. Narrow the filters.');
+  const commentsByLead = new Map<string, ReportComment[]>();
+  for (const comment of comments) {
+    const leadComments = commentsByLead.get(comment.leadId) ?? [];
+    leadComments.push(comment);
+    commentsByLead.set(comment.leadId, leadComments);
+  }
+  const commentCount = rows.reduce((max, row) => Math.max(max, commentsByLead.get(row.id)?.length ?? 0), 0);
+  sheet.columns = [
+    ...columns.map((c) => ({
+      header: c.label,
+      key: c.key,
+      width: ['latestComment', 'comments'].includes(c.key) ? 55 : 24,
+    })),
+    ...Array.from({ length: commentCount }, (_, index) => ({
+      header: 'Comment ' + (index + 1),
+      width: 55,
+      style: { alignment: { wrapText: true, vertical: 'top' as const } },
+    })),
+  ];
+  for (const row of rows) {
+    const notes = commentsByLead.get(row.id) ?? [];
+    notes.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+    const values = row.values.map((value) => typeof value === 'number' ? value : String(value));
+    sheet.addRow([...values, ...notes.map((comment) => String(comment.text))]);
+  }
   sheet.views = [{ state: 'frozen', ySplit: 1 }];
   sheet.autoFilter = {
     from: { row: 1, column: 1 },
-    to: { row: rows.length + 1, column: columns.length },
+    to: { row: rows.length + 1, column: sheet.columnCount },
   };
   sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
   sheet.getRow(1).fill = {
@@ -35,24 +53,6 @@ export async function buildReportWorkbook(
     pattern: 'solid',
     fgColor: { argb: 'FF07549F' },
   };
-  if (data.comments) {
-    if (data.comments.length > 10000) throw Error('More than 10,000 comments match. Narrow the filters.');
-    const comments = workbook.addWorksheet('Lead comments');
-    const rowNumbers = new Map(rows.map((row, i) => [row.id, i + 2]));
-    comments.columns = [
-      { header: 'Row in Leads', width: 16 },
-      { header: 'Lead ID', width: 28 },
-      { header: 'Customer name', width: 24 },
-      { header: 'Recorded at', width: 26 },
-      { header: 'Comment', width: 70 },
-    ];
-    for (const comment of data.comments)
-      comments.addRow([rowNumbers.get(comment.leadId), String(comment.leadId),
-        String(comment.leadName), String(comment.createdAt), String(comment.text)]);
-    comments.views = [{ state: 'frozen', ySplit: 1 }];
-    comments.getRow(1).font = { bold: true };
-    comments.getColumn(5).alignment = { wrapText: true, vertical: 'top' };
-  }
   // ExcelJS writes user-entered text as string cells, never formulas or hyperlinks.
   const meta = workbook.addWorksheet('Report details');
   for (const line of context) meta.addRow([String(line)]);

@@ -23,7 +23,7 @@ import {
   type LeadWorkspaceTab,
 } from './lib/lead-workspace';
 import Assignment from './components/Assignment';
-import LeadPage from './components/LeadPage';
+import LeadPage, { LeadPageLoading } from './components/LeadPage';
 import LeadReportExport from './features/LeadReportExport';
 import NotificationsPage from './features/NotificationsPage';
 import { setRumIdentity, rumPage } from './lib/rum';
@@ -1103,17 +1103,12 @@ export default function App() {
       clearInterval(timer);
     };
   }, [demo, selected?.id, pendingAutomatic, request]);
-  async function chooseLead(lead: Lead, initialTab: LeadWorkspaceTab = 'comments') {
-    if (!lead?.id) {
-      setError('This lead is unavailable. Return to Leads and refresh.');
-      return;
-    }
+  const chooseLead = useCallback(async (leadId: string, initialTab: LeadWorkspaceTab, signal?: AbortSignal) => {
     const epoch = ++detailEpoch.current;
-    selectedIdRef.current = lead.id;
+    selectedIdRef.current = leadId;
     timelineMoreRequest.current++;
     timelineMoreLock.current = false;
     setTimelineMoreBusy(false);
-    setSelected(lead);
     setLeadTab(initialTab);
     if (window.matchMedia('(max-width: 599.99px)').matches)
       window.scrollTo(0, 0);
@@ -1123,30 +1118,30 @@ export default function App() {
     const current = generation.current;
     try {
       const [l, a] = await Promise.all([
-        request('/leads/' + lead.id),
-        request('/leads/' + lead.id + '/activities'),
+        request('/leads/' + encodeURIComponent(leadId)),
+        request('/leads/' + encodeURIComponent(leadId) + '/activities'),
       ]);
-      if (current === generation.current && epoch === detailEpoch.current) {
+      if (!signal?.aborted && current === generation.current && epoch === detailEpoch.current) {
         setSelected(l);
         setTimeline(a.items);
         setTimelineCursor(a.nextCursor);
         return l;
       }
     } catch (e) {
-      if (current === generation.current && epoch === detailEpoch.current) {
+      if (!signal?.aborted && current === generation.current && epoch === detailEpoch.current) {
         setError((e as Error).message);
         setSelected(null);
       }
     } finally {
-      if (epoch === detailEpoch.current) setDetailBusy(false);
+      if (!signal?.aborted && epoch === detailEpoch.current) setDetailBusy(false);
     }
-  }
+  }, [request]);
   async function inspectLead(lead: Lead) {
     if (!lead?.id) {
       setError('This lead is unavailable. Return to Leads and refresh.');
       return;
     }
-    if (routeLeadId === lead.id) return chooseLead(lead, leadTabRef.current);
+    if (routeLeadId === lead.id) return chooseLead(lead.id, leadTabRef.current);
     detailEpoch.current++;
     selectedIdRef.current = undefined;
     setSelected(null);
@@ -1179,35 +1174,11 @@ export default function App() {
     const leadId = routeLeadId;
     const id = params.get('task');
     if (leadId) {
-      let alive = true;
-      setDetailBusy(true);
-      if (routeLeadId && selectedIdRef.current !== routeLeadId) {
-        detailEpoch.current++;
-        selectedIdRef.current = undefined;
-        setSelected(null);
-        setTimeline([]);
-      }
-      request('/leads/' + encodeURIComponent(leadId))
-        .then((l) => {
-          if (alive && identityEpoch === generation.current) {
-            setPage('leads');
-            return chooseLead(
-              l,
-              tabAfterLeadLoad(leadTabRef.current, selectedIdRef.current, l.id),
-            );
-          }
-        })
-        .catch((e) => {
-          if (alive && identityEpoch === generation.current)
-            setError(e.message);
-        })
-        .finally(() => {
-          if (alive && identityEpoch === generation.current)
-            setDetailBusy(false);
-        });
-      return () => {
-        alive = false;
-      };
+      if (selectedIdRef.current !== leadId) setSelected(null);
+      setPage('leads');
+      const controller = new AbortController();
+      void chooseLead(leadId, tabAfterLeadLoad(leadTabRef.current, selectedIdRef.current, leadId), controller.signal);
+      return () => controller.abort();
     }
     if (!id || demo) return;
     let alive = true;
@@ -1224,7 +1195,7 @@ export default function App() {
     return () => {
       alive = false;
     };
-  }, [active, demo, request, session?.identity.uid, routeLeadId]);
+  }, [active, demo, request, session?.identity.uid, routeLeadId, chooseLead]);
   useEffect(() => {
     const sync = () => {
       const id = leadPathId(window.location.pathname);
@@ -2254,16 +2225,12 @@ export default function App() {
                     </div>
                   </section>
                 </div>
-                {routeLeadId && !selected ? (
+                {routeLeadId && !selected && detailBusy ? <LeadPageLoading /> : null}
+                {routeLeadId && !selected && !detailBusy ? (
                   <div className="lead-route-state">
-                    {detailBusy ? (
-                      <Loading />
-                    ) : (
-                      <Empty title="This lead is unavailable.">
-                        It may have been archived, or your access may have
-                        changed.
-                      </Empty>
-                    )}
+                    <Empty title="This lead is unavailable.">
+                      It may have been archived, or your access may have changed.
+                    </Empty>
                     <button className="button" onClick={() => go('leads')}>
                       Return to leads
                     </button>
@@ -2305,17 +2272,23 @@ export default function App() {
                         <h2>
                           <LeadName name={selected.name} detail />
                         </h2>
-                        <LeadHeaderContext company={selected.company} phone={selected.phone}/>
-                        <dl className="lead-header-extra">
-                          {orderedFields(fieldOptions, fieldOptions.headerFields || [], (key) => key)
-                            .filter((key) => !fieldOptions.hiddenFields.includes(key) && leadFieldValue(selected, key))
-                            .map((key) => (
-                              <div key={key}>
-                                <dt>{fieldOptions.customFields.find((field) => field.id === key)?.label || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined)}</dt>
-                                <dd>{leadFieldValue(selected, key)}</dd>
-                              </div>
-                            ))}
-                        </dl>
+                        <LeadHeaderContext
+                          company={selected.company}
+                          phone={selected.phone}
+                          fields={orderedFields(fieldOptions, fieldOptions.headerFields || [], (key) => key)
+                            .filter((key) => !fieldOptions.hiddenFields.includes(key))
+                            .flatMap((key) => {
+                              const value = leadFieldValue(selected, key).trim();
+                              if (!value) return [];
+                              const label = fieldOptions.customFields.find((field) => field.id === key)?.label
+                                || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined);
+                              return [{ id: key, label, value }];
+                            })}
+                        />
+                      </div>
+                    }
+                    workflow={
+                      <>
                         <div className="lead-header-score">
                           <span>Lead score</span>
                           <ScoreBadge
@@ -2326,10 +2299,6 @@ export default function App() {
                             }
                           />
                         </div>
-                      </div>
-                    }
-                    workflow={
-                      <>
                         <div className="detail-section">
                           <h3>
                             {labelFor(fieldOptions, 'stage', 'Sales stage')}
@@ -2356,8 +2325,7 @@ export default function App() {
                       timezone={timezone}
                       demo={!!demo}
                     />),
-                      details: (<details className="lead-context">
-                        <summary>Details &amp; qualification</summary>
+                      details: (<div className="lead-context">
                         <LeadScore
                           key={selected.id}
                           leadId={selected.id}
@@ -2492,7 +2460,7 @@ export default function App() {
                             </details>
                           ) : null}
                         </div>
-                      </details>),
+                      </div>),
                       activity: (<div className="lead-activity-area">
                         {routeLeadId ? (
                           <>
@@ -2582,6 +2550,7 @@ export default function App() {
                         ) : null}
                         <div
                           className="lead-work-panel"
+                          aria-busy={detailBusy}
                           role={routeLeadId ? 'tabpanel' : undefined}
                           id={routeLeadId ? 'lead-panel-' + leadTab : undefined}
                           aria-labelledby={
@@ -2674,12 +2643,12 @@ export default function App() {
                                 </span>
                               </div>
                               {detailBusy ? (
-                                <Loading />
+                                <Loading label="Loading lead activity…" />
                               ) : filterLeadActivities(
                                   timeline,
                                   routeLeadId ? leadTab : 'all',
                                 ).length ? (
-                                <div className="timeline">
+                                <div className="timeline" key={leadTab}>
                                   {filterLeadActivities(
                                     timeline,
                                     routeLeadId ? leadTab : 'all',

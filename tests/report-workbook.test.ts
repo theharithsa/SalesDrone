@@ -13,8 +13,14 @@ test('Excel report preserves phone formatting, protects formula-like source text
         id: 'demo',
         values: ['=HYPERLINK("https://example.com")', '+001234567'],
       },
+      { id: 'second', values: ['Second lead', '001234568'] },
+      { id: 'third', values: ['Third lead', '001234569'] },
     ],
-    comments: [{leadId:'demo',leadName:'Example',createdAt:'2026-11-01T00:00:00Z',text:'=SUM(1,2)'}],
+    comments: [
+      { leadId: 'demo', leadName: 'Example', createdAt: '2026-11-02T00:00:00Z', text: 'Follow-up' },
+      { leadId: 'second', leadName: 'Second lead', createdAt: '2026-11-02T00:00:00Z', text: 'Second lead only' },
+      { leadId: 'demo', leadName: 'Example', createdAt: '2026-11-01T00:00:00Z', text: '=SUM(1,2)' },
+    ],
     context: ['Synthetic fixture', 'Filters: city equals Chennai'],
   };
   const file = await buildReportWorkbook(data);
@@ -30,8 +36,13 @@ test('Excel report preserves phone formatting, protects formula-like source text
     data.context[1],
   );
   assert.equal(sheet.views[0].state, 'frozen');
-  const comments = workbook.getWorksheet('Lead comments')!;
-  assert.equal(comments.getCell('A2').value, 2);
-  assert.equal(comments.getCell('E2').value, '=SUM(1,2)');
-  assert.equal(comments.getCell('E2').type, ExcelJS.ValueType.String);
+  assert.equal(workbook.getWorksheet('Lead comments'), undefined);
+  assert.equal(sheet.getCell('C1').value, 'Comment 1');
+  assert.equal(sheet.getCell('D1').value, 'Comment 2');
+  assert.equal(sheet.getCell('C2').value, '=SUM(1,2)');
+  assert.equal(sheet.getCell('C2').type, ExcelJS.ValueType.String);
+  assert.equal(sheet.getCell('D2').value, 'Follow-up');
+  assert.equal(sheet.getCell('C3').value, 'Second lead only');
+  assert.equal(sheet.getCell('D3').value, null);
+  assert.equal(sheet.getCell('C4').value, null);
 });

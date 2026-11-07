@@ -12,8 +12,9 @@ import SettingsPage from '../features/SettingsPage';
 import ImportPage from '../features/ImportPage';
 import DashboardPage from '../features/DashboardPage';
 import ImportReviewFixture from './ImportReviewFixture';
-import { Avatar, Brand, LeadName, Loading, Modal } from '../components/UI';
+import { Avatar, Badge, Brand, LeadName, Loading, Modal } from '../components/UI';
 import LeadBlade from '../components/LeadBlade';
+import LeadPage from '../components/LeadPage';
 import Assignment from '../components/Assignment';
 import { ScoreBadge } from '../components/LeadScore';
 import { ChevronLeft, Pencil } from 'lucide-react';
@@ -285,31 +286,57 @@ function AdminReview() {
     return request(path, method, body);
   }, [request]);
   if (new URLSearchParams(window.location.search).get('preview') === 'assistant-agent')return <LeadAssistantPrototype/>;
-  if (new URLSearchParams(window.location.search).get('preview') === 'lead-header')
+  if (new URLSearchParams(window.location.search).get('preview') === 'lead-header') {
+    const overlay = new URLSearchParams(window.location.search).has('overlay');
+    const identity = (
+      <div className="detail-profile">
+        <Avatar name={headerLead.name}/>
+        <h2><LeadName name={headerLead.name} detail/></h2>
+        <LeadHeaderContext
+          company={headerLead.company}
+          phone={headerLead.phone}
+          fields={[
+            { id: 'secondary-phone', label: 'Phone number 2', value: '+1 202 555 0117' },
+            { id: 'location', label: 'Location', value: 'North district' },
+          ]}
+        />
+        {overlay && <div className="lead-header-score"><span>Lead score</span><ScoreBadge/></div>}
+      </div>
+    );
+    const toolbar = <>
+      <button className="text-button" aria-label="Back to leads"><ChevronLeft size={16}/><span className="lead-action-label">Back to leads</span></button>
+      <button className="button detail-edit-button" aria-label="Edit lead"><Pencil size={16}/><span className="lead-action-label">Edit lead</span></button>
+    </>;
     return <>
       <div className="review-admin-banner">Fictional lead header · in-memory preview only</div>
-      <LeadBlade
-        fullPage={!new URLSearchParams(window.location.search).has('overlay')}
-        onClose={() => { window.location.href = '/design-admin.html'; }}
-        onExpand={() => { window.location.href = '/design-admin.html?preview=lead-header'; }}
-        toolbar={<>
-          <button className="text-button" aria-label="Back to leads"><ChevronLeft size={16}/><span className="lead-action-label">Back to leads</span></button>
-          <button className="button detail-edit-button" aria-label="Edit lead"><Pencil size={16}/><span className="lead-action-label">Edit lead</span></button>
-        </>}
-        identity={<div className="detail-profile">
-          <Avatar name={headerLead.name}/><h2><LeadName name={headerLead.name} detail/></h2><LeadHeaderContext company={headerLead.company} phone={headerLead.phone}/>
-          <div className="lead-header-score"><span>Lead score</span><ScoreBadge/></div>
-        </div>}
-        workflow={<>
-          <div className="detail-section"><h3>Sales stage</h3>
-            <select aria-label="Update lead stage" value={headerLead.stage} onChange={e => setHeaderLead(old=>({...old,stage:e.target.value}))}>
-              {config.values.stage.map(stage=><option key={stage}>{stage}</option>)}
-            </select>
-          </div>
-          <Assignment compact lead={headerLead} request={headerRequest} onSaved={async()=>{}}/>
-        </>}
-      ><p className="notice">Synthetic layout preview. No customer records or live API calls.</p></LeadBlade>
+      {overlay ? (
+        <LeadBlade
+          onClose={() => { window.location.href = '/design-admin.html'; }}
+          onExpand={() => { window.location.href = '/design-admin.html?preview=lead-header'; }}
+          toolbar={toolbar}
+          identity={identity}
+          workflow={<>
+            <div className="detail-section"><h3>Sales stage</h3>
+              <select aria-label="Update lead stage" value={headerLead.stage} onChange={e => setHeaderLead(old=>({...old,stage:e.target.value}))}>
+                {config.values.stage.map(stage=><option key={stage}>{stage}</option>)}
+              </select>
+            </div>
+            <Assignment compact lead={headerLead} request={headerRequest} onSaved={async()=>{}}/>
+          </>}
+        ><p className="notice">Synthetic layout preview. No customer records or live API calls.</p></LeadBlade>
+      ) : (
+        <div className="leads-page">
+          <LeadPage toolbar={toolbar} identity={identity} workflow={<>
+            <div className="lead-header-score"><span>Lead score</span><ScoreBadge/></div>
+            <div className="detail-section"><h3>Sales stage</h3><Badge stage={headerLead.stage}/></div>
+            <div className="lead-assignment-summary"><h3>Assigned to</h3><span>Unassigned</span></div>
+          </>}>
+            <p className="notice">Synthetic layout preview. No customer records or live API calls.</p>
+          </LeadPage>
+        </div>
+      )}
     </>;
+  }
   if (new URLSearchParams(window.location.search).get('preview') === 'startup')
     return (
       <div className="startup">

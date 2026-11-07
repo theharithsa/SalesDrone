@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.10.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.10.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -178,26 +178,6 @@ Applies to lists, direct links, reports, dashboards and reminder/notification el
 
 **Permissions:** Read: leads:read (PAT configuration:read). Write: members:write via Google/App Check; expectedVersion.
 
-### Enquiry field and column order
-
-**Default:** Existing form, Leads table and export order.
-
-Move built-in and custom fields together. The workspace order is shared and saved by an Admin.
-
-New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order to supported visible fields after refresh. Unlisted fields keep their relative defaults.
-
-**Example:** Put Phone number before Company name.
-
-### Extra lead header fields
-
-**Default:** None.
-
-Choose up to six additional built-in or custom fields from the current enquiry layout.
-
-The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.
-
-**Example:** Show City / location and Product in the lead header.
-
 ### Built-in field names
 
 **Default:** Standard enquiry labels.
@@ -243,6 +223,42 @@ Removing a choice preserves unchanged historical values but prevents new use of 
 Remove an unused custom field from new-entry controls without erasing historical lead values.
 
 Retired IDs cannot be reused. Create a new field for a different data type instead of rewriting existing values.
+
+## Manage fields → Field order
+
+**Who/where:** Workspace-wide; Admin only.
+
+**API:** GET/PATCH /api/v1/field-options.
+
+**Permissions:** Read: leads:read (PAT configuration:read). Write: members:write via Google/App Check; expectedVersion.
+
+### Enquiry field and column order
+
+**Default:** Existing form, Leads table and export order.
+
+Move built-in and custom fields together. The workspace order is shared and saved by an Admin.
+
+New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order to supported visible fields after refresh. Unlisted fields keep their relative defaults.
+
+**Example:** Put Phone number before Company name.
+
+## Manage fields → Lead page header
+
+**Who/where:** Workspace-wide; Admin only.
+
+**API:** GET/PATCH /api/v1/field-options.
+
+**Permissions:** Read: leads:read (PAT configuration:read). Write: members:write via Google/App Check; expectedVersion.
+
+### Extra lead header fields
+
+**Default:** None.
+
+Choose up to six additional built-in or custom fields from the current enquiry layout.
+
+The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.
+
+**Example:** Show City / location and Product in the lead header.
 
 ## Manage fields → Dropdown choices
 

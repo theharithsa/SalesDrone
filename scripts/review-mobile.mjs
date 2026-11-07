@@ -203,15 +203,19 @@ try {
       const panel=document.querySelector('.tasks-panel');
       const styles=getComputedStyle(page);
       const rows=[...document.querySelectorAll('.task-row')];
-      return {ratio:panel.getBoundingClientRect().width/(page.getBoundingClientRect().width-parseFloat(styles.paddingLeft)-parseFloat(styles.paddingRight)),
+      const stacked=getComputedStyle(panel.querySelector('.task-list-head')).display==='none';
+      return {stacked, ratio:panel.getBoundingClientRect().width/(page.getBoundingClientRect().width-parseFloat(styles.paddingLeft)-parseFloat(styles.paddingRight)),
         picker:getComputedStyle(document.querySelector('.task-status-picker')).display,
         subtitle:getComputedStyle(document.querySelector('.tasks-page .page-title p')).display,
-        aligned:rows.every(e=>e.querySelector('.task-menu').getBoundingClientRect().top < e.querySelector('.task-body').getBoundingClientRect().bottom),
+        aligned:rows.every(e=>{
+          const actions=e.querySelector('.task-actions').getBoundingClientRect(), body=e.querySelector('.task-body').getBoundingClientRect(), row=e.getBoundingClientRect();
+          return actions.right<=row.right && (stacked ? actions.top>=body.bottom : actions.top<body.bottom);
+        }),
         symbol:document.querySelector('.task-check-symbol').getBoundingClientRect().width,
         target:document.querySelector('.task-check').getBoundingClientRect().width};
     })()`);
     assert.ok(layout.ratio > 0.98, JSON.stringify({width,...layout}));
-    assert.ok(layout.aligned, 'Task actions stay beside identity');
+    assert.ok(layout.aligned, JSON.stringify({width, ...layout}));
     assert.ok(layout.symbol <= 24, 'Completion symbol stays visually small');
     if (width < 768) {
       assert.equal(layout.subtitle, 'none');
@@ -263,9 +267,16 @@ try {
   await tap('.task-menu summary');
   assert.deepEqual(await js('[...document.querySelectorAll(".task-menu[open] button")].map(e=>e.textContent.trim())'), ['Edit task','Delete task']);
   await tap('.tasks-page h1');
+  await tap('.task-row .task-body');
+  await action('Reopen task');
+  await wait('!!document.querySelector("[role=dialog] textarea[name=comment]")');
+  await js('document.querySelector("[role=dialog] textarea[name=comment]").value="Fictional task reopened";document.querySelector("[role=dialog] form").requestSubmit()');
+  await wait('!document.querySelector("[role=dialog]")');
   await select('.task-status-picker select', 'Pending');
-  await tap('.task-menu summary');
-  await action('Cancel task');
+  // The reopened fixture is the owned task. Menu hit testing is covered above.
+  await wait('document.querySelectorAll(".task-row").length===5');
+  await js(`[...document.querySelectorAll('.task-menu button')].find(button => button.textContent.trim() === 'Cancel task').click()`);
+  await wait('document.querySelectorAll(".task-row").length===4');
   await select('.task-status-picker select', 'Cancelled');
   await wait('document.querySelectorAll(".task-row").length===1');
   await tap('.task-menu summary');
@@ -274,8 +285,39 @@ try {
   await select('.task-status-picker select', 'Pending');
   evidence.push({case:'task-status-menu-actions', result:'passed', fixture:'synthetic in-memory only'});
 
-  await action('More');
-  await action('Settings');
+  for (const [width, height] of [[320, 540], [390, 720], [599, 720]]) {
+    await viewport(width, height);
+    await js('window.scrollTo(0, 0)');
+    await action('Open navigation');
+    await wait(`!!document.elementFromPoint(100, ${height - 120})?.closest('.sidebar.mobile-open')`);
+    const layout = await js(`(() => {
+      const drawer = document.querySelector('.sidebar.mobile-open');
+      return {overflow: getComputedStyle(drawer).overflowY, range: drawer.scrollHeight - drawer.clientHeight,
+        navigationOverflow: getComputedStyle(drawer.querySelector('.navigation-scroll')).overflowY};
+    })()`);
+    assert.equal(layout.overflow, 'auto');
+    assert.equal(layout.navigationOverflow, 'visible');
+    assert.ok(layout.range > 0, JSON.stringify({width, height, ...layout}));
+    await send('Input.synthesizeScrollGesture', {
+      x: 100, y: height - 120, yDistance: -1600, gestureSourceType: 'touch',
+    });
+    await wait(`(() => {
+      const drawer = document.querySelector('.sidebar.mobile-open');
+      return drawer.scrollHeight - drawer.clientHeight - drawer.scrollTop <= 1;
+    })()`);
+    const end = await js(`(() => {
+      const drawer = document.querySelector('.sidebar.mobile-open');
+      const last = drawer.querySelector('.sidebar-attribution').getBoundingClientRect();
+      const settings = drawer.querySelector('button[aria-label=Settings]').getBoundingClientRect();
+      return {remaining: drawer.scrollHeight - drawer.clientHeight - drawer.scrollTop,
+        last: last.bottom, settings: settings.bottom, drawer: drawer.getBoundingClientRect().bottom};
+    })()`);
+    assert.ok(end.remaining <= 1 && end.last <= end.drawer && end.settings <= end.drawer, JSON.stringify(end));
+    await tap('.sidebar button[aria-label=Settings]');
+    await wait('!!document.querySelector(".settings-page") && !document.querySelector(".sidebar.mobile-open")');
+    evidence.push({case:'mobile-drawer-scrolls-to-footer',width,height,result:'passed'});
+  }
+  await viewport(390, 844);
   console.log(
     'Settings controls',
     await js(
@@ -343,6 +385,8 @@ try {
     'developer',
     'access',
     'fields',
+    'field-order',
+    'lead-header',
     'choices',
     'scoring',
     'ai',

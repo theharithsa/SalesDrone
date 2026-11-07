@@ -23,3 +23,18 @@ export default function LeadPage({ toolbar, workflow, identity, children }: {
     </section>
   );
 }
+
+export function LeadPageLoading() {
+  return (
+    <div className="lead-page-loading" role="status">
+      <span className="sr-only">Loading lead details…</span>
+      <div className="lead-loading-card" aria-hidden="true">
+        <span className="lead-loading-avatar" />
+        <div><span /><span /></div>
+      </div>
+      <div className="lead-loading-card lead-loading-journey" aria-hidden="true">
+        <div><span /><span /></div>
+      </div>
+    </div>
+  );
+}

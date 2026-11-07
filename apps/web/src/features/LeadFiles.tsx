@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { FileUp, FileText, Download, Trash2 } from 'lucide-react';
-import { ErrorMessage } from '../components/UI';
+import { ErrorMessage, Loading } from '../components/UI';
 import { downloadFileBytes, uploadFileBytes } from '../lib/api';
 import FILE_TYPES from '../../../../functions/src/attachment-types.json';
 const MAX = 8 * 1024 * 1024;
@@ -32,6 +32,7 @@ export default function LeadFiles({
     [cursor, setCursor] = useState<string | null>(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
+    [loading, setLoading] = useState(!demo),
     [progress, setProgress] = useState(0),
     [confirm, setConfirm] = useState<string | null>(null),
     [pending, setPending] = useState<{ file: File; record: Attachment } | null>(
@@ -45,6 +46,7 @@ export default function LeadFiles({
   const base = '/leads/' + leadId + '/attachments';
   async function load(more = false) {
     if (demo) return;
+    setLoading(true);
     setError('');
     try {
       const r = await request(
@@ -64,6 +66,8 @@ export default function LeadFiles({
       }
     } catch (e) {
       if (alive.current) setError((e as Error).message);
+    } finally {
+      if (alive.current) setLoading(false);
     }
   }
   useEffect(() => {
@@ -197,12 +201,12 @@ export default function LeadFiles({
           </p>
         </div>
         {!demo && (
-          <button className="button" disabled={busy} onClick={() => load()}>
+          <button className="button" disabled={busy || loading} onClick={() => load()}>
             Refresh files
           </button>
         )}
         {canEdit && (
-          <label className={'button ' + (busy ? 'disabled' : '')}>
+          <label className={'button ' + (busy || loading ? 'disabled' : '')}>
             <FileUp size={16} />
             Upload file
             <input
@@ -212,7 +216,7 @@ export default function LeadFiles({
               accept={Object.keys(FILE_TYPES)
                 .map((x) => '.' + x)
                 .join(',')}
-              disabled={busy || !!pending}
+              disabled={busy || loading || !!pending}
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 if (f) void upload(f);
@@ -261,7 +265,8 @@ export default function LeadFiles({
           </button>
         </div>
       )}
-      {!items.length && !busy && <p>No files have been added to this lead.</p>}
+      {loading && <Loading label="Loading lead files…" />}
+      {!items.length && !busy && !loading && !error && <p>No files have been added to this lead.</p>}
       <ul className="lead-file-list">
         {items.map((item) => (
           <li key={item.id}>
@@ -323,7 +328,7 @@ export default function LeadFiles({
         ))}
       </ul>
       {cursor && (
-        <button className="button" disabled={busy} onClick={() => load(true)}>
+        <button className="button" disabled={busy || loading} onClick={() => load(true)}>
           Load more files
         </button>
       )}

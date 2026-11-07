@@ -1,48 +1,92 @@
 import { useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { labelFor, orderedFields, standardFieldLabels, type FieldOptions } from '../lib/field-options';
+import { ErrorMessage, SaveButton, useSubmit } from './UI';
 
-export default function LeadFieldLayoutSettings({ config, busy, onSave }: {
+const fixedHeaderFields = new Set(['company', 'phone', 'name', 'stage', 'assignedToUid', 'outcome', 'disposition']);
+const headerLimit = 6;
+
+export default function LeadFieldLayoutSettings({ config, mode, request, onChanged }: {
   config: FieldOptions;
-  busy: boolean;
-  onSave: (change: Partial<FieldOptions>) => Promise<boolean>;
+  mode: 'order' | 'header';
+  request: (path: string, method: string, body: Record<string, unknown>) => Promise<FieldOptions>;
+  onChanged: (options: FieldOptions) => void;
 }) {
   const custom = config.customFields.filter((field) => !field.deleted);
-  const visible = (key: string) => !config.hiddenFields.includes(key);
-  const initial = orderedFields(config, [
-    ...Object.keys(standardFieldLabels).filter(visible),
+  const available = orderedFields(config, [
+    ...Object.keys(standardFieldLabels).filter((key) => !config.hiddenFields.includes(key)),
     'createdAt',
     ...custom.map((field) => field.id),
   ], (key) => key);
-  const [order, setOrder] = useState(initial);
-  const [header, setHeader] = useState(config.headerFields || []);
+  const headerFields = available.filter((key) => !fixedHeaderFields.has(key));
+  const [order, setOrder] = useState(available);
+  const [header, setHeader] = useState(() => headerFields.filter((key) => config.headerFields?.includes(key)));
+  const [saved, setSaved] = useState(false);
+  const [expectedVersion, setExpectedVersion] = useState(config.version);
+  const isOrder = mode === 'order';
+  const submit = useSubmit(async (change, _key, isCurrent) => {
+    const result = await request('/field-options', 'PATCH', {
+      expectedVersion,
+      values: config.values,
+      ...change,
+    });
+    if (isCurrent()) {
+      setExpectedVersion(result.version);
+      onChanged(result);
+      setSaved(true);
+    }
+  });
+
   function move(index: number, direction: number) {
+    setSaved(false);
     setOrder((current) => {
       const next = current.slice();
       [next[index], next[index + direction]] = [next[index + direction], next[index]];
       return next;
     });
   }
+
   return (
-    <details className="field-layout-settings">
-      <summary>Field order and lead header</summary>
-      <p className="field-hint">Set the workspace order for enquiry fields, lead columns and exports. Show up to six extra fields in the lead header.</p>
+    <form className="panel field-layout-settings" data-mode={mode} onSubmit={(event) => {
+      event.preventDefault();
+      setSaved(false);
+      void submit.run(isOrder ? { fieldOrder: order } : { headerFields: header });
+    }}>
+      <p className="field-hint">{isOrder
+        ? 'Arrange fields for enquiry forms, the Leads table and Excel exports.'
+        : 'Choose up to six fields to show under the lead name and contact details. Fields appear when they have a value.'}</p>
+      {!isOrder && <p className="field-hint" role="status">{header.length} of {headerLimit} selected</p>}
       <ol>
-        {order.map((key, index) => {
+        {(isOrder ? order : headerFields).map((key, index) => {
           const label = custom.find((field) => field.id === key)?.label || labelFor(config, key, key === 'createdAt' ? 'Created at' : undefined);
-          const headerEligible = !['company', 'phone', 'name', 'stage', 'assignedToUid', 'outcome', 'disposition'].includes(key);
-          return <li key={key}>
-            <span>{label}</span>
-            <button className="icon-button" type="button" aria-label={'Move ' + label + ' up'} disabled={!index || busy} onClick={() => move(index, -1)}><ArrowUp size={17} /></button>
-            <button className="icon-button" type="button" aria-label={'Move ' + label + ' down'} disabled={index === order.length - 1 || busy} onClick={() => move(index, 1)}><ArrowDown size={17} /></button>
-            {headerEligible ? <label className="check">
-              <input type="checkbox" checked={header.includes(key)} disabled={busy || (!header.includes(key) && header.length >= 6)} onChange={(e) => setHeader((current) => e.target.checked ? [...current, key] : current.filter((id) => id !== key))} />
-              In lead header
-            </label> : null}
-          </li>;
+          return (
+            <li key={key} data-selected={!isOrder && header.includes(key) || undefined}>
+              {isOrder ? <>
+                <span className="field-position" aria-hidden="true">{index + 1}</span>
+                <span className="field-order-name">{label}</span>
+                <button className="icon-button" type="button" aria-label={'Move ' + label + ' up'} disabled={!index || submit.busy} onClick={() => move(index, -1)}><ArrowUp size={17} /></button>
+                <button className="icon-button" type="button" aria-label={'Move ' + label + ' down'} disabled={index === order.length - 1 || submit.busy} onClick={() => move(index, 1)}><ArrowDown size={17} /></button>
+              </> : (
+                <label className="check">
+                  <input type="checkbox" checked={header.includes(key)}
+                    disabled={submit.busy || (!header.includes(key) && header.length >= headerLimit)}
+                    onChange={(event) => {
+                      const checked = event.target.checked;
+                      setSaved(false);
+                      setHeader((current) => checked ? [...current, key] : current.filter((id) => id !== key));
+                    }} />
+                  {label}
+                </label>
+              )}
+            </li>
+          );
         })}
       </ol>
-      <button type="button" className="button primary" disabled={busy} onClick={() => void onSave({ fieldOrder: order, headerFields: order.filter((key) => header.includes(key)) })}>Save field layout</button>
-    </details>
+      <ErrorMessage error={submit.error} />
+      <div className="form-footer field-layout-actions">
+        {saved && <span role="status">Saved.</span>}
+        <SaveButton busy={submit.busy} label={isOrder ? 'Save field order' : 'Save lead header'} />
+      </div>
+    </form>
   );
 }

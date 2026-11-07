@@ -45,7 +45,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard groups current lead counts by your chosen field. Its headings and descriptions follow that field’s configured label; selecting a group opens matching leads. Recorded stage changes remain in the lead journey.
 
-![Current dashboard counts, separate from recorded lead-journey history.](site/assets/screenshots/journey-demo.jpg?sha=5e71520ef776)
+![Fictional lead journey with its current stage highlighted.](site/assets/screenshots/journey-demo.jpg?sha=131b1614ba54)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -140,11 +140,11 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=5ae8db96ef7b)
+![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=6912ede2ba28)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
-The full lead page opens in **All**: loaded activity and review information. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
+The full lead page opens in **Comments**. Switch to **All** to see loaded activity and review information. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
 
 **v1.6.2** standardized Dynatrace CloudEvents delivery and added a sunrise/sunset theme control. [Book mode is available in v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
 
@@ -174,7 +174,7 @@ The v1.6.7 maintenance updates align wrapped customer names, remove duplicate le
 
 Open Settings → Appearance & time to preview and save Standard, Inter, Source Sans 3 or Lora. The choice is personal; Book mode keeps its serif styling. Activity cards now use a clearer, more compact type hierarchy. Fonts are self-hosted, with licences retained. See the [font and activity guide](docs/FONT-CHOICES.md).
 
-![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=85f6447a44a9)
+![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=96e3778d5b3c)
 
 ## Repeatable testing
 
@@ -182,7 +182,7 @@ The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.jso
 
 Personal desktop display zoom lives in Settings → Appearance & time. The compact lead header keeps identity, score, stage and assignment together; rings distinguish a known zero from missing evidence.
 
-![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/lead-workspace-demo.jpg?sha=5ae8db96ef7b)
+![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/journey-demo.jpg?sha=131b1614ba54)
 
 Batch edit up to 25 explicitly selected leads with a before/after review and atomic version checks. Lead pages now include a Files tab for private Firebase Storage attachments, with upload progress, retry and forced downloads. See [file architecture](docs/ATTACHMENTS.md) and [the product handbook](docs/PRODUCT-GUIDE.md).
 
@@ -221,13 +221,13 @@ Settings uses separate field names and supporting text, with delete and restore
 icons. Keep name, enquiry date and one contact method; removed fields retain their
 saved values.
 
-<img src="site/assets/screenshots/field-manager-mobile-demo.jpg" alt="Fictional mobile field settings with edit, delete and restore behavior" width="390">
+<img src="site/assets/screenshots/field-manager-mobile-demo.jpg" alt="Fictional mobile Lead fields settings with layout shortcuts" width="390">
 
 ### Aligned phone lead controls and chart axes
 
 Stage and assignment stack on compact lead surfaces. Outreach tick labels share the chart gridline positions.
 
-<img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional administrator lead header with aligned full-width controls" width="412">
+<img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional phone lead header with two tappable numbers and read-only workflow summary" width="412">
 
 ## Collaborative imports (2.3)
 
