@@ -46,7 +46,18 @@ try {
       Number(settings['autoscaling.knative.dev/minScale'] || 0) !== 0 || minimum !== 0)
     throw Error('Ingress requires request-based billing and zero minimum instances');
   const identity = await checkIngressIdentity(candidate.url, release);
-  const transportChecks = await checkIngress(candidate.url, release);
+  let upstreamVersion = release.version;
+  if (stageOnly) {
+    // A staged gateway talks to the already active Function, which still has
+    // the prior release's identity on its forwarded responses.
+    const response = await fetch(upstream + '/api/v1/leads', {redirect: 'error', signal: AbortSignal.timeout(15000)});
+    upstreamVersion = response.headers.get('x-app-version');
+    const body = await response.json();
+    if (response.status !== 401 || body.error?.code !== 'UNAUTHENTICATED' ||
+        !/^\d+\.\d+\.\d+$/.test(upstreamVersion || ''))
+      throw Error('Could not verify the active upstream identity');
+  }
+  const transportChecks = await checkIngress(candidate.url, release, { upstreamVersion });
   if (!stageOnly) {
     gcloud(['run', 'services', 'update-traffic', service, ...serviceArgs, '--to-revisions', candidate.revisionName + '=100']);
     const active = describe().status?.traffic?.find(target => target.revisionName === candidate.revisionName && target.percent === 100);
@@ -55,7 +66,7 @@ try {
   await writeFile('ingress-deployment.json', JSON.stringify({
     service, region, image, uri: stageOnly ? candidate.url : staged.status.url, revision: candidate.revisionName,
     version: identity.version, commit: identity.commit, billing: 'request-based', minimumInstances: 0,
-    parserBoundary: 'passed', transportChecks, ...(stageOnly ? { tag, trafficPercent: 0 } : {}),
+    parserBoundary: 'passed', transportChecks, ...(stageOnly ? { tag, trafficPercent: 0, upstreamVersion } : {}),
   }, null, 2));
   keepTag = stageOnly;
   console.log('Verified ingress identity, request billing, zero minimum instances and parser boundary.');

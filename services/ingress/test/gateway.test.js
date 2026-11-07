@@ -94,6 +94,17 @@ test('production probes exercise real ingress denial/parser boundaries without a
  const results=await checkIngress(f.url,{version:'2.6.1'});assert.equal(results.length,5);assert.ok(results.every(r=>r.status==='passed'));assert.equal(f.calls.length,2);assert.ok(f.calls.every(call=>!call.headers.authorization));
 });
 
+test('tagged staging accepts the prior backend version only on forwarded denials', async t => {
+  const f = await fixture(t, (_req, res) => {
+    const requestId = randomUUID();
+    res.writeHead(401, {'Content-Type': 'application/json', 'X-Request-Id': requestId, 'X-App-Version': '2.6.0'});
+    res.end(JSON.stringify({error: {code: 'UNAUTHENTICATED', requestId}}));
+  });
+  await assert.rejects(checkIngress(f.url, {version: '2.6.1'}, {largeBody: false}), /compressed-json-denial/);
+  const results = await checkIngress(f.url, {version: '2.6.1'}, {largeBody: false, upstreamVersion: '2.6.0'});
+  assert.equal(results.length, 4);
+});
+
 test('operational health avoids Cloud Run reserved paths and rejects managed HTML errors',async()=>{
  assert.ok(!HEALTH_PATH.endsWith('z')&&!HEALTH_PATH.startsWith('/_ah/'));
  await assert.rejects(checkIngressIdentity('https://synthetic.example.invalid',{version:'2.6.2',commit:'synthetic'},{fetchImpl:async()=>new Response('<html>provider error</html>',{status:404,headers:{'content-type':'text/html'}})}),/did not return application JSON/);
