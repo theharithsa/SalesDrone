@@ -177,6 +177,8 @@
   font-size: 1rem;
   margin-bottom: 16px;
 }
+/* Clip long selected option text to the trigger on narrow and zoomed layouts. */
+.interface-font-settings select { overflow: hidden; }
 .interface-font-preview {
   margin-top: 16px;
   border-radius: 16px;

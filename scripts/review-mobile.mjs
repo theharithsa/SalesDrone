@@ -285,7 +285,9 @@ try {
 
   for (const [width, height] of [[320, 540], [390, 720], [599, 720]]) {
     await viewport(width, height);
+    await js('window.scrollTo(0, 0)');
     await action('Open navigation');
+    await wait(`!!document.elementFromPoint(100, ${height - 120})?.closest('.sidebar.mobile-open')`);
     const layout = await js(`(() => {
       const drawer = document.querySelector('.sidebar.mobile-open');
       return {overflow: getComputedStyle(drawer).overflowY, range: drawer.scrollHeight - drawer.clientHeight,
@@ -297,6 +299,10 @@ try {
     await send('Input.synthesizeScrollGesture', {
       x: 100, y: height - 120, yDistance: -1600, gestureSourceType: 'touch',
     });
+    await wait(`(() => {
+      const drawer = document.querySelector('.sidebar.mobile-open');
+      return drawer.scrollHeight - drawer.clientHeight - drawer.scrollTop <= 1;
+    })()`);
     const end = await js(`(() => {
       const drawer = document.querySelector('.sidebar.mobile-open');
       const last = drawer.querySelector('.sidebar-attribution').getBoundingClientRect();
