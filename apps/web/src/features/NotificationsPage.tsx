@@ -1,3 +1,4 @@
+import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import { useState } from 'react';
 import { ArrowUpRight, Bell, CheckCheck, Mail, UserRound } from 'lucide-react';
 import { Entity, displayDate } from '../lib/types';
@@ -43,19 +44,19 @@ export default function NotificationsPage({
       }
     >
       {!embedded ? (
-        <div className="page-title">
-          <div>
-            <span className="eyebrow">YOUR WORKSPACE UPDATES</span>
-            <h1>Your inbox</h1>
-            <p>
-              Lead assignments, new leads and reminders stay here, even when
-              push is off.
-            </p>
-          </div>
-        </div>
+        <WorkspacePageHeader
+          title="Notifications"
+          description="Review lead assignments, new enquiries and due reminders."
+        />
       ) : null}
       <ErrorMessage error={error} />
       <section className="panel notification-list" aria-label="Notifications">
+        {items.length ? (
+          <div className="workspace-list-summary">
+            <span>{items.filter((item) => !item.readAt).length} unread in this list</span>
+            <span>{items.length} loaded</span>
+          </div>
+        ) : null}
         {loading ? (
           <Loading />
         ) : items.length ? (

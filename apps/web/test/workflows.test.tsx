@@ -319,12 +319,12 @@ describe('personal dashboard categories',()=>{
   const picker=await screen.findByLabelText('Dashboard visualization field');
   await waitFor(()=>expect(picker).toBeEnabled());
   expect(screen.getByRole('option',{name:'Sales stage'})).toBeInTheDocument();
-  expect(screen.getByText('Currently using Enquiry status')).toBeInTheDocument();
+  expect(screen.getByText('Showing Enquiry status · Saved for your account')).toBeInTheDocument();
   await user.selectOptions(picker,'stage');
   expect(await screen.findByRole('heading',{name:'Leads by Sales stage'})).toBeInTheDocument();
   expect(localStorage.getItem('salesdrone.demo.dashboard-field')).toBe('stage');
   await user.selectOptions(picker,'source');
-  await waitFor(()=>expect(screen.getByText('Currently using Enquiry source')).toBeInTheDocument());
+  await waitFor(()=>expect(screen.getByText('Showing Enquiry source · Saved for your account')).toBeInTheDocument());
   expect(localStorage.getItem('salesdrone.demo.dashboard-field')).toBe('source');
   await user.click(screen.getByRole('button',{name:/Website: 1 leads/}));expect(onCategory).toHaveBeenCalledWith('source','Website',false);
   expect(screen.getByRole('heading',{name:'Leads by Enquiry source'})).toBeInTheDocument();

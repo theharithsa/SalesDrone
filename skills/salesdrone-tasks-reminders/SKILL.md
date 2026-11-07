@@ -100,3 +100,5 @@ GET tasks view=accessible is a bounded Google-member view: current lead readers 
 Reminder claims publish full eligible backlog and due lag; FCM spans retain finite token/quota errors without tokens or titles. Completion/cancellation semantic outboxes share the original transaction and stable IDs. TASK_KINDS is shared by validation and telemetry; regress administrative completion and saved Manual follow-ups through semantic-telemetry.test.js. See [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md).
 
 Completing, rescheduling and reopening require a nonblank comment of up to 500 characters. Reopen Completed only with a future due instant and eligible current recipient/lead. Cancel the obsolete pending delivery and queue the new version atomically. Keep up to 100 dated changes on the scoped task. Never export comment text into telemetry. Shared lead editors keep the original responsible member.
+
+Keep the primary reminder action in the workspace heading and task status alongside the task list. Preserve compact status controls on phones.

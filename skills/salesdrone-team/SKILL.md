@@ -42,3 +42,5 @@ Adjacent owners: [permissions](../salesdrone-people-permissions/SKILL.md), [lead
 Read-only MCP integration uses explicit `team:read` and `people:read` PAT scopes for Admin owners. Existing tokens gain no new permissions. Team/directory reads recheck token validity and current access before publication; Google sessions still require members:write. PATs cannot read full membership/security records or mutate people. See [MCP adapter](../salesdrone-mcp/SKILL.md) and [integration contract](../../docs/MCP.md). Shared lead task reads accept tasks:read without exposing unrelated personal reminders.
 
 The UI offers Last 24 hours, Last 7 days, Last 30 days and custom inclusive UTC dates. The explicit from/to API accepts UTC instants, at most 90 days apart. Activity cursors bind both fixed bounds and access. Workload remains current while recorded activity and completed totals use the selected period.
+
+The Team activity period and custom dates use one control panel. Keep both native date inputs readable at mobile widths. Snapshot timestamps distinguish the selected activity window from current workload.

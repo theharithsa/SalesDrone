@@ -1,3 +1,4 @@
+import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import ImportStatusMapping from './ImportStatusMapping';
 import { dashboardFields } from '../../../../functions/src/dashboard-grouping.js';
 import ImportFieldSetup from './ImportFieldSetup';
@@ -362,18 +363,18 @@ export default function ImportPage({
   }
   return (
     <div className="page-body import-page">
-      <div className="page-title">
-        <div>
-          <span className="eyebrow">BRING YOUR PIPELINE WITH YOU</span>
-          <h1>Imports &amp; history</h1>
-          <p>
-            Bring new enquiries in or review updates from a revised workbook.
-          </p>
-        </div>
-        <button className="button" onClick={downloadTemplate}>
-          <Download size={16} /> Get template
-        </button>
-      </div>
+      <WorkspacePageHeader
+        title="Imports & history"
+        description="Upload a workbook to add or update enquiries, or return to a saved job."
+        actions={
+          <div className="title-actions">
+            {!demo ? <a className="button" href="#import-job-history">View history</a> : null}
+            <button className="button" onClick={downloadTemplate}>
+              <Download size={16} /> Get template
+            </button>
+          </div>
+        }
+      />
       {demo ? (
         <div className="notice">
           <AlertCircle size={18} />
@@ -388,11 +389,13 @@ export default function ImportPage({
       ) : null}
       {canWrite || demo ? (
         <>
-          <div className="import-steps">
+          <div className="import-steps" role="list" aria-label="Import steps">
             {['Choose workbook', 'Review & map', 'Import enquiries'].map(
               (s, i) => (
                 <div
                   key={s}
+                  role="listitem"
+                  aria-current={i === (job ? 2 : sheets.length ? 1 : 0) ? 'step' : undefined}
                   className={
                     i === (job ? 2 : sheets.length ? 1 : 0) ? 'current' : ''
                   }
@@ -408,7 +411,7 @@ export default function ImportPage({
           >
             <div className="upload-area">
               <FileSpreadsheet size={36} strokeWidth={1.4} />
-              <h2>Your enquiries, ready to move.</h2>
+              <h2>Choose an enquiry workbook</h2>
               <p>
                 Excel (.xlsx) or CSV · first worksheet only · up to 5,000
                 records · 10 MB maximum

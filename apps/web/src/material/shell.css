@@ -327,6 +327,20 @@
   font-size: 0.875rem;
   margin-top: 8px;
 }
+.workspace-page-header .workspace-page-heading {
+  min-width: 0;
+  max-width: 66ch;
+}
+.workspace-list-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
 .page-title .eyebrow {
   display: none;
 }

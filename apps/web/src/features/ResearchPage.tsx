@@ -1,3 +1,4 @@
+import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import { useCallback, useEffect, useState, useRef } from "react";
 import {
   RefreshCw,
@@ -206,40 +207,35 @@ export default function ResearchPage({
   }
   return (
     <div className="page-body research-page" data-dt-mask>
-      <header className="page-heading">
-        <div>
-          <span className="eyebrow">
-            {mode === "hygiene"
-              ? "WORKSPACE QUALITY"
-              : "WORKSPACE LEAD DATA ONLY"}
-          </span>
-          <h1>{mode === "hygiene" ? "Lead Hygiene" : "Lead Assistant"}</h1>
-          <p>
-            {mode === "hygiene"
-              ? "Review shared contacts, missing details and potential archive candidates."
-              : "Ask about your leads. Counts use exact analytics; note insights cite retrieved evidence."}
-          </p>
-        </div>
-        <button
-          className="button primary"
-          disabled={busy || demo || (mode === "hygiene" && !canRun)}
-          onClick={() => void create()}
-        >
-          <Plus size={18} />
-          {mode === "hygiene" ? "Run scan" : "New chat"}
-        </button>
-      </header>
+      <WorkspacePageHeader
+        title={mode === "hygiene" ? "Lead Hygiene" : "Lead Assistant"}
+        description={mode === "hygiene"
+          ? "Find shared contacts, missing details and leads to review for archiving."
+          : "Ask about your leads and review the sources behind each answer."}
+        actions={
+          <div className="research-scan-controls">
+            {mode === "hygiene" ? (
+              <label className="report-setting-option">
+                <input
+                  type="checkbox"
+                  checked={includeArchived}
+                  onChange={(event) => setIncludeArchived(event.target.checked)}
+                />
+                Include archived leads
+              </label>
+            ) : null}
+            <button
+              className="button primary"
+              disabled={busy || demo || (mode === "hygiene" && !canRun)}
+              onClick={() => void create()}
+            >
+              <Plus size={18} />
+              {mode === "hygiene" ? "Run scan" : "New chat"}
+            </button>
+          </div>
+        }
+      />
       <ErrorMessage error={error} />
-      {mode === "hygiene" ? (
-        <label className="report-setting-option">
-          <input
-            type="checkbox"
-            checked={includeArchived}
-            onChange={(e) => setIncludeArchived(e.target.checked)}
-          />
-          Include archived leads in a separate review group
-        </label>
-      ) : null}
       {demo ? (
         <section className="panel">
           <ShieldCheck />

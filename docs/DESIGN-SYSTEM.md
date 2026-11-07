@@ -63,12 +63,18 @@ state changes use 160ms and entrances 240–260ms. Dragging follows the pointer 
   below 1001px; details stack after activity below that width.
 - <600px: modal navigation drawer, 64px bottom navigation (plus safe-area inset at 100% zoom) and full-width content.
 - Lead tables switch to cards below 768px. Additional columns scroll locally.
-- Settings navigation becomes a section dropdown below 900px.
+- Settings uses a searchable directory with a category rail on wide screens and focused pages with back navigation on phones.
 
 These are web content breakpoints, adapted from Material principles rather than
 native device detection. Keep horizontal scroll within tables, tabs, charts and the
 stage path. Long names/labels must wrap. A long details card must never stretch the
 conversation tab/action rows; the two panes have independent internal layout.
+
+## Workspace structure
+
+Use the shared workspace heading for the page title, a concise description and primary actions. Lead details use the record name as the document heading. Lead Assistant keeps a compact conversation header with visible New chat on larger screens.
+
+Place controls beside the results they affect. Show the active field beside the lead distribution, keep the Team date form together, and put the archive scope alongside Run scan. Keep page-level navigation separate from those controls. Workspace lists describe loaded counts explicitly when more results can be fetched. Deep workflows expose links to saved work, such as import history.
 
 ## Verification
 

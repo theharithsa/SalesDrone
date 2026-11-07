@@ -202,8 +202,8 @@ export default function LeadAssistantView({
     >
       <header className="assistant-topbar">
         <div className="assistant-title">
-          <Sparkles size={22} />
-          <span>Lead Assistant</span>
+          <Sparkles size={22} aria-hidden="true" />
+          <h1>Lead Assistant</h1>
         </div>
         <div className="assistant-page-actions">
           {onDeleteChat ? (
@@ -233,12 +233,13 @@ export default function LeadAssistantView({
             <History size={21} />
           </button>
           <button
-            className="icon-button"
+            className="button tonal assistant-new-chat"
             aria-label="New chat"
             title="New chat"
             onClick={onNewChat}
           >
-            <Plus size={23} />
+            <Plus size={19} aria-hidden="true" />
+            <span>New chat</span>
           </button>
         </div>
       </header>
@@ -251,7 +252,7 @@ export default function LeadAssistantView({
         {!messages.length ? (
           <div className="assistant-welcome">
             <Sparkles className="assistant-welcome-icon" size={40} />
-            <h1>How can I help with your leads?</h1>
+            <h2>How can I help with your leads?</h2>
             <p>Explore follow-ups, orders and pipeline insights.</p>
             <div className="assistant-suggestions">
               {suggestions.map(({ label, question, icon: Icon }) => (

@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.10.2
+Version 2.10.3
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -48,7 +48,7 @@ Members with access to the underlying leads
 
 4. Use Chart day below the outreach chart to select a date. Its summary and highlighted point update from the already loaded data; this does not request AI insights.
 
-5. Choose Group leads by for your lead distribution charts. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions.
+5. Use Group leads by in the lead distribution panel. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions.
 
 Charts describe current accessible records. The lead breakdown groups counts by your selected field; headings, descriptions and notes use its configured label, whether Zone, Enquiry source or a custom field. Recorded stage history remains in the lead journey.
 
@@ -398,7 +398,7 @@ No. Read/unread organizes the inbox; it does not recreate reminder delivery.
 
 Members with optional import permissions and import-capable administrators
 
-1. Open Imports & history. Find previous jobs by status or date; Load older imports follows server pagination. Your permissions determine which jobs and rows you can inspect.
+1. Open Imports & history and choose View history. Find previous jobs by status or date; Load older imports follows server pagination. Your permissions determine which jobs and rows you can inspect.
 
 2. Choose a new workbook, or choose Update this workbook on a completed import to link a revised upload to its source comparison history. Upload XLSX/CSV, map columns and choose the duplicate/update mode.
 
@@ -812,7 +812,7 @@ Admins and explicitly granted members within current lead scope
 
 1. Open Lead Hygiene from navigation. Admins have access by default; members need explicit grants.
 
-2. Choose Run scan. Work continues in resumable pages; reopen the report from Previous reports.
+2. Set Include archived leads beside Run scan when needed, then run the scan. Work continues in resumable pages; reopen the report from Previous reports.
 
 3. Review shared phone/email groups and field issues. Open matching leads to compare enquiries; a shared contact does not prove duplication.
 

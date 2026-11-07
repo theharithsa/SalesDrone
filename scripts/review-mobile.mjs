@@ -172,6 +172,8 @@ try {
   // Open a full lead at phone size and verify each tab and its content bounds.
   await tap('.worksheet-card-open');
   await wait('!!document.querySelector(".full-lead-page")');
+  assert.equal(await js("document.querySelectorAll('.full-lead-page .detail-profile h1').length"), 1);
+  evidence.push({case:'lead-record-heading', result:'passed'});
   for (const width of [320, 390, 600, 768])
     await geometry('lead-record', width);
   await viewport(390, 844);
@@ -189,6 +191,8 @@ try {
     await geometry('dashboard', width);
   await viewport(390, 844);
   await screenshot('test-results/mobile/dashboard.jpg');
+  assert.equal(await js("document.querySelectorAll('.pipeline-funnel .dashboard-category-control select').length"), 1);
+  evidence.push({case:'dashboard-field-control-in-chart', result:'passed'});
   await action('Open notifications');
   await geometry('notifications-overlay', 390);
   await screenshot('test-results/mobile/notifications.jpg');
@@ -413,6 +417,10 @@ try {
   await action('Import preview');
   for (const width of [320, 390, 600, 844]) await geometry('imports', width);
   await screenshot('test-results/mobile/imports.jpg');
+  assert.equal(await js("document.querySelectorAll('.import-steps [aria-current=step]').length"), 1);
+  await action('View history');
+  await wait("document.activeElement.id==='import-job-history'");
+  evidence.push({case:'import-step-and-history-focus', result:'passed'});
   await nav('/api/docs');
   await wait('!!document.querySelector(".swagger-ui .info")');
   for (const width of [320, 390, 600, 844]) await geometry('api-portal', width);

@@ -1,3 +1,4 @@
+import WorkspacePageHeader from './components/WorkspacePageHeader';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
 import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
@@ -1924,12 +1925,9 @@ export default function App() {
                 }
               >
                 <div className="page-body leads-main" hidden={!!routeLeadId}>
-                  <div className="page-title">
-                    <div>
-                      <span className="eyebrow">
-                        RELATIONSHIPS IN THE MAKING
-                      </span>
-                      <h1>
+                  <WorkspacePageHeader
+                    title={
+                      <>
                         Leads
                         <span
                           className="heading-count"
@@ -1946,111 +1944,110 @@ export default function App() {
                             }).format(summary.total ?? data.leads.length)}
                           </span>
                         </span>
-                      </h1>
-                      <p>
-                        Capture enquiries, keep the context and move the next
-                        step forward.
-                      </p>
-                    </div>
-                    <div className="title-actions lead-collection-actions">
-                      {demo ||
-                      session?.workspaceSettings?.exportsEnabled !== false ||
-                      admin ? (
-                        <div
-                          className="lead-secondary-actions"
-                          ref={leadActionsRoot}
-                          onBlur={(event) => {
-                            if (
-                              !event.currentTarget.contains(
-                                event.relatedTarget as Node,
-                              )
-                            )
-                              setLeadMoreOpen(false);
-                          }}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Escape') {
-                              setLeadMoreOpen(false);
-                              leadMoreTrigger.current?.focus();
-                              event.stopPropagation();
-                            }
-                          }}
-                        >
-                          <button
-                            type="button"
-                            ref={leadMoreTrigger}
-                            className="icon-button lead-more-button"
-                            aria-label="More lead actions"
-                            title="More lead actions"
-                            aria-expanded={leadMoreOpen}
-                            aria-controls="lead-extra-actions"
-                            onClick={() => setLeadMoreOpen(!leadMoreOpen)}
-                          >
-                            <MoreHorizontal size={20} />
-                          </button>
+                      </>
+                    }
+                    description="Find enquiries and track their next steps."
+                    actions={
+                      <div className="title-actions lead-collection-actions">
+                        {demo ||
+                        session?.workspaceSettings?.exportsEnabled !== false ||
+                        admin ? (
                           <div
-                            id="lead-extra-actions"
-                            className={
-                              'lead-action-popover' +
-                              (leadMoreOpen ? ' open' : '')
-                            }
-                            onClick={(event) => {
+                            className="lead-secondary-actions"
+                            ref={leadActionsRoot}
+                            onBlur={(event) => {
                               if (
-                                (event.target as HTMLElement).closest('button')
+                                !event.currentTarget.contains(
+                                  event.relatedTarget as Node,
+                                )
                               )
                                 setLeadMoreOpen(false);
                             }}
+                            onKeyDown={(event) => {
+                              if (event.key === 'Escape') {
+                                setLeadMoreOpen(false);
+                                leadMoreTrigger.current?.focus();
+                                event.stopPropagation();
+                              }
+                            }}
                           >
-                            {demo ||
-                            session?.workspaceSettings?.exportsEnabled !==
-                              false ? (
-                              <LeadReportExport
-                                menuTriggerRef={leadMoreTrigger}
-                                request={request}
-                                config={fieldOptions}
-                                criteria={{
-                                  filters: columnFilters,
-                                  ...(assignee?{assignedToUid:assignee}:{}),
-                                  ...(stage ? { stage } : {}),
-                                  ...(source ? { source } : {}),
-                                  ...(search
-                                    ? { search, field: searchField }
-                                    : {}),
-                                }}
-                                demo={demo}
-                                demoLeads={filteredDemoLeads}
-                                demoActivities={data.activities.map(({leadId, type, notes, createdAt}) => ({leadId, type, notes, createdAt}))}
-                                key={
-                                  session?.member?.accessPolicyVersion || 'demo'
-                                }
-                              />
-                            ) : null}
-                            {importAccess ? (
-                              <button
-                                className="button"
-                                onClick={() => go('imports')}
-                              >
-                                <Upload size={16} /> Import
-                              </button>
-                            ) : null}
+                            <button
+                              type="button"
+                              ref={leadMoreTrigger}
+                              className="icon-button lead-more-button"
+                              aria-label="More lead actions"
+                              title="More lead actions"
+                              aria-expanded={leadMoreOpen}
+                              aria-controls="lead-extra-actions"
+                              onClick={() => setLeadMoreOpen(!leadMoreOpen)}
+                            >
+                              <MoreHorizontal size={20} />
+                            </button>
+                            <div
+                              id="lead-extra-actions"
+                              className={
+                                'lead-action-popover' +
+                                (leadMoreOpen ? ' open' : '')
+                              }
+                              onClick={(event) => {
+                                if (
+                                  (event.target as HTMLElement).closest('button')
+                                )
+                                  setLeadMoreOpen(false);
+                              }}
+                            >
+                              {demo ||
+                              session?.workspaceSettings?.exportsEnabled !==
+                                false ? (
+                                <LeadReportExport
+                                  menuTriggerRef={leadMoreTrigger}
+                                  request={request}
+                                  config={fieldOptions}
+                                  criteria={{
+                                    filters: columnFilters,
+                                    ...(assignee?{assignedToUid:assignee}:{}),
+                                    ...(stage ? { stage } : {}),
+                                    ...(source ? { source } : {}),
+                                    ...(search
+                                      ? { search, field: searchField }
+                                      : {}),
+                                  }}
+                                  demo={demo}
+                                  demoLeads={filteredDemoLeads}
+                                  demoActivities={data.activities.map(({leadId, type, notes, createdAt}) => ({leadId, type, notes, createdAt}))}
+                                  key={
+                                    session?.member?.accessPolicyVersion || 'demo'
+                                  }
+                                />
+                              ) : null}
+                              {importAccess ? (
+                                <button
+                                  className="button"
+                                  onClick={() => go('imports')}
+                                >
+                                  <Upload size={16} /> Import
+                                </button>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
-                      ) : null}
-                      {can('leads:create') ? (
-                        <button
-                          className="button primary lead-create-button"
-                          aria-label="New enquiry"
-                          title="New enquiry"
-                          onClick={() => setModal('lead')}
-                        >
-                          <Plus size={18} />
-                          <span className="lead-create-label-desktop">
-                            New enquiry
-                          </span>
-                          <span className="lead-create-label-mobile">New</span>
-                        </button>
-                      ) : null}
-                    </div>
-                  </div>
+                        ) : null}
+                        {can('leads:create') ? (
+                          <button
+                            className="button primary lead-create-button"
+                            aria-label="New enquiry"
+                            title="New enquiry"
+                            onClick={() => setModal('lead')}
+                          >
+                            <Plus size={18} />
+                            <span className="lead-create-label-desktop">
+                              New enquiry
+                            </span>
+                            <span className="lead-create-label-mobile">New</span>
+                          </button>
+                        ) : null}
+                      </div>
+                    }
+                  />
                   <div className="lead-search-row">
                     <form
                       className="search-field"
@@ -2305,9 +2302,9 @@ export default function App() {
                     identity={
                       <div className="detail-profile">
                         <Avatar name={selected.name} />
-                        <h2>
+                        <h1>
                           <LeadName name={selected.name} detail />
-                        </h2>
+                        </h1>
                         <LeadHeaderContext
                           company={selected.company}
                           phone={selected.phone}
@@ -2929,26 +2926,26 @@ export default function App() {
             ) : null}
             {page === 'tasks' ? (
               <div className="page-body tasks-page">
-                <div className="page-title">
-                  <div>
-                    <h1>Tasks</h1>
-                    <p>Shared lead work and your private reminders, organised by what needs attention.</p>
-                  </div>
-                  {can('tasks:write') ? (
-                    <button
-                      className="button primary task-create-button"
-                      aria-label="Add reminder"
-                      title="Add reminder"
-                      onClick={() => setModal('task')}
-                    >
-                      <Plus size={18} />
-                      <span className="task-create-label-desktop">
-                        Add reminder
-                      </span>
-                      <span className="task-create-label-mobile">New</span>
-                    </button>
-                  ) : null}
-                </div>
+                <WorkspacePageHeader
+                  title="Tasks"
+                  description="Track shared lead work and your private reminders."
+                  actions={
+                    can('tasks:write') ? (
+                      <button
+                        className="button primary task-create-button"
+                        aria-label="Add reminder"
+                        title="Add reminder"
+                        onClick={() => setModal('task')}
+                      >
+                        <Plus size={18} />
+                        <span className="task-create-label-desktop">
+                          Add reminder
+                        </span>
+                        <span className="task-create-label-mobile">New</span>
+                      </button>
+                    ) : null
+                  }
+                />
                 <div className="task-list-toolbar">
                   <div
                     className="stage-tabs task-status-tabs"

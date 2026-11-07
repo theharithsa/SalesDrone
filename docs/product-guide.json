@@ -38,7 +38,7 @@
         "Use Get insights to request a grounded outreach brief in manual mode. If automatic insights are enabled by an administrator, the button is hidden and the brief is requested when you visit the dashboard.",
         "Read the selected-field distribution and other charts together with the task list. Use Leads filters to examine the records behind a pattern.",
         "Use Chart day below the outreach chart to select a date. Its summary and highlighted point update from the already loaded data; this does not request AI insights.",
-        "Choose Group leads by for your lead distribution charts. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions."
+        "Use Group leads by in the lead distribution panel. Automatic uses Enquiry status when Sales stage is hidden. Your choice is personal and saved immediately; it does not change workflow stages or KPI definitions."
       ],
       "details": [
         "Charts describe current accessible records. The lead breakdown groups counts by your selected field; headings, descriptions and notes use its configured label, whether Zone, Enquiry source or a custom field. Recorded stage history remains in the lead journey.",
@@ -342,7 +342,7 @@
       "title": "Excel and CSV import",
       "audience": "Members with optional import permissions and import-capable administrators",
       "steps": [
-        "Open Imports & history. Find previous jobs by status or date; Load older imports follows server pagination. Your permissions determine which jobs and rows you can inspect.",
+        "Open Imports & history and choose View history. Find previous jobs by status or date; Load older imports follows server pagination. Your permissions determine which jobs and rows you can inspect.",
         "Choose a new workbook, or choose Update this workbook on a completed import to link a revised upload to its source comparison history. Upload XLSX/CSV, map columns and choose the duplicate/update mode.",
         "Review Additional workbook fields. Every populated unmatched column is selected as a reusable text field by default. Rename if needed or explicitly exclude a column. Admins choose Create / reuse fields & validate; other importers must ask an Admin for setup or map/exclude those columns.",
         "In Map existing statuses, Enquiry status is the default destination. Map statuses to lists all compatible active category and custom text/dropdown fields, including fields already mapped to workbook columns. Hidden or retired fields are excluded. Keep original text only applies no extra mapping.",
@@ -705,7 +705,7 @@
       "audience": "Admins and explicitly granted members within current lead scope",
       "steps": [
         "Open Lead Hygiene from navigation. Admins have access by default; members need explicit grants.",
-        "Choose Run scan. Work continues in resumable pages; reopen the report from Previous reports.",
+        "Set Include archived leads beside Run scan when needed, then run the scan. Work continues in resumable pages; reopen the report from Previous reports.",
         "Review shared phone/email groups and field issues. Open matching leads to compare enquiries; a shared contact does not prove duplication.",
         "If configured, review archive candidates in the existing lead workflow. Scanning never archives or deletes leads.",
         "Optionally summarize findings with AI. Admins can delete a report and its retained evidence without deleting leads."

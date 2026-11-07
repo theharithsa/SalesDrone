@@ -67,3 +67,5 @@ Workspace queue admission is bounded (50 Assistant requests / 10 unfinished scan
 429 WORKSPACE_BUSY exposes no owner data. Keep provider and worker time limits.
 
 ResearchPage must use the shared page-body workspace wrapper. Its responsive gutters inset headings, archive options, private report history and findings together; verify the empty and populated report at phone/tablet/desktop/wide sizes. Keep inner panel padding separate from page gutters.
+
+Place archived-lead scope next to the scan action. History and results remain separate, and scans still require the existing permission.
