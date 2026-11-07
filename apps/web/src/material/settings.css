@@ -1228,3 +1228,89 @@ button[role='switch'][aria-checked='true'] > span {
 .import-status-conflict .text-button{justify-self:start;}
 .import-status-mapping{overflow-wrap:anywhere;min-width:0;}
 .import-status-mapping select{overflow:hidden;text-overflow:ellipsis;}
+
+.field-settings-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 12px;
+  margin-block: 16px;
+}
+.field-settings-shortcuts button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--md-sys-color-surface-container-low);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.field-settings-shortcuts button > span { display: grid; gap: 2px; }
+.field-settings-shortcuts small { color: var(--muted); }
+.field-settings-search { max-width: 26rem; margin-block: 16px 24px; }
+.lead-field-manager .settings-field-row {
+  padding: 10px 12px;
+  margin-block: 6px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--md-sys-color-surface-container-low);
+}
+.lead-field-manager .settings-field-row[data-removed] {
+  background: transparent;
+  outline: 1px dashed var(--line);
+}
+.field-layout-settings ol {
+  list-style: none;
+  padding: 0;
+  margin-block: 16px;
+  display: grid;
+  gap: 6px;
+}
+.field-layout-settings li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--md-sys-color-surface-container-low);
+}
+.field-layout-settings .field-order-name { flex: 1 1 10ch; overflow-wrap: anywhere; }
+.field-layout-settings .field-position {
+  display: grid;
+  flex: 0 0 28px;
+  place-items: center;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--md-sys-color-surface-container-high);
+  font-variant-numeric: tabular-nums;
+}
+.field-layout-settings[data-mode='header'] ol {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+.field-layout-settings[data-mode='header'] li[data-selected] {
+  background: var(--md-sys-color-secondary-container);
+}
+.field-layout-settings[data-mode='header'] label {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+.field-layout-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  padding-block: 12px;
+  background: var(--panel);
+}
+@media (max-width: 599px) {
+  .main-shell .field-layout-actions {
+    bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+}

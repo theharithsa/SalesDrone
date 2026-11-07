@@ -13,7 +13,7 @@ test('shared navigation groups fields and choices and every visible settings sec
     catalog = await read('docs/settings-reference.json');
   assert.deepEqual(
     sections.filter((s) => s.group === 'manageFields').map((s) => s.id),
-    ['fields', 'choices'],
+    ['fields', 'field-order', 'lead-header', 'choices'],
   );
   assert.ok(
     sections.filter((s) => s.group === 'manageFields').every((s) => s.admin),

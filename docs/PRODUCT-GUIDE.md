@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.10.0
+Version 2.10.1
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -140,9 +140,7 @@ On mobile, New is the primary header action. Export Excel and permitted Import a
 
 Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
 
-The header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app.
-
-The lead header shows the primary phone beside the company or Independent enquiry. Select the phone to open your calling app.
+The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Manage fields → Lead page header. Select a phone number to open your calling app.
 
 Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices.
 
@@ -468,7 +466,7 @@ Resolve the displayed column conflict first. A separate column and status values
 
 Members, when exports are enabled
 
-1. Apply the desired search and column filters on Leads. Search covers accessible fields and recorded comments by default. Verify the visible matches before opening Export Excel. The workbook includes a separate recorded-comments sheet unless you clear that option.
+1. Apply the desired search and column filters on Leads. Search covers accessible fields and recorded comments by default. Verify the visible matches before opening Export Excel. The workbook adds Comment 1, Comment 2 and further columns to the Leads sheet unless you clear that option. Notes are oldest first within each lead row.
 
 2. Choose the supported columns for the report, start export and wait for the paginated data retrieval and workbook generation.
 
@@ -554,7 +552,7 @@ Use Manage fields > Lead fields. A label change does not rename its stable API k
 
 **Can I remove a field without losing historical data?**
 
-Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. Use Field order and lead header to arrange visible built-in and custom fields and pick up to six extra header fields. The saved order also applies to the Leads worksheet and Excel.
+Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Manage fields, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded.
 
 ## Book mode: a quieter reading workspace
 

@@ -13,6 +13,20 @@ API contract versions are independent from application versions.
 
 
 
+
+## [Unreleased]
+
+## [2.10.1] - 2026-11-07
+
+### Fixed
+- Make the whole mobile navigation drawer scroll, including Settings and the account footer.
+- Align lead card titles and reorder controls, tighten desktop spacing, and show a lead-specific loading state.
+- Group extra lead header values beneath the name and make recognizable phone numbers tappable in the monospace phone style.
+
+### Changed
+- Give Field order and Lead page header dedicated settings. Add field search and shortcuts to Lead fields.
+- Export recorded notes in chronological order as numbered comment columns on each lead row.
+
 ## [2.10.0] - 2026-11-07
 
 ### Changed

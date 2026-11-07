@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "version": "2.10.1",
+  "summary": "Improve full-page lead layout, field controls, workbook comments and mobile drawer scrolling.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-leads",
+    "salesdrone-workspace-settings",
+    "salesdrone-imports",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/DESIGN-SYSTEM.md"
+  ],
+  "settingsSections": [
+    "fields",
+    "field-order",
+    "lead-header"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Use existing lead reads, field-options PATCH and lead report endpoints. Comment columns are composed in the browser.",
+    "contractVersion": "1.30.0",
+    "permissions": "Workspace layout remains Admin-only. Leads and report comments retain their current access and export checks.",
+    "tests": [
+      "functions/test/custom-fields-and-tasks.test.js",
+      "functions/test/reports-policy.test.js",
+      "tests/report-workbook.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing route telemetry covers lead, field and export requests. Layout and worksheet presentation add no backend operation.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing route telemetry covers lead, field and export requests. Layout and worksheet presentation add no backend operation.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing route telemetry covers lead, field and export requests. Layout and worksheet presentation add no backend operation.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Field settings use the existing committed audit path. Rendering a header, scrolling the drawer or formatting the downloaded workbook creates no business event.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Keep the existing version and commit stamped production release notifications and transport checks.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review the synthetic drawer with a touch gesture through its footer, full-page lead cards and header, independent field settings and workbook comment order. Browser evidence does not certify physical devices. Check the custom host version and commit after deployment.",
+  "milestone": {
+    "number": 32,
+    "title": "v2.10.1 — Lead layout and mobile navigation",
+    "issues": [
+      148
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "lead-workspace-demo.jpg",
+    "journey-demo.jpg",
+    "score-ring-demo.jpg",
+    "activity-demo.jpg",
+    "lead-tasks-demo.jpg",
+    "lead-files-demo.jpg",
+    "lead-files-mobile.jpg",
+    "lead-header-mobile-demo.jpg",
+    "field-manager-demo.jpg",
+    "field-manager-mobile-demo.jpg"
+  ]
+}

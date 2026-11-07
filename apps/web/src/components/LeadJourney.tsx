@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, GitBranch } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Lead, Entity, displayDate } from '../lib/types';
-import { ErrorMessage } from './UI';
+import { ErrorMessage, Loading } from './UI';
 export default function LeadJourney({
   lead,
   stages,
@@ -18,7 +18,7 @@ export default function LeadJourney({
   const [items, setItems] = useState<Entity[]>([]),
     [cursor, setCursor] = useState<string | null>(null),
     [complete, setComplete] = useState(false),
-    [busy, setBusy] = useState(false),
+    [busy, setBusy] = useState(!demo),
     [error, setError] = useState('');
   useEffect(() => {
     let alive = true;
@@ -68,10 +68,6 @@ export default function LeadJourney({
   const labels = [...new Set([...stages, lead.stage])];
   return (
     <section className="detail-section lead-journey">
-      <div className="score-section-heading">
-        <h3>LEAD JOURNEY</h3>
-        <GitBranch size={17} />
-      </div>
       <ol
         className="lead-stage-path"
         tabIndex={0}
@@ -111,7 +107,7 @@ export default function LeadJourney({
               </time>
             </div>
           ))}
-          {busy ? <p className="field-hint">Loading journey…</p> : null}
+          {busy ? <Loading label="Loading stage history…" /> : null}
           {!complete && !busy ? (
             <p className="field-hint">
               {demo

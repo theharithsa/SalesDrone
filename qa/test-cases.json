@@ -853,7 +853,7 @@
         },
         {
           "id": "NAV-TEAM-01",
-          "expected": "Compact grouped sidebar, collapsed rail, short-window scrolling, permission gates and Quick navigation keep all allowed modules reachable; phone targets retain 48px.",
+          "expected": "Compact grouped sidebar, collapsed rail, permission gates and Quick navigation keep all allowed modules reachable. A swipe anywhere inside the phone drawer can reach Settings, account controls and attribution using one scroll surface; phone targets retain 48px.",
           "fixture": "synthetic demo across phone/tablet/laptop/wide, short windows, themes and large text"
         }
       ]

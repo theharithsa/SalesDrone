@@ -77,11 +77,11 @@ export function Empty({
     </div>
   );
 }
-export function Loading() {
+export function Loading({ label = 'Loading your workspace…' }: { label?: string } = {}) {
   return (
     <div className="loading" role="status">
       <LoaderCircle className="spin" size={22} />
-      <span>Loading your workspace…</span>
+      <span>{label}</span>
     </div>
   );
 }

@@ -100,4 +100,4 @@ Cleanup blocks use fixed 503 LEAD_DATA_RESET copy and Retry-After:60; preserve t
 
 Lead research: [settings contract](references/research.md).
 
-Field order and lead header fields are workspace-wide Admin settings saved through the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports up to six additional visible fields. Existing layouts keep their defaults, and retired field IDs are removed from the saved arrangement. Settings audit events include static changed control keys only.
+Manage fields has separate Field order and Lead page header settings. Both are workspace-wide Admin controls saved through the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports up to six additional visible fields. Existing layouts keep their defaults, and retired field IDs are removed from the saved arrangement. Settings audit events include static changed control keys only.

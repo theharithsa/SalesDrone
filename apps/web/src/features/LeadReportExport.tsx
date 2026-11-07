@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Download } from 'lucide-react';
+import { Download, LoaderCircle } from 'lucide-react';
 import { Modal, ErrorMessage } from '../components/UI';
 import reportColumns from '../../../../functions/src/report-columns.json';
 import type { ReportComment } from './report-workbook';
@@ -184,7 +184,7 @@ export default function LeadReportExport({
             `Rows: ${rows.length}`,
             `Applied filters: ${JSON.stringify(criteria)}`,
             'Rows reflect permissions and current values while pages were read; this is not a transactional snapshot.',
-            includeComments ? 'Lead comments contains recorded notes linked to rows on the Leads sheet.' : 'Recorded comments were excluded.',
+            includeComments ? 'Numbered comment columns show each lead’s recorded notes in chronological order.' : 'Recorded comments were excluded.',
           ],
         });
       });
@@ -277,7 +277,7 @@ export default function LeadReportExport({
         </fieldset>
         <label className="check">
           <input type="checkbox" checked={includeComments} disabled={busy} onChange={(e) => setIncludeComments(e.target.checked)} />
-          Include recorded comments on a separate sheet
+          Include recorded comments as numbered columns
         </label>
         <p role="status">{progress}</p>
         <div className="form-actions">
@@ -291,6 +291,7 @@ export default function LeadReportExport({
             }
             onClick={() => void download()}
           >
+            {busy && <LoaderCircle className="spin" size={16} aria-hidden="true" />}
             {busy ? 'Preparing…' : 'Download Excel'}
           </button>
         </div>

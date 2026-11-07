@@ -52,7 +52,7 @@ Archive writes one actor/time-attributed “Lead archived” activity in the sam
 
 ## Filtered Excel reports
 
-[lead-reports.js](../../functions/src/lead-reports.js) projects selected available columns; [LeadReportExport.tsx](../../apps/web/src/features/LeadReportExport.tsx) follows signed report pages and [report-workbook.ts](../../apps/web/src/features/report-workbook.ts) builds XLSX in a worker. The report uses every applied lead filter, not just loaded rows. Preserve column order/renamed labels, phone strings, plain string cells for formula-like content and the filter-context sheet. Opt-in API comment pages feed the default Lead comments workbook sheet. Export recorded notes linked to scoped lead rows; do not include call history or task comments.
+[lead-reports.js](../../functions/src/lead-reports.js) projects selected available columns; [LeadReportExport.tsx](../../apps/web/src/features/LeadReportExport.tsx) follows signed report pages and [report-workbook.ts](../../apps/web/src/features/report-workbook.ts) builds XLSX in a worker. The report uses every applied lead filter, not just loaded rows. Preserve column order/renamed labels, phone strings, plain string cells for formula-like content and the filter-context sheet. Opt-in API comments become numbered cells on each lead row, oldest first. Export recorded notes linked to scoped lead rows; do not include call history or task comments.
 
 Require enabled workspace exports and leads:read; PATs need the separate leads:export scope. Recheck current access and settings per page, bind cursors to filters/columns/config/policy and audit counts only. Sparse pages can be empty with nextCursor; continue to null. Cancel rather than silently truncate beyond 10,000 matching rows or 1,000 scan pages. Do not promise a transactional snapshot across pages. Test with reports-policy.test.js and report-workbook.test.ts.
 
@@ -95,7 +95,7 @@ When PATCH retains an existing normalized contact key, allow other existing owne
 
 Archive/restore uses current leads:edit scope and expectedVersion. Restore retains suppression, assignment, stage and shared contact owners, repairs missing self references and rejects newly acquired conflicts. Record one restore activity and committed restored lifecycle event; never reschedule cancelled outreach. DUPLICATE_ARCHIVED is disclosed only when every matching source is accessible and archived. Test app.test.js, archived-leads.test.js and emulator.integration.js.
 
-Lead headers use LeadHeaderContext to wrap company/Individual Customer and a masked monospace tel link. Shared lead Tasks exposes responsibility and completion to current lead editors; personal reminders are excluded. Regress header links, shared task versions and current access before publishing.
+LeadHeaderContext groups label-free values with masked monospace dial links. Keep accessible field names. Lead editors can complete shared tasks and see responsibility; private reminders stay private. Regress links, task versions and access.
 
 Named Assigned to filtering is available to Admins on desktop and in mobile draft filters. GET /leads assignedToUid accepts a member UID or reserved __unassigned__ for null assignments. Compose with stage/search/column filters; cursors bind the selected assignee. Export adds the equivalent Assigned user ID Equals/Is empty condition, preserving export policy. Team workload links clear other filters before opening a member’s assigned leads. Non-admin directory/filter privileges remain unchanged.
 

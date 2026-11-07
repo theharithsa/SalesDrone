@@ -1,6 +1,5 @@
-import LeadFieldLayoutSettings from '../components/LeadFieldLayoutSettings';
 import { useState } from 'react';
-import { Plus, Pencil, Trash2, RotateCcw, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, RotateCcw, X, ChevronRight, ListFilter, UserRound } from 'lucide-react';
 import {
   CustomField,
   FieldOptions,
@@ -8,7 +7,7 @@ import {
   standardFieldLabels,
   labelFor,
 } from '../lib/field-options';
-import { ErrorMessage } from '../components/UI';
+import { ErrorMessage, SaveButton } from '../components/UI';
 const types = {
   text: 'Short text',
   textarea: 'Long text',
@@ -21,10 +20,12 @@ export default function LeadFieldManager({
   config,
   request,
   onChanged,
+  onOpenLayout,
 }: {
   config: FieldOptions;
   request: (p: string, m?: string, b?: any) => Promise<any>;
   onChanged: (c: FieldOptions) => void;
+  onOpenLayout?: (section: 'field-order' | 'lead-header') => void;
 }) {
   const [standardEditing, setStandardEditing] = useState<{
     key: string;
@@ -35,6 +36,12 @@ export default function LeadFieldManager({
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState('');
+  const [query, setQuery] = useState('');
+  const term = query.trim().toLowerCase();
+  const activeFields = config.customFields.filter((field) => !field.deleted);
+  const matchingCustom = activeFields.filter((field) => field.label.toLowerCase().includes(term));
+  const matchingStandard = Object.entries(standardFieldLabels).filter(([key, originalLabel]) =>
+    standardEditing?.key === key || [labelFor(config, key), originalLabel].some((label) => label.toLowerCase().includes(term)));
   async function update(change: Partial<FieldOptions>) {
     setBusy(true);
     setError('');
@@ -87,31 +94,45 @@ export default function LeadFieldManager({
             busy ||
             !!editing ||
             !!standardEditing ||
-            config.customFields.filter((f) => !f.deleted).length >= 30
+            activeFields.length >= 30
           }
           onClick={() => open()}
         >
           <Plus size={17} /> Add field
         </button>
       </div>
-      <LeadFieldLayoutSettings key={config.version} config={config} busy={busy} onSave={update} />
+      {onOpenLayout && <div className="field-settings-shortcuts">
+        <button type="button" onClick={() => onOpenLayout('field-order')}>
+          <ListFilter size={20} aria-hidden="true" />
+          <span><strong>Arrange fields</strong><small>Forms, lead columns and Excel</small></span>
+          <ChevronRight size={16} aria-hidden="true" />
+        </button>
+        <button type="button" onClick={() => onOpenLayout('lead-header')}>
+          <UserRound size={20} aria-hidden="true" />
+          <span><strong>Choose lead header fields</strong><small>What appears under the lead name</small></span>
+          <ChevronRight size={16} aria-hidden="true" />
+        </button>
+      </div>}
+      <label className="material-field field-settings-search">
+        <span className="field-label">Find a field</span>
+        <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} />
+      </label>
       <div className="section-heading">
         <div>
           <h3>Custom fields</h3>
           <p>Collect details specific to your business.</p>
         </div>
         <span className="role-label">
-          {config.customFields.filter((f) => !f.deleted).length} / 30
+          {activeFields.length} / 30
         </span>
       </div>
-      {!config.customFields.some((f) => !f.deleted) && !editing ? (
+      {!matchingCustom.length && !editing ? (
         <div className="settings-empty">
-          No custom fields yet. Add a field such as Product interest or
-          Estimated budget.
+          {term ? 'No custom fields match your search.' : 'No custom fields yet. Add a field such as Product interest or Estimated budget.'}
         </div>
       ) : null}
-      {config.customFields
-        .filter((f) => !f.deleted && f.id !== editing?.id)
+      {matchingCustom
+        .filter((f) => f.id !== editing?.id)
         .map((f) => (
           <div className="settings-field-row" key={f.id}>
             <span>
@@ -260,9 +281,7 @@ export default function LeadFieldManager({
             >
               Cancel
             </button>
-            <button className="button primary" disabled={busy}>
-              {busy ? 'Saving…' : 'Save field'}
-            </button>
+            <SaveButton busy={busy} label="Save field" />
           </div>
         </form>
       ) : null}
@@ -275,14 +294,15 @@ export default function LeadFieldManager({
       </div>
       <h3 className="settings-group-title">Standard fields</h3>
       <div className="standard-field-list">
-        {Object.entries(standardFieldLabels).map(([key, originalLabel]) => {
+        {!matchingStandard.length && <p className="field-hint">No standard fields match your search.</p>}
+        {matchingStandard.map(([key, originalLabel]) => {
           const hidden = config.hiddenFields.includes(key);
           const reason = fieldRemovalReason(config, key);
           const action = hidden
             ? 'Restore ' + labelFor(config, key) + ' to form'
             : 'Delete ' + labelFor(config, key) + ' from form';
           return (
-            <div className="settings-field-row" key={key}>
+            <div className="settings-field-row" data-removed={hidden || undefined} key={key}>
               {standardEditing?.key === key ? (
                 <form
                   className="standard-label-editor"
@@ -331,9 +351,7 @@ export default function LeadFieldManager({
                     >
                       Cancel
                     </button>
-                    <button className="button primary" disabled={busy}>
-                      {busy ? 'Saving…' : 'Save name'}
-                    </button>
+                    <SaveButton busy={busy} label="Save name" />
                   </div>
                 </form>
               ) : (

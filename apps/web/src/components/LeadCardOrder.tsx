@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowDown, ArrowUp, GripVertical } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown, GripVertical } from 'lucide-react';
 
 const defaultOrder = ['journey', 'details', 'activity'] as const;
 type Card = (typeof defaultOrder)[number];
-const labels = { journey: 'Lead journey', details: 'Details and qualification', activity: 'Lead activity' };
+const labels = { journey: 'Lead journey', details: 'Details & qualification', activity: 'Lead activity' };
 const storageKey = (viewer: string) => 'salesdrone.lead-card-order:' + viewer;
 
 function readOrder(viewer: string): Card[] {
@@ -16,6 +16,7 @@ function readOrder(viewer: string): Card[] {
 }
 
 export default function LeadCardOrder({ viewer, cards }: { viewer: string; cards: Record<Card, ReactNode> }) {
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [order, setOrder] = useState(() => readOrder(viewer));
   const [dragged, setDragged] = useState<Card | null>(null);
   const [target, setTarget] = useState<Card | null>(null);
@@ -58,6 +59,13 @@ export default function LeadCardOrder({ viewer, cards }: { viewer: string; cards
       {order.map((card, index) => (
         <div key={card} data-lead-card={card} className="lead-order-card"
           data-dragging={dragged === card || undefined} data-drop-target={target === card && dragged !== card || undefined}>
+          <header className="lead-card-heading">
+            <h3>{card === 'details' ? (
+              <button type="button" className="lead-card-disclosure" aria-expanded={detailsOpen}
+                aria-controls="lead-qualification-content" onClick={() => setDetailsOpen(!detailsOpen)}>
+                {labels[card]} <ChevronDown size={17} aria-hidden="true" />
+              </button>
+            ) : labels[card]}</h3>
           <div className="lead-card-controls" aria-label={labels[card] + ' arrangement'}>
             <button className="icon-button lead-card-grip" type="button" aria-label={'Drag ' + labels[card]}
               onPointerDown={(event) => {
@@ -88,7 +96,12 @@ export default function LeadCardOrder({ viewer, cards }: { viewer: string; cards
             <button className="icon-button" type="button" disabled={index === order.length - 1}
               aria-label={'Move ' + labels[card] + ' down'} onClick={() => move(card, index + 1)}><ArrowDown size={16} /></button>
           </div>
-          {cards[card]}
+          </header>
+          {card === 'details' ? (
+            <div className="lead-qualification" id="lead-qualification-content" hidden={!detailsOpen}>
+              {cards[card]}
+            </div>
+          ) : cards[card]}
         </div>
       ))}
     </div>

@@ -82,42 +82,42 @@
   {
     "file": "activity-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "c9b62c1e438da86421490e192cbf90af36c3065571a91e3a057ce81ca070201e",
-    "capturedAt": "2026-11-07T08:15:31.397823Z",
+    "sha256": "96e3778d5b3c98d0119eaf91d6f76ccce5b129441f4fe860dc0558eabc75d2b2",
+    "capturedAt": "2026-11-07",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "score-ring-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "70e7e423555aad9586a492ca4b943afe4d3bf2be0d69beb9bdca9135d03144e3",
-    "capturedAt": "2026-11-07T08:15:32.881742Z",
+    "sha256": "3b7507e7f51db8c77b5acd5d7e595487ff5833584c016240ee550faaac5d5997",
+    "capturedAt": "2026-11-07",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "lead-files-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "9e7d4d7f3f3b24b5fa03f0cde226a104d269e47e9da7a209411cc222806fb517",
-    "capturedAt": "2026-11-07T08:15:31.999284Z",
+    "sha256": "cf9ccfda2d2623fd64e1c9f15181195ff4d01c6a3a6df8e6ed4200be87699014",
+    "capturedAt": "2026-11-07",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "lead-files-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "0735c79ef70d1c798deed359444961f307b29e371196aa1f4a361a9925496ccf",
-    "capturedAt": "2026-11-07T08:15:32.313387Z",
+    "sha256": "043fe3890d00c34f8ae878fb58d30f9514b237dba519c420e7bf7d3a38fadd77",
+    "capturedAt": "2026-11-07",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "mobile-tasks-demo.jpg",
@@ -292,32 +292,32 @@
   {
     "file": "field-manager-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "05df54d792d34a340fd8575292db5db87bfdd1f963b8e0d25a45a9612fb389b0",
-    "capturedAt": "2026-11-07T08:15:51.647770Z",
-    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "dcf1ac8d48a9d724831cc3f29e72b97a1b6c7afdc47f1faf10440d1e32866630",
+    "capturedAt": "2026-11-07",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 844",
-    "version": "2.10.0",
-    "review": "Reviewed fictional in-memory Admin component preview. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "field-manager-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ea5df84291f2bb5d1d622e3d0b416bf676ac8ffc1579c9222d4832df0142842e",
-    "capturedAt": "2026-11-07T08:15:36.817031Z",
-    "viewport": "1440 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "1c5c3de19e4fe6272253bf4d8ab886168a63cb92e298aa1270eefc22b77fb508",
+    "capturedAt": "2026-11-07",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 844",
-    "version": "2.10.0",
-    "review": "Reviewed fictional in-memory Admin component preview. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "b8628b652a9032fe69145a1ff991c2dd24634b54be12ca802b6cecb75f670761",
-    "capturedAt": "2026-11-07T08:15:32.579855Z",
+    "sha256": "44148cea74ceae8f4273e700e411b94d84dfd747864590e64ae5a2241e6d9879",
+    "capturedAt": "2026-11-07",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "outreach-mobile-demo.jpg",
@@ -342,12 +342,12 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "90cb35e81e160625c1971874e7a64a1efb4caee8d92f21e0b36b70057d6ea3e8",
-    "capturedAt": "2026-11-07T08:15:30.517170Z",
+    "sha256": "6912ede2ba288646ddb24c5f3e943392865b864e0ac5ec0aa3095e2e8ab8be3b",
+    "capturedAt": "2026-11-07",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "import-review-demo.jpg",
@@ -442,12 +442,12 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "78319b3bcae0b76e9ac563b07810e9f6ffac763b3b13cad38ea218905cc8c78e",
-    "capturedAt": "2026-11-07T08:15:30.816270Z",
+    "sha256": "131b1614ba549aa8d6bee75614965f118eb34b351e1c191b58364ec4ab36d2d4",
+    "capturedAt": "2026-11-07",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "import-fields-demo.jpg",
@@ -622,12 +622,12 @@
   {
     "file": "lead-tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5d7cf01ed90bbcd3168b500dac9494217166bad8f7c73784a5b2275f69da6eef",
-    "capturedAt": "2026-11-07T08:15:31.699244Z",
+    "sha256": "c9cacaead53a1adc841c8cebab2c3d9e9d1a16cef03ef554c98e11804be5c9bb",
+    "capturedAt": "2026-11-07",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.10.1",
+    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
   },
   {
     "file": "team-demo.jpg",

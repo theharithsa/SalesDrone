@@ -70,7 +70,7 @@ export default function LeadTaskTab({
         </button>
       </div>
       <ErrorMessage error={error} />
-      {busy && !items.length ? <Loading /> : null}
+      {busy && !items.length ? <Loading label="Loading lead tasks…" /> : null}
       {!busy && !error && !items.length ? (
         <p>No tasks match this status. Use Remind me to add a follow-up.</p>
       ) : null}

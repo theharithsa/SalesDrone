@@ -772,8 +772,12 @@
 }
 @media(min-width:1200px){.sidebar-collapsed .navigation-group-toggle{display:none;}.sidebar-collapsed .navigation-group.is-collapsed nav{display:grid;}.sidebar-collapsed .nav-item{width:56px;justify-content:center;padding:8px;}.sidebar-collapsed .nav-item.active{box-shadow:none;}}
 @media(pointer:coarse),(max-width:599.99px){.sidebar .nav-item,.sidebar .navigation-group-toggle,.sidebar .quick-search{min-height:max(var(--md-touch-target,0px),48px);}.sidebar .nav-item{padding:10px 12px;font-size:.875rem;}.sidebar .sidebar-profile{padding-top:8px;}.sidebar.mobile-open{padding:16px 8px 8px;}.sidebar-collapsed .sidebar-brand{padding:0 10px 16px;}}
-@media(max-height:650px){
-  .sidebar{overflow-y:auto;overscroll-behavior:contain;}
-  .navigation-scroll{flex:0 0 auto;overflow:visible;}
-  .sidebar-bottom{margin-top:auto;}
+/* The mobile drawer and short rails need one scroll surface, including the footer. */
+@media (max-width: 599.99px), (max-height: 650px) {
+  .sidebar { overflow-y: auto; overscroll-behavior: contain; }
+  .navigation-scroll { flex: 0 0 auto; overflow: visible; }
+  .sidebar-bottom { margin-top: auto; }
+}
+@media (max-width: 599.99px) {
+  .sidebar.mobile-open { padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
 }

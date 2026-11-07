@@ -42,6 +42,20 @@
     "admin": true
   },
   {
+    "id": "field-order",
+    "label": "Field order",
+    "description": "Arrange fields across forms, tables and exports.",
+    "group": "manageFields",
+    "admin": true
+  },
+  {
+    "id": "lead-header",
+    "label": "Lead page header",
+    "description": "Choose fields to show under the lead name.",
+    "group": "manageFields",
+    "admin": true
+  },
+  {
     "id": "choices",
     "label": "Dropdown choices",
     "description": "Manage shared choices for your team.",

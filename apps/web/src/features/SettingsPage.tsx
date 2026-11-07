@@ -1,3 +1,4 @@
+import LeadFieldLayoutSettings from '../components/LeadFieldLayoutSettings';
 import ResearchSettings from './ResearchSettings';
 import LeadDataSettings from './LeadDataSettings';
 import ArchivedLeadsSettings from './ArchivedLeadsSettings';
@@ -76,6 +77,8 @@ export default function SettingsPage({
     workspace: ShieldCheck,
     fields: SlidersHorizontal,
     choices: ListFilter,
+    'field-order': ListFilter,
+    'lead-header': UserRound,
     ai: SlidersHorizontal,
     reminders: Bell,
     scoring: SlidersHorizontal,
@@ -87,10 +90,10 @@ export default function SettingsPage({
   const sections = settingsSections
     .filter((item) => !item.admin || isAdmin)
     .map((item) => ({ ...item, icon: icons[item.id] }));
-  const fieldIds = ['fields', 'choices'];
   const fieldSections = sections.filter(
     (item) => item.group === 'manageFields',
   );
+  const fieldIds = fieldSections.map((item) => item.id);
   const aiIds = ['ai', 'reminders', 'scoring', 'research'];
   const aiSections = sections
     .filter((item) => aiIds.includes(item.id))
@@ -109,13 +112,7 @@ export default function SettingsPage({
         '',
     ),
   );
-  const [fieldsExpanded, setFieldsExpanded] = useState(() =>
-    fieldIds.includes(
-      initialSection ||
-        new URLSearchParams(window.location.search).get('section') ||
-        '',
-    ),
-  );
+  const [fieldsExpanded, setFieldsExpanded] = useState(true);
   const currentSection = sections.find((s) => s.id === section) || sections[0];
   const personalSections = sections.filter((item) =>
     ['profile', 'appearance', 'notifications', 'archives'].includes(item.id),
@@ -402,7 +399,13 @@ export default function SettingsPage({
               config={fieldOptions}
               request={request}
               onChanged={onFieldOptions}
+              onOpenLayout={chooseSection}
             />
+          ) : null}
+          {isAdmin && (section === 'field-order' || section === 'lead-header') ? (
+            <LeadFieldLayoutSettings key={section} config={fieldOptions}
+              mode={section === 'field-order' ? 'order' : 'header'}
+              request={request} onChanged={onFieldOptions} />
           ) : null}
           {isAdmin && section === 'choices' ? (
             <FieldOptionsEditor
