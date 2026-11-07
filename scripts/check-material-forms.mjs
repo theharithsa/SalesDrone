@@ -40,7 +40,7 @@ try {
           labels: { ...defaultFieldOptions.labels, name: 'Customer / account' },
         },
       },
-      ['name', 'phone', 'enquiryDate'],
+      ['source', 'name', 'phone', 'enquiryDate'],
     ],
     [
       forms.CallForm,
@@ -55,7 +55,7 @@ try {
     [
       TaskEditForm,
       { ...shared, task: sample.tasks[0] },
-      ['title', 'dueAt', 'kind', 'state'],
+      ['title', 'dueAt', 'kind'],
     ],
   ];
   for (const [component, props, fields] of cases) {

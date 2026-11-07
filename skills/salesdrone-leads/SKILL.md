@@ -11,7 +11,7 @@ this map is an immutable schema or a standalone microservice.
 
 ## Responsibility and entry points
 
-Form or scoped API → field and contact validation → member/lead policy → atomic lead/dedupe/discussion/journey/outbox write → scoped table and inspector refresh.
+Form or scoped API → field and contact validation → member/lead policy → atomic lead/dedupe/discussion/journey/outbox write → scoped table and full lead-page refresh.
 
 - [functions/src/leads.js](../../functions/src/leads.js)
 - [functions/src/lead-filters.js](../../functions/src/lead-filters.js)
@@ -42,7 +42,7 @@ and the route handler in [app.js](../../functions/src/app.js) when changing an A
 
 leads, dedupeKeys, requests, leadTransitions, activities, tasks, reminderDeliveries, auditEvents; creation and assignment can enqueue recipient notifications.
 
-- Normalize contact values without discarding original input; name/date/contact requirements differ only for explicitly needsReview imports. Duplicate overrides must be intentional.
+- Normalize contact values without discarding original input; Manual browser creation requires phone and date and permits an empty name. Scoped PAT creation and legacy/import review retain their compatible contact rules. Duplicate overrides must be intentional.
 - Keep stage, call outcome, legacy status and disposition distinct. Archive retains records; the scoped Settings archive browser is read-only and restore is not implemented (#4).
 - Use expectedVersion and idempotency semantics; reauthorize request replays and protect contact-key ownership on edits.
 - Do-not-contact and needsReview suppress outreach, while administrative tasks can remain. Assignment changes invalidate old inference and delivery eligibility. Archive and reassignment currently cancel all pending tasks; outreach-only behavior is an unresolved policy (#15/#21).
@@ -52,7 +52,7 @@ Archive writes one actor/time-attributed “Lead archived” activity in the sam
 
 ## Filtered Excel reports
 
-[lead-reports.js](../../functions/src/lead-reports.js) projects selected available columns; [LeadReportExport.tsx](../../apps/web/src/features/LeadReportExport.tsx) follows signed report pages and [report-workbook.ts](../../apps/web/src/features/report-workbook.ts) builds XLSX in a worker. The report uses every applied lead filter, not just loaded rows. Preserve column order/renamed labels, phone strings, plain string cells for formula-like content and the filter-context sheet. Conversation timelines are not included.
+[lead-reports.js](../../functions/src/lead-reports.js) projects selected available columns; [LeadReportExport.tsx](../../apps/web/src/features/LeadReportExport.tsx) follows signed report pages and [report-workbook.ts](../../apps/web/src/features/report-workbook.ts) builds XLSX in a worker. The report uses every applied lead filter, not just loaded rows. Preserve column order/renamed labels, phone strings, plain string cells for formula-like content and the filter-context sheet. Opt-in API comment pages feed the default Lead comments workbook sheet. Export recorded notes linked to scoped lead rows; do not include call history or task comments.
 
 Require enabled workspace exports and leads:read; PATs need the separate leads:export scope. Recheck current access and settings per page, bind cursors to filters/columns/config/policy and audit counts only. Sparse pages can be empty with nextCursor; continue to null. Cancel rather than silently truncate beyond 10,000 matching rows or 1,000 scan pages. Do not promise a transactional snapshot across pages. Test with reports-policy.test.js and report-workbook.test.ts.
 
@@ -83,8 +83,6 @@ Adjacent owners:
 - [salesdrone-imports](../salesdrone-imports/SKILL.md)
 - [salesdrone-notifications](../salesdrone-notifications/SKILL.md)
 
-Exact match is additive for source, stage and configured custom dropdowns. It compares raw case/spacing/Unicode and pushes every equality into the query; Equals remains normalized and unchanged. Residual conditions and signed filter/member-bound pagination still apply. Verify exact-filters.test.js, emulator.integration.js and desktop/mobile component interactions.
-
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
@@ -95,10 +93,10 @@ These are tracked follow-ups, not implemented behavior: [#24](https://github.com
 
 When PATCH retains an existing normalized contact key, allow other existing owners from separate imports; only newly acquired keys need duplicate rejection. Preserve every other owner in atomic dedupe rewrites, expectedVersion, scope and stage history. Cover shared stage edits, stale saves, rejected new duplicates and releasing one shared owner in API/Firestore tests.
 
-Stage edits validate against current Admin-configured values, including custom replacements. Never hardcode STAGES in edit controls. Refresh workspace reloads field options with identity-generation protection so another session’s changes can be picked up.
-
 Archive/restore uses current leads:edit scope and expectedVersion. Restore retains suppression, assignment, stage and shared contact owners, repairs missing self references and rejects newly acquired conflicts. Record one restore activity and committed restored lifecycle event; never reschedule cancelled outreach. DUPLICATE_ARCHIVED is disclosed only when every matching source is accessible and archived. Test app.test.js, archived-leads.test.js and emulator.integration.js.
 
-Lead headers use LeadHeaderContext to wrap company/Independent enquiry and a masked monospace tel link. Shared lead Tasks exposes responsibility and completion to current lead editors; personal reminders are excluded. Regress header links, shared task versions and current access before publishing.
+Lead headers use LeadHeaderContext to wrap company/Individual Customer and a masked monospace tel link. Shared lead Tasks exposes responsibility and completion to current lead editors; personal reminders are excluded. Regress header links, shared task versions and current access before publishing.
 
 Named Assigned to filtering is available to Admins on desktop and in mobile draft filters. GET /leads assignedToUid accepts a member UID or reserved __unassigned__ for null assignments. Compose with stage/search/column filters; cursors bind the selected assignee. Export adds the equivalent Assigned user ID Equals/Is empty condition, preserving export policy. Team workload links clear other filters before opening a member’s assigned leads. Non-admin directory/filter privileges remain unchanged.
+
+Global Leads search uses field=all with bounded scope-first scans across current lead fields, configured custom values, formatted phone digits and recorded notes. Signed cursors bind the term and field settings, and sparse pages may continue. Dedicated lead pages select Comments on a new lead, retain the current tab on refresh and use the edit dialog for stage/assignment. See reports-policy.test.js and emulator.integration.js.

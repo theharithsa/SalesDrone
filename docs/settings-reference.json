@@ -160,6 +160,22 @@
       "permissions": "Read: leads:read (PAT configuration:read). Write: members:write via Google/App Check; expectedVersion",
       "controls": [
         {
+          "id": "fieldOrder",
+          "label": "Enquiry field and column order",
+          "default": "Existing form, Leads table and export order",
+          "description": "Move built-in and custom fields together. The workspace order is shared and saved by an Admin.",
+          "effect": "New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order to supported visible fields after refresh. Unlisted fields keep their relative defaults.",
+          "example": "Put Phone number before Company name."
+        },
+        {
+          "id": "headerFields",
+          "label": "Extra lead header fields",
+          "default": "None",
+          "description": "Choose up to six additional built-in or custom fields from the current enquiry layout.",
+          "effect": "The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.",
+          "example": "Show City / location and Product in the lead header."
+        },
+        {
           "id": "labels",
           "label": "Built-in field names",
           "default": "Standard enquiry labels",
@@ -171,7 +187,7 @@
           "id": "visibility",
           "label": "Field visibility",
           "default": "Visible",
-          "description": "Use the trash icon to remove standard fields from enquiry entry and configurable columns, filters and new reports where applicable. Use the restore icon to bring them back. Customer name and Enquiry date stay required; keep Phone number or Email available. A disabled delete control explains the minimum requirement.",
+          "description": "Use the trash icon to remove standard fields from enquiry entry and configurable columns, filters and new reports where applicable. Use the restore icon to bring them back. Customer name is optional. New manual enquiries always need a phone number and enquiry date, including in workspaces with older field layouts. A disabled delete control explains the minimum requirement.",
           "effect": "Existing records and values are preserved. This is workspace-wide presentation configuration, not authorization or removal of sales-stage, call, assignment, suppression or review workflows. Removing Country code uses the first configured country code for new manual enquiries; existing contacts retain their country code. A hidden Sales stage defaults new enquiries to New.",
           "example": "Remove Phone number when you collect Email instead, or remove Sector and restore it later."
         },

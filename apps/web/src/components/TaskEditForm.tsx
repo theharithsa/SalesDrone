@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Task } from '../lib/types';
 import { localInstant } from '../lib/dates';
 import { ErrorMessage, SaveButton, useSubmit } from './UI';
@@ -14,9 +15,11 @@ export default function TaskEditForm({
   onSave: (data: any) => Promise<void>;
   onCancel: () => void;
 }) {
+  const [dueAt, setDueAt] = useState(localTime(task.dueAt));
+  const dateChanged = dueAt !== localTime(task.dueAt);
   const submit = useSubmit(async (data, _key, isCurrent) => {
     const { localDueAt, ...fields } = data;
-    await onSave({ ...fields, dueAt: localInstant(localDueAt) });
+    await onSave({ ...fields, ...(dateChanged ? { dueAt: localInstant(localDueAt) } : {}) });
     if (isCurrent()) onCancel();
   });
   return (
@@ -30,7 +33,7 @@ export default function TaskEditForm({
           localDueAt: String(d.get('dueAt')),
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           kind: String(d.get('kind')),
-          state: String(d.get('state')),
+          ...(dateChanged ? { comment: String(d.get('comment')) } : {}),
         });
       }}
     >
@@ -50,7 +53,9 @@ export default function TaskEditForm({
           <input
             name="dueAt"
             type="datetime-local"
-            defaultValue={localTime(task.dueAt)}
+            value={dueAt}
+            onChange={(e) => setDueAt(e.target.value)}
+            disabled={task.state !== 'Pending'}
             required
           />
         </label>
@@ -61,15 +66,11 @@ export default function TaskEditForm({
             <option value="administrative">Administrative</option>
           </select>
         </label>
-        <label className="material-field">
-          <span className="field-label">Status</span>
-          <select name="state" defaultValue={task.state}>
-            {['Pending', 'Completed', 'Cancelled'].map((value) => (
-              <option key={value}>{value}</option>
-            ))}
-          </select>
-        </label>
       </div>
+      {dateChanged ? <label className="material-field">
+        <span className="field-label">Reschedule comment</span>
+        <textarea name="comment" required maxLength={500} rows={3} />
+      </label> : null}
       <p className="field-hint">
         Entered in {Intl.DateTimeFormat().resolvedOptions().timeZone}. Your lead
         link and reminder history stay with the task.

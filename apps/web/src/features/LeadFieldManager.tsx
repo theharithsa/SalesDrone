@@ -1,3 +1,4 @@
+import LeadFieldLayoutSettings from '../components/LeadFieldLayoutSettings';
 import { useState } from 'react';
 import { Plus, Pencil, Trash2, RotateCcw, X } from 'lucide-react';
 import {
@@ -93,6 +94,7 @@ export default function LeadFieldManager({
           <Plus size={17} /> Add field
         </button>
       </div>
+      <LeadFieldLayoutSettings key={config.version} config={config} busy={busy} onSave={update} />
       <div className="section-heading">
         <div>
           <h3>Custom fields</h3>
@@ -267,7 +269,7 @@ export default function LeadFieldManager({
       <div className="settings-notice">
         <strong>Your form, your fields</strong>
         <p>
-          Keep a name, enquiry date and at least one contact field. Removed fields
+          New enquiries need a phone number and enquiry date. Removed fields
           keep their saved data; workflow controls stay available.
         </p>
       </div>

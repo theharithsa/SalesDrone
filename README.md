@@ -6,7 +6,7 @@
 > See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
 
 SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
-filled forms, a resizable lead inspector and automatic lead-list pagination.
+filled forms, full-page lead details and automatic lead-list pagination.
 See the [product handbook](docs/PRODUCT-GUIDE.md), [settings reference](docs/SETTINGS.md)
 and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo data.
 

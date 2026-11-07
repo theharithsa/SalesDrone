@@ -3,14 +3,33 @@ import {
   defaultFieldOptions,
   FieldOptions,
   withCurrent,
+  orderedFields,
+  type CustomField,
   labelFor,
 } from '../lib/field-options';
-import { FormEvent, useState } from 'react';
+import { Children, isValidElement, useState, type FormEvent, type ReactElement, type ReactNode } from 'react';
 import { localInstant } from '../lib/dates';
 import {Lead, dateOnly} from '../lib/types';
 import { ErrorMessage, SaveButton, useSubmit } from './UI';
 const inputData = (e: FormEvent<HTMLFormElement>) =>
   Object.fromEntries(new FormData(e.currentTarget));
+function arrangeFormFields(
+  config: FieldOptions,
+  standard: ReactElement<{ children?: ReactNode }>,
+  custom: CustomField[] = [],
+  values?: Lead['customFields'],
+) {
+  const controls: { id: string; control: ReactElement }[] = [];
+  Children.forEach(standard.props.children, (control) => {
+    if (isValidElement(control) && typeof control.key === 'string')
+      controls.push({ id: control.key, control });
+  });
+  return orderedFields(config, [
+    ...controls,
+    ...custom.map((field) => ({ id: field.id, control: <CustomFieldInputs key={field.id} fields={[field]} values={values} /> })),
+  ], (field) => field.id).map((field) => field.control);
+}
+
 export function LeadForm({
   lead,
   onSave,
@@ -57,6 +76,7 @@ export function LeadForm({
           delete d['custom:' + f.id];
         }
         if (lead && !d.comments) delete d.comments;
+        if (!lead) d.name ??= '';
         // Hidden country-code controls still use the configured default for new contacts.
         if (!lead && !visible('countryCode'))
           d.countryCode = choices.countryCode[0];
@@ -68,11 +88,6 @@ export function LeadForm({
         });
       }}
     >
-      <datalist id="workspace-source-options">
-        {choices.source.map((v) => (
-          <option key={v}>{v}</option>
-        ))}
-      </datalist>
       <datalist id="workspace-location-options">
         {choices.location.map((v) => (
           <option key={v}>{v}</option>
@@ -83,35 +98,35 @@ export function LeadForm({
           <option key={v}>{v}</option>
         ))}
       </datalist>
-      <div className="form-grid">
+      <div className="form-grid">{arrangeFormFields(config, <>
+
         {visible('source') ? (
-          <label className="material-field">
+          <label key="source" className="material-field">
             <span className="field-label">{labelFor(config, 'source')}</span>
-            <input
-              name="source"
-              list="workspace-source-options"
-              maxLength={200}
-              defaultValue={lead?.source || choices.source[0] || ''}
-            />
+            <select name="source" defaultValue={lead?.source || ''} required={!lead && choices.source.length > 0}>
+              <option value="">Choose an enquiry source</option>
+              {withCurrent(choices.source, lead?.source).map((source) => (
+                <option key={source}>{source}</option>
+              ))}
+            </select>
           </label>
         ) : null}
-        <label className="material-field">
+        {visible('name') ? <label key="name" className="material-field">
           <span className="field-label">{labelFor(config, 'name')}</span>
           <input
             name="name"
-            required={!lead?.needsReview}
             autoFocus
             maxLength={200}
             defaultValue={lead?.name}
             autoComplete="name"
           />
-        </label>
-        {visible('phone') ? (
-          <label className="material-field">
+        </label> : null}
+        {!lead || visible('phone') ? (
+          <label key="phone" className="material-field">
             <span className="field-label">{labelFor(config, 'phone')}</span>
             <input
               name="phone"
-              required={!lead?.needsReview && !visible('email') && !lead?.email}
+              required={!lead || (!lead.needsReview && !lead.email && !visible('email'))}
               type="tel"
               maxLength={40}
               defaultValue={lead?.phone}
@@ -123,7 +138,7 @@ export function LeadForm({
           </label>
         ) : null}
         {visible('company') ? (
-          <label className="material-field">
+          <label key="company" className="material-field">
             <span className="field-label">{labelFor(config, 'company')}</span>
             <input
               name="company"
@@ -134,7 +149,7 @@ export function LeadForm({
           </label>
         ) : null}
         {visible('location') ? (
-          <label className="material-field">
+          <label key="location" className="material-field">
             <span className="field-label">{labelFor(config, 'location')}</span>
             <input
               name="location"
@@ -145,7 +160,7 @@ export function LeadForm({
           </label>
         ) : null}
         {visible('zone') ? (
-          <label className="material-field">
+          <label key="zone" className="material-field">
             <span className="field-label">{labelFor(config, 'zone')}</span>
             <input
               name="zone"
@@ -155,7 +170,7 @@ export function LeadForm({
             />
           </label>
         ) : null}
-        <label className="material-field">
+        <label key="enquiryDate" className="material-field">
           <span className="field-label">{labelFor(config, 'enquiryDate')}</span>
           <input
             name="enquiryDate"
@@ -168,7 +183,7 @@ export function LeadForm({
           ) : null}
         </label>
         {visible('legacyStatus') ? (
-          <label className="material-field">
+          <label key="legacyStatus" className="material-field">
             <span className="field-label">
               {labelFor(config, 'legacyStatus')}
             </span>
@@ -185,8 +200,8 @@ export function LeadForm({
             </datalist>
           </label>
         ) : null}
-        {visible('stage') ? (
-          <label className="material-field">
+        {lead || visible('stage') ? (
+          <label key="stage" className="material-field">
             <span className="field-label">{labelFor(config, 'stage')}</span>
             <select name="stage" defaultValue={lead?.stage || 'New'}>
               {withCurrent(choices.stage, lead?.stage).map((v) => (
@@ -196,7 +211,7 @@ export function LeadForm({
           </label>
         ) : null}
         {visible('initialDiscussion') ? (
-          <label className="material-field full">
+          <label key="initialDiscussion" className="material-field full">
             <span className="field-label">
               {labelFor(config, 'initialDiscussion')}
             </span>
@@ -208,15 +223,13 @@ export function LeadForm({
             />
           </label>
         ) : null}
-      </div>
 
-      <div className="form-grid">
         {visible('email') ? (
-          <label className="material-field">
+          <label key="email" className="material-field">
             <span className="field-label">{labelFor(config, 'email')}</span>
             <input
               name="email"
-              required={!lead?.needsReview && !visible('phone') && !lead?.phone}
+              required={!!lead && !lead.needsReview && !visible('phone') && !lead.phone}
               type="email"
               maxLength={200}
               defaultValue={lead?.email}
@@ -224,7 +237,7 @@ export function LeadForm({
           </label>
         ) : null}
         {visible('countryCode') ? (
-          <label className="material-field">
+          <label key="countryCode" className="material-field">
             <span className="field-label">{labelFor(config, 'countryCode')}</span>
             <select
               name="countryCode"
@@ -237,7 +250,7 @@ export function LeadForm({
           </label>
         ) : null}
         {lead && visible('comments') ? (
-          <label className="material-field full">
+          <label key="comments" className="material-field full">
             <span className="field-label">Add a comment</span>
             <textarea
               name="comments"
@@ -247,18 +260,10 @@ export function LeadForm({
             />
           </label>
         ) : null}
-      </div>
-      {config.customFields.some((f) => !f.deleted) ? (
-        <fieldset className="custom-field-inputs">
-          <legend>Additional information</legend>
-          <div className="form-grid">
-            <CustomFieldInputs
-              fields={config.customFields}
-              values={lead?.customFields}
-            />
-          </div>
-        </fieldset>
-      ) : null}
+      </>,
+      config.customFields.filter((field) => !field.deleted),
+      lead?.customFields,
+    )}</div>
       <p className="field-hint">
         New initial discussions and comments are checked for dated follow-ups
         when automatic reminders are enabled. Manual reminders remain available.
@@ -367,8 +372,8 @@ export function CallForm({
         submit.run(payload);
       }}
     >
-      <div className="form-grid">
-        <label className="material-field">
+      <div className="form-grid">{arrangeFormFields(config, <>
+        <label key="outcome" className="material-field">
           <span className="field-label">{labelFor(config, 'outcome')}</span>
           <select name="outcome" autoFocus>
             {choices.outcome.map((s) => (
@@ -376,7 +381,7 @@ export function CallForm({
             ))}
           </select>
         </label>
-        <label className="material-field">
+        <label key="disposition" className="material-field">
           <span className="field-label">{labelFor(config, 'disposition')}</span>
           <select
             value={disposition}
@@ -390,7 +395,7 @@ export function CallForm({
             ))}
           </select>
         </label>
-        <label className="material-field">
+        <label key="durationSeconds" className="material-field">
           <span className="field-label">Duration (seconds, optional)</span>
           <input
             type="number"
@@ -401,7 +406,7 @@ export function CallForm({
           />
         </label>
         {canEdit ? (
-          <label className="material-field">
+          <label key="stage" className="material-field">
             <span className="field-label">{labelFor(config, 'stage')}</span>
             <select name="stage" defaultValue={lead.stage}>
               {withCurrent(choices.stage, lead?.stage).map((s) => (
@@ -410,7 +415,7 @@ export function CallForm({
             </select>
           </label>
         ) : null}
-        <label className="material-field full">
+        <label key="notes" className="material-field full">
           <span className="field-label">Conversation notes</span>
           <textarea
             name="notes"
@@ -419,6 +424,7 @@ export function CallForm({
             placeholder="What did you discuss? What should happen next?"
           />
         </label>
+        </>)}
         {canTask && disposition !== 'Do not contact' ? (
           <label className="check full">
             <input
@@ -606,21 +612,32 @@ export function NoteForm({
 }
 export function RescheduleForm({
   task,
+  action = 'reschedule',
+  initialDueAt,
   onSave,
   onCancel,
 }: {
   task: import('../lib/types').Task;
+  action?: 'reschedule' | 'complete' | 'reopen';
+  initialDueAt?: string;
   onSave: (data: any, key: string) => Promise<void>;
   onCancel: () => void;
 }) {
   const submit = useSubmit(async (d, k, isCurrent) => {
     await onSave(
-      { dueAt: localInstant(d.dueAt), expectedVersion: task.version },
+      {
+        expectedVersion: task.version,
+        comment: d.comment,
+        ...(action === 'complete' ? { state: 'Completed' } : {
+          dueAt: localInstant(d.dueAt),
+          ...(action === 'reopen' ? { state: 'Pending' } : {}),
+        }),
+      },
       k,
     );
     if (isCurrent()) onCancel();
   });
-  const value = new Date(task.dueAt);
+  const value = new Date(action === 'reopen' ? Math.max(Date.parse(task.dueAt), Date.now() + 3600000) : initialDueAt || task.dueAt);
   const local = new Date(value.getTime() - value.getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, 16);
@@ -631,6 +648,7 @@ export function RescheduleForm({
         submit.run(inputData(e));
       }}
     >
+      {action !== 'complete' ? <>
       <label className="material-field">
         <span className="field-label">New date and time</span>
         <input
@@ -643,12 +661,17 @@ export function RescheduleForm({
       <p className="field-hint">
         Time is in {Intl.DateTimeFormat().resolvedOptions().timeZone}.
       </p>
+      </> : null}
+      <label className="material-field">
+        <span className="field-label">Comment</span>
+        <textarea name="comment" required maxLength={500} rows={3} />
+      </label>
       <ErrorMessage error={submit.error} />
       <div className="form-footer">
         <button className="button" type="button" onClick={onCancel}>
           Cancel
         </button>
-        <SaveButton busy={submit.busy} label="Reschedule reminder" />
+        <SaveButton busy={submit.busy} label={action === 'complete' ? 'Complete task' : action === 'reopen' ? 'Reopen task' : 'Reschedule reminder'} />
       </div>
     </form>
   );

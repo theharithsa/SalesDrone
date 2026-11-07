@@ -18,7 +18,7 @@ policy guarantees. This module does not authorize deployment or delegation.
   dashboard, settings and login styles. Do not re-import the v1 refresh cascade.
 - [UI.tsx](../../apps/web/src/components/UI.tsx): semantic actions, Radix dialogs,
   feedback, avatars and branded names.
-- [LeadBlade.tsx](../../apps/web/src/components/LeadBlade.tsx): resizable inspector
+- [LeadPage.tsx](../../apps/web/src/components/LeadPage.tsx): full lead workspace
   and full record, independent of the collection’s layout.
 - [lead-table.ts](../../apps/web/src/lib/lead-table.ts): presentation order and
   configured labels; import/export mappings and stored field IDs do not change.
@@ -67,8 +67,6 @@ the app shell, so standalone synthetic previews do not inherit a phantom nav gap
 
 Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use existing Material buttons and narrow-card wrapping.
 
-The real Assistant container renders independent grounded answer parts using the existing Material 3 conversation component and per-part result controls. Keep result state keyed by request plus part so one list/cursor cannot replace another. The development-only Admin preview accepts theme=dark and scale=125 for geometry review; its compound responses are fictional and excluded from production builds.
-
 ResearchPage uses page-body for the same responsive padding/max-width as other workspace pages. Assistant compound answers render one conversational message, with supporting context in a collapsed native details element and independent result controls beneath it. Preserve visible partial/setup warnings and use returned counts only; no additional model call is required for presentation.
 
 Tasks uses components/TaskRow.tsx with matching header/row grid columns, a minimal current lead summary and a direct Reschedule action. A container query stacks the same information below 900px of panel width; review actual row overflow, keyboard Escape and large-text dialogs. Keep pending-only scheduling and link semantics, including opening the full lead page.
@@ -78,3 +76,5 @@ LeadHeaderContext wraps company and masked monospace phone links without changin
 LeadHeaderContext uses the canonical phone-number utility; mono was undefined in Material styles and inherited the body font. Check computed font-family against mono-font in real browser themes. Main Tasks adds responsibility with shared column geometry and a 1100px panel stacking threshold; preserve link independence, access-gated actions and compact phone layout.
 
 Compact product navigation uses WorkspaceNavigation’s shared grouped registry for sidebar and quick navigation. Add future modules there with their capability gate; do not append unrelated footer links. Desktop rows are 36px with 18px icons and 8px selection shapes; phone/coarse targets remain at least 48px. The product region scrolls independently from brand/utilities/profile; short windows scroll the whole drawer to keep full menu rows usable. Rail mode keeps all product links accessible even if a drawer group was collapsed. Team has Overview and Member activity views; active navigation and focus/More selection remain visible.
+
+Use LeadPage for every lead at all breakpoints. Comments is the initial activity tab. LeadCardOrder renders Journey, Details and Activity in saved DOM order with a touch grip and keyboard/button equivalents. Card order is personal on the current browser, and reduced motion disables the animated rearrangement. Stage and assignee display as labels outside Edit enquiry.

@@ -2575,3 +2575,86 @@ input[type='tel'] {
 .mobile-filter-scroll {overflow-y:auto;overscroll-behavior:contain;min-height:0;padding-right:3px;}
 .mobile-lead-filter-form .form-footer {flex-shrink:0;flex-wrap:nowrap;gap:8px;margin-top:16px;}
 .mobile-lead-filter-form .form-footer>div {display:flex;gap:8px;}
+
+.lead-card-order {
+  display: grid;
+  gap: 16px;
+}
+.lead-order-card {
+  min-width: 0;
+  background: var(--panel);
+  border-radius: 20px;
+  outline: 2px solid transparent;
+  transition: outline-color 180ms, opacity 180ms;
+}
+.lead-order-card[data-drop-target] {
+  outline-color: var(--primary);
+}
+.lead-order-card[data-dragging] {
+  opacity: .65;
+}
+.lead-card-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 12px 0;
+}
+.lead-card-controls .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.lead-card-grip {
+  touch-action: none;
+  cursor: grab;
+}
+.lead-card-grip:active {
+  cursor: grabbing;
+}
+.full-lead-page .lead-order-card .lead-context,
+.full-lead-page .lead-order-card .lead-journey {
+  margin-block: 0;
+}
+.lead-header-extra {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 2 / -1;
+  gap: 8px 20px;
+  margin-block: 8px 0;
+  overflow-wrap: anywhere;
+}
+.lead-header-extra:empty {
+  display: none;
+}
+.lead-header-extra dt {
+  font-size: .8125rem;
+  color: var(--muted);
+}
+.lead-header-extra dd {
+  margin: 0;
+}
+.field-layout-settings ol {
+  padding-inline-start: 24px;
+}
+.field-layout-settings li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding-block: 4px;
+  border-block-end: 1px solid var(--line);
+}
+.field-layout-settings li > span {
+  flex: 1 1 10ch;
+  overflow-wrap: anywhere;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lead-order-card { transition: none; }
+}
+.full-lead-page .blade-workflow {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));
+}
+.lead-assignment-summary > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  overflow-wrap: anywhere;
+}

@@ -12,6 +12,17 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.10.0] - 2026-11-07
+
+### Changed
+- Leave Enquiry source unselected in the dropdown, make Customer name optional and require a phone number for new manual enquiries.
+- Search lead fields and recorded comments from the Leads search bar. Include matching leads’ recorded comments on a separate Excel sheet.
+- Open every lead as a full page with Comments selected, show stage and assignee as read-only labels, and let members reorder the Journey, Details and Activity cards.
+- Let Admins arrange enquiry fields and Leads columns, choose extra lead header fields and apply the workspace field order to Excel exports.
+- Require a comment to reschedule, complete or reopen a task. Show recent changes on the task and preserve the responsible person on reopen.
+- Offer Last 24 hours, Last 7 days, Last 30 days and custom dates in Team activity.
+
 ## [2.9.6] - 2026-11-06
 
 ### Fixed

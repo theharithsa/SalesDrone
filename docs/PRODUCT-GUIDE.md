@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.9.6
+Version 2.10.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -74,7 +74,7 @@ Use it for current distribution only. Recorded stage history on a lead is the ev
 
 Workspace administrators
 
-1. Open Team under Insights. Overview shows current lead assignment, comments, recorded calls and completed lead tasks. The page defaults to the last 30 UTC calendar days; choose 7 or 90 days or Refresh team.
+1. Open Team under Insights. Overview shows current lead assignment, comments, recorded calls and completed lead tasks. The page defaults to the last 30 UTC calendar days; choose Last 24 hours, Last 7 days, Last 30 days or Custom dates, then use Refresh team to reload.
 
 2. Compare Current workload and Recorded outreach, then review People & progress. Select a member to open their activity, or an assigned count to open their Leads with Assigned to applied.
 
@@ -202,13 +202,13 @@ Members who can read the lead
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.
 
-4. All opens first and includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.
+4. Comments opens first. All includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser. Stage and assignee are read-only on the lead page and can be changed from Edit enquiry.
 
 5. Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission.
 
 Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.
 
-Tasks for this lead is shared with everyone who can read the lead. Each task shows its responsible member. Lead editors can complete Pending work directly, or open the task and reschedule it. Status filtering and Load more tasks remain available. Personal reminders and notification delivery remain private; shared editors cannot retitle, delete or reassign another recipient’s task.
+Tasks for this lead is shared with everyone who can read the lead. Each task shows its responsible member. Lead editors add a comment when completing or rescheduling Pending work. They can reopen Completed work with a comment and a future due time. Status filtering and Load more tasks remain available. Personal reminders and notification delivery remain private; shared editors cannot retitle, delete or reassign another recipient’s task.
 
 Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.
 
@@ -240,7 +240,7 @@ The tab shows tasks linked to this lead within your current access, including wo
 
 Lead readers; editors for upload and removal
 
-1. Open a lead in its full page and select Files, or use Files in the desktop quick inspector. Choose Upload file, then select a supported photo or document. Files are private to people who currently have access to this lead.
+1. Open a lead and select Files. Choose Upload file, then select a supported photo or document. Files are private to people who currently have access to this lead.
 
 2. Wait for upload progress and File uploaded. A failed upload offers Retry upload or Discard pending upload; Cancel upload stops the transfer. Keep the tab open until completion.
 
@@ -468,7 +468,7 @@ Resolve the displayed column conflict first. A separate column and status values
 
 Members, when exports are enabled
 
-1. Apply the desired search and column filters on Leads. Verify the visible matches before opening Export Excel.
+1. Apply the desired search and column filters on Leads. Search covers accessible fields and recorded comments by default. Verify the visible matches before opening Export Excel. The workbook includes a separate recorded-comments sheet unless you clear that option.
 
 2. Choose the supported columns for the report, start export and wait for the paginated data retrieval and workbook generation.
 
@@ -554,7 +554,7 @@ Use Manage fields > Lead fields. A label change does not rename its stable API k
 
 **Can I remove a field without losing historical data?**
 
-Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name, Enquiry date and at least one of Phone number or Email remain available so new enquiries can still be saved. Removing a form field does not disable contact restrictions or workflow actions.
+Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. Use Field order and lead header to arrange visible built-in and custom fields and pick up to six extra header fields. The saved order also applies to the Leads worksheet and Excel.
 
 ## Book mode: a quieter reading workspace
 

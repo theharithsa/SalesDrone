@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.9.1**, OpenAPI contract **1.29.0**. All application operations
+Application release **v2.10.0**, OpenAPI contract **1.30.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -105,7 +105,7 @@ Replace example IDs, dates and versions with the values returned by your API.
 Only send write requests with scopes you intended to grant.
 
 ```sh
-# CREATE: enquiryDate and name are required for an ordinary new enquiry.
+# CREATE: enquiryDate is required for an ordinary new enquiry. Customer name is optional. Manual browser entry requires a phone number.
 curl -X POST 'https://sales-drone-avinya.firebaseapp.com/api/v1/leads' \
   -H "Authorization: Bearer $SALESDRONE_TOKEN" \
   -H 'Content-Type: application/json' \

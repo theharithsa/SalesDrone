@@ -37,7 +37,7 @@ const definitions = {
   'reports-access': ['exportsEnabled', 'assignedOnly'],
   'ai.insights': ['instructions', 'insightMode'],
   'ai.scoring': ['enabled', 'factors'],
-  'manage-fields': ['labels', 'values', 'hiddenFields', 'customFields'],
+  'manage-fields': ['labels', 'values', 'hiddenFields', 'customFields', 'fieldOrder', 'headerFields'],
   'people.members': ['active', 'role', 'scope', 'capabilities'],
   'people.invitations': [
     'active',

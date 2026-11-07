@@ -15,7 +15,8 @@ export default function Assignment({
   const [members, setMembers] = useState<Entity[]>([]),
     [loadingMembers, setLoadingMembers] = useState(true),
     [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [target, setTarget] = useState(lead.assignedToUid || '');
   const mounted = useRef(false);
   useEffect(() => {
     mounted.current = true;
@@ -44,24 +45,10 @@ export default function Assignment({
     <div className={compact ? 'assignment-control' : 'detail-section'}>
       <h3>Assigned to</h3>
       <select
-        value={lead.assignedToUid || ''}
+        value={target}
         disabled={busy || loadingMembers}
         aria-label="Assign lead"
-        onChange={async (e) => {
-          setBusy(true);
-          setError('');
-          try {
-            await request('/leads/' + lead.id + '/assignment', 'PATCH', {
-              assignedToUid: e.target.value || null,
-              expectedVersion: lead.version,
-            });
-            if (mounted.current) await onSaved();
-          } catch (e) {
-            if (mounted.current) setError((e as Error).message);
-          } finally {
-            if (mounted.current) setBusy(false);
-          }
-        }}
+        onChange={(e) => setTarget(e.target.value)}
       >
         {loadingMembers && lead.assignedToUid ? (
           <option value={lead.assignedToUid}>Loading assignee…</option>
@@ -75,10 +62,26 @@ export default function Assignment({
             </option>
           ))}
       </select>
+      <button type="button" className="button" disabled={busy || loadingMembers || target === (lead.assignedToUid || '')}
+        onClick={async () => {
+          setBusy(true);
+          setError('');
+          try {
+            await request('/leads/' + lead.id + '/assignment', 'PATCH', {
+              assignedToUid: target || null,
+              expectedVersion: lead.version,
+            });
+            if (mounted.current) await onSaved();
+          } catch (e) {
+            if (mounted.current) setError((e as Error).message);
+          } finally {
+            if (mounted.current) setBusy(false);
+          }
+        }}>Save assignment</button>
       <details className="assignment-help">
         <summary>About reassignment</summary>
         <p className="field-hint">
-          Reassignment cancels pending lead tasks. Set the next reminder for the
+          Reassignment cancels pending outreach tasks. Set the next reminder for the
           new owner.
         </p>
       </details>

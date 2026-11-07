@@ -300,6 +300,13 @@ schemas.LeadExportPage = {
       },
     },
     nextCursor: { type: ['string', 'null'] },
+    comments: {
+      type: 'array', maxItems: 2000,
+      description: 'Present only when includeComments is true. Notes belong to the authorized lead rows on this page.',
+      items: {type: 'object', required: ['leadId', 'leadName', 'createdAt', 'text'], properties: {
+        leadId: {type: 'string'}, leadName: {type: 'string'}, createdAt: {type: 'string', format: 'date-time'}, text: {type: 'string'},
+      }},
+    },
     scanLimited: { type: 'boolean' },
     policyVersion: { type: 'integer' },
     asOf: { type: 'string', format: 'date-time' },
@@ -331,11 +338,13 @@ schemas.FieldOptions = {
     version: { type: 'integer', minimum: 1 },
     values: schemas.FieldOptionsPatch.properties.values,
     labels: schemas.FieldOptionsPatch.properties.labels,
+    fieldOrder: schemas.FieldOptionsPatch.properties.fieldOrder,
+    headerFields: schemas.FieldOptionsPatch.properties.headerFields,
     customFields: schemas.FieldOptionsPatch.properties.customFields,
     hiddenFields: {
       ...schemas.FieldOptionsPatch.properties.hiddenFields,
       description:
-        'Fields removed from enquiry entry, configurable columns, filters and new reports where applicable. Name and enquiryDate cannot be hidden; keep phone or email visible. This is presentation configuration, not data erasure, authorization or removal of workflow/suppression controls.',
+        'Fields removed from enquiry entry, configurable columns, filters and new reports where applicable. Enquiry date stays visible. The manual new enquiry form always shows phone, including for legacy layouts with phone hidden. This is presentation configuration, not data erasure, authorization or removal of workflow/suppression controls.',
     },
   },
 };
@@ -410,6 +419,9 @@ schemas.Task = object({
   sharedLeadContext: string,
   canManage: {type:'boolean'},
   canEditOwn: {type:'boolean'},
+  changeHistory: {type:'array',maxItems:100,items:{type:'object',properties:{
+    action:{type:'string',enum:['Rescheduled','Completed','Reopened']},comment:{type:'string',maxLength:500},actorUid:string,createdAt:instant,
+  },required:['action','comment','actorUid','createdAt']}}, updatedAt: instant,
   lead: {type: ['object', 'null'], description: 'Task list only: current authorized linked lead summary, independent of the loaded lead page. Null for personal reminders.', required: ['id', 'name', 'company'], additionalProperties: false, properties: {id: string, name: string, company: string}},
   ...schemas.TaskInput.properties,
   id: string,
@@ -728,7 +740,7 @@ schemas.ResearchSettings=z.toJSONSchema(z.object(Object.fromEntries(Object.entri
 const researchTheme={type:'object',required:['label','evidence'],properties:{label:{type:'string'},evidence:{type:'array',items:{type:'object',required:['sourceId','quote'],properties:{sourceId:{type:'string'},quote:{type:'string'}}}}}};
 schemas.ResearchScan={type:'object',required:['id','status','version'],properties:{id:{type:'string'},status:{type:'string',enum:['Pending','Running','Completed','Stale','Deleting']},version:{type:'integer'},scanned:{type:['integer','null']},findings:{type:['integer','null']},createdAt:{type:'string'},updatedAt:{type:'string'},summaryStatus:{type:['string','null'],enum:['Pending','Completed','Failed',null]},summary:{type:['object','null'],properties:{themes:{type:'array',items:researchTheme},sampledFindings:{type:'integer'},totalFindings:{type:'integer'}}}}};
 schemas.TeamMember={type:'object',required:['id','name','role','active','assigned','comments','calls','leadsWorked','stageChanges','pending','overdue','completed'],properties:{id:{type:'string'},name:{type:'string'},role:{type:'string'},active:{type:'boolean'},...Object.fromEntries(['assigned','comments','calls','connected','leadsWorked','stageChanges','pending','overdue','completed'].map(k=>[k,{type:'integer',minimum:0}])),lastActivityAt:{type:['string','null'],format:'date-time'},stages:{type:'array',items:{type:'object',properties:{label:{type:'string'},value:{type:'integer'}}}}}};
-schemas.TeamSnapshot={type:'object',required:['generatedAt','since','days','timezone','members','trend','unassigned','unlistedAssigned','limits'],properties:{generatedAt:{type:'string',format:'date-time'},since:{type:'string',format:'date-time'},days:{type:'integer',enum:[7,30,90]},timezone:{type:'string',const:'UTC'},members:{type:'array',maxItems:200,items:{$ref:'#/components/schemas/TeamMember'}},unassigned:{type:'integer'},unlistedAssigned:{type:'integer'},trend:{type:'array',maxItems:90,items:{type:'object',properties:{date:{type:'string',format:'date'},comments:{type:'integer'},calls:{type:'integer'}}}},limits:{type:'object',additionalProperties:{type:'integer'}}}};
+schemas.TeamSnapshot={type:'object',required:['generatedAt','since','until','days','timezone','members','trend','unassigned','unlistedAssigned','limits'],properties:{generatedAt:{type:'string',format:'date-time'},since:{type:'string',format:'date-time'},until:{type:'string',format:'date-time'},days:{type:'integer',minimum:1,maximum:91},timezone:{type:'string',const:'UTC'},members:{type:'array',maxItems:200,items:{$ref:'#/components/schemas/TeamMember'}},unassigned:{type:'integer'},unlistedAssigned:{type:'integer'},trend:{type:'array',maxItems:91,items:{type:'object',properties:{date:{type:'string',format:'date'},comments:{type:'integer'},calls:{type:'integer'}}}},limits:{type:'object',additionalProperties:{type:'integer'}}}};
 schemas.TeamActivity={type:'object',required:['id','type','notes','createdAt','lead','revision'],properties:{id:{type:'string'},type:{type:'string',enum:['note','call']},notes:{type:'string',maxLength:4000},outcome:{type:['string','null']},createdAt:{type:'string',format:'date-time'},revision:{type:'integer'},lead:{type:'object',properties:{id:{type:'string'},name:{type:'string'}}}}};
 schemas.LeadAssignee={type:'object',required:['id','name','active'],properties:{id:{type:'string'},name:{type:'string'},active:{type:'boolean'}}};
 schemas.ResearchLead={type:'object',required:['id'],properties:{id:{type:'string'},version:{type:'integer'},name:{type:'string'},company:{type:'string'}}};
@@ -1046,9 +1058,16 @@ for (const e of endpoints) {
       $ref: '#/components/schemas/Page',
     };
   }
+  if(e.method==='post'&&e.url==='/leads')
+    operation.description+=' Customer name is optional. Manual browser entries need a phone number and enquiry date. Approved legacy-review and scoped PAT inputs retain their contact compatibility.';
+  if(e.method==='patch'&&['/tasks/:id','/leads/:id/tasks/:taskId'].includes(e.url))
+    operation.description+=' In the browser workspace, task completion, changed due times and reopening require a nonblank comment (up to 500 characters). Reopen completed tasks with state Pending and a future dueAt. Recheck current lead access, recipient eligibility and outreach suppression. Supported personal-access-token task updates retain their previous validation.';
+  if(e.method==='post'&&e.url==='/leads/export')
+    operation.description+=' Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.';
   if(e.url==='/team'||e.url==='/team/members/:uid/activities'){
     operation.description+=' Admin role is always required; Google sessions also require members:write. PATs require explicit team:read scope. Recorded activity uses UTC calendar days (7/30/90; default 30), bounded scans and current lead scope. Imported text, deleted-source activities and personal reminders are excluded. No employee rating or online status. Counts are current reads, not a transactional snapshot. Access is rechecked before publication. 413 TEAM_LIMIT rejects oversized reports rather than partial totals; 409 TEAM_STALE requires refresh.';
     operation.parameters.push({in:'query',name:'days',schema:{type:'integer',enum:[7,30,90],default:30}});
+    for (const name of ['from','to']) operation.parameters.push({in:'query',name,schema:{type:'string',format:'date-time'},description:'Both bounds are required together and replace days. Inclusive UTC instants with milliseconds. Maximum 90 days. Reuse the exact bounds with a cursor.'});
     operation.responses[200].content['application/json'].schema=e.url==='/team'?ref('TeamSnapshot'):pageOf('TeamActivity');
     if(e.url!=='/team')operation.parameters.push({in:'query',name:'limit',schema:{type:'integer',minimum:1,maximum:100,default:30}},{in:'query',name:'cursor',schema:{type:'string'},description:'Encrypted continuation bound to member, period, requester and current access. Sparse pages can continue.'});
   }
@@ -1081,6 +1100,7 @@ for (const e of endpoints) {
               ? {
                   type: 'string',
                   enum: [
+                    'all',
                     'name',
                     'company',
                     'phone',
@@ -1092,7 +1112,7 @@ for (const e of endpoints) {
               : { type: 'string' },
         description:
           name === 'search'
-            ? 'With column filters, case-insensitive contains search; city/sector use the same scanning path. Legacy queries without filters retain name/company prefix and normalized exact contact matching.'
+            ? 'Use field=all to search lead text, phone digits and recorded notes. With column filters, case-insensitive contains search; city/sector use the same scanning path. Legacy queries without filters retain name/company prefix and normalized exact contact matching.'
             : undefined,
       });
   if (e.method === 'get' && e.url === '/leads')
@@ -1103,7 +1123,7 @@ for (const e of endpoints) {
         'application/json': { schema: ref('LeadFilters'), example: [] },
       },
       description:
-        'AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. The additive exact operator supports source, stage and configured custom dropdowns only: raw case, spaces and Unicode must match saved values. Every exact predicate uses indexed equality with document-ID ordering; other conditions retain bounded residual scanning. Existing equals behavior is unchanged. Signed continuation cursors bind all filters and identity. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment.',
+        'AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. The additive exact operator supports source, stage and configured custom dropdowns only: raw case, spaces and Unicode must match saved values. Every exact predicate uses indexed equality with document-ID ordering; other conditions retain bounded residual scanning. Existing equals behavior is unchanged. Signed continuation cursors bind all filters and identity. Empty pages may still have nextCursor; continue until null. Use field=all to include historical notes, including imported note rows.',
     });
   if (e.method === 'get' && (e.url === '/tasks'||e.url === '/leads/:id/tasks'))
     for (const name of e.url === '/tasks' ? ['state','leadId'] : ['state'])
@@ -1279,7 +1299,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.29.0',
+    version: '1.30.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

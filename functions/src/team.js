@@ -11,6 +11,22 @@ export const teamSince = (now, days) =>
   new Date(
     Date.parse(now.slice(0, 10) + "T00:00:00Z") - (days - 1) * 86400000,
   ).toISOString();
+export function teamWindow(now, query) {
+  if (query.from === undefined && query.to === undefined) {
+    const days = teamDays(query.days);
+    return { since: teamSince(now, days), until: now, days, explicit: false };
+  }
+  const iso = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+  const from = Date.parse(query.from), to = Date.parse(query.to);
+  if (!iso.test(query.from) || !iso.test(query.to) || !Number.isFinite(from) ||
+      !Number.isFinite(to) || new Date(from).toISOString() !== query.from ||
+      new Date(to).toISOString() !== query.to || to <= from || to - from > 90 * 86400000)
+    throw new AppError(400, "TEAM_PERIOD", "Choose a valid date range of up to 90 days");
+  const since = query.from;
+  const until = query.to;
+  const days = 1 + Math.round((Date.parse(until.slice(0, 10)) - Date.parse(since.slice(0, 10))) / 86400000);
+  return { since, until, days, explicit: true };
+}
 export async function assertTeamAccess(store, identity, before) {
   const current = await requireMember(store, identity, identity.personalAccess ? "leads:read" : "members:write");
   assertAdmin(current);
@@ -53,8 +69,8 @@ const memberView = (m) => ({
   role: m.role,
   active: !!m.active,
 });
-export async function teamSnapshot(store, member, now, days) {
-  const since = teamSince(now, days);
+export async function teamSnapshot(store, member, now, period) {
+  const { since, until, days } = typeof period === "number" ? teamWindow(now, { days: period }) : period;
   const [members, leads, activities, tasks, transitions] = await Promise.all([
     scan(store, "members", [], 200, ["id", "uid", "name", "role", "active"]),
     scan(store, "leads", scopeFilters(member), 5000, [
@@ -67,7 +83,7 @@ export async function teamSnapshot(store, member, now, days) {
     scan(
       store,
       "activities",
-      [["createdAt", ">=", since]],
+      [["createdAt", ">=", since], ["createdAt", "<=", until]],
       10000,
       [
         "id",
@@ -93,7 +109,7 @@ export async function teamSnapshot(store, member, now, days) {
     scan(
       store,
       "leadTransitions",
-      [["createdAt", ">=", since]],
+      [["createdAt", ">=", since], ["createdAt", "<=", until]],
       10000,
       ["id", "leadId", "actorUid", "from", "createdAt", "reason"],
       "createdAt",
@@ -118,7 +134,7 @@ export async function teamSnapshot(store, member, now, days) {
     worked = new Map(),
     stages = new Map();
   const trend = Array.from({ length: days }, (_, i) => ({
-    date: new Date(Date.parse(now) - (days - 1 - i) * 86400000)
+    date: new Date(Date.parse(since.slice(0, 10)) + i * 86400000)
       .toISOString()
       .slice(0, 10),
     comments: 0,
@@ -152,7 +168,7 @@ export async function teamSnapshot(store, member, now, days) {
       !leadMap.has(a.leadId) ||
       a.imported ||
       a.importId ||
-      a.createdAt > now ||
+      a.createdAt > until || a.createdAt > now ||
       !["note", "call"].includes(a.type)
     )
       continue;
@@ -169,7 +185,7 @@ export async function teamSnapshot(store, member, now, days) {
       r &&
       leadMap.has(a.leadId) &&
       a.from &&
-      a.createdAt <= now &&
+      a.createdAt <= until && a.createdAt <= now &&
       !String(a.reason).startsWith("import")
     ) {
       r.stageChanges++;
@@ -187,7 +203,7 @@ export async function teamSnapshot(store, member, now, days) {
     if (
       t.state === "Completed" &&
       t.completedAt >= since &&
-      t.completedAt <= now
+      t.completedAt <= until && t.completedAt <= now
     )
       r.completed++;
   }
@@ -202,6 +218,7 @@ export async function teamSnapshot(store, member, now, days) {
   return {
     generatedAt: now,
     since,
+    until,
     days,
     timezone: "UTC",
     members: rows,

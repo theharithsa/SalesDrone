@@ -88,6 +88,7 @@ export default function MobileLeadFilters({
                     setDraft({ ...draft, searchField: e.target.value })
                   }
                 >
+                  <option value="all">All lead fields and comments</option>
                   {[
                     "name",
                     "company",
@@ -157,7 +158,7 @@ export default function MobileLeadFilters({
               type="button"
               onClick={() =>
                 setDraft({
-                  searchField: "name",
+                  searchField: "all",
                   stage: "",
                   source: "",
                   ...(assignees ? { assignee: "" } : {}),

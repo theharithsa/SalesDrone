@@ -14,8 +14,9 @@ export const LeadExportInput = z
     source: z.string().max(100).optional(),
     assignedToUid: z.string().min(1).max(128).optional(),
     search: z.string().max(200).optional(),
+    includeComments: z.boolean().default(false),
     field: z
-      .enum(['name', 'company', 'phone', 'email', 'location', 'zone'])
+      .enum(['all', 'name', 'company', 'phone', 'email', 'location', 'zone'])
       .optional(),
     cursor: z.string().max(4000).optional(),
     limit: z.number().int().min(1).max(100).default(100),

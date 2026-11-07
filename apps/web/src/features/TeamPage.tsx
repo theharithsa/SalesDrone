@@ -61,6 +61,18 @@ export default function TeamPage({
     [busy, setBusy] = useState(true),
     [error, setError] = useState(""),
     [refresh, setRefresh] = useState(0);
+  const [range, setRange] = useState({ from: '', to: '' });
+  const [windowQuery, setWindowQuery] = useState('');
+  const [rangeError, setRangeError] = useState('');
+  const query = days === 'custom' || days === '24h' ? windowQuery : 'days=' + days;
+  function selectPeriod(value: string) {
+    setDays(value);
+    setRangeError('');
+    if (value === '24h') {
+      const end = Date.now();
+      setWindowQuery(new URLSearchParams({from: new Date(end - 86400000).toISOString(), to: new Date(end).toISOString()}).toString());
+    } else setWindowQuery('');
+  }
   const activityEpoch = useRef(0);
   const [activity, setActivity] = useState<Activity[]>([]),
     [cursor, setCursor] = useState<string | null>(null),
@@ -69,9 +81,10 @@ export default function TeamPage({
   useEffect(() => {
     let alive = true;
     setSnapshot(null);
-    setBusy(true);
+    setBusy(!!query);
     setError("");
-    request("/team?days=" + days)
+    if (!query) return;
+    request("/team?" + query)
       .then((r) => {
         if (alive) setSnapshot(r);
       })
@@ -84,14 +97,14 @@ export default function TeamPage({
     return () => {
       alive = false;
     };
-  }, [request, days, refresh]);
+  }, [request, query, refresh]);
   useEffect(() => {
     let alive = true;
     const epoch = ++activityEpoch.current;
     setActivity([]);
     setCursor(null);
     setActivityError("");
-    if (view !== "activity" || !selected) {
+    if (!query || view !== "activity" || !selected) {
       setActivityBusy(false);
       return;
     }
@@ -99,8 +112,8 @@ export default function TeamPage({
     request(
       "/team/members/" +
         encodeURIComponent(selected) +
-        "/activities?days=" +
-        days +
+        "/activities?" +
+        query +
         "&limit=20",
     )
       .then((r) => {
@@ -119,7 +132,7 @@ export default function TeamPage({
       alive = false;
       if (activityEpoch.current === epoch) activityEpoch.current = epoch + 1;
     };
-  }, [request, days, selected, view, refresh]);
+  }, [request, query, selected, view, refresh]);
   const member = snapshot?.members.find((m) => m.id === selected),
     total = (field: keyof Member) =>
       snapshot?.members.reduce((n, m) => n + Number(m[field] || 0), 0) || 0;
@@ -152,25 +165,45 @@ export default function TeamPage({
             <select
               aria-label="Team activity period"
               value={days}
-              onChange={(e) => setDays(e.target.value)}
+              onChange={(e) => selectPeriod(e.target.value)}
             >
-              {["7", "30", "90"].map((d) => (
+              <option value="24h">Last 24 hours</option>
+              {["7", "30"].map((d) => (
                 <option key={d} value={d}>
                   Last {d} days
                 </option>
               ))}
+              <option value="custom">Custom dates</option>
             </select>
           </label>
           <button
             className="icon-button"
             aria-label="Refresh team"
             disabled={busy}
-            onClick={() => setRefresh((v) => v + 1)}
+            onClick={() => { if (days === "24h") selectPeriod(days); setRefresh((v) => v + 1); }}
           >
             <RefreshCw size={18} />
           </button>
         </div>
       </div>
+      {days === 'custom' ? (
+        <form className="team-toolbar" onSubmit={(event) => {
+          event.preventDefault();
+          const from = range.from + 'T00:00:00.000Z', to = range.to + 'T23:59:59.999Z';
+          const duration = Date.parse(to) - Date.parse(from);
+          if (!Number.isFinite(duration) || duration <= 0 || duration > 90 * 86400000) {
+            setRangeError('Choose up to 90 days in chronological order.');
+            return;
+          }
+          setRangeError('');
+          setWindowQuery(new URLSearchParams({from, to}).toString());
+        }}>
+          <label>From (UTC)<input required type="date" value={range.from} onChange={(e) => setRange({...range, from:e.target.value})} /></label>
+          <label>Through (UTC)<input required type="date" min={range.from} value={range.to} onChange={(e) => setRange({...range, to:e.target.value})} /></label>
+          <button className="button" type="submit">Apply dates</button>
+          <ErrorMessage error={rangeError} />
+        </form>
+      ) : null}
       <div className="team-view-switch" aria-label="Team views">
         <button
           className={"button " + (view === "overview" ? "tonal" : "")}
@@ -510,7 +543,7 @@ export default function TeamPage({
                       disabled={activityBusy}
                       onClick={async () => {
                         const key = selected,
-                          period = days,
+                          period = query,
                           epoch = activityEpoch.current;
                         setActivityBusy(true);
                         setActivityError("");
@@ -518,7 +551,7 @@ export default function TeamPage({
                           const r = await request(
                             "/team/members/" +
                               encodeURIComponent(key) +
-                              "/activities?days=" +
+                              "/activities?" +
                               period +
                               "&limit=20&cursor=" +
                               encodeURIComponent(cursor),

@@ -14,6 +14,7 @@ test('Excel report preserves phone formatting, protects formula-like source text
         values: ['=HYPERLINK("https://example.com")', '+001234567'],
       },
     ],
+    comments: [{leadId:'demo',leadName:'Example',createdAt:'2026-11-01T00:00:00Z',text:'=SUM(1,2)'}],
     context: ['Synthetic fixture', 'Filters: city equals Chennai'],
   };
   const file = await buildReportWorkbook(data);
@@ -29,4 +30,8 @@ test('Excel report preserves phone formatting, protects formula-like source text
     data.context[1],
   );
   assert.equal(sheet.views[0].state, 'frozen');
+  const comments = workbook.getWorksheet('Lead comments')!;
+  assert.equal(comments.getCell('A2').value, 2);
+  assert.equal(comments.getCell('E2').value, '=SUM(1,2)');
+  assert.equal(comments.getCell('E2').type, ExcelJS.ValueType.String);
 });

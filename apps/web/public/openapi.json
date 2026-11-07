@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SalesDrone by AvinyaTech API",
-    "version": "1.29.0",
+    "version": "1.30.0",
     "description": "Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data."
   },
   "servers": [
@@ -2558,7 +2558,7 @@
       "post": {
         "operationId": "post_leads_export",
         "summary": "POST /leads/export",
-        "description": "Requires: leads:read. Personal access token scope: leads:export. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot.",
+        "description": "Requires: leads:read. Personal access token scope: leads:export. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot. Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.",
         "tags": [
           "leads"
         ],
@@ -13450,7 +13450,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "With column filters, case-insensitive contains search; city/sector use the same scanning path. Legacy queries without filters retain name/company prefix and normalized exact contact matching."
+            "description": "Use field=all to search lead text, phone digits and recorded notes. With column filters, case-insensitive contains search; city/sector use the same scanning path. Legacy queries without filters retain name/company prefix and normalized exact contact matching."
           },
           {
             "in": "query",
@@ -13458,6 +13458,7 @@
             "schema": {
               "type": "string",
               "enum": [
+                "all",
                 "name",
                 "company",
                 "phone",
@@ -13478,7 +13479,7 @@
                 "example": []
               }
             },
-            "description": "AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. The additive exact operator supports source, stage and configured custom dropdowns only: raw case, spaces and Unicode must match saved values. Every exact predicate uses indexed equality with document-ID ordering; other conditions retain bounded residual scanning. Existing equals behavior is unchanged. Signed continuation cursors bind all filters and identity. Empty pages may still have nextCursor; continue until null. Does not search all historical comment text: use the source discussion fields or latestComment."
+            "description": "AND-combined column filters. Use JSON in the filters query parameter. Case-insensitive contains/equals/startsWith, empty/notEmpty and before/after for dates. The additive exact operator supports source, stage and configured custom dropdowns only: raw case, spaces and Unicode must match saved values. Every exact predicate uses indexed equality with document-ID ordering; other conditions retain bounded residual scanning. Existing equals behavior is unchanged. Signed continuation cursors bind all filters and identity. Empty pages may still have nextCursor; continue until null. Use field=all to include historical notes, including imported note rows."
           }
         ],
         "responses": {
@@ -13837,7 +13838,7 @@
       "post": {
         "operationId": "post_leads",
         "summary": "POST /leads",
-        "description": "Requires: leads:create. Personal access token scope: leads:create. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: leads:create. Personal access token scope: leads:create. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Customer name is optional. Manual browser entries need a phone number and enquiry date. Approved legacy-review and scoped PAT inputs retain their contact compatibility.",
         "tags": [
           "leads"
         ],
@@ -22009,7 +22010,7 @@
       "patch": {
         "operationId": "patch_tasks__id",
         "summary": "PATCH /tasks/:id",
-        "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. In the browser workspace, task completion, changed due times and reopening require a nonblank comment (up to 500 characters). Reopen completed tasks with state Pending and a future dueAt. Recheck current lead access, recipient eligibility and outreach suppression. Supported personal-access-token task updates retain their previous validation.",
         "tags": [
           "tasks"
         ],
@@ -23162,7 +23163,7 @@
       "patch": {
         "operationId": "patch_leads__id_tasks__taskId",
         "summary": "PATCH /leads/:id/tasks/:taskId",
-        "description": "Requires: leads:edit. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: leads:edit. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. In the browser workspace, task completion, changed due times and reopening require a nonblank comment (up to 500 characters). Reopen completed tasks with state Pending and a future dueAt. Recheck current lead access, recipient eligibility and outreach suppression. Supported personal-access-token task updates retain their previous validation.",
         "tags": [
           "leads"
         ],
@@ -23952,6 +23953,24 @@
               ],
               "default": 30
             }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Both bounds are required together and replace days. Inclusive UTC instants with milliseconds. Maximum 90 days. Reuse the exact bounds with a cursor."
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Both bounds are required together and replace days. Inclusive UTC instants with milliseconds. Maximum 90 days. Reuse the exact bounds with a cursor."
           }
         ],
         "responses": {
@@ -24329,6 +24348,24 @@
               ],
               "default": 30
             }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Both bounds are required together and replace days. Inclusive UTC instants with milliseconds. Maximum 90 days. Reuse the exact bounds with a cursor."
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Both bounds are required together and replace days. Inclusive UTC instants with milliseconds. Maximum 90 days. Reuse the exact bounds with a cursor."
           },
           {
             "in": "query",
@@ -36771,7 +36808,7 @@
             "maxLength": 200
           },
           "source": {
-            "default": "Direct enquiry",
+            "default": "",
             "type": "string",
             "maxLength": 200
           },
@@ -37197,6 +37234,11 @@
             "type": "string",
             "maxLength": 100
           },
+          "comment": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
           "state": {
             "type": "string",
             "enum": [
@@ -37221,6 +37263,11 @@
                 "type": "integer",
                 "exclusiveMinimum": 0,
                 "maximum": 9007199254740991
+              },
+              "comment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
               },
               "state": {
                 "type": "string",
@@ -37249,6 +37296,15 @@
               "timezone": {
                 "type": "string",
                 "maxLength": 100
+              },
+              "comment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "state": {
+                "type": "string",
+                "const": "Pending"
               }
             },
             "required": [
@@ -38887,9 +38943,14 @@
             "type": "string",
             "maxLength": 200
           },
+          "includeComments": {
+            "default": false,
+            "type": "boolean"
+          },
           "field": {
             "type": "string",
             "enum": [
+              "all",
               "name",
               "company",
               "phone",
@@ -38992,6 +39053,35 @@
               "string",
               "null"
             ]
+          },
+          "comments": {
+            "type": "array",
+            "maxItems": 2000,
+            "description": "Present only when includeComments is true. Notes belong to the authorized lead rows on this page.",
+            "items": {
+              "type": "object",
+              "required": [
+                "leadId",
+                "leadName",
+                "createdAt",
+                "text"
+              ],
+              "properties": {
+                "leadId": {
+                  "type": "string"
+                },
+                "leadName": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "scanLimited": {
             "type": "boolean"
@@ -39206,6 +39296,22 @@
             },
             "additionalProperties": false
           },
+          "fieldOrder": {
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "headerFields": {
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
           "customFields": {
             "maxItems": 100,
             "type": "array",
@@ -39266,6 +39372,7 @@
               "type": "string",
               "enum": [
                 "source",
+                "name",
                 "phone",
                 "email",
                 "company",
@@ -39290,7 +39397,7 @@
                 "followUp4"
               ]
             },
-            "description": "Remove standard fields from enquiry entry and configurable columns. Name and enquiryDate stay visible; at least one of phone or email must remain. Existing records and workflow controls are preserved."
+            "description": "Remove standard fields from enquiry entry and configurable columns. Enquiry date stays visible; the new manual enquiry form always displays phone, including for legacy layouts. Existing records and workflow controls are preserved."
           },
           "values": {
             "type": "object",
@@ -39618,6 +39725,22 @@
             },
             "additionalProperties": false
           },
+          "fieldOrder": {
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "headerFields": {
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
           "customFields": {
             "maxItems": 100,
             "type": "array",
@@ -39678,6 +39801,7 @@
               "type": "string",
               "enum": [
                 "source",
+                "name",
                 "phone",
                 "email",
                 "company",
@@ -39702,7 +39826,7 @@
                 "followUp4"
               ]
             },
-            "description": "Fields removed from enquiry entry, configurable columns, filters and new reports where applicable. Name and enquiryDate cannot be hidden; keep phone or email visible. This is presentation configuration, not data erasure, authorization or removal of workflow/suppression controls."
+            "description": "Fields removed from enquiry entry, configurable columns, filters and new reports where applicable. Enquiry date stays visible. The manual new enquiry form always shows phone, including for legacy layouts with phone hidden. This is presentation configuration, not data erasure, authorization or removal of workflow/suppression controls."
           }
         }
       },
@@ -39797,7 +39921,7 @@
             "maxLength": 200
           },
           "source": {
-            "default": "Direct enquiry",
+            "default": "",
             "type": "string",
             "maxLength": 200
           },
@@ -40030,6 +40154,44 @@
           "canEditOwn": {
             "type": "boolean"
           },
+          "changeHistory": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "Rescheduled",
+                    "Completed",
+                    "Reopened"
+                  ]
+                },
+                "comment": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "actorUid": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "action",
+                "comment",
+                "actorUid",
+                "createdAt"
+              ]
+            }
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "lead": {
             "type": [
               "object",
@@ -40121,6 +40283,8 @@
           "sharedLeadContext",
           "canManage",
           "canEditOwn",
+          "changeHistory",
+          "updatedAt",
           "lead",
           "title",
           "leadId",
@@ -41494,6 +41658,7 @@
         "required": [
           "generatedAt",
           "since",
+          "until",
           "days",
           "timezone",
           "members",
@@ -41511,13 +41676,14 @@
             "type": "string",
             "format": "date-time"
           },
+          "until": {
+            "type": "string",
+            "format": "date-time"
+          },
           "days": {
             "type": "integer",
-            "enum": [
-              7,
-              30,
-              90
-            ]
+            "minimum": 1,
+            "maximum": 91
           },
           "timezone": {
             "type": "string",
@@ -41538,7 +41704,7 @@
           },
           "trend": {
             "type": "array",
-            "maxItems": 90,
+            "maxItems": 91,
             "items": {
               "type": "object",
               "properties": {

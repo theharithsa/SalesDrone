@@ -1,3 +1,4 @@
+import reportColumns from './report-columns.json' with { type: 'json' };
 import DEFAULT_FIELD_LABELS from './lead-labels.json' with { type: 'json' };
 export { DEFAULT_FIELD_LABELS };
 import { z } from 'zod';
@@ -38,7 +39,7 @@ const values = z
   );
 export const OPTIONAL_LEAD_FIELDS = [
   ...Object.keys(DEFAULT_FIELD_LABELS).filter(
-    (key) => !['name', 'enquiryDate'].includes(key),
+    (key) => key !== 'enquiryDate',
   ),
   'followUp1',
   'followUp2',
@@ -90,6 +91,8 @@ export const FieldOptionsPatch = z
       .partial()
       .strict()
       .optional(),
+    fieldOrder: z.array(z.string().max(80)).max(100).optional(),
+    headerFields: z.array(z.string().max(80)).max(6).optional(),
     customFields: z.array(CustomField).max(100).optional(),
     hiddenFields: z
       .array(z.enum(OPTIONAL_LEAD_FIELDS))
@@ -98,7 +101,7 @@ export const FieldOptionsPatch = z
         (fields) => !(fields.includes('phone') && fields.includes('email')),
         'Keep Phone number or Email available for contact details',
       )
-      .describe('Remove standard fields from enquiry entry and configurable columns. Name and enquiryDate stay visible; at least one of phone or email must remain. Existing records and workflow controls are preserved.')
+      .describe('Remove standard fields from enquiry entry and configurable columns. Enquiry date stays visible; the new manual enquiry form always displays phone, including for legacy layouts. Existing records and workflow controls are preserved.')
       .optional(),
     values: z
       .object(
@@ -160,6 +163,8 @@ export async function readFieldOptions(store) {
     customFields: doc?.customFields || [],
     hiddenFields: doc?.hiddenFields || [],
     labels: { ...DEFAULT_FIELD_LABELS, ...doc?.labels },
+    fieldOrder: doc?.fieldOrder || [],
+    headerFields: doc?.headerFields || [],
   };
 }
 export function assertFieldOption(config, key, value, previous) {
@@ -201,8 +206,16 @@ export function mergeFieldSettings(current, input) {
       'FIELD_LABEL',
       'Use distinct names for built-in and custom fields',
     );
+  const known = new Set([...Object.keys(DEFAULT_FIELD_LABELS), ...Object.keys(reportColumns),
+    ...fields.filter((f) => !f.deleted).map((f) => f.id)]);
+  for (const keys of [input.fieldOrder, input.headerFields]) {
+    if (keys && (new Set(keys).size !== keys.length || keys.some((key) => !known.has(key))))
+      throw new AppError(400, 'FIELD_LAYOUT', 'Choose unique, available fields');
+  }
   return {
     labels,
+    fieldOrder: (input.fieldOrder || current.fieldOrder || []).filter((key) => known.has(key)),
+    headerFields: (input.headerFields || current.headerFields || []).filter((key) => known.has(key)),
     values: input.values,
     customFields: fields,
     hiddenFields: input.hiddenFields || current.hiddenFields,

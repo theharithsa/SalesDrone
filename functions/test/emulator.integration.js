@@ -496,6 +496,7 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     await req('patch', '/tasks/' + generatedTask.id, {
       expectedVersion: generatedTask.version,
       title: 'Edited emulator task',
+      comment: 'Fictional scheduling reason',
       kind: 'administrative',
       dueAt: '2026-11-03T05:30:00Z',
     }).expect(200)
@@ -1500,7 +1501,7 @@ test('shared lead work and business-query results persist with actual Auth, Fire
  const rows=(await req('get','/leads/'+leadId+'/tasks?state=Pending').expect(200)).body.items;
  assert.equal(rows[0].responsible.name,'Task owner');assert.equal(rows[0].canManage,true);
  const sharedPage=(await req('get','/tasks?view=accessible&state=Pending&limit=100').expect(200)).body;const shared=sharedPage.items.find(t=>t.id===taskId);assert.equal(shared.responsible.name,'Task owner');assert.equal(shared.lead.name,'Fictional shared lead');assert.equal(shared.canManage,true);assert.equal(shared.canEditOwn,false);
- const key=randomUUID(),body={expectedVersion:1,state:'Completed'};
+ const key=randomUUID(),body={expectedVersion:1,state:'Completed',comment:'Synthetic private task comment'};
  const completed=(await req('patch','/leads/'+leadId+'/tasks/'+taskId,body,key).expect(200)).body;
  assert.equal(completed.recipientUid,owner);assert.equal(completed.version,2);
  assert.equal((await req('patch','/leads/'+leadId+'/tasks/'+taskId,body,key).expect(200)).body.version,2);
@@ -1530,6 +1531,14 @@ test('Admin Team statistics and assignee filters use actual Auth and Firestore w
  const get=(url,token=adminToken)=>request(app).get('/api/v1'+url).set('Authorization','Bearer '+token);
  const result=(await get('/team?days=7').expect(200)).body,m=result.members.find(m=>m.id===repUid);assert.equal(m.comments,1);assert.equal(m.leadsWorked,1);assert.equal(m.assigned,1);assert.equal(m.pending,0);
  const activities=(await get('/team/members/'+repUid+'/activities?days=7').expect(200)).body.items;assert.equal(activities.length,1);assert.equal(activities[0].notes,'Synthetic authored comment');
+ const range=new URLSearchParams({from:'2026-11-03T09:00:00.000Z',to:'2026-11-03T11:00:00.000Z'});
+ const custom=(await get('/team/members/'+repUid+'/activities?'+range).expect(200)).body.items;
+ assert.deepEqual(custom.map(a=>a.id),['team-note']);
+ const search=(await get('/leads?field=all&search=authored+comment',repToken).expect(200)).body;
+ assert.ok(search.items.some(l=>l.id==='team-lead'));
+ const report=(await request(app).post('/api/v1/leads/export').set('Authorization','Bearer '+repToken)
+  .send({columns:['name'],field:'all',search:'authored comment',includeComments:true}).expect(200)).body;
+ assert.deepEqual(report.comments.map(row=>row.leadId),['team-lead','team-lead']);
  await get('/team',repToken).expect(403);
  const filtered=(await get('/leads?filters=[]&assignedToUid='+repUid).expect(200)).body.items;assert.ok(filtered.some(l=>l.id==='team-lead'));assert.ok(filtered.every(l=>l.assignedToUid===repUid));
  const dir=(await get('/lead-assignees?limit=100').expect(200)).body.items;assert.ok(dir.some(m=>m.id===repUid&&m.name==='Synthetic Team SDR'));assert.ok(dir.every(m=>Object.keys(m).sort().join(',')==='active,id,name'));

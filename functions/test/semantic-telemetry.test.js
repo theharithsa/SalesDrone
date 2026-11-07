@@ -16,7 +16,7 @@ test('actual note/follow-up save and administrative task completion export persi
  const lead=(await call('post','/leads',{name:'Synthetic person',phone:'+12025550123',enquiryDate:'2026-11-06'}).expect(200)).body;
  const first=(await call('post','/leads/'+lead.id+'/activities',{type:'note',expectedVersion:lead.version,notes:'PRIVATE MANUAL NOTE',followUp:{title:'PRIVATE TASK TITLE',kind:'administrative',dueAt:'2026-11-07T08:00:00.000Z',timezone:'Asia/Kolkata'}}).expect(200)).body;
  const tasks=await base.query(path('tasks'),{limit:20});assert.equal(tasks.length,1);assert.equal(tasks[0].kind,'administrative');
- await call('patch','/tasks/'+tasks[0].id,{expectedVersion:tasks[0].version,state:'Completed'}).expect(200);
+ await call('patch','/tasks/'+tasks[0].id,{expectedVersion:tasks[0].version,state:'Completed',comment:'Synthetic private task comment'}).expect(200);
  const current=await base.get(path('leads',lead.id));
  const second=(await call('post','/leads/'+lead.id+'/activities',{type:'note',expectedVersion:current.version,notes:'PRIVATE ORDINARY NOTE'}).expect(200)).body;
  const events=(await base.query(path('telemetryOutbox'),{limit:200})).flatMap(r=>[r.event,...(r.additionalEvents||[])]);

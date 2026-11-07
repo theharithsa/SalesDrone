@@ -17,6 +17,7 @@ export type Lead = Entity & {
   needsReview: boolean;
 };
 export type Task = Entity & {
+  changeHistory?: { action: string; comment: string; createdAt: string }[];
   lead?: {id: string; name: string; company: string} | null;
   title: string;
   dueAt: string;

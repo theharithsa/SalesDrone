@@ -55,3 +55,9 @@ FontStyle is an optional allowlisted personal preference (standard/inter/source-
 Reviewed import field setup reuses the existing Admin-only expectedVersion boundary and retains all current definitions. It never promotes import access into schema-write access. PATCH /me now supports partial preferences and dashboardField; merge defaults/omitted keys, validate available categories and emit key-only dashboard.visualization audit evidence. Document the direct Today control in the personal settings guide.
 
 Blocked lead-data writes during cleanup expose only fixed 503 LEAD_DATA_RESET guidance and Retry-After:60. Do not weaken the lock, promise completion in a minute or expose arbitrary provider messages. Settings cleanup status remains authoritative; test a blocked import creates no job and retry works after the lock clears.
+
+
+## Known gaps
+
+
+Personal Appearance includes optional boolean bookMode (default false), independent of appearance. GET /me defaults it; PATCH merges omitted values so older clients retain the choice. Keep Google/App Check self-service boundaries and PAT denial. Settings saves include bookMode even when saving reminder preferences; apply the style only after successful save. Guest settings receive App guestPreferences so navigation does not reset the local style; live account preferences override local fallback. Verify book-mode.test.js, generated API Preferences and emulator persistence/isolation.

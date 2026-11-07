@@ -63,7 +63,7 @@
       "title": "Team insights",
       "audience": "Workspace administrators",
       "steps": [
-        "Open Team under Insights. Overview shows current lead assignment, comments, recorded calls and completed lead tasks. The page defaults to the last 30 UTC calendar days; choose 7 or 90 days or Refresh team.",
+        "Open Team under Insights. Overview shows current lead assignment, comments, recorded calls and completed lead tasks. The page defaults to the last 30 UTC calendar days; choose Last 24 hours, Last 7 days, Last 30 days or Custom dates, then use Refresh team to reload.",
         "Compare Current workload and Recorded outreach, then review People & progress. Select a member to open their activity, or an assigned count to open their Leads with Assigned to applied.",
         "In Member activity, choose a person to read their authored comments and calls, with current corrected text and links to each lead. Load more until no continuation remains.",
         "Use the member\u2019s current stage chips to see their assigned lead distribution. Open View assigned leads to work with those records."
@@ -167,12 +167,12 @@
         "On desktop, select Open full lead page in the inspection overlay. On phones and narrow tablets, opening a lead goes directly to this page. The URL is /leads/{leadId}; bookmarks still require current authorization.",
         "Use the stage and assignment controls at the top. Assignment editing is an administrator action. Read-only users see status rather than gaining access to the people directory.",
         "Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.",
-        "All opens first and includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab.",
+        "Comments opens first. All includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser. Stage and assignee are read-only on the lead page and can be changed from Edit enquiry.",
         "Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission."
       ],
       "details": [
         "Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.",
-        "Tasks for this lead is shared with everyone who can read the lead. Each task shows its responsible member. Lead editors can complete Pending work directly, or open the task and reschedule it. Status filtering and Load more tasks remain available. Personal reminders and notification delivery remain private; shared editors cannot retitle, delete or reassign another recipient\u2019s task.",
+        "Tasks for this lead is shared with everyone who can read the lead. Each task shows its responsible member. Lead editors add a comment when completing or rescheduling Pending work. They can reopen Completed work with a comment and a future due time. Status filtering and Load more tasks remain available. Personal reminders and notification delivery remain private; shared editors cannot retitle, delete or reassign another recipient\u2019s task.",
         "Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.",
         "The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers.",
         "Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.",
@@ -201,7 +201,7 @@
       "title": "Lead files and attachments",
       "audience": "Lead readers; editors for upload and removal",
       "steps": [
-        "Open a lead in its full page and select Files, or use Files in the desktop quick inspector. Choose Upload file, then select a supported photo or document. Files are private to people who currently have access to this lead.",
+        "Open a lead and select Files. Choose Upload file, then select a supported photo or document. Files are private to people who currently have access to this lead.",
         "Wait for upload progress and File uploaded. A failed upload offers Retry upload or Discard pending upload; Cancel upload stops the transfer. Keep the tab open until completion.",
         "Choose Download to save a file to your device. There is no permanent public sharing link. Refresh files retrieves current metadata; Load more files follows the next page.",
         "Choose Remove, then Confirm removal. The file becomes unavailable in SalesDrone immediately. Removal has no in-app restore button; underlying Storage cleanup happens later."
@@ -395,7 +395,7 @@
       "title": "Filtered Excel reports",
       "audience": "Members, when exports are enabled",
       "steps": [
-        "Apply the desired search and column filters on Leads. Verify the visible matches before opening Export Excel.",
+        "Apply the desired search and column filters on Leads. Search covers accessible fields and recorded comments by default. Verify the visible matches before opening Export Excel. The workbook includes a separate recorded-comments sheet unless you clear that option.",
         "Choose the supported columns for the report, start export and wait for the paginated data retrieval and workbook generation.",
         "Cancel if you selected the wrong filter or columns. Download the completed workbook and handle it as private company data.",
         "Administrators can enable or disable this feature under Settings > Reports & lead access."
@@ -467,7 +467,7 @@
         ],
         [
           "Can I remove a field without losing historical data?",
-          "Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name, Enquiry date and at least one of Phone number or Email remain available so new enquiries can still be saved. Removing a form field does not disable contact restrictions or workflow actions."
+          "Use the delete icon in Manage fields > Lead fields. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. Use Field order and lead header to arrange visible built-in and custom fields and pick up to six extra header fields. The saved order also applies to the Leads worksheet and Excel."
         ]
       ],
       "screenshot": "field-manager-demo.jpg"

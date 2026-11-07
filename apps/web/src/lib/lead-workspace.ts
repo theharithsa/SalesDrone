@@ -36,11 +36,11 @@ export function filterLeadActivities(
   return items;
 }
 
-/** Preserve the requested tab when an inspector expands or reloads the same lead. */
+/** Preserve the requested tab when the page reloads the same lead. */
 export function tabAfterLeadLoad(
   tab: LeadWorkspaceTab,
   selectedId: string | undefined,
   loadedId: string,
 ): LeadWorkspaceTab {
-  return selectedId === loadedId ? tab : 'all';
+  return selectedId === loadedId ? tab : 'comments';
 }
