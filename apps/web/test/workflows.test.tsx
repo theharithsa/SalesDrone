@@ -1,3 +1,4 @@
+import { LeadForm } from '../src/components/Forms';
 import DashboardPage from '../src/features/DashboardPage';
 import LeadScore from '../src/components/LeadScore';
 import { describe, it, expect, vi } from "vitest";
@@ -138,7 +139,7 @@ describe("lead filters", () => {
     await user.click(screen.getByRole("button", { name: "Reset" }));
     expect(apply).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Apply filters" }));
-    expect(apply).toHaveBeenCalledWith({ ...applied, stage: "" });
+    expect(apply).toHaveBeenCalledWith({ ...applied, searchField: "all", stage: "" });
   });
 });
 describe("batch editor", () => {
@@ -422,4 +423,24 @@ describe('archive restore policy and confirmation',()=>{
   await user.click(screen.getByRole('button',{name:'Restore lead'}));await user.click(within(screen.getByRole('dialog')).getByRole('button',{name:'Confirm restore'}));
   await screen.findByText('No archived leads');expect(request).toHaveBeenCalledWith('/leads/'+lead.id+'/restore','POST',{expectedVersion:lead.version});expect(refreshed).toHaveBeenCalledTimes(1);
  });
+});
+
+describe('configured enquiry form order', () => {
+  it('places a custom field between built-in fields and saves a phone-only contact', async () => {
+    const user = userEvent.setup();
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    const { container } = render(<LeadForm config={{
+      ...config,
+      fieldOrder: ['phone', 'cf_product', 'name'],
+      customFields: [{ id: 'cf_product', label: 'Product', type: 'text', options: [], required: false, deleted: false }],
+    }} onSave={onSave} onCancel={vi.fn()} />);
+    const fields = [...container.querySelectorAll('.form-grid [name]')];
+    expect(fields.slice(0, 3).map((field) => field.getAttribute('name'))).toEqual(['phone', 'custom:cf_product', 'name']);
+    const source = screen.getByRole('combobox', { name: 'Enquiry source' });
+    expect(source).toHaveValue('');
+    await user.selectOptions(source, 'Website');
+    await user.type(screen.getByRole('textbox', { name: 'Phone number' }), '+12025550147');
+    await user.click(screen.getByRole('button', { name: 'Create enquiry' }));
+    await waitFor(() => expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ name: '', phone: '+12025550147', source: 'Website' }), expect.any(String)));
+  });
 });

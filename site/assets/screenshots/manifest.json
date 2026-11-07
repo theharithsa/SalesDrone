@@ -22,42 +22,42 @@
   {
     "file": "tablet-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "773bd27d18c85a4c65f0538780e3a45760b732ef336c7220b9beec551254b177",
-    "capturedAt": "2026-11-03T12:41:18.750706+00:00",
-    "viewport": "768 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application scale 100%",
+    "sha256": "97ead3ffe0664898538bbe8c355958603fd056cb437f21a9577c26ae4777d373",
+    "capturedAt": "2026-11-07T08:15:28.599751Z",
+    "viewport": "768 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "768 x 900",
-    "version": "2.8.1",
-    "review": "Fresh fictional Leads page capture; heading and local table scrolling verified, matching the handbook caption. No live data or server writes. Only blank transport padding trimmed. Browser viewport is not physical-device certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "laptop-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f6da044cb4d47fdca80e3d656af8e3427457e771d66a95f0ba960c036c13b807",
-    "capturedAt": "2026-11-03T12:41:18.749501+00:00",
-    "viewport": "1280 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application scale 100%",
+    "sha256": "e675d72738fbf2f3c1c7eec4720e4453ce2b13ee69a212010a588fe6ae74c2c6",
+    "capturedAt": "2026-11-07T08:15:28.261959Z",
+    "viewport": "1280 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1280 x 900",
-    "version": "2.8.1",
-    "review": "Fresh fictional Leads page capture; heading and local table scrolling verified, matching the handbook caption. No live data or server writes. Only blank transport padding trimmed. Browser viewport is not physical-device certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "b79a45fe773b498d4636c07f5523cd601cb43c24f713d7a95527d84b81cec23c",
-    "capturedAt": "2026-11-03T12:08:43.327872+00:00",
-    "viewport": "1440 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
+    "sha256": "d44a6987fd0b20e996711c11a6c82b8eaf8858b112cb6d5ac0ef5e9b9bba7088",
+    "capturedAt": "2026-11-07T08:15:27.954098Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "mobile-leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "33780803857396ae8fa4672e864358854787dfede2bc6b1d1b31f950bcc0cd02",
-    "capturedAt": "2026-11-03T12:08:43.328245+00:00",
-    "viewport": "390 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
+    "sha256": "d1f4943e58baaa1d9ee0f53069fe104eb61fc8bc7df695937e28aa4eb2352fe3",
+    "capturedAt": "2026-11-07T08:15:28.930090Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "batch-edit-mobile.jpg",
@@ -82,42 +82,42 @@
   {
     "file": "activity-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "85f6447a44a90bee7d7b2bdae46291e1b0b8ed9b5a649bc93e531004933592a9",
-    "capturedAt": "2026-10-26T16:39:40.711Z",
+    "sha256": "c9b62c1e438da86421490e192cbf90af36c3065571a91e3a057ce81ca070201e",
+    "capturedAt": "2026-11-07T08:15:31.397823Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "score-ring-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "85f6447a44a90bee7d7b2bdae46291e1b0b8ed9b5a649bc93e531004933592a9",
-    "capturedAt": "2026-10-26T16:39:41.074Z",
+    "sha256": "70e7e423555aad9586a492ca4b943afe4d3bf2be0d69beb9bdca9135d03144e3",
+    "capturedAt": "2026-11-07T08:15:32.881742Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "lead-files-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "7a1518c2706a06cfc15c5fef67695392c2e7c72986985e764bf201f9ea844a1f",
-    "capturedAt": "2026-10-26T16:39:41.888Z",
+    "sha256": "9e7d4d7f3f3b24b5fa03f0cde226a104d269e47e9da7a209411cc222806fb517",
+    "capturedAt": "2026-11-07T08:15:31.999284Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest Files tab, empty memory-only state; no bucket writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "lead-files-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "0daf0b5d967a39b73dff425787b3b6112c9363ebc1ca7e1c73dbc67933aaec9d",
-    "capturedAt": "2026-10-26T16:39:42.290Z",
+    "sha256": "0735c79ef70d1c798deed359444961f307b29e371196aa1f4a361a9925496ccf",
+    "capturedAt": "2026-11-07T08:15:32.313387Z",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest Files tab, empty memory-only state; no bucket writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "mobile-tasks-demo.jpg",
@@ -292,32 +292,32 @@
   {
     "file": "field-manager-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "9e6075796cb8532e559e777b3916c7a7db43c7ce21aab613e1239d529612c434",
-    "capturedAt": "2026-10-29T14:58:45.172501+00:00",
+    "sha256": "05df54d792d34a340fd8575292db5db87bfdd1f963b8e0d25a45a9612fb389b0",
+    "capturedAt": "2026-11-07T08:15:51.647770Z",
     "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 844",
-    "version": "2.2.0",
-    "review": "Visually and privacy reviewed. Real Settings components with fictional in-memory AdminReview state and one synthetic Product interest field; no live API calls, customer data or credentials. Browser viewport only; not physical-device or Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional in-memory Admin component preview. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "field-manager-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "01928cba101c4b13f8a17fc02285915af8ff1ae661bfd81ee2ed09bdc7322486",
-    "capturedAt": "2026-10-29T14:58:45.427589+00:00",
+    "sha256": "ea5df84291f2bb5d1d622e3d0b416bf676ac8ffc1579c9222d4832df0142842e",
+    "capturedAt": "2026-11-07T08:15:36.817031Z",
     "viewport": "1440 x 844 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 844",
-    "version": "2.2.0",
-    "review": "Visually and privacy reviewed. Real Settings components with fictional in-memory AdminReview state and one synthetic Product interest field; no live API calls, customer data or credentials. Browser viewport only; not physical-device or Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional in-memory Admin component preview. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "05664ab959e8f828deed71d6203cfd5f34b3f72dfad760c49de1b10dab7e68aa",
-    "capturedAt": "2026-11-02T11:10:13.546636+00:00",
-    "viewport": "411 x 891 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
-    "capturePixels": "411 x 891",
-    "version": "2.7.2",
-    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
+    "sha256": "b8628b652a9032fe69145a1ff991c2dd24634b54be12ca802b6cecb75f670761",
+    "capturedAt": "2026-11-07T08:15:32.579855Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "outreach-mobile-demo.jpg",
@@ -342,22 +342,12 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5ae8db96ef7b85a329b882128dc82804b251648542259e37fa6b4ed13954946e",
-    "capturedAt": "2026-11-02T11:10:13.579869+00:00",
-    "viewport": "1440 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
+    "sha256": "90cb35e81e160625c1971874e7a64a1efb4caee8d92f21e0b36b70057d6ea3e8",
+    "capturedAt": "2026-11-07T08:15:30.517170Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.7.2",
-    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
-  },
-  {
-    "file": "lead-overlay-demo.jpg",
-    "mode": "synthetic-demo",
-    "sha256": "585795926b9d04d092e88fb62211ea1e920f1aed76b820e6a65a395d1f890645",
-    "capturedAt": "2026-11-02T11:10:13.613319+00:00",
-    "viewport": "1440 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
-    "capturePixels": "1440 x 900",
-    "version": "2.7.2",
-    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "import-review-demo.jpg",
@@ -382,22 +372,22 @@
   {
     "file": "lead-filters-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "40e9a38d7d4ba77021df6bef7a8c0b5f41ec65d5169c6b540330e94a52b53899",
-    "capturedAt": "2026-11-03T12:08:43.326882+00:00",
-    "viewport": "1440 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
+    "sha256": "3ea01c67386b321e681c093054165f6c8fefec32a68f21b9e708e322ad088e74",
+    "capturedAt": "2026-11-07T08:15:30.166769Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "lead-filters-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "4a259607ff362b62b87fc8b8d56eab644fe95f38c1362c5cb9cb2de98e30acad",
-    "capturedAt": "2026-11-03T12:08:43.327384+00:00",
-    "viewport": "390 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
+    "sha256": "e5956f7c29a155ca0828dd23b8ad317270b9a60a1b9ebf90724a01d569959397",
+    "capturedAt": "2026-11-07T08:15:29.513927Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "popup-select-demo.jpg",
@@ -452,12 +442,12 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "5e71520ef776bbf686d4ca7d1012ddbde809745a471e941ccd99adbb46e5a5a2",
-    "capturedAt": "2026-10-31T10:10:43.724393+00:00",
+    "sha256": "78319b3bcae0b76e9ac563b07810e9f6ffac763b3b13cad38ea218905cc8c78e",
+    "capturedAt": "2026-11-07T08:15:30.816270Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.5.2",
-    "review": "Visually/privacy reviewed fictional guest application; configured chart labels follow the selected field. No live writes, customer records or credentials. Isolated Chromium viewport only; not device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "import-fields-demo.jpg",
@@ -552,22 +542,22 @@
   {
     "file": "lead-form-selects-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "e1444055882fbf56a968ddf0da6a79f1ca0e5b216a9c79ed29e089bba18c0543",
-    "capturedAt": "2026-10-31T12:29:21.081721+00:00",
-    "viewport": "1440 x 800 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 800",
-    "version": "2.5.3",
-    "review": "Visually/privacy reviewed. Synthetic Admin fixture only, no live API or writes. Stage analytics with hidden form stage or filled Country code/custom Product dialog. No customer data or credentials. Browser viewport only; native popup keyboard selection and physical-device/Safari behavior are not certified."
+    "sha256": "bbd22b20c9be941950e421d6846d2348026a58cbda21963b6a9482b54f7f09f5",
+    "capturedAt": "2026-11-07T08:15:35.598329Z",
+    "viewport": "1440 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 844",
+    "version": "2.10.0",
+    "review": "Reviewed fictional in-memory Admin component preview. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "lead-form-selects-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "3697d55fc93efedd551bc2a6eb6b65987d0582c6c46cc6f8029d41ca1744479e",
-    "capturedAt": "2026-10-31T12:29:21.081721+00:00",
-    "viewport": "390 x 800 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 800",
-    "version": "2.5.3",
-    "review": "Visually/privacy reviewed. Synthetic Admin fixture only, no live API or writes. Stage analytics with hidden form stage or filled Country code/custom Product dialog. No customer data or credentials. Browser viewport only; native popup keyboard selection and physical-device/Safari behavior are not certified."
+    "sha256": "d42786f012bc25f337e8c83c925ed74964aba4a64b9df61e4c25f0163befa4ee",
+    "capturedAt": "2026-11-07T08:15:38.050734Z",
+    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 844",
+    "version": "2.10.0",
+    "review": "Reviewed fictional in-memory Admin component preview. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "hygiene-demo.jpg",
@@ -632,41 +622,41 @@
   {
     "file": "lead-tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "7797879a11b0c6968939ab254177aba80d042e132335cd7dec69be4d5e2f5356",
-    "capturedAt": "2026-11-02T11:10:13.647174+00:00",
-    "viewport": "1440 x 900 CSS pixels; in-app Chromium, 70% zoom with compensated measured override",
+    "sha256": "5d7cf01ed90bbcd3168b500dac9494217166bad8f7c73784a5b2275f69da6eef",
+    "capturedAt": "2026-11-07T08:15:31.699244Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.7.2",
-    "review": "Visually and privacy reviewed fictional in-memory demo, real task/header components. Shared task names/responsibility and canonical monospace contact type. No customer data, credentials or production writes. Cropped only right/bottom capture transport padding. Browser review is not physical-device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "team-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2bc1a7dab8c1b565b969c76335a081ab5375bb3057061e30d89c1ecebdb5ed59",
-    "capturedAt": "2026-11-03T12:08:43.324920+00:00",
-    "viewport": "1440 x 1000 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
-    "capturePixels": "1440 x 1000",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "sha256": "1a9ccb9e2189f5b9fa428ff05a7a2cdf2b9e0c0eab33e3c50e56056f8e2491c8",
+    "capturedAt": "2026-11-07T08:15:33.490167Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "team-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1002b77dd014418b3d12e33d5f88c677cd195092338dbcdda8373bd5d0021dee",
-    "capturedAt": "2026-11-03T12:08:43.325572+00:00",
-    "viewport": "390 x 900 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
+    "sha256": "8b6cd52912720ebd99280c5a7ec5e6e5b42b13246e25ba43abd13a5d079dea7c",
+    "capturedAt": "2026-11-07T08:15:34.362766Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   },
   {
     "file": "team-activity-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "4866317c15836644836b4caade78e05ad42345b3a0f26499e85d63da88e78322",
-    "capturedAt": "2026-11-03T12:08:43.326179+00:00",
-    "viewport": "1440 x 1000 measured CSS pixels; in-app Chromium at 70% native browser zoom; application display scale 100%",
-    "capturePixels": "1440 x 1000",
-    "version": "2.8.0",
-    "review": "Fresh synthetic capture visually/privacy reviewed. Fictional guest people, leads and activity; no production data, credentials or server writes. Only blank browser-transport padding trimmed. Measured browser viewport is not physical-device/Safari certification."
+    "sha256": "76b3a3c5115f16d0f65814be988eae043ff18fae7bade658749b07e3bc8c1338",
+    "capturedAt": "2026-11-07T08:15:34.065353Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.10.0",
+    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
   }
 ]

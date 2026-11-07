@@ -111,7 +111,7 @@ membership, privacy or audit semantics.
 
 ## UI behavior
 
-Desktop uses a collapsible sidebar and lead inspector. Mobile uses bottom navigation,
+Desktop uses a collapsible sidebar and dedicated lead pages. Mobile uses bottom navigation,
 sheets and a Settings section selector. The notification bell opens a focus-managed
 overlay without navigation; selecting an item opens the corresponding authorized
 resource. Read/unread state persists privately. Escape, outside click and trigger

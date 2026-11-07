@@ -152,3 +152,6 @@ Files uses its own private transport. Review describes only loaded actionable st
 The Files inspector shortcut must survive asynchronous same-lead loading; opening a
 different lead starts All. Preserve keyboard tab wrapping and comment drafts.
 
+
+
+The real Assistant container renders independent grounded answer parts using the existing Material 3 conversation component and per-part result controls. Keep result state keyed by request plus part so one list/cursor cannot replace another. The development-only Admin preview accepts theme=dark and scale=125 for geometry review; its compound responses are fictional and excluded from production builds.

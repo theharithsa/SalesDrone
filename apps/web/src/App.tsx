@@ -1,3 +1,4 @@
+import LeadCardOrder from './components/LeadCardOrder';
 import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
 import AssigneeFilter, { type Assignee } from './components/AssigneeFilter';
 import { teamDemo, demoAssignees } from './lib/team-demo';
@@ -22,7 +23,7 @@ import {
   type LeadWorkspaceTab,
 } from './lib/lead-workspace';
 import Assignment from './components/Assignment';
-import LeadBlade from './components/LeadBlade';
+import LeadPage from './components/LeadPage';
 import LeadReportExport from './features/LeadReportExport';
 import NotificationsPage from './features/NotificationsPage';
 import { setRumIdentity, rumPage } from './lib/rum';
@@ -37,6 +38,8 @@ import {
   defaultFieldOptions,
   FieldOptions,
   withCurrent,
+  leadFieldValue,
+  orderedFields,
   labelFor,
 } from './lib/field-options';
 import LeadFilters from './components/LeadFilters';
@@ -81,7 +84,6 @@ import {
   ArrowRight,
   RefreshCw,
   FileText,
-  Paperclip,
   BookOpen,
   ShieldCheck,
   PanelLeftClose,
@@ -146,6 +148,15 @@ const nav = [
   { id: 'tasks', label: 'Tasks', icon: ListTodo },
   { id: 'notifications', label: 'Notifications', icon: Bell },
 ] as const;
+function demoTaskChange(task: Task, body: Record<string, any>): Task {
+  const { comment, expectedVersion, ...patch } = body;
+  const action = patch.state === 'Completed' ? 'Completed' : patch.state === 'Pending' ? 'Reopened' : 'Rescheduled';
+  return {
+    ...task, ...patch, version: expectedVersion + 1,
+    ...(comment ? {changeHistory: [...(task.changeHistory || []), {action, comment, createdAt: new Date().toISOString()}]} : {}),
+  };
+}
+
 export default function App() {
   const [session, setSession] = useState<Session | null>(null),
     [guest, setGuest] = useState(false),
@@ -162,7 +173,7 @@ export default function App() {
     [routeLeadId, setRouteLeadId] = useState(() =>
       leadPathId(window.location.pathname),
     ),
-    [leadTab, setLeadTab] = useState<LeadWorkspaceTab>('all'),
+    [leadTab, setLeadTab] = useState<LeadWorkspaceTab>('comments'),
     [timeline, setTimeline] = useState<Entity[]>([]),
     [timelineCursor, setTimelineCursor] = useState<string | null>(null),
     [modal, setModal] = useState<
@@ -175,13 +186,15 @@ export default function App() {
       | 'edittask'
       | 'deletetask'
       | 'reschedule'
+      | 'complete'
+      | 'reopen'
       | 'taskdetail'
       | 'correction'
       | null
     >(null),
     [search, setSearch] = useState(''),
     [searchDraft, setSearchDraft] = useState(''),
-    [searchField, setSearchField] = useState('name'),
+    [searchField, setSearchField] = useState('all'),
     [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]),
     [stage, setStage] = useState(''),
     [source, setSource] = useState(''),
@@ -204,7 +217,7 @@ export default function App() {
     ),
     [mutationBusy, setMutationBusy] = useState(false);
   const [focusedTask, setFocusedTask] = useState<Task | null>(null),
-    [leadTasks, setLeadTasks] = useState<Task[]>([]),
+    [taskProposedDue, setTaskProposedDue] = useState<string | undefined>(undefined),
     [selectedActivity, setSelectedActivity] = useState<Entity | null>(null);
   const [fieldOptions, setFieldOptions] =
     useState<FieldOptions>(defaultFieldOptions);
@@ -279,7 +292,6 @@ export default function App() {
       (c: string) => c === 'imports:read' || c === 'imports:write',
     );
   const generation = useRef(0);
-  const sharedTaskCompletionKeys = useRef(new Map<string,string>());
   const leadActionsRoot = useRef<HTMLDivElement>(null);
   const leadMoreTrigger = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -536,7 +548,11 @@ export default function App() {
       }
       let d = demoRef.current;
       if(method==='GET'&&path.startsWith('/lead-assignees'))return {items:demoAssignees,nextCursor:null};
-      if(method==='GET'&&path.startsWith('/team')){const parts=path.split('?')[0].split('/');return teamDemo(d.leads,Number(new URLSearchParams(path.split('?')[1]).get('days')||30),parts[3]);}
+      if (method === 'GET' && path.startsWith('/team')) {
+        const parts = path.split('?')[0].split('/');
+        const query = new URLSearchParams(path.split('?')[1]);
+        return teamDemo(d.leads, Number(query.get('days') || 30), parts[3], query.get('from'), query.get('to'));
+      }
       const parts = path.split('?')[0].split('/').filter(Boolean);
       const collection = parts[0],
         id = parts[1];
@@ -554,7 +570,7 @@ export default function App() {
         if(method==='PATCH') {
           const task=d.tasks.find(t=>t.id===parts[3]&&t.leadId===id);
           if(!task||task.version!==body.expectedVersion)throw Error('Task changed. Refresh and try again.');
-          const updated={...task,...body,version:task.version+1};
+          const updated=demoTaskChange(task,body);
           d={...d,tasks:d.tasks.map(t=>t.id===task.id?updated:t)};demoRef.current=d;setData(d);return updated;
         }
       }
@@ -645,8 +661,7 @@ export default function App() {
         return { items: (d as any)[collection] || [], nextCursor: null };
       }
       if (collection === 'leads' && method === 'POST' && !id) {
-        if (!body.phone && !body.email)
-          throw Error('Add a phone number or email.');
+        if (!body.phone) throw Error('Enter a phone number.');
         if (
           !body.allowDuplicate &&
           d.leads.some(
@@ -693,7 +708,7 @@ export default function App() {
               ]
             : d.activities,
         };
-      } else if (collection === 'leads' && method === 'PATCH' && !parts[2]) {
+      } else if (collection === 'leads' && method === 'PATCH' && (!parts[2] || parts[2] === 'assignment')) {
         result = {
           ...d.leads.find((l) => l.id === id),
           ...body,
@@ -755,11 +770,9 @@ export default function App() {
         };
         d = { ...d, tasks: [result, ...d.tasks] };
       } else if (collection === 'tasks' && method === 'PATCH') {
-        result = {
-          ...d.tasks.find((t) => t.id === id),
-          ...body,
-          version: body.expectedVersion + 1,
-        };
+        const task = d.tasks.find((t) => t.id === id);
+        if (!task || task.version !== body.expectedVersion) throw Error('Task changed. Refresh and try again.');
+        result = demoTaskChange(task, body);
         d = { ...d, tasks: d.tasks.map((t) => (t.id === id ? result : t)) };
       } else if (collection === 'tasks' && method === 'DELETE') {
         result = { ok: true };
@@ -870,7 +883,16 @@ export default function App() {
                     ? '/devices'
                     : null;
         if (endpoint) {
-          const result = await request(endpoint + '?' + params);
+          let result = await request(endpoint + '?' + params);
+          // Global search has a bounded server scan. Continue past sparse pages
+          // automatically while the same search and workspace remain current.
+          if (page === 'leads' && search && searchField === 'all') {
+            for (let pages = 1; pages < 10 && !result.items.length && result.nextCursor; pages++) {
+              if (g !== generation.current || epoch !== listEpoch.current) return;
+              params.set('cursor', result.nextCursor);
+              result = await request(endpoint + '?' + params);
+            }
+          }
           if (g !== generation.current || epoch !== listEpoch.current) return;
           const field = endpoint.slice(1) as keyof Data;
           setData((d) => ({
@@ -1018,10 +1040,9 @@ export default function App() {
     } else setError((fields.reason as Error).message);
     if (selected && selectedIdRef.current === selected.id)
       try {
-        const [l, a, t] = await Promise.all([
+        const [l, a] = await Promise.all([
           request('/leads/' + selected.id),
           request('/leads/' + selected.id + '/activities'),
-          request('/tasks?leadId=' + selected.id + '&state=Pending&limit=10'),
         ]);
         if (
           currentGeneration !== generation.current ||
@@ -1030,7 +1051,6 @@ export default function App() {
           return;
         setSelected(l);
         setTimeline(a.items);
-        setLeadTasks(t.items);
         setTimelineCursor(a.nextCursor);
       } catch (e) {
         if (
@@ -1042,7 +1062,6 @@ export default function App() {
             selectedIdRef.current = undefined;
             setSelected(null);
             setTimeline([]);
-            setLeadTasks([]);
           }
           setError((e as Error).message);
         }
@@ -1062,10 +1081,7 @@ export default function App() {
       if (running || document.visibilityState !== 'visible') return;
       running = true;
       try {
-        const [a, t] = await Promise.all([
-          request('/leads/' + id + '/activities?limit=100'),
-          request('/tasks?leadId=' + id + '&state=Pending&limit=10'),
-        ]);
+        const a = await request('/leads/' + id + '/activities?limit=100');
         if (
           alive &&
           epoch === detailEpoch.current &&
@@ -1075,7 +1091,6 @@ export default function App() {
             a.items.map((item: Entity) => [item.id, item]),
           );
           setTimeline((old) => old.map((item) => fresh.get(item.id) || item));
-          setLeadTasks(t.items);
         }
       } catch {
         /* The main refresh action reports connection failures. */
@@ -1088,7 +1103,7 @@ export default function App() {
       clearInterval(timer);
     };
   }, [demo, selected?.id, pendingAutomatic, request]);
-  async function chooseLead(lead: Lead, initialTab: LeadWorkspaceTab = 'all') {
+  async function chooseLead(lead: Lead, initialTab: LeadWorkspaceTab = 'comments') {
     if (!lead?.id) {
       setError('This lead is unavailable. Return to Leads and refresh.');
       return;
@@ -1102,21 +1117,18 @@ export default function App() {
     setLeadTab(initialTab);
     if (window.matchMedia('(max-width: 599.99px)').matches)
       window.scrollTo(0, 0);
-    setLeadTasks([]);
     setTimeline([]);
     setTimelineCursor(null);
     setDetailBusy(true);
     const current = generation.current;
     try {
-      const [l, a, t] = await Promise.all([
+      const [l, a] = await Promise.all([
         request('/leads/' + lead.id),
         request('/leads/' + lead.id + '/activities'),
-        request('/tasks?leadId=' + lead.id + '&state=Pending&limit=10'),
       ]);
       if (current === generation.current && epoch === detailEpoch.current) {
         setSelected(l);
         setTimeline(a.items);
-        setLeadTasks(t.items);
         setTimelineCursor(a.nextCursor);
         return l;
       }
@@ -1130,22 +1142,25 @@ export default function App() {
     }
   }
   async function inspectLead(lead: Lead) {
-    if (window.matchMedia('(max-width: 1000.99px)').matches && lead?.id) {
-      detailEpoch.current++;
-      setSelected(null);
-      setDetailBusy(true);
-      setPage('leads');
-      setLeadTab('all');
-      const nextPath = '/leads/' + encodeURIComponent(lead.id);
-      if (window.location.pathname !== nextPath)
-        window.history.pushState({}, '', nextPath);
-      setRouteLeadId(lead.id);
-      window.scrollTo(0, 0);
-      // Reopening the current route does not rerun its effect. Refresh it directly.
-      if (routeLeadId === lead.id) return chooseLead(lead);
+    if (!lead?.id) {
+      setError('This lead is unavailable. Return to Leads and refresh.');
       return;
     }
-    return chooseLead(lead);
+    if (routeLeadId === lead.id) return chooseLead(lead, leadTabRef.current);
+    detailEpoch.current++;
+    selectedIdRef.current = undefined;
+    setSelected(null);
+    setDetailBusy(true);
+    setPage('leads');
+    setLeadTab('comments');
+    window.history.pushState({}, '', '/leads/' + encodeURIComponent(lead.id));
+    setRouteLeadId(lead.id);
+    window.scrollTo(0, 0);
+  }
+  function changeTask(t: Task, action: 'reschedule' | 'complete' | 'reopen', dueAt?: string) {
+    setTaskProposedDue(dueAt);
+    setFocusedTask(t);
+    setModal(action);
   }
   async function openTask(t: Task) {
     setFocusedTask(t);
@@ -1155,7 +1170,13 @@ export default function App() {
     if (!active) return;
     const identityEpoch = generation.current;
     const params = new URLSearchParams(window.location.search);
-    const leadId = routeLeadId || params.get('lead');
+    const legacyLeadId = params.get('lead');
+    if (!routeLeadId && legacyLeadId && !legacyLeadId.includes('/')) {
+      window.history.replaceState({}, '', '/leads/' + encodeURIComponent(legacyLeadId));
+      setRouteLeadId(legacyLeadId);
+      return;
+    }
+    const leadId = routeLeadId;
     const id = params.get('task');
     if (leadId) {
       let alive = true;
@@ -1165,7 +1186,6 @@ export default function App() {
         selectedIdRef.current = undefined;
         setSelected(null);
         setTimeline([]);
-        setLeadTasks([]);
       }
       request('/leads/' + encodeURIComponent(leadId))
         .then((l) => {
@@ -1210,7 +1230,7 @@ export default function App() {
       const id = leadPathId(window.location.pathname);
       detailEpoch.current++;
       setRouteLeadId(id);
-      setLeadTab('all');
+      setLeadTab('comments');
       if (id) setPage('leads');
       else {
         detailEpoch.current++;
@@ -1234,17 +1254,6 @@ export default function App() {
       window.history.pushState({}, '', '/leads');
       setRouteLeadId(null);
     }
-  }
-  function expandLead() {
-    if (!selected) return;
-    window.history.pushState(
-      {},
-      '',
-      '/leads/' + encodeURIComponent(selected.id),
-    );
-    setRouteLeadId(selected.id);
-    setLeadTab('all');
-    window.scrollTo(0, 0);
   }
   function go(p: Page) {
     if (p === 'notifications') {
@@ -1303,20 +1312,14 @@ export default function App() {
       await signOut(auth);
     }
   }
-  async function taskChange(t: Task, patch: any) {
+  async function cancelTask(task: Task) {
     setMutationBusy(true);
     try {
-      const shared=t.sharedLeadContext && patch.state!=='Cancelled';
-      const operation=t.id+':'+t.version+':'+JSON.stringify(patch);
-      let key=sharedTaskCompletionKeys.current.get(operation);
-      if(shared&&!key){key=crypto.randomUUID();sharedTaskCompletionKeys.current.set(operation,key);}
-      await request(shared?'/leads/'+encodeURIComponent(t.sharedLeadContext)+'/tasks/'+encodeURIComponent(t.id):'/tasks/'+t.id,'PATCH',{expectedVersion:t.version,...patch},shared?key:undefined);
-      sharedTaskCompletionKeys.current.delete(operation);
-      notify(
-        patch.state === 'Completed'
-          ? 'Task completed. One less thing on your list.'
-          : 'Reminder updated.',
-      );
+      await request('/tasks/' + encodeURIComponent(task.id), 'PATCH', {
+        expectedVersion: task.version,
+        state: 'Cancelled',
+      });
+      notify('Task cancelled.');
       await refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -1352,9 +1355,8 @@ export default function App() {
           (!source || l.source === source) &&
           (!assignee || (assignee==='__unassigned__'?!l.assignedToUid:l.assignedToUid===assignee)) &&
           (!search ||
-            String(l[searchField] || '')
-              .toLowerCase()
-              .includes(search.toLowerCase())),
+            (searchField === 'all' ? [l.name, l.company, l.phone, l.email, l.source, l.location, l.zone, l.latestComment, l.comments, l.initialDiscussion, ...Object.values(l.customFields || {}), ...data.activities.filter((row) => row.leadId === l.id && row.type === 'note').map((row) => row.notes)] : [l[searchField]])
+              .some((value) => String(value ?? '').toLowerCase().includes(search.toLowerCase()))),
       )
     : data.leads;
   const visibleLeads = demo
@@ -1743,7 +1745,6 @@ export default function App() {
                 if (n.kind?.startsWith('lead_')) {
                   const lead = await request('/leads/' + n.leadId);
                   if (epoch !== generation.current || !isCurrent()) return;
-                  go('leads');
                   await inspectLead(lead);
                 } else {
                   const task = await request('/tasks/' + n.taskId);
@@ -1898,7 +1899,6 @@ export default function App() {
                   const epoch = generation.current;
                   const lead = await request('/leads/' + id);
                   if (epoch !== generation.current) return;
-                  go('leads');
                   await inspectLead(lead);
                 }}
                 onTask={async (id) => {
@@ -1913,11 +1913,7 @@ export default function App() {
               <div
                 className={
                   'leads-page ' +
-                  (routeLeadId
-                    ? 'lead-page-mode'
-                    : selected
-                      ? 'lead-overlay-mode'
-                      : '')
+                  (routeLeadId ? 'lead-page-mode' : '')
                 }
               >
                 <div className="page-body leads-main" hidden={!!routeLeadId}>
@@ -2015,6 +2011,7 @@ export default function App() {
                                 }}
                                 demo={demo}
                                 demoLeads={filteredDemoLeads}
+                                demoActivities={data.activities.map(({leadId, type, notes, createdAt}) => ({leadId, type, notes, createdAt}))}
                                 key={
                                   session?.member?.accessPolicyVersion || 'demo'
                                 }
@@ -2058,7 +2055,7 @@ export default function App() {
                       <Search size={17} />
                       <input
                         aria-label="Search leads"
-                        placeholder="Search leads…"
+                        placeholder="Search leads and comments…"
                         value={searchDraft}
                         onChange={(e) => {
                           setSearchDraft(e.target.value);
@@ -2115,6 +2112,7 @@ export default function App() {
                         value={searchField}
                         onChange={(e) => setSearchField(e.target.value)}
                       >
+                        <option value="all">All lead fields and comments</option>
                         <option value="name">
                           {labelFor(fieldOptions, 'name')}
                         </option>
@@ -2271,11 +2269,8 @@ export default function App() {
                     </button>
                   </div>
                 ) : null}
-                {selected ? (
-                  <LeadBlade
-                    fullPage={!!routeLeadId}
-                    onExpand={expandLead}
-                    onClose={closeLead}
+                {routeLeadId && selected ? (
+                  <LeadPage
                     toolbar={
                       <>
                         <button
@@ -2291,20 +2286,6 @@ export default function App() {
                             Back to leads
                           </span>
                         </button>
-                        {!routeLeadId && (
-                          <button
-                            className="button detail-files-button"
-                            aria-label="Files"
-                            title="Files"
-                            onClick={() => {
-                              expandLead();
-                              setLeadTab('files');
-                            }}
-                          >
-                            <Paperclip size={16} />
-                            <span className="lead-action-label">Files</span>
-                          </button>
-                        )}
                         {can('leads:edit') ? (
                           <button
                             className="button detail-edit-button"
@@ -2325,6 +2306,16 @@ export default function App() {
                           <LeadName name={selected.name} detail />
                         </h2>
                         <LeadHeaderContext company={selected.company} phone={selected.phone}/>
+                        <dl className="lead-header-extra">
+                          {orderedFields(fieldOptions, fieldOptions.headerFields || [], (key) => key)
+                            .filter((key) => !fieldOptions.hiddenFields.includes(key) && leadFieldValue(selected, key))
+                            .map((key) => (
+                              <div key={key}>
+                                <dt>{fieldOptions.customFields.find((field) => field.id === key)?.label || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined)}</dt>
+                                <dd>{leadFieldValue(selected, key)}</dd>
+                              </div>
+                            ))}
+                        </dl>
                         <div className="lead-header-score">
                           <span>Lead score</span>
                           <ScoreBadge
@@ -2343,61 +2334,29 @@ export default function App() {
                           <h3>
                             {labelFor(fieldOptions, 'stage', 'Sales stage')}
                           </h3>
-                          {can('leads:edit') ? (
-                            <select
-                              aria-label="Update lead stage"
-                              value={selected.stage}
-                              disabled={mutationBusy || detailBusy}
-                              onChange={(e) =>
-                                void leadAction({ stage: e.target.value })
-                              }
-                            >
-                              {withCurrent(
-                                fieldOptions.values.stage,
-                                selected.stage,
-                              ).map((s) => (
-                                <option key={s}>{s}</option>
-                              ))}
-                            </select>
-                          ) : (
-                            <Badge stage={selected.stage} />
-                          )}
+                          <Badge stage={selected.stage} />
                         </div>
-                        {admin ? (
-                          <Assignment
-                            key={selected.id}
-                            compact
-                            lead={selected}
-                            request={request}
-                            onSaved={refresh}
-                          />
-                        ) : (
-                          <div className="assignment-control">
-                            <h3>Assigned to</h3>
-                            <span>
-                              {selected.assignedToUid ===
-                                session?.identity.uid ||
-                              (demo && selected.assignedToUid === 'demo')
-                                ? 'You'
-                                : selected.assignedToUid
-                                  ? 'Assigned member'
-                                  : 'Unassigned'}
-                            </span>
-                          </div>
-                        )}
+                        <div className="lead-assignment-summary">
+                          <h3>Assigned to</h3>
+                          <span>
+                            {!selected.assignedToUid ? 'Unassigned' :
+                              assignees.find((member) => member.id === selected.assignedToUid)?.name ||
+                              (selected.assignedToUid === session?.identity.uid ? 'You' : 'Assigned member')}
+                          </span>
+                        </div>
                       </>
                     }
                   >
-                    <LeadJourney
+                    <LeadCardOrder key={session?.identity.uid || 'demo'} viewer={session?.identity.uid || 'demo'} cards={{
+                      journey: (<LeadJourney
                       key={'journey:' + selected.id}
                       lead={selected}
                       stages={fieldOptions.values.stage}
                       request={request}
                       timezone={timezone}
                       demo={!!demo}
-                    />
-                    <div className="lead-work-layout">
-                      <details className="lead-context" open={!compact}>
+                    />),
+                      details: (<details className="lead-context">
                         <summary>Details &amp; qualification</summary>
                         <LeadScore
                           key={selected.id}
@@ -2416,42 +2375,6 @@ export default function App() {
                         ) : selected.needsReview ? (
                           <div className="detail-warning">
                             Contact needs review before outreach.
-                          </div>
-                        ) : null}
-                        {!routeLeadId ? (
-                          <div className="detail-actions">
-                            {can('activities:write') ? (
-                              <button
-                                className="button primary"
-                                disabled={
-                                  selected.doNotContact ||
-                                  selected.needsReview ||
-                                  detailBusy
-                                }
-                                onClick={() => setModal('call')}
-                              >
-                                <Phone size={15} /> Log call
-                              </button>
-                            ) : null}
-                            {can('tasks:write') ? (
-                              <button
-                                className="button"
-                                onClick={() => setModal('task')}
-                                disabled={detailBusy}
-                              >
-                                <Bell size={15} /> Remind me
-                              </button>
-                            ) : null}
-                            {can('activities:write') ? (
-                              <button
-                                className="button"
-                                aria-label="Add comment"
-                                onClick={() => setModal('note')}
-                                disabled={detailBusy}
-                              >
-                                <FileText size={18} /> Add comment
-                              </button>
-                            ) : null}
                           </div>
                         ) : null}
                         <div className="detail-section contact-info">
@@ -2569,29 +2492,8 @@ export default function App() {
                             </details>
                           ) : null}
                         </div>
-                      </details>
-                      <div className="lead-activity-area">
-                        {!routeLeadId && leadTasks.length ? (
-                          <div className="detail-section">
-                            <h3>YOUR UPCOMING FOLLOW-UPS</h3>
-                            {leadTasks.map((t) => (
-                              <button
-                                className="lead-task"
-                                key={t.id}
-                                onClick={() => openTask(t)}
-                              >
-                                <Bell size={14} />
-                                <span>
-                                  {t.title}
-                                  <small>
-                                    {displayDate(t.dueAt, timezone)}
-                                  </small>
-                                </span>
-                                <ChevronRight size={14} />
-                              </button>
-                            ))}
-                          </div>
-                        ) : null}
+                      </details>),
+                      activity: (<div className="lead-activity-area">
                         {routeLeadId ? (
                           <>
                             <div className="lead-page-actions">
@@ -2940,11 +2842,14 @@ export default function App() {
                                 request={request}
                                 timezone={timezone}
                                 onOpen={openTask}
+                              onChange={changeTask}
                               />
                             </section>
                           ) : null}
                         </div>
-                      </div>
+                      </div>),
+                    }} />
+                    <div className="lead-detail-controls">
                       {can('leads:edit') ? (
                         <div className="detail-section detail-admin-actions">
                           {selected.needsReview ? (
@@ -3013,7 +2918,7 @@ export default function App() {
                         </div>
                       ) : null}
                     </div>
-                  </LeadBlade>
+                  </LeadPage>
                 ) : null}
               </div>
             ) : null}
@@ -3093,7 +2998,7 @@ export default function App() {
                         lead={t.lead || data.leads.find((l) => l.id === t.leadId)}
                         timezone={timezone}
                         onOpen={() => openTask(t)}
-                        onComplete={() => taskChange(t, { state: 'Completed' })}
+                        onComplete={() => changeTask(t, 'complete')}
                         onEdit={t.canEditOwn ? () => {
                           setFocusedTask(t);
                           setModal('edittask');
@@ -3102,16 +3007,10 @@ export default function App() {
                           setFocusedTask(t);
                           setModal('deletetask');
                         } : undefined}
-                        onCancel={t.canEditOwn ? () => taskChange(t, { state: 'Cancelled' }) : undefined}
+                        onCancel={t.canEditOwn ? () => cancelTask(t) : undefined}
                         onSnooze={(demo || t.canManage) ? () =>
-                          taskChange(t, {
-                            dueAt: new Date(Date.now() + 3600000).toISOString(),
-                          }) : undefined
-                        }
-                        onReschedule={(demo || t.canManage) ? () => {
-                          setFocusedTask(t);
-                          setModal('reschedule');
-                        } : undefined}
+                          changeTask(t, 'reschedule', new Date(Date.now() + 3600000).toISOString()) : undefined}
+                        onReschedule={(demo || t.canManage) ? () => changeTask(t, 'reschedule') : undefined}
                         canComplete={demo || !!t.canManage}
                         disabled={mutationBusy}
                       />
@@ -3167,7 +3066,6 @@ export default function App() {
                         navigationEpoch !== listEpoch.current
                       )
                         return;
-                      go('leads');
                       await inspectLead(lead);
                     } else {
                       const task = await request('/tasks/' + n.taskId);
@@ -3205,10 +3103,7 @@ export default function App() {
             ):null}
             {page === 'settings' || page === 'members' ? (
               <SettingsPage
-                onOpenLead={(lead) => {
-                  setPage('leads');
-                  void inspectLead(lead);
-                }}
+                onOpenLead={inspectLead}
                 onWorkspacePolicyChanged={() => void resolveSession()}
                 initialSection={page === 'members' ? 'access' : undefined}
                 session={session}
@@ -3300,6 +3195,7 @@ export default function App() {
         wide
       >
         {modal === 'lead' || modal === 'edit' ? (
+          <>
           <LeadForm
             config={fieldOptions}
             lead={modal === 'edit' ? selected || undefined : undefined}
@@ -3321,6 +3217,10 @@ export default function App() {
               await refresh();
             }}
           />
+          {modal === 'edit' && selected && can('assignments:write') ? (
+            <Assignment key={selected.id} lead={selected} request={request} onSaved={refresh} />
+          ) : null}
+          </>
         ) : null}
       </Modal>
       <Modal
@@ -3441,19 +3341,21 @@ export default function App() {
         ) : null}
       </Modal>
       <Modal
-        open={modal === 'reschedule'}
+        open={modal === 'reschedule' || modal === 'complete' || modal === 'reopen'}
         onClose={() => setModal(null)}
-        title="Find a better time."
+        title={modal === 'complete' ? 'Complete task' : modal === 'reopen' ? 'Reopen task' : 'Reschedule task'}
         description={focusedTask?.title}
       >
-        {focusedTask && modal === 'reschedule' ? (
+        {focusedTask && (modal === 'reschedule' || modal === 'complete' || modal === 'reopen') ? (
           <RescheduleForm
+            action={modal}
+            initialDueAt={taskProposedDue}
             task={focusedTask}
             onCancel={() => setModal(null)}
             onSave={async (d, key) => {
               await request(focusedTask.sharedLeadContext ? '/leads/'+encodeURIComponent(focusedTask.sharedLeadContext)+'/tasks/'+encodeURIComponent(focusedTask.id) : '/tasks/' + focusedTask.id, 'PATCH', d, key);
               await refresh();
-              notify('Reminder rescheduled.');
+              notify(modal === 'complete' ? 'Task completed.' : modal === 'reopen' ? 'Task reopened.' : 'Reminder rescheduled.');
             }}
           />
         ) : null}
@@ -3481,8 +3383,7 @@ export default function App() {
                   try {
                     const lead = await request('/leads/' + focusedTask.leadId);
                     setModal(null);
-                    go('leads');
-                    await chooseLead(lead);
+                    await inspectLead(lead);
                   } catch (e) {
                     setError((e as Error).message);
                   }
@@ -3505,33 +3406,24 @@ export default function App() {
                 </button>
               </div>
             ) : null}
-            {focusedTask.state === 'Pending' && (focusedTask.sharedLeadContext ? focusedTask.canManage && can('leads:edit') : can('tasks:write')) ? (
+            {focusedTask.changeHistory?.length ? (
+              <details>
+                <summary>Task change history</summary>
+                <ul>{[...focusedTask.changeHistory].reverse().map((entry, index) => (
+                  <li key={entry.createdAt + ':' + index}>
+                    <strong>{entry.action}</strong> · {displayDate(entry.createdAt, timezone)}
+                    <p>{entry.comment}</p>
+                  </li>
+                ))}</ul>
+              </details>
+            ) : null}
+            {(focusedTask.sharedLeadContext ? focusedTask.canManage && can('leads:edit') : (demo || focusedTask.recipientUid === session?.member?.uid) && can('tasks:write')) &&
+            (focusedTask.state === 'Pending' || focusedTask.state === 'Completed') ? (
               <div className="form-footer">
-                <button
-                  className="button"
-                  onClick={() => setModal('reschedule')}
-                >
-                  Reschedule
-                </button>
-                <button
-                  className="button primary"
-                  disabled={mutationBusy}
-                  onClick={async () => {
-                    if (!focusedTask.sharedLeadContext) { await taskChange(focusedTask,{state:'Completed'});setModal(null);return; }
-                    const operation=focusedTask.id+':'+focusedTask.version;
-                    let key=sharedTaskCompletionKeys.current.get(operation);
-                    if(!key){key=crypto.randomUUID();sharedTaskCompletionKeys.current.set(operation,key);}
-                    setMutationBusy(true);
-                    try {
-                      await request('/leads/'+encodeURIComponent(focusedTask.sharedLeadContext)+'/tasks/'+encodeURIComponent(focusedTask.id),'PATCH',{expectedVersion:focusedTask.version,state:'Completed'},key);
-                      sharedTaskCompletionKeys.current.delete(operation);
-                      await refresh();setModal(null);notify('Task completed.');
-                    } catch(e) {setError((e as Error).message);} finally {setMutationBusy(false);}
-
-                  }}
-                >
-                  Complete task <Check size={15} />
-                </button>
+                {focusedTask.state === 'Pending' ? <>
+                  <button className="button" onClick={() => changeTask(focusedTask, 'reschedule')}>Reschedule</button>
+                  <button className="button primary" onClick={() => changeTask(focusedTask, 'complete')}>Complete task</button>
+                </> : <button className="button primary" onClick={() => changeTask(focusedTask, 'reopen')}>Reopen task</button>}
               </div>
             ) : null}
           </div>

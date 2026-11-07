@@ -238,6 +238,11 @@
       ],
       "manualCases": [
         {
+          "id": "EXPORT-LEAD-COMMENTS",
+          "expected": "Export a filtered lead with several notes, including formula-like text. Match each note to the lead row and confirm that inaccessible leads and call history are excluded.",
+          "fixture": "synthetic records and current scoped access"
+        },
+        {
           "id": "IMPORTS-01",
           "expected": "Use a fictional first-sheet workbook; select multiple comment columns and inspect preview.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
@@ -404,6 +409,11 @@
         "functions/test/exact-filters.test.js"
       ],
       "manualCases": [
+        {
+          "id": "LEADS-FULL-PAGE",
+          "expected": "Open any lead at phone and desktop widths. Comments is active, stage and assignee are labels, and the Details card is movable through the grip and arrow controls.",
+          "fixture": "synthetic records and current scoped access"
+        },
         {
           "id": "LEADS-01",
           "expected": "Open a lead from its name/card; use Edit lead inside details and cancel without writes.",
@@ -624,6 +634,11 @@
       ],
       "manualCases": [
         {
+          "id": "TASK-TRANSITION-COMMENT",
+          "expected": "Reschedule and complete a pending task with required comments, then reopen it with a future due time. Check history, versioned delivery and unchanged responsibility.",
+          "fixture": "synthetic records and current scoped access"
+        },
+        {
           "id": "TASKS-REMINDERS-01",
           "expected": "Create/edit/snooze/complete/delete a synthetic private task in the emulator.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
@@ -700,6 +715,11 @@
         "functions/test/dashboard-grouping.test.js"
       ],
       "manualCases": [
+        {
+          "id": "SETTINGS-LEAD-LAYOUT",
+          "expected": "Reorder built-in and custom fields and select extra header fields. Verify the saved order in New/Edit Enquiry, the Leads worksheet and an Excel export.",
+          "fixture": "synthetic records and current scoped access"
+        },
         {
           "id": "WORKSPACE-SETTINGS-01",
           "expected": "Font/scale are draft until save; missing preferences default Standard/100.",
@@ -816,6 +836,11 @@
         "apps/web/test/team.test.tsx"
       ],
       "manualCases": [
+        {
+          "id": "TEAM-CUSTOM-WINDOW",
+          "expected": "Select Last 24 hours and a custom UTC range, checking dates, sparse pages and current membership scope.",
+          "fixture": "synthetic records and current scoped access"
+        },
         {
           "id": "TEAM-01",
           "expected": "Admin sees workload, authored comments/calls and current member stages; imported source text/private reminders are excluded. Period/member switches and sparse Load more remain correct.",

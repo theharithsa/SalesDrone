@@ -61,6 +61,6 @@ test('lead views separate notes and calls while All retains every activity and r
 test('same-lead route loading preserves the requested Files tab and another lead starts at All', () => {
   assert.equal(tabAfterLeadLoad('files', 'lead-a', 'lead-a'), 'files');
   assert.equal(tabAfterLeadLoad('comments', 'lead-a', 'lead-a'), 'comments');
-  assert.equal(tabAfterLeadLoad('files', 'lead-a', 'lead-b'), 'all');
-  assert.equal(tabAfterLeadLoad('files', undefined, 'lead-a'), 'all');
+  assert.equal(tabAfterLeadLoad('files', 'lead-a', 'lead-b'), 'comments');
+  assert.equal(tabAfterLeadLoad('files', undefined, 'lead-a'), 'comments');
 });

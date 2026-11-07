@@ -492,6 +492,7 @@ test('rescheduled/cancelled tasks and revoked users are not sent old reminders',
     .call('sdr', 'patch', '/tasks/' + t.id, {
       expectedVersion: 1,
       dueAt: '2026-10-25T11:00:00Z',
+      comment: 'Fictional scheduling reason',
     })
     .expect(200);
   let count = 0;

@@ -1,5 +1,5 @@
 import { worksheetColumns } from './lead-fields.ts';
-import { labelFor, type FieldOptions } from './field-options.ts';
+import { labelFor, orderedFields, type FieldOptions } from './field-options.ts';
 /** Presentation order only. Import/export mapping and stored field IDs stay stable. */
 export function leadTableColumns(
   config: FieldOptions,
@@ -17,8 +17,9 @@ export function leadTableColumns(
     'enquiryDate',
     'legacyStatus',
   ];
-  return [
-    ...order
+  const available = config.fieldOrder?.length ? [...new Set([...order, ...config.fieldOrder.filter((key) => labels.has(key) || ['company','email','initialDiscussion','countryCode'].includes(key))])] : order;
+  return orderedFields(config, [
+    ...available
       .filter((key) => !config.hiddenFields.includes(key))
       .map(
         (key) =>
@@ -36,5 +37,5 @@ export function leadTableColumns(
     ...config.customFields
       .filter((f) => !f.deleted)
       .map((f) => [f.id, f.label] as const),
-  ];
+  ], ([key]) => key);
 }

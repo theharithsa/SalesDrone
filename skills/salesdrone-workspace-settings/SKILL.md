@@ -86,8 +86,6 @@ Adjacent owners:
 - [salesdrone-people-permissions](../salesdrone-people-permissions/SKILL.md)
 - [salesdrone-api-integrations](../salesdrone-api-integrations/SKILL.md)
 
-Personal Appearance includes optional boolean bookMode (default false), independent of appearance. GET /me defaults it; PATCH merges omitted values so older clients retain the choice. Keep Google/App Check self-service boundaries and PAT denial. Settings saves include bookMode even when saving reminder preferences; apply the style only after successful save. Guest settings receive App guestPreferences so navigation does not reset the local style; live account preferences override local fallback. Verify book-mode.test.js, generated API Preferences and emulator persistence/isolation.
-
 Every saved net configuration change now carries auditEvents.settingsChanges and atomic settings.audit.committed outbox evidence through settings-audit.js, including /me preferences. Audit keys and hashed targets only, no values; default normalization avoids false changes on first saves. No-op/replayed/denied operations emit no change event. Preserve before-write snapshots, rollback, 40-key chunks and current self/Admin authorization. [Book mode](../salesdrone-book-mode/SKILL.md) owns reading typography; this skill retains primary /me ownership. See [audit guide](../../docs/SETTINGS-AUDIT.md).
 
 FontStyle is personal, defaults to standard and preserves older clients. Keep Book/branding exceptions and committed key-only audit behavior; see [font operations](references/operations.md).
@@ -96,10 +94,10 @@ FontStyle is personal, defaults to standard and preserves older clients. Keep Bo
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-## Known gaps
-
 These are tracked follow-ups, not implemented behavior: [#16](https://github.com/theharithsa/SalesDrone/issues/16), [#18](https://github.com/theharithsa/SalesDrone/issues/18). Check their current status before changing the contract.
 
 Cleanup blocks use fixed 503 LEAD_DATA_RESET copy and Retry-After:60; preserve the lock and provider-error privacy. See operations for import/schema and recovery checks.
 
 Lead research: [settings contract](references/research.md).
+
+Field order and lead header fields are workspace-wide Admin settings saved through the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports up to six additional visible fields. Existing layouts keep their defaults, and retired field IDs are removed from the saved arrangement. Settings audit events include static changed control keys only.

@@ -49,8 +49,6 @@ emulator case. Assistant component checks in apps/web/test/lead-assistant.test.t
 cover IME/Shift-Enter and literal evidence rendering. Include short-window/zoom history
 sheet geometry; document overflow alone cannot establish dialog bounds or focus.
 
-Ingress transport cases run in npm test and CI with individual receipts. Use real HTTP servers for pre-parser rejection, compression bounds, auth/binary preservation, upstream failures and timeouts; live Hosting probes are separate. Archives/correction/cancellation tests include Firestore restoration with no task resurrection.
-
 Managed ingress regression includes shared non-reserved health, safe HTML/status rejection and exact version/SHA checks. Keep local-container packaging proof distinct from live Cloud Run routing; all five denial/parser cases remain required before Hosting cutover.
 
 App Check token exchange uses the installed SDK origin https://content-firebaseappcheck.googleapis.com; allowing only firebaseappcheck.googleapis.com breaks browser attestation. Keep every SPA Hosting CSP and the HTML meta fallback aligned. Regress the exact SDK origin through tests/spa-security.test.ts and verify managed browser exchange separately; parser/401 checks do not certify login. Never disable enforcement to resolve a CSP denial.
@@ -65,3 +63,5 @@ Global shared-task and computed-font regressions: see [operations](references/op
 Team reporting guidance is in [operations](references/operations.md).
 
 Toolchain upgrades must preserve real leaf receipts, the lint baseline and accessibility/hooks checks. Follow [migration](../../docs/TOOLCHAIN-MIGRATION.md), including native compiler rejection and isolated lint regression cases. Auth emulators do not certify browser App Check. Journey coverage: observability-contract.test.js and rum-api.test.tsx; see [contract](../../docs/OBSERVABILITY-JOURNEYS.md).
+
+Lead workflow checks cover scoped historical comment search/export and custom Team windows in the Auth/Firestore suite. Synthetic browser cases verify the full lead route, Comments default, phone/source constraints and pointer and keyboard card order. Task regressions cover comment-required transitions, ownership, versioned delivery and literal workbook comment cells.

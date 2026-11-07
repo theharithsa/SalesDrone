@@ -53,7 +53,7 @@ export const LeadInput = z
     email: z.union([z.email().max(254), z.literal('')]).default(''),
     company: text().default(''),
     jobTitle: text().default(''),
-    source: text().default('Direct enquiry'),
+    source: text().default(''),
     location: text().default(''),
     zone: text().default(''),
     enquiryDate: z.union([date, z.literal('')]).default(''),
@@ -139,12 +139,14 @@ export const TaskPatch = z
     kind: z.enum(TASK_KINDS).optional(),
     dueAt: instant.optional(),
     timezone: text(100).optional(),
+    comment: text(500).min(1).optional(),
     state: z.enum(['Pending', 'Completed', 'Cancelled']).optional(),
   })
   .strict();
-export const SharedTaskPatch=z.union([
- z.object({expectedVersion:z.number().int().positive(),state:z.literal('Completed')}).strict(),
- z.object({expectedVersion:z.number().int().positive(),dueAt:instant,timezone:text(100).optional()}).strict()
+export const SharedTaskPatch = z.union([
+  TaskPatch.pick({ expectedVersion: true, comment: true }).extend({ state: z.literal('Completed') }).strict(),
+  TaskPatch.pick({ expectedVersion: true, dueAt: true, timezone: true, comment: true })
+    .extend({ dueAt: instant, state: z.literal('Pending').optional() }).strict(),
 ]);
 export const TaskDelete = z
   .object({ expectedVersion: z.number().int().positive() })

@@ -94,3 +94,5 @@ Import details and source baselines remain until explicit Admin deletion; #25 mu
 List mapped destinations as well as unmapped compatible fields. Block browser validation until a direct-column conflict or additional-field reuse collision is resolved; focus the relevant mapping/name control. Preserve unused source columns for field review or explicit exclusion. Recheck resolved target IDs against fresh configuration before any schema write; server STATUS_COLUMN protection stays authoritative.
 
 A 503 LEAD_DATA_RESET means cleanup is still active, not workbook validation failure. Return fixed public guidance and Retry-After:60; wait for Completed in Settings, then retry the same mapping/job. Preserve locking, idempotency and generic redaction for unrelated server errors. Cover blocked preview/no job and successful retry in lead-data-reset.test.js.
+
+The Excel export uses the workspace field order and can include a separate sheet of recorded notes for the authorized lead rows. Preserve imported note labels in the recorded note text and write text cells as literal strings. Import source mapping and validation are independent from the export layout.

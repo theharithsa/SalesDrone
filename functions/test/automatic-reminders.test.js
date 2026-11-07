@@ -308,6 +308,7 @@ test('correction cancels an untouched generated reminder; manual edits are prese
   await s
     .call('patch', '/tasks/' + act.autoReminder.taskId, {
       expectedVersion: 1,
+      comment: 'Fictional scheduling reason',
       dueAt: '2026-11-04T05:30:00Z',
     })
     .expect(200);

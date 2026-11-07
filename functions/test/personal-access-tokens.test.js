@@ -185,8 +185,15 @@ test('scoped CRUD shares validation, optimistic versions, replay protection and 
       title: 'Edited task',
     }).expect(200)
   ).body;
+  const completed = (
+    await call(token, 'patch', '/tasks/' + task.id, {
+      expectedVersion: edited.version,
+      state: 'Completed',
+    }).expect(200)
+  ).body;
+  assert.equal(completed.state, 'Completed');
   await call(token, 'delete', '/tasks/' + task.id, {
-    expectedVersion: edited.version,
+    expectedVersion: completed.version,
   }).expect(200);
   await call(token, 'get', '/tasks/' + task.id).expect(404);
   lead = (await call(token, 'get', '/leads/' + lead.id).expect(200)).body;

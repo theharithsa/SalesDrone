@@ -28,6 +28,8 @@ export function semanticChanges(domain,before,after) {
     const at=Date.parse(after.completedAt||after.cancelledAt||after.updatedAt),due=Date.parse(before.dueAt);
     return [event('tasks.'+({Completed:'completed',Cancelled:'cancelled',Pending:'reopened'}[after.state]),{'task.id':ref('tasks',after.id),'lead.id':ref('leads',after.leadId),'task.kind':TASK_KINDS.includes(after.kind)?after.kind:'other',...(Number.isFinite(at)&&Number.isFinite(due)?{overdue:at>due,'lateness.s':Math.max(0,(at-due)/1000)}:{})})];
   }
+  if(domain==='tasks'&&before?.state==='Pending'&&after.state==='Pending'&&before.dueAt!==after.dueAt)
+    return [event('tasks.rescheduled',{'task.id':ref('tasks',after.id),'lead.id':ref('leads',after.leadId),'task.kind':TASK_KINDS.includes(after.kind)?after.kind:'other'})];
   if(domain==='imports'&&before?.status!=='Completed'&&after.status==='Completed')return [event('imports.completed',{'import.id':ref('imports',after.id),...(Number.isFinite(Date.parse(after.completedAt))&&Number.isFinite(Date.parse(after.createdAt))?{'duration.s':Math.max(0,(Date.parse(after.completedAt)-Date.parse(after.createdAt))/1000)}:{}),...Object.fromEntries([['created','imported'],['updated','updated'],['unchanged','unchanged'],['skipped','skipped'],['total','total']].filter(([,key])=>Number.isFinite(after[key])).map(([key,source])=>['rows.'+key,after[source]]))})];
   return [];
 }

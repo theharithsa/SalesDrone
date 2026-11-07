@@ -253,6 +253,9 @@ try {
   assert.equal(await js('document.querySelectorAll(".task-row").length'), 0);
   await select('.task-status-picker select', 'Pending');
   await tap('.task-row .task-check');
+  await wait('!!document.querySelector("[role=dialog] textarea[name=comment]")');
+  assert.equal(await js('document.querySelector("[role=dialog] textarea[name=comment]").required'),true);
+  await js('document.querySelector("[role=dialog] textarea[name=comment]").value="Fictional task completed";document.querySelector("[role=dialog] form").requestSubmit()');
   await wait('document.querySelectorAll(".task-row").length===4');
   await select('.task-status-picker select', 'Completed');
   await wait('document.querySelectorAll(".task-row").length===1');

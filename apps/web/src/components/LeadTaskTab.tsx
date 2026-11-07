@@ -6,6 +6,7 @@ export default function LeadTaskTab({
   request,
   timezone,
   onOpen,
+  onChange,
   refreshKey,
 }: {
   leadId: string;
@@ -13,22 +14,14 @@ export default function LeadTaskTab({
   request: (p: string, method?:string, body?:any, key?:string) => Promise<any>;
   timezone: string;
   onOpen: (t: Task) => void;
+  onChange: (task: Task, action: 'complete' | 'reopen') => void;
 }) {
   const [items, setItems] = useState<Task[]>([]),
     [cursor, setCursor] = useState<string | null>(null),
     [state, setState] = useState(''),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
-  const epoch = useRef(0), completionKeys=useRef(new Map<string,string>());
-  const [changing,setChanging]=useState(false);
-  async function complete(task:Task){
-    const turn=epoch.current, keyId=task.id+':'+task.version;
-    let key=completionKeys.current.get(keyId);if(!key){key=crypto.randomUUID();completionKeys.current.set(keyId,key);}
-    setChanging(true);setError('');
-    try{await request('/leads/'+encodeURIComponent(leadId)+'/tasks/'+encodeURIComponent(task.id),'PATCH',{expectedVersion:task.version,state:'Completed'},key);if(turn===epoch.current){completionKeys.current.delete(keyId);setChanging(false);await load();}}
-    catch(e){if(turn===epoch.current)setError((e as Error).message);}
-    finally{if(turn===epoch.current)setChanging(false);}
-  }
+  const epoch = useRef(0);
   async function load(next?: string) {
     const current = ++epoch.current;
     setBusy(true);
@@ -49,7 +42,6 @@ export default function LeadTaskTab({
     }
   }
   useEffect(() => {
-    setChanging(false);
     setItems([]);
     setCursor(null);
     void load();
@@ -88,7 +80,7 @@ export default function LeadTaskTab({
             <span><strong>{t.title}</strong><small>{displayDate(t.dueAt,timezone)}</small><small>Responsible: {t.responsible?.name || 'Member unavailable'}</small></span>
             <span className="task-state">{t.state}</span>
           </button>
-          {t.state==='Pending'&&t.canManage ? <button className="button" disabled={changing||busy} onClick={()=>void complete(t)}>Complete task</button> : null}
+          {t.canManage && (t.state === 'Pending' || t.state === 'Completed') ? <button className="button" disabled={busy} onClick={() => onChange(t, t.state === 'Pending' ? 'complete' : 'reopen')}>{t.state === 'Pending' ? 'Complete task' : 'Reopen task'}</button> : null}
         </div>
       ))}
       {cursor ? (

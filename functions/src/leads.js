@@ -3,11 +3,11 @@ import { AppError, LeadInput, parse } from './contracts.js';
 import { hash, path, canReadLead } from './policy.js';
 export function normalizeLead(value) {
   const l = parse(LeadInput, value);
-  if (!l.needsReview && (!l.name || !l.enquiryDate))
+  if (!l.needsReview && !l.enquiryDate)
     throw new AppError(
       400,
       'REQUIRED',
-      'Name and enquiry date are required; incomplete imports must be marked for review',
+      'Enquiry date is required; incomplete imports must be marked for review',
     );
   const digits = l.phone.replace(/[^0-9]/g, '');
   if (l.phone && !/^\+?[0-9\s().-]+$/.test(l.phone))

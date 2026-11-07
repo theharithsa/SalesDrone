@@ -208,6 +208,7 @@ test('task editing changes title, type and timing with validation, owner checks 
     await s
       .call('patch', '/tasks/' + t.id, {
         expectedVersion: 1,
+        comment: 'Fictional scheduling reason',
         title: 'Prepare proposal',
         kind: 'outreach',
         dueAt: '2026-10-26T05:00:00Z',
@@ -443,7 +444,6 @@ test('invalid custom definitions and hiding essential fields are rejected', asyn
         { ...f, type: 'text' },
       ],
     },
-    { hiddenFields: ['name'] },
     { hiddenFields: ['enquiryDate'] },
     { hiddenFields: ['phone', 'email'] },
     { hiddenFields: ['unrecognized'] },
@@ -566,7 +566,7 @@ test('Admin may retire either contact field and other standard fields without er
   }).expect(200)).body;
   assert.deepEqual(saved.hiddenFields, hiddenFields);
   assert.equal((await s.call('get', '/leads/' + existing.id).expect(200)).body.phone, lead.phone);
-  await s.call('post', '/leads', {...lead, phone: '', email: 'synthetic@example.com'}).expect(200);
+  await s.call('post', '/leads', {...lead, phone: '', email: 'synthetic@example.com'}).expect(400);
   await s.call('post', '/leads', {...lead, phone: '', email: ''}).expect(400);
   await s.call('patch', '/field-options', {
     expectedVersion: saved.version, values: c.values, hiddenFields: ['email'],
@@ -613,12 +613,21 @@ test('shared lead task readers see responsibility while any current lead editor 
  await s.store.run(async tx=>{const m=await tx.get(path('members','other'));tx.set(path('members','other'),{...m,name:'Fictional task owner'});});
  const list=(await s.call('get','/leads/'+l.id+'/tasks',null,'viewer').expect(200)).body.items;
  assert.equal(list.length,1);assert.equal(list[0].responsible.name,'Fictional task owner');assert.equal(list[0].canManage,false);
- await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:1,state:'Completed'},'viewer').expect(403);
+ await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:1,state:'Completed',comment:'Finished the fictional follow-up'},'viewer').expect(403);
  await s.store.run(async tx=>{const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,capabilities:['leads:read','leads:edit'],version:2});});
- const updated=(await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:1,state:'Completed'},'viewer').expect(200)).body;
+ const updated=(await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:1,state:'Completed',comment:'Finished the fictional follow-up'},'viewer').expect(200)).body;
  assert.equal(updated.state,'Completed');assert.equal(updated.recipientUid,'other');
  await s.call('patch','/leads/'+l.id+'/tasks/'+t.id,{expectedVersion:2,dueAt:'2026-10-26T10:00:00Z'},'viewer').expect(409);
  await s.call('patch','/tasks/'+t.id,{expectedVersion:2,title:'Not the owner'},'admin').expect(403);
+ const url='/leads/'+l.id+'/tasks/'+t.id;
+ await s.call('patch',url,{expectedVersion:2,state:'Pending',dueAt:'2026-10-26T10:00:00Z'},'viewer').expect(400);
+ const reopened=(await s.call('patch',url,{expectedVersion:2,state:'Pending',dueAt:'2026-10-26T10:00:00Z',comment:'Additional fictional follow-up'},'viewer').expect(200)).body;
+ assert.equal(reopened.state,'Pending');
+ assert.equal(reopened.completedAt,null);
+ assert.equal(reopened.recipientUid,'other');
+ assert.deepEqual(reopened.changeHistory.map((item)=>item.action),['Completed','Reopened']);
+ assert.equal((await s.store.get(path('reminderDeliveries',t.id+'_1'))).status,'Cancelled');
+ assert.equal((await s.store.get(path('reminderDeliveries',t.id+'_3'))).status,'Pending');
  await s.store.run(async tx=>{const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,scope:'assigned',version:3});});
  await s.call('get','/leads/'+l.id+'/tasks',null,'viewer').expect(404);
 });
@@ -645,9 +654,25 @@ test('main accessible task view uses scoped sparse pages, preserves private defa
  await s.call('get','/tasks?cursor='+encodeURIComponent(first.nextCursor),null,'viewer').expect(400);
  await s.store.run(async tx=>{const m=await tx.get(path('members','viewer'));tx.set(path('members','viewer'),{...m,version:2,capabilities:['leads:read','leads:edit']});});
  const edit=(await s.call('get','/tasks?view=accessible',null,'viewer').expect(200)).body.items.find(t=>t.id==='c');assert.equal(edit.canManage,true);assert.equal(edit.canEditOwn,false);
- await s.call('patch','/leads/in/tasks/c',{expectedVersion:1,dueAt:'2026-10-26T10:00:00Z'},'viewer').expect(200);
+ await s.call('patch','/leads/in/tasks/c',{expectedVersion:1,dueAt:'2026-10-26T10:00:00Z',comment:'Moved fictional follow-up'},'viewer').expect(200);
  await s.call('patch','/tasks/c',{expectedVersion:2,title:'Cannot retitle'},'viewer').expect(403);
  await s.store.run(async tx=>{const l=await tx.get(path('leads','in'));tx.set(path('leads','in'),{...l,assignedToUid:'other'});});
  assert.equal((await s.call('get','/tasks?view=accessible',null,'viewer').expect(200)).body.items.some(t=>t.id==='c'),false);
  await s.call('get','/tasks?view=unknown',null,'viewer').expect(400);
+});
+
+test('manual enquiry accepts a missing name and requires phone; field layout is versioned', async () => {
+  const s = await setup();
+  const created = (await s.call('post', '/leads', {...lead, name: '', source: ''}).expect(200)).body;
+  assert.equal(created.name, '');
+  assert.equal(created.source, '');
+  const rejected = await s.call('post', '/leads', {...lead, phone: '', email: 'fictional@example.com'}).expect(400);
+  assert.equal(rejected.body.error.code, 'PHONE_REQUIRED');
+  const config = (await s.call('get', '/field-options').expect(200)).body;
+  const change = { expectedVersion: config.version, values: config.values, fieldOrder: ['phone', 'name', 'company'], headerFields: ['location'] };
+  await s.call('patch', '/field-options', {...change, headerFields: ['not_a_field']}).expect(400);
+  const updated = (await s.call('patch', '/field-options', change).expect(200)).body;
+  assert.deepEqual(updated.fieldOrder, change.fieldOrder);
+  assert.deepEqual(updated.headerFields, change.headerFields);
+  await s.call('patch', '/field-options', change).expect(409);
 });

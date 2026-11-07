@@ -89,3 +89,5 @@ Cloud Run salesdrone-ingress reuses the bounded OTel foundation with platform re
 For source-owned detector policies, offline notebook, weighted rates, `_bucket` p95 and read-only validation, follow [the operator handoff](../../observability/README.md). Never auto-install tenant resources; missing data must not resolve an incident. Regress obs:check and observability-pack.test.ts; use verify-monitoring-inputs.mjs only for labelled synthetic transport proof.
 
 For complete per-suite case receipts, reconciliation and export validation, read [the CI evidence runbook](references/operations.md).
+
+Task reschedules join completion/reopen semantic events with fixed action names and allowlisted facts. Task comments and lead-note search/export values stay out of telemetry. Field layout audits use static control keys. Read-only Team ranges and global search reuse route metrics, traces and logs.

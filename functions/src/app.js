@@ -1,5 +1,6 @@
+import { leadComments, matchesLeadText, matchesCommentText } from './lead-text.js';
 import { errorType as telemetryErrorType } from './observability-contract.js';
-import {teamSnapshot, teamDays, teamSince, assertTeamAccess, authoredActivity} from './team.js';
+import {teamSnapshot, teamWindow, assertTeamAccess, authoredActivity} from './team.js';
 import {businessRecord} from './business-records.js';
 import { ResearchSettingsPatch, RESEARCH_SETTINGS_PATH, readResearchSettings, validateResearchSettings } from './lead-research-settings.js';
 import { researchMember, researchAccessKey } from './lead-research-access.js';
@@ -269,7 +270,7 @@ export function createApp({
             'Lead data is being cleared. Try again after cleanup finishes.',
           );
         const allowed =
-          url === '/team' ? ['days'] : url === '/team/members/:uid/activities' ? ['days','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
+          url === '/team' ? ['days','from','to'] : url === '/team/members/:uid/activities' ? ['days','from','to','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
             ? ['ids']
             : url === '/leads'
               ? [
@@ -605,7 +606,9 @@ export function createApp({
     }
     if (req.query.source)
       filters.push({ field: 'source', op: 'equals', value: req.query.source });
-    if (req.query.search) {
+    const globalSearch = req.query.field === 'all' ? parse(z.string().trim().max(200).optional(), req.query.search) : undefined;
+    const searchConfig = globalSearch ? await readFieldOptions(store) : null;
+    if (req.query.search && req.query.field !== 'all') {
       const field = req.query.field || 'name';
       if (
         !['name', 'company', 'phone', 'email', 'location', 'zone'].includes(
@@ -634,6 +637,8 @@ export function createApp({
         req.exportBinding || null,
         base,
         filters,
+        globalSearch || null,
+        searchConfig?.version || null,
       ]),
     );
     let after = req.query.cursor
@@ -654,13 +659,14 @@ export function createApp({
     const items = [];
     let scanned = 0,
       hasMore = false;
-    while (items.length < n && scanned < 1000) {
+    const scanLimit = globalSearch ? 100 : 1000;
+    while (items.length < n && scanned < scanLimit) {
       const page = await store.query(path('leads'), {
         filters: indexed,
         order,
         direction: 'desc',
         after,
-        limit: Math.min(100, 1000 - scanned),
+        limit: Math.min(100, scanLimit - scanned),
       });
       if (!page.length) {
         hasMore = false;
@@ -670,7 +676,9 @@ export function createApp({
         const lead = page[i];
         scanned++;
         after = [exact.size ? documentKey(lead) : lead.id];
-        if (matchesLead(lead, filters)) items.push(lead);
+        if (matchesLead(lead, filters) &&
+            (!globalSearch || matchesLeadText(lead, globalSearch, searchConfig) ||
+              matchesCommentText(await leadComments(store, lead.id), globalSearch))) items.push(lead);
         if (items.length === n) {
           hasMore = i < page.length - 1 || page.length === 100;
           break;
@@ -680,10 +688,21 @@ export function createApp({
       hasMore = page.length === 100;
       if (!hasMore) break;
     }
+    if (globalSearch && !req.exportBinding) {
+      const current = await requireMember(store, req.identity, 'leads:read');
+      if (!sameAccess(current, req.member))
+        throw new AppError(409, 'SCOPE_CHANGED', 'Workspace access changed; restart your search');
+      const records = await store.getAll(items.map((lead) => path('leads', lead.id)));
+      return {
+        items: records.filter((lead) => lead && !lead.archived && canReadLead(current, lead)),
+        nextCursor: hasMore ? encodeCursor(after, binding) : null,
+        scanLimited: scanned >= scanLimit && hasMore,
+      };
+    }
     return {
       items,
       nextCursor: hasMore ? encodeCursor(after, binding) : null,
-      scanLimited: scanned >= 1000 && hasMore,
+      scanLimited: scanned >= scanLimit && hasMore,
     };
   }
   route('get', '/personal-access-tokens', 'members:write', async (req) => {
@@ -828,17 +847,22 @@ export function createApp({
     });
     const config = await readFieldOptions(store);
     const selected = exportColumns(input.columns, config);
-    const { columns, filters, cursor, limit, ...rest } = input;
+    const { columns, filters, cursor, limit, includeComments, ...rest } = input;
     const result = await filteredLeads({
       ...req,
       query: {
         ...rest,
         filters: JSON.stringify(filters),
-        limit: String(limit),
+        limit: String(includeComments ? Math.min(limit, 10) : limit),
         ...(cursor ? { cursor } : {}),
       },
-      exportBinding: ['report', settings.version, config.version, columns],
+      exportBinding: ['report', settings.version, config.version, columns, includeComments],
     });
+    const comments = includeComments ? (await Promise.all(result.items.map(async (lead) =>
+      (await leadComments(store, lead.id)).map((row) => ({
+        leadId: lead.id, leadName: lead.name || '', createdAt: row.createdAt, text: row.notes,
+      })),
+    ))).flat() : undefined;
     const current = await requireMember(store, req.identity, 'leads:read');
     const latest = await readWorkspaceSettings(store);
     if (!latest.exportsEnabled)
@@ -853,6 +877,11 @@ export function createApp({
         'SCOPE_CHANGED',
         'Workspace access changed; restart your report',
       );
+    if (includeComments || input.field === 'all') {
+      const sources = await store.getAll(result.items.map((lead) => path('leads', lead.id)));
+      if (sources.some((lead) => !lead || lead.archived || !canReadLead(current, lead)))
+        throw new AppError(409, 'SCOPE_CHANGED', 'Lead access changed; restart your report');
+    }
     const id = uid();
     await store.run(async (tx) => {
       const member = await requireMember(tx, req.identity, 'leads:read');
@@ -868,6 +897,7 @@ export function createApp({
         action: 'POST /leads/export',
         rowCount: result.items.length,
         columnCount: columns.length,
+        ...(comments ? { commentCount: comments.length } : {}),
         createdAt: now(),
         requestId: req.requestId,
       });
@@ -875,6 +905,7 @@ export function createApp({
     return {
       columns: selected,
       rows: exportRows(result.items, selected),
+      ...(comments ? { comments } : {}),
       nextCursor: result.nextCursor,
       scanLimited: result.scanLimited,
       policyVersion: settings.version,
@@ -1114,6 +1145,7 @@ export function createApp({
   route('get', '/leads', 'leads:read', (req) => {
     if (
       req.query.filters !== undefined ||
+      req.query.field === 'all' ||
       ['location', 'zone'].includes(req.query.field)
     )
       return filteredLeads(req);
@@ -1166,6 +1198,7 @@ export function createApp({
   });
   route('post', '/leads', 'leads:create', (req) => {
     const input = parse(LeadInput, req.body);
+    if (req.identity.personalAccess && req.body.source === undefined) input.source = 'Direct enquiry';
     if (req.member.role !== 'Admin' && input.needsReview)
       throw new AppError(
         403,
@@ -1177,6 +1210,8 @@ export function createApp({
       'leads:create',
       async (tx, m) => {
         const options = await readFieldOptions(tx);
+        if (!req.identity.personalAccess && !input.needsReview && !input.phone)
+          throw new AppError(400, 'PHONE_REQUIRED', 'Enter a phone number');
         assertFieldOption(options, 'stage', input.stage);
         validateCustomValues(options, input.customFields);
         const id = uid();
@@ -1914,9 +1949,12 @@ export function createApp({
       },
     );
   });
-  route('get', '/tasks/:id', 'leads:read', (req) =>
-    readTask(store, req.member, req.params.id),
-  );
+  route('get', '/tasks/:id', 'leads:read', async (req) => {
+    const task = await readTask(store, req.member, req.params.id);
+    return task.leadId && !req.identity.personalAccess
+      ? { ...task, sharedLeadContext: task.leadId, canManage: req.member.capabilities.includes('leads:edit') }
+      : task;
+  });
   route('post', '/tasks', 'tasks:write', (req) => {
     const input = parse(TaskInput, req.body);
     return mutate(
@@ -1942,17 +1980,40 @@ export function createApp({
       { idempotent: true },
     );
   });
-  async function applyTaskChange(tx, m, old, input) {
+  async function applyTaskChange(tx, m, old, input, enforceWorkflow = true) {
       assertVersion(old, input.expectedVersion);
       if (input.timezone) validateTimezone(input.timezone);
-      const { expectedVersion, ...fields } = input;
+      const { expectedVersion, comment, ...fields } = input;
+      const timestamp = now();
+      const reopening = old.state === 'Completed' && input.state === 'Pending';
+      const completing = old.state === 'Pending' && input.state === 'Completed';
+      const rescheduling = old.state === 'Pending' && input.dueAt !== undefined &&
+        Date.parse(input.dueAt) !== Date.parse(old.dueAt);
+      const action = reopening ? 'Reopened' : completing ? 'Completed' : rescheduling ? 'Rescheduled' : null;
+      if (enforceWorkflow && input.state && input.state !== old.state && !action &&
+          !(old.state === 'Pending' && input.state === 'Cancelled'))
+        throw new AppError(409, 'TASK_FINISHED', 'Only completed tasks can be reopened');
+      if (enforceWorkflow && old.state !== 'Pending' && !reopening && input.dueAt &&
+          Date.parse(input.dueAt) !== Date.parse(old.dueAt))
+        throw new AppError(409, 'TASK_FINISHED', 'Reopen the task before rescheduling it');
+      if (enforceWorkflow && action && !comment)
+        throw new AppError(400, 'TASK_COMMENT', 'Add a comment explaining the task change');
+      if (enforceWorkflow && reopening && (!input.dueAt || Date.parse(input.dueAt) <= Date.parse(timestamp)))
+        throw new AppError(400, 'TASK_DUE', 'Choose a future date and time to reopen the task');
+      const previousDelivery = old.state === 'Pending'
+        ? await tx.get(path('reminderDeliveries', old.id + '_' + old.version))
+        : null;
       const t = {
         ...old,
         ...fields,
+        updatedAt: timestamp,
+        ...(action && comment ? {
+          changeHistory: [...(old.changeHistory || []).slice(-99), { action, comment, actorUid: m.uid, createdAt: timestamp }],
+        } : {}),
         version: old.version + 1,
         completedAt:
-          input.state === 'Completed'
-            ? now()
+          (enforceWorkflow ? completing : input.state === 'Completed')
+            ? timestamp
             : input.state === 'Pending'
               ? null
               : old.completedAt,
@@ -1960,6 +2021,11 @@ export function createApp({
       if (t.state === 'Pending') {
         if (t.leadId) {
           const l = await leadAccess(tx, m, t.leadId);
+          if (enforceWorkflow && reopening) {
+            const recipient = await effectiveMember(tx, await tx.get(path('members', t.recipientUid)));
+            if (l.archived || !recipient?.active || !canReadLead(recipient, l))
+              throw new AppError(409, 'TASK_CONTEXT', 'Create a new task for a member who can access this lead');
+          }
           if (
             t.kind === 'outreach' &&
             (l.doNotContact || l.archived || l.needsReview)
@@ -1968,6 +2034,8 @@ export function createApp({
         }
         queueTask(tx, t);
       } else tx.set(path('tasks', t.id), t);
+      if (previousDelivery?.status === 'Pending')
+        tx.set(path('reminderDeliveries', previousDelivery.id), { ...previousDelivery, status: 'Cancelled' });
       if (old.sourceActivityId) {
         const a = await tx.get(path('activities', old.sourceActivityId));
         if (a?.autoReminder?.taskId === old.id)
@@ -1991,7 +2059,7 @@ export function createApp({
     return mutate(req, 'tasks:write', async (tx,m) => {
       const old=await readTask(tx,m,req.params.id);
       if(old.recipientUid!==m.uid)throw new AppError(403,'TASK_OWNER','Only the recipient can update this task');
-      return applyTaskChange(tx,m,old,input);
+      return applyTaskChange(tx,m,old,input,!req.identity.personalAccess);
     });
   });
   route('get','/leads/:id/tasks','leads:read',async req=>{
@@ -2011,7 +2079,10 @@ export function createApp({
       await leadAccess(tx,m,req.params.id);
       const old=await readTask(tx,m,req.params.taskId);
       if(old.leadId!==req.params.id)throw new AppError(404,'NOT_FOUND','Task not found');
-      if(old.state!=='Pending')throw new AppError(409,'TASK_FINISHED','Only pending tasks can be completed or rescheduled.');
+      if (old.state !== 'Pending' && !(old.state === 'Completed' && input.state === 'Pending'))
+        throw new AppError(409, 'TASK_FINISHED', 'Only pending tasks can be completed or rescheduled');
+      if (input.state === 'Pending' && old.state !== 'Completed')
+        throw new AppError(409, 'TASK_STATE', 'Only completed tasks can be reopened');
       return applyTaskChange(tx,m,old,input);
     },{idempotent:true});
   });
@@ -2064,15 +2135,15 @@ export function createApp({
   });
   route('get','/team','leads:read',async req=>{
     await assertTeamAccess(store,req.identity,req.member);
-    const result=await teamSnapshot(store,req.member,now(),teamDays(req.query.days));
+    const result=await teamSnapshot(store,req.member,now(),teamWindow(now(),req.query));
     await assertTeamAccess(store,req.identity,req.member);
     return result;
   });
   route('get','/team/members/:uid/activities','leads:read',async req=>{
     await assertTeamAccess(store,req.identity,req.member);
-    const days=teamDays(req.query.days),since=teamSince(now(),days);
+    const {days,since,until,explicit}=teamWindow(now(),req.query);
     if(!await store.get(path('members',req.params.uid)))throw new AppError(404,'NOT_FOUND','Member not found');
-    const result=await list(req,'activities',[['actorUid','==',req.params.uid],['createdAt','>=',since]],undefined,'createdAt','desc','team:'+days);
+    const result=await list(req,'activities',[['actorUid','==',req.params.uid],['createdAt','>=',since],...(explicit?[['createdAt','<=',until]]:[])],undefined,'createdAt','desc','team:'+days);
     const ids=[...new Set(result.items.map(a=>a.leadId).filter(Boolean))];
     const records=await store.getAll(ids.map(id=>path('leads',id)),['id','name','assignedToUid']);
     const leads=new Map(ids.map((id,i)=>[id,records[i]]));

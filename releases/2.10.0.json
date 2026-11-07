@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "version": "2.10.0",
+  "summary": "Full-page lead workflows, scoped comment search and Excel export, task transition comments and Team date ranges.",
+  "modules": [
+    "salesdrone-leads",
+    "salesdrone-tasks-reminders",
+    "salesdrone-team",
+    "salesdrone-workspace-settings",
+    "salesdrone-imports",
+    "salesdrone-interface",
+    "salesdrone-observability",
+    "salesdrone-testing",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/API.md",
+    "docs/observability.md",
+    "docs/DESIGN-SYSTEM.md"
+  ],
+  "settingsSections": [
+    "fields"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Add field order, header fields, global lead search, scoped comment exports, task transition history and explicit Team date ranges.",
+    "contractVersion": "1.30.0",
+    "permissions": "Keep assigned lead scope, current task ownership or lead-edit permission, Admin layout settings, export permission and existing PAT behavior.",
+    "tests": [
+      "functions/test/reports-policy.test.js",
+      "functions/test/custom-fields-and-tasks.test.js",
+      "functions/test/personal-access-tokens.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse safe route instrumentation and bounded identifiers. Comment text, search terms and exported rows stay out of telemetry.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Reuse safe route instrumentation and bounded identifiers. Comment text, search terms and exported rows stay out of telemetry.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Reuse safe route instrumentation and bounded identifiers. Comment text, search terms and exported rows stay out of telemetry.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Emit a committed task reschedule event and retain safe completion, reopen and settings audit events.",
+      "tests": [
+        "functions/test/semantic-telemetry.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Retain versioned release and HTTP or OTLP verification for deployment signals.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review synthetic full-page lead navigation and tab default, card reordering by touch and keyboard, task comments, enquiry validation, Team ranges and workbook contents. Chromium review spans phone to wide desktop. Verify custom-host version and API after deployment.",
+  "milestone": {
+    "number": 31,
+    "title": "v2.10.0 — Lead and task workflows",
+    "issues": [
+      146
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "leads-demo.jpg",
+    "laptop-demo.jpg",
+    "tablet-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "lead-filters-mobile-demo.jpg",
+    "lead-filters-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "journey-demo.jpg",
+    "activity-demo.jpg",
+    "lead-tasks-demo.jpg",
+    "lead-files-demo.jpg",
+    "lead-files-mobile.jpg",
+    "lead-header-mobile-demo.jpg",
+    "score-ring-demo.jpg",
+    "team-demo.jpg",
+    "team-activity-demo.jpg",
+    "team-mobile-demo.jpg",
+    "lead-form-selects-demo.jpg",
+    "field-manager-demo.jpg",
+    "lead-form-selects-mobile-demo.jpg",
+    "field-manager-mobile-demo.jpg"
+  ]
+}

@@ -121,3 +121,6 @@ CI case suites are functions, ingress, web, components and emulator. Node/Vitest
 ## Monitoring policy and histogram verification
 
 Monitoring policy regressions: observability-pack.test.ts exercises minimum volumes, strict threshold boundaries, unknown/idle input, debounce and recovery. observability.test.js independently decodes delta histogram bucket counts; obs:verify only reads tenant queries, and no-data is distinct from health or installed-alert validation.
+
+
+Ingress transport cases run in npm test and CI with individual receipts. Use real HTTP servers for pre-parser rejection, compression bounds, auth/binary preservation, upstream failures and timeouts; live Hosting probes are separate. Archives/correction/cancellation tests include Firestore restoration with no task resurrection.

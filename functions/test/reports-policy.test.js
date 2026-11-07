@@ -271,3 +271,33 @@ test('personal tokens require the separate export scope and cannot edit workspac
     .send({ expectedVersion: 1, exportsEnabled: false, assignedOnly: false })
     .expect(403);
 });
+
+test('global search finds earlier comments and formatted phones, and exports only scoped notes', async () => {
+  const s = await setup();
+  await s.store.run(async (tx) => {
+    for (const [id, leadId, type, notes] of [
+      ['earlier', 'lead000', 'note', '=Historic fictional sample'],
+      ['recent', 'lead000', 'note', 'Recent update'],
+      ['private', 'lead124', 'note', 'Historic fictional sample'],
+      ['call', 'lead000', 'call', 'Excluded call outcome'],
+    ]) {
+      tx.set(path('activities', id), { id, leadId, type, notes, createdAt: '2026-11-01T10:00:00.000Z' });
+    }
+  });
+  const query = '/leads?field=all&search=historic+fictional';
+  const first = (await s.call('rep', 'get', query).expect(200)).body;
+  assert.equal(first.items.length, 0);
+  assert.ok(first.nextCursor);
+  const second = (await s.call('rep', 'get', query + '&cursor=' + encodeURIComponent(first.nextCursor)).expect(200)).body;
+  assert.deepEqual(second.items.map((lead) => lead.id), ['lead000']);
+  assert.equal((await s.call('rep', 'get', '/leads?field=all&search=001-234').expect(200)).body.items.length, 30);
+  await s.call('rep', 'get', '/leads?field=all&search=other&cursor=' + encodeURIComponent(first.nextCursor)).expect(400);
+  const input = { columns: ['phone', 'name'], search: 'historic fictional', field: 'all', includeComments: true };
+  const page = (await s.call('rep', 'post', '/leads/export', input).expect(200)).body;
+  const exported = (await s.call('rep', 'post', '/leads/export', { ...input, cursor: page.nextCursor }).expect(200)).body;
+  assert.deepEqual(exported.columns.map((c) => c.key), ['phone', 'name']);
+  assert.deepEqual(exported.comments.map((row) => [row.leadId, row.text]), [
+    ['lead000', '=Historic fictional sample'],
+    ['lead000', 'Recent update'],
+  ]);
+});

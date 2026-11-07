@@ -33,18 +33,15 @@ export type CustomField = {
   required: boolean;
   deleted: boolean;
 };
-export function fieldRemovalReason(config: FieldOptions, key: string) {
-  if (key === 'name' || key === 'enquiryDate')
+export function fieldRemovalReason(_config: FieldOptions, key: string) {
+  if (key === 'phone' || key === 'enquiryDate')
     return 'Required to save an enquiry';
-  if (
-    (key === 'phone' && config.hiddenFields.includes('email')) ||
-    (key === 'email' && config.hiddenFields.includes('phone'))
-  )
-    return 'Keep at least one contact field: Phone number or Email';
   return '';
 }
 export type FieldOptions = {
   labels?: Record<string, string>;
+  fieldOrder?: string[];
+  headerFields?: string[];
   customFields: CustomField[];
   hiddenFields: string[];
   version: number;
@@ -77,4 +74,14 @@ export function labelFor(config: FieldOptions, key: string, fallback?: string) {
     fallback ||
     key
   );
+}
+
+export function orderedFields<T>(config: FieldOptions, fields: T[], key: (field: T) => string): T[] {
+  const order = new Map((config.fieldOrder || []).map((id, i) => [id, i]));
+  return fields.slice().sort((a, b) => (order.get(key(a)) ?? Infinity) - (order.get(key(b)) ?? Infinity));
+}
+
+export function leadFieldValue(lead: Record<string, any>, key: string): string {
+  const value = key.startsWith('cf_') ? lead.customFields?.[key] : lead[key];
+  return typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value ?? '');
 }

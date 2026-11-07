@@ -91,3 +91,8 @@ Stage and assignment in the lead header use uniform label/control geometry. Remo
 
 Archive uses strict ArchiveInput with a positive integer expectedVersion, returning VALIDATION (400) before state changes for malformed/missing bodies. DUPLICATE create errors contain no lead IDs for any caller; the contact index still enforces uniqueness. Authorized duplicate candidates remain available through reviewed Imports. Archive cancellation/restoration policy is unchanged; see open #4/#15/#21. Archive history now records its transition in the same transaction.
 
+
+
+Exact match is additive for source, stage and configured custom dropdowns. It compares raw case/spacing/Unicode and pushes every equality into the query; Equals remains normalized and unchanged. Residual conditions and signed filter/member-bound pagination still apply. Verify exact-filters.test.js, emulator.integration.js and desktop/mobile component interactions.
+
+Stage edits validate against current Admin-configured values, including custom replacements. Never hardcode STAGES in edit controls. Refresh workspace reloads field options with identity-generation protection so another session’s changes can be picked up.

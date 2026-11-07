@@ -4,11 +4,13 @@ export const demoAssignees = [
   { id: "demo-maya", name: "Maya Chen", active: true },
   { id: "demo-jordan", name: "Jordan Lee", active: true },
 ];
-export function teamDemo(leads: Lead[], days: number, member?: string) {
+export function teamDemo(leads: Lead[], days: number, member?: string, from?: string | null, to?: string | null) {
   const now = new Date().toISOString(),
-    since = new Date(
+    since = from || new Date(
       Date.parse(now.slice(0, 10) + "T00:00:00Z") - (days - 1) * 86400000,
     ).toISOString();
+  const until = to || now;
+  const bucketCount = from && to ? 1 + Math.round((Date.parse(to.slice(0, 10)) - Date.parse(from.slice(0, 10))) / 86400000) : days;
   const activities = Array.from({ length: 18 }, (_, i) => ({
     id: "fictional-team-" + i,
     type: i % 3 ? "note" : "call",
@@ -24,7 +26,7 @@ export function teamDemo(leads: Lead[], days: number, member?: string) {
       id: leads[i % leads.length]?.id || "demo-0",
       name: leads[i % leads.length]?.name || "Sample lead",
     },
-  })).filter((a) => a.createdAt >= since);
+  })).filter((a) => a.createdAt >= since && a.createdAt <= until);
   if (member)
     return {
       items: activities.filter((a) => a.actorUid === member),
@@ -55,13 +57,14 @@ export function teamDemo(leads: Lead[], days: number, member?: string) {
   return {
     generatedAt: now,
     since,
-    days,
+    days: bucketCount,
+    until,
     timezone: "UTC",
     members,
     unassigned: leads.filter((l) => !l.assignedToUid).length,
     unlistedAssigned: 0,
-    trend: Array.from({ length: days }, (_, i) => {
-      const date = new Date(Date.now() - (days - 1 - i) * 86400000)
+    trend: Array.from({ length: bucketCount }, (_, i) => {
+      const date = new Date(Date.parse(since.slice(0, 10)) + i * 86400000)
           .toISOString()
           .slice(0, 10),
         today = activities.filter((a) => a.createdAt.slice(0, 10) === date);

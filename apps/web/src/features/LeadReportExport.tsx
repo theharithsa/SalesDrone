@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Download } from 'lucide-react';
 import { Modal, ErrorMessage } from '../components/UI';
 import reportColumns from '../../../../functions/src/report-columns.json';
-import { FieldOptions, labelFor } from '../lib/field-options';
+import type { ReportComment } from './report-workbook';
+import { FieldOptions, labelFor, orderedFields } from '../lib/field-options';
 import { ColumnFilter } from '../lib/lead-fields';
 import { Lead } from '../lib/types';
 type Criteria = {
@@ -18,6 +19,7 @@ export default function LeadReportExport({
   config,
   criteria,
   demoLeads,
+  demoActivities = [],
   demo = false,
   menuTriggerRef,
 }: {
@@ -25,6 +27,7 @@ export default function LeadReportExport({
   config: FieldOptions;
   criteria: Criteria;
   demoLeads: Lead[];
+  demoActivities?: { leadId: string; type: string; notes?: string; createdAt: string }[];
   demo?: boolean;
   menuTriggerRef?: { current: HTMLElement | null };
 }) {
@@ -37,14 +40,14 @@ export default function LeadReportExport({
     },
   };
 
-  const choices = [
+  const choices = orderedFields(config, [
     ...Object.entries(reportColumns)
       .filter(([key]) => !config.hiddenFields.includes(key))
       .map(([key, label]) => ({ key, label: labelFor(config, key, label) })),
     ...config.customFields
       .filter((f) => !f.deleted)
       .map((f) => ({ key: f.id, label: f.label })),
-  ];
+  ], (column) => column.key);
   const [open, setOpen] = useState(false),
     [selected, setSelected] = useState<string[]>([
       'name',
@@ -55,6 +58,7 @@ export default function LeadReportExport({
       'stage',
       'latestComment',
     ]),
+    [includeComments, setIncludeComments] = useState(true),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [progress, setProgress] = useState('');
@@ -79,10 +83,11 @@ export default function LeadReportExport({
     setError('');
     setProgress('Preparing matching leads…');
     try {
-      const keys = selected.filter((k) => choices.some((c) => c.key === k));
+      const keys = choices.filter((c) => selected.includes(c.key)).map((c) => c.key);
       if (!keys.length) throw Error('Select at least one column.');
       let columns = choices.filter((c) => keys.includes(c.key));
-      columns = keys.map((key) => columns.find((c) => c.key === key)!);
+      const comments: ReportComment[] = [];
+      let commentChars = 0;
       const rows: { id: string; values: (string | number)[] }[] = [];
       let cursor: string | undefined;
       let policyVersion: number | undefined;
@@ -109,11 +114,17 @@ export default function LeadReportExport({
                   : String(v ?? '');
               }),
             });
+          if (includeComments) for (const row of demoActivities) {
+            const lead = demoLeads.find((item) => item.id === row.leadId);
+            if (lead && row.type === 'note' && row.notes)
+              comments.push({ leadId: lead.id, leadName: lead.name, createdAt: row.createdAt, text: row.notes });
+          }
           cursor = undefined;
         } else {
           const page = await request('/leads/export', 'POST', {
             ...criteria,
             columns: keys,
+            includeComments,
             ...(cursor ? { cursor } : {}),
           });
           if (run !== epoch.current) return;
@@ -129,6 +140,15 @@ export default function LeadReportExport({
               throw Error('The lead list changed during export. Start again.');
             seen.add(row.id);
             rows.push(row);
+          }
+          if (includeComments) {
+            if (!Array.isArray(page.comments)) throw Error('Comment export is unavailable. Refresh and try again.');
+            for (const item of page.comments as ReportComment[]) {
+              commentChars += item.text.length;
+              if (comments.length >= 10000 || commentChars > 10000000)
+                throw Error('Too many comments for one workbook. Narrow the filters.');
+              comments.push(item);
+            }
           }
           cursor = page.nextCursor || undefined;
           if (cursor) {
@@ -156,6 +176,7 @@ export default function LeadReportExport({
         w.postMessage({
           columns,
           rows,
+          ...(includeComments ? { comments } : {}),
           context: [
             'SalesDrone by AvinyaTech',
             demo ? 'Synthetic demo data' : 'Authorized filtered lead report',
@@ -163,7 +184,7 @@ export default function LeadReportExport({
             `Rows: ${rows.length}`,
             `Applied filters: ${JSON.stringify(criteria)}`,
             'Rows reflect permissions and current values while pages were read; this is not a transactional snapshot.',
-            'Conversation history is not included; comment columns contain stored lead summaries.',
+            includeComments ? 'Lead comments contains recorded notes linked to rows on the Leads sheet.' : 'Recorded comments were excluded.',
           ],
         });
       });
@@ -254,6 +275,10 @@ export default function LeadReportExport({
             ))}
           </div>
         </fieldset>
+        <label className="check">
+          <input type="checkbox" checked={includeComments} disabled={busy} onChange={(e) => setIncludeComments(e.target.checked)} />
+          Include recorded comments on a separate sheet
+        </label>
         <p role="status">{progress}</p>
         <div className="form-actions">
           <button className="button" onClick={close}>
