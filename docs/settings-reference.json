@@ -570,9 +570,9 @@
     },
     {
       "sectionId": "about",
-      "scope": "Read only",
-      "api": "No dedicated settings mutation",
-      "permissions": "Available in demo and live app",
+      "scope": "Product information and a browser-local usage analytics preference",
+      "api": "No workspace API; the browser stores the preference locally",
+      "permissions": "Product information is public to demo and live members; analytics control is available to live members on production hosts",
       "controls": [
         {
           "id": "aboutStory",
@@ -581,6 +581,14 @@
           "description": "Explains why SalesDrone exists and shows the application version.",
           "effect": "Refresh after a release to load current assets. This page does not change business data.",
           "example": ""
+        },
+        {
+          "id": "usageAnalytics",
+          "label": "Allow usage analytics",
+          "default": "Off",
+          "description": "Opt in to Google Analytics counts for workspace page categories. This choice is specific to the browser and site address.",
+          "effect": "Takes effect immediately. Turning it off stops new page measurements. Only fixed page categories are shared; lead details, search terms and account identifiers are excluded. Demo and emulator use is excluded.",
+          "example": "A visit to any individual lead counts under Leads."
         }
       ]
     },

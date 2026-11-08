@@ -16,6 +16,28 @@ are marked by actual evidence; configuration alone is not end-to-end verificatio
 | Admin | Verified capability → member/settings transaction | Committed versioned domain changes | Invite address, custom-field values |
 | Release | GitHub main → verified Firebase deployment | Version/commit/run/build/deployment event | Credentials, source data, customer screenshots |
 
+## Google Analytics workspace usage
+
+The Firebase-linked GA4 web stream is `G-7LZPTNS713`. Live members can opt in
+under **Settings → About SalesDrone → Allow usage analytics**. The preference is
+off by default, stored locally per browser and site origin, and reflected across
+open tabs. Signed-out, demo, development and emulator sessions do not load the tag.
+
+Hosting permits the Google tag only in the same-origin usage analytics document.
+Its URL and page-view parameters are built from a fixed workspace-page list.
+Lead detail views roll up to Leads. The document receives no referrer, search text,
+route identifiers, business records or user identity. The tag denies advertising
+consent and uses a browser analytics cookie with a 90-day expiry. Opting out
+removes the frame and stops new measurement. This browser-only path adds no
+Firestore operations, workspace API calls or scheduled jobs.
+
+For verification, check the live Hosting frame headers and use an opted-in
+browser with no customer interactions. Inspect a GA4 page_view request for the
+expected stream, fixed page URL and successful response, then verify the event
+in GA4 Realtime with a property-authorized account. Delivery and report visibility
+are separate. Dynatrace remains the source for application health, traces and
+committed business activity.
+
 ## Identity and transport
 
 Tenant ingestion: https://indiacs.live.dynatrace.com (not an apps UI host).

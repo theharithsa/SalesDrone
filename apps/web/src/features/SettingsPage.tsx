@@ -1,3 +1,4 @@
+import { UsageAnalyticsPreference } from '../components/UsageAnalytics';
 import LeadFieldLayoutSettings from '../components/LeadFieldLayoutSettings';
 import ResearchSettings from './ResearchSettings';
 import LeadDataSettings from './LeadDataSettings';
@@ -694,6 +695,7 @@ export default function SettingsPage({
           ) : null}
           {section === 'about' ? (
             <section className="about-salesdrone">
+              {!demo && session?.mode === 'live' ? <UsageAnalyticsPreference /> : null}
               <article className="panel about-story">
                 <span className="eyebrow">WHY WE BUILT SALESDRONE</span>
                 <h3>Built for the people growing a small business.</h3>

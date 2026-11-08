@@ -32,3 +32,25 @@ test('SPA CSP keeps required Firebase and Dynatrace origins without permitting i
 test('API rewrite uses fixed ingress after static documentation; all existing domain Functions remain configured',()=>{
  assert.equal(config.hosting.rewrites[0].source,'/api/docs');assert.equal(config.hosting.rewrites[1].run.serviceId,'salesdrone-ingress');assert.equal(config.hosting.rewrites[1].run.region,'asia-south1');assert.equal(config.functions[0].codebase,'salesdrone');
 });
+
+test('Google Tag is permitted only in the first-party analytics frame', () => {
+ const tag = 'https://www.googletagmanager.com';
+ const frame = config.hosting.headers.find((entry: any) => entry.source === '/usage-analytics.html');
+ const headers = Object.fromEntries(frame.headers.map((header: any) => [header.key, header.value]));
+ assert.equal(headers['Content-Security-Policy'], "frame-ancestors 'self'");
+ assert.equal(headers['X-Frame-Options'], 'SAMEORIGIN');
+
+ const document = new JSDOM(readFileSync('apps/web/usage-analytics.html', 'utf8')).window.document;
+ const policy = parsePolicy(document.querySelector('meta[http-equiv="Content-Security-Policy"]')!.getAttribute('content')!);
+ assert.deepEqual([...policy['script-src']], ["'self'", tag]);
+ assert.ok(policy['connect-src'].has('https://*.google-analytics.com'));
+ assert.equal(document.querySelector('meta[name="referrer"]')?.getAttribute('content'), 'no-referrer');
+
+ for (const entry of config.hosting.headers) {
+   for (const header of entry.headers) {
+     if (header.key === 'Content-Security-Policy') {
+       assert.ok(!parsePolicy(header.value)['script-src']?.has(tag));
+     }
+   }
+ }
+});

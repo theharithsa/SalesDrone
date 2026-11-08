@@ -495,9 +495,16 @@
         "apps/web/test/rum-api.test.tsx",
         "tests/rum-property-contract.test.ts",
         "functions/test/semantic-telemetry.test.js",
-        "tests/observability-pack.test.ts"
+        "tests/observability-pack.test.ts",
+        "apps/web/test/usage-analytics.test.tsx",
+        "tests/spa-security.test.ts"
       ],
       "manualCases": [
+        {
+          "id": "OBS-GA-01",
+          "expected": "Opt-in loads the GA4 tag only in the first-party measurement document and emits one fixed page category per navigation. Revocation and demo mode suppress new collection. Verify browser delivery separately from GA4 Realtime visibility.",
+          "fixture": "Isolated browser with synthetic navigation; no customer records or account identifiers"
+        },
         {
           "id": "OBSERVABILITY-01",
           "expected": "Committed settings changes produce key-only outbox/audit evidence; rollback/no-op emits none.",

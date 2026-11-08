@@ -20,7 +20,6 @@ export const firebaseConfig = {
   storageBucket: 'sales-drone-avinya.firebasestorage.app',
   messagingSenderId: '510928501696',
   appId: '1:510928501696:web:51489a43bc139eab55e625',
-  measurementId: 'G-7LZPTNS713',
 };
 export const emulator = import.meta.env.VITE_USE_EMULATORS === 'true';
 const app = initializeApp(
