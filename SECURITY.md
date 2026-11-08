@@ -54,6 +54,10 @@ masking and action names are normalized. RUM still observes standard browser
 performance/network/session data according to the tenant's privacy/consent settings.
 The integration does not silently change tenant-wide consent, IP or retention policy. By explicit application-owner choice, approved live members’ verified emails are used only as browser RUM user tags; backend telemetry remains pseudonymous. Demo users stay anonymous, and sign-out/account switching ends the former RUM session.
 
+Google Analytics is opt-in on each browser. Only fixed workspace page categories
+are reported. The tag loads in a separate first-party document with no referrer,
+record URLs, account IDs or customer content, and advertising consent is denied.
+
 Business events describe committed server transactions and use a durable outbox.
 Ingestion is at least once; deduplicate by event.id before aggregating. Application
 data deletion does not automatically erase already exported telemetry. Define tenant

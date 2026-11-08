@@ -17,6 +17,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.10.5] - 2026-11-09
+
+### Changed
+- Connect the existing GA4 stream to opt-in workspace page counts. Control sharing under Settings → About SalesDrone. Lead records, search terms and account details are excluded.
+
 ## [Unreleased]
 
 ## [2.10.4] - 2026-11-08

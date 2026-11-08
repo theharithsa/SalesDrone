@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.10.4**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.10.5**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -695,11 +695,11 @@ Refresh status checks progress immediately. A failure retains the pause and curs
 
 ## About → About SalesDrone
 
-**Who/where:** Read only.
+**Who/where:** Product information and a browser-local usage analytics preference.
 
-**API:** No dedicated settings mutation.
+**API:** No workspace API; the browser stores the preference locally.
 
-**Permissions:** Available in demo and live app.
+**Permissions:** Product information is public to demo and live members; analytics control is available to live members on production hosts.
 
 ### Story, mission and version
 
@@ -708,6 +708,16 @@ Refresh status checks progress immediately. A failure retains the pause and curs
 Explains why SalesDrone exists and shows the application version.
 
 Refresh after a release to load current assets. This page does not change business data.
+
+### Allow usage analytics
+
+**Default:** Off.
+
+Opt in to Google Analytics counts for workspace page categories. This choice is specific to the browser and site address.
+
+Takes effect immediately. Turning it off stops new page measurements. Only fixed page categories are shared; lead details, search terms and account identifiers are excluded. Demo and emulator use is excluded.
+
+**Example:** A visit to any individual lead counts under Leads.
 
 ## Settings audit trail
 

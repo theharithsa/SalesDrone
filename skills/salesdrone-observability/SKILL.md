@@ -91,3 +91,5 @@ For source-owned detector policies, offline notebook, weighted rates, `_bucket` 
 For complete per-suite case receipts, reconciliation and export validation, read [the CI evidence runbook](references/operations.md).
 
 Task reschedules join completion/reopen semantic events with fixed action names and allowlisted facts. Task comments and lead-note search/export values stay out of telemetry. Field layout audits use static control keys. Read-only Team ranges and global search reuse route metrics, traces and logs.
+
+GA4 is opt-in and page-scoped. Verify transport and Realtime separately. See [observability](../../docs/observability.md).

@@ -1,3 +1,4 @@
+import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
@@ -1567,6 +1568,7 @@ export default function App() {
     <div
       className={'app-shell ' + (sidebarCollapsed ? 'sidebar-collapsed' : '')}
     >
+      {!demo && session?.mode === 'live' ? <UsageAnalyticsFrame page={page} /> : null}
       <a className="skip-link" href="#main-content">
         Skip to workspace
       </a>
