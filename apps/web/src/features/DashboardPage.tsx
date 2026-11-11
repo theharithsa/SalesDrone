@@ -22,12 +22,12 @@ import {
 import { Entity, Lead, Task, displayDate } from '../lib/types';
 import { ErrorMessage, Loading } from '../components/UI';
 const colors = [
-  '#2284d2',
-  '#34a5c0',
-  '#65b5d7',
-  '#8ec5e7',
-  '#abc9de',
-  '#6a829a',
+  'var(--chart-one, #2284d2)',
+  'var(--chart-two, #34a5c0)',
+  'var(--chart-three, #65b5d7)',
+  'var(--chart-four, #8ec5e7)',
+  'var(--chart-five, #abc9de)',
+  'var(--chart-six, #6a829a)',
 ];
 const sum = (values: any[]) => values.reduce((n, v) => n + v.value, 0);
 function Ring({ data, label }: { data: any[]; label: string }) {
@@ -64,7 +64,7 @@ function Ring({ data, label }: { data: any[]; label: string }) {
                 fill="none"
                 stroke={
                   d.label.includes('risk')
-                    ? '#ce7568'
+                    ? 'var(--chart-warning, #ce7568)'
                     : colors[i % colors.length]
                 }
                 strokeWidth="21"
@@ -90,7 +90,7 @@ function Ring({ data, label }: { data: any[]; label: string }) {
             <i
               style={{
                 background: d.label.includes('risk')
-                  ? '#ce7568'
+                  ? 'var(--chart-warning, #ce7568)'
                   : colors[i % colors.length],
               }}
             />
@@ -122,7 +122,7 @@ function Bars({ data, kind }: { data: any[]; kind?: string }) {
                   width: `${(d.value / max) * 100}%`,
                   background:
                     kind === 'work' && i === 0
-                      ? '#ce7568'
+                      ? 'var(--chart-warning, #ce7568)'
                       : colors[i % colors.length],
                 }}
               />
@@ -192,8 +192,8 @@ function Trend({ data }: { data: any[] }) {
         >
           <defs>
             <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#2b93dd" stopOpacity=".32" />
-              <stop offset="100%" stopColor="#2b93dd" stopOpacity=".02" />
+              <stop offset="0%" stopColor="var(--chart-one, #2b93dd)" stopOpacity=".32" />
+              <stop offset="100%" stopColor="var(--chart-one, #2b93dd)" stopOpacity=".02" />
             </linearGradient>
           </defs>
           {[0, 0.5, 1].map((v) => (
@@ -216,7 +216,7 @@ function Trend({ data }: { data: any[] }) {
               <polyline
                 points={line}
                 fill="none"
-                stroke="#2b93dd"
+                stroke="var(--chart-one, #2b93dd)"
                 strokeWidth="3.5"
                 strokeLinejoin="round"
                 strokeLinecap="round"
@@ -227,7 +227,7 @@ function Trend({ data }: { data: any[] }) {
                     cx={p.x}
                     cy={p.y}
                     r={selectedIndex === i ? 6 : 4}
-                    fill="#2b93dd"
+                    fill="var(--chart-one, #2b93dd)"
                   />
                   <circle
                     tabIndex={0}

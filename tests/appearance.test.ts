@@ -1,12 +1,14 @@
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
+import { accentPalettes, normalizeAccent } from '../apps/web/src/lib/accent.ts';
 import { resolveVisualPreferences } from '../apps/web/src/lib/appearance.ts';
 test('live accounts never inherit guest book mode; unapproved/demo preferences remain local', () => {
   const guest = {
     appearance: 'dark',
     bookMode: true,
     fontStyle: 'lora',
+    accentPalette: 'plum',
     displayScale: 90,
   } as const;
   assert.deepEqual(
@@ -15,6 +17,7 @@ test('live accounts never inherit guest book mode; unapproved/demo preferences r
       appearance: 'light',
       bookMode: false,
       fontStyle: 'standard',
+      accentPalette: 'blue',
       displayScale: 100,
     },
   );
@@ -27,6 +30,7 @@ test('live accounts never inherit guest book mode; unapproved/demo preferences r
       appearance: 'system',
       bookMode: true,
       fontStyle: 'standard',
+      accentPalette: 'blue',
       displayScale: 100,
     },
   );
@@ -80,4 +84,11 @@ test('font choices are allowlisted and live accounts do not inherit guest styles
     ).fontStyle,
     'inter',
   );
+});
+
+test('personal palettes match the API allowlist and invalid values fall back to Ocean', () => {
+  const spec = JSON.parse(readFileSync(new URL('../docs/openapi.json', import.meta.url), 'utf8'));
+  assert.deepEqual(accentPalettes.map((palette) => palette.id), spec.components.schemas.Preferences.properties.accentPalette.enum);
+  for (const palette of accentPalettes) assert.equal(normalizeAccent(palette.id), palette.id);
+  assert.equal(normalizeAccent('url(https://example.invalid)'), 'blue');
 });

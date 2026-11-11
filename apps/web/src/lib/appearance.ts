@@ -1,9 +1,10 @@
+import { normalizeAccent } from './accent.ts';
 import { normalizeDisplayScale } from './display-scale.ts';
 import { normalizeFontStyle } from './fonts.ts';
 import type { Session } from './types';
 type VisualPreferences = Pick<
   Session['preferences'],
-  'appearance' | 'bookMode' | 'fontStyle' | 'displayScale'
+  'appearance' | 'bookMode' | 'fontStyle' | 'displayScale' | 'accentPalette'
 >;
 /** Live identity preferences win; demo/unapproved identities use the guest style. */
 export function resolveVisualPreferences(
@@ -16,6 +17,7 @@ export function resolveVisualPreferences(
     appearance: selected.appearance,
     bookMode: selected.bookMode === true,
     fontStyle: normalizeFontStyle(selected.fontStyle),
+    accentPalette: normalizeAccent(selected.accentPalette),
     displayScale: normalizeDisplayScale(selected.displayScale),
   };
 }

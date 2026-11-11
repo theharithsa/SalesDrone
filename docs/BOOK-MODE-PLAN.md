@@ -26,3 +26,13 @@ Test true/false persistence, default/missing values, omission by older clients, 
 The planned setting is implemented as optional boolean bookMode on Preferences (API contract 1.13.0). Server reads default false; PATCH merges without resetting an omitted field. App sets data-reading-mode=book|standard and a resolved data-color-scheme for the palette. Guest fallback uses the guarded salesdrone.guestBookMode key; live preference updates do not populate it. The save action applies the style, and disabling it restores the unmodified standard theme. Release verification evidence is collected separately in CI.
 
 Book mode now has a dedicated [module skill](../skills/salesdrone-book-mode/SKILL.md). Saved changes participate in the [durable settings audit](SETTINGS-AUDIT.md), including the top-right theme control.
+
+## Interactive workspace pages
+
+Book mode uses the existing editable workspace and lead routes. Leads has an
+index of eight entries per page with its existing filters, lead selection,
+export permissions and incremental loading. The index scrolls continuously.
+The lead record opens on the next page with Comments selected, and returning
+to the index restores focus to the previous entry when it is loaded. A paper
+edge is shared by workspace modules. The page turn uses a short visual
+transition and honours reduced motion. Source Serif 4 is the reading family.

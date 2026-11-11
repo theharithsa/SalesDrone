@@ -74,6 +74,8 @@ schemas.Preferences.properties.dashboardField.description =
   'Personal pipeline visualization category. Default auto chooses the first available field: stage, enquiry status, source, sector, location, then custom text/dropdown fields. Active members edit only their own preference; hidden/retired fields are rejected on save and existing unavailable choices fall back without rewriting the preference. PATCH supports partial preferences; omitted keys are preserved. PAT writes are denied.';
 schemas.Preferences.properties.bookMode.description =
   'Personal reading style, default false. Omission preserves the stored value; does not alter theme, timezone or permissions.';
+schemas.Preferences.properties.accentPalette.description =
+  'Personal Material 3 palette; blue is the default, and monochrome works in light and dark schemes. Omitted values are preserved.';
 schemas.Preferences.properties.fontStyle.description =
   'Personal interface font: standard (default), inter, source-sans or lora. Omission preserves the saved value. Book mode keeps its own serif family; no authorization change. Google sign-in/App Check only; PAT writes denied.';
 schemas.Preferences.properties.displayScale.description =
@@ -1313,7 +1315,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.31.0',
+    version: '1.32.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

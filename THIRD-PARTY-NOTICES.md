@@ -22,3 +22,8 @@ lockfiles identify exact versions. This document does not replace their notices.
 
 Swagger UI Distribution 5.34.0 (Swagger / SmartBear) is Apache-2.0 licensed. Its
 licence is copied with the self-hosted runtime assets to `/swagger/LICENSE`.
+
+Open Sans Variable, Source Serif 4 Variable and Patrick Hand are distributed by
+Fontsource under their upstream SIL Open Font License 1.1. See the LICENSE files
+in the corresponding `@fontsource-variable/open-sans`,
+`@fontsource-variable/source-serif-4` and `@fontsource/patrick-hand` packages.

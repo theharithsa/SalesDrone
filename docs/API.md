@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.10.0**, OpenAPI contract **1.31.0**. All application operations
+Application release **v2.12.0**, OpenAPI contract **1.32.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -376,3 +376,7 @@ Use [the npm MCP adapter](MCP.md) for local stdio tools over the same HTTP API. 
 ### Contract design for API and MCP clients
 
 Design bounded, indexed list and search operations with validated filters, minimal projections and stable cursor order. Keep exact aggregates, current snapshots and historical transitions distinct. Describe date bounds, scope and incomplete coverage in the response schema. Do not make clients walk a full list to compute a count that the server can answer with an authorized aggregate. Preserve stable error codes, Retry-After, idempotency and version checks. See [MCP tool design](MCP.md#designing-cost-effective-tools) and [operation budgets](FINOPS.md).
+
+Personal appearance preferences on GET/PATCH /api/v1/me include the optional
+`accentPalette` allowlist and additional font choices. Saved preferences are
+self-owned. Older clients can omit the new fields and retain the saved choices.

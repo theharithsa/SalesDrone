@@ -28,6 +28,9 @@ import '@fontsource-variable/manrope';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/source-sans-3';
 import '@fontsource-variable/lora';
+import '@fontsource-variable/open-sans';
+import '@fontsource-variable/source-serif-4';
+import '@fontsource/patrick-hand/latin-400.css';
 import '../material/fonts.css';
 import '../material/tokens.css';
 import '../material/base.css';
@@ -36,6 +39,7 @@ import '../material/shell.css';
 import '../material/workspaces.css';
 import '../material/dashboard.css';
 import '../material/settings.css';
+import '../material/personalization.css';
 import '../material/login.css';
 const initialSession: Session = {
   mode: 'live',
@@ -198,6 +202,7 @@ function AdminReview() {
     root.dataset.theme = p.appearance;
     root.dataset.readingMode = p.bookMode ? 'book' : 'standard';
     root.dataset.fontStyle = p.fontStyle || 'standard';
+    root.dataset.accent = p.accentPalette || 'blue';
     root.style.setProperty(
       '--interface-scale',
       String((p.displayScale || 100) / 100),

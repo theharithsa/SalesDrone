@@ -88,7 +88,7 @@ Adjacent owners:
 
 Every saved net configuration change now carries auditEvents.settingsChanges and atomic settings.audit.committed outbox evidence through settings-audit.js, including /me preferences. Audit keys and hashed targets only, no values; default normalization avoids false changes on first saves. No-op/replayed/denied operations emit no change event. Preserve before-write snapshots, rollback, 40-key chunks and current self/Admin authorization. [Book mode](../salesdrone-book-mode/SKILL.md) owns reading typography; this skill retains primary /me ownership. See [audit guide](../../docs/SETTINGS-AUDIT.md).
 
-FontStyle is personal, defaults to standard and preserves older clients. Keep Book/branding exceptions and committed key-only audit behavior; see [font operations](references/operations.md).
+Font style and accent palette are personal. They default to Standard and Ocean and preserve omitted values from older clients. Keep Book/branding exceptions and committed key-only audit behavior; see [font operations](references/operations.md).
 
 ## Conditional reference
 

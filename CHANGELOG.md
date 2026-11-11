@@ -19,6 +19,14 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.12.0] - 2026-11-11
+
+### Changed
+- Refresh the SalesDrone wordmark with a drone symbol that follows your accent. Retain the original compact icon and favicon.
+- Add five personal palettes, including Black & white, and self-hosted Open Sans, Source Serif 4, Patrick Hand and Caveat.
+- Give Book mode a scrollable lead index, paper workspace surfaces and reduced-motion-aware page turns.
+
 ## [2.11.0] - 2026-11-11
 
 ### Changed
