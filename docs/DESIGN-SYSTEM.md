@@ -238,6 +238,8 @@ fields. The lead index presents four loaded entries on one sheet. Scroll, swipe 
 Previous and Next to turn the sheet. The focused sheet accepts Left and Right
 arrows and Page Up and Page Down. Back to leads restores the source sheet and
 entry focus.
-Reduced motion renders the same pages without the turn animation.
+The visible workspace page curls as a whole, including its heading and filters.
+Dashboard uses four sheets and shares the Leads page controls. Reduced motion
+switches pages immediately.
 
 The dashboard snapshot uses one decorative AI badge beside its label and content. About SalesDrone panels share the same outer edges, with a narrower reading measure for prose and illustrations.

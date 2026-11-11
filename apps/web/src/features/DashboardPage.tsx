@@ -1,10 +1,13 @@
+import BookPageControls from '../components/BookPageControls';
+import { BookPageTurn } from '../lib/use-book-turn';
+import { useBookSheet } from '../lib/use-book-sheet';
 import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import DashboardCategoryPicker from '../components/DashboardCategoryPicker';
 import { dashboardGrouping } from '../../../../functions/src/dashboard-grouping.js';
 import { defaultFieldOptions, type FieldOptions } from '../lib/field-options';
 import { readStored, writeStored } from '../lib/browser-storage';
 import PipelineFunnel from '../components/PipelineFunnel';
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useId, useRef, useState } from 'react';
 import {
   ArrowUpRight,
   BarChart3,
@@ -362,10 +365,13 @@ function demoSnapshot(
     })),
   };
 }
+const dashboardSheets = ['Snapshot', 'Pipeline', 'Activity', 'Follow-ups'];
+
 export default function DashboardPage({
   request,
   demo,
   canUseIntelligence = true,
+  bookMode = false,
   firstName,
   timezone,
   sample,
@@ -383,6 +389,7 @@ export default function DashboardPage({
   request: (p: string, m?: string, b?: any) => Promise<any>;
   demo: boolean;
   canUseIntelligence?: boolean;
+  bookMode?: boolean;
   firstName: string;
   timezone: string;
   sample: { leads: Lead[]; tasks: Task[]; activities: Entity[] };
@@ -445,6 +452,18 @@ export default function DashboardPage({
       loadEpoch.current++;
     };
   }, [load, refreshKey]);
+  const [sheetIndex, setSheetIndex] = useState(0);
+  const turnPage = useContext(BookPageTurn);
+  const sheetCount = bookMode && snapshot ? dashboardSheets.length : 0;
+  const turnDashboard = useCallback((direction: number) => {
+    const next = sheetIndex + direction;
+    if (next < 0 || next >= sheetCount) return false;
+    turnPage(direction);
+    setSheetIndex(next);
+    return true;
+  }, [sheetCount, sheetIndex, turnPage]);
+  const { sheet, gestures } = useBookSheet(sheetIndex, sheetCount, turnDashboard);
+
   const intelligenceEnabled = canUseIntelligence && snapshot?.intelligenceEnabled !== false;
   const briefInFlight = useRef(false);
   const briefEpoch = useRef(0);
@@ -519,6 +538,13 @@ export default function DashboardPage({
         <Loading />
       ) : (
         <>
+          {bookMode && <BookPageControls index={sheetIndex} count={sheetCount}
+            label="Dashboard pages" section={dashboardSheets[sheetIndex]} onTurn={turnDashboard} />}
+          <section className={bookMode ? 'book-dashboard-sheet' : 'dashboard-sheet'}
+            ref={bookMode ? sheet : undefined} tabIndex={bookMode ? -1 : undefined}
+            aria-label={bookMode ? dashboardSheets[sheetIndex] : undefined}
+            {...(bookMode ? gestures : {})}>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 0}>
           <div className="dashboard-kpis">
             {[
               {
@@ -662,6 +688,8 @@ export default function DashboardPage({
               ))}
             </div>
           ) : null}
+          </div>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 1}>
           {snapshot.visualization?.field ? (
             <PipelineFunnel
               counts={snapshot.stages}
@@ -686,6 +714,8 @@ export default function DashboardPage({
               <p>No category fields are available. Ask an Admin to enable a field for dashboard charts.</p>
             </section>
           )}
+          </div>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 2}>
           <div className="dashboard-chart-grid">
             <section className="panel chart-panel">
               <div className="chart-heading">
@@ -792,6 +822,8 @@ export default function DashboardPage({
               </p>
             </section>
           </div>
+          </div>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 3}>
           <div className="dashboard-bottom-grid">
             <section className="panel dashboard-next">
               <div className="section-heading">
@@ -881,6 +913,8 @@ export default function DashboardPage({
               : ''}
             {intelligenceEnabled ? '. AI insights are suggestions, not automatic actions.' : '.'}
           </p>
+          </div>
+          </section>
         </>
       )}
     </div>

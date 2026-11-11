@@ -48,7 +48,7 @@ API contract versions are independent from application versions.
 
 ### Fixed
 - Show one AI badge on the dashboard snapshot and align the About SalesDrone cards to the same edges.
-- Turn the Book mode lead index one sheet at a time with scroll, swipe, keyboard and page controls. The outgoing sheet folds away to reveal the next page.
+- Turn the Book mode lead index one sheet at a time with scroll, swipe, keyboard and page controls. The whole page curls from the outer edge, including its toolbar, heading and filters. Dashboard uses the same turn across four sheets.
 
 
 ## [2.10.4] - 2026-11-08

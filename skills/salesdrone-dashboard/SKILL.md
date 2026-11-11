@@ -96,3 +96,5 @@ Admin team workload and authored-work reporting is owned by [Team](../salesdrone
 The chart field control lives in the lead distribution panel. Keep the current field and account-specific selection visible there, and keep chart drill-downs accessible at narrow widths.
 
 Keep one decorative AI badge in the snapshot card. The manual insights action retains its own labelled button and existing behavior.
+
+Book mode groups the existing dashboard into Snapshot, Pipeline, Activity and Follow-ups sheets. Keep chart state and reuse the loaded snapshot when turning pages.

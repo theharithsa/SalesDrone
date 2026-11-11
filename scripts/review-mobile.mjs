@@ -443,9 +443,13 @@ try {
     await viewport(390, 844);
     await screenshot('test-results/mobile/' + mode.name + '.jpg');
     if (mode.book) {
-      assert.equal(await js('document.querySelectorAll(".book-index-page").length'), 1);
-      await action('Next');
-      await wait('document.querySelector(".book-page-number")?.textContent.startsWith("Page 2 of ")');
+      assert.equal(await js('document.querySelectorAll("#main-content .book-index-page").length'), 1);
+      assert.ok(await js(`(() => {
+        document.querySelector('#main-content .book-page-controls button:last-child').click();
+        return !!document.querySelector('.book-turn-layer[inert] .lead-search-row');
+      })()`));
+      await wait('document.querySelector("#main-content .book-page-number")?.textContent.startsWith("Page 2 of ")');
+      await wait('!document.querySelector(".book-turn-layer")');
       const leadId = await js('document.querySelector(".book-index-link").dataset.bookLead');
       await tap('.book-index-link');
       await wait('!!document.querySelector(".full-lead-page")');
