@@ -94,25 +94,30 @@ try {
   assert.equal(await js('!!document.querySelector(".topbar .enterprise-brand")'), false);
   for (const width of [320, 390, 600, 767]) {
     await viewport(width, 844);
-    const boxes = await js(`([...document.querySelectorAll('.worksheet-lead-card')].slice(0,6).map(e=>{const c=e.querySelector('.mobile-lead-select').getBoundingClientRect(),n=e.querySelector('strong').getBoundingClientRect(),b=e.getBoundingClientRect();return {checkLeft:c.left,checkRight:c.right,nameLeft:n.left,left:b.left,right:b.right,target:c.width}}))`);
-    assert.ok(boxes.every(r=>r.checkLeft>=r.left && r.checkRight<=r.nameLeft && r.target>=44),JSON.stringify({width,boxes}));
-    assert.ok(boxes.every(r=>Math.abs(r.nameLeft-boxes[0].nameLeft)<1),'Lead names share a start edge');
-    evidence.push({case:'leading-mobile-checkbox',width,result:'passed'});
+    await wait('!!document.querySelector(".mobile-lead-search-trigger")');
+    const boxes = await js(`([...document.querySelectorAll('.worksheet-lead-card')].slice(0,6).map(e=>{const n=e.querySelector('strong').getBoundingClientRect(),b=e.getBoundingClientRect();return {select:!!e.querySelector('.mobile-lead-select'),nameLeft:n.left,left:b.left}}))`);
+    assert.ok(boxes.every(r=>!r.select && r.nameLeft>=r.left && Math.abs(r.nameLeft-boxes[0].nameLeft)<1), JSON.stringify({width,boxes}));
+    assert.equal(await js('!!document.querySelector(".batch-toolbar")'),false);
+    evidence.push({case:'mobile-leads-without-batch-selection',width,result:'passed'});
   }
   await viewport(390, 844);
-  await tap('.mobile-lead-select');
-  assert.equal(await js('document.querySelector(".mobile-lead-select input").checked'),true);
-  assert.equal(await js('!!document.querySelector(".lead-blade")'),false,'Checkbox does not open a lead');
-  await tap('.mobile-lead-select');
-  assert.equal(await js('document.querySelector(".mobile-lead-select input").checked'),false);
-  await viewport(390, 844);
+  await tap('.mobile-lead-search-trigger');
+  await wait('document.activeElement?.type==="search"');
+  await send('Input.insertText', {text:'Ananya'});
+  await action('Search');
+  await wait('document.activeElement?.matches(".mobile-lead-search-trigger[data-active]")');
+  await tap('.mobile-lead-search-trigger');
+  await wait('document.activeElement?.value==="Ananya"');
+  await action('Clear search');
+  await wait('!document.querySelector(".mobile-lead-search-trigger[data-active]")');
   await screenshot('test-results/mobile/leads.jpg');
   const header = await js(
-    "({subtitle:getComputedStyle(document.querySelector('.leads-main > .page-title p')).display,chips:getComputedStyle(document.querySelector('.stage-tabs')).display,stage:!!document.querySelector('.mobile-lead-list-bar select'),listTop:document.querySelector('.leads-table').getBoundingClientRect().top})",
+    "({subtitle:getComputedStyle(document.querySelector('.leads-main > .page-title p')).display,chips:getComputedStyle(document.querySelector('.stage-tabs')).display,toolbar:!!document.querySelector('.page-title .mobile-lead-filter-trigger + .mobile-lead-search-trigger'),inline:getComputedStyle(document.querySelector('.lead-search-row')).display,listTop:document.querySelector('.leads-table').getBoundingClientRect().top})",
   );
   assert.equal(header.subtitle, 'none');
   assert.equal(header.chips, 'none');
-  assert.ok(header.stage);
+  assert.ok(header.toolbar);
+  assert.equal(header.inline, 'none');
   assert.ok(header.listTop < 380, JSON.stringify(header));
   await action('More lead actions');
   await wait("!!document.querySelector('.lead-action-popover.open')");
@@ -218,13 +223,18 @@ try {
       const panel=document.querySelector('.tasks-panel');
       const styles=getComputedStyle(page);
       const rows=[...document.querySelectorAll('.task-row')];
-      const stacked=getComputedStyle(panel.querySelector('.task-list-head')).display==='none';
-      return {stacked, ratio:panel.getBoundingClientRect().width/(page.getBoundingClientRect().width-parseFloat(styles.paddingLeft)-parseFloat(styles.paddingRight)),
+      const head=panel.querySelector('.task-list-head');
+      const table=head.getClientRects().length>0;
+      const edges=[...head.children].map(e=>e.getBoundingClientRect().left);
+      return {compact:matchMedia('(max-width:767.99px)').matches, ratio:panel.getBoundingClientRect().width/(page.getBoundingClientRect().width-parseFloat(styles.paddingLeft)-parseFloat(styles.paddingRight)),
         picker:getComputedStyle(document.querySelector('.task-status-picker')).display,
         subtitle:getComputedStyle(document.querySelector('.tasks-page .page-title p')).display,
         aligned:rows.every(e=>{
-          const actions=e.querySelector('.task-actions').getBoundingClientRect(), body=e.querySelector('.task-body').getBoundingClientRect(), row=e.getBoundingClientRect();
-          return actions.right<=row.right && (stacked ? actions.top>=body.bottom : actions.top<body.bottom);
+          const row=e.getBoundingClientRect();
+          const bounds=s=>e.querySelector(s)?.getBoundingClientRect();
+          const inside=s=>!bounds(s) || bounds(s).right<=row.right+1;
+          return inside('.task-menu summary') && inside('.task-reschedule') &&
+            (table ? ['.task-body','.task-lead','.task-responsible','.task-time'].every((s,i)=>Math.abs(bounds(s).left-edges[i+1])<1) : bounds('.task-people').top>=bounds('.task-body').bottom);
         }),
         symbol:document.querySelector('.task-check-symbol').getBoundingClientRect().width,
         target:document.querySelector('.task-check').getBoundingClientRect().width};
@@ -232,7 +242,7 @@ try {
     assert.ok(layout.ratio > 0.98, JSON.stringify({width,...layout}));
     assert.ok(layout.aligned, JSON.stringify({width, ...layout}));
     assert.ok(layout.symbol <= 24, 'Completion symbol stays visually small');
-    if (width < 768) {
+    if (layout.compact) {
       assert.equal(layout.subtitle, 'none');
       assert.notEqual(layout.picker, 'none');
       assert.ok(layout.target >= 44);
@@ -257,7 +267,7 @@ try {
   assert.equal(await js('document.activeElement.matches(".task-menu summary")'), true);
   await js('window.scrollTo(0,0)');
   for (const name of ['Edit task', 'Reschedule', 'Delete task']) {
-    await tap('.task-menu summary');
+    if (name !== 'Reschedule') await tap('.task-menu summary');
     await action(name);
     await wait('!!document.querySelector("[role=dialog]")');
     assert.equal(await js('!!document.querySelector(".task-menu[open]")'), false);
@@ -366,9 +376,9 @@ try {
     );
     await action('Leads');
     for (const width of [320, 390]) {
-      await geometry('leads-selection-scale-' + scale, width);
-      const placement = await js(`(()=>{const e=document.querySelector('.worksheet-lead-card'),c=e.querySelector('.mobile-lead-select').getBoundingClientRect(),n=e.querySelector('strong').getBoundingClientRect();return {left:c.left,right:c.right,nameLeft:n.left,target:c.width}})()`);
-      assert.ok(placement.left>=0 && placement.right<=placement.nameLeft && placement.target>=44,JSON.stringify({scale,width,placement}));
+      await geometry('leads-header-scale-' + scale, width);
+      const placement = await js(`(()=>{const e=document.querySelector('.mobile-lead-search-trigger'),r=e.getBoundingClientRect();return {left:r.left,right:r.right,viewport:innerWidth,target:r.width,selection:!!document.querySelector('.mobile-lead-select')}})()`);
+      assert.ok(placement.left>=0 && placement.right<=placement.viewport+1 && placement.target>=44 && !placement.selection,JSON.stringify({scale,width,placement}));
     }
     await action('Tasks');
     for (const width of [320, 390, 768]) await geometry('tasks-scale-' + scale, width);
@@ -442,6 +452,24 @@ try {
       await geometry('palette-' + mode.name, width);
     await viewport(390, 844);
     await screenshot('test-results/mobile/' + mode.name + '.jpg');
+    if (mode.book) {
+      assert.equal(await js('document.querySelectorAll("#main-content .book-index-page").length'), 1);
+      assert.ok(await js(`(() => {
+        document.querySelector('#main-content .book-page-controls button:last-child').click();
+        const layer = document.querySelector('.book-turn-layer[inert]');
+        return !!layer?.querySelector('.book-index-page') &&
+          !layer.querySelector('.topbar, .page-title, .mobile-lead-search-trigger, .mobile-lead-filter-trigger, .book-page-controls');
+      })()`));
+      await wait('document.querySelector("#main-content .book-page-number")?.textContent.startsWith("Page 2 of ")');
+      await wait('!document.querySelector(".book-turn-layer")');
+      const leadId = await js('document.querySelector(".book-index-link").dataset.bookLead');
+      await tap('.book-index-link');
+      await wait('!!document.querySelector(".full-lead-page")');
+      await action('Back to leads');
+      await wait('document.activeElement?.dataset.bookLead===' + JSON.stringify(leadId));
+      assert.equal(await js('document.querySelector(".book-page-number").textContent.startsWith("Page 2 of ")'), true);
+      evidence.push({case:'book-sheet-navigation-and-focus',width:390,mode:mode.name,result:'passed'});
+    }
     await action('Tasks');
     for (const width of [320, 390, 768]) await geometry('tasks-palette-' + mode.name, width);
     await viewport(390, 844);

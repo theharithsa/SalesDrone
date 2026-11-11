@@ -1,4 +1,3 @@
-import { useBookTurn } from './lib/use-book-turn';
 import { normalizeAccent } from './lib/accent';
 import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
@@ -49,6 +48,7 @@ import {
 } from './lib/field-options';
 import LeadFilters from './components/LeadFilters';
 import MobileLeadFilters from './components/MobileLeadFilters';
+import MobileLeadSearch from './components/MobileLeadSearch';
 import LeadBatchEditor from './features/LeadBatchEditor';
 import {
   ColumnFilter,
@@ -274,11 +274,22 @@ export default function App() {
   const [compact, setCompact] = useState(
     () => window.matchMedia('(max-width: 599.99px)').matches,
   );
+  const [compactLeads, setCompactLeads] = useState(
+    () => window.matchMedia('(max-width: 767.99px)').matches,
+  );
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 599.99px)');
-    const change = () => setCompact(media.matches);
-    media.addEventListener('change', change);
-    return () => media.removeEventListener('change', change);
+    const shell = window.matchMedia('(max-width: 599.99px)');
+    const leads = window.matchMedia('(max-width: 767.99px)');
+    const change = () => {
+      setCompact(shell.matches);
+      setCompactLeads(leads.matches);
+    };
+    shell.addEventListener('change', change);
+    leads.addEventListener('change', change);
+    return () => {
+      shell.removeEventListener('change', change);
+      leads.removeEventListener('change', change);
+    };
   }, []);
   const demo = guest || session?.mode === 'demo';
   const active = guest || !!session;
@@ -443,22 +454,11 @@ export default function App() {
       accentPalette: guestAccent,
       displayScale: guestDisplayScale,
     });
-  const bookSurface = useBookTurn(bookMode && !!active, page, routeLeadId);
-  const bookReturnLead = useRef<string | null>(null);
+  const [bookReturnLead, setBookReturnLead] = useState<string | null>(null);
+  const clearBookReturnLead = useCallback(() => setBookReturnLead(null), []);
   useEffect(() => {
-    if (page !== 'leads' || !bookMode) {
-      bookReturnLead.current = null;
-      return;
-    }
-    if (routeLeadId || !bookReturnLead.current) return;
-    const button = bookSurface.current?.querySelector<HTMLButtonElement>(
-      `[data-book-lead="${CSS.escape(bookReturnLead.current)}"]`,
-    );
-    if (!button) return;
-    button.focus({ preventScroll: true });
-    button.scrollIntoView({ block: 'nearest' });
-    bookReturnLead.current = null;
-  }, [bookMode, bookSurface, page, routeLeadId]);
+    if (page !== 'leads' || !bookMode) clearBookReturnLead();
+  }, [bookMode, clearBookReturnLead, page]);
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
@@ -1207,7 +1207,7 @@ export default function App() {
       return;
     }
     if (routeLeadId === lead.id) return chooseLead(lead.id, leadTabRef.current);
-    if (bookMode && page === 'leads' && !routeLeadId) bookReturnLead.current = lead.id;
+    if (bookMode && page === 'leads' && !routeLeadId) setBookReturnLead(lead.id);
     detailEpoch.current++;
     selectedIdRef.current = undefined;
     setSelected(null);
@@ -1894,7 +1894,7 @@ export default function App() {
             saving will report any connection problem.
           </div>
         ) : null}
-        <main id="main-content" ref={bookSurface}>
+        <main id="main-content">
           <Suspense fallback={<Loading />}>
             {page==='team' ? (admin||demo ? <TeamPage key={(session?.identity.uid||'demo')+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} request={request} demo={!!demo} onLeads={id=>{setAssignee(id);setStage('');setSource('');setSearch('');setSearchDraft('');setColumnFilters([]);go('leads');}}/> : <div className="page-body"><ErrorMessage error="Team insights are available to workspace administrators."/></div>) : null}
 
@@ -1910,6 +1910,7 @@ export default function App() {
                 request={request}
                 demo={!!demo}
                 canUseIntelligence={canUseIntelligence}
+                bookMode={bookMode}
                 firstName={
                   demo
                     ? 'Explorer'
@@ -2076,6 +2077,39 @@ export default function App() {
                             <span className="lead-create-label-mobile">New</span>
                           </button>
                         ) : null}
+                        {compactLeads ? (
+                          <>
+                            <MobileLeadFilters
+                              key={session?.identity.uid || 'demo'}
+                              config={fieldOptions}
+                              sources={sourceOptions}
+                              assignees={admin || demo ? assignees : undefined}
+                              assigneesLoading={assigneesLoading}
+                              assigneesError={assigneesError}
+                              applied={{
+                                searchField,
+                                stage,
+                                source,
+                                assignee,
+                                filters: columnFilters,
+                              }}
+                              onApply={(values) => {
+                                setSearchField(values.searchField);
+                                setStage(values.stage);
+                                setSource(values.source);
+                                setAssignee(values.assignee || '');
+                                setColumnFilters(values.filters);
+                              }}
+                            />
+                            <MobileLeadSearch
+                              value={search}
+                              onApply={(value) => {
+                                setSearchDraft(value);
+                                setSearch(value);
+                              }}
+                            />
+                          </>
+                        ) : null}
                       </div>
                     }
                   />
@@ -2106,28 +2140,6 @@ export default function App() {
                       </button>
                     </form>
                   </div>
-                  <MobileLeadFilters
-                    key={session?.identity.uid || 'demo'}
-                    config={fieldOptions}
-                    sources={sourceOptions}
-                    assignees={admin||demo?assignees:undefined}
-                    assigneesLoading={assigneesLoading}
-                    assigneesError={assigneesError}
-                    applied={{
-                      searchField,
-                      stage,
-                      source,
-                      assignee,
-                      filters: columnFilters,
-                    }}
-                    onApply={(values) => {
-                      setSearchField(values.searchField);
-                      setStage(values.stage);
-                      setSource(values.source);
-                      setAssignee(values.assignee||'');
-                      setColumnFilters(values.filters);
-                    }}
-                  />
                   <details className="lead-filters-disclosure">
                     <summary>
                       <Filter size={16} /> Filters
@@ -2202,22 +2214,6 @@ export default function App() {
                       onApply={setColumnFilters}
                     />
                   </details>
-                  <div className="mobile-lead-list-bar">
-                    <label>
-                      <span className="sr-only">Quick stage filter</span>
-                      <select
-                        aria-label="Quick stage filter"
-                        value={stage}
-                        onChange={(event) => setStage(event.target.value)}
-                      >
-                        <option value="">All stages</option>
-                        {fieldOptions.values.stage.map((value) => (
-                          <option key={value}>{value}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <span aria-live="polite">{visibleLeads.length} loaded</span>
-                  </div>
                   <div
                     className="stage-tabs"
                     role="group"
@@ -2239,7 +2235,7 @@ export default function App() {
                     ) : visibleLeads.length ? (
                       <LeadBatchEditor
                         key={leadQueryKey}
-                        canEdit={!!can('leads:edit')}
+                        canEdit={!compactLeads && !!can('leads:edit')}
                         canAssign={!!can('assignments:write')}
                         request={request}
                         onDone={() => void load()}
@@ -2247,6 +2243,8 @@ export default function App() {
                         scores={leadScores}
                         showScores={canUseIntelligence}
                         bookMode={bookMode}
+                        returnLeadId={routeLeadId ? null : bookReturnLead}
+                        onRestoreFocus={clearBookReturnLead}
                         leads={visibleLeads}
                         selectedId={selected?.id || null}
                         onSelect={inspectLead}
@@ -2276,11 +2274,12 @@ export default function App() {
                     )}
                     <div className="panel-footer">
                       <span>
-                        {visibleLeads.length} {demo ? 'sample ' : ''}leads shown
+                        {visibleLeads.length} {demo ? 'sample ' : ''}leads {bookMode ? 'loaded' : 'shown'}
                       </span>
                       <InfiniteLeadLoader
                         key={leadQueryKey}
                         cursor={leadMoreCursor}
+                        autoLoad={!bookMode}
                         busy={loading}
                         error={listLoadError}
                         onLoad={() => {

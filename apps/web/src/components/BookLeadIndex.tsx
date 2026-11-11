@@ -1,33 +1,16 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import type { Lead } from '../lib/types';
 import { Badge } from './UI';
+import BookPageControls from './BookPageControls';
 import { ScoreBadge } from './LeadScore';
+import { useBookSheet } from '../lib/use-book-sheet';
 
-const leadsPerPage = 8;
-
-function IndexPage({ number, children }: { number: number; children: ReactNode }) {
-  const page = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const element = page.current;
-    if (!element || number === 1 || typeof IntersectionObserver === 'undefined') return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      element.dataset.turned = 'true';
-      observer.disconnect();
-    }, { threshold: 0.2 });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [number]);
-  return (
-    <section className="book-index-page" ref={page} aria-label={`Lead index page ${number}`}>
-      <ol>{children}</ol>
-      <p className="book-page-number" aria-hidden="true">{number}</p>
-    </section>
-  );
-}
-
-export default function BookLeadIndex({ leads, scores, showScores, hiddenFields, checkedIds, onToggle, onSelect }: {
+const leadsPerPage = 4;
+export default function BookLeadIndex({
+  leads, scores, showScores, hiddenFields, checkedIds, onToggle, onSelect,
+  returnLeadId, onRestoreFocus,
+}: {
   leads: Lead[];
   scores: Record<string, unknown>;
   showScores: boolean;
@@ -35,14 +18,36 @@ export default function BookLeadIndex({ leads, scores, showScores, hiddenFields,
   checkedIds?: Set<string>;
   onToggle?: (id: string) => void;
   onSelect: (lead: Lead) => void;
+  returnLeadId?: string | null;
+  onRestoreFocus?: () => void;
 }) {
-  const pages = Array.from({ length: Math.ceil(leads.length / leadsPerPage) }, (_, index) =>
-    leads.slice(index * leadsPerPage, (index + 1) * leadsPerPage),
-  );
-  return <div className="book-index">
-    {pages.map((page, index) => (
-      <IndexPage key={index} number={index + 1}>
-        {page.map((lead) => {
+  const restoreIndex = returnLeadId ? leads.findIndex((lead) => lead.id === returnLeadId) : -1;
+  const [index, setIndex] = useState(() => Math.max(0, Math.floor(restoreIndex / leadsPerPage)));
+  const pageCount = Math.max(1, Math.ceil(leads.length / leadsPerPage));
+  const pageIndex = Math.min(index, pageCount - 1);
+  const first = pageIndex * leadsPerPage;
+  const entries = leads.slice(first, first + leadsPerPage);
+  const { sheet, gestures, turn } = useBookSheet(pageIndex, pageCount, setIndex);
+
+  useLayoutEffect(() => {
+    if (!returnLeadId) return;
+    const restorePage = Math.floor(restoreIndex / leadsPerPage);
+    if (restorePage >= 0 && restorePage !== pageIndex) {
+      setIndex(restorePage);
+      return;
+    }
+    const button = sheet.current?.querySelector<HTMLButtonElement>(
+      `[data-book-lead="${CSS.escape(returnLeadId)}"]`,
+    );
+    button?.focus({ preventScroll: true });
+    button?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    onRestoreFocus?.();
+  }, [onRestoreFocus, pageIndex, restoreIndex, returnLeadId, sheet]);
+
+  function renderEntries(rows: Lead[]) {
+    return (
+      <ol>
+        {rows.map((lead) => {
           const showCompany = !hiddenFields.includes('company');
           const company = showCompany ? lead.company : '';
           const name = hiddenFields.includes('name') ? '' : lead.name;
@@ -59,7 +64,8 @@ export default function BookLeadIndex({ leads, scores, showScores, hiddenFields,
                   aria-label={`Select ${title}`}
                   onChange={() => onToggle?.(lead.id)} />
               </label>}
-              <button type="button" className="book-index-link" data-book-lead={lead.id} onClick={() => onSelect(lead)}>
+              <button type="button" className="book-index-link" data-book-lead={lead.id}
+                onClick={() => onSelect(lead)}>
                 <span className="book-index-identity">
                   <strong>{title}</strong>
                   {context && <span>{context}</span>}
@@ -74,7 +80,19 @@ export default function BookLeadIndex({ leads, scores, showScores, hiddenFields,
             </li>
           );
         })}
-      </IndexPage>
-    ))}
-  </div>;
+      </ol>
+    );
+  }
+
+  return (
+    <div className="book-index">
+      <BookPageControls index={pageIndex} count={pageCount} label="Lead index pages" onTurn={turn} />
+      <div className="book-page-stage">
+        <section className="book-index-page" ref={sheet} tabIndex={-1}
+          aria-label={`Lead index page ${pageIndex + 1}`} {...gestures}>
+          {renderEntries(entries)}
+        </section>
+      </div>
+    </div>
+  );
 }

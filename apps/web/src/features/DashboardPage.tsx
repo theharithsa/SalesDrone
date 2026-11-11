@@ -1,3 +1,5 @@
+import BookPageControls from '../components/BookPageControls';
+import { useBookSheet } from '../lib/use-book-sheet';
 import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import DashboardCategoryPicker from '../components/DashboardCategoryPicker';
 import { dashboardGrouping } from '../../../../functions/src/dashboard-grouping.js';
@@ -362,10 +364,13 @@ function demoSnapshot(
     })),
   };
 }
+const dashboardSheets = ['Snapshot', 'Pipeline', 'Activity', 'Follow-ups'];
+
 export default function DashboardPage({
   request,
   demo,
   canUseIntelligence = true,
+  bookMode = false,
   firstName,
   timezone,
   sample,
@@ -383,6 +388,7 @@ export default function DashboardPage({
   request: (p: string, m?: string, b?: any) => Promise<any>;
   demo: boolean;
   canUseIntelligence?: boolean;
+  bookMode?: boolean;
   firstName: string;
   timezone: string;
   sample: { leads: Lead[]; tasks: Task[]; activities: Entity[] };
@@ -445,6 +451,10 @@ export default function DashboardPage({
       loadEpoch.current++;
     };
   }, [load, refreshKey]);
+  const [sheetIndex, setSheetIndex] = useState(0);
+  const sheetCount = bookMode && snapshot ? dashboardSheets.length : 0;
+  const { sheet, gestures, turn: turnDashboard } = useBookSheet(sheetIndex, sheetCount, setSheetIndex);
+
   const intelligenceEnabled = canUseIntelligence && snapshot?.intelligenceEnabled !== false;
   const briefInFlight = useRef(false);
   const briefEpoch = useRef(0);
@@ -519,6 +529,13 @@ export default function DashboardPage({
         <Loading />
       ) : (
         <>
+          {bookMode && <BookPageControls index={sheetIndex} count={sheetCount}
+            label="Dashboard pages" section={dashboardSheets[sheetIndex]} onTurn={turnDashboard} />}
+          <section className={bookMode ? 'book-dashboard-sheet' : 'dashboard-sheet'}
+            ref={bookMode ? sheet : undefined} tabIndex={bookMode ? -1 : undefined}
+            aria-label={bookMode ? dashboardSheets[sheetIndex] : undefined}
+            {...(bookMode ? gestures : {})}>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 0}>
           <div className="dashboard-kpis">
             {[
               {
@@ -558,14 +575,11 @@ export default function DashboardPage({
           </div>
           {intelligenceEnabled && <section className="dashboard-brief">
             <div className="brief-orbit" aria-hidden="true">
-              <span />
-              <span />
-              <Sparkles size={30} />
+              <Sparkles />
             </div>
             <div className="brief-main">
               <div className="brief-heading-row">
                 <span className="eyebrow">
-                  <Sparkles size={13} />
                   {demo
                     ? 'DEMO WORKSPACE SNAPSHOT'
                     : b
@@ -580,7 +594,7 @@ export default function DashboardPage({
                     disabled={briefBusy}
                     onClick={() => void refreshBrief()}
                   >
-                    <Sparkles size={15} />
+                    <Sparkles size={15} aria-hidden="true" />
                     {briefBusy
                       ? 'Working…'
                       : b
@@ -665,6 +679,8 @@ export default function DashboardPage({
               ))}
             </div>
           ) : null}
+          </div>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 1}>
           {snapshot.visualization?.field ? (
             <PipelineFunnel
               counts={snapshot.stages}
@@ -689,6 +705,8 @@ export default function DashboardPage({
               <p>No category fields are available. Ask an Admin to enable a field for dashboard charts.</p>
             </section>
           )}
+          </div>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 2}>
           <div className="dashboard-chart-grid">
             <section className="panel chart-panel">
               <div className="chart-heading">
@@ -795,6 +813,8 @@ export default function DashboardPage({
               </p>
             </section>
           </div>
+          </div>
+          <div className="dashboard-sheet" hidden={bookMode && sheetIndex !== 3}>
           <div className="dashboard-bottom-grid">
             <section className="panel dashboard-next">
               <div className="section-heading">
@@ -884,6 +904,8 @@ export default function DashboardPage({
               : ''}
             {intelligenceEnabled ? '. AI insights are suggestions, not automatic actions.' : '.'}
           </p>
+          </div>
+          </section>
         </>
       )}
     </div>

@@ -7,11 +7,13 @@ export default function InfiniteLeadLoader({
   busy,
   error,
   onLoad,
+  autoLoad = true,
 }: {
   cursor: string | null;
   busy: boolean;
   error: boolean;
   onLoad: () => void;
+  autoLoad?: boolean;
 }) {
   const marker = useRef<HTMLDivElement>(null);
   const attempted = useRef<string | null>(null);
@@ -19,6 +21,7 @@ export default function InfiniteLeadLoader({
   action.current = onLoad;
   useEffect(() => {
     if (
+      !autoLoad ||
       !cursor ||
       busy ||
       error ||
@@ -36,7 +39,7 @@ export default function InfiniteLeadLoader({
     );
     observer.observe(marker.current);
     return () => observer.disconnect();
-  }, [cursor, busy, error]);
+  }, [autoLoad, cursor, busy, error]);
   return (
     <div ref={marker} className="lead-load-more" aria-busy={busy}>
       {busy ? (

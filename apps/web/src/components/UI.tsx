@@ -94,6 +94,7 @@ export function Modal({
   children,
   wide = false,
   returnFocusRef,
+  initialFocusRef,
 }: {
   open: boolean;
   onClose: () => void;
@@ -102,6 +103,7 @@ export function Modal({
   children: ReactNode;
   wide?: boolean;
   returnFocusRef?: { current: HTMLElement | null };
+  initialFocusRef?: { current: HTMLElement | null };
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
@@ -110,6 +112,12 @@ export function Modal({
         <Dialog.Content
           className={'dialog ' + (wide ? 'wide' : '')}
           onPointerDownOutside={(e) => e.preventDefault()}
+          onOpenAutoFocus={(event) => {
+            if (initialFocusRef?.current) {
+              event.preventDefault();
+              initialFocusRef.current.focus();
+            }
+          }}
           onCloseAutoFocus={
             returnFocusRef
               ? (event) => {

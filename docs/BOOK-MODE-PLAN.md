@@ -9,6 +9,8 @@ Book mode is a personal reading style, independent of System/Light/Dark. It is o
 - Use a bound workspace page with an ink rule at the margin, stacked paper edges, bookmark-style navigation, ledger rows and loose-sheet dialogs. Narrow the binding on phones. No tiled image texture, artificial shadows over text or new remote font dependency.
 - Keep tables dense enough for outreach and horizontal scrolling contained. At 390px, retain existing navigation, editable fields and touch target sizes. Reduced motion removes the theme control's orbital transition.
 
+- The curl is clipped to the visible outgoing sheet in the lead index and Dashboard. The header, filters and page controls remain live outside it. Opening a lead or switching workspace modules uses normal navigation. This motion change adds no API calls or business events.
+
 ## State and API
 
 Add optional boolean bookMode to the existing self-owned Preferences contract and Session type. Missing values default false; older PATCH clients that omit it preserve the stored choice. Include the preference in appearance/reminder saves and quick theme updates without changing roles or capabilities. The live API remains Google/App Check protected; no Personal Access Token scope for preferences is introduced.
@@ -30,9 +32,22 @@ Book mode now has a dedicated [module skill](../skills/salesdrone-book-mode/SKIL
 ## Interactive workspace pages
 
 Book mode uses the existing editable workspace and lead routes. Leads has an
-index of eight entries per page with its existing filters, lead selection,
-export permissions and incremental loading. The index scrolls continuously.
+index of four entries per sheet with its existing filters, lead selection and
+export permissions. Scroll or swipe on a sheet to turn it, or use Previous and
+Next. Long sheets scroll internally before the next gesture turns the page.
+Page turns use already loaded leads. Choose Load more leads for the next batch.
+The outgoing workspace page curls from the outer edge toward the binding,
+carrying the visible toolbar, heading, filters and content as the next sheet
+appears underneath. Dashboard has separate Snapshot, Pipeline, Activity and
+Follow-ups sheets with the same controls. Reduced motion switches directly
+to the next sheet.
 The lead record opens on the next page with Comments selected, and returning
-to the index restores focus to the previous entry when it is loaded. The workspace shell puts every section on the same bound paper, including the dashboard, Tasks, Team, imports, notifications, research and Settings. Forms and overlays use the same paper and handwriting. The short page turn honours reduced motion. Caveat headings and Patrick Hand controls stay self-hosted.
+to the index restores the previous sheet and focuses the entry when it is loaded. The workspace shell puts every section on the same bound paper, including the dashboard, Tasks, Team, imports, notifications, research and Settings. Forms and overlays use the same paper and handwriting. Caveat headings and Patrick Hand controls stay self-hosted.
 
 The notebook redesign is presentation-only. It uses the same preference, permissions and settings audit. Page turns and layout changes add no API calls or business events.
+
+Local sheet-turn review covered synthetic Chromium at 320, 390, 768, 1024, 1440
+and 1920 px viewport settings, including a 540 px short window and 125% display
+zoom. The animation layer stayed within the outgoing sheet. The review exercised
+Next, keyboard navigation, reduced motion and focus restoration when returning
+from a lead. Captures are local under `test-results/sheet-only/`.

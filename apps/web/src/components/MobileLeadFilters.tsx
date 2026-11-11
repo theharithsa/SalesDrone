@@ -55,7 +55,6 @@ export default function MobileLeadFilters({
         }}
       >
         <Filter size={18} />
-        <span>Filters{count ? ` (${count})` : ""}</span>
         {count ? (
           <span className="mobile-filter-count" aria-hidden="true">
             {count}

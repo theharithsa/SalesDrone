@@ -88,15 +88,17 @@ export default function TaskRow({
           {task.leadId ? 'Lead follow-up' : 'Personal reminder'}
         </span>
       </button>
-      <div className={"task-lead" + (!task.leadId ? " task-lead-personal" : "")}>
-        <span className="task-lead-label">Lead</span>
-        {lead ? <><a href={'/leads/' + encodeURIComponent(lead.id)}><LeadName name={lead.name}/></a>{lead.company ? <small>{lead.company}</small> : null}</> : <span className="muted">{task.leadId ? 'Lead unavailable' : '—'}</span>}
+      <div className="task-people">
+        <div className={"task-lead" + (!task.leadId ? " task-lead-personal" : "")}>
+          <span className="task-lead-label">Lead</span>
+          {lead ? <><a href={'/leads/' + encodeURIComponent(lead.id)}><LeadName name={lead.name}/></a>{lead.company ? <small>{lead.company}</small> : null}</> : <span className="muted">{task.leadId ? 'Lead unavailable' : '—'}</span>}
+        </div>
+        <div className="task-responsible"><span className="task-lead-label">Responsible</span><span>{task.responsible?.name || 'You'}</span></div>
       </div>
-      <div className="task-responsible"><span className="task-lead-label">Responsible</span><span>{task.responsible?.name || 'You'}</span></div>
       <div className="task-time">
         <span className={overdue ? 'overdue' : ''}>
           {overdue ? <span className="overdue-dot" /> : <Clock size={12} />}{' '}
-          <time dateTime={task.dueAt}>{displayDate(task.dueAt, timezone)}</time>
+          <span className="sr-only">Due </span><time dateTime={task.dueAt}>{displayDate(task.dueAt, timezone)}</time>
         </span>
         {overdue ? (
           <small>Overdue</small>
@@ -105,7 +107,7 @@ export default function TaskRow({
         ) : null}
       </div>
       <div className="task-actions">
-        {task.state === 'Pending' && onReschedule ? <button className="button task-reschedule" onClick={onReschedule} disabled={disabled}><CalendarClock size={16}/><span>Reschedule</span></button> : null}
+        {task.state === 'Pending' && onReschedule ? <button className="button task-reschedule" aria-label="Reschedule" onClick={onReschedule} disabled={disabled}><CalendarClock size={16}/><span>Reschedule</span></button> : null}
       {(task.state === 'Pending' && (onSnooze || onCancel)) || onEdit || onDelete ? (
         <details
           ref={menuRef}

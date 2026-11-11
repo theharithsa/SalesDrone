@@ -107,7 +107,7 @@
       "manualCases": [
         {
           "id": "BOOK-MODE-INDEX",
-          "expected": "Scroll across lead pages, open a record with Comments selected, return focus to the index entry and verify that reduced motion disables page turns.",
+          "expected": "Turn one sheet at a time by wheel, swipe, keyboard or buttons. Check that only the changing lead or Dashboard sheet curls. The workspace header, filters and page controls stay outside the animation, and the visual copy never receives focus. Turn through Snapshot, Pipeline, Activity and Follow-ups in Dashboard. Check wheel momentum, sheet overflow, the first and last pages, explicit loading and filter resets. Open a lead and return to its sheet and entry focus. Reduced motion removes the animation.",
           "fixture": "Synthetic live-component preview on narrow and wide browser viewports"
         },
         {
@@ -160,7 +160,7 @@
         },
         {
           "id": "DASHBOARD-02",
-          "expected": "Get insights/manual/automatic modes and chart day selection retain their contracts.",
+          "expected": "The snapshot has one decorative badge with a clean text label on phones and desktops. Get insights/manual/automatic modes and chart day selection retain their contracts.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         },
         {
@@ -445,8 +445,8 @@
           "expected": "Bottom proximity loads 30/60/90/96 sample rows, then stops. Live cursor pages retain filters/access and continue through sparse results. At most one append is in flight; failed loads wait for Retry. Filter/navigation changes reject stale responses. Keyboard fallback and mobile work; appending preserves selection without selecting new rows; demo export includes all matching rows."
         },
         {
-          "id": "LEADS-LEADING-SELECTION-2.0.1",
-          "expected": "At 320/390/600/767px, checkbox target is left of the name and names share a start edge. Select/deselect without opening the lead. Verify target size and placement through all five saved zoom values, plus desktop table selection, dark and Book layouts. Workspace header omits Avinya logo beside the theme control.",
+          "id": "LEADS-COMPACT-HEADER-01",
+          "expected": "On mobile, search and filter icons share the title row and no batch selection occupies the list. Search focuses the input, applies and clears the query, and restores focus on submit or Escape. Filters include stage. Verify touch targets through saved zoom, desktop batch selection, and Standard and Book modes.",
           "fixture": "isolated synthetic demo; review:mobile; no customer writes"
         },
         {
@@ -667,7 +667,7 @@
         },
         {
           "id": "TASK-LEAD-RESCHEDULE-01",
-          "expected": "Task lead names are current and linked without loading the Leads collection. Direct Reschedule is available only for writable Pending tasks; save updates time, cancel preserves it. Narrow layouts stack context; personal reminders have no lead link.",
+          "expected": "Task lead names are current and linked without loading the Leads collection. Direct Reschedule is available only for writable Pending tasks; save updates time, cancel preserves it. Wide panels align headings and cells; narrow rows group lead and responsibility below the title. Personal reminders have no lead link.",
           "fixture": "Fictional task screen, real RescheduleForm, and real Auth/Firestore task-list integration"
         },
         {
@@ -752,6 +752,11 @@
           "id": "WORKSPACE-SETTINGS-03",
           "expected": "Old PATCH clients preserve omitted choices; denied/no-op saves emit no false audit.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "SETTINGS-ABOUT-ALIGNMENT",
+          "expected": "The usage analytics and story cards share both edges at phone, tablet and desktop widths. Story prose keeps a readable line length on wide screens.",
+          "fixture": "Fictional local Admin preview with analytics availability stubbed and no telemetry transport"
         },
         {
           "id": "SETTINGS-RESET-01",

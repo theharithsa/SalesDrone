@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.12.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.12.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -76,9 +76,9 @@ Stored on your account through GET/PATCH /me; other members are unaffected. Choo
 
 **Default:** Off.
 
-A personal notebook layout with handwriting, section tabs and paper pages throughout the workspace. The lead index groups records on scrollable pages. Opening a lead turns to its existing detail page, with Comments and editing available. Phone numbers remain monospace.
+A personal notebook layout with handwriting, section tabs and paper pages throughout the workspace. The lead index shows one sheet at a time. Scroll, swipe or use Previous and Next to turn it. Opening a lead turns to its existing detail page, with Comments and editing available. Phone numbers remain monospace.
 
-Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Page turns are brief and follow the device’s reduced-motion preference. Returning to the lead index restores focus to the entry you opened when it is still loaded.
+Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Page turns are brief and follow the device’s reduced-motion preference. Returning to the lead index restores the sheet and focus to the entry you opened when it is still loaded.
 
 **Example:** Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace.
 

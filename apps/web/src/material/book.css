@@ -69,7 +69,6 @@
     linear-gradient(var(--book-margin-rule), var(--book-margin-rule)) left var(--book-gutter) top / 1px 100% no-repeat,
     var(--panel);
   box-shadow: 3px 3px 0 var(--book-edge), 5px 5px 0 -1px var(--line), 0 10px 24px #00000012;
-  transform-origin: left center;
 }
 
 :root[data-reading-mode='book'] .app-shell #main-content :is(.page-body, .lead-assistant) {
@@ -225,8 +224,33 @@
   box-shadow: none;
   overflow: visible;
 }
-.book-index { display: grid; gap: clamp(18px, 3vw, 32px); padding-block: 12px; }
+.book-index { display: grid; gap: 10px; padding-block: 12px; }
+.book-page-controls {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--panel);
+  border-bottom: 1px solid var(--book-rule);
+  padding: 4px 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.book-page-controls .button { gap: 4px; padding-inline: 10px; }
+.book-page-controls .button[aria-disabled='true'] { opacity: .55; cursor: default; }
+.book-page-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  padding: 3px 6px 7px 3px;
+}
 .book-index-page {
+  max-block-size: max(200px, calc(100dvh / var(--interface-scale, 1) - 146px));
+  overflow: auto;
+  touch-action: pan-y pinch-zoom;
+  scroll-padding: 10px;
   padding: clamp(12px, 3vw, 28px);
   border: 1px solid var(--line);
   border-radius: 4px 12px 12px 4px;
@@ -235,6 +259,7 @@
   box-shadow: 2px 3px var(--md-sys-color-surface-container-high), 4px 6px 0 -1px var(--line);
   transform-origin: left center;
 }
+.book-index-page:focus-visible { outline-offset: -2px; }
 .book-index-page > ol { list-style: none; margin: 0; padding: 0; }
 .book-index-entry { display: flex; align-items: center; gap: 8px; }
 .book-index-entry + .book-index-entry { border-top: 1px solid var(--line); }
@@ -258,16 +283,92 @@
 .book-index-identity strong { color: var(--accent); font-size: 1.125rem; }
 .book-index-identity > span { color: var(--muted); }
 .book-index-status { display: flex; align-items: flex-end; flex-direction: column; gap: 4px; }
-.book-page-number { margin: 12px 0 0; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+.book-page-number { text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 599.99px) {
+  .book-page-controls {
+    top: max(var(--md-touch-target, 48px), 56px);
+    scroll-margin-block-start: max(var(--md-touch-target, 48px), 56px);
+  }
+  /* The lead sheet scrolls below its controls. Keep them out of the sheet. */
+  .book-index .book-page-controls { position: relative; top: auto; }
+}
 @media (max-width: 480px) {
   .book-index-link { grid-template-columns: minmax(0, 1fr) auto; }
   .book-index-status { grid-column: 1; grid-row: 2; flex-direction: row; align-items: center; flex-wrap: wrap; }
   .book-index-link > svg { grid-column: 2; grid-row: 1 / 3; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .book-index-page[data-turned='true'] { animation: book-leaf-in 240ms var(--md-sys-motion-easing); }
+.dashboard-sheet:not([hidden]) { display: contents; }
+.book-dashboard-sheet {
+  max-block-size: max(200px, calc(100dvh / var(--interface-scale, 1) - 146px));
+  overflow: auto;
+  touch-action: pan-y pinch-zoom;
+  scroll-padding: 10px;
+  margin-top: 12px;
 }
-@keyframes book-leaf-in {
-  from { transform: perspective(1000px) rotateY(3deg); opacity: 0.84; }
-  to { transform: none; opacity: 1; }
+.book-dashboard-sheet:focus-visible { outline-offset: -2px; }
+.book-page-number strong { display: block; color: var(--text); }
+
+.book-turn-layer {
+  position: fixed;
+  z-index: 66;
+  isolation: isolate;
+  overflow: clip;
+  perspective: 1800px;
+  perspective-origin: 50% 35%;
+  pointer-events: none;
+}
+
+.book-turn-shade,
+.book-turn-front,
+.book-turn-back {
+  position: absolute;
+  inset: 0;
+}
+
+.book-turn-shade { background: var(--text); }
+
+.book-turn-plane,
+.book-turn-strip {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.book-turn-strip {
+  inset-block: 0;
+}
+
+.book-turn-front,
+.book-turn-back {
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+.book-turn-window {
+  position: absolute;
+  overflow: hidden;
+  scrollbar-width: none;
+  background: var(--panel);
+}
+
+.book-turn-back { transform: rotateY(180deg); }
+
+.book-turn-back-mirror {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(-1);
+}
+
+.book-turn-paper {
+  position: absolute;
+  background: var(--panel);
+}
+
+.book-turn-paper-shadow {
+  position: absolute;
+  inset: 0;
+  background: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book-turn-layer { display: none; }
 }

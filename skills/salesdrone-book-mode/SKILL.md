@@ -21,7 +21,7 @@ Book mode is optional boolean bookMode, default false, independent of appearance
 
 Caveat headings and Patrick Hand body/controls use the same notebook shell for all workspace modules, including overlays. Phone numbers and telephone inputs, including descendants of phone cells, remain monospace. Keep the SalesDrone/Avinya artwork and standard-mode fonts intact. Avoid blanket !important rules that override phone semantics or icon rendering; account for portals outside the app root and SVG chart text.
 
-Day uses warm paper/ink; night uses charcoal/warm pale ink. Preserve semantic status distinctions, focus, contrast, 16px editable inputs and 44px touch targets. Use the live lead index and existing record routes. Turns are visual only, preserve navigation focus and honour reduced motion. Styles must work in the lead index, full lead page, dashboard, tasks, settings, inbox and dialogs. Standard mode must restore cleanly.
+Day uses warm paper/ink; night uses charcoal/warm pale ink. Preserve semantic status distinctions, focus, contrast, 16px editable inputs and 44px touch targets. The live lead index renders one sheet at a time and turns by wheel, swipe, keys or buttons. Scroll long sheets internally and load additional leads explicitly. Back restores the source sheet and focus. Curl only the outgoing lead index or Dashboard sheet. Keep workspace navigation, headings, filters and page controls outside the animation. Dashboard uses Snapshot, Pipeline, Activity and Follow-ups sheets. Keep the outgoing view inert and remove it when the turn ends. Reduced motion switches instantly. Styles must work in the lead index, full lead page, dashboard, tasks, settings, inbox and dialogs. Standard mode must restore cleanly.
 
 ## API, audit and adjacent owners
 
@@ -48,3 +48,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#46](https://github.com/theharithsa/SalesDrone/issues/46). Check their current status before changing the contract.
+
+The Tasks register aligns by available page width and uses compact rows on phones. Mobile search and filter icons stay in the lead header while the index turns.
