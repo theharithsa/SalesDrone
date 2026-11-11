@@ -57,7 +57,7 @@
   border-bottom: 1px solid var(--book-rule);
 }
 
-:root[data-reading-mode='book'] :is(#main-content, .book-turn-page) {
+:root[data-reading-mode='book'] #main-content {
   min-width: 0;
   min-height: calc(100dvh / var(--interface-scale, 1) - 104px);
   margin: 10px clamp(12px, 2vw, 30px) 22px;
@@ -71,11 +71,11 @@
   box-shadow: 3px 3px 0 var(--book-edge), 5px 5px 0 -1px var(--line), 0 10px 24px #00000012;
 }
 
-:root[data-reading-mode='book'] .app-shell :is(#main-content, .book-turn-page) :is(.page-body, .lead-assistant) {
+:root[data-reading-mode='book'] .app-shell #main-content :is(.page-body, .lead-assistant) {
   padding-inline: clamp(14px, 2.6vw, 42px);
 }
 
-:root[data-reading-mode='book'] .app-shell :is(#main-content, .book-turn-page) > .lead-assistant {
+:root[data-reading-mode='book'] .app-shell #main-content > .lead-assistant {
   padding-block: 16px 26px;
 }
 
@@ -204,13 +204,13 @@
     border-top: 1px solid var(--book-rule);
   }
 
-  :root[data-reading-mode='book'] :is(#main-content, .book-turn-page) {
+  :root[data-reading-mode='book'] #main-content {
     margin: 4px 6px 14px;
     min-height: 0;
     box-shadow: 2px 3px 0 var(--book-edge), 3px 4px 0 -1px var(--line);
   }
 
-  :root[data-reading-mode='book'] .app-shell :is(#main-content, .book-turn-page) :is(.page-body, .lead-assistant) {
+  :root[data-reading-mode='book'] .app-shell #main-content :is(.page-body, .lead-assistant) {
     padding-inline: 9px;
   }
 
@@ -347,7 +347,7 @@
   position: absolute;
   overflow: hidden;
   scrollbar-width: none;
-  background: var(--book-board);
+  background: var(--panel);
 }
 
 .book-turn-back { transform: rotateY(180deg); }

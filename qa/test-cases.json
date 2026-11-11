@@ -107,7 +107,7 @@
       "manualCases": [
         {
           "id": "BOOK-MODE-INDEX",
-          "expected": "Turn one sheet at a time by wheel, swipe, keyboard or buttons. Check that the workspace header, filters and rows turn together and the visual copy never receives focus. Turn through Snapshot, Pipeline, Activity and Follow-ups in Dashboard. Check wheel momentum, sheet overflow, the first and last pages, explicit loading and filter resets. Open a lead and return to its sheet and entry focus. Reduced motion removes the animation.",
+          "expected": "Turn one sheet at a time by wheel, swipe, keyboard or buttons. Check that only the changing lead or Dashboard sheet curls. The workspace header, filters and page controls stay outside the animation, and the visual copy never receives focus. Turn through Snapshot, Pipeline, Activity and Follow-ups in Dashboard. Check wheel momentum, sheet overflow, the first and last pages, explicit loading and filter resets. Open a lead and return to its sheet and entry focus. Reduced motion removes the animation.",
           "fixture": "Synthetic live-component preview on narrow and wide browser viewports"
         },
         {

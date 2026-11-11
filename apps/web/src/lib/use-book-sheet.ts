@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, type TouchEvent as ReactTouchEvent } from 'react';
 
+import { useBookTurn } from './use-book-turn';
+
 const wheelPause = 180;
 const swipeDistance = 48;
 
@@ -9,8 +11,17 @@ function atEdge(element: HTMLElement, direction: number) {
     : element.scrollHeight - element.clientHeight - element.scrollTop <= 1;
 }
 
-export function useBookSheet(pageIndex: number, pageCount: number, turn: (direction: number) => boolean) {
+export function useBookSheet(pageIndex: number, pageCount: number, setPageIndex: (index: number) => void) {
   const sheet = useRef<HTMLElement>(null);
+  const animateTurn = useBookTurn(pageCount > 1);
+  const turn = useCallback((direction: number) => {
+    const next = pageIndex + direction;
+    if (next < 0 || next >= pageCount) return false;
+    if (sheet.current) animateTurn(sheet.current, direction);
+    setPageIndex(next);
+    return true;
+  }, [animateTurn, pageCount, pageIndex, setPageIndex]);
+
   const wheel = useRef({ last: -Infinity, distance: 0, turned: false });
   const touch = useRef<{ x: number; y: number; start: boolean; end: boolean } | null>(null);
 
@@ -99,5 +110,5 @@ export function useBookSheet(pageIndex: number, pageCount: number, turn: (direct
       else if (y >= swipeDistance && start.start) turnFromSheet(event.currentTarget, -1);
     },
   };
-  return { sheet, gestures };
+  return { sheet, gestures, turn };
 }

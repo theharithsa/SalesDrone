@@ -1,6 +1,4 @@
-import { createContext, useCallback, useEffect, useRef } from 'react';
-
-export const BookPageTurn = createContext<(direction?: number) => void>(() => {});
+import { useCallback, useEffect, useRef } from 'react';
 
 const stripCount = 16;
 const frameCount = 32;
@@ -29,7 +27,6 @@ function capturePrint(source: HTMLElement) {
 
   copies.forEach((copy, index) => {
     const original = originals[index];
-    if (copy.id === 'main-content') copy.classList.add('book-turn-page');
     if (copy instanceof HTMLInputElement && original instanceof HTMLInputElement) {
       copy.checked = original.checked;
       if (copy.type !== 'file') copy.value = original.value;
@@ -75,26 +72,32 @@ function copyPrint(template: HTMLElement, number: number) {
 }
 
 export function useBookTurn(enabled: boolean) {
-  const surface = useRef<HTMLDivElement>(null);
   const stop = useRef<() => void>(() => {});
 
   useEffect(() => () => stop.current(), [enabled]);
 
-  const turn = useCallback((direction = 1) => {
-    const source = surface.current;
-    const host = source?.parentElement;
+  return useCallback((source: HTMLElement, direction: number) => {
+    const host = source.parentElement;
     const media = window.matchMedia(motionQuery);
     stop.current();
-    if (!enabled || !source || !host || media.matches || !source.animate) return;
+    if (!enabled || !host || media.matches || !source.animate) return;
 
     const bounds = source.getBoundingClientRect();
     if (!bounds.width || !source.offsetWidth) return;
     const scale = bounds.width / source.offsetWidth;
-    const top = Math.max(bounds.top, 0);
-    const navigation = host.querySelector('.bottom-nav');
-    const bottom = Math.min(bounds.bottom, navigation?.getClientRects().length
+    const shell = source.closest('.main-shell');
+    const toolbar = shell?.querySelector('.topbar');
+    const controls = host.querySelector(':scope > .book-page-controls')
+      ?? host.parentElement?.querySelector(':scope > .book-page-controls');
+    const navigation = shell?.parentElement?.querySelector('.bottom-nav');
+    const toolbarBottom = toolbar && ['sticky', 'fixed'].includes(getComputedStyle(toolbar).position)
+      ? toolbar.getBoundingClientRect().bottom
+      : 0;
+    const navigationTop = navigation?.getClientRects().length
       ? navigation.getBoundingClientRect().top
-      : window.innerHeight);
+      : window.innerHeight;
+    const top = Math.max(0, bounds.top, toolbarBottom, controls?.getBoundingClientRect().bottom ?? 0);
+    const bottom = Math.min(bounds.bottom, navigationTop, window.innerHeight);
     if (bottom <= top) return;
 
     const width = bounds.width / scale;
@@ -105,6 +108,11 @@ export function useBookTurn(enabled: boolean) {
     const modelHeight = height * Math.cos(radians) + width * Math.abs(Math.sin(radians));
     const stripWidth = modelWidth / stripCount;
     const { template, scrollPositions } = capturePrint(source);
+    Object.assign(template.style, {
+      width: `${source.offsetWidth}px`,
+      height: `${source.offsetHeight}px`,
+      margin: '0',
+    });
     const layer = document.createElement('div');
     layer.className = 'book-turn-layer';
     layer.inert = true;
@@ -191,12 +199,14 @@ export function useBookTurn(enabled: boolean) {
       animations.forEach((animation) => animation.cancel());
       media.removeEventListener('change', clear);
       window.removeEventListener('resize', clear);
+      window.removeEventListener('scroll', clear);
+      shell?.removeEventListener('scroll', clear);
     }
     stop.current = clear;
     media.addEventListener('change', clear);
     window.addEventListener('resize', clear);
+    window.addEventListener('scroll', clear);
+    shell?.addEventListener('scroll', clear);
     void animations[0].finished.then(clear, clear);
   }, [enabled]);
-
-  return { surface, turn };
 }

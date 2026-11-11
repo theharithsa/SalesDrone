@@ -456,7 +456,9 @@ try {
       assert.equal(await js('document.querySelectorAll("#main-content .book-index-page").length'), 1);
       assert.ok(await js(`(() => {
         document.querySelector('#main-content .book-page-controls button:last-child').click();
-        return !!document.querySelector('.book-turn-layer[inert] .mobile-lead-search-trigger');
+        const layer = document.querySelector('.book-turn-layer[inert]');
+        return !!layer?.querySelector('.book-index-page') &&
+          !layer.querySelector('.topbar, .page-title, .mobile-lead-search-trigger, .mobile-lead-filter-trigger, .book-page-controls');
       })()`));
       await wait('document.querySelector("#main-content .book-page-number")?.textContent.startsWith("Page 2 of ")');
       await wait('!document.querySelector(".book-turn-layer")');

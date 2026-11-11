@@ -1,10 +1,9 @@
-import { useCallback, useContext, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import type { Lead } from '../lib/types';
 import { Badge } from './UI';
 import BookPageControls from './BookPageControls';
 import { ScoreBadge } from './LeadScore';
-import { BookPageTurn } from '../lib/use-book-turn';
 import { useBookSheet } from '../lib/use-book-sheet';
 
 const leadsPerPage = 4;
@@ -24,19 +23,11 @@ export default function BookLeadIndex({
 }) {
   const restoreIndex = returnLeadId ? leads.findIndex((lead) => lead.id === returnLeadId) : -1;
   const [index, setIndex] = useState(() => Math.max(0, Math.floor(restoreIndex / leadsPerPage)));
-  const turnPage = useContext(BookPageTurn);
   const pageCount = Math.max(1, Math.ceil(leads.length / leadsPerPage));
   const pageIndex = Math.min(index, pageCount - 1);
   const first = pageIndex * leadsPerPage;
   const entries = leads.slice(first, first + leadsPerPage);
-  const turn = useCallback((direction: number) => {
-    const next = pageIndex + direction;
-    if (next < 0 || next >= pageCount) return false;
-    turnPage(direction);
-    setIndex(next);
-    return true;
-  }, [pageCount, pageIndex, turnPage]);
-  const { sheet, gestures } = useBookSheet(pageIndex, pageCount, turn);
+  const { sheet, gestures, turn } = useBookSheet(pageIndex, pageCount, setIndex);
 
   useLayoutEffect(() => {
     if (!returnLeadId) return;

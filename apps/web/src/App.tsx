@@ -1,4 +1,3 @@
-import { BookPageTurn, useBookTurn } from './lib/use-book-turn';
 import { normalizeAccent } from './lib/accent';
 import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
@@ -455,7 +454,6 @@ export default function App() {
       accentPalette: guestAccent,
       displayScale: guestDisplayScale,
     });
-  const { surface: bookSurface, turn: turnBookPage } = useBookTurn(bookMode && !!active);
   const [bookReturnLead, setBookReturnLead] = useState<string | null>(null);
   const clearBookReturnLead = useCallback(() => setBookReturnLead(null), []);
   useEffect(() => {
@@ -1209,7 +1207,6 @@ export default function App() {
       return;
     }
     if (routeLeadId === lead.id) return chooseLead(lead.id, leadTabRef.current);
-    turnBookPage();
     if (bookMode && page === 'leads' && !routeLeadId) setBookReturnLead(lead.id);
     detailEpoch.current++;
     selectedIdRef.current = undefined;
@@ -1268,7 +1265,6 @@ export default function App() {
   useEffect(() => {
     const sync = () => {
       const id = leadPathId(window.location.pathname);
-      turnBookPage(-1);
       detailEpoch.current++;
       setRouteLeadId(id);
       setLeadTab('comments');
@@ -1283,9 +1279,8 @@ export default function App() {
     };
     window.addEventListener('popstate', sync);
     return () => window.removeEventListener('popstate', sync);
-  }, [turnBookPage]);
+  }, []);
   function closeLead() {
-    if (routeLeadId) turnBookPage(-1);
     detailEpoch.current++;
     selectedIdRef.current = undefined;
     timelineMoreRequest.current++;
@@ -1303,7 +1298,6 @@ export default function App() {
       setMenu(false);
       return;
     }
-    if (p !== page || routeLeadId) turnBookPage();
     listEpoch.current++;
     detailEpoch.current++;
     setPage(p);
@@ -1726,7 +1720,7 @@ export default function App() {
       {menu ? (
         <div className="mobile-nav-scrim" onClick={() => setMenu(false)} />
       ) : null}
-      <div className="main-shell" ref={bookSurface} inert={compact && menu}>
+      <div className="main-shell" inert={compact && menu}>
         <header className="topbar">
           <div className="breadcrumb">
             <button
@@ -1901,7 +1895,6 @@ export default function App() {
           </div>
         ) : null}
         <main id="main-content">
-          <BookPageTurn.Provider value={turnBookPage}>
           <Suspense fallback={<Loading />}>
             {page==='team' ? (admin||demo ? <TeamPage key={(session?.identity.uid||'demo')+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} request={request} demo={!!demo} onLeads={id=>{setAssignee(id);setStage('');setSource('');setSearch('');setSearchDraft('');setColumnFilters([]);go('leads');}}/> : <div className="page-body"><ErrorMessage error="Team insights are available to workspace administrators."/></div>) : null}
 
@@ -3194,7 +3187,6 @@ export default function App() {
               />
             ) : null}
           </Suspense>
-          </BookPageTurn.Provider>
         </main>
       </div>
       <nav

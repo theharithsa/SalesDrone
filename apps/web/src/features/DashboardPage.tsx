@@ -1,5 +1,4 @@
 import BookPageControls from '../components/BookPageControls';
-import { BookPageTurn } from '../lib/use-book-turn';
 import { useBookSheet } from '../lib/use-book-sheet';
 import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import DashboardCategoryPicker from '../components/DashboardCategoryPicker';
@@ -7,7 +6,7 @@ import { dashboardGrouping } from '../../../../functions/src/dashboard-grouping.
 import { defaultFieldOptions, type FieldOptions } from '../lib/field-options';
 import { readStored, writeStored } from '../lib/browser-storage';
 import PipelineFunnel from '../components/PipelineFunnel';
-import { useCallback, useContext, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import {
   ArrowUpRight,
   BarChart3,
@@ -453,16 +452,8 @@ export default function DashboardPage({
     };
   }, [load, refreshKey]);
   const [sheetIndex, setSheetIndex] = useState(0);
-  const turnPage = useContext(BookPageTurn);
   const sheetCount = bookMode && snapshot ? dashboardSheets.length : 0;
-  const turnDashboard = useCallback((direction: number) => {
-    const next = sheetIndex + direction;
-    if (next < 0 || next >= sheetCount) return false;
-    turnPage(direction);
-    setSheetIndex(next);
-    return true;
-  }, [sheetCount, sheetIndex, turnPage]);
-  const { sheet, gestures } = useBookSheet(sheetIndex, sheetCount, turnDashboard);
+  const { sheet, gestures, turn: turnDashboard } = useBookSheet(sheetIndex, sheetCount, setSheetIndex);
 
   const intelligenceEnabled = canUseIntelligence && snapshot?.intelligenceEnabled !== false;
   const briefInFlight = useRef(false);
