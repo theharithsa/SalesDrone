@@ -21,7 +21,7 @@ Book mode is optional boolean bookMode, default false, independent of appearance
 
 Caveat headings and Patrick Hand body/controls use the same notebook shell for all workspace modules, including overlays. Phone numbers and telephone inputs, including descendants of phone cells, remain monospace. Keep the SalesDrone/Avinya artwork and standard-mode fonts intact. Avoid blanket !important rules that override phone semantics or icon rendering; account for portals outside the app root and SVG chart text.
 
-Day uses warm paper/ink; night uses charcoal/warm pale ink. Preserve semantic status distinctions, focus, contrast, 16px editable inputs and 44px touch targets. The live lead index renders one sheet at a time and turns by wheel, swipe, keys or buttons. Scroll long sheets internally and load additional leads explicitly. Back restores the source sheet and focus. Reduced motion turns instantly. Styles must work in the lead index, full lead page, dashboard, tasks, settings, inbox and dialogs. Standard mode must restore cleanly.
+Day uses warm paper/ink; night uses charcoal/warm pale ink. Preserve semantic status distinctions, focus, contrast, 16px editable inputs and 44px touch targets. The live lead index renders one sheet at a time and turns by wheel, swipe, keys or buttons. Scroll long sheets internally and load additional leads explicitly. Back restores the source sheet and focus. The outgoing rows fold around the binding in an inert layer that is removed when the turn ends. Reduced motion switches instantly. Styles must work in the lead index, full lead page, dashboard, tasks, settings, inbox and dialogs. Standard mode must restore cleanly.
 
 ## API, audit and adjacent owners
 

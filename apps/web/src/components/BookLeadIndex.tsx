@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Lead } from '../lib/types';
 import { Badge } from './UI';
@@ -7,6 +7,13 @@ import { ScoreBadge } from './LeadScore';
 const leadsPerPage = 4;
 const wheelPause = 180;
 const swipeDistance = 48;
+
+type OutgoingSheet = {
+  entries: Lead[];
+  height: number;
+  scrollTop: number;
+  direction: 'next' | 'previous';
+};
 
 function atEdge(element: HTMLElement, direction: number) {
   return direction < 0
@@ -29,9 +36,9 @@ export default function BookLeadIndex({
   onRestoreFocus?: () => void;
 }) {
   const restoreIndex = returnLeadId ? leads.findIndex((lead) => lead.id === returnLeadId) : -1;
-  const [page, setPage] = useState(() => ({
+  const [page, setPage] = useState<{ index: number; outgoing: OutgoingSheet | null }>(() => ({
     index: Math.max(0, Math.floor(restoreIndex / leadsPerPage)),
-    direction: 0,
+    outgoing: null,
   }));
   const pageCount = Math.max(1, Math.ceil(leads.length / leadsPerPage));
   const pageIndex = Math.min(page.index, pageCount - 1);
@@ -49,7 +56,7 @@ export default function BookLeadIndex({
     if (!returnLeadId) return;
     const restorePage = Math.floor(restoreIndex / leadsPerPage);
     if (restorePage >= 0 && restorePage !== pageIndex) {
-      setPage({ index: restorePage, direction: 0 });
+      setPage({ index: restorePage, outgoing: null });
       return;
     }
     const button = sheet.current?.querySelector<HTMLButtonElement>(
@@ -65,9 +72,18 @@ export default function BookLeadIndex({
     if (next < 0 || next >= pageCount) return false;
     const element = sheet.current;
     if (element?.contains(document.activeElement)) element.focus({ preventScroll: true });
-    setPage({ index: next, direction });
+    const outgoing: OutgoingSheet | null =
+      element && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? {
+            entries: leads.slice(first, first + leadsPerPage),
+            height: element.offsetHeight,
+            scrollTop: element.scrollTop,
+            direction: direction > 0 ? 'next' : 'previous',
+          }
+        : null;
+    setPage({ index: next, outgoing });
     return true;
-  }, [pageCount, pageIndex]);
+  }, [first, leads, pageCount, pageIndex]);
 
   useEffect(() => {
     const element = sheet.current;
@@ -121,7 +137,51 @@ export default function BookLeadIndex({
     };
   }, [pageCount, pageIndex, turn]);
 
+  function renderEntries(rows: Lead[], interactive = true, scrollTop = 0) {
+    return (
+      <ol style={scrollTop ? { transform: `translateY(-${scrollTop}px)` } : undefined}>
+        {rows.map((lead) => {
+          const showCompany = !hiddenFields.includes('company');
+          const company = showCompany ? lead.company : '';
+          const name = hiddenFields.includes('name') ? '' : lead.name;
+          const title = name || company || 'Lead enquiry';
+          const companyLabel = company || (showCompany && name ? 'Individual Customer' : '');
+          const context = [
+            companyLabel === title ? '' : companyLabel,
+            hiddenFields.includes('location') ? '' : lead.location,
+          ].filter(Boolean).join(' · ');
+          return (
+            <li key={lead.id} className="book-index-entry">
+              {checkedIds && <label className="lead-selection-control">
+                <input type="checkbox" checked={checkedIds.has(lead.id)}
+                  aria-label={`Select ${title}`}
+                  onChange={interactive ? () => onToggle?.(lead.id) : undefined}
+                  readOnly={!interactive} />
+              </label>}
+              <button type="button" className="book-index-link" data-book-lead={interactive ? lead.id : undefined}
+                onClick={interactive ? () => {
+                  setPage((current) => current.outgoing ? { ...current, outgoing: null } : current);
+                  onSelect(lead);
+                } : undefined}>
+                <span className="book-index-identity">
+                  <strong>{title}</strong>
+                  {context && <span>{context}</span>}
+                  {!hiddenFields.includes('phone') && lead.phone && <span className="phone-number">{lead.phone}</span>}
+                </span>
+                <span className="book-index-status">
+                  {!hiddenFields.includes('stage') && <Badge stage={lead.stage} />}
+                  {showScores && <ScoreBadge score={scores[lead.id]} />}
+                </span>
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    );
+  }
 
+  const { outgoing } = page;
   return (
     <div className="book-index">
       <nav className="book-page-controls" aria-label="Lead index pages">
@@ -131,7 +191,8 @@ export default function BookLeadIndex({
         <button type="button" className="button" aria-disabled={pageIndex === pageCount - 1}
           onClick={() => turn(1)}>Next <ChevronRight size={18} aria-hidden="true" /></button>
       </nav>
-      <div className="book-page-stage">
+      <div className="book-page-stage" data-turning={outgoing ? '' : undefined}
+        style={outgoing ? { '--book-turn-height': `${outgoing.height}px` } as CSSProperties : undefined}>
         <section className="book-index-page" ref={sheet} tabIndex={-1}
           aria-label={`Lead index page ${pageIndex + 1}`}
           onTouchStart={(event) => {
@@ -152,44 +213,25 @@ export default function BookLeadIndex({
             else if (y <= -swipeDistance && start.end) turn(1);
             else if (y >= swipeDistance && start.start) turn(-1);
           }}>
-          <ol>
-            {entries.map((lead) => {
-              const showCompany = !hiddenFields.includes('company');
-              const company = showCompany ? lead.company : '';
-              const name = hiddenFields.includes('name') ? '' : lead.name;
-              const title = name || company || 'Lead enquiry';
-              const companyLabel = company || (showCompany && name ? 'Individual Customer' : '');
-              const context = [
-                companyLabel === title ? '' : companyLabel,
-                hiddenFields.includes('location') ? '' : lead.location,
-              ].filter(Boolean).join(' · ');
-              return (
-                <li key={lead.id} className="book-index-entry">
-                  {checkedIds && <label className="lead-selection-control">
-                    <input type="checkbox" checked={checkedIds.has(lead.id)}
-                      aria-label={`Select ${title}`}
-                      onChange={() => onToggle?.(lead.id)} />
-                  </label>}
-                  <button type="button" className="book-index-link" data-book-lead={lead.id} onClick={() => onSelect(lead)}>
-                    <span className="book-index-identity">
-                      <strong>{title}</strong>
-                      {context && <span>{context}</span>}
-                      {!hiddenFields.includes('phone') && lead.phone && <span className="phone-number">{lead.phone}</span>}
-                    </span>
-                    <span className="book-index-status">
-                      {!hiddenFields.includes('stage') && <Badge stage={lead.stage} />}
-                      {showScores && <ScoreBadge score={scores[lead.id]} />}
-                    </span>
-                    <ChevronRight size={18} aria-hidden="true" />
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
+          {renderEntries(entries)}
         </section>
-        {page.direction !== 0 && (
-          <div key={pageIndex} className="book-page-flap"
-            data-direction={page.direction > 0 ? 'next' : 'previous'} aria-hidden="true" />
+        {outgoing && (
+          <div key={pageIndex} className="book-page-flap" data-direction={outgoing.direction}
+            aria-hidden="true" inert
+            onAnimationEnd={(event) => {
+              if (event.target !== event.currentTarget) return;
+              setPage((current) => current.outgoing === outgoing
+                ? { ...current, outgoing: null }
+                : current);
+            }}>
+            {(['spine', 'edge'] as const).map((half) => (
+              <div key={half} className="book-fold-half" data-half={half}>
+                <div className="book-fold-print">
+                  {renderEntries(outgoing.entries, false, outgoing.scrollTop)}
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
