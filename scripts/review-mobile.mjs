@@ -442,6 +442,18 @@ try {
       await geometry('palette-' + mode.name, width);
     await viewport(390, 844);
     await screenshot('test-results/mobile/' + mode.name + '.jpg');
+    if (mode.book) {
+      assert.equal(await js('document.querySelectorAll(".book-index-page").length'), 1);
+      await action('Next');
+      await wait('document.querySelector(".book-page-number")?.textContent.startsWith("Page 2 of ")');
+      const leadId = await js('document.querySelector(".book-index-link").dataset.bookLead');
+      await tap('.book-index-link');
+      await wait('!!document.querySelector(".full-lead-page")');
+      await action('Back to leads');
+      await wait('document.activeElement?.dataset.bookLead===' + JSON.stringify(leadId));
+      assert.equal(await js('document.querySelector(".book-page-number").textContent.startsWith("Page 2 of ")'), true);
+      evidence.push({case:'book-sheet-navigation-and-focus',width:390,mode:mode.name,result:'passed'});
+    }
     await action('Tasks');
     for (const width of [320, 390, 768]) await geometry('tasks-palette-' + mode.name, width);
     await viewport(390, 844);

@@ -444,21 +444,11 @@ export default function App() {
       displayScale: guestDisplayScale,
     });
   const bookSurface = useBookTurn(bookMode && !!active, page, routeLeadId);
-  const bookReturnLead = useRef<string | null>(null);
+  const [bookReturnLead, setBookReturnLead] = useState<string | null>(null);
+  const clearBookReturnLead = useCallback(() => setBookReturnLead(null), []);
   useEffect(() => {
-    if (page !== 'leads' || !bookMode) {
-      bookReturnLead.current = null;
-      return;
-    }
-    if (routeLeadId || !bookReturnLead.current) return;
-    const button = bookSurface.current?.querySelector<HTMLButtonElement>(
-      `[data-book-lead="${CSS.escape(bookReturnLead.current)}"]`,
-    );
-    if (!button) return;
-    button.focus({ preventScroll: true });
-    button.scrollIntoView({ block: 'nearest' });
-    bookReturnLead.current = null;
-  }, [bookMode, bookSurface, page, routeLeadId]);
+    if (page !== 'leads' || !bookMode) clearBookReturnLead();
+  }, [bookMode, clearBookReturnLead, page]);
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
@@ -1207,7 +1197,7 @@ export default function App() {
       return;
     }
     if (routeLeadId === lead.id) return chooseLead(lead.id, leadTabRef.current);
-    if (bookMode && page === 'leads' && !routeLeadId) bookReturnLead.current = lead.id;
+    if (bookMode && page === 'leads' && !routeLeadId) setBookReturnLead(lead.id);
     detailEpoch.current++;
     selectedIdRef.current = undefined;
     setSelected(null);
@@ -2247,6 +2237,8 @@ export default function App() {
                         scores={leadScores}
                         showScores={canUseIntelligence}
                         bookMode={bookMode}
+                        returnLeadId={routeLeadId ? null : bookReturnLead}
+                        onRestoreFocus={clearBookReturnLead}
                         leads={visibleLeads}
                         selectedId={selected?.id || null}
                         onSelect={inspectLead}
@@ -2276,11 +2268,12 @@ export default function App() {
                     )}
                     <div className="panel-footer">
                       <span>
-                        {visibleLeads.length} {demo ? 'sample ' : ''}leads shown
+                        {visibleLeads.length} {demo ? 'sample ' : ''}leads {bookMode ? 'loaded' : 'shown'}
                       </span>
                       <InfiniteLeadLoader
                         key={leadQueryKey}
                         cursor={leadMoreCursor}
+                        autoLoad={!bookMode}
                         busy={loading}
                         error={listLoadError}
                         onLoad={() => {

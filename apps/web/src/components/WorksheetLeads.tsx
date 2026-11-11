@@ -14,6 +14,8 @@ export default function WorksheetLeads({
   scores = {},
   showScores = true,
   bookMode = false,
+  returnLeadId,
+  onRestoreFocus,
   checkedIds,
   onToggle,
 }: {
@@ -22,6 +24,8 @@ export default function WorksheetLeads({
   scores?: Record<string, any>;
   showScores?: boolean;
   bookMode?: boolean;
+  returnLeadId?: string | null;
+  onRestoreFocus?: () => void;
   leads: Lead[];
   selectedId: string | null;
   onSelect: (lead: Lead) => void;
@@ -50,7 +54,8 @@ export default function WorksheetLeads({
   }, [bookMode]);
   if (bookMode) return (
     <BookLeadIndex leads={leads} scores={scores} showScores={showScores} hiddenFields={config.hiddenFields}
-      checkedIds={checkedIds} onToggle={onToggle} onSelect={onSelect} />
+      checkedIds={checkedIds} onToggle={onToggle} onSelect={onSelect}
+      returnLeadId={returnLeadId} onRestoreFocus={onRestoreFocus} />
   );
   const value = (lead: Lead, field: string) =>
     field === 'enquiryDate'

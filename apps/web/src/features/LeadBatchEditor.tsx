@@ -10,6 +10,8 @@ export default function LeadBatchEditor({
   scores,
   showScores = true,
   bookMode = false,
+  returnLeadId,
+  onRestoreFocus,
   selectedId,
   onSelect,
   request,
@@ -22,6 +24,8 @@ export default function LeadBatchEditor({
   scores: Record<string, any>;
   showScores?: boolean;
   bookMode?: boolean;
+  returnLeadId?: string | null;
+  onRestoreFocus?: () => void;
   selectedId: string | null;
   onSelect: (l: Lead) => void;
   request: (p: string, m?: string, b?: any, k?: string) => Promise<any>;
@@ -248,6 +252,8 @@ export default function LeadBatchEditor({
           scores={scores}
           showScores={showScores}
           bookMode={bookMode}
+          returnLeadId={returnLeadId}
+          onRestoreFocus={onRestoreFocus}
           selectedId={selectedId}
           onSelect={onSelect}
           checkedIds={canEdit ? selected : undefined}

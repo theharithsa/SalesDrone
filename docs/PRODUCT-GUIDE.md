@@ -566,7 +566,7 @@ Every active member; personal preference
 
 4. Return to Appearance & time, disable Book mode and save to restore the standard workspace.
 
-The mode applies across dashboard, leads, tasks, forms, notifications and settings. Headings use Caveat, and navigation, forms, tables and chart labels use Patrick Hand or Caveat according to role. Phone numbers remain monospace. Section changes and scrolling into the next lead-index page use a short page-turn transition, which respects reduced motion.
+The mode applies across dashboard, leads, tasks, forms, notifications and settings. Headings use Caveat, and navigation, forms, tables and chart labels use Patrick Hand or Caveat according to role. Phone numbers remain monospace. In Leads, scroll or swipe on the sheet or use Previous and Next to turn the page. Use the Left or Right arrow, Page Up or Page Down when the sheet has keyboard focus. Page turns respect reduced motion. Select Load more leads to extend the index.
 
 The saved preference belongs to your account, not the team. Existing clients that omit bookMode preserve the stored value. Demo/guest changes use a guarded local fallback; a live account uses its own server preference, default off.
 

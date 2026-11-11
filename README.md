@@ -150,7 +150,7 @@ The full lead page opens in **Comments**. Switch to **All** to see loaded activi
 
 ## Read in Book mode
 
-Open **Settings → Appearance & time**, enable **Book mode**, and save. The workspace uses bound paper pages, section tabs and handwriting. Scroll the Leads index through its pages and open a lead to continue in the same book. Accent palettes and interface fonts are personal to your account.
+Open **Settings → Appearance & time**, enable **Book mode**, and save. The workspace uses bound paper pages, section tabs and handwriting. Scroll or swipe on the Leads index to turn one page at a time, or use Previous and Next. Open a lead to continue in the same book. Accent palettes and interface fonts are personal to your account.
 
 ![Book mode lead workspace with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=78f2e2c5ffcd)
 

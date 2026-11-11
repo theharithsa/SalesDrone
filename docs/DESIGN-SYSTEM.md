@@ -234,9 +234,10 @@ Open Sans, Source Serif 4, Patrick Hand and Caveat are self-hosted. Handwritten
 styles have larger body and label roles. Book mode uses Caveat for headings and
 Patrick Hand for reading and controls. Phone numbers stay monospaced. The
 workspace uses a bound page with a margin rule, bookmark tabs and ruled form
-fields. The lead index groups eight loaded entries per page. Scroll naturally between pages, open any entry
-with the keyboard, and use Back to leads to restore focus to the entry. Use
-brief visual turns on newly visible index pages and on workspace navigation.
+fields. The lead index presents four loaded entries on one sheet. Scroll, swipe or use
+Previous and Next to turn the sheet. The focused sheet accepts Left and Right
+arrows and Page Up and Page Down. Back to leads restores the source sheet and
+entry focus.
 Reduced motion renders the same pages without the turn animation.
 
 The dashboard snapshot uses one decorative AI badge beside its label and content. About SalesDrone panels share the same outer edges, with a narrower reading measure for prose and illustrations.

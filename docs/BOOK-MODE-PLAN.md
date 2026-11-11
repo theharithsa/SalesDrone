@@ -30,9 +30,11 @@ Book mode now has a dedicated [module skill](../skills/salesdrone-book-mode/SKIL
 ## Interactive workspace pages
 
 Book mode uses the existing editable workspace and lead routes. Leads has an
-index of eight entries per page with its existing filters, lead selection,
-export permissions and incremental loading. The index scrolls continuously.
+index of four entries per sheet with its existing filters, lead selection and
+export permissions. Scroll or swipe on a sheet to turn it, or use Previous and
+Next. Long sheets scroll internally before the next gesture turns the page.
+Page turns use already loaded leads. Choose Load more leads for the next batch.
 The lead record opens on the next page with Comments selected, and returning
-to the index restores focus to the previous entry when it is loaded. The workspace shell puts every section on the same bound paper, including the dashboard, Tasks, Team, imports, notifications, research and Settings. Forms and overlays use the same paper and handwriting. The short page turn honours reduced motion. Caveat headings and Patrick Hand controls stay self-hosted.
+to the index restores the previous sheet and focuses the entry when it is loaded. The workspace shell puts every section on the same bound paper, including the dashboard, Tasks, Team, imports, notifications, research and Settings. Forms and overlays use the same paper and handwriting. The short page turn honours reduced motion. Caveat headings and Patrick Hand controls stay self-hosted.
 
 The notebook redesign is presentation-only. It uses the same preference, permissions and settings audit. Page turns and layout changes add no API calls or business events.

@@ -67,8 +67,8 @@
           "id": "bookMode",
           "label": "Book mode",
           "default": "Off",
-          "description": "A personal notebook layout with handwriting, section tabs and paper pages throughout the workspace. The lead index groups records on scrollable pages. Opening a lead turns to its existing detail page, with Comments and editing available. Phone numbers remain monospace.",
-          "effect": "Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Page turns are brief and follow the device’s reduced-motion preference. Returning to the lead index restores focus to the entry you opened when it is still loaded.",
+          "description": "A personal notebook layout with handwriting, section tabs and paper pages throughout the workspace. The lead index shows one sheet at a time. Scroll, swipe or use Previous and Next to turn it. Opening a lead turns to its existing detail page, with Comments and editing available. Phone numbers remain monospace.",
+          "effect": "Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Page turns are brief and follow the device’s reduced-motion preference. Returning to the lead index restores the sheet and focus to the entry you opened when it is still loaded.",
           "example": "Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace."
         },
         {

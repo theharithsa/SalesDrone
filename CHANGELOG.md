@@ -48,6 +48,7 @@ API contract versions are independent from application versions.
 
 ### Fixed
 - Show one AI badge on the dashboard snapshot and align the About SalesDrone cards to the same edges.
+- Turn the Book mode lead index one sheet at a time with scroll, swipe, keyboard and page controls.
 
 
 ## [2.10.4] - 2026-11-08
