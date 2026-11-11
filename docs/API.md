@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.12.0**, OpenAPI contract **1.32.0**. All application operations
+Application release **v2.13.0**, OpenAPI contract **1.33.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -192,9 +192,19 @@ GET /api/v1/workspace-settings returns version, exportsEnabled, assignedOnly, me
 The two member flags default to true and apply to non-Admins. An older PATCH
 that omits either flag preserves its saved value. `GET /api/v1/me` exposes the
 caller’s effective `member.leadFeatureAccess` booleans for browser controls.
-Lead export requires both the workspace-wide report switch and, for non-Admins,
-the member export switch. A denied request returns `403 EXPORT_DISABLED`.
-Admin PAT exports still require `leads:export` and the workspace-wide switch.
+The workspace-wide report switch must be on for everyone. Non-Admins can export
+when their setting is `allow`, or when their setting is `inherit` and
+`memberExportsEnabled` is true. An explicit `deny` blocks exports. A denied
+request returns `403 EXPORT_DISABLED`. Admin PAT exports still require
+`leads:export` and the workspace-wide switch.
+
+`PATCH /api/v1/members/{uid}` accepts optional `leadExportAccess` as `inherit`,
+`allow` or `deny`. Existing memberships and invitations use the workspace
+default until an Admin saves an exception. Omitting the field preserves the
+saved choice. The route requires Admin role, `members:write`, Google/App Check
+and the current `expectedVersion`. PATs cannot edit membership. Export pages
+recheck current membership and effective lead scope. The existing member audit
+records the changed setting key.
 
 AvinyaIntelligence access gates dashboard insights, score reads and refresh,
 automatic reminder analysis, Lead Assistant, and AI-assisted Lead Hygiene.

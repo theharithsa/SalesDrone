@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "version": "2.13.0",
+  "summary": "Let Admins allow or block lead exports for individual team members.",
+  "modules": [
+    "salesdrone-people-permissions",
+    "salesdrone-workspace-settings",
+    "salesdrone-api-integrations"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/SETTINGS.md",
+    "docs/API.md",
+    "docs/REPORTS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "access",
+    "lead-features"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "The versioned member edit accepts an optional export setting. Older callers preserve the stored choice. Export authorization uses existing member and workspace policy reads.",
+    "contractVersion": "1.33.0",
+    "permissions": "Only active Google/App Check Admins with members:write can edit this setting. Current lead scope and the workspace master switch apply to exports. PAT scopes remain unchanged.",
+    "tests": [
+      "functions/test/reports-policy.test.js",
+      "functions/test/api-portal.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing request metrics cover the member edit and export outcome without introducing labels or additional policy reads.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing HTTP and Firestore spans trace the member edit transaction and export authorization.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing request and audit logs record the route, safe outcome and static changed key without customer data.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "The committed member settings outbox carries the static leadExportAccess key and omits permission values.",
+      "tests": [
+        "functions/test/settings-audit.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The current release workflow reports version, commit and deployment outcome through the existing Dynatrace integration.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Use fictional Admin previews at 390 and 1440 CSS pixels to check the member dialog and navigation from Feature access. Validate scoped allow, deny and revocation against Auth and Firestore emulators. Verify the published version, OpenAPI, and protected boundaries after deployment without changing live member permissions.",
+  "milestone": {
+    "number": 41,
+    "title": "v2.13.0 — Individual lead export permissions",
+    "issues": [
+      177
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "lead-feature-access-demo.jpg",
+    "lead-feature-access-mobile-demo.jpg"
+  ]
+}

@@ -3,6 +3,12 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+
+## [2.13.0] - 2026-11-11
+
+### Added
+- Let Admins allow or block lead exports for individual members in People & access.
+
 ## [2.12.2] - 2026-11-11
 
 ### Fixed

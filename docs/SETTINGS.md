@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.12.2**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.13.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -166,7 +166,7 @@ Refresh reloads the first page. Load more follows a signed, access-bound cursor.
 
 Lets members with lead access export matching lead fields and selected columns from Leads → Export Excel. Admins are also subject to this switch.
 
-Turning it off blocks the report API as well as hiding the action. Leads Management has a separate export control for non-Admins. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.
+Turning it off blocks the report API as well as hiding the action. Leads Management sets the default for non-Admins. People & access sets individual exceptions. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.
 
 **Example:** Filter Sector equals MEP, choose phone and company, then export all matching pages.
 
@@ -188,13 +188,13 @@ Applies to lists, direct links, reports, dashboards and reminder/notification el
 
 **Permissions:** Admin with members:write and a current version can save. Existing member grants and lead scope still apply..
 
-### Export leads
+### Export leads by default
 
 **Default:** On.
 
-Allow members to export accessible leads. The workspace-wide Allow Excel reports setting must also be on.
+Controls exports for non-Admin members who use the workspace default. The workspace-wide Allow Excel reports setting must also be on.
 
-Off hides the lead export action and denies new API requests, including subsequent export pages. Previously downloaded workbooks remain available.
+Turn off to grant exports only to selected members. Open People & access and use Edit access to allow or block a member individually. Previously downloaded workbooks remain available.
 
 ### Use AvinyaIntelligence
 
@@ -644,6 +644,16 @@ This screen does not promote other users to Admin or edit protected bootstrap ad
 Choose Assigned or All leads for a member. The workspace assigned-only cap still limits non-admins when enabled.
 
 Changing scope applies server-side; old cursors/cached context cannot grant broader access.
+
+### Export leads
+
+**Default:** Use workspace default.
+
+In Edit access, choose Use workspace default, Allow or Block for a non-Admin member. Allow Excel reports must be enabled. The member can export only leads they can access.
+
+The server checks the current permission for every export page. Blocking hides Export Excel when the member session refreshes. Saving a member edit changes its version and invalidates old export cursors.
+
+**Example:** Turn off Export leads by default, then set Export leads to Allow for each member who needs it.
 
 ### Detailed permissions
 

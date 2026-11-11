@@ -5,7 +5,9 @@ are marked by actual evidence; configuration alone is not end-to-end verificatio
 
 Lead feature settings reuse the versioned settings audit and committed outbox.
 Only the static keys `memberExportsEnabled` and `memberIntelligenceEnabled` are
-recorded. Existing HTTP metrics, spans and logs track permission denials with
+recorded for those workspace switches. A per-member export edit records the
+static `leadExportAccess` key in the existing people audit and committed outbox.
+Existing HTTP metrics, spans and logs track permission denials with
 finite error codes. Permission checks reuse the workspace policy read, and a
 restricted dashboard skips score-document reads.
 

@@ -63,6 +63,8 @@ export async function effectiveMember(store, member) {
   if (!member) return null;
   const config = await readWorkspaceSettings(store, { includeResearchVersion: true });
   const isAdmin = member.role === 'Admin';
+  const memberExport = member.leadExportAccess === 'allow' ||
+    (member.leadExportAccess !== 'deny' && config.memberExportsEnabled);
   const intelligence = isAdmin || config.memberIntelligenceEnabled;
   const capabilities = isAdmin
     ? [...new Set([
@@ -77,7 +79,7 @@ export async function effectiveMember(store, member) {
       (capability) => capability !== 'assistant:query' && capability !== 'hygiene:ai',
     ),
     leadFeatureAccess: {
-      export: config.exportsEnabled && (isAdmin || config.memberExportsEnabled),
+      export: config.exportsEnabled && (isAdmin || memberExport),
       intelligence,
     },
     scope: !isAdmin && config.assignedOnly ? 'assigned' : member.scope,

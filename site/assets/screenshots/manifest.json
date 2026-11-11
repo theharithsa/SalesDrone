@@ -662,22 +662,22 @@
   {
     "file": "lead-feature-access-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "6274becad6d3f538d89369d9cf702afe84bfc3471e32cd195580b8a76a249728",
-    "capturedAt": "2026-11-11T17:37:24.397990+05:30",
+    "sha256": "3c8cada6c2b1cb13928bea9f59fd0b35516000fe7ded913445aa6668a3336536",
+    "capturedAt": "2026-11-11T20:40:01.626659Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.11.0",
-    "review": "Visually and privacy reviewed in the fictional Admin Settings preview. Browser viewport evidence."
+    "version": "2.13.0",
+    "review": "Visually reviewed fictional Admin settings preview in isolated Chromium. No customer data or production writes."
   },
   {
     "file": "lead-feature-access-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1c9fd539d127777f08a26f0213e21076298dc9203c16692ebc90f09ab8a48d61",
-    "capturedAt": "2026-11-11T17:37:20.907928+05:30",
-    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 844",
-    "version": "2.11.0",
-    "review": "Visually and privacy reviewed in the fictional Admin Settings preview. Browser viewport evidence."
+    "sha256": "d67e6d12250a4309eb70d968991a501242cb713a71c925f79ea256318c9b495c",
+    "capturedAt": "2026-11-11T20:40:00.147921Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.13.0",
+    "review": "Visually reviewed fictional Admin settings preview in isolated Chromium. No customer data or production writes."
   },
   {
     "file": "appearance-palettes-demo.jpg",

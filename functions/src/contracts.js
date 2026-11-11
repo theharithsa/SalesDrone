@@ -198,6 +198,7 @@ export const GrantInput = z
   });
 export const MemberPatch = z
   .object({
+    leadExportAccess: z.enum(['inherit', 'allow', 'deny']).optional(),
     active: z.boolean(),
     role: z.enum(['Viewer', 'SDR']),
     scope: z.enum(['assigned', 'all']),

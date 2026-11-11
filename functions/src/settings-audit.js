@@ -40,7 +40,7 @@ const definitions = {
   'ai.insights': ['instructions', 'insightMode'],
   'ai.scoring': ['enabled', 'factors'],
   'manage-fields': ['labels', 'values', 'hiddenFields', 'customFields', 'fieldOrder', 'headerFields'],
-  'people.members': ['active', 'role', 'scope', 'capabilities'],
+  'people.members': ['active', 'role', 'scope', 'capabilities', 'leadExportAccess'],
   'people.invitations': [
     'active',
     'role',
@@ -85,6 +85,7 @@ async function normalized(section, value) {
   if (section === 'ai.insights') return readAISettings(reader);
   if (section === 'ai.scoring') return readScoring(reader);
   if (section === 'manage-fields') return readFieldOptions(reader);
+  if (section === 'people.members') return { leadExportAccess: 'inherit', ...value };
   return value || {};
 }
 function collectionKeys(prefix, before = [], after = [], properties) {

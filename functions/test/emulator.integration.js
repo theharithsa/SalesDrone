@@ -281,6 +281,39 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     exportsEnabled: true,
     assignedOnly: true,
   }).expect(200);
+  const memberToken = await signIn('report-exception@example.test');
+  const memberUid = (await auth.verifyIdToken(memberToken)).uid;
+  await store.run(async (tx) => {
+    tx.set(path('members', memberUid), {
+      id: memberUid, uid: memberUid, role: 'Viewer', scope: 'assigned',
+      capabilities: ['leads:read'], active: true, version: 1,
+    });
+  });
+  const memberReport = () => request(app).post('/api/v1/leads/export')
+    .set('Authorization', 'Bearer ' + memberToken).send({ columns: ['name'] });
+  const savedControls = (await req('patch', '/workspace-settings', {
+    expectedVersion: controls.version + 2,
+    exportsEnabled: true,
+    assignedOnly: true,
+    memberExportsEnabled: false,
+  }).expect(200)).body;
+  await memberReport().expect(403);
+  await req('patch', '/members/' + memberUid, {
+    expectedVersion: 1, role: 'Viewer', scope: 'assigned', active: true,
+    leadExportAccess: 'allow',
+  }).expect(200);
+  assert.deepEqual((await memberReport().expect(200)).body.rows, []);
+  await req('patch', '/members/' + memberUid, {
+    expectedVersion: 2, role: 'Viewer', scope: 'assigned', active: true,
+    leadExportAccess: 'deny',
+  }).expect(200);
+  await memberReport().expect(403);
+  await req('patch', '/workspace-settings', {
+    expectedVersion: savedControls.version,
+    exportsEnabled: true,
+    assignedOnly: true,
+    memberExportsEnabled: true,
+  }).expect(200);
   const aiPreferences = (await req('get', '/ai-settings').expect(200)).body;
   assert.equal(aiPreferences.usingDefault, true);
   await req('patch', '/ai-settings', {

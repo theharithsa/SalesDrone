@@ -44,6 +44,8 @@ The workspace assignedOnly policy caps non-admin members at assigned scope by de
 
 [Assignment.tsx](../../apps/web/src/components/Assignment.tsx) is now shown in the lead blade header for Admins. It uses the same members read and assignment PATCH policy/version contract. Read-only assignment status does not expose the directory to other members. Ignore UI continuations from an unmounted assignment control after switching leads; About reassignment preserves the pending-task cancellation explanation.
 
+Admin member edits may set `leadExportAccess` to inherit, allow or deny. Omitted fields preserve saved access. Non-Admins inherit the workspace default unless overridden. The global Excel switch and assigned lead scope still apply. Version checks protect edits and export cursors. The existing audit exports the setting key. Authorization reuses the membership and workspace policy reads, with no new queries or polling. Verify with reports-policy.test.js.
+
 ## Change and diagnosis
 
 Reproduce cross-user assigned/all and viewer writes, expired/revoked grants, and concurrent version edits. If an old task or notification remains visible after transfer, inspect its recipient and assignment revision rather than broadening access.

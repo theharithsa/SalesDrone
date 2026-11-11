@@ -10,10 +10,12 @@ export type WorkspacePolicy = {
 export default function WorkspacePolicySettings({
   request,
   onChanged,
+  onOpenPeople,
   featureAccess = false,
 }: {
   request: (p: string, m?: string, b?: any) => Promise<any>;
   onChanged: () => void;
+  onOpenPeople?: () => void;
   featureAccess?: boolean;
 }) {
   const [config, setConfig] = useState<WorkspacePolicy | null>(null),
@@ -42,8 +44,13 @@ export default function WorkspacePolicySettings({
     <section className="panel workspace-policy-settings">
       {!featureAccess && <h3>Reports & lead access</h3>}
       <p>{featureAccess
-        ? 'These settings apply to non-Admin members with the required lead access and individual grants.'
+        ? 'Set defaults for non-Admin members.'
         : 'Workspace-wide controls. Individual member permissions still apply.'}</p>
+      {featureAccess && onOpenPeople ? (
+        <button type="button" className="text-button" onClick={onOpenPeople}>
+          Manage individual export access
+        </button>
+      ) : null}
       <ErrorMessage error={error} />
       {config ? (
         <form
@@ -76,8 +83,8 @@ export default function WorkspacePolicySettings({
               <input id="member-lead-export" type="checkbox" checked={memberExportsEnabled} disabled={busy}
                 onChange={(event) => setMemberExports(event.currentTarget.checked)} />
               <span>
-                Export leads
-                <small>Allow members to export leads they can access. The workspace-wide Excel reports switch must also be on.</small>
+                Export leads by default
+                <small>Applies to members who use the workspace default. Set individual exceptions in People &amp; access.</small>
               </span>
             </label>
             <label className="report-setting-option" htmlFor="member-intelligence">
