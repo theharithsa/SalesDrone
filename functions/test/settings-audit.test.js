@@ -146,6 +146,7 @@ test('all editable Settings families are audited without exporting dynamic value
     role: 'Viewer',
     scope: 'all',
     active: true,
+    leadExportAccess: 'allow',
   }).expect(200);
   const invitationKey = randomUUID(),
     inv = {
@@ -200,6 +201,8 @@ test('all editable Settings families are audited without exporting dynamic value
   ).event.data['settings.changed_keys'];
   assert.ok(fields.includes('labels.company'));
   assert.ok(fields.includes('values.location'));
+  assert.ok(rows.some(({ event }) => event.data['settings.section'] === 'people.members' &&
+    event.data['settings.changed_keys'].includes('leadExportAccess')));
   const payload = JSON.stringify(rows.map((x) => x.event));
   assert.ok(!payload.includes('PRIVATE'));
   assert.ok(!payload.includes(token.token));

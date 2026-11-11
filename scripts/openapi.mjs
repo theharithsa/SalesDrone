@@ -498,6 +498,11 @@ schemas.Member = object({
   active: { type: 'boolean' },
   version: integer,
 });
+schemas.Member.properties.leadExportAccess = {
+  type: 'string',
+  enum: ['inherit', 'allow', 'deny'],
+  default: 'inherit',
+};
 schemas.Member.properties.leadFeatureAccess = object({
   export: { type: 'boolean' },
   intelligence: { type: 'boolean' },
@@ -1073,7 +1078,11 @@ for (const e of endpoints) {
   if(e.method==='patch'&&['/tasks/:id','/leads/:id/tasks/:taskId'].includes(e.url))
     operation.description+=' In the browser workspace, task completion, changed due times and reopening require a nonblank comment (up to 500 characters). Reopen completed tasks with state Pending and a future dueAt. Recheck current lead access, recipient eligibility and outreach suppression. Supported personal-access-token task updates retain their previous validation.';
   if(e.method==='post'&&e.url==='/leads/export')
-    operation.description+=' Non-Admin members also need memberExportsEnabled. Denied reports return 403 EXPORT_DISABLED. Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.';
+    operation.description+=' Non-Admin members need an individual Allow or an enabled memberExportsEnabled default if they inherit it. Individual Block overrides the default. The workspace exportsEnabled switch applies to everyone. Denied reports return 403 EXPORT_DISABLED. Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.';
+  if (e.method === 'patch' && e.url === '/members/:uid') {
+    operation.description += ' Admin only. Set leadExportAccess to inherit, allow, or deny for a non-Admin. Omitting it preserves the saved choice. Requires the current expectedVersion.';
+    operation.responses[200].content['application/json'].schema = ref('Member');
+  }
   if (['/dashboard/insights', '/lead-scores', '/leads/:id/score', '/leads/:id/score/refresh'].includes(e.url))
     operation.description += ' Non-Admins require AvinyaIntelligence access. A disabled feature returns 403 INTELLIGENCE_DISABLED.';
   if (e.url === '/activities/:id/automatic-reminder')
@@ -1315,7 +1324,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.32.0',
+    version: '1.33.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },

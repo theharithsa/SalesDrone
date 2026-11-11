@@ -300,6 +300,7 @@ export default function SettingsPage({
             <WorkspacePolicySettings
               key={section}
               featureAccess={section === 'lead-features'}
+              onOpenPeople={() => chooseDestination({ section: 'access' })}
               request={request}
               onChanged={onWorkspacePolicyChanged || onRefresh}
             />

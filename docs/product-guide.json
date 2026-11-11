@@ -397,7 +397,7 @@
         "Apply the desired search and column filters on Leads. Search covers accessible fields and recorded comments by default. Verify the visible matches before opening Export Excel. The workbook adds Comment 1, Comment 2 and further columns to the Leads sheet unless you clear that option. Notes are oldest first within each lead row.",
         "Choose the supported columns for the report, start export and wait for the paginated data retrieval and workbook generation.",
         "Cancel if you selected the wrong filter or columns. Download the completed workbook and handle it as private company data.",
-        "Administrators can enable or disable this feature under Settings > Reports & lead access."
+        "Admins can turn off all lead exports in Settings > Workspace > Reports & lead access. To allow only selected members, turn off Export leads by default in Leads Management > Feature access. In People & access, open Edit access for each selected member and set Export leads to Allow."
       ],
       "details": [
         "An export follows the active filters and current authorization; it is not an unrestricted database download. The server rechecks current access while report pages are read. Policy/account changes cancel pending work.",

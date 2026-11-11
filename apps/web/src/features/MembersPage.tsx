@@ -56,6 +56,7 @@ export default function MembersPage({
         scope,
         capabilities,
         active: data.active,
+        leadExportAccess: data.leadExportAccess,
         expectedVersion: editing.version,
       });
     else
@@ -228,6 +229,23 @@ export default function MembersPage({
                 <option value="all">All leads</option>
               </select>
             </label>
+            {editing ? (
+              <label className="full">
+                Export leads
+                <select
+                  name="leadExportAccess"
+                  defaultValue={editing.leadExportAccess ?? 'inherit'}
+                  aria-describedby="member-export-help"
+                >
+                  <option value="inherit">Use workspace default</option>
+                  <option value="allow">Allow</option>
+                  <option value="deny">Block</option>
+                </select>
+                <small id="member-export-help">
+                  Applies to this member’s accessible leads. Allow Excel reports must be on for exports.
+                </small>
+              </label>
+            ) : null}
             <fieldset className="full permission-list">
               <legend>Capabilities</legend>
               {availableGrants.map((c) => (

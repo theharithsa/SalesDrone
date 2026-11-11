@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.12.2
+Version 2.13.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -472,7 +472,7 @@ Members, when exports are enabled
 
 3. Cancel if you selected the wrong filter or columns. Download the completed workbook and handle it as private company data.
 
-4. Administrators can enable or disable this feature under Settings > Reports & lead access.
+4. Admins can turn off all lead exports in Settings > Workspace > Reports & lead access. To allow only selected members, turn off Export leads by default in Leads Management > Feature access. In People & access, open Edit access for each selected member and set Export leads to Allow.
 
 An export follows the active filters and current authorization; it is not an unrestricted database download. The server rechecks current access while report pages are read. Policy/account changes cancel pending work.
 

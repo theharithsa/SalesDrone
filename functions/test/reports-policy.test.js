@@ -391,3 +391,55 @@ test('member feature controls apply to current sessions and preserve Admin and m
   await call('rep', 'post', '/leads/export', { columns: ['name'], limit: 1 }).expect(200);
   await call('rep', 'get', '/leads/lead001/score').expect(200);
 });
+
+test('individual lead export exceptions honor the workspace switch, member scope and revocation', async () => {
+  const { call } = await setup();
+  const defaults = (await call('admin', 'get', '/workspace-settings').expect(200)).body;
+  const settings = ({ version, ...current }, overrides) =>
+    call('admin', 'patch', '/workspace-settings', {
+      ...current,
+      ...overrides,
+      expectedVersion: version,
+    }).expect(200);
+  const edit = (actor, target, version, overrides = {}) =>
+    call(actor, 'patch', '/members/' + target, {
+      active: true,
+      role: 'SDR',
+      scope: 'all',
+      expectedVersion: version,
+      ...overrides,
+    });
+  const report = (actor, params) =>
+    call(actor, 'post', '/leads/export', { columns: ['name'], limit: 1, ...params });
+
+  const restricted = (await settings(defaults, { memberExportsEnabled: false })).body;
+  await report('rep').expect(403);
+  await edit('rep', 'rep', 1, { leadExportAccess: 'allow' }).expect(403);
+  await edit('admin', 'rep', 1, { leadExportAccess: 'yes' }).expect(400);
+  await edit('admin', 'admin', 1, { leadExportAccess: 'deny' }).expect(403);
+  await edit('admin', 'rep', 1, { leadExportAccess: 'allow' }).expect(200);
+  await edit('admin', 'rep', 1, { leadExportAccess: 'deny' }).expect(409);
+  const persisted = (await edit('admin', 'rep', 2).expect(200)).body;
+  assert.equal(persisted.leadExportAccess, 'allow');
+  assert.equal((await call('rep', 'get', '/me').expect(200)).body.member.leadFeatureAccess.export, true);
+
+  const first = (await report('rep').expect(200)).body;
+  assert.ok(first.nextCursor);
+  assert.deepEqual((await report('rep', { search: 'Lead 124', field: 'name' }).expect(200)).body.rows, []);
+  await report('other').expect(403);
+  await report('admin').expect(200);
+
+  const deniedMember = (await edit('admin', 'rep', 3, { leadExportAccess: 'deny' }).expect(200)).body;
+  const denied = await report('rep', { cursor: first.nextCursor }).expect(403);
+  assert.equal(denied.body.error.code, 'EXPORT_DISABLED');
+  const enabled = (await settings(restricted, { memberExportsEnabled: true })).body;
+  await report('rep').expect(403);
+  await report('other').expect(200);
+
+  await edit('admin', 'rep', deniedMember.version, { leadExportAccess: 'inherit' }).expect(200);
+  await report('rep').expect(200);
+  await edit('admin', 'rep', deniedMember.version + 1, { leadExportAccess: 'allow' }).expect(200);
+  await settings(enabled, { exportsEnabled: false });
+  await report('rep').expect(403);
+  await report('admin').expect(403);
+});

@@ -553,7 +553,8 @@
       "automatedTests": [
         "functions/test/app.test.js",
         "functions/test/notifications.test.js",
-        "functions/test/personal-access-tokens.test.js"
+        "functions/test/personal-access-tokens.test.js",
+        "functions/test/reports-policy.test.js"
       ],
       "manualCases": [
         {
@@ -565,6 +566,11 @@
           "id": "PEOPLE-PERMISSIONS-02",
           "expected": "Role/capability changes are audited atomically and invalidate unauthorized actions.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "PEOPLE-LEAD-EXPORT-01",
+          "expected": "Disable the default and allow one member in Edit access. Confirm a second member remains blocked, exports respect lead scope, revocation blocks the next page and the master switch also blocks Admins. Check the edit dialog on desktop and phone.",
+          "fixture": "Fictional Admin preview and demo-salesdrone emulator"
         }
       ]
     },

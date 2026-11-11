@@ -2195,7 +2195,9 @@ export function createApp({
   );
   route('patch', '/members/:uid', 'members:write', (req) => {
     const input = parse(MemberPatch, req.body);
-    return mutate(req, 'members:write', async (tx) => {
+    return mutate(req, 'members:write', async (tx, member) => {
+      if (member.role !== 'Admin')
+        throw new AppError(403, 'FORBIDDEN', 'Administrator access is required');
       const old = await tx.get(path('members', req.params.uid));
       if (!old) throw new AppError(404, 'NOT_FOUND', 'Member not found');
       if (old.role === 'Admin')
