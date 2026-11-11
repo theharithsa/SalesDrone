@@ -498,7 +498,7 @@ export default function SettingsPage({
                       <p id="interface-font-help" className="field-hint">
                         Preview only until you save. Personal to your account.
                         Branding and phone-number fonts stay consistent. Book
-                        mode uses its own serif font; your choice returns when
+                        mode uses its own handwriting fonts; your choice returns when
                         Book mode is off.
                       </p>
                     </section>
@@ -509,7 +509,7 @@ export default function SettingsPage({
                       <span>
                         <strong>Book mode</strong>
                         <small>
-                          Paper pages and serif type throughout the workspace. Scroll through the lead index and open each lead on its own page.
+                          A handwritten notebook for your workspace, with section tabs, paper pages and a lead index.
                         </small>
                       </span>
                       <input

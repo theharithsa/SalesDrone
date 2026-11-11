@@ -59,3 +59,4 @@ import './material/settings.css';
 import './material/login.css';
 
 import './material/personalization.css';
+import './material/book.css';

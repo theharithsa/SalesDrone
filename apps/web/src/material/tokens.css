@@ -98,8 +98,6 @@
   color-scheme: dark;
 }
 :root[data-reading-mode='book'] {
-  --body-font: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --heading-font: var(--body-font);
   --md-sys-color-surface: #f5efe2;
   --md-sys-color-surface-container-lowest: #fffbf1;
   --md-sys-color-surface-container-low: #ede6d6;

@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.12.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.12.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -58,7 +58,7 @@ Saved with your account through PATCH /me. The full SalesDrone mark follows your
 
 Choose Standard, Inter, Source Sans 3, Lora, Open Sans, Source Serif 4, Patrick Hand or Caveat. A sample previews the draft selection; the workspace changes after a successful Save changes. Font files are self-hosted, with no runtime Google Fonts request.
 
-Saved on your own account through PATCH /me and returned by GET /me. Older clients that omit fontStyle preserve it. Book mode uses its own serif stack and restores your selected font when disabled. Branding, phone numbers and technical code retain their established fonts. Other users are unaffected. Demo choices are a guarded browser-local fallback.
+Saved on your own account through PATCH /me and returned by GET /me. Older clients that omit fontStyle preserve it. Book mode uses its own handwriting fonts and restores your selected font when disabled. Branding, phone numbers and technical code retain their established fonts. Other users are unaffected. Demo choices are a guarded browser-local fallback.
 
 **Example:** Choose Inter for a compact interface or Lora for an editorial serif style, inspect the sample, then save. Standard restores the original pairing.
 
@@ -76,7 +76,7 @@ Stored on your account through GET/PATCH /me; other members are unaffected. Choo
 
 **Default:** Off.
 
-A personal paper layout and serif type throughout the workspace. The lead index groups records on scrollable pages. Opening a lead turns to its existing detail page, with Comments and editing available. Phone numbers remain monospace.
+A personal notebook layout with handwriting, section tabs and paper pages throughout the workspace. The lead index groups records on scrollable pages. Opening a lead turns to its existing detail page, with Comments and editing available. Phone numbers remain monospace.
 
 Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Page turns are brief and follow the device’s reduced-motion preference. Returning to the lead index restores focus to the entry you opened when it is still loaded.
 

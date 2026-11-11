@@ -37673,7 +37673,7 @@
               "patrick-hand",
               "caveat"
             ],
-            "description": "Personal interface font: standard (default), inter, source-sans or lora. Omission preserves the saved value. Book mode keeps its own serif family; no authorization change. Google sign-in/App Check only; PAT writes denied."
+            "description": "Personal interface font from the supported enum. Standard is the default. Omission preserves the saved value. Book mode applies its own handwriting and restores this preference when turned off. Google sign-in/App Check only; PAT writes denied."
           },
           "accentPalette": {
             "type": "string",

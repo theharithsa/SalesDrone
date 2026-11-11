@@ -5,8 +5,8 @@ Book mode is a personal reading style, independent of System/Light/Dark. It is o
 ## Visual design
 
 - Day: warm ivory paper, dark brown ink, subdued blue links and readable semantic status colours. Night: charcoal paper, warm pale ink and softened accents. Keep focus, errors, warnings and success distinguishable in both.
-- Serif text throughout Book mode: headings, lead identity, navigation, tables, forms, buttons, chart labels and reading passages. Preserve monospace phone numbers; standard mode keeps its existing fonts. Avoid decorative page-turn effects over working data.
-- Use restrained page edges and section rules, comfortable line height and consistent form backgrounds. No tiled image texture, artificial shadows over text or new remote font dependency.
+- Caveat headings and Patrick Hand reading text throughout Book mode, including lead identity, navigation, tables, forms, buttons and chart labels. Preserve monospace phone numbers; standard mode keeps its existing fonts. Avoid decorative page-turn effects over working data.
+- Use a bound workspace page with an ink rule at the margin, stacked paper edges, bookmark-style navigation, ledger rows and loose-sheet dialogs. Narrow the binding on phones. No tiled image texture, artificial shadows over text or new remote font dependency.
 - Keep tables dense enough for outreach and horizontal scrolling contained. At 390px, retain existing navigation, editable fields and touch target sizes. Reduced motion removes the theme control's orbital transition.
 
 ## State and API
@@ -33,6 +33,6 @@ Book mode uses the existing editable workspace and lead routes. Leads has an
 index of eight entries per page with its existing filters, lead selection,
 export permissions and incremental loading. The index scrolls continuously.
 The lead record opens on the next page with Comments selected, and returning
-to the index restores focus to the previous entry when it is loaded. A paper
-edge is shared by workspace modules. The page turn uses a short visual
-transition and honours reduced motion. Source Serif 4 is the reading family.
+to the index restores focus to the previous entry when it is loaded. The workspace shell puts every section on the same bound paper, including the dashboard, Tasks, Team, imports, notifications, research and Settings. Forms and overlays use the same paper and handwriting. The short page turn honours reduced motion. Caveat headings and Patrick Hand controls stay self-hosted.
+
+The notebook redesign is presentation-only. It uses the same preference, permissions and settings audit. Page turns and layout changes add no API calls or business events.

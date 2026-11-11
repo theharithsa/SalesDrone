@@ -150,11 +150,11 @@ The full lead page opens in **Comments**. Switch to **All** to see loaded activi
 
 ## Read in Book mode
 
-Open **Settings → Appearance & time**, enable **Book mode**, and save. The workspace uses paper surfaces and serif type. Scroll the Leads index through its pages and open a lead to continue in the same book. Accent palettes and interface fonts are personal to your account.
+Open **Settings → Appearance & time**, enable **Book mode**, and save. The workspace uses bound paper pages, section tabs and handwriting. Scroll the Leads index through its pages and open a lead to continue in the same book. Accent palettes and interface fonts are personal to your account.
 
-![Book mode lead workspace with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=542dc1804c1d)
+![Book mode lead workspace with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=78f2e2c5ffcd)
 
-[Accent palettes](site/assets/screenshots/appearance-palettes-demo.jpg) · [Book mode lead detail](site/assets/screenshots/book-lead-detail-demo.jpg)
+[Book mode dashboard](site/assets/screenshots/book-dashboard-demo.jpg) · [Lead detail](site/assets/screenshots/book-lead-detail-demo.jpg) · [Mobile enquiry form](site/assets/screenshots/book-form-mobile-demo.jpg)
 
 Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).
 
@@ -174,7 +174,7 @@ The v1.6.7 maintenance updates align wrapped customer names, remove duplicate le
 
 ## Choose your reading style
 
-Open Settings → Appearance & time to preview and save Standard, Inter, Source Sans 3 or Lora. The choice is personal; Book mode keeps its serif styling. Activity cards now use a clearer, more compact type hierarchy. Fonts are self-hosted, with licences retained. See the [font and activity guide](docs/FONT-CHOICES.md).
+Open Settings → Appearance & time to preview and save Standard, Inter, Source Sans 3 or Lora. The choice is personal; Book mode keeps its own handwriting. Activity cards now use a clearer, more compact type hierarchy. Fonts are self-hosted, with licences retained. See the [font and activity guide](docs/FONT-CHOICES.md).
 
 ![Compact activity cards with fictional notes and calls.](site/assets/screenshots/activity-demo.jpg?sha=96e3778d5b3c)
 

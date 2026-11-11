@@ -663,6 +663,3 @@ h3,
 h4 {
   overflow-wrap: anywhere;
 }
-:root[data-reading-mode='book'] .brand {
-  font-family: var(--heading-font);
-}

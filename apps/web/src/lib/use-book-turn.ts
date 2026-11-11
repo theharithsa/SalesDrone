@@ -7,8 +7,8 @@ export function useBookTurn(enabled: boolean, page: string, recordId: string | n
     if (!enabled || !element?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const turn = element.animate(
       [
-        { transform: 'perspective(1000px) rotateY(-2.5deg) translateX(5px)', opacity: 0.8 },
-        { transform: 'perspective(1000px) rotateY(0) translateX(0)', opacity: 1 },
+        { transform: 'perspective(1000px) rotateY(2.5deg)', opacity: 0.8 },
+        { transform: 'perspective(1000px) rotateY(0)', opacity: 1 },
       ],
       { duration: 220, easing: 'cubic-bezier(0.2, 0, 0, 1)' },
     );

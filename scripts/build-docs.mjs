@@ -99,6 +99,8 @@ const screenshots = [
   'book-settings-demo.jpg',
   'appearance-palettes-demo.jpg',
   'book-lead-detail-demo.jpg',
+  'book-dashboard-demo.jpg',
+  'book-form-mobile-demo.jpg',
 ];
 for (const name of screenshots) {
   const source = 'site/assets/screenshots/' + name,
