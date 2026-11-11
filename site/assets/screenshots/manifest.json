@@ -172,42 +172,42 @@
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "0730a58469957c6b778da72a30b93304acbd163dd6ab9c30dc45412dde3c7db1",
-    "capturedAt": "2026-11-11T13:17:19.269Z",
+    "sha256": "2bf407eb76857adafa64c494139989843e7511c40a4d680528ed033ad87119ec",
+    "capturedAt": "2026-11-11T14:51:58.013Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.0",
-    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
+    "version": "2.12.1",
+    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
   },
   {
     "file": "book-mode-light.jpg",
     "mode": "synthetic-demo",
-    "sha256": "542dc1804c1de6c87571d8dce1f55f9be3f26913ed14931ab6db3dc122475405",
-    "capturedAt": "2026-11-11T13:17:13.254Z",
+    "sha256": "78f2e2c5ffcd6ea28cb45d6e06152e8b69f78a1d5de1ef7bed5c786e59210ba8",
+    "capturedAt": "2026-11-11T14:51:56.409Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.0",
-    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
+    "version": "2.12.1",
+    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
   },
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2865767ca11ec6eb0b3663f84616fb17dda064dfb0331558046f6fcd2fd70429",
-    "capturedAt": "2026-11-11T13:17:16.037Z",
+    "sha256": "d5479596df23f4686d0131767429584a51586d87445d6e2c34beff6c9555e39a",
+    "capturedAt": "2026-11-11T14:52:00.057Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.0",
-    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
+    "version": "2.12.1",
+    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
   },
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ee43dfda674cb4411e8cb61eff10cc3cf5eba69cf1bf198c06a8afed365ca63c",
-    "capturedAt": "2026-11-11T13:17:17.741Z",
-    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 900",
-    "version": "2.12.0",
-    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
+    "sha256": "d096b4ec603abef3942636b274563fa56de996d403bf75db2ea52da45015e79a",
+    "capturedAt": "2026-11-11T14:52:02.136Z",
+    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 844",
+    "version": "2.12.1",
+    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
   },
   {
     "file": "developer-settings-demo.jpg",
@@ -692,11 +692,31 @@
   {
     "file": "book-lead-detail-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "af2e6e74472a127130bfb2d1dca8d26b0fc093985698128b9c9f7b960721a864",
-    "capturedAt": "2026-11-11T13:17:13.952Z",
+    "sha256": "fad43ba46fe35866a64105c7025814099cceef6315067331100cf2307976378c",
+    "capturedAt": "2026-11-11T14:51:56.993Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.0",
-    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
+    "version": "2.12.1",
+    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+  },
+  {
+    "file": "book-dashboard-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "ec12f28d4024d25fd74dd18d7838491258fefadee910d824940e0214464adb73",
+    "capturedAt": "2026-11-11T14:51:55.464Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.12.1",
+    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+  },
+  {
+    "file": "book-form-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "7eae4bbcfd5385f63347d9ed21b27110b851404939b636fc0228d6556e6ffe79",
+    "capturedAt": "2026-11-11T14:52:02.786Z",
+    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 844",
+    "version": "2.12.1",
+    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
   }
 ]

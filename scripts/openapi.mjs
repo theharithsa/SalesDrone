@@ -77,7 +77,7 @@ schemas.Preferences.properties.bookMode.description =
 schemas.Preferences.properties.accentPalette.description =
   'Personal Material 3 palette; blue is the default, and monochrome works in light and dark schemes. Omitted values are preserved.';
 schemas.Preferences.properties.fontStyle.description =
-  'Personal interface font: standard (default), inter, source-sans or lora. Omission preserves the saved value. Book mode keeps its own serif family; no authorization change. Google sign-in/App Check only; PAT writes denied.';
+  'Personal interface font from the supported enum. Standard is the default. Omission preserves the saved value. Book mode applies its own handwriting and restores this preference when turned off. Google sign-in/App Check only; PAT writes denied.';
 schemas.Preferences.properties.displayScale.description =
   'Personal display zoom percentage: 85, 90, 100 (default), 110 or 125. Omission preserves the saved value. The current UI applies it on phones, tablets and desktops after saving, retaining usable touch targets. Browser zoom is unrestricted. Self-service Google/App Check only; PAT writes denied.';
 schemas.ImportInput.properties.rows.items.properties = {

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "version": "2.12.1",
+  "summary": "Complete the handwritten notebook design throughout the existing Book mode workspace.",
+  "modules": [
+    "salesdrone-book-mode",
+    "salesdrone-interface"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/BOOK-MODE-PLAN.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/SETTINGS.md",
+    "docs/PRODUCT-GUIDE.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "unchanged",
+    "reason": "Book mode uses the existing self-owned profile preference. The notebook layout and font changes are local rendering.",
+    "contractVersion": "1.32.0",
+    "permissions": "Active browser members retain the same access to their own settings and the same role-based workspace actions.",
+    "tests": [
+      "functions/test/book-mode.test.js",
+      "tests/appearance.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing HTTP and workspace telemetry still covers real operations. The notebook CSS and page transitions require no new metrics.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "The redesign uses the existing route and save flows. Page turns and drawing styles have no service calls.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing settings audit and allowlisted logging remain in use. Visual actions do not add log fields.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Saving Book mode still emits the existing committed settings event. Layout, typography and navigation create no domain event.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The current workflow emits its standard version, commit and deployment outcome events.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Use sample data in isolated Chromium at 390, 768, 1024, 1440 and 1920 CSS pixels. Verify bound workspace pages, handwriting, lead detail and focus return, ruled fields, reduced motion, and turning Book mode off. After deployment repeat the mobile and desktop demo flows against the exact live version.",
+  "milestone": {
+    "number": 39,
+    "title": "v2.12.1 — Book mode redesign",
+    "issues": [
+      173
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "book-dashboard-demo.jpg",
+    "book-mode-light.jpg",
+    "book-mode-dark.jpg",
+    "book-mode-mobile.jpg",
+    "book-lead-detail-demo.jpg",
+    "book-settings-demo.jpg",
+    "book-form-mobile-demo.jpg"
+  ]
+}

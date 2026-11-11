@@ -20,6 +20,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.12.1] - 2026-11-11
+
+### Changed
+- Redesign Book mode as a handwritten notebook across the workspace, with bound paper pages, bookmark navigation, a dashboard ledger and ruled form fields.
+- Keep the lead index and page turns usable on phones and desktops, with reduced motion and focus restoration.
+
 ## [2.12.0] - 2026-11-11
 
 ### Changed
@@ -39,8 +46,6 @@ API contract versions are independent from application versions.
 
 ## [Unreleased]
 
-### Changed
-- Extend Book mode across the workspace with bound paper pages, bookmark navigation, handwritten type and paper forms.
 
 ## [2.10.4] - 2026-11-08
 
