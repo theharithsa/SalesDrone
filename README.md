@@ -152,7 +152,7 @@ The full lead page opens in **Comments**. Switch to **All** to see loaded activi
 
 Open **Settings → Appearance & time**, enable **Book mode**, and save. The workspace uses bound paper pages, section tabs and handwriting. Scroll or swipe on the Leads index to turn one page at a time, or use Previous and Next. Open a lead to continue in the same book. Accent palettes and interface fonts are personal to your account.
 
-![Book mode lead workspace with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=78f2e2c5ffcd)
+![Book mode lead workspace with fictional data and warm paper colours.](site/assets/screenshots/book-mode-light.jpg?sha=5e9d688e5d01)
 
 [Book mode dashboard](site/assets/screenshots/book-dashboard-demo.jpg) · [Lead detail](site/assets/screenshots/book-lead-detail-demo.jpg) · [Mobile enquiry form](site/assets/screenshots/book-form-mobile-demo.jpg)
 
@@ -160,7 +160,7 @@ Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with saf
 
 Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Material 3 while retaining personal font and Book mode preferences. Open Filters for advanced search options; opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
 
-![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=337808038573)
+![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=f0705a1b343b)
 
 ## Reviewed across screen sizes
 

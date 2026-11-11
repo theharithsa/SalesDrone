@@ -52,12 +52,12 @@
   {
     "file": "mobile-leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d1f4943e58baaa1d9ee0f53069fe104eb61fc8bc7df695937e28aa4eb2352fe3",
-    "capturedAt": "2026-11-07T20:39:23.954Z",
+    "sha256": "f0705a1b343b00d1dc60defb37ba15af1edf136653234ffedad558162621e0d2",
+    "capturedAt": "2026-11-11T16:32:13.445953Z",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.10.3",
-    "review": "Reviewed fictional workspace capture. No customer records, credentials or server writes. Browser viewport, not physical-device certification."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "batch-edit-mobile.jpg",
@@ -122,22 +122,22 @@
   {
     "file": "mobile-tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "e534a5250877acff33d2f54c221a23cfd2ccfef7483e8f03428bb42b1d8c2b18",
-    "capturedAt": "2026-11-07T20:39:23.995Z",
+    "sha256": "853b17ce71646ae413910107d3cc74327abe913a0331ec7051c7878cd0e58a3f",
+    "capturedAt": "2026-11-11T16:32:14.414838Z",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.10.3",
-    "review": "Reviewed fictional workspace capture. No customer records, credentials or server writes. Browser viewport, not physical-device certification."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "4332f053126de3a5c48eb950c7d45c2529083b4677fdf1d4d0ef89c22ff92a9d",
-    "capturedAt": "2026-11-07T20:39:23.982Z",
+    "sha256": "b3ba01d4966c07ed80e631a6630571d8bb7febf58405631cf96d237b373f70b2",
+    "capturedAt": "2026-11-11T16:32:11.470117Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.3",
-    "review": "Reviewed fictional workspace capture. No customer records, credentials or server writes. Browser viewport, not physical-device certification."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "notifications-demo.jpg",
@@ -182,32 +182,32 @@
   {
     "file": "book-mode-light.jpg",
     "mode": "synthetic-demo",
-    "sha256": "78f2e2c5ffcd6ea28cb45d6e06152e8b69f78a1d5de1ef7bed5c786e59210ba8",
-    "capturedAt": "2026-11-11T14:51:56.409Z",
+    "sha256": "5e9d688e5d01774febc568fc7677f2adc6493ca1ac84b44d75ebf0dc38e2754a",
+    "capturedAt": "2026-11-11T16:32:19.225672Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.1",
-    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d5479596df23f4686d0131767429584a51586d87445d6e2c34beff6c9555e39a",
-    "capturedAt": "2026-11-11T14:52:00.057Z",
+    "sha256": "236fdec4990c14d07f97580c86ee7e25b1eda51fa23601aaf3d1e081b733f444",
+    "capturedAt": "2026-11-11T16:32:21.228138Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.1",
-    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d096b4ec603abef3942636b274563fa56de996d403bf75db2ea52da45015e79a",
-    "capturedAt": "2026-11-11T14:52:02.136Z",
-    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 844",
-    "version": "2.12.1",
-    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+    "sha256": "df7fb26cd0529e4e7da4ac4820b94cad44a410b82604f63d3d42c52a105f97fe",
+    "capturedAt": "2026-11-11T16:32:16.347878Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "developer-settings-demo.jpg",
@@ -382,12 +382,12 @@
   {
     "file": "lead-filters-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "e5956f7c29a155ca0828dd23b8ad317270b9a60a1b9ebf90724a01d569959397",
-    "capturedAt": "2026-11-07T08:15:29.513927Z",
+    "sha256": "1816af048f1c6cb417a4a98131d8c7e5a61389fc4ae8fc81f1592306ae5c9de9",
+    "capturedAt": "2026-11-11T16:32:13.763210Z",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "popup-select-demo.jpg",
@@ -612,12 +612,12 @@
   {
     "file": "dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "0e99c7ff1cd415d380e9f2c86365ca3738e0c836c94f3660393800f4c0e67325",
-    "capturedAt": "2026-11-07T20:39:23.846Z",
+    "sha256": "3b615fcba1bdbe9f398c1ee29cbc3c1900813a909fe444c5efd2545d37a241ea",
+    "capturedAt": "2026-11-11T16:32:11.173867Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.3",
-    "review": "Reviewed fictional workspace capture. No customer records, credentials or server writes. Browser viewport, not physical-device certification."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "lead-tasks-demo.jpg",
@@ -702,21 +702,21 @@
   {
     "file": "book-dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ec12f28d4024d25fd74dd18d7838491258fefadee910d824940e0214464adb73",
-    "capturedAt": "2026-11-11T14:51:55.464Z",
+    "sha256": "d5a523a0597585b568dfd86687980e264a3c8dc98efd0a8aaf3252fc2782b60e",
+    "capturedAt": "2026-11-11T16:32:18.916102Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.1",
-    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   },
   {
     "file": "book-form-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "7eae4bbcfd5385f63347d9ed21b27110b851404939b636fc0228d6556e6ffe79",
-    "capturedAt": "2026-11-11T14:52:02.786Z",
-    "viewport": "390 x 844 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 844",
-    "version": "2.12.1",
-    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+    "sha256": "bf67852cdabf1c5a4e45bfcbeab41139074b5c809862c6448c51f2436c088778",
+    "capturedAt": "2026-11-11T16:32:16.998066Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 900",
+    "version": "2.12.2",
+    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
   }
 ]

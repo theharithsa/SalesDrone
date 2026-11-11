@@ -3,23 +3,13 @@
 Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
+## [2.12.2] - 2026-11-11
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### Fixed
+- Keep the Tasks register aligned on wide panels and group task details into compact rows on phones.
+- Open mobile Leads search and filters from the title row and keep batch editing on wider screens.
+- Show one AI badge on the dashboard snapshot and align the About SalesDrone cards to the same edges.
+- Turn the Book mode lead index one sheet at a time with scroll, swipe, keyboard and page controls. Only the changing sheet curls. The workspace navigation, headings, filters and page controls stay outside the animation. Dashboard uses the same turn across four sheets.
 
 ## [2.12.1] - 2026-11-11
 
@@ -43,15 +33,6 @@ API contract versions are independent from application versions.
 
 ### Changed
 - Connect the existing GA4 stream to opt-in workspace page counts. Control sharing under Settings → About SalesDrone. Lead records, search terms and account details are excluded.
-
-## [Unreleased]
-
-### Fixed
-- Keep the Tasks register aligned on wide panels and group task details into compact rows on phones.
-- Open mobile Leads search and filters from the title row and keep batch editing on wider screens.
-- Show one AI badge on the dashboard snapshot and align the About SalesDrone cards to the same edges.
-- Turn the Book mode lead index one sheet at a time with scroll, swipe, keyboard and page controls. Only the changing sheet curls. The workspace navigation, headings, filters and page controls stay outside the animation. Dashboard uses the same turn across four sheets.
-
 
 ## [2.10.4] - 2026-11-08
 
