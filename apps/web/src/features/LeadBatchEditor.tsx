@@ -57,13 +57,14 @@ export default function LeadBatchEditor({
     setReview(null);
   }, [signature]);
   useEffect(() => {
-    if (open && canAssign)
+    if (!canEdit) setOpen(false);
+    if (open && canEdit && canAssign)
       request('/members?limit=100')
         .then((r) => setMembers(r.items || []))
         .catch(() =>
           setError('Assignees could not be loaded. Retry opening batch edit.'),
         );
-  }, [open, canAssign, request]);
+  }, [open, canEdit, canAssign, request]);
   const fields = [
     ...[
       'stage',
@@ -261,7 +262,7 @@ export default function LeadBatchEditor({
         />
       </div>
       <Modal
-        open={open}
+        open={open && canEdit}
         onClose={() => {
           if (!busy) setOpen(false);
         }}

@@ -48,3 +48,5 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 ## Known gaps
 
 These are tracked follow-ups, not implemented behavior: [#46](https://github.com/theharithsa/SalesDrone/issues/46). Check their current status before changing the contract.
+
+The Tasks register aligns by available page width and uses compact rows on phones. Lead sheets carry the mobile search and filter icons when the whole page turns; the dialogs stay live only on the active view.

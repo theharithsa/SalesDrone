@@ -289,6 +289,8 @@
     top: max(var(--md-touch-target, 48px), 56px);
     scroll-margin-block-start: max(var(--md-touch-target, 48px), 56px);
   }
+  /* The lead sheet scrolls below its controls. Keep them out of the sheet. */
+  .book-index .book-page-controls { position: relative; top: auto; }
 }
 @media (max-width: 480px) {
   .book-index-link { grid-template-columns: minmax(0, 1fr) auto; }

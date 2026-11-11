@@ -124,12 +124,13 @@ follows the actual resizable blade/full-page width, independently of the viewpor
 
 The actual `.leads-table` section is the grid item and spans all columns. Test its
 width against the grid content box; no page overflow alone does not prove the
-layout fills available space. Phone cards align identity, company and score while
-keeping selection away from the name. The native search input has no nested box.
+layout fills available space. Phone cards align identity, company and score across the full row. Batch editing
+and its checkboxes are available on wider screens.
 
-Below 768px, filters use a Radix dialog with separate drafts, explicit Apply/Cancel
-and draft Reset; desktop retains the disclosure. Escape/Cancel must preserve
-applied filters and restore trigger focus. Reset is not a server mutation.
+Below 768 CSS pixels, the title actions include separate search and filter icons.
+Search opens with input focus. Filters include stage and use explicit Apply, Cancel
+and Reset. Escape preserves applied criteria and both dialogs restore trigger
+focus. Desktop retains inline search, stage shortcuts and the filter disclosure.
 
 Dropdowns/filled fields use 12px rounded corners. Material supports a shape scale,
 not a single universal radius; see the [official Material shape guidance](https://developer.android.com/develop/ui/compose/designsystems/material3#shapes).
@@ -149,12 +150,14 @@ status picker replaces the three status buttons; desktop keeps labelled status
 buttons and Add reminder. The loaded count describes the current page collection,
 not a workspace total. Timezone context appears once above the list.
 
-Task rows use a grid: completion target, flexible identity and an anchored action
-menu. Dates sit under the identity on phones and in a separate column on desktop.
-The completion circle is 22px inside a compensated 48px phone target; never enlarge
-the visible circle to the entire target. Titles and lead/company text wrap. Edit,
-delete and pending-only scheduling actions share one menu, including for completed
-and cancelled tasks. Escape, outside pointer and focus leaving dismiss it.
+The Tasks register uses aligned columns for task, lead, responsible person, due
+date and actions once the list panel has 740 CSS pixels. Below that width, group
+lead and responsibility beneath the task title. On phones, put the due date and
+Reschedule on the bottom line and keep the menu beside the title. Below 290 CSS
+pixels of panel width, Reschedule uses a calendar icon with an accessible label.
+The completion circle stays 22px inside its touch target. Titles and lead/company
+text wrap. Escape, outside pointer and focus leaving dismiss the row menu. These
+layouts apply in Standard and Book mode.
 
 ### Shared theme control (local 2.0.1)
 

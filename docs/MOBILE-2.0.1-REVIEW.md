@@ -198,3 +198,24 @@ centers the value vertically and uses a rounded filled surface with room for the
 complete ISO date. Native day selection and caption metrics remain unchanged;
 there is no API or telemetry change. No automated suites were repeated for this
 small CSS refinement, following the user's review instruction.
+
+## Follow-up: compact Tasks and Leads (local v2.12.1)
+
+Tasks switches between a register and compact rows based on the list panel's
+width. The 1280 × 850 Book demo at 100% had a panel about 898 CSS pixels wide;
+the first task used one 69 px row. At 390 × 850 it used a 162 px row with the
+lead and responsible person grouped under the title. At larger display zoom the
+layout reflows, with labelled calendar and menu buttons on the narrowest panels.
+
+Mobile Leads places Search and Filters next to the title and removes batch
+controls. Stage remains in Filters. Search uses the same query and permissions
+as desktop. Book page controls sit above the internally scrolling lead sheet.
+This is UI-only: the API, authorization, audit writes and telemetry contracts
+are unchanged.
+
+Targeted synthetic Chromium review measured 68 Leads and Tasks layouts at
+requested widths of 320–1920 px in Standard and Book mode at 100% and 125%.
+It also exercised search submit, clear and Escape, filter focus return, the task
+menu and the Reschedule dialog. Captures are local under
+`test-results/compact-workspace/`; refresh the affected public Leads, Tasks
+and Book images when preparing a release. No physical-device or Safari claim.

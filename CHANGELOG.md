@@ -47,6 +47,8 @@ API contract versions are independent from application versions.
 ## [Unreleased]
 
 ### Fixed
+- Keep the Tasks register aligned on wide panels and group task details into compact rows on phones.
+- Open mobile Leads search and filters from the title row and keep batch editing on wider screens.
 - Show one AI badge on the dashboard snapshot and align the About SalesDrone cards to the same edges.
 - Turn the Book mode lead index one sheet at a time with scroll, swipe, keyboard and page controls. The whole page curls from the outer edge, including its toolbar, heading and filters. Dashboard uses the same turn across four sheets.
 

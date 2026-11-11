@@ -42,7 +42,7 @@ Preserve Material colour roles, Google Sans headings, Manrope body text and mono
 
 For domain controls, also load [leads](../salesdrone-leads/SKILL.md), [tasks](../salesdrone-tasks-reminders/SKILL.md), [workspace settings](../salesdrone-workspace-settings/SKILL.md) or [Book mode](../salesdrone-book-mode/SKILL.md) as applicable. [Product guide](../salesdrone-product-guide/SKILL.md) owns public captures.
 
-Shared desktop/mobile column filters expose Exact match only for source, stage and active custom dropdowns. Keep Equals available and explain literal case/spacing/Unicode matching. Changing a column resets the comparison. Preserve mobile draft Apply/Cancel/Reset and focus restoration; capture reviewed synthetic filter controls.
+Shared desktop/mobile column filters expose Exact match only for source, stage and active custom dropdowns. Keep Equals available and explain literal case/spacing/Unicode matching. Changing columns resets comparison. Mobile search and filters open from the title with focus return. Align Tasks by panel width.
 
 Import comment choices use separate header and column-position rows, explicit associated labels, compact selectable surfaces and single-column phones. Popup selects keep one-line closed labels and bounded trigger-width pickers; desktop filter dialogs put the value on a second row so selects remain readable. Retain native fallback, Escape/focus and real-browser open-picker review. Dialogs use native platform pickers to avoid customizable-select conflicts with modal Escape handling; keep comfortable closed-control widths.
 

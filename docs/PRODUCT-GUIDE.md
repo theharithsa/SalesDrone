@@ -128,7 +128,7 @@ Non-admin lead visibility follows workspace Reports & lead access policy and mem
 
 Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion.
 
-Search stays visible. On mobile, Filters opens a dialog for search field, stage, source and column conditions. Apply filters commits the draft and closes the dialog; Cancel or Escape keeps the existing filters. Reset clears the draft until applied. Desktop retains the inline disclosure. Stage shortcuts scroll within their row.
+On mobile, tap the magnifying glass in the top-right corner to search. Clear search restores the unsearched list. The adjacent filter icon opens search field, stage, source, assignment and column conditions. Apply filters commits the draft; Cancel or Escape keeps the existing filters. Reset clears the draft until applied. Desktop keeps inline search, the filter disclosure and stage shortcuts.
 
 Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment.
 
@@ -136,7 +136,7 @@ The list has no row-level Edit controls or Actions column. Open the customer nam
 
 Infinite scrolling loads the next page automatically as you approach the bottom of the lead list. The initial live page requests up to 30 leads; sparse filtered scans may contain fewer results with another cursor. Loading continues until the API returns no cursor. Load more leads remains available as a keyboard/browser fallback; failures pause automatic loading and show Retry loading leads. Changing filters starts a fresh list. Demo mode uses 96 fictional leads, revealed 30 at a time.
 
-On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and the filter icon share a row. All stages provides a compact quick stage picker; desktop retains its action buttons and stage shortcuts. Small screens shorten action labels, and large mobile counts use compact notation.
+On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and Filters sit beside the title, so the lead list starts immediately below the header. Small screens shorten action labels, and large mobile counts use compact notation.
 
 Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
 
@@ -166,7 +166,7 @@ Equals normalizes text. Exact match requires the same saved case, spaces and Uni
 
 Members with lead-edit access; assignment permission for reassignment
 
-1. Filter Leads to the records you need, then tick individual selection boxes or Select loaded leads. A batch contains at most 25 explicitly selected loaded records; this does not select every record matching server filters.
+1. On desktop, filter Leads to the records you need, then tick individual selection boxes or Select loaded leads. A batch contains at most 25 explicitly selected loaded records; this does not select every record matching server filters.
 
 2. Choose Batch edit. Pick shared fields and values; Add another field for additional changes. Leave unchanged retains each lead value. Clear value removes an optional value; required-field validation still applies.
 
@@ -222,7 +222,7 @@ The lead header groups the person, a small score ring, current sales stage and a
 
 Files is a separate tab for private lead attachments. It is not part of All activity; comments/calls and tasks keep their existing tabs. Existing Ready files stay with a lead when it is reassigned, while pending uploads are invalidated by assignment changes.
 
-On phones, use the checkbox on the left of a lead to select it for batch editing. Selecting does not open the record; use the adjacent name/card to open it.
+On phones, tap a lead card to open it. Use a wider window for batch selection and editing.
 
 ### Questions
 
@@ -336,7 +336,7 @@ Members with current lead access; personal reminder recipients
 
 1. Open Tasks to review shared lead work within your current lead access and your own private personal reminders. Pending, Completed and Cancelled filter the same scope.
 
-2. Use the Lead column to open the linked lead page. On phones the same lead link appears below the task title; personal reminders have no linked lead.
+2. Use the Lead column to open the linked lead page. On narrower panels the same link appears with the responsible person beneath the task title. Personal reminders have no linked lead.
 
 3. For a Pending task choose Reschedule directly on its row, enter the new date and time, and save. Completed or cancelled tasks do not offer this action.
 
