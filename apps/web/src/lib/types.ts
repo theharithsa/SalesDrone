@@ -33,8 +33,10 @@ export type Session = {
     version: number;
     exportsEnabled: boolean;
     assignedOnly: boolean;
+    memberExportsEnabled?: boolean;
+    memberIntelligenceEnabled?: boolean;
   };
-  member: Entity | null;
+  member: (Entity & { leadFeatureAccess?: { export: boolean; intelligence: boolean } }) | null;
   preferences: {
     timezone: string;
     appearance: 'light' | 'dark' | 'system';

@@ -365,6 +365,7 @@ function demoSnapshot(
 export default function DashboardPage({
   request,
   demo,
+  canUseIntelligence = true,
   firstName,
   timezone,
   sample,
@@ -381,6 +382,7 @@ export default function DashboardPage({
 }: {
   request: (p: string, m?: string, b?: any) => Promise<any>;
   demo: boolean;
+  canUseIntelligence?: boolean;
   firstName: string;
   timezone: string;
   sample: { leads: Lead[]; tasks: Task[]; activities: Entity[] };
@@ -443,6 +445,7 @@ export default function DashboardPage({
       loadEpoch.current++;
     };
   }, [load, refreshKey]);
+  const intelligenceEnabled = canUseIntelligence && snapshot?.intelligenceEnabled !== false;
   const briefInFlight = useRef(false);
   const briefEpoch = useRef(0);
   useEffect(
@@ -452,7 +455,7 @@ export default function DashboardPage({
     [],
   );
   const refreshBrief = useCallback(async () => {
-    if (demo || briefInFlight.current) return;
+    if (demo || !intelligenceEnabled || briefInFlight.current) return;
     briefInFlight.current = true;
     const epoch = ++briefEpoch.current;
     setBriefBusy(true);
@@ -466,9 +469,9 @@ export default function DashboardPage({
       briefInFlight.current = false;
       if (epoch === briefEpoch.current) setBriefBusy(false);
     }
-  }, [request, demo]);
+  }, [request, demo, intelligenceEnabled]);
   const autoRequested = useRef(false);
-  const automaticInsights = !demo && snapshot?.insightMode === 'automatic';
+  const automaticInsights = intelligenceEnabled && !demo && snapshot?.insightMode === 'automatic';
   useEffect(() => {
     if (!automaticInsights) {
       autoRequested.current = false;
@@ -486,7 +489,7 @@ export default function DashboardPage({
     }
   }
   const facts = snapshot?.facts || {},
-    b = brief?.status === 'Ready' ? brief.brief : null;
+    b = intelligenceEnabled && brief?.status === 'Ready' ? brief.brief : null;
   return (
     <div className="page-body dashboard-page">
       <WorkspacePageHeader
@@ -542,7 +545,7 @@ export default function DashboardPage({
                 icon: Target,
                 note: facts.highPriorityLeads + ' high priority',
               },
-            ].map((k) => (
+            ].filter((k) => intelligenceEnabled || k.label !== 'Scored leads').map((k) => (
               <div key={k.label}>
                 <div>
                   <span>{k.label}</span>
@@ -553,7 +556,7 @@ export default function DashboardPage({
               </div>
             ))}
           </div>
-          <section className="dashboard-brief">
+          {intelligenceEnabled && <section className="dashboard-brief">
             <div className="brief-orbit" aria-hidden="true">
               <span />
               <span />
@@ -627,7 +630,7 @@ export default function DashboardPage({
                 </p>
               ) : null}
             </div>
-          </section>
+          </section>}
           {b?.insights?.length ? (
             <div className="insight-grid">
               {b.insights.map((insight: any, i: number) => (
@@ -761,7 +764,7 @@ export default function DashboardPage({
                 Missing values stay visible as “Not recorded.”
               </p>
             </section>
-            <section className="panel chart-panel">
+            {intelligenceEnabled && <section className="panel chart-panel">
               <div className="chart-heading">
                 <div>
                   <span className="eyebrow">QUALIFICATION COVERAGE</span>
@@ -777,7 +780,7 @@ export default function DashboardPage({
                 Scores reflect reported evidence under your admin’s model.
                 Unknown leads are not scored as zero.
               </p>
-            </section>
+            </section>}
             <section className="panel chart-panel">
               <div className="chart-heading">
                 <div>
@@ -836,7 +839,7 @@ export default function DashboardPage({
                 </p>
               )}
             </section>
-            <section className="panel dashboard-next">
+            {intelligenceEnabled && <section className="panel dashboard-next">
               <div className="section-heading">
                 <div>
                   <span className="eyebrow">LEADS TO REVIEW</span>
@@ -868,7 +871,7 @@ export default function DashboardPage({
                   its score and review the evidence.
                 </p>
               )}
-            </section>
+            </section>}
           </div>
           <p className="dashboard-coverage">
             {snapshot.coverage.leadsScanned}/{snapshot.coverage.totalLeads}{' '}
@@ -879,7 +882,7 @@ export default function DashboardPage({
             snapshot.coverage.callsTruncated
               ? ' · Bounded snapshot: some records are not included.'
               : ''}
-            . AI insights are suggestions, not automatic actions.
+            {intelligenceEnabled ? '. AI insights are suggestions, not automatic actions.' : '.'}
           </p>
         </>
       )}

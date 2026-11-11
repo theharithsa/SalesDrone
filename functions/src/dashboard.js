@@ -9,6 +9,7 @@ import {
   scopeFilters,
   requireMember,
   sameAccess,
+  assertLeadFeature,
 } from './policy.js';
 import { AppError } from './contracts.js';
 import { readScoring, scoreView } from './scoring.js';
@@ -56,6 +57,7 @@ export async function dashboardSnapshot(
   member,
   now = new Date().toISOString(),
 ) {
+  const intelligenceEnabled = member.leadFeatureAccess?.intelligence !== false;
   const [leadScan, taskScan, callScan, totalLeads, config, prefs, fields] =
     await Promise.all([
       scan(
@@ -89,7 +91,7 @@ export async function dashboardSnapshot(
         ...scopeFilters(member),
         ['archived', '==', false],
       ]),
-      readScoring(store),
+      intelligenceEnabled ? readScoring(store) : null,
       store.get('users/' + member.uid),
       readFieldOptions(store),
     ]);
@@ -153,13 +155,13 @@ export async function dashboardSnapshot(
     ].value++;
   }
   const records = [];
-  for (let i = 0; i < leads.length; i += 100)
+  for (let i = 0; config && i < leads.length; i += 100)
     records.push(
       ...(await Promise.all(
         leads.slice(i, i + 100).map((l) => store.get(path('leadScores', l.id))),
       )),
     );
-  const scores = leads.map((l, i) => ({
+  const scores = (config ? leads : []).map((l, i) => ({
     ...scoreView(config, l, records[i]),
     name: l.name,
     stage: l.stage,
@@ -184,7 +186,7 @@ export async function dashboardSnapshot(
       label: 'Review risks',
       value: ready.filter((s) => s.score < 40 && s.hasRisk).length,
     },
-    { label: 'Not scored / unknown', value: leads.length - ready.length },
+    { label: 'Not scored / unknown', value: config ? leads.length - ready.length : 0 },
   ];
   const priority = ready
     .filter((s) => !s.doNotContact && !s.needsReview)
@@ -207,7 +209,7 @@ export async function dashboardSnapshot(
     connected14,
     knownScores: ready.length,
     highPriorityLeads: distribution[0].value,
-    unscoredLeads: leads.length - ready.length,
+    unscoredLeads: config ? leads.length - ready.length : 0,
   };
   const taskContext = tasks.slice(0, 25).map((t) => ({
     id: t.id,
@@ -226,7 +228,7 @@ export async function dashboardSnapshot(
       member.version,
       member.scope,
       member.accessPolicyVersion || 1,
-      config.version,
+      config?.version,
       leads.map((l) => [l.id, l.version]),
       tasks.map((t) => [t.id, t.version]),
       recentCalls.map((a) => [a.id, a.revision]),
@@ -257,7 +259,7 @@ export async function dashboardSnapshot(
     outcomes: counts(recentCalls, 'outcome'),
     trend,
     workload,
-    scoreDistribution: distribution,
+    scoreDistribution: config ? distribution : [],
     priority,
     tasks: taskContext.map((t) => ({
       ...t,
@@ -332,6 +334,7 @@ export async function dashboardBrief({
     lease = randomUUID();
   const claim = await store.run(async (tx) => {
     const current = await requireMember(tx, member, 'leads:read');
+    assertLeadFeature(current, 'intelligence');
     if (!sameAccess(current, member))
       throw new AppError(
         409,
@@ -392,6 +395,7 @@ export async function dashboardBrief({
     return await store.run(async (tx) => {
       const current = await requireMember(tx, member, 'leads:read'),
         old = await tx.get(p);
+      assertLeadFeature(current, 'intelligence');
       if (!sameAccess(current, member) || old?.lease !== lease)
         throw new AppError(
           409,

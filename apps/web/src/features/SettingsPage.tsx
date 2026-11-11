@@ -68,6 +68,7 @@ export default function SettingsPage({
   onPreferences: (p: any) => void;
 }) {
   const isAdmin = !demo && session?.member?.role === 'Admin';
+  const canUseIntelligence = demo || session?.member?.leadFeatureAccess?.intelligence !== false;
   const sections = settingsSections.filter((item) => !item.admin || isAdmin);
   const [location, setLocation] = useState(() => initialSection ? { section: initialSection } : readSettingsLocation());
   const [sectionDraft, setSectionDraft] = useState(cleanDraft);
@@ -290,8 +291,10 @@ export default function SettingsPage({
           {isAdmin && section === 'data' ? (
             <LeadDataSettings request={request} onChanged={onRefresh} />
           ) : null}
-          {isAdmin && section === 'workspace' ? (
+          {isAdmin && (section === 'workspace' || section === 'lead-features') ? (
             <WorkspacePolicySettings
+              key={section}
+              featureAccess={section === 'lead-features'}
               request={request}
               onChanged={onWorkspacePolicyChanged || onRefresh}
             />
@@ -530,7 +533,10 @@ export default function SettingsPage({
                     </p>
                   </>
                 ) : null}
-                {section === 'reminders' ? (
+                {section === 'reminders' && !canUseIntelligence ? (
+                  <p>Your administrator has turned off AvinyaIntelligence for members. You can still schedule reminders manually.</p>
+                ) : null}
+                {section === 'reminders' && canUseIntelligence ? (
                   <div className="automatic-settings">
                     <h3>Reminders from your notes</h3>
                     <p className="field-hint">

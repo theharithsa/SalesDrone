@@ -1,7 +1,7 @@
 const groupNames = {
   personal: 'Personal',
   workspace: 'Workspace',
-  manageFields: 'Lead fields',
+  manageFields: 'Leads Management',
   intelligence: 'Intelligence',
   product: 'About',
 };

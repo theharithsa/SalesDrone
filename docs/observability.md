@@ -3,6 +3,12 @@
 This document is the implementation contract and release evidence ledger. Entries
 are marked by actual evidence; configuration alone is not end-to-end verification.
 
+Lead feature settings reuse the versioned settings audit and committed outbox.
+Only the static keys `memberExportsEnabled` and `memberIntelligenceEnabled` are
+recorded. Existing HTTP metrics, spans and logs track permission denials with
+finite error codes. Permission checks reuse the workspace policy read, and a
+restricted dashboard skips score-document reads.
+
 ## Signal map
 
 | Journey | Trace boundary | Canonical evidence | Sensitive data excluded |

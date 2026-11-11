@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SalesDrone by AvinyaTech API",
-    "version": "1.30.0",
+    "version": "1.31.0",
     "description": "Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data."
   },
   "servers": [
@@ -1837,7 +1837,7 @@
       "get": {
         "operationId": "get_workspace_settings",
         "summary": "GET /workspace-settings",
-        "description": "Requires: leads:read. Personal access token scope: configuration:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. PATCH requires Admin role and members:write. assignedOnly defaults true and caps non-admin scope; false restores each member’s configured scope. exportsEnabled defaults true. Reads are allowed to active workspace members.",
+        "description": "Requires: leads:read. Personal access token scope: configuration:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. PATCH requires Admin role and members:write. assignedOnly defaults true and caps non-admin scope; false restores each member’s configured scope. exportsEnabled is the workspace-wide report switch and defaults true. memberExportsEnabled and memberIntelligenceEnabled apply only to non-Admins, default true, and preserve saved values when omitted. Reads are allowed to active workspace members.",
         "tags": [
           "workspace-settings"
         ],
@@ -2190,7 +2190,7 @@
       "patch": {
         "operationId": "patch_workspace_settings",
         "summary": "PATCH /workspace-settings",
-        "description": "Requires: members:write. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. PATCH requires Admin role and members:write. assignedOnly defaults true and caps non-admin scope; false restores each member’s configured scope. exportsEnabled defaults true. Reads are allowed to active workspace members. Saved net configuration changes create an atomic server-side audit and privacy-safe Dynatrace outbox event. No values are exported; unchanged/failed/denied/replayed saves do not create duplicate success changes. No audit-read endpoint or token scope is granted.",
+        "description": "Requires: members:write. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. PATCH requires Admin role and members:write. assignedOnly defaults true and caps non-admin scope; false restores each member’s configured scope. exportsEnabled is the workspace-wide report switch and defaults true. memberExportsEnabled and memberIntelligenceEnabled apply only to non-Admins, default true, and preserve saved values when omitted. Reads are allowed to active workspace members. Saved net configuration changes create an atomic server-side audit and privacy-safe Dynatrace outbox event. No values are exported; unchanged/failed/denied/replayed saves do not create duplicate success changes. No audit-read endpoint or token scope is granted.",
         "tags": [
           "workspace-settings"
         ],
@@ -2558,7 +2558,7 @@
       "post": {
         "operationId": "post_leads_export",
         "summary": "POST /leads/export",
-        "description": "Requires: leads:read. Personal access token scope: leads:export. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot. Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.",
+        "description": "Requires: leads:read. Personal access token scope: leads:export. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot. Non-Admin members also need memberExportsEnabled. Denied reports return 403 EXPORT_DISABLED. Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.",
         "tags": [
           "leads"
         ],
@@ -4373,7 +4373,7 @@
       "get": {
         "operationId": "get_lead_research_settings",
         "summary": "GET /lead-research-settings",
-        "description": "Requires: leads:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: leads:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-research-settings"
         ],
@@ -4742,7 +4742,7 @@
       "patch": {
         "operationId": "patch_lead_research_settings",
         "summary": "PATCH /lead-research-settings",
-        "description": "Requires: members:write. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution. Saved net configuration changes create an atomic server-side audit and privacy-safe Dynatrace outbox event. No values are exported; unchanged/failed/denied/replayed saves do not create duplicate success changes. No audit-read endpoint or token scope is granted.",
+        "description": "Requires: members:write. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution. Saved net configuration changes create an atomic server-side audit and privacy-safe Dynatrace outbox event. No values are exported; unchanged/failed/denied/replayed saves do not create duplicate success changes. No audit-read endpoint or token scope is granted.",
         "tags": [
           "lead-research-settings"
         ],
@@ -5110,7 +5110,7 @@
       "post": {
         "operationId": "post_lead_hygiene_scans",
         "summary": "POST /lead-hygiene/scans",
-        "description": "Requires: hygiene:run. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: hygiene:run. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-hygiene"
         ],
@@ -5481,7 +5481,7 @@
       "get": {
         "operationId": "get_lead_hygiene_scans",
         "summary": "GET /lead-hygiene/scans",
-        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-hygiene"
         ],
@@ -5870,7 +5870,7 @@
       "get": {
         "operationId": "get_lead_hygiene_scans__id",
         "summary": "GET /lead-hygiene/scans/:id",
-        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-hygiene"
         ],
@@ -6229,7 +6229,7 @@
       "delete": {
         "operationId": "delete_lead_hygiene_scans__id",
         "summary": "DELETE /lead-hygiene/scans/:id",
-        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-hygiene"
         ],
@@ -6600,7 +6600,7 @@
       "get": {
         "operationId": "get_lead_hygiene_scans__id_findings",
         "summary": "GET /lead-hygiene/scans/:id/findings",
-        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-hygiene"
         ],
@@ -6979,7 +6979,7 @@
       "get": {
         "operationId": "get_lead_hygiene_scans__id_findings__findingId_leads",
         "summary": "GET /lead-hygiene/scans/:id/findings/:findingId/leads",
-        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: hygiene:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-hygiene"
         ],
@@ -7366,7 +7366,7 @@
       "post": {
         "operationId": "post_lead_hygiene_scans__id_summary",
         "summary": "POST /lead-hygiene/scans/:id/summary",
-        "description": "Requires: hygiene:ai. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: hygiene:ai. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-hygiene"
         ],
@@ -7747,7 +7747,7 @@
       "get": {
         "operationId": "get_lead_assistant_index",
         "summary": "GET /lead-assistant/index",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -8116,7 +8116,7 @@
       "post": {
         "operationId": "post_lead_assistant_index",
         "summary": "POST /lead-assistant/index",
-        "description": "Requires: members:write. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: members:write. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -8489,7 +8489,7 @@
       "post": {
         "operationId": "post_lead_assistant_conversations",
         "summary": "POST /lead-assistant/conversations",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -8860,7 +8860,7 @@
       "get": {
         "operationId": "get_lead_assistant_conversations",
         "summary": "GET /lead-assistant/conversations",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -9249,7 +9249,7 @@
       "get": {
         "operationId": "get_lead_assistant_conversations__id_messages",
         "summary": "GET /lead-assistant/conversations/:id/messages",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -9631,7 +9631,7 @@
       "post": {
         "operationId": "post_lead_assistant_conversations__id_questions",
         "summary": "POST /lead-assistant/conversations/:id/questions",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -10012,7 +10012,7 @@
       "get": {
         "operationId": "get_lead_assistant_requests__id",
         "summary": "GET /lead-assistant/requests/:id",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -10373,7 +10373,7 @@
       "get": {
         "operationId": "get_lead_assistant_requests__id_leads",
         "summary": "GET /lead-assistant/requests/:id/leads",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -10780,7 +10780,7 @@
       "post": {
         "operationId": "post_lead_assistant_requests__id_cancel",
         "summary": "POST /lead-assistant/requests/:id/cancel",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -11171,7 +11171,7 @@
       "delete": {
         "operationId": "delete_lead_assistant_conversations__id",
         "summary": "DELETE /lead-assistant/conversations/:id",
-        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
+        "description": "Requires: assistant:query. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.",
         "tags": [
           "lead-assistant"
         ],
@@ -20483,7 +20483,7 @@
       "patch": {
         "operationId": "patch_activities__id_automatic_reminder",
         "summary": "PATCH /activities/:id/automatic-reminder",
-        "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Retrying note analysis requires AvinyaIntelligence access. Manual reminder actions retain their existing permissions.",
         "tags": [
           "activities"
         ],
@@ -34204,7 +34204,7 @@
       "get": {
         "operationId": "get_lead_scores",
         "summary": "GET /lead-scores",
-        "description": "Requires: leads:read. Personal access token scope: scores:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: leads:read. Personal access token scope: scores:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Non-Admins require AvinyaIntelligence access. A disabled feature returns 403 INTELLIGENCE_DISABLED.",
         "tags": [
           "lead-scores"
         ],
@@ -34577,7 +34577,7 @@
       "get": {
         "operationId": "get_leads__id_score",
         "summary": "GET /leads/:id/score",
-        "description": "Requires: leads:read. Personal access token scope: scores:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: leads:read. Personal access token scope: scores:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Non-Admins require AvinyaIntelligence access. A disabled feature returns 403 INTELLIGENCE_DISABLED.",
         "tags": [
           "leads"
         ],
@@ -34941,7 +34941,7 @@
       "post": {
         "operationId": "post_leads__id_score_refresh",
         "summary": "POST /leads/:id/score/refresh",
-        "description": "Requires: leads:edit. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: leads:edit. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Non-Admins require AvinyaIntelligence access. A disabled feature returns 403 INTELLIGENCE_DISABLED.",
         "tags": [
           "leads"
         ],
@@ -35312,7 +35312,7 @@
       "get": {
         "operationId": "get_dashboard",
         "summary": "GET /dashboard",
-        "description": "Requires: leads:read. Personal access token scope: dashboard:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: leads:read. Personal access token scope: dashboard:read. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Score data is excluded for members without AvinyaIntelligence access.",
         "tags": [
           "dashboard"
         ],
@@ -35667,7 +35667,7 @@
       "post": {
         "operationId": "post_dashboard_insights",
         "summary": "POST /dashboard/insights",
-        "description": "Requires: leads:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+        "description": "Requires: leads:read. Google sign-in and App Check required; personal access tokens are not accepted. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Non-Admins require AvinyaIntelligence access. A disabled feature returns 403 INTELLIGENCE_DISABLED.",
         "tags": [
           "dashboard"
         ],
@@ -38666,6 +38666,10 @@
             "type": "object",
             "description": "Personal grouping over authorized scanned leads only. Includes requested/effective field, label, unavailable fallback flag, availableFields and groups. At most 20 displayed groups plus Other values; group keys distinguish missing values. Normalized equality and Is empty support drill-through; aggregate/overlong-label groups are not direct filters."
           },
+          "intelligenceEnabled": {
+            "type": "boolean",
+            "description": "Effective workspace feature access for the caller."
+          },
           "insightMode": {
             "type": "string",
             "enum": [
@@ -38834,6 +38838,12 @@
           },
           "assignedOnly": {
             "type": "boolean"
+          },
+          "memberExportsEnabled": {
+            "type": "boolean"
+          },
+          "memberIntelligenceEnabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -38980,7 +38990,9 @@
         "required": [
           "version",
           "exportsEnabled",
-          "assignedOnly"
+          "assignedOnly",
+          "memberExportsEnabled",
+          "memberIntelligenceEnabled"
         ],
         "properties": {
           "version": {
@@ -38992,6 +39004,14 @@
           },
           "assignedOnly": {
             "type": "boolean"
+          },
+          "memberExportsEnabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "memberIntelligenceEnabled": {
+            "type": "boolean",
+            "default": true
           }
         }
       },
@@ -40478,6 +40498,21 @@
           "version": {
             "type": "integer",
             "minimum": 0
+          },
+          "leadFeatureAccess": {
+            "type": "object",
+            "properties": {
+              "export": {
+                "type": "boolean"
+              },
+              "intelligence": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "export",
+              "intelligence"
+            ]
           }
         },
         "required": [
@@ -40617,6 +40652,9 @@
                 "type": "null"
               }
             ]
+          },
+          "workspaceSettings": {
+            "$ref": "#/components/schemas/WorkspaceSettings"
           }
         },
         "required": [

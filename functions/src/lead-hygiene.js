@@ -117,7 +117,9 @@ export async function readHygieneScan(store, identity, id) {
         summary: null,
         summaryStatus: null,
       }
-    : job;
+    : m.capabilities.includes("hygiene:ai")
+      ? job
+      : { ...job, summary: null, summaryStatus: null };
 }
 export function inspectLead(lead, fields) {
   const issues = [];

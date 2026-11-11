@@ -2,6 +2,13 @@
 
 SalesDrone displays six responsive views: pipeline stage composition, 14-day personal outreach / lead additions, personal reminder workload, sector/city mix, score coverage, and call outcomes. Stage composition is not a conversion funnel. Reminder and outreach counts are personal; lead counts honor assigned/all scope. The dashboard states its account timezone and snapshot coverage.
 
+Admins can manage non-Admin access from **Settings → Leads Management →
+Feature access**. Turning off **Use AvinyaIntelligence** blocks dashboard AI
+insights, score access, automatic note analysis, Lead Assistant and AI Hygiene.
+Background scoring is shared workspace work and follows the Admin’s scoring
+configuration. The member switch stops those members from reading or refreshing
+scores. Manual reminders and standard Hygiene keep their existing permissions.
+
 ## AI workspace brief
 
 Dashboard AI summaries default to on demand: choose **Get insights** (or **Refresh insights**). Admins can select **When the dashboard opens** under Settings → AvinyaIntelligence → Dashboard insights. Automatic mode hides the button and makes one request per dashboard visit; chart refreshes do not request another summary. Errors stay visible without automatic retry loops. Recent matching results reuse the server cache. Duplicate requests are guarded while running. The summary retains its own snapshot time when charts refresh. Server caching and rate limits still apply.

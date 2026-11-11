@@ -126,6 +126,7 @@ import {
   resolveIdentity,
   effectiveMember,
   sameAccess,
+  assertLeadFeature,
   requireMember,
   scopeFilters,
   leadAccess,
@@ -798,20 +799,25 @@ export function createApp({
     const input = parse(WorkspaceSettingsPatch, req.body);
     return mutate(req, 'members:write', async (tx, member) => {
       assertAdmin(member);
-      const current = await readWorkspaceSettings(tx);
+      const { researchPolicyVersion, ...current } = await readWorkspaceSettings(tx, { includeResearchVersion: true });
       assertVersion(current, input.expectedVersion);
-      if (
-        current.exportsEnabled === input.exportsEnabled &&
-        current.assignedOnly === input.assignedOnly
-      )
-        return current;
       const next = {
         version: current.version + 1,
         exportsEnabled: input.exportsEnabled,
         assignedOnly: input.assignedOnly,
+        memberExportsEnabled: input.memberExportsEnabled ?? current.memberExportsEnabled,
+        memberIntelligenceEnabled: input.memberIntelligenceEnabled ?? current.memberIntelligenceEnabled,
       };
+      if (
+        next.exportsEnabled === current.exportsEnabled &&
+        next.assignedOnly === current.assignedOnly &&
+        next.memberExportsEnabled === current.memberExportsEnabled &&
+        next.memberIntelligenceEnabled === current.memberIntelligenceEnabled
+      ) return current;
       tx.set(WORKSPACE_SETTINGS_PATH, {
         ...next,
+        researchPolicyVersion: next.assignedOnly !== current.assignedOnly || next.exportsEnabled !== current.exportsEnabled
+          ? next.version : researchPolicyVersion,
         updatedAt: now(),
         updatedByUid: member.uid,
       });
@@ -820,15 +826,13 @@ export function createApp({
   });
   route('post', '/leads/export', 'leads:read', async (req) => {
     const input = parse(LeadExportInput, req.body);
-    const settings = await readWorkspaceSettings(store);
-    if (!settings.exportsEnabled)
-      throw new AppError(
-        403,
-        'EXPORT_DISABLED',
-        'Lead exports are disabled by your administrator',
-      );
+    assertLeadFeature(req.member, 'export');
+    const policyVersion = req.member.accessPolicyVersion;
     await store.run(async (tx) => {
-      await requireMember(tx, req.identity, 'leads:read');
+      const member = await requireMember(tx, req.identity, 'leads:read');
+      assertLeadFeature(member, 'export');
+      if (!sameAccess(member, req.member))
+        throw new AppError(409, 'SCOPE_CHANGED', 'Workspace access changed; restart your report');
       const p = path(
         'rateLimits',
         hash('leadExport:' + req.member.uid + ':' + now().slice(0, 16)),
@@ -856,7 +860,7 @@ export function createApp({
         limit: String(includeComments ? Math.min(limit, 10) : limit),
         ...(cursor ? { cursor } : {}),
       },
-      exportBinding: ['report', settings.version, config.version, columns, includeComments],
+      exportBinding: ['report', policyVersion, config.version, columns, includeComments],
     });
     const comments = includeComments ? (await Promise.all(result.items.map(async (lead) =>
       (await leadComments(store, lead.id)).map((row) => ({
@@ -864,14 +868,8 @@ export function createApp({
       })),
     ))).flat() : undefined;
     const current = await requireMember(store, req.identity, 'leads:read');
-    const latest = await readWorkspaceSettings(store);
-    if (!latest.exportsEnabled)
-      throw new AppError(
-        403,
-        'EXPORT_DISABLED',
-        'Lead exports are disabled by your administrator',
-      );
-    if (!sameAccess(current, req.member) || latest.version !== settings.version)
+    assertLeadFeature(current, 'export');
+    if (!sameAccess(current, req.member))
       throw new AppError(
         409,
         'SCOPE_CHANGED',
@@ -885,6 +883,7 @@ export function createApp({
     const id = uid();
     await store.run(async (tx) => {
       const member = await requireMember(tx, req.identity, 'leads:read');
+      assertLeadFeature(member, 'export');
       if (!sameAccess(member, current))
         throw new AppError(
           409,
@@ -908,7 +907,7 @@ export function createApp({
       ...(comments ? { comments } : {}),
       nextCursor: result.nextCursor,
       scanLimited: result.scanLimited,
-      policyVersion: settings.version,
+      policyVersion,
       asOf: now(),
     };
   });
@@ -1839,6 +1838,7 @@ export function createApp({
       const job = await tx.get(path('noteAnalyses', auto.id));
       let summary;
       if (input.action === 'retry') {
+        assertLeadFeature(m, 'intelligence');
         if (auto.status !== 'Failed')
           throw new AppError(
             409,
@@ -2737,6 +2737,7 @@ export function createApp({
     });
   });
   route('get', '/lead-scores', 'leads:read', async (req) => {
+    assertLeadFeature(req.member, 'intelligence');
     const ids = parse(
       z
         .array(z.string().regex(/^[A-Za-z0-9_.:-]{1,120}$/))
@@ -2761,6 +2762,7 @@ export function createApp({
     };
   });
   route('get', '/leads/:id/score', 'leads:read', async (req) => {
+    assertLeadFeature(req.member, 'intelligence');
     const lead = await leadAccess(store, req.member, req.params.id),
       config = await readScoring(store),
       record = await store.get(path('leadScores', lead.id));
@@ -2769,6 +2771,7 @@ export function createApp({
   route('post', '/leads/:id/score/refresh', 'leads:edit', async (req) => {
     parse(z.object({}).strict(), req.body);
     await mutate(req, 'leads:edit', async (tx, m) => {
+      assertLeadFeature(m, 'intelligence');
       await leadAccess(tx, m, req.params.id);
       return { ok: true };
     });
@@ -2785,6 +2788,7 @@ export function createApp({
       now,
     });
     const current = await requireMember(store, req.identity, 'leads:read');
+    assertLeadFeature(current, 'intelligence');
     await leadAccess(store, current, req.params.id);
     return result;
   });
@@ -2794,10 +2798,12 @@ export function createApp({
       req.member,
       now(),
     );
-    const { insightMode } = await readAISettings(store);
-    return { ...snapshot, insightMode };
+    const intelligenceEnabled = req.member.leadFeatureAccess.intelligence;
+    const insightMode = intelligenceEnabled ? (await readAISettings(store)).insightMode : 'manual';
+    return { ...snapshot, insightMode, intelligenceEnabled };
   });
   route('post', '/dashboard/insights', 'leads:read', async (req) => {
+    assertLeadFeature(req.member, 'intelligence');
     parse(z.object({}).strict(), req.body);
     if (!summarizeDashboard) return { status: 'Unavailable' };
     const snapshot = await dashboardSnapshot(store, req.member, now());

@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "version": "2.11.0",
+  "summary": "Give Admins independent workspace controls for member lead exports and AvinyaIntelligence.",
+  "modules": [
+    "salesdrone-workspace-settings",
+    "salesdrone-people-permissions"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/SETTINGS.md",
+    "docs/API.md",
+    "docs/INTELLIGENCE.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [
+    "lead-features",
+    "workspace"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "Existing versioned workspace settings accept optional member flags. Profile exposes effective access. Lead export and AI routes enforce current feature access.",
+    "contractVersion": "1.31.0",
+    "permissions": "Admin role with members:write and a current settings version can edit. Feature access intersects assigned scope and individual grants. PATs retain their explicit scope requirements and workspace export control.",
+    "tests": [
+      "functions/test/reports-policy.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Reuse HTTP duration and status metrics for protected routes, including feature denial codes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Permission checks run within existing route and worker traces, with the same scope policy and no additional provider calls.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Reuse request logs with finite error types and include key-only settings audit metadata.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "The settings transaction commits versioned policy and emits the existing settings audit event with two allowed static keys.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The existing deployment and CI events cover this release independently of feature behavior.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "In the isolated Admin preview verify feature toggles, keyboard activation, saved state, settings search, and denied member deep links at measured widths. Verify server enforcement in test fixtures and preserve existing export, research and reminder policy. Post-deploy verify exact revision and read-only Admin settings without changing customer permissions.",
+  "milestone": {
+    "number": 37,
+    "title": "v2.11.0 \u2014 Lead feature permissions",
+    "issues": [
+      167
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "lead-feature-access-demo.jpg",
+    "lead-feature-access-mobile-demo.jpg"
+  ]
+}

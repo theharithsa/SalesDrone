@@ -61,22 +61,39 @@ export async function resolveIdentity(store, identity) {
 }
 export async function effectiveMember(store, member) {
   if (!member) return null;
-  const config = await readWorkspaceSettings(store);
-  return {
+  const config = await readWorkspaceSettings(store, { includeResearchVersion: true });
+  const isAdmin = member.role === 'Admin';
+  const intelligence = isAdmin || config.memberIntelligenceEnabled;
+  const capabilities = isAdmin
+    ? [...new Set([
+        ...member.capabilities,
+        ...(member.capabilities.includes('imports:write') ? ['imports:read', 'imports:share'] : []),
+        'hygiene:read', 'hygiene:run', 'hygiene:ai', 'assistant:query',
+      ])]
+    : member.capabilities;
+  const effective = {
     ...member,
-    capabilities: member.role === 'Admin'
-      ? [...new Set([
-          ...member.capabilities,
-          ...(member.capabilities.includes('imports:write') ? ['imports:read', 'imports:share'] : []),
-          'hygiene:read', 'hygiene:run', 'hygiene:ai', 'assistant:query',
-        ])]
-      : member.capabilities,
-    scope:
-      member.role !== 'Admin' && config.assignedOnly
-        ? 'assigned'
-        : member.scope,
+    capabilities: intelligence ? capabilities : capabilities.filter(
+      (capability) => capability !== 'assistant:query' && capability !== 'hygiene:ai',
+    ),
+    leadFeatureAccess: {
+      export: config.exportsEnabled && (isAdmin || config.memberExportsEnabled),
+      intelligence,
+    },
+    scope: !isAdmin && config.assignedOnly ? 'assigned' : member.scope,
     accessPolicyVersion: config.version,
   };
+  // Preserve the access key of saved research when member-only feature switches change.
+  Object.defineProperty(effective, 'researchAccess', {
+    value: { version: config.researchPolicyVersion, capabilities },
+  });
+  return effective;
+}
+export function assertLeadFeature(member, feature) {
+  if (member.leadFeatureAccess[feature]) return;
+  if (feature === 'export')
+    throw new AppError(403, 'EXPORT_DISABLED', 'Lead exports are disabled by your administrator');
+  throw new AppError(403, 'INTELLIGENCE_DISABLED', 'AvinyaIntelligence is disabled by your administrator');
 }
 export const sameAccess = (a, b) =>
   a.version === b.version &&

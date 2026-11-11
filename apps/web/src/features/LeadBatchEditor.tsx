@@ -8,6 +8,7 @@ export default function LeadBatchEditor({
   leads,
   config,
   scores,
+  showScores = true,
   selectedId,
   onSelect,
   request,
@@ -18,6 +19,7 @@ export default function LeadBatchEditor({
   leads: Lead[];
   config: FieldOptions;
   scores: Record<string, any>;
+  showScores?: boolean;
   selectedId: string | null;
   onSelect: (l: Lead) => void;
   request: (p: string, m?: string, b?: any, k?: string) => Promise<any>;
@@ -242,6 +244,7 @@ export default function LeadBatchEditor({
           leads={leads}
           config={config}
           scores={scores}
+          showScores={showScores}
           selectedId={selectedId}
           onSelect={onSelect}
           checkedIds={canEdit ? selected : undefined}

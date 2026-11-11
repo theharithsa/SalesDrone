@@ -13,7 +13,7 @@ test('shared navigation groups fields and choices and every visible settings sec
     catalog = await read('docs/settings-reference.json');
   assert.deepEqual(
     sections.filter((s) => s.group === 'manageFields').map((s) => s.id),
-    ['fields', 'field-order', 'lead-header', 'choices'],
+    ['lead-features', 'fields', 'field-order', 'lead-header', 'choices'],
   );
   assert.ok(
     sections.filter((s) => s.group === 'manageFields').every((s) => s.admin),
@@ -39,7 +39,7 @@ test('settings documentation escapes markup and includes defaults, permission bo
   assert.ok(output.html.includes('&lt;script&gt;'));
   assert.ok(!output.html.includes('<script>unsafe'));
   assert.ok(output.html.includes('name="salesdrone-version" content="9.8.7"'));
-  assert.ok(output.markdown.includes('Lead fields → Field definitions'));
+  assert.ok(output.markdown.includes('Leads Management → Field definitions'));
   assert.ok(output.markdown.includes('example:read'));
   assert.ok(output.markdown.includes('Operator environment configuration'));
 });

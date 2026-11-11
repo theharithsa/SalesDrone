@@ -289,6 +289,9 @@ export default function App() {
     rumPage('/' + page);
   }, [page]);
   const admin = !demo && session?.member?.role === 'Admin';
+  const canExportLeads = demo || (session?.member?.leadFeatureAccess?.export ??
+    (session?.workspaceSettings?.exportsEnabled !== false));
+  const canUseIntelligence = demo || session?.member?.leadFeatureAccess?.intelligence !== false;
   const importAccess =
     !demo &&
     !!session?.member?.capabilities?.some(
@@ -572,6 +575,8 @@ export default function App() {
             setSelected(null);
             void resolveSession();
           }
+          if (e instanceof ApiError && ['EXPORT_DISABLED', 'INTELLIGENCE_DISABLED'].includes(e.code))
+            void resolveSession();
           throw e;
         }
       }
@@ -1387,7 +1392,7 @@ export default function App() {
   const scoreIds = visibleLeads.map((l) => l.id + ':' + l.version).join(',');
   useEffect(() => {
     setLeadScores({});
-    if (demo || page !== 'leads' || !data.leads.length) return;
+    if (demo || !canUseIntelligence || page !== 'leads' || !data.leads.length) return;
     let alive = true;
     const get = () =>
       Promise.all(
@@ -1423,6 +1428,7 @@ export default function App() {
     demo,
     page,
     scoreIds,
+    canUseIntelligence,
     session?.identity.uid,
     session?.member?.version,
   ]);
@@ -1877,6 +1883,7 @@ export default function App() {
                 }
                 request={request}
                 demo={!!demo}
+                canUseIntelligence={canUseIntelligence}
                 firstName={
                   demo
                     ? 'Explorer'
@@ -1951,9 +1958,7 @@ export default function App() {
                     description="Find enquiries and track their next steps."
                     actions={
                       <div className="title-actions lead-collection-actions">
-                        {demo ||
-                        session?.workspaceSettings?.exportsEnabled !== false ||
-                        admin ? (
+                        {canExportLeads || admin ? (
                           <div
                             className="lead-secondary-actions"
                             ref={leadActionsRoot}
@@ -1998,9 +2003,7 @@ export default function App() {
                                   setLeadMoreOpen(false);
                               }}
                             >
-                              {demo ||
-                              session?.workspaceSettings?.exportsEnabled !==
-                                false ? (
+                              {canExportLeads ? (
                                 <LeadReportExport
                                   menuTriggerRef={leadMoreTrigger}
                                   request={request}
@@ -2216,6 +2219,7 @@ export default function App() {
                         onDone={() => void load()}
                         config={fieldOptions}
                         scores={leadScores}
+                        showScores={canUseIntelligence}
                         leads={visibleLeads}
                         selectedId={selected?.id || null}
                         onSelect={inspectLead}
@@ -2324,7 +2328,7 @@ export default function App() {
                     }
                     workflow={
                       <>
-                        <div className="lead-header-score">
+                        {canUseIntelligence && <div className="lead-header-score">
                           <span>Lead score</span>
                           <ScoreBadge
                             score={
@@ -2333,7 +2337,7 @@ export default function App() {
                                 : leadScores[selected.id]
                             }
                           />
-                        </div>
+                        </div>}
                         <div className="detail-section">
                           <h3>
                             {labelFor(fieldOptions, 'stage', 'Sales stage')}
@@ -2361,7 +2365,7 @@ export default function App() {
                       demo={!!demo}
                     />),
                       details: (<div className="lead-context">
-                        <LeadScore
+                        {canUseIntelligence && <LeadScore
                           key={selected.id}
                           leadId={selected.id}
                           version={selected.version}
@@ -2370,7 +2374,7 @@ export default function App() {
                           canRefresh={!!can('leads:edit')}
                           timezone={timezone}
                           demo={demo}
-                        />
+                        />}
                         {selected.doNotContact ? (
                           <div className="detail-warning">
                             Do not contact · {selected.suppressionReason}
@@ -2720,7 +2724,7 @@ export default function App() {
                                         <p className="comment-body">
                                           {a.notes}
                                         </p>
-                                        <AutomaticReminder
+                                        {canUseIntelligence && <AutomaticReminder
                                           key={a.id + '_' + a.revision}
                                           activity={a}
                                           timezone={timezone}
@@ -2740,7 +2744,7 @@ export default function App() {
                                             );
                                             await refresh();
                                           }}
-                                        />
+                                        />}
                                         {['call', 'note'].includes(a.type) &&
                                         a.revision &&
                                         can('activities:write') && (demo || admin || a.actorUid === session?.identity.uid) ? (

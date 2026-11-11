@@ -18,6 +18,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.11.0] - 2026-11-11
+
+### Changed
+- Add Admin controls for member lead exports and AvinyaIntelligence under Settings → Leads Management → Feature access. Both permissions start enabled.
+
 ## [2.10.5] - 2026-11-09
 
 ### Changed

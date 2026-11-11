@@ -228,6 +228,7 @@ schemas.Dashboard = {
   properties: {
     asOf: { type: 'string' },
     visualization: {type:'object',description:'Personal grouping over authorized scanned leads only. Includes requested/effective field, label, unavailable fallback flag, availableFields and groups. At most 20 displayed groups plus Other values; group keys distinguish missing values. Normalized equality and Is empty support drill-through; aggregate/overlong-label groups are not direct filters.'},
+    intelligenceEnabled: { type: 'boolean', description: 'Effective workspace feature access for the caller.' },
     insightMode: {
       type: 'string',
       enum: ['manual', 'automatic'],
@@ -268,11 +269,13 @@ schemas.LeadExportInput = z.toJSONSchema(LeadExportInput, { io: 'input' });
 schemas.LeadExportInput.properties.columns.uniqueItems = true;
 schemas.WorkspaceSettings = {
   type: 'object',
-  required: ['version', 'exportsEnabled', 'assignedOnly'],
+  required: ['version', 'exportsEnabled', 'assignedOnly', 'memberExportsEnabled', 'memberIntelligenceEnabled'],
   properties: {
     version: { type: 'integer', minimum: 1 },
     exportsEnabled: { type: 'boolean' },
     assignedOnly: { type: 'boolean' },
+    memberExportsEnabled: { type: 'boolean', default: true },
+    memberIntelligenceEnabled: { type: 'boolean', default: true },
   },
 };
 schemas.LeadExportPage = {
@@ -493,6 +496,10 @@ schemas.Member = object({
   active: { type: 'boolean' },
   version: integer,
 });
+schemas.Member.properties.leadFeatureAccess = object({
+  export: { type: 'boolean' },
+  intelligence: { type: 'boolean' },
+}, ['export', 'intelligence']);
 schemas.Invitation = object({
   id: string,
   email: { type: 'string', format: 'email' },
@@ -519,6 +526,7 @@ schemas.Profile = object({
     ],
   },
 });
+schemas.Profile.properties.workspaceSettings = ref('WorkspaceSettings');
 schemas.Profile.properties.identity.properties.photoURL = {
   type: 'string',
   description:
@@ -965,7 +973,7 @@ for (const e of endpoints) {
   const operation = {
     operationId: e.method + e.url.replace(/[^a-zA-Z]/g, '_'),
     summary: e.method.toUpperCase() + ' ' + e.url,
-    description: `Requires: ${e.capability}.${e.url === '/ai-settings' ? ' Admin-only workspace AI preferences; blank instructions restore defaults. Changes invalidate summary caches and stale generation cannot publish.' : ''} ${PAT_ROUTES[e.method + ' ' + e.url] ? 'Personal access token scope: ' + PAT_ROUTES[e.method + ' ' + e.url] + '.' : 'Google sign-in and App Check required; personal access tokens are not accepted.'} Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.${e.url === '/leads/export' ? ' Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot.' : ''}${e.url === '/workspace-settings' ? ' PATCH requires Admin role and members:write. assignedOnly defaults true and caps non-admin scope; false restores each member’s configured scope. exportsEnabled defaults true. Reads are allowed to active workspace members.' : ''}${e.url === '/leads/:id/activities' && e.method === 'post' ? ' Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.' : ''}${e.url === '/personal-access-tokens' && e.method === 'post' ? ' Admin-only. Do not send Idempotency-Key. Token is shown once; list and delete metadata never include the credential or its hash.' : ''}`,
+    description: `Requires: ${e.capability}.${e.url === '/ai-settings' ? ' Admin-only workspace AI preferences; blank instructions restore defaults. Changes invalidate summary caches and stale generation cannot publish.' : ''} ${PAT_ROUTES[e.method + ' ' + e.url] ? 'Personal access token scope: ' + PAT_ROUTES[e.method + ' ' + e.url] + '.' : 'Google sign-in and App Check required; personal access tokens are not accepted.'} Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.${e.url === '/leads/export' ? ' Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot.' : ''}${e.url === '/workspace-settings' ? ' PATCH requires Admin role and members:write. assignedOnly defaults true and caps non-admin scope; false restores each member’s configured scope. exportsEnabled is the workspace-wide report switch and defaults true. memberExportsEnabled and memberIntelligenceEnabled apply only to non-Admins, default true, and preserve saved values when omitted. Reads are allowed to active workspace members.' : ''}${e.url === '/leads/:id/activities' && e.method === 'post' ? ' Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.' : ''}${e.url === '/personal-access-tokens' && e.method === 'post' ? ' Admin-only. Do not send Idempotency-Key. Token is shown once; list and delete metadata never include the credential or its hash.' : ''}`,
     tags: [e.url.split('/')[1]],
     security: PAT_ROUTES[e.method + ' ' + e.url]
       ? [{ personalAccessToken: [] }, { firebaseIdToken: [], appCheck: [] }]
@@ -1063,7 +1071,13 @@ for (const e of endpoints) {
   if(e.method==='patch'&&['/tasks/:id','/leads/:id/tasks/:taskId'].includes(e.url))
     operation.description+=' In the browser workspace, task completion, changed due times and reopening require a nonblank comment (up to 500 characters). Reopen completed tasks with state Pending and a future dueAt. Recheck current lead access, recipient eligibility and outreach suppression. Supported personal-access-token task updates retain their previous validation.';
   if(e.method==='post'&&e.url==='/leads/export')
-    operation.description+=' Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.';
+    operation.description+=' Non-Admin members also need memberExportsEnabled. Denied reports return 403 EXPORT_DISABLED. Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.';
+  if (['/dashboard/insights', '/lead-scores', '/leads/:id/score', '/leads/:id/score/refresh'].includes(e.url))
+    operation.description += ' Non-Admins require AvinyaIntelligence access. A disabled feature returns 403 INTELLIGENCE_DISABLED.';
+  if (e.url === '/activities/:id/automatic-reminder')
+    operation.description += ' Retrying note analysis requires AvinyaIntelligence access. Manual reminder actions retain their existing permissions.';
+  if (e.url === '/dashboard')
+    operation.description += ' Score data is excluded for members without AvinyaIntelligence access.';
   if(e.url==='/team'||e.url==='/team/members/:uid/activities'){
     operation.description+=' Admin role is always required; Google sessions also require members:write. PATs require explicit team:read scope. Recorded activity uses UTC calendar days (7/30/90; default 30), bounded scans and current lead scope. Imported text, deleted-source activities and personal reminders are excluded. No employee rating or online status. Counts are current reads, not a transactional snapshot. Access is rechecked before publication. 413 TEAM_LIMIT rejects oversized reports rather than partial totals; 409 TEAM_STALE requires refresh.';
     operation.parameters.push({in:'query',name:'days',schema:{type:'integer',enum:[7,30,90],default:30}});
@@ -1262,7 +1276,7 @@ for (const e of endpoints) {
   }
   if(e.url.endsWith('/cancel')&&e.url.startsWith('/lead-assistant/')) operation.requestBody={required:true,content:{'application/json':{schema:{type:'object',required:['expectedVersion'],additionalProperties:false,properties:{expectedVersion:{type:'integer',minimum:1}}}}}};
   if(e.url.startsWith('/lead-hygiene')||e.url.startsWith('/lead-assistant')||e.url==='/lead-research-settings') {
-    operation.description+=' Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.';
+    operation.description+=' Lead research is read-only for leads. Admins receive feature access by default; members need explicit grants intersecting current lead scope. Lead Assistant and AI-assisted Hygiene additionally require AvinyaIntelligence access. Histories are creator-private and retained until deletion. Source/policy changes invalidate results. Reports are resumable and full-list; archive candidates require explicit settings. Assistant counts are deterministic; calendar-month conversions count distinct accessible active leads with recorded transitions into configured converted stages. Missing import history is explicitly partial. Qualitative answers use bounded source-verified RAG, never top-k counting. Indexing is disabled by default and must be enabled by an Admin. No PAT, lead mutation or arbitrary query execution.';
   }
   const auditRoutes = new Set([
     'PATCH /me',
@@ -1299,7 +1313,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.30.0',
+    version: '1.31.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
