@@ -112,12 +112,12 @@
         },
         {
           "id": "BOOK-MODE-01",
-          "expected": "Book serif styling wins over interface font; switching it off restores the saved family.",
+          "expected": "Caveat headings and Patrick Hand body and editable controls override the selected interface font. Turning Book mode off restores the saved family.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         },
         {
           "id": "BOOK-MODE-02",
-          "expected": "The personal palettes pair readable roles in light and dark themes. Zoom and phone monospace remain usable.",
+          "expected": "The bound page, section tabs and paper dialogs carry through Today, Leads, Tasks, Team, notifications, imports, research and Settings. Check narrow and wide windows, light and dark palettes, large text and phone monospace.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         }
       ]

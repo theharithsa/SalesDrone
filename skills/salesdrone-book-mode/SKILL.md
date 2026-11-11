@@ -9,7 +9,7 @@ Read [SHARED.md](../SHARED.md). This is a visual mode of the existing editable a
 
 ## Ownership and source
 
-- [personalization.css](../../apps/web/src/material/personalization.css) and [tokens.css](../../apps/web/src/material/tokens.css): page surfaces, type and motion.
+- [book.css](../../apps/web/src/material/book.css) and [tokens.css](../../apps/web/src/material/tokens.css): page surfaces, type and motion.
 - [appearance.ts](../../apps/web/src/lib/appearance.ts): live/guest preference isolation.
 - [App.tsx](../../apps/web/src/App.tsx): root reading-mode/resolved-colour attributes and guest persistence.
 - [SettingsPage.tsx](../../apps/web/src/features/SettingsPage.tsx): Book mode control in Appearance & time, applied after Save changes.
@@ -19,7 +19,7 @@ Read [SHARED.md](../SHARED.md). This is a visual mode of the existing editable a
 
 Book mode is optional boolean bookMode, default false, independent of appearance=System/Light/Dark. The compact sun/moon theme pill preserves it. Older PATCH clients that omit bookMode preserve the saved choice. Live identities use their server preference; guest/demo/unapproved identities use guarded local fallback and cannot inherit live data.
 
-All visible text uses the local serif reading stack in Book mode: headings, identity, navigation, buttons, forms, tables, chart labels and narrative text. Phone numbers and telephone inputs, including descendants of phone cells, remain monospace. Keep the SalesDrone/Avinya artwork and standard-mode fonts intact. Avoid blanket !important rules that override phone semantics or icon rendering; account for portals outside the app root and SVG chart text.
+Caveat headings and Patrick Hand body/controls use the same notebook shell for all workspace modules, including overlays. Phone numbers and telephone inputs, including descendants of phone cells, remain monospace. Keep the SalesDrone/Avinya artwork and standard-mode fonts intact. Avoid blanket !important rules that override phone semantics or icon rendering; account for portals outside the app root and SVG chart text.
 
 Day uses warm paper/ink; night uses charcoal/warm pale ink. Preserve semantic status distinctions, focus, contrast, 16px editable inputs and 44px touch targets. Use the live lead index and existing record routes. Turns are visual only, preserve navigation focus and honour reduced motion. Styles must work in the lead index, full lead page, dashboard, tasks, settings, inbox and dialogs. Standard mode must restore cleanly.
 
@@ -35,11 +35,11 @@ Run [book preference tests](../../functions/test/book-mode.test.js), [identity r
 
 Refresh affected Book mode captures and hash manifest through [product guide](../salesdrone-product-guide/SKILL.md). Update settings/API docs and release impact plan; use [release readiness](../salesdrone-release-readiness/SKILL.md) and [release](../salesdrone-release/SKILL.md) for authorized publication. Do not claim physical-device or tenant-search verification from browser/HTTP checks.
 
-Typography sizes and responsive layout now come from design-system.css after Book palette/font rules. Preserve the serif family while matching the semantic web roles; avoid a mode-specific large paragraph rule defeating mobile 17px body sizing. Verify computed size as well as family, including comment selectors and portals. See [the design system](../../docs/DESIGN-SYSTEM.md).
+Typography sizes and responsive layout now come from design-system.css after Book palette/font rules. Preserve the handwriting families and semantic roles; avoid a mode-specific large paragraph rule defeating mobile 17px body sizing. Verify computed size as well as family, including comment selectors and portals. See [the design system](../../docs/DESIGN-SYSTEM.md).
 
-Book mode shares the all-screen semantic sizes, available-width grids and dialog layout in design-system.css, which loads after book-mode.css. Preserve serif families, monospace phone numbers and palette tokens. Check phone, tablet, laptop, wide desktop and short heights, not just mobile. HTML chart labels inherit the reading font without SVG downscaling. Use the matrix in DESIGN-SYSTEM.md and distinguish simulated default-text scaling from physical-device testing.
+Book mode shares the all-screen semantic sizes, available-width grids and dialog layout in design-system.css, which loads after book-mode.css. Preserve handwriting, monospace phone numbers and palette tokens. Check phone, tablet, laptop, wide desktop and short heights, not just mobile. HTML chart labels inherit the reading font without SVG downscaling. Use the matrix in DESIGN-SYSTEM.md and distinguish simulated default-text scaling from physical-device testing.
 
-Interface font selection is orthogonal to Book mode. Store the selected font but never override --reading-font with it. Turning Book mode off restores the selected family; all Book content retains its serif stack except existing monospace phone rules. Activity role sizes now come from typography.css, loaded last, and must match standard mode without truncating history.
+Interface font selection is orthogonal to Book mode. Store the selected font but never replace the Book mode font stacks with it. Turning Book mode off restores the selected family; all Book content retains its handwriting except existing monospace phone rules. Activity role sizes now come from typography.css, loaded last, and must match standard mode without truncating history.
 
 ## Conditional reference
 

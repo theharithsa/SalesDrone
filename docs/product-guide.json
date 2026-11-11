@@ -477,15 +477,15 @@
       "audience": "Every active member; personal preference",
       "steps": [
         "Open Settings > Personal > Appearance & time, or find it with Search settings.",
-        "Enable Book mode and select Save changes. The workspace uses warm paper surfaces, ink-like text and serif fonts throughout the UI, with monospace phone numbers.",
+        "Enable Book mode and select Save changes. The workspace uses bound paper pages, tabbed navigation and handwriting throughout the UI, with monospace phone numbers.",
         "Choose Light, Dark or System as usual. The top-right light/dark control changes day/night while preserving Book mode.",
         "Return to Appearance & time, disable Book mode and save to restore the standard workspace."
       ],
       "details": [
-        "The mode applies across dashboard, leads, tasks, forms, notifications and settings. All UI text uses a local serif font, including headings, navigation, tables, forms, buttons and chart labels; phone numbers remain monospace. Status distinctions remain readable. Page borders are restrained and no page-turn animation covers working data.",
+        "The mode applies across dashboard, leads, tasks, forms, notifications and settings. Headings use Caveat, and navigation, forms, tables and chart labels use Patrick Hand or Caveat according to role. Phone numbers remain monospace. Section changes and scrolling into the next lead-index page use a short page-turn transition, which respects reduced motion.",
         "The saved preference belongs to your account, not the team. Existing clients that omit bookMode preserve the stored value. Demo/guest changes use a guarded local fallback; a live account uses its own server preference, default off.",
         "This is a visual reading style. It does not add offline access, physical e-ink behaviour or a separate read-only view. You can continue editing and following up on leads. Reduced motion disables the theme indicator transition.",
-        "Book mode uses the same responsive type-size roles as the standard interface. Its serif family is preserved; the mode does not enlarge every passage indiscriminately."
+        "Book mode uses larger handwriting for body text and labels. On phones the binding narrows and navigation remains accessible from the bottom tabs."
       ],
       "faq": [
         [
@@ -622,7 +622,7 @@
         "To choose your own font, open Settings > Appearance & time > Interface font. Select Standard, Inter, Source Sans 3 or Lora, inspect the sample and save. This changes only your own interface."
       ],
       "details": [
-        "Body and editable text use a 16px default, with 14px supporting text, 13px desktop table data and 12px metadata. Phone lead cards use 16px names with secondary details grouped below. Existing font families are unchanged; Book mode uses its serif families. Sizes scale with browser text preferences.",
+        "Body and editable text use a 16px default, with 14px supporting text, 13px desktop table data and 12px metadata. Phone lead cards use 16px names with secondary details grouped below. Standard font families are unchanged. Book mode uses its own handwriting. Sizes scale with browser text preferences.",
         "On narrow screens a lead opens its dedicated page. On larger screens inspection overlays the table; expand opens the full page. Local table, stage and tab scrolling is intentional.",
         "Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.",
         "Standard keeps the current Google Sans/Manrope pairing. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode keeps its reading font and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.",

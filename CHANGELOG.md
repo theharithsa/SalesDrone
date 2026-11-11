@@ -39,6 +39,9 @@ API contract versions are independent from application versions.
 
 ## [Unreleased]
 
+### Changed
+- Extend Book mode across the workspace with bound paper pages, bookmark navigation, handwritten type and paper forms.
+
 ## [2.10.4] - 2026-11-08
 
 ### Changed

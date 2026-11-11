@@ -40,7 +40,7 @@ Use Google Sans headings and Manrope body; alternate fonts change the same roles
 Compact tables use 13px cells and 14px identity actions, keeping rows scannable.
 Do not shrink the entire app by default. Personal display scale is 85–125% on all viewport sizes, applied after saving.
 Touch targets compensate at smaller scales rather than forcing mobile to 100%. Phone text inputs stay 16px. Monospace contact
-numbers are deliberate. Book mode uses serif roles, preserving monospace identifiers.
+numbers are deliberate. Book mode uses handwriting roles, preserving monospace identifiers.
 
 ## Colour, shape and motion
 
@@ -231,9 +231,10 @@ in light and dark schemes. The full drone mark uses the selected primary tone.
 Keep the original compact mark and favicon as established product identifiers.
 
 Open Sans, Source Serif 4, Patrick Hand and Caveat are self-hosted. Handwritten
-styles have larger body and label roles. Book mode uses Source Serif 4 and
-keeps phone numbers monospaced. The book workspace uses a paper edge and pages
-of eight loaded lead entries. Scroll naturally between pages, open any entry
+styles have larger body and label roles. Book mode uses Caveat for headings and
+Patrick Hand for reading and controls. Phone numbers stay monospaced. The
+workspace uses a bound page with a margin rule, bookmark tabs and ruled form
+fields. The lead index groups eight loaded entries per page. Scroll naturally between pages, open any entry
 with the keyboard, and use Back to leads to restore focus to the entry. Use
 brief visual turns on newly visible index pages and on workspace navigation.
 Reduced motion renders the same pages without the turn animation.

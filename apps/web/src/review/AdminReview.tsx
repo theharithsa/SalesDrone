@@ -40,6 +40,7 @@ import '../material/workspaces.css';
 import '../material/dashboard.css';
 import '../material/settings.css';
 import '../material/personalization.css';
+import '../material/book.css';
 import '../material/login.css';
 const initialSession: Session = {
   mode: 'live',
@@ -59,7 +60,7 @@ const initialSession: Session = {
   preferences: {
     appearance: new URLSearchParams(location.search).get('theme')==='dark'?'dark':'light',
     timezone: 'Asia/Kolkata',
-    bookMode: false,
+    bookMode: new URLSearchParams(location.search).get('book') === '1',
     fontStyle: 'standard',
     displayScale: new URLSearchParams(location.search).get('scale')==='125'?125:100,
     automaticReminders: true,

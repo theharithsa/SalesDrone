@@ -1,0 +1,273 @@
+/* The book is the workspace shell. Modules supply the editable content on its pages. */
+:root[data-reading-mode='book'] {
+  --body-font: 'Patrick Hand', 'Segoe Print', cursive;
+  --heading-font: 'Caveat Variable', 'Patrick Hand', 'Segoe Print', cursive;
+  --md-type-headline: 2.25rem;
+  --md-type-title: 1.6rem;
+  --md-type-body: 1.125rem;
+  --md-type-supporting: 1rem;
+  --md-type-label: 1rem;
+  --md-type-caption: .875rem;
+  --md-sys-shape-small: 4px;
+  --md-sys-shape-medium: 6px;
+  --md-sys-shape-large: 8px;
+  --md-sys-shape-extra-large: 12px;
+  --book-board: var(--md-sys-color-surface-container-high);
+  --book-edge: var(--md-sys-color-surface-container-highest);
+  --book-rule: color-mix(in srgb, var(--line) 68%, transparent);
+  --book-crease: color-mix(in srgb, var(--text) 11%, transparent);
+  --book-margin-rule: color-mix(in srgb, var(--accent) 29%, transparent);
+  --book-ink: color-mix(in srgb, var(--accent) 82%, var(--text));
+  --book-gutter: clamp(26px, 4vw, 60px);
+  font-synthesis: weight;
+}
+
+:root[data-reading-mode='book'] :is(.app-shell, .login-page) {
+  background: var(--book-board);
+}
+
+:root[data-reading-mode='book'] .sidebar {
+  border-inline-end: 1px solid var(--line);
+  background: linear-gradient(to right, transparent calc(100% - 18px), var(--book-crease)), var(--sidebar);
+}
+
+:root[data-reading-mode='book'] .sidebar-brand {
+  border-bottom: 1px double var(--line);
+  margin-bottom: 14px;
+  padding-bottom: 16px;
+}
+
+:root[data-reading-mode='book'] :is(.sidebar .nav-item, .bottom-nav button) {
+  font-size: 1rem;
+}
+
+:root[data-reading-mode='book'] .sidebar .nav-item {
+  border-radius: 4px;
+  border-inline-start: 3px solid transparent;
+}
+
+:root[data-reading-mode='book'] .sidebar .nav-item.active {
+  border-inline-start-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+:root[data-reading-mode='book'] .topbar {
+  background: var(--book-board);
+  border-bottom: 1px solid var(--book-rule);
+}
+
+:root[data-reading-mode='book'] #main-content {
+  min-width: 0;
+  min-height: calc(100dvh / var(--interface-scale, 1) - 104px);
+  margin: 10px clamp(12px, 2vw, 30px) 22px;
+  padding-inline-start: var(--book-gutter);
+  border: 1px solid var(--line);
+  border-radius: 4px 11px 11px 4px;
+  background:
+    linear-gradient(to right, var(--book-crease), transparent 19px),
+    linear-gradient(var(--book-margin-rule), var(--book-margin-rule)) left var(--book-gutter) top / 1px 100% no-repeat,
+    var(--panel);
+  box-shadow: 3px 3px 0 var(--book-edge), 5px 5px 0 -1px var(--line), 0 10px 24px #00000012;
+  transform-origin: left center;
+}
+
+:root[data-reading-mode='book'] .app-shell #main-content :is(.page-body, .lead-assistant) {
+  padding-inline: clamp(14px, 2.6vw, 42px);
+}
+
+:root[data-reading-mode='book'] .app-shell #main-content > .lead-assistant {
+  padding-block: 16px 26px;
+}
+
+:root[data-reading-mode='book'] :is(.page-title, .settings-masthead, .assistant-topbar, .lead-heading, .dialog-heading) {
+  border-bottom: 1px solid var(--book-rule);
+  padding-bottom: 12px;
+}
+
+:root[data-reading-mode='book'] :is(.page-title h1, .settings-masthead h1, .assistant-title h1, .full-lead-page h1) {
+  color: var(--book-ink);
+  font-size: clamp(2.05rem, 3.3vw, 3.35rem);
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+:root[data-reading-mode='book'] :is(.page-body, .lead-assistant) :is(h2, h3) {
+  letter-spacing: 0;
+}
+
+:root[data-reading-mode='book'] :is(.panel, .dashboard-kpis > div, .lead-card-order > *, .settings-directory-group ul, .assistant-composer, .notification-overlay, .dialog, .login-card) {
+  border-radius: var(--md-sys-shape-medium);
+  border: 1px solid var(--book-rule);
+  box-shadow: none;
+}
+
+:root[data-reading-mode='book'] :is(.chart-panel, .research-history, .research-results, .settings-content .panel, .lead-work-panel, .dashboard-kpis > div) {
+  background: color-mix(in srgb, var(--panel) 88%, var(--sidebar));
+}
+
+:root[data-reading-mode='book'] :is(.task-row, .activity-item, .assistant-message, .settings-field-row) {
+  border-bottom: 1px solid var(--book-rule);
+}
+
+:root[data-reading-mode='book'] :is(.button, .lead-filter-chip, .filter-pill, .settings-directory-rail a, .accent-option) {
+  border-radius: var(--md-sys-shape-small);
+}
+
+:root[data-reading-mode='book'] :is(.button, .badge, .field-hint, .page-title p, .workspace-list-summary, .lead-header-context, .dialog label, .settings-directory-group small) {
+  font-size: var(--md-type-supporting);
+}
+
+:root[data-reading-mode='book'] :is(input, textarea, select) {
+  font-size: max(1rem, var(--md-type-body));
+}
+
+:root[data-reading-mode='book'] :is(.dialog, .notification-overlay, .login-card) {
+  background: var(--panel);
+  border-top: 4px solid var(--accent);
+  box-shadow: 3px 4px 0 var(--book-edge), 0 10px 28px #00000026;
+}
+
+:root[data-reading-mode='book'] .dashboard-kpis {
+  gap: 0;
+  border-block: 1px solid var(--book-rule);
+}
+
+:root[data-reading-mode='book'] .dashboard-kpis > div {
+  border: 0;
+  border-inline-end: 1px solid var(--book-rule);
+  border-radius: 0;
+}
+
+:root[data-reading-mode='book'] .dashboard-kpis > div:last-child {
+  border-inline-end: 0;
+}
+
+:root[data-reading-mode='book'] .dashboard-kpis > div:first-child {
+  background: var(--accent-soft);
+}
+
+:root[data-reading-mode='book'] .lead-work-tabs [role='tab'] {
+  border-radius: var(--md-sys-shape-small) var(--md-sys-shape-small) 0 0;
+}
+
+:root[data-reading-mode='book'] .lead-work-tabs [aria-selected='true'] {
+  background: var(--accent-soft);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+:root[data-reading-mode='book'] .material-field > :is(input:not([type='checkbox'], [type='radio']), select, textarea) {
+  border-bottom: 1px solid var(--md-sys-color-outline);
+  border-radius: 4px 4px 0 0;
+}
+
+:root[data-reading-mode='book'] .material-field > .field-label {
+  font-size: var(--md-type-caption);
+}
+
+:root[data-reading-mode='book'] .dialog .form-grid {
+  row-gap: 16px;
+}
+
+:root[data-reading-mode='book'] :is(.dialog, .lead-work-panel, .assistant-composer) textarea {
+  line-height: 1.6;
+  background-image: repeating-linear-gradient(transparent 0 calc(1lh - 1px), var(--book-rule) 0 1lh);
+  background-attachment: local;
+  background-origin: content-box;
+}
+
+:root[data-reading-mode='book'] .bottom-nav {
+  border-top: 1px solid var(--line);
+  background: var(--sidebar);
+}
+
+:root[data-reading-mode='book'] .bottom-nav button.active {
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--md-sys-color-on-primary-container);
+  box-shadow: inset 0 2px var(--accent);
+}
+
+@media (max-width: 599.99px) {
+  :root[data-reading-mode='book'] {
+    --book-gutter: 10px;
+  }
+
+  :root[data-reading-mode='book'] .dashboard-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  :root[data-reading-mode='book'] .dashboard-kpis > div:nth-child(even) {
+    border-inline-end: 0;
+  }
+
+  :root[data-reading-mode='book'] .dashboard-kpis > div:nth-child(n + 3) {
+    border-top: 1px solid var(--book-rule);
+  }
+
+  :root[data-reading-mode='book'] #main-content {
+    margin: 4px 6px 14px;
+    min-height: 0;
+    box-shadow: 2px 3px 0 var(--book-edge), 3px 4px 0 -1px var(--line);
+  }
+
+  :root[data-reading-mode='book'] .app-shell #main-content :is(.page-body, .lead-assistant) {
+    padding-inline: 9px;
+  }
+
+  :root[data-reading-mode='book'] :is(.page-title h1, .settings-masthead h1, .assistant-title h1, .full-lead-page h1) {
+    font-size: 2rem;
+  }
+}
+
+:root[data-reading-mode='book'] .leads-table:has(.book-index) {
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.book-index { display: grid; gap: clamp(18px, 3vw, 32px); padding-block: 12px; }
+.book-index-page {
+  padding: clamp(12px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 4px 12px 12px 4px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--line) 40%, transparent), transparent 18px),
+    var(--panel);
+  box-shadow: 2px 3px var(--md-sys-color-surface-container-high), 4px 6px 0 -1px var(--line);
+  transform-origin: left center;
+}
+.book-index-page > ol { list-style: none; margin: 0; padding: 0; }
+.book-index-entry { display: flex; align-items: center; gap: 8px; }
+.book-index-entry + .book-index-entry { border-top: 1px solid var(--line); }
+.book-index-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: clamp(6px, 2vw, 20px);
+  width: 100%;
+  min-width: 0;
+  min-height: max(60px, var(--md-touch-target, 0px));
+  padding: 12px 5px;
+  background: transparent;
+  color: var(--text);
+  text-align: start;
+  border: 0;
+  border-radius: 8px;
+}
+.book-index-link:hover { background: var(--md-sys-color-surface-container-low); }
+.book-index-identity { display: grid; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
+.book-index-identity strong { color: var(--accent); font-size: 1.125rem; }
+.book-index-identity > span { color: var(--muted); }
+.book-index-status { display: flex; align-items: flex-end; flex-direction: column; gap: 4px; }
+.book-page-number { margin: 12px 0 0; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) {
+  .book-index-link { grid-template-columns: minmax(0, 1fr) auto; }
+  .book-index-status { grid-column: 1; grid-row: 2; flex-direction: row; align-items: center; flex-wrap: wrap; }
+  .book-index-link > svg { grid-column: 2; grid-row: 1 / 3; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .book-index-page[data-turned='true'] { animation: book-leaf-in 240ms var(--md-sys-motion-easing); }
+}
+@keyframes book-leaf-in {
+  from { transform: perspective(1000px) rotateY(3deg); opacity: 0.84; }
+  to { transform: none; opacity: 1; }
+}

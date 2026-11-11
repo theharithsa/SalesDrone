@@ -509,7 +509,7 @@ export default function SettingsPage({
                       <span>
                         <strong>Book mode</strong>
                         <small>
-                          Paper pages and serif type throughout the workspace. Scroll through the lead index and open each lead on its own page.
+                          A handwritten notebook for your workspace, with section tabs, paper pages and a lead index.
                         </small>
                       </span>
                       <input
