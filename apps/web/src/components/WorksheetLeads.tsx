@@ -11,18 +11,20 @@ export default function WorksheetLeads({
   onSelect,
   config = defaultFieldOptions,
   scores = {},
+  showScores = true,
   checkedIds,
   onToggle,
 }: {
   checkedIds?: Set<string>;
   onToggle?: (id: string) => void;
   scores?: Record<string, any>;
+  showScores?: boolean;
   leads: Lead[];
   selectedId: string | null;
   onSelect: (lead: Lead) => void;
   config?: FieldOptions;
 }) {
-  const columns = leadTableColumns(config);
+  const columns = leadTableColumns(config).filter(([key]) => showScores || key !== 'leadScore');
   const scroller = useRef<HTMLDivElement>(null);
   const [horizontal, setHorizontal] = useState({ max: 0, position: 0 });
   useEffect(() => {
@@ -236,7 +238,7 @@ export default function WorksheetLeads({
               onClick={() => onSelect(lead)}
             >
               <strong>{lead.name || 'Name not recorded'}</strong>
-              <ScoreBadge score={scores[lead.id]} />
+              {showScores && <ScoreBadge score={scores[lead.id]} />}
               <span className="worksheet-card-company">
                 {lead.company || 'Company not recorded'}
               </span>

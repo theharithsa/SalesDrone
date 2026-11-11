@@ -9,6 +9,7 @@ import { WORKSPACE_SETTINGS_PATH } from '../src/workspace-settings.js';
 import { deliveryContext } from '../src/notifications.js';
 import { PRESETS } from '../src/contracts.js';
 import { dashboardSnapshot, dashboardBrief } from '../src/dashboard.js';
+import { analyzeNotes, enqueueAnalysis } from '../src/automatic-reminders.js';
 async function setup() {
   const store = memoryStore();
   const app = createApp({
@@ -300,4 +301,93 @@ test('global search finds earlier comments and formatted phones, and exports onl
     ['lead000', '=Historic fictional sample'],
     ['lead000', 'Recent update'],
   ]);
+});
+
+
+test('member feature controls apply to current sessions and preserve Admin and manual workflows', async () => {
+  const { store, call } = await setup();
+  const initial = (await call('rep', 'get', '/workspace-settings').expect(200)).body;
+  assert.equal(initial.memberExportsEnabled, true);
+  assert.equal(initial.memberIntelligenceEnabled, true);
+  const leadId = 'lead001';
+  await store.run(async (tx) => {
+    const rep = await tx.get(path('members', 'rep'));
+    tx.set(path('members', 'rep'), {
+      ...rep,
+      capabilities: [...rep.capabilities, 'assistant:query', 'hygiene:read', 'hygiene:run', 'hygiene:ai'],
+    });
+    const member = await requireMember(tx, { uid: 'rep' }, 'leads:read');
+    const lead = await tx.get(path('leads', leadId));
+    await enqueueAnalysis(tx, {
+      id: 'synthetic-note', leadId, revision: 1, type: 'note',
+      notes: 'Call next Monday at 10:00',
+    }, member, lead, '2026-11-10T08:00:00.000Z');
+  });
+  const scan = (await call('rep', 'post', '/lead-hygiene/scans', {}).expect(200)).body;
+  await store.run(async (tx) => {
+    const record = await tx.get(path('hygieneScans', scan.id));
+    tx.set(path('hygieneScans', scan.id), {
+      ...record, status: 'Completed', summaryStatus: 'Completed',
+      summary: { themes: [{ label: 'Synthetic theme' }] },
+    });
+  });
+  const blocked = {
+    ...initial,
+    expectedVersion: initial.version,
+    memberExportsEnabled: false,
+    memberIntelligenceEnabled: false,
+  };
+  delete blocked.version;
+  await call('rep', 'patch', '/workspace-settings', blocked).expect(403);
+  const disabled = (await call('admin', 'patch', '/workspace-settings', blocked).expect(200)).body;
+  const me = (await call('rep', 'get', '/me').expect(200)).body;
+  assert.deepEqual(me.member.leadFeatureAccess, { export: false, intelligence: false });
+  assert.ok(me.member.capabilities.includes('hygiene:read'));
+  assert.ok(!me.member.capabilities.includes('hygiene:ai'));
+  assert.ok(!me.member.capabilities.includes('assistant:query'));
+  for (const [method, url, payload, code] of [
+    ['post', '/leads/export', { columns: ['name'] }, 'EXPORT_DISABLED'],
+    ['post', '/dashboard/insights', {}, 'INTELLIGENCE_DISABLED'],
+    ['get', '/lead-scores?ids=lead001', undefined, 'INTELLIGENCE_DISABLED'],
+    ['get', '/leads/lead001/score', undefined, 'INTELLIGENCE_DISABLED'],
+    ['post', '/leads/lead001/score/refresh', {}, 'INTELLIGENCE_DISABLED'],
+    ['get', '/lead-assistant/conversations', undefined, 'FORBIDDEN'],
+    ['post', '/lead-hygiene/scans/scan/summary', {}, 'FORBIDDEN'],
+  ]) {
+    const denied = await call('rep', method, url, payload).expect(403);
+    assert.equal(denied.body.error.code, code);
+  }
+  const hygiene = (await call('rep', 'get', '/lead-hygiene/scans/' + scan.id).expect(200)).body;
+  assert.equal(hygiene.status, 'Completed');
+  assert.equal(hygiene.summary, null);
+  await call('rep', 'post', '/lead-hygiene/scans', {}).expect(200);
+  await call('rep', 'get', '/leads/lead001').expect(200);
+  const dashboard = (await call('rep', 'get', '/dashboard').expect(200)).body;
+  assert.equal(dashboard.intelligenceEnabled, false);
+  assert.deepEqual(dashboard.priority, []);
+  assert.deepEqual(dashboard.scoreDistribution, []);
+  await call('admin', 'post', '/leads/export', { columns: ['name'], limit: 1 }).expect(200);
+  await call('admin', 'get', '/leads/lead001/score').expect(200);
+  await call('admin', 'get', '/lead-assistant/conversations').expect(200);
+
+  let extractions = 0;
+  await analyzeNotes({
+    store,
+    now: () => '2026-11-11T08:00:00.000Z',
+    extract: async () => { extractions++; },
+  });
+  assert.equal(extractions, 0);
+  assert.equal((await store.get(path('noteAnalyses', 'synthetic-note_r1'))).status, 'Cancelled');
+
+  const legacySave = (await call('admin', 'patch', '/workspace-settings', {
+    expectedVersion: disabled.version, exportsEnabled: true, assignedOnly: false,
+  }).expect(200)).body;
+  assert.equal(legacySave.memberExportsEnabled, false);
+  assert.equal(legacySave.memberIntelligenceEnabled, false);
+  await call('admin', 'patch', '/workspace-settings', {
+    expectedVersion: legacySave.version, exportsEnabled: true, assignedOnly: true,
+    memberExportsEnabled: true, memberIntelligenceEnabled: true,
+  }).expect(200);
+  await call('rep', 'post', '/leads/export', { columns: ['name'], limit: 1 }).expect(200);
+  await call('rep', 'get', '/leads/lead001/score').expect(200);
 });

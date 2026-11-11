@@ -4,7 +4,7 @@ import catalog from '../lib/settings-sections.json';
 
 export type SettingsSection = (typeof catalog)[number];
 export const settingsGroups = [
-  { id: 'manageFields', label: 'Lead fields', description: 'Set up the enquiry form and choose how lead information appears.', icon: Settings2 },
+  { id: 'manageFields', label: 'Leads Management', description: 'Manage lead features, the enquiry form and how lead information appears.', icon: Settings2 },
   { id: 'personal', label: 'Personal', description: 'Manage your account, display and devices.', icon: UserRound },
   { id: 'workspace', label: 'Workspace', description: 'Manage access, integrations and lead data.', icon: ShieldCheck },
   { id: 'intelligence', label: 'Intelligence', description: 'Set up insights, reminders, scoring and research.', icon: Sparkles },

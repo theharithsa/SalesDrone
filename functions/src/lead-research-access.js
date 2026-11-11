@@ -14,8 +14,8 @@ export const researchAccessKey = (m) =>
       m.uid,
       m.version,
       m.scope,
-      m.accessPolicyVersion,
-      [...m.capabilities].sort(),
+      m.researchAccess?.version ?? m.accessPolicyVersion,
+      [...(m.researchAccess?.capabilities ?? m.capabilities)].sort(),
     ]),
   );
 export async function researchMember(

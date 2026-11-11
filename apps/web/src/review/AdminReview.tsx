@@ -70,6 +70,8 @@ const values: Record<string, any> = {
     version: 1,
     exportsEnabled: true,
     assignedOnly: true,
+    memberExportsEnabled: true,
+    memberIntelligenceEnabled: true,
   },
   '/ai-settings': {
     version: 1,

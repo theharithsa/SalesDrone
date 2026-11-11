@@ -200,7 +200,7 @@ export async function enqueueAnalysis(
     ? 'Manual'
     : preserveManual
       ? 'NeedsReview'
-      : !prefs.automaticReminders
+      : !prefs.automaticReminders || member.leadFeatureAccess?.intelligence === false
         ? 'Disabled'
         : !member.capabilities.includes('tasks:write')
           ? 'Disabled'
@@ -262,6 +262,7 @@ async function eligible(tx, job) {
     current &&
     activity.disposition !== 'Do not contact' &&
     member?.active &&
+    member.leadFeatureAccess.intelligence &&
     member.capabilities.includes('activities:write') &&
     member.capabilities.includes('tasks:write') &&
     member.capabilities.includes('leads:read') &&

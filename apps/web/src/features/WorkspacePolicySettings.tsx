@@ -1,41 +1,49 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ErrorMessage } from '../components/UI';
 export type WorkspacePolicy = {
   version: number;
   exportsEnabled: boolean;
   assignedOnly: boolean;
+  memberExportsEnabled: boolean;
+  memberIntelligenceEnabled: boolean;
 };
 export default function WorkspacePolicySettings({
   request,
   onChanged,
+  featureAccess = false,
 }: {
   request: (p: string, m?: string, b?: any) => Promise<any>;
   onChanged: () => void;
+  featureAccess?: boolean;
 }) {
   const [config, setConfig] = useState<WorkspacePolicy | null>(null),
     [exportsEnabled, setExports] = useState(true),
     [assignedOnly, setAssigned] = useState(true),
+    [memberExportsEnabled, setMemberExports] = useState(true),
+    [memberIntelligenceEnabled, setMemberIntelligence] = useState(true),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [message, setMessage] = useState('');
-  async function load() {
+  const load = useCallback(async () => {
     setError('');
     try {
       const c = await request('/workspace-settings');
       setConfig(c);
       setExports(c.exportsEnabled);
       setAssigned(c.assignedOnly);
+      setMemberExports(c.memberExportsEnabled !== false);
+      setMemberIntelligence(c.memberIntelligenceEnabled !== false);
     } catch (e) {
       setError((e as Error).message);
     }
-  }
-  useEffect(() => {
-    void load();
   }, [request]);
+  useEffect(() => { void load(); }, [load]);
   return (
     <section className="panel workspace-policy-settings">
-      <h3>Reports & lead access</h3>
-      <p>Workspace-wide controls. Individual member permissions still apply.</p>
+      {!featureAccess && <h3>Reports & lead access</h3>}
+      <p>{featureAccess
+        ? 'These settings apply to non-Admin members with the required lead access and individual grants.'
+        : 'Workspace-wide controls. Individual member permissions still apply.'}</p>
       <ErrorMessage error={error} />
       {config ? (
         <form
@@ -49,6 +57,7 @@ export default function WorkspacePolicySettings({
                 expectedVersion: config.version,
                 exportsEnabled,
                 assignedOnly,
+                ...(featureAccess ? { memberExportsEnabled, memberIntelligenceEnabled } : {}),
               });
               setConfig(c);
               setMessage(
@@ -62,6 +71,24 @@ export default function WorkspacePolicySettings({
             }
           }}
         >
+          {featureAccess ? <>
+            <label className="report-setting-option" htmlFor="member-lead-export">
+              <input id="member-lead-export" type="checkbox" checked={memberExportsEnabled} disabled={busy}
+                onChange={(event) => setMemberExports(event.currentTarget.checked)} />
+              <span>
+                Export leads
+                <small>Allow members to export leads they can access. The workspace-wide Excel reports switch must also be on.</small>
+              </span>
+            </label>
+            <label className="report-setting-option" htmlFor="member-intelligence">
+              <input id="member-intelligence" type="checkbox" checked={memberIntelligenceEnabled} disabled={busy}
+                onChange={(event) => setMemberIntelligence(event.currentTarget.checked)} />
+              <span>
+                Use AvinyaIntelligence
+                <small>Allow dashboard insights, lead scoring, reminders from notes, Lead Assistant and AI-assisted Lead Hygiene.</small>
+              </span>
+            </label>
+          </> : <>
           <label className="report-setting-option">
             <input
               type="checkbox"
@@ -99,15 +126,18 @@ export default function WorkspacePolicySettings({
               this restriction is off.
             </p>
           ) : null}
+          </>}
           <button
             className="button primary"
             disabled={
               busy ||
-              (exportsEnabled === config.exportsEnabled &&
-                assignedOnly === config.assignedOnly)
+              (featureAccess
+                ? memberExportsEnabled === (config.memberExportsEnabled !== false) &&
+                  memberIntelligenceEnabled === (config.memberIntelligenceEnabled !== false)
+                : exportsEnabled === config.exportsEnabled && assignedOnly === config.assignedOnly)
             }
           >
-            {busy ? 'Saving…' : 'Save workspace controls'}
+            {busy ? 'Saving…' : featureAccess ? 'Save feature access' : 'Save workspace controls'}
           </button>
         </form>
       ) : (

@@ -719,12 +719,18 @@
         "tests/lead-fields.test.ts",
         "functions/test/lead-data-reset.test.js",
         "tests/import-fields.test.ts",
-        "functions/test/dashboard-grouping.test.js"
+        "functions/test/dashboard-grouping.test.js",
+        "functions/test/reports-policy.test.js"
       ],
       "manualCases": [
         {
+          "id": "SETTINGS-FEATURE-ACCESS",
+          "expected": "Admins can locate Feature access, toggle and save each permission independently, and reopen the section. Members cannot open the settings section. The API enforces current policy for exports and all five AI features.",
+          "fixture": "Synthetic Admin and member preview plus reports-policy integration cases"
+        },
+        {
           "id": "SETTINGS-LEAD-LAYOUT",
-          "expected": "Search Settings, open Field order and Lead page header from Lead fields, preview fictional header values, save or discard changes, and return to the group. Verify Admin-only URLs are hidden from members and saved order applies to New/Edit Enquiry, Leads and Excel.",
+          "expected": "Search Settings, open Field order and Lead page header from Leads Management, preview fictional header values, save or discard changes, and return to the group. Verify Admin-only URLs are hidden from members and saved order applies to New/Edit Enquiry, Leads and Excel.",
           "fixture": "synthetic records and current scoped access"
         },
         {

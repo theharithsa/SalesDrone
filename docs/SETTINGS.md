@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.10.5**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.11.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -156,7 +156,7 @@ Refresh reloads the first page. Load more follows a signed, access-bound cursor.
 
 Lets members with lead access export matching lead fields and selected columns from Leads → Export Excel. Admins are also subject to this switch.
 
-Turning it off blocks the report API as well as hiding the action. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.
+Turning it off blocks the report API as well as hiding the action. Leads Management has a separate export control for non-Admins. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.
 
 **Example:** Filter Sector equals MEP, choose phone and company, then export all matching pages.
 
@@ -170,7 +170,31 @@ Applies to lists, direct links, reports, dashboards and reminder/notification el
 
 **Example:** Keep on for SDRs working separate portfolios.
 
-## Lead fields → Field definitions
+## Leads Management → Feature access
+
+**Who/where:** Workspace-wide for non-Admin members.
+
+**API:** GET/PATCH /api/v1/workspace-settings; effective access in GET /api/v1/me.
+
+**Permissions:** Admin with members:write and a current version can save. Existing member grants and lead scope still apply..
+
+### Export leads
+
+**Default:** On.
+
+Allow members to export accessible leads. The workspace-wide Allow Excel reports setting must also be on.
+
+Off hides the lead export action and denies new API requests, including subsequent export pages. Previously downloaded workbooks remain available.
+
+### Use AvinyaIntelligence
+
+**Default:** On.
+
+Allow dashboard insights, score views and refresh, automatic note reminders, Lead Assistant, and AI-assisted Hygiene.
+
+Off denies AI access and stops pending member note analysis when the worker rechecks. Existing reminders, standard dashboard charts, and non-AI Hygiene scans remain available with existing permissions. Restoring access does not change personal preferences or member grants.
+
+## Leads Management → Field definitions
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -224,7 +248,7 @@ Remove an unused custom field from new-entry controls without erasing historical
 
 Retired IDs cannot be reused. Create a new field for a different data type instead of rewriting existing values.
 
-## Lead fields → Field order
+## Leads Management → Field order
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -242,7 +266,7 @@ New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order
 
 **Example:** Put Phone number before Company name.
 
-## Lead fields → Lead page header
+## Leads Management → Lead page header
 
 **Who/where:** Workspace-wide; Admin only.
 
@@ -260,7 +284,7 @@ The full lead page displays chosen visible fields with recorded values. The work
 
 **Example:** Show City / location and Product in the lead header.
 
-## Lead fields → Choice lists
+## Leads Management → Choice lists
 
 **Who/where:** Workspace-wide; Admin only.
 

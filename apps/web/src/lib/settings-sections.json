@@ -35,6 +35,13 @@
     "admin": true
   },
   {
+    "id": "lead-features",
+    "label": "Feature access",
+    "description": "Control whether members can export leads or use AvinyaIntelligence.",
+    "group": "manageFields",
+    "admin": true
+  },
+  {
     "id": "fields",
     "label": "Field definitions",
     "description": "Build an enquiry form for your business.",

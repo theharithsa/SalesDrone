@@ -140,7 +140,7 @@
           "label": "Allow Excel reports",
           "default": "On",
           "description": "Lets members with lead access export matching lead fields and selected columns from Leads → Export Excel. Admins are also subject to this switch.",
-          "effect": "Turning it off blocks the report API as well as hiding the action. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.",
+          "effect": "Turning it off blocks the report API as well as hiding the action. Leads Management has a separate export control for non-Admins. It does not prevent copying data a person is already authorized to read. PAT reports require leads:export.",
           "example": "Filter Sector equals MEP, choose phone and company, then export all matching pages."
         },
         {
@@ -150,6 +150,28 @@
           "description": "Caps every non-admin at assigned scope, including members whose configured scope is All leads. Admins retain their existing scope.",
           "effect": "Applies to lists, direct links, reports, dashboards and reminder/notification eligibility on the next API request. Existing UI sessions recheck on focus/every minute. Off restores configured member scope; it does not broaden an assigned member.",
           "example": "Keep on for SDRs working separate portfolios."
+        }
+      ]
+    },
+    {
+      "sectionId": "lead-features",
+      "scope": "Workspace-wide for non-Admin members",
+      "api": "GET/PATCH /api/v1/workspace-settings; effective access in GET /api/v1/me",
+      "permissions": "Admin with members:write and a current version can save. Existing member grants and lead scope still apply.",
+      "controls": [
+        {
+          "id": "memberExportsEnabled",
+          "label": "Export leads",
+          "default": "On",
+          "description": "Allow members to export accessible leads. The workspace-wide Allow Excel reports setting must also be on.",
+          "effect": "Off hides the lead export action and denies new API requests, including subsequent export pages. Previously downloaded workbooks remain available."
+        },
+        {
+          "id": "memberIntelligenceEnabled",
+          "label": "Use AvinyaIntelligence",
+          "default": "On",
+          "description": "Allow dashboard insights, score views and refresh, automatic note reminders, Lead Assistant, and AI-assisted Hygiene.",
+          "effect": "Off denies AI access and stops pending member note analysis when the worker rechecks. Existing reminders, standard dashboard charts, and non-AI Hygiene scans remain available with existing permissions. Restoring access does not change personal preferences or member grants."
         }
       ]
     },

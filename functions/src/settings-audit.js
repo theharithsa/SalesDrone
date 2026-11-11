@@ -34,7 +34,7 @@ const definitions = {
     'nextWeekRule',
     'moveWeekends',
   ],
-  'reports-access': ['exportsEnabled', 'assignedOnly'],
+  'reports-access': ['exportsEnabled', 'assignedOnly', 'memberExportsEnabled', 'memberIntelligenceEnabled'],
   'ai.insights': ['instructions', 'insightMode'],
   'ai.scoring': ['enabled', 'factors'],
   'manage-fields': ['labels', 'values', 'hiddenFields', 'customFields', 'fieldOrder', 'headerFields'],
