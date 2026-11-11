@@ -46,6 +46,9 @@ API contract versions are independent from application versions.
 
 ## [Unreleased]
 
+### Fixed
+- Show one AI badge on the dashboard snapshot and align the About SalesDrone cards to the same edges.
+
 
 ## [2.10.4] - 2026-11-08
 

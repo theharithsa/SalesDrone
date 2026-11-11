@@ -61,12 +61,10 @@
   border-radius: 14px;
   background: var(--accent-soft);
   color: var(--accent);
-  position: relative;
 }
-.brief-orbit i,
-.brief-orbit:before,
-.brief-orbit:after {
-  display: none;
+.brief-orbit svg {
+  width: 28px;
+  height: 28px;
 }
 .brief-main {
   flex: 1;
@@ -577,9 +575,6 @@
   .insight-grid {
     grid-template-columns: 1fr;
   }
-  .brief-orbit {
-    display: none;
-  }
 }
 @media (max-width: 599.99px) {
   .dashboard-kpis {
@@ -601,7 +596,17 @@
     font-size: 0.6875rem;
   }
   .dashboard-brief {
-    padding: 20px;
+    gap: 12px;
+    padding: 16px;
+  }
+  .brief-orbit {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+  .brief-orbit svg {
+    width: 20px;
+    height: 20px;
   }
   .brief-heading-row {
     align-items: flex-start;

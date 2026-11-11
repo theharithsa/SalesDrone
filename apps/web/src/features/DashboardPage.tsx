@@ -558,14 +558,11 @@ export default function DashboardPage({
           </div>
           {intelligenceEnabled && <section className="dashboard-brief">
             <div className="brief-orbit" aria-hidden="true">
-              <span />
-              <span />
-              <Sparkles size={30} />
+              <Sparkles />
             </div>
             <div className="brief-main">
               <div className="brief-heading-row">
                 <span className="eyebrow">
-                  <Sparkles size={13} />
                   {demo
                     ? 'DEMO WORKSPACE SNAPSHOT'
                     : b
@@ -580,7 +577,7 @@ export default function DashboardPage({
                     disabled={briefBusy}
                     onClick={() => void refreshBrief()}
                   >
-                    <Sparkles size={15} />
+                    <Sparkles size={15} aria-hidden="true" />
                     {briefBusy
                       ? 'Working…'
                       : b

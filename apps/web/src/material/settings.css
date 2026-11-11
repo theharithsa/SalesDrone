@@ -681,8 +681,8 @@ button[role='switch'][aria-checked='true'] > span {
   line-height: 1.8;
   margin-block: 20px;
 }
-.about-story {
-  max-width: 800px;
+.about-salesdrone :is(.panel > p, .about-mission > p) {
+  max-inline-size: 72ch;
 }
 .about-story > p {
   margin-top: 20px;
@@ -690,6 +690,7 @@ button[role='switch'][aria-checked='true'] > span {
   font-size: 1rem;
 }
 .about-story-illustration {
+  max-inline-size: 752px;
   margin: 24px 0;
   overflow: hidden;
   border-radius: 16px;

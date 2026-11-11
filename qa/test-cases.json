@@ -160,7 +160,7 @@
         },
         {
           "id": "DASHBOARD-02",
-          "expected": "Get insights/manual/automatic modes and chart day selection retain their contracts.",
+          "expected": "The snapshot has one decorative badge with a clean text label on phones and desktops. Get insights/manual/automatic modes and chart day selection retain their contracts.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         },
         {
@@ -752,6 +752,11 @@
           "id": "WORKSPACE-SETTINGS-03",
           "expected": "Old PATCH clients preserve omitted choices; denied/no-op saves emit no false audit.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "SETTINGS-ABOUT-ALIGNMENT",
+          "expected": "The usage analytics and story cards share both edges at phone, tablet and desktop widths. Story prose keeps a readable line length on wide screens.",
+          "fixture": "Fictional local Admin preview with analytics availability stubbed and no telemetry transport"
         },
         {
           "id": "SETTINGS-RESET-01",

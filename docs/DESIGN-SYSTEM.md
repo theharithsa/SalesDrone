@@ -238,3 +238,5 @@ fields. The lead index groups eight loaded entries per page. Scroll naturally be
 with the keyboard, and use Back to leads to restore focus to the entry. Use
 brief visual turns on newly visible index pages and on workspace navigation.
 Reduced motion renders the same pages without the turn animation.
+
+The dashboard snapshot uses one decorative AI badge beside its label and content. About SalesDrone panels share the same outer edges, with a narrower reading measure for prose and illustrations.
