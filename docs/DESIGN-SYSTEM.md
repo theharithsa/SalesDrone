@@ -222,3 +222,18 @@ Full lead cards share one heading row with reorder controls. Group company, phon
 The mobile navigation drawer uses one scroll surface from the brand to the account footer. Keep its bottom safe-area padding, contain scroll chaining and avoid putting the navigation groups inside another scroll container on phones.
 
 Settings opens with a searchable directory and grouped action rows. Desktop shows a category rail and a bounded content surface. Mobile opens a focused section and provides a back link to its group. Filter Admin destinations before matching search. Keep the selected destination in the URL and move focus to the section heading. Save actions follow the settings rows in normal document flow. The header editor previews fictional values with the production header component.
+
+## Personal palettes and book pages
+
+Appearance & time offers Ocean, Forest, Plum, Terracotta and Black & white.
+Each accent supplies paired Material 3 primary, secondary and tertiary roles
+in light and dark schemes. The full drone mark uses the selected primary tone.
+Keep the original compact mark and favicon as established product identifiers.
+
+Open Sans, Source Serif 4, Patrick Hand and Caveat are self-hosted. Handwritten
+styles have larger body and label roles. Book mode uses Source Serif 4 and
+keeps phone numbers monospaced. The book workspace uses a paper edge and pages
+of eight loaded lead entries. Scroll naturally between pages, open any entry
+with the keyboard, and use Back to leads to restore focus to the entry. Use
+brief visual turns on newly visible index pages and on workspace navigation.
+Reduced motion renders the same pages without the turn animation.

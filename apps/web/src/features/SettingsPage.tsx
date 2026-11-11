@@ -1,3 +1,4 @@
+import { accentPalettes, normalizeAccent } from '../lib/accent';
 import { UsageAnalyticsPreference } from '../components/UsageAnalytics';
 import LeadFieldLayoutSettings from '../components/LeadFieldLayoutSettings';
 import ResearchSettings from './ResearchSettings';
@@ -127,6 +128,8 @@ export default function SettingsPage({
     () => setFontStyle(normalizeFontStyle(preferences.fontStyle)),
     [preferences.fontStyle],
   );
+  const [accentPalette, setAccentPalette] = useState(() => normalizeAccent(preferences.accentPalette));
+  useEffect(() => setAccentPalette(normalizeAccent(preferences.accentPalette)), [preferences.accentPalette]);
   const [bookMode, setBookMode] = useState(preferences.bookMode === true);
   useEffect(
     () => setBookMode(preferences.bookMode === true),
@@ -165,9 +168,10 @@ export default function SettingsPage({
     timezone: preferences.timezone,
     bookMode: preferences.bookMode === true,
     fontStyle: normalizeFontStyle(preferences.fontStyle),
+    accentPalette: normalizeAccent(preferences.accentPalette),
     displayScale: normalizeDisplayScale(preferences.displayScale),
   };
-  const appearanceDraft = { appearance, timezone, bookMode, fontStyle, displayScale };
+  const appearanceDraft = { appearance, timezone, bookMode, fontStyle, accentPalette, displayScale };
   const reminderDraft = { automaticReminders, reminderTime, nextWeekRule, moveWeekends };
   const savingAppearance = section === 'appearance';
   const preferenceEditor = savingAppearance || section === 'reminders';
@@ -187,6 +191,7 @@ export default function SettingsPage({
     setTimezone(appearanceDefaults.timezone);
     setBookMode(appearanceDefaults.bookMode);
     setFontStyle(appearanceDefaults.fontStyle);
+    setAccentPalette(appearanceDefaults.accentPalette);
     setDisplayScale(appearanceDefaults.displayScale);
     setAutomaticReminders(reminderDefaults.automaticReminders);
     setReminderTime(reminderDefaults.reminderTime);
@@ -407,6 +412,23 @@ export default function SettingsPage({
                         );
                       })}
                     </div>
+                    <section className="accent-settings" aria-labelledby="accent-heading">
+                      <h3 id="accent-heading">Accent palette</h3>
+                      <div className="accent-options">
+                        {accentPalettes.map((palette) => (
+                          <button key={palette.id} type="button" className="accent-option"
+                            aria-pressed={accentPalette === palette.id}
+                            onClick={() => setAccentPalette(palette.id)}>
+                            <span className="accent-swatches" aria-hidden="true">
+                              {palette.colors.map((color) => <span key={color} style={{ backgroundColor: color }} />)}
+                            </span>
+                            <span>{palette.label}</span>
+                            {accentPalette === palette.id && <Check size={16} aria-hidden="true" />}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="field-hint">The workspace and SalesDrone mark change when you save.</p>
+                    </section>
                     <section
                       className="display-scale-settings"
                       aria-labelledby="display-scale-heading"
@@ -487,8 +509,7 @@ export default function SettingsPage({
                       <span>
                         <strong>Book mode</strong>
                         <small>
-                          Warm paper, quiet colours and serif fonts throughout
-                          the workspace. Works with Light, Dark or System.
+                          Paper pages and serif type throughout the workspace. Scroll through the lead index and open each lead on its own page.
                         </small>
                       </span>
                       <input

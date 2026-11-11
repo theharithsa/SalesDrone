@@ -106,13 +106,18 @@
       ],
       "manualCases": [
         {
+          "id": "BOOK-MODE-INDEX",
+          "expected": "Scroll across lead pages, open a record with Comments selected, return focus to the index entry and verify that reduced motion disables page turns.",
+          "fixture": "Synthetic live-component preview on narrow and wide browser viewports"
+        },
+        {
           "id": "BOOK-MODE-01",
           "expected": "Book serif styling wins over interface font; switching it off restores the saved family.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         },
         {
           "id": "BOOK-MODE-02",
-          "expected": "Both palettes, zoom and phone monospace exceptions retain readable contrast.",
+          "expected": "The personal palettes pair readable roles in light and dark themes. Zoom and phone monospace remain usable.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         }
       ]

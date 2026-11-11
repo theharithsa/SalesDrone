@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "version": "2.12.0",
+  "summary": "Add accent-aware drone branding, personal palette and font choices, and an app-wide Book mode with a paged lead index.",
+  "modules": [
+    "salesdrone-interface",
+    "salesdrone-workspace-settings",
+    "salesdrone-book-mode"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/SETTINGS.md",
+    "docs/API.md",
+    "docs/observability.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/BOOK-MODE-PLAN.md",
+    "docs/PRODUCT-GUIDE.md"
+  ],
+  "settingsSections": [
+    "appearance"
+  ],
+  "api": {
+    "status": "changed",
+    "reason": "The existing versioned profile route accepts an optional personal accentPalette enum and extended interfaceFont values. Older saves can omit the new fields.",
+    "contractVersion": "1.32.0",
+    "permissions": "An approved member can update only their own visual preferences using the existing signed-in browser session.",
+    "tests": [
+      "functions/test/book-mode.test.js",
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Profile reads and saves use the existing route metrics and status codes. Palette rendering and book navigation run in the browser.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Preference validation and storage remain under the current profile request trace with no new service calls.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Settings audit logging adds accentPalette to the allowlist of static changed keys without recording selected values.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Successful personal preference saves use the existing committed settings audit event with a static accentPalette key. Visual transitions do not create domain writes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Deployment and CI events reuse the existing release version and revision fields.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review synthetic demo and fictional Admin settings at 360, 390, 600, 768, 1280, 1440 and 1920 CSS pixels. Verify palette saves, logo tint, monochrome, font restoration, scrolling, lead navigation and focus, and reduced motion. Isolated browser evidence only. After an authorized deployment verify the live version and inspect appearance without editing customer data.",
+  "milestone": {
+    "number": 38,
+    "title": "v2.12.0 — Appearance and Book mode",
+    "issues": [
+      170
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "appearance-palettes-demo.jpg",
+    "book-lead-detail-demo.jpg",
+    "book-mode-dark.jpg",
+    "book-mode-light.jpg",
+    "book-mode-mobile.jpg",
+    "book-settings-demo.jpg",
+    "font-settings-demo.jpg",
+    "login-demo.jpg"
+  ]
+}

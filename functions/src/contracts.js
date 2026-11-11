@@ -233,7 +233,10 @@ export const Preferences = z
     appearance: z.enum(['system', 'light', 'dark']).optional(),
     dashboardField: z.union([z.enum(['auto','stage','legacyStatus','source','zone','location']),z.string().regex(/^cf_[a-z0-9_]{1,60}$/)]).optional(),
     bookMode: z.boolean().optional(),
-    fontStyle: z.enum(['standard', 'inter', 'source-sans', 'lora']).optional(),
+    fontStyle: z.enum([
+      'standard', 'inter', 'source-sans', 'lora', 'open-sans', 'source-serif', 'patrick-hand', 'caveat',
+    ]).optional(),
+    accentPalette: z.enum(['blue', 'teal', 'plum', 'clay', 'monochrome']).optional(),
     displayScale: z
       .union([
         z.literal(85),

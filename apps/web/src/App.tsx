@@ -1,3 +1,5 @@
+import { useBookTurn } from './lib/use-book-turn';
+import { normalizeAccent } from './lib/accent';
 import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
@@ -240,6 +242,9 @@ export default function App() {
   const [guestFontStyle, setGuestFontStyle] = useState(() =>
     normalizeFontStyle(readStored('localStorage', 'salesdrone.guestFontStyle')),
   );
+  const [guestAccent, setGuestAccent] = useState(() =>
+    normalizeAccent(readStored('localStorage', 'salesdrone.guestAccent')),
+  );
   const [guestDisplayScale, setGuestDisplayScale] = useState(() =>
     normalizeDisplayScale(
       Number(readStored('localStorage', 'salesdrone.guestDisplayScale')),
@@ -430,18 +435,36 @@ export default function App() {
       window.removeEventListener('focus', onFocus);
     };
   }, [session, demo]);
-  const { appearance, bookMode, fontStyle, displayScale } =
+  const { appearance, bookMode, fontStyle, displayScale, accentPalette } =
     resolveVisualPreferences(session?.preferences || null, demo, {
       appearance: guestAppearance,
       bookMode: guestBookMode,
       fontStyle: guestFontStyle,
+      accentPalette: guestAccent,
       displayScale: guestDisplayScale,
     });
+  const bookSurface = useBookTurn(bookMode && !!active, page, routeLeadId);
+  const bookReturnLead = useRef<string | null>(null);
+  useEffect(() => {
+    if (page !== 'leads' || !bookMode) {
+      bookReturnLead.current = null;
+      return;
+    }
+    if (routeLeadId || !bookReturnLead.current) return;
+    const button = bookSurface.current?.querySelector<HTMLButtonElement>(
+      `[data-book-lead="${CSS.escape(bookReturnLead.current)}"]`,
+    );
+    if (!button) return;
+    button.focus({ preventScroll: true });
+    button.scrollIntoView({ block: 'nearest' });
+    bookReturnLead.current = null;
+  }, [bookMode, bookSurface, page, routeLeadId]);
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
       document.documentElement.dataset.theme = appearance;
       document.documentElement.dataset.fontStyle = fontStyle;
+      document.documentElement.dataset.accent = accentPalette;
       document.documentElement.style.setProperty(
         '--interface-scale',
         String(displayScale / 100),
@@ -457,7 +480,9 @@ export default function App() {
         .forEach((meta) =>
           meta.setAttribute(
             'content',
-            bookMode
+            accentPalette === 'monochrome'
+              ? dark ? '#141414' : '#fafafa'
+              : bookMode
               ? dark
                 ? '#211e19'
                 : '#f4eddf'
@@ -473,7 +498,7 @@ export default function App() {
     } catch {}
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
-  }, [appearance, bookMode, fontStyle, displayScale]);
+  }, [appearance, bookMode, fontStyle, displayScale, accentPalette]);
   async function changeTheme(next: 'light' | 'dark') {
     if (demo || !session) {
       setGuestAppearance(next);
@@ -1182,6 +1207,7 @@ export default function App() {
       return;
     }
     if (routeLeadId === lead.id) return chooseLead(lead.id, leadTabRef.current);
+    if (bookMode && page === 'leads' && !routeLeadId) bookReturnLead.current = lead.id;
     detailEpoch.current++;
     selectedIdRef.current = undefined;
     setSelected(null);
@@ -1868,7 +1894,7 @@ export default function App() {
             saving will report any connection problem.
           </div>
         ) : null}
-        <main id="main-content">
+        <main id="main-content" ref={bookSurface}>
           <Suspense fallback={<Loading />}>
             {page==='team' ? (admin||demo ? <TeamPage key={(session?.identity.uid||'demo')+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} request={request} demo={!!demo} onLeads={id=>{setAssignee(id);setStage('');setSource('');setSearch('');setSearchDraft('');setColumnFilters([]);go('leads');}}/> : <div className="page-body"><ErrorMessage error="Team insights are available to workspace administrators."/></div>) : null}
 
@@ -2220,6 +2246,7 @@ export default function App() {
                         config={fieldOptions}
                         scores={leadScores}
                         showScores={canUseIntelligence}
+                        bookMode={bookMode}
                         leads={visibleLeads}
                         selectedId={selected?.id || null}
                         onSelect={inspectLead}
@@ -3119,6 +3146,7 @@ export default function App() {
                   appearance,
                   bookMode,
                   fontStyle,
+                  accentPalette,
                   displayScale,
                   timezone,
                 }}
@@ -3136,6 +3164,8 @@ export default function App() {
                     setGuestAppearance(p.appearance);
                     setGuestBookMode(p.bookMode === true);
                     setGuestFontStyle(normalizeFontStyle(p.fontStyle));
+                    setGuestAccent(normalizeAccent(p.accentPalette));
+                    writeStored('localStorage', 'salesdrone.guestAccent', normalizeAccent(p.accentPalette));
                     setGuestDisplayScale(normalizeDisplayScale(p.displayScale));
                     writeStored(
                       'localStorage',

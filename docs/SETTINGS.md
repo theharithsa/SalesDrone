@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.11.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.12.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -42,11 +42,21 @@ Choose System, Light or Dark. System follows the device preference. The top-righ
 
 Saved appearance applies to your account; the browser also remembers a local fallback. Demo appearance is local. On desktop, lead blade width is adjusted directly in Leads using its left edge (double-click resets it); expand opens a dedicated lead page. That width is remembered only in the current browser, separately from account preferences; double-click the edge to reset it.
 
+### Accent palette
+
+**Default:** Ocean.
+
+Choose Ocean, Forest, Plum, Terracotta or Black & white. Light, Dark and System each use matching Material 3 colour roles.
+
+Saved with your account through PATCH /me. The full SalesDrone mark follows your accent. The original compact icon and favicon remain available. The demo stores its own choice in the browser.
+
+**Example:** Choose Plum with Light or Black & white with Dark.
+
 ### Interface font
 
 **Default:** Standard (Google Sans headings and Manrope text).
 
-Choose Standard, Inter, Source Sans 3 or Lora for your own interface. A sample previews the draft selection; the workspace changes after a successful Save changes. Font files are self-hosted, with no runtime Google Fonts request.
+Choose Standard, Inter, Source Sans 3, Lora, Open Sans, Source Serif 4, Patrick Hand or Caveat. A sample previews the draft selection; the workspace changes after a successful Save changes. Font files are self-hosted, with no runtime Google Fonts request.
 
 Saved on your own account through PATCH /me and returned by GET /me. Older clients that omit fontStyle preserve it. Book mode uses its own serif stack and restores your selected font when disabled. Branding, phone numbers and technical code retain their established fonts. Other users are unaffected. Demo choices are a guarded browser-local fallback.
 
@@ -66,9 +76,9 @@ Stored on your account through GET/PATCH /me; other members are unaffected. Choo
 
 **Default:** Off.
 
-A personal reading style with warm paper surfaces and serif fonts throughout headings, navigation, tables, forms, buttons and chart labels. Dark mode uses charcoal paper. Phone numbers remain monospace. This is a visual style, not physical e-ink or an offline reader.
+A personal paper layout and serif type throughout the workspace. The lead index groups records on scrollable pages. Opening a lead turns to its existing detail page, with Comments and editing available. Phone numbers remain monospace.
 
-Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Responsive type-size roles match the standard UI while keeping the Book serif family; this is a web adaptation, not native Dynamic Type. Shared typography roles and responsive layouts apply across phones, tablets, laptops and desktops; font families remain serif in Book mode.
+Select Book mode and save preferences. Your account stores bookMode; other members are unaffected. Light/Dark/System and the quick light/dark toggle remain independent. Omitted bookMode in older API clients preserves the saved value; missing preferences default off. Demo/guest preference is a guarded local fallback. Page turns are brief and follow the device’s reduced-motion preference. Returning to the lead index restores focus to the entry you opened when it is still loaded.
 
 **Example:** Enable Book mode with Light for ivory paper, then use the top-right toggle for warm night reading. Turn Book mode off and save to restore the standard workspace.
 

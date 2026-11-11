@@ -2,12 +2,12 @@
   {
     "file": "login-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "9b5f970e68d9794fe3eb5a0c9cd1aff48a5a45b3c0ef51fa884376ffaa6b3023",
-    "capturedAt": "2026-10-26T16:39:31.662Z",
+    "sha256": "3fba43f1829ecf6cc45b3a11dcf332d3df0aadf7cbd305f6ab6ed3cffd6eac8a",
+    "capturedAt": "2026-11-11T13:17:11.552Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
   },
   {
     "file": "mobile-demo.jpg",
@@ -152,12 +152,12 @@
   {
     "file": "font-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2f457212520d12e5f49c8aa06f6bc8ddc4c2f39ab40fc98bb1d92b38ce5bd084",
-    "capturedAt": "2026-11-08T01:54:34.439750+05:30",
+    "sha256": "5cff4263b3b48051b20aa27579954d80c8b1b73b631c420c9fdcb09c3debbc4e",
+    "capturedAt": "2026-11-11T13:17:18.985Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.2",
-    "review": "Visually and privacy reviewed with the isolated fictional Settings preview. No customer records, credentials, or live writes. Browser viewport review."
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
   },
   {
     "file": "display-scale-demo.jpg",
@@ -172,42 +172,42 @@
   {
     "file": "book-settings-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "d9a16898c8f3eeb60b41d5e938c9375afbc19923d364aff722c85813d922a4ba",
-    "capturedAt": "2026-11-08T01:54:34.440557+05:30",
+    "sha256": "0730a58469957c6b778da72a30b93304acbd163dd6ab9c30dc45412dde3c7db1",
+    "capturedAt": "2026-11-11T13:17:19.269Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.10.2",
-    "review": "Visually and privacy reviewed with the isolated fictional Settings preview. No customer records, credentials, or live writes. Browser viewport review."
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
   },
   {
     "file": "book-mode-light.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f26289ab467885bee812825fe0b893ec6f23414bbd54c48a4ee25ba28e25638f",
-    "capturedAt": "2026-10-26T16:39:49.179Z",
+    "sha256": "542dc1804c1de6c87571d8dce1f55f9be3f26913ed14931ab6db3dc122475405",
+    "capturedAt": "2026-11-11T13:17:13.254Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
   },
   {
     "file": "book-mode-dark.jpg",
     "mode": "synthetic-demo",
-    "sha256": "535f0c32cb56c54a54015f23f7180c794641be06600901ec4f8aaeda42957719",
-    "capturedAt": "2026-10-26T16:39:52.219Z",
+    "sha256": "2865767ca11ec6eb0b3663f84616fb17dda064dfb0331558046f6fcd2fd70429",
+    "capturedAt": "2026-11-11T13:17:16.037Z",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
   },
   {
     "file": "book-mode-mobile.jpg",
     "mode": "synthetic-demo",
-    "sha256": "00c8ee2914d1c39fdfffa245c7dc0880f705a3508b320931e677fe45526ad46c",
-    "capturedAt": "2026-10-26T16:39:52.633Z",
+    "sha256": "ee43dfda674cb4411e8cb61eff10cc3cf5eba69cf1bf198c06a8afed365ca63c",
+    "capturedAt": "2026-11-11T13:17:17.741Z",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.0.1",
-    "review": "Fresh capture visually/privacy reviewed for 2.0.1. Fictional guest application, no server writes. Synthetic fixtures only; no customer data or credentials. Browser viewport, not physical-device certification."
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
   },
   {
     "file": "developer-settings-demo.jpg",
@@ -678,5 +678,25 @@
     "capturePixels": "390 x 844",
     "version": "2.11.0",
     "review": "Visually and privacy reviewed in the fictional Admin Settings preview. Browser viewport evidence."
+  },
+  {
+    "file": "appearance-palettes-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "643214c2b0ef6d774e388399a90819ca7cdf1988330eb89ca0c254573fc473ae",
+    "capturedAt": "2026-11-11T13:17:18.701Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
+  },
+  {
+    "file": "book-lead-detail-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "af2e6e74472a127130bfb2d1dca8d26b0fc093985698128b9c9f7b960721a864",
+    "capturedAt": "2026-11-11T13:17:13.952Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.12.0",
+    "review": "Visually reviewed synthetic workspace or fictional Admin preview in isolated Chromium. Browser viewport evidence only."
   }
 ]

@@ -9,7 +9,7 @@ Read [SHARED.md](../SHARED.md). This is a visual mode of the existing editable a
 
 ## Ownership and source
 
-- [book-mode.css](../../apps/web/src/book-mode.css): complete serif typography and day/night paper tokens.
+- [personalization.css](../../apps/web/src/material/personalization.css) and [tokens.css](../../apps/web/src/material/tokens.css): page surfaces, type and motion.
 - [appearance.ts](../../apps/web/src/lib/appearance.ts): live/guest preference isolation.
 - [App.tsx](../../apps/web/src/App.tsx): root reading-mode/resolved-colour attributes and guest persistence.
 - [SettingsPage.tsx](../../apps/web/src/features/SettingsPage.tsx): Book mode control in Appearance & time, applied after Save changes.
@@ -21,7 +21,7 @@ Book mode is optional boolean bookMode, default false, independent of appearance
 
 All visible text uses the local serif reading stack in Book mode: headings, identity, navigation, buttons, forms, tables, chart labels and narrative text. Phone numbers and telephone inputs, including descendants of phone cells, remain monospace. Keep the SalesDrone/Avinya artwork and standard-mode fonts intact. Avoid blanket !important rules that override phone semantics or icon rendering; account for portals outside the app root and SVG chart text.
 
-Day uses warm paper/ink; night uses charcoal/warm pale ink. Preserve semantic status distinctions, focus, contrast, 16px editable inputs and 44px touch targets. Do not introduce animated page turns over working data or layout shifts merely for decoration. Styles must work in the lead overlay, full lead page, dashboard, tasks, settings, inbox and dialogs. Standard mode must restore cleanly.
+Day uses warm paper/ink; night uses charcoal/warm pale ink. Preserve semantic status distinctions, focus, contrast, 16px editable inputs and 44px touch targets. Use the live lead index and existing record routes. Turns are visual only, preserve navigation focus and honour reduced motion. Styles must work in the lead index, full lead page, dashboard, tasks, settings, inbox and dialogs. Standard mode must restore cleanly.
 
 ## API, audit and adjacent owners
 

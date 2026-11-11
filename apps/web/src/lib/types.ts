@@ -1,3 +1,5 @@
+import type { AccentPalette } from './accent';
+import type { FontStyle } from './fonts';
 export type Entity = { id: string; [key: string]: any };
 export type Lead = Entity & {
   name: string;
@@ -41,7 +43,8 @@ export type Session = {
     timezone: string;
     appearance: 'light' | 'dark' | 'system';
     bookMode?: boolean;
-    fontStyle?: 'standard' | 'inter' | 'source-sans' | 'lora';
+    fontStyle?: FontStyle;
+    accentPalette?: AccentPalette;
     dashboardField?: string;
     displayScale?: 85 | 90 | 100 | 110 | 125;
     automaticReminders?: boolean;

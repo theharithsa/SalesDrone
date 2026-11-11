@@ -1,3 +1,4 @@
+import BookLeadIndex from './BookLeadIndex';
 import { Badge } from './UI';
 import { ScoreBadge } from './LeadScore';
 import { Lead, displayDate } from '../lib/types';
@@ -12,6 +13,7 @@ export default function WorksheetLeads({
   config = defaultFieldOptions,
   scores = {},
   showScores = true,
+  bookMode = false,
   checkedIds,
   onToggle,
 }: {
@@ -19,6 +21,7 @@ export default function WorksheetLeads({
   onToggle?: (id: string) => void;
   scores?: Record<string, any>;
   showScores?: boolean;
+  bookMode?: boolean;
   leads: Lead[];
   selectedId: string | null;
   onSelect: (lead: Lead) => void;
@@ -44,7 +47,11 @@ export default function WorksheetLeads({
       observer.disconnect();
       element.removeEventListener('scroll', measure);
     };
-  }, []);
+  }, [bookMode]);
+  if (bookMode) return (
+    <BookLeadIndex leads={leads} scores={scores} showScores={showScores} hiddenFields={config.hiddenFields}
+      checkedIds={checkedIds} onToggle={onToggle} onSelect={onSelect} />
+  );
   const value = (lead: Lead, field: string) =>
     field === 'enquiryDate'
       ? displayDate(lead.enquiryDate)

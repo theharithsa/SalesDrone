@@ -53,6 +53,8 @@ test('book mode defaults off, is self-owned, persists, and survives older theme/
     timezone: 'Asia/Kolkata',
     appearance: 'light',
     bookMode: true,
+    fontStyle: 'patrick-hand',
+    accentPalette: 'plum',
   }).expect(200);
   assert.equal((await store.get('users/viewer')).bookMode, true);
   await call('viewer', 'patch', '/me', {
@@ -62,6 +64,8 @@ test('book mode defaults off, is self-owned, persists, and survives older theme/
   const profile = (await call('viewer', 'get', '/me').expect(200)).body;
   assert.equal(profile.preferences.bookMode, true);
   assert.equal(profile.preferences.appearance, 'dark');
+  assert.equal(profile.preferences.accentPalette, 'plum');
+  assert.equal(profile.preferences.fontStyle, 'patrick-hand');
   assert.equal(
     (await call('admin', 'get', '/me').expect(200)).body.preferences.bookMode,
     false,
@@ -87,6 +91,7 @@ test('book preferences reject invalid payloads, identity spoofing, unauthenticat
     { ...input, bookMode: 'true' },
     { ...input, uid: 'admin' },
     { ...input, bookMode: null },
+    { ...input, accentPalette: 'arbitrary-css' },
   ])
     await call('viewer', 'patch', '/me', body).expect(400);
   await request(app).patch('/api/v1/me').send(input).expect(401);

@@ -5,6 +5,7 @@ import { initials } from '../lib/types';
 export function Brand({ full = false }: { full?: boolean }) {
   return (
     <div className="brand">
+      <span className="brand-drone" aria-hidden="true" />
       <span className="brand-symbol" aria-hidden="true">
         <span />
         <span />

@@ -97,6 +97,8 @@ const screenshots = [
   'book-mode-dark.jpg',
   'book-mode-mobile.jpg',
   'book-settings-demo.jpg',
+  'appearance-palettes-demo.jpg',
+  'book-lead-detail-demo.jpg',
 ];
 for (const name of screenshots) {
   const source = 'site/assets/screenshots/' + name,
