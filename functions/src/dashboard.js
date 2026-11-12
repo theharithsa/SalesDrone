@@ -1,4 +1,5 @@
 import { dashboardGrouping } from './dashboard-grouping.js';
+import { rateLimitExpiry } from './rate-limit.js';
 import { readAISettings } from './ai-settings.js';
 import { readFieldOptions } from './field-options.js';
 import { z } from 'zod';
@@ -363,7 +364,8 @@ export async function dashboardBrief({
       old.leaseUntil > now()
     )
       return { cached: { status: 'Processing' } };
-    const budgetPath = `users/${member.uid}/aiBudgets/${now().slice(0, 16).replaceAll(':', '-')}`;
+    const budgetAt = now();
+    const budgetPath = `users/${member.uid}/aiBudgets/${budgetAt.slice(0, 16).replaceAll(':', '-')}`;
     const budget = await tx.get(budgetPath);
     if ((budget?.count || 0) >= 2)
       throw new AppError(
@@ -371,7 +373,10 @@ export async function dashboardBrief({
         'AI_RATE_LIMIT',
         'Please wait a minute before generating another brief',
       );
-    tx.set(budgetPath, { count: (budget?.count || 0) + 1 });
+    tx.set(budgetPath, {
+      count: (budget?.count || 0) + 1,
+      expiresAt: rateLimitExpiry(budgetAt),
+    });
     tx.set(p, {
       status: 'Processing',
       lease,

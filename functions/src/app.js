@@ -2705,13 +2705,14 @@ export function createApp({
     await mutate(req, 'leads:read', async (tx) => {
       const p = path('pushTests', req.member.uid);
       const old = await tx.get(p);
-      if (old && Date.parse(now()) - Date.parse(old.at) < 60000)
+      const at = now();
+      if (old && Date.parse(at) - Date.parse(old.at) < 60000)
         throw new AppError(
           429,
           'RATE_LIMIT',
           'Wait a minute before sending another test',
         );
-      tx.set(p, { at: now() });
+      tx.set(p, { at, expiresAt: rateLimitExpiry(at) });
       return { ok: true };
     });
     await sendTest(device);

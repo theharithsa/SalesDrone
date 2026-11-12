@@ -4,6 +4,12 @@ Application versions follow [Semantic Versioning](https://semver.org/).
 API contract versions are independent from application versions.
 
 
+
+## [2.13.1] - 2026-11-12
+
+### Fixed
+- Expire new dashboard AI and push-test rate counters with a one-day Firestore TTL.
+
 ## [2.13.0] - 2026-11-11
 
 ### Added
