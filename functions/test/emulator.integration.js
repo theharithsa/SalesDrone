@@ -1675,3 +1675,36 @@ test('terminal delivery retention uses the existing Firestore status and due-tim
     });
   }
 });
+
+test('legacy counter backfill stores timestamps for existing inactive member records', async () => {
+  const { backfillOperationalCounterExpiry } = await import('../src/operational-counter-backfill.js');
+  const store = firestoreStore(db);
+  const uid = 'legacy-counter-' + randomUUID();
+  const budget = `users/${uid}/aiBudgets/2026-10-30T02-14`;
+  const pushTest = path('pushTests', uid);
+  const progress = path('maintenance', 'operationalCounterExpiry');
+  const at = '2026-10-30T02:14:15.000Z';
+  await store.run(async (tx) => {
+    tx.set(path('members', uid), { active: false });
+    tx.set(budget, { count: 2 });
+    tx.set(pushTest, { at });
+  });
+  try {
+    let result;
+    for (let pass = 0; pass < 50; pass++) {
+      result = await backfillOperationalCounterExpiry(store);
+      if (result.completed) break;
+    }
+    assert.equal(result?.completed, true);
+    const budgetRecord = (await db.doc(budget).get()).data();
+    const pushRecord = (await db.doc(pushTest).get()).data();
+    assert.equal(budgetRecord.count, 2);
+    assert.equal(budgetRecord.expiresAt.toDate().toISOString(), '2026-10-31T02:14:00.000Z');
+    assert.equal(pushRecord.at, at);
+    assert.equal(pushRecord.expiresAt.toDate().toISOString(), '2026-10-31T02:14:15.000Z');
+  } finally {
+    await store.run(async (tx) => {
+      for (const record of [budget, pushTest, progress, path('members', uid)]) tx.delete(record);
+    });
+  }
+});

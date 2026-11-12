@@ -41,7 +41,7 @@ Workspace-root domain collections plus private users/{uid} subcollections; path(
 
 Rate-limit expiry uses Date/Timestamp values and an active Firestore TTL policy. Keep scripts/indexes.py aligned so regenerating indexes retains that policy. The reminders worker converts legacy counter strings in bounded resumable transactions; customer/import retention is unchanged. Task pages use positional batch lead reads with current-access filtering. Production cursors require a stable Secret Manager key; ephemeral keys are local/emulator only. Verify configuration.test.js and the real emulator.
 
-Dashboard AI and push-test rate counters set a 24-hour Timestamp TTL on write. Wait for both collection-group policies ACTIVE. Keep the minute bucket and cooldown check independent of deletion timing. Legacy counter backfill and delivery receipts are tracked in #25.
+Dashboard AI and push-test rate counters set a 24-hour Timestamp TTL on write. Wait for both collection-group policies ACTIVE. Keep the minute bucket and cooldown check independent of deletion timing. Backfill legacy counters from valid original timestamps in hourly pages of 50. Preserve counts and the maintenance checkpoint.
 
 ## Change and diagnosis
 
