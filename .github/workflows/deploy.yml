@@ -95,6 +95,14 @@ jobs:
           node scripts/write-function-env.mjs
       - name: Deployment started
         run: echo 'DEPLOY_ATTEMPTED=true' >> "$GITHUB_ENV"
+      - name: Stage and verify Firebase Hosting
+        id: stage_hosting
+        run: |
+          preview="$(mktemp)"
+          trap 'rm -f "$preview"' EXIT
+          npx --no-install firebase hosting:channel:deploy "rc-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --project "$GCP_PROJECT_ID" --expires 1h --no-authorized-domains --non-interactive --json > "$preview"
+          node scripts/verify-hosting-preview.mjs "$preview"
       - name: Deploy Firestore rules and indexes
         id: indexes
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only firestore --non-interactive
@@ -112,7 +120,11 @@ jobs:
         run: node scripts/deploy-ingress.mjs
       - name: Deploy Firebase Hosting
         id: hosting
-        run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only hosting --non-interactive
+        env:
+          HOSTING_VERSION: ${{ steps.stage_hosting.outputs.version }}
+        run: |
+          npx --no-install firebase hosting:clone "$GCP_PROJECT_ID@$HOSTING_VERSION" "$GCP_PROJECT_ID:live" \
+            --project "$GCP_PROJECT_ID" --non-interactive
       - name: Check published version
         id: published
         run: node scripts/check-published.mjs
@@ -129,6 +141,7 @@ jobs:
         if: always() && env.DEPLOY_ATTEMPTED == 'true'
         env:
           DYNATRACE_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
+          DEPLOY_STAGE_HOSTING: ${{ steps.stage_hosting.outcome }}
           DEPLOY_FIRESTORE: ${{ steps.indexes.outcome }}
           DEPLOY_INDEXES: ${{ steps.wait_indexes.outcome }}
           DEPLOY_STORAGE: ${{ steps.storage.outcome }}

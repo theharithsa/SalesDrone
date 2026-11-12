@@ -46,9 +46,9 @@ Firebase CLI non-interactive deployments require explicit dotenv parameter value
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-## Known gaps
+## Hosting promotion
 
-These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
+Preview staging is a separate release gate. Check the candidate Hosting identity and contract before backend mutation. Promotion takes the already verified immutable version. The live gate still requires the published commit and API checks.
 
 Current release plans require a milestone reference with numeric scope and readiness. Planning state holds publication; CI checks live GitHub milestone/issue assignments and PR closing scope. Main publication requires completed issue states. See docs/RELEASE-GOVERNANCE.md and milestone-policy.test.ts; local review iterations do not advance SemVer.
 

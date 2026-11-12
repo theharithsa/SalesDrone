@@ -1,6 +1,7 @@
 import { pathToFileURL } from 'node:url';
 // A skipped, cancelled, missing or failed required phase cannot report success.
 export const deploymentPhases = [
+  'stage_hosting',
   'firestore',
   'indexes',
   'storage',

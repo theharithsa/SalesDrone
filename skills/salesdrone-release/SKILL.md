@@ -91,9 +91,9 @@ Firebase CLI non-interactive deployments require explicit dotenv parameter value
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-## Known gaps
+## Hosting promotion
 
-These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
+The production workflow stages the exact Hosting build before changing backend services. It verifies the preview version, commit and OpenAPI, then promotes the immutable Hosting version only after ingress checks pass. The preview expires after one hour and does not change Firebase Auth domain settings. Use the partial-release runbook in docs/RELEASE.md if promotion or live verification fails.
 
 For approval promotion and unpublished recovery, follow [the operational reference](references/operations.md). Preserve historical evidence and required PR/main checks.
 
