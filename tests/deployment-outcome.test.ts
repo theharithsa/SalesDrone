@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { deploymentOutcome } from '../scripts/deployment-outcome.mjs';
 const success = {
+  stage_hosting: 'success',
   firestore: 'success',
   indexes: 'success',
   storage: 'success',

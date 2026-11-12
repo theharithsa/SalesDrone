@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "version": "2.13.2",
+  "summary": "Stage the exact Hosting build before deploying backend services and document partial-release recovery.",
+  "modules": [
+    "salesdrone-release",
+    "salesdrone-release-readiness"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/RELEASE.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Staging changes deployment ordering only. The candidate and live OpenAPI are checked against the built contract.",
+    "contractVersion": "1.33.0",
+    "permissions": "No API or customer authorization changes. The temporary Hosting domain is excluded from Firebase Auth domain sync.",
+    "tests": [
+      "tests/hosting-preview.test.ts",
+      "tests/release-readiness.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing application and workflow metrics measure the same operations. No request or polling change.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing request and CI reporting traces are reused. Hosting is promoted via the same Actions job.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Actions logs record the candidate release identity and separate staging and promotion outcomes.",
+      "tests": [
+        "tests/hosting-preview.test.ts",
+        "tests/deployment-outcome.test.ts"
+      ]
+    },
+    "businessEvents": {
+      "status": "not-applicable",
+      "reason": "Hosting promotion is infrastructure maintenance without domain writes or settings changes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Deployment reporting requires the staged Hosting gate to succeed in addition to backend, promotion and live checks.",
+      "tests": [
+        "tests/deployment-outcome.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Check the production Actions staging, ingress and promotion steps. Then verify the exact public Hosting commit and OpenAPI on salesdrone.in and confirm the protected API returns 401. No real-account writes or intentional production failures are needed.",
+  "milestone": {
+    "number": 43,
+    "title": "v2.13.2 — Safer Hosting promotion",
+    "issues": [
+      33
+    ],
+    "readiness": "ready"
+  }
+}

@@ -91,9 +91,9 @@ Firebase CLI non-interactive deployments require explicit dotenv parameter value
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
 
-## Known gaps
+## Hosting promotion
 
-These are tracked follow-ups, not implemented behavior: [#33](https://github.com/theharithsa/SalesDrone/issues/33). Check their current status before changing the contract.
+Verify the staged Hosting version before deploying the backend. Promote that exact version after ingress checks. Follow the [partial-release runbook](../../docs/RELEASE.md).
 
 For approval promotion and unpublished recovery, follow [the operational reference](references/operations.md). Preserve historical evidence and required PR/main checks.
 
