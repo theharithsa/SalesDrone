@@ -179,7 +179,9 @@ Archive is retained state, not physical deletion. Settings uses a dedicated read
 
 ## Counter retention and runtime configuration
 
-Rate-limit expiresAt is a Date serialized by the Admin SDK as a Firestore Timestamp. The collection-group TTL policy is limited to rateLimits; deletion is asynchronous and is not the admission-control clock. The reminders worker converts at most 100 legacy counter strings per transaction, preserves counts and checkpoints progress in maintenance/rateLimitExpiry. It never changes import details or customer data. Deployment waits for the TTL policy ACTIVE and composite indexes READY. Emulator tests prove timestamp storage and conversion, not managed TTL deletion timing.
+Rate-limit expiresAt is a Date serialized by the Admin SDK as a Firestore Timestamp. The rateLimits TTL policy retains counters for one day; deletion is asynchronous and is not the admission-control clock. The reminders worker converts at most 100 legacy counter strings per transaction, preserves counts and checkpoints progress in maintenance/rateLimitExpiry. It never changes import details or customer data. Deployment waits for the TTL policy ACTIVE and composite indexes READY. Emulator tests prove timestamp storage and conversion, not managed TTL deletion timing.
+
+Dashboard AI budget and push-test cooldown writes also set an expiresAt Timestamp 24 hours after the rate-counter write. The deploy waits for both collection-group policies to be ACTIVE. Admission checks still use the minute bucket or the last send time. Firestore handles expiry asynchronously with no scheduled scan or additional foreground reads or writes. Legacy records without timestamps and delivery receipts remain tracked in #25. Import records remain under Admin-managed retention.
 
 CURSOR_SECRET is required by the production API initialization hook and never logged. Both adapters share functions/src/model-config.js and resolve the Firebase GEMINI_MODEL parameter lazily; changing a model override requires deploying affected api/analyzeNotes/leadIntelligence functions. No workflow fallback overrides the parameter.
 

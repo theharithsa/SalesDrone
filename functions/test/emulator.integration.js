@@ -325,10 +325,33 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     (await req('get', '/ai-settings').expect(200)).body.usingDefault,
     false,
   );
+  const { uid } = await auth.verifyIdToken(token);
+  const budgetStartedAt = Date.now();
   const intelligence = (
     await req('post', '/dashboard/insights', {}).expect(200)
   ).body;
   assert.equal(intelligence.status, 'Ready');
+  const budgets = await db.collection(`users/${uid}/aiBudgets`).get();
+  assert.equal(budgets.size, 1);
+  const budget = budgets.docs[0].data();
+  assert.equal(budget.count, 1);
+  assert.ok(budget.expiresAt.toMillis() >= budgetStartedAt + 86400000);
+  assert.ok(budget.expiresAt.toMillis() <= Date.now() + 86400000);
+
+  const deviceId = randomUUID();
+  await req('post', '/devices', {
+    id: deviceId,
+    token: 'synthetic-device-token',
+    label: 'Emulator test device',
+  }).expect(200);
+  try {
+    await req('post', `/devices/${deviceId}/test`).expect(200);
+    const cooldown = (await db.doc(path('pushTests', uid)).get()).data();
+    assert.equal(cooldown.expiresAt.toMillis(), Date.parse(cooldown.at) + 86400000);
+    await req('post', `/devices/${deviceId}/test`).expect(429);
+  } finally {
+    await req('delete', `/devices/${deviceId}`).expect(200);
+  }
   assert.ok(
     !JSON.stringify(
       await store.query('workspaces/avinyatech/telemetryOutbox', {
