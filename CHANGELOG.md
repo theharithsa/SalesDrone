@@ -9,6 +9,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.13.6] - 2026-11-12
+
+### Fixed
+- Give the full-size hosted API parser probe enough time to finish uploading before checking its 413 response.
+
 ## [2.13.5] - 2026-11-12
 
 ### Fixed

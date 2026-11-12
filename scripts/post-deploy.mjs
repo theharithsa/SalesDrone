@@ -114,7 +114,8 @@ try {
     await check('live-ingress-parser', async () => {
       const metadata=JSON.parse(await readFile('ingress-deployment.json','utf8'));
       if(metadata.version!==expected.version || metadata.commit!==expected.commit || !metadata.revision || metadata.parserBoundary!=='passed' || metadata.billing!=='request-based' || metadata.minimumInstances!==0)throw Error('Ingress revision or billing not verified');
-      await checkIngress('https://sales-drone-avinya.firebaseapp.com',expected);
+      // The full-size request travels through Hosting before the gateway can reject it.
+      await checkIngress('https://sales-drone-avinya.firebaseapp.com',expected,{largeBodyTimeoutMs:60000});
     });
     await check('spa-security-headers',async()=>{
       for(const path of ['/','/leads','/settings']){

@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.13.5
+Version 2.13.6
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 

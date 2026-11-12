@@ -109,3 +109,20 @@ test('operational health avoids Cloud Run reserved paths and rejects managed HTM
  assert.ok(!HEALTH_PATH.endsWith('z')&&!HEALTH_PATH.startsWith('/_ah/'));
  await assert.rejects(checkIngressIdentity('https://synthetic.example.invalid',{version:'2.6.2',commit:'synthetic'},{fetchImpl:async()=>new Response('<html>provider error</html>',{status:404,headers:{'content-type':'text/html'}})}),/did not return application JSON/);
 });
+
+test('the hosted full-size upload can have a longer deadline without weakening any parser assertion', async (t) => {
+  const f = await fixture(t, (_req, res) => {
+    const requestId = randomUUID();
+    res.writeHead(401, {'Content-Type': 'application/json', 'X-Request-Id': requestId});
+    res.end(JSON.stringify({error: {code: 'UNAUTHENTICATED', requestId}}));
+  });
+  const deadlines = [];
+  const timeout = AbortSignal.timeout;
+  t.mock.method(AbortSignal, 'timeout', (ms) => {
+    deadlines.push(ms);
+    return timeout(ms);
+  });
+  const result = await checkIngress(f.url, {version: '2.6.1'}, {largeBodyTimeoutMs: 60000});
+  assert.equal(result.length, 5);
+  assert.deepEqual(deadlines, [30000, 30000, 30000, 30000, 60000]);
+});

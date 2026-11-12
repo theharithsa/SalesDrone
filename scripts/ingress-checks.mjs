@@ -1,7 +1,7 @@
 import {HEALTH_PATH} from '../services/ingress/src/contract.js';
 import { gzipSync } from 'node:zlib';
 // Read-only denial/parser probes. Never attach customer credentials or identifiers.
-export async function checkIngress(origin, expected, {fetchImpl=fetch, largeBody=true, upstreamVersion=expected.version}={}) {
+export async function checkIngress(origin, expected, {fetchImpl=fetch, largeBody=true, largeBodyTimeoutMs=30000, upstreamVersion=expected.version}={}) {
  const cases=[
   {id:'malformed-json',method:'POST',headers:{'Content-Type':'application/json'},body:'{',status:400,code:'BAD_JSON'},
   {id:'strict-json',method:'POST',headers:{'Content-Type':'application/json'},body:'null',status:400,code:'BAD_JSON'},
@@ -11,7 +11,7 @@ export async function checkIngress(origin, expected, {fetchImpl=fetch, largeBody
  ];
  const results=[];
  for(const item of cases){
-  const response=await fetchImpl(origin+(item.path||'/api/v1/leads'),{method:item.method,headers:item.headers,body:item.body,redirect:'error',signal:AbortSignal.timeout(30000)});
+  const response=await fetchImpl(origin+(item.path||'/api/v1/leads'),{method:item.method,headers:item.headers,body:item.body,redirect:'error',signal:AbortSignal.timeout(item.id === 'oversized-json' ? largeBodyTimeoutMs : 30000)});
   const value=await response.json();
   if(response.status!==item.status || value.error?.code!==item.code || !value.error.requestId || response.headers.get('x-request-id')!==value.error.requestId || response.headers.get('x-app-version')!==(item.upstream ? upstreamVersion : expected.version) || response.headers.get('cache-control')!=='no-store')throw Error('Ingress contract failed: '+item.id);
   results.push({id:item.id,status:'passed'});

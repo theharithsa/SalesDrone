@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "version": "2.13.6",
+  "summary": "Allow the full-size hosted ingress verification request up to 60 seconds.",
+  "modules": [
+    "salesdrone-api-ingress"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API-INGRESS.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Only the hosted release probe client deadline changes. The request, status and API behavior remain the same.",
+    "contractVersion": "1.34.0",
+    "permissions": "The synthetic denial probes remain unauthenticated and do not touch customer records.",
+    "tests": [
+      "services/ingress/test/gateway.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing workflow and ingress metrics cover verification and denial outcomes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "The same unauthenticated ingress request uses existing trace coverage.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "The release records existing safe parser and post-deploy check outcomes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "not-applicable",
+      "reason": "This release gate sends synthetic denial checks with no domain mutations.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The normal release workflow reports the exact deployed version and gate result.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Run the existing full-size parser probe through Hosting. Confirm that it still returns a correlated 413 and verify the custom domain version, OpenAPI and protected access boundary.",
+  "milestone": {
+    "number": 47,
+    "title": "v2.13.6 — Hosted ingress probe reliability",
+    "issues": [
+      187
+    ],
+    "readiness": "ready"
+  }
+}
