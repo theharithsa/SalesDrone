@@ -31,6 +31,7 @@ import { createApp } from './app.js';
 import { firestoreStore } from './store.js';
 import { dispatchReminders } from './reminders.js';
 import { cleanTerminalDeliveries } from './delivery-retention.js';
+import { backfillOperationalCounterExpiry } from './operational-counter-backfill.js';
 import { analyzeNotes as processNotes } from './automatic-reminders.js';
 import { geminiExtractor } from './gemini.js';
 import { AppError } from './contracts.js';
@@ -243,6 +244,20 @@ export const reminders = onSchedule(
         observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'WARN');
       }
       if (new Date(event.scheduleTime).getUTCMinutes() === 0) {
+        try {
+          const expiry = await backfillOperationalCounterExpiry(store);
+          if (expiry.scanned || expiry.completed)
+            observability?.log('worker.stage', {
+              'operation.stage': 'cleanup',
+              processed: expiry.converted,
+              completed: Number(expiry.completed),
+            });
+        } catch (error) {
+          observability?.log('worker.stage', {
+            'operation.stage': 'failed',
+            'error.type': errorType(error),
+          }, 'WARN');
+        }
         try {
           const cleanup = await cleanTerminalDeliveries(store, event.scheduleTime);
           if (cleanup.removed)

@@ -30,6 +30,8 @@ Searches, cursor pages, lead details, activity, inbox, attachments, authorizatio
 
 Terminal reminder retention shares the existing scheduled invocation. At most one indexed pass per scheduled UTC hour selects up to ten old terminal jobs and reads up to 21 receipts per job. A full pass deletes at most 210 documents. No additional task or notification-path reads are needed. Measure cleanup separately from the one-minute delivery scan, including empty and retried queries.
 
+The one-time legacy operational counter backfill shares the existing hourly pass and caps conversion at 50 documents per invocation. Budget at most 1,200 conversions and their eventual TTL deletes per day, plus the bounded member lookup and checkpoint. Completion leaves one progress read per hour. Preserve the checkpoint during rollback.
+
 ## Move off the standalone Cloud Run ingress
 
 Target the existing Firebase Hosting, Cloud Functions, Auth/App Check, Firestore, Storage and FCM runtime. Functions v2 runs on Cloud Run infrastructure, so removing the independently deployed ingress is a reduction in managed services and one HTTP hop. It will not by itself reduce Firestore operations. Keep Dynatrace and GitHub as operational integrations and Gemini as the approved AI provider while separately assessing Firebase AI support and feature equivalence. [Functions version comparison](https://firebase.google.com/docs/functions/version-comparison)

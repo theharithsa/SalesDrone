@@ -7,6 +7,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.13.4] - 2026-11-12
+
+### Fixed
+- Backfill one-day Firestore expiry for legacy dashboard AI and push-test counters in bounded batches.
+
 ## [2.13.3] - 2026-11-12
 
 ### Fixed
