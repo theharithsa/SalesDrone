@@ -5,6 +5,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.13.2] - 2026-11-12
+
+### Fixed
+- Stage and verify Firebase Hosting before updating the backend, then promote the exact tested version.
+- Document how to recover from a partial deployment.
+
 ## [2.13.1] - 2026-11-12
 
 ### Fixed

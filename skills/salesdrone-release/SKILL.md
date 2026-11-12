@@ -93,7 +93,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Hosting promotion
 
-The production workflow stages the exact Hosting build before changing backend services. It verifies the preview version, commit and OpenAPI, then promotes the immutable Hosting version only after ingress checks pass. The preview expires after one hour and does not change Firebase Auth domain settings. Use the partial-release runbook in docs/RELEASE.md if promotion or live verification fails.
+Verify the staged Hosting version before deploying the backend. Promote that exact version after ingress checks. Follow the [partial-release runbook](../../docs/RELEASE.md).
 
 For approval promotion and unpublished recovery, follow [the operational reference](references/operations.md). Preserve historical evidence and required PR/main checks.
 
