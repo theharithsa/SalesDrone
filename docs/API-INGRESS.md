@@ -92,3 +92,8 @@ revision for traffic rollback. Stage-only operation leaves the tag available for
 synthetic probes. Remove the stage tag after recording the results. Confirm
 traces and logs with synthetic trace IDs and metrics with `faas.version` in
 Dynatrace. Compare matched usage windows before reporting savings.
+
+The post-cutover Hosting probe gives the oversized JSON upload up to 60 seconds
+to complete. It still requires a correlated 413 PAYLOAD_TOO_LARGE response with
+the deployed version and no-store policy. Direct ingress staging and the smaller
+probes use a 30-second client deadline.
