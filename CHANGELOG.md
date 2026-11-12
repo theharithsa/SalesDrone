@@ -6,6 +6,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.13.3] - 2026-11-12
+
+### Fixed
+- Clean up terminal reminder delivery records and device receipts after 90 days in bounded batches. Preserve pending delivery and retry records.
+
 ## [2.13.2] - 2026-11-12
 
 ### Fixed
