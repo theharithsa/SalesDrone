@@ -1708,3 +1708,37 @@ test('legacy counter backfill stores timestamps for existing inactive member rec
     });
   }
 });
+
+test('Firestore compacts indexed and legacy replay receipts while keeping keys reserved', async () => {
+  const { expireRequestReplays, replayExpiry, replayExpired } = await import('../src/request-replay.js');
+  const store = firestoreStore(db);
+  const at = '2000-01-08T00:00:00.000Z';
+  const old = { fingerprint: 'synthetic', createdAt: '2000-01-01T00:00:00.000Z', result: { id: 'fixture' } };
+  const ids = ['!replay-due', '!replay-legacy', '!replay-recent', '!replay-reset'];
+  const [due, legacy, recent, reset] = ids.map((id) => path('requests', id));
+  const progress = path('maintenance', 'requestReplayExpiry');
+  const resetMarker = { fingerprint: old.fingerprint, createdAt: old.createdAt, expiredByReset: true };
+  await store.run(async (tx) => {
+    tx.set(due, { ...old, id: ids[0], replayExpiresAt: replayExpiry(old.createdAt) });
+    tx.set(legacy, old);
+    tx.set(recent, { ...old, createdAt: '2000-01-01T00:00:00.001Z' });
+    tx.set(reset, resetMarker);
+  });
+  try {
+    assert.equal(replayExpired(await store.get(legacy), at), true);
+    assert.equal((await expireRequestReplays(store, at)).redacted, 2);
+    for (const record of [due, legacy]) {
+      assert.deepEqual(await store.get(record), {
+        fingerprint: old.fingerprint, createdAt: old.createdAt, replayExpired: true,
+      });
+    }
+    assert.deepEqual((await store.get(recent)).result, old.result);
+    assert.equal((await store.get(recent)).replayExpiresAt, '2000-01-08T00:00:00.001Z');
+    assert.deepEqual(await store.get(reset), resetMarker);
+    assert.equal((await expireRequestReplays(store, at)).redacted, 0);
+  } finally {
+    await store.run(async (tx) => {
+      for (const record of [due, legacy, recent, reset, progress]) tx.delete(record);
+    });
+  }
+});

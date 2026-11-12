@@ -12,6 +12,7 @@ import { dashboardFields } from './dashboard-grouping.js';
 import { documentKey } from './store.js';
 import { createCursorCodec } from './cursors.js';
 import { rateLimitExpiry } from './rate-limit.js';
+import { replayExpired, replayExpiry } from './request-replay.js';
 import {
   ImportVersion,
   ImportDecision,
@@ -315,7 +316,8 @@ export function createApp({
       : null;
     return store.run(async (tx) => {
       const member = await requireMember(tx, req.identity, capability);
-      const requestPath = path('requests', hash(member.uid + ':' + key));
+      const receiptId = hash(member.uid + ':' + key);
+      const requestPath = path('requests', receiptId);
       const prior = idempotent ? await tx.get(requestPath) : null;
       if (prior) {
         if (prior.expiredByReset)
@@ -329,6 +331,12 @@ export function createApp({
             409,
             'IDEMPOTENCY_CONFLICT',
             'This key was already used for a different request',
+          );
+        if (replayExpired(prior, now()))
+          throw new AppError(
+            409,
+            'IDEMPOTENCY_EXPIRED',
+            'The saved response expired. Check whether the original change succeeded before starting a new request.',
           );
         const replayed=async value=>{const result=await value;telemetry()?.stage?.('replayed');return result;};
         if (req.path === '/leads/batch')
@@ -392,15 +400,19 @@ export function createApp({
       };
       tx.set(path('auditEvents', id), audit);
       queueSettingsAudits(tx, audit, settingsChanges, telemetry()?.capture());
-      if (idempotent)
+      if (idempotent) {
+        const createdAt = now();
         tx.set(requestPath, {
+          id: receiptId,
           fingerprint,
           result:
             result?.formatVersion === 3
               ? { id: result.id, formatVersion: 3 }
               : result,
-          createdAt: now(),
+          createdAt,
+          replayExpiresAt: replayExpiry(createdAt),
         });
+      }
       return result;
     });
   }

@@ -4,6 +4,7 @@ import { researchStore } from './lead-research-store.js';
 import { researchGemini } from './lead-research-gemini.js';
 import { researchWork } from './lead-research-worker.js';
 import { backfillRateLimitExpiry } from './rate-limit.js';
+import { expireRequestReplays } from './request-replay.js';
 import { ROOT } from './policy.js';
 import { onInit } from 'firebase-functions/v2/core';
 import { requireCursorSecret } from './cursors.js';
@@ -244,6 +245,20 @@ export const reminders = onSchedule(
         observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'WARN');
       }
       if (new Date(event.scheduleTime).getUTCMinutes() === 0) {
+        try {
+          const replay = await expireRequestReplays(store, new Date(event.scheduleTime).toISOString());
+          if (replay.scanned)
+            observability?.log('worker.stage', {
+              'operation.stage': 'cleanup',
+              processed: replay.scanned,
+              removed: replay.redacted,
+            });
+        } catch (error) {
+          observability?.log('worker.stage', {
+            'operation.stage': 'failed',
+            'error.type': errorType(error),
+          }, 'WARN');
+        }
         try {
           const expiry = await backfillOperationalCounterExpiry(store);
           if (expiry.scanned || expiry.completed)

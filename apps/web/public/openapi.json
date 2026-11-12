@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SalesDrone by AvinyaTech API",
-    "version": "1.33.0",
+    "version": "1.34.0",
     "description": "Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data."
   },
   "servers": [
@@ -5130,7 +5130,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -5286,7 +5286,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -5476,7 +5476,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       },
       "get": {
         "operationId": "get_lead_hygiene_scans",
@@ -8509,7 +8510,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -8665,7 +8666,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -8855,7 +8856,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       },
       "get": {
         "operationId": "get_lead_assistant_conversations",
@@ -9659,7 +9661,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -9815,7 +9817,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -10005,7 +10007,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/lead-assistant/requests/{id}": {
@@ -13861,7 +13864,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -14017,7 +14020,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -14207,7 +14210,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/leads/{id}/attachments": {
@@ -14245,7 +14249,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -14401,7 +14405,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -14620,7 +14624,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       },
       "get": {
         "operationId": "get_leads__id_attachments",
@@ -16653,7 +16658,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -16809,7 +16814,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -16999,7 +17004,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/leads/{id}": {
@@ -19703,7 +19709,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -19859,7 +19865,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -20049,7 +20055,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/activities/{id}/corrections": {
@@ -20087,7 +20094,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -20243,7 +20250,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -20476,7 +20483,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/activities/{id}/automatic-reminder": {
@@ -21295,7 +21303,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -21451,7 +21459,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -21641,7 +21649,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/tasks/{id}": {
@@ -23199,7 +23208,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same UUID and body after an uncertain response. Current lead edit access is rechecked on replay."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -23355,7 +23364,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -23545,7 +23554,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/lead-assignees": {
@@ -25540,7 +25550,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -25696,7 +25706,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -25892,7 +25902,8 @@
           "atomic": true,
           "valuesExported": false,
           "auditReadScopeAdded": false
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/invitations/{id}": {
@@ -30104,7 +30115,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -30260,7 +30271,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -30450,7 +30461,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/imports/{id}/errors": {
@@ -30870,7 +30882,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Reuse the same key and body after an uncertain response."
+            "description": "Reuse the same UUID and body for an uncertain response within 7 days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request."
           }
         ],
         "responses": {
@@ -31026,7 +31038,7 @@
             }
           },
           "409": {
-            "description": "Duplicate, stale version or conflict",
+            "description": "Duplicate, stale version or conflict or IDEMPOTENCY_EXPIRED for a saved response past its replay window",
             "content": {
               "application/json": {
                 "schema": {
@@ -31216,7 +31228,8 @@
               }
             }
           }
-        }
+        },
+        "x-idempotency-replay-days": 7
       }
     },
     "/api/v1/notifications": {

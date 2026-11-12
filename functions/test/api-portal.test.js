@@ -101,4 +101,20 @@ test('main task contract documents opt-in accessible browsing and action flags w
  assert.ok(JSON.stringify(op.responses['200']).includes('Task'));assert.ok(spec.components.schemas.Task.properties.canEditOwn);assert.ok(spec.components.schemas.Task.properties.canManage);
 });
 
-test('Team contract exposes typed admin-only reporting and literal assignment export filtering',async()=>{const spec=JSON.parse(await read('docs/openapi.json'));assert.equal(spec.info.version,'1.33.0');for(const p of ['/team','/team/members/{uid}/activities','/lead-assignees'])assert.equal(spec.paths['/api/v1'+p].get['x-personal-access-token-scope'],p==='/lead-assignees'?'people:read':'team:read');assert.ok(spec.paths['/api/v1/team'].get.parameters.some(p=>p.name==='days'));assert.ok(spec.components.schemas.LeadExportInput.properties.assignedToUid);});
+test('Team contract exposes typed admin-only reporting and literal assignment export filtering',async()=>{const spec=JSON.parse(await read('docs/openapi.json'));for(const p of ['/team','/team/members/{uid}/activities','/lead-assignees'])assert.equal(spec.paths['/api/v1'+p].get['x-personal-access-token-scope'],p==='/lead-assignees'?'people:read':'team:read');assert.ok(spec.paths['/api/v1/team'].get.parameters.some(p=>p.name==='days'));assert.ok(spec.components.schemas.LeadExportInput.properties.assignedToUid);});
+
+test('OpenAPI documents the seven-day replay deadline and separates the reset contract', async () => {
+  const spec = JSON.parse(await read('docs/openapi.json'));
+  assert.equal(spec.info.version, '1.34.0');
+  for (const [method, route] of [
+    ['post', '/leads'],
+    ['post', '/imports/{id}/commit'],
+    ['patch', '/leads/{id}/tasks/{taskId}'],
+  ]) {
+    const op = spec.paths['/api/v1' + route][method];
+    assert.equal(op['x-idempotency-replay-days'], 7);
+    assert.match(op.responses[409].description, /IDEMPOTENCY_EXPIRED/);
+    assert.equal(op.parameters.find((p) => p.name === 'Idempotency-Key').required, true);
+  }
+  assert.equal(spec.paths['/api/v1/lead-data-reset'].post['x-idempotency-replay-days'], undefined);
+});

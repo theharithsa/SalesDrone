@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.13.0**, OpenAPI contract **1.33.0**. All application operations
+Application release **v2.13.5**, OpenAPI contract **1.34.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -150,8 +150,13 @@ Do not parse or manufacture them. Lead search, stage/source filters and combined
 column filters are described in the list operation.
 
 For endpoints that require `Idempotency-Key`, generate a UUID once per logical
-request; retry an uncertain response with exactly the same key and body. A changed
-body with the same key is a 409 conflict. Authorization is rechecked on replay.
+request. Operations with `x-idempotency-replay-days` accept the same key and body
+for seven days from the original successful write, subject to current authorization.
+At the seven-day boundary the same request returns `409 IDEMPOTENCY_EXPIRED`.
+A changed body with the same key still returns `409 IDEMPOTENCY_CONFLICT`.
+The expired key stays reserved and cannot repeat the original write. Check the
+original outcome before submitting a new request with a fresh key. Lead-data
+reset retains its separate replay behavior.
 For versioned edits/deletion, use the latest `expectedVersion`; a 409 stale response
 means fetch and resolve the conflict, not overwrite blindly.
 

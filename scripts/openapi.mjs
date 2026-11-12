@@ -28,6 +28,7 @@ import { FieldOptionsPatch } from '../functions/src/field-options.js';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { z } from 'zod';
 import { LeadFilters } from '../functions/src/lead-filters.js';
+import { replayDays } from '../functions/src/request-replay.js';
 import * as contracts from '../functions/src/contracts.js';
 const names = [
   'LeadInput',
@@ -974,6 +975,21 @@ const bodyFor = (m, u) =>
                                                                 '/imports/preview'
                                                               ? 'ImportInput'
                                                               : null;
+const savedReplayRoutes = new Set([
+  'post /lead-hygiene/scans',
+  'post /lead-assistant/conversations',
+  'post /lead-assistant/conversations/:id/questions',
+  'post /leads',
+  'post /leads/:id/attachments',
+  'post /leads/batch',
+  'post /leads/:id/activities',
+  'post /activities/:id/corrections',
+  'post /tasks',
+  'patch /leads/:id/tasks/:taskId',
+  'post /invitations',
+  'post /imports/preview',
+  'post /imports/:id/commit',
+]);
 const paths = {};
 for (const e of endpoints) {
   const url = '/api/v1' + e.url.replace(/:([a-zA-Z]+)/g, '{$1}');
@@ -1317,6 +1333,12 @@ for (const e of endpoints) {
   }
   if(e.method==='post'&&['/lead-hygiene/scans','/lead-assistant/conversations','/lead-assistant/conversations/:id/questions'].includes(e.url)&&!operation.parameters.some(p=>p.name==='Idempotency-Key'))
     operation.parameters.push({in:'header',name:'Idempotency-Key',required:true,schema:{type:'string',format:'uuid'}});
+  if (savedReplayRoutes.has(e.method + ' ' + e.url)) {
+    const key = operation.parameters.find((p) => p.name === 'Idempotency-Key');
+    key.description = `Reuse the same UUID and body for an uncertain response within ${replayDays} days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request.`;
+    operation.responses[409].description += ' or IDEMPOTENCY_EXPIRED for a saved response past its replay window';
+    operation['x-idempotency-replay-days'] = replayDays;
+  }
   paths[url] ??= {};
   paths[url][e.method] = operation;
 }
@@ -1324,7 +1346,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.33.0',
+    version: '1.34.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
