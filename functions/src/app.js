@@ -2037,7 +2037,12 @@ export function createApp({
         queueTask(tx, t);
       } else tx.set(path('tasks', t.id), t);
       if (previousDelivery?.status === 'Pending')
-        tx.set(path('reminderDeliveries', previousDelivery.id), { ...previousDelivery, status: 'Cancelled' });
+        tx.set(path('reminderDeliveries', previousDelivery.id), {
+          ...previousDelivery,
+          status: 'Cancelled',
+          nextAttemptAt: timestamp,
+          finishedAt: timestamp,
+        });
       if (old.sourceActivityId) {
         const a = await tx.get(path('activities', old.sourceActivityId));
         if (a?.autoReminder?.taskId === old.id)
@@ -2105,17 +2110,20 @@ export function createApp({
       const activity = task.sourceActivityId
         ? await tx.get(path('activities', task.sourceActivityId))
         : null;
+      const timestamp = now();
       tx.set(path('tasks', task.id), {
         ...task,
         state: 'Cancelled',
         deleted: true,
-        deletedAt: now(),
+        deletedAt: timestamp,
         version: task.version + 1,
       });
       if (delivery?.status === 'Pending')
         tx.set(path('reminderDeliveries', delivery.id), {
           ...delivery,
           status: 'Cancelled',
+          nextAttemptAt: timestamp,
+          finishedAt: timestamp,
         });
       if (activity?.autoReminder?.taskId === task.id)
         tx.set(path('activities', activity.id), {

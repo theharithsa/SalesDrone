@@ -28,6 +28,8 @@ Searches, cursor pages, lead details, activity, inbox, attachments, authorizatio
 3. Start with review thresholds of 40,000 reads and 16,000 writes per day (80% of the Standard free quota). Review rolling daily counters and rising spend against the user's agreed limit. Budget alerts notify; they do not stop spending. Assign someone to investigate bursts before tightening production throttles.
 4. Prioritize measured high-volume routes: an authorized unread indicator, denormalized score summaries only if measured reads outweigh added writes and invalidation cost, and targeted MCP filters/aggregates. Preserve mutation audit and authorization even when reducing amplification.
 
+Terminal reminder retention shares the existing scheduled invocation. At most one indexed pass per scheduled UTC hour selects up to ten old terminal jobs and reads up to 21 receipts per job. A full pass deletes at most 210 documents. No additional task or notification-path reads are needed. Measure cleanup separately from the one-minute delivery scan, including empty and retried queries.
+
 ## Move off the standalone Cloud Run ingress
 
 Target the existing Firebase Hosting, Cloud Functions, Auth/App Check, Firestore, Storage and FCM runtime. Functions v2 runs on Cloud Run infrastructure, so removing the independently deployed ingress is a reduction in managed services and one HTTP hop. It will not by itself reduce Firestore operations. Keep Dynatrace and GitHub as operational integrations and Gemini as the approved AI provider while separately assessing Firebase AI support and feature equivalence. [Functions version comparison](https://firebase.google.com/docs/functions/version-comparison)
