@@ -177,6 +177,10 @@ They have no live data transport and cannot generate real tokens or grant access
 
 Archive is retained state, not physical deletion. Settings uses a dedicated read-only /archived-leads collection endpoint over archived=true and current scope, with existing signed pagination. New archives retain archivedAt; old missing timestamps stay unknown. No new Firestore composite query shape is introduced beyond the existing archived/assignee/id index. Admin lead-data reset is described in docs/LEAD-DATA-MANAGEMENT.md; it preserves configuration and users.
 
+## Saved write-response retention
+
+The API calculates a seven-day replay deadline from the original receipt time. Existing receipts follow the same deadline. At expiry the API rejects the retry even if the saved response still awaits cleanup. The hourly reminders pass redacts expired responses and backfills recent legacy receipts in bounded batches. It retains the hashed document key and fingerprint as a compact duplicate guard. It does not expire the whole document with Firestore TTL because losing the key would allow a late retry to run the write again. Lead-data reset keeps its own conflict marker.
+
 ## Counter retention and runtime configuration
 
 Rate-limit expiresAt is a Date serialized by the Admin SDK as a Firestore Timestamp. The rateLimits TTL policy retains counters for one day; deletion is asynchronous and is not the admission-control clock. The reminders worker converts at most 100 legacy counter strings per transaction, preserves counts and checkpoints progress in maintenance/rateLimitExpiry. It never changes import details or customer data. Deployment waits for the TTL policy ACTIVE and composite indexes READY. Emulator tests prove timestamp storage and conversion, not managed TTL deletion timing.

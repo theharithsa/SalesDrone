@@ -11,6 +11,10 @@ Existing HTTP metrics, spans and logs track permission denials with
 finite error codes. Permission checks reuse the workspace policy read, and a
 restricted dashboard skips score-document reads.
 
+Expired write-response replays use the finite `IDEMPOTENCY_EXPIRED` error code.
+The scheduled cleanup emits only scanned and redacted counts. Request keys,
+fingerprints and saved payloads are excluded from telemetry.
+
 ## Signal map
 
 | Journey | Trace boundary | Canonical evidence | Sensitive data excluded |

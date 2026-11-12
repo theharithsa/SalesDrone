@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "version": "2.13.5",
+  "summary": "Expire saved write responses after seven days while keeping prior keys reserved.",
+  "modules": [
+    "salesdrone-data-platform",
+    "salesdrone-api-integrations"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/API.md",
+    "docs/TECHNICAL.md",
+    "docs/FINOPS.md",
+    "docs/observability.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "changed",
+    "reason": "The documented seven-day window returns IDEMPOTENCY_EXPIRED after expiry without re-running the write.",
+    "contractVersion": "1.34.0",
+    "permissions": "Existing membership, scope and key fingerprint checks still apply. Lead-data reset retains its own conflict policy.",
+    "tests": [
+      "functions/test/app.test.js",
+      "functions/test/api-portal.test.js",
+      "functions/test/emulator.integration.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "The finite IDEMPOTENCY_EXPIRED error type is available to existing HTTP error metrics.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing request and datastore traces cover the replay check and bounded worker transaction.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "The worker emits aggregate scanned and redacted counts without saved results or hashes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "not-applicable",
+      "reason": "Retiring a replay body is internal maintenance and does not repeat the domain mutation.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The existing release workflow records index readiness, runtime revisions and the published version and contract.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Verify the deadline, stale-key conflict, index query and response-body redaction using synthetic test records. After deployment, verify the custom domain release identity, OpenAPI and protected Leads denial without creating production records. Scheduled cleanup progress is separate.",
+  "milestone": {
+    "number": 46,
+    "title": "v2.13.5 — Request replay retention",
+    "issues": [
+      24
+    ],
+    "readiness": "ready"
+  }
+}

@@ -43,6 +43,8 @@ Rate-limit expiry uses Date/Timestamp values and an active Firestore TTL policy.
 
 Dashboard AI and push-test rate counters set a 24-hour Timestamp TTL on write. Wait for both collection-group policies ACTIVE. Keep the minute bucket and cooldown check independent of deletion timing. Backfill legacy counters from valid original timestamps in hourly pages of 50. Preserve counts and the maintenance checkpoint.
 
+Reject saved-response replays after seven days. Redact expired payloads through the indexed hourly pass and keep hashed request keys reserved. Keep the reset marker and resumable legacy cursor intact.
+
 ## Change and diagnosis
 
 Reproduce index errors, transaction write-limit failures, tie pagination and membership changes in demo-salesdrone. Compare actual index readiness to required query shape; do not remove scope predicates to make a query succeed.
@@ -77,7 +79,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Known gaps
 
-These are tracked follow-ups, not implemented behavior: [#24](https://github.com/theharithsa/SalesDrone/issues/24), [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#35](https://github.com/theharithsa/SalesDrone/issues/35). Check their current status before changing the contract.
+These are tracked follow-ups, not implemented behavior: [#35](https://github.com/theharithsa/SalesDrone/issues/35). Check their current status before changing the contract.
 
 Lead research adds an atomic source epoch and durable index jobs independent of telemetry. The Firestore adapter converts numeric embeddings to VectorValue only at flush; semantic queries use bounded cosine nearest-neighbor search with ACL prefilters. Reset blocks/clears derived collections and suppresses source re-queueing during cleanup. Wait for all composite/vector indexes before deployment. Due-work aggregate counts need status/nextAttemptAt indexes separately from id-ordered drains; verify production READY and count success.
 

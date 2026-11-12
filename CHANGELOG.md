@@ -8,6 +8,12 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.13.5] - 2026-11-12
+
+### Fixed
+- Reject saved write-response retries after seven days and clear expired response bodies in bounded batches. Keep used keys reserved to prevent duplicate writes.
+
 ## [2.13.4] - 2026-11-12
 
 ### Fixed

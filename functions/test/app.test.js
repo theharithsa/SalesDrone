@@ -6,6 +6,7 @@ import { createApp } from '../src/app.js';
 import { memoryStore } from '../src/store.js';
 import { dispatchReminders } from '../src/reminders.js';
 import { path, hash } from '../src/policy.js';
+import { expireRequestReplays } from '../src/request-replay.js';
 const identity = (uid, email) => ({
   uid,
   email,
@@ -857,4 +858,32 @@ test('single and batch reassignment preserve private administrative tasks', asyn
  assert.equal((await s.store.get(path('tasks',l.id+'outreach'))).state,'Cancelled');
  const task=await s.store.get(path('tasks',l.id+'administrative'));assert.equal(task.state,'Pending');assert.equal(task.version,1);assert.equal(task.recipientUid,'admin');
  }
+});
+
+test('saved write responses expire exactly at seven days and retired keys cannot write again', async () => {
+  const s = setup();
+  await bootstrap(s);
+  const key = randomUUID();
+  const payload = lead();
+  const original = (await s.call('admin', 'post', '/leads', payload, key).expect(200)).body;
+  const receiptPath = path('requests', hash('admin:' + key));
+  s.setTime('2026-10-31T11:59:59.999Z');
+  const replay = (await s.call('admin', 'post', '/leads', payload, key).expect(200)).body;
+  assert.deepEqual(replay, original);
+
+  s.setTime('2026-10-31T12:00:00.000Z');
+  const expired = (await s.call('admin', 'post', '/leads', payload, key).expect(409)).body;
+  assert.equal(expired.error.code, 'IDEMPOTENCY_EXPIRED');
+  assert.ok((await s.store.get(receiptPath)).result);
+
+  assert.equal((await expireRequestReplays(s.store, s.now())).redacted, 1);
+  const compacted = await s.store.get(receiptPath);
+  assert.deepEqual(Object.keys(compacted).sort(), ['createdAt', 'fingerprint', 'replayExpired']);
+  assert.equal(compacted.replayExpired, true);
+  await s.call('admin', 'post', '/leads', payload, key).expect(409)
+    .expect(({ body }) => assert.equal(body.error.code, 'IDEMPOTENCY_EXPIRED'));
+  await s.call('admin', 'post', '/leads', lead(2), key).expect(409)
+    .expect(({ body }) => assert.equal(body.error.code, 'IDEMPOTENCY_CONFLICT'));
+  assert.equal((await s.store.scan(path('leads'))).length, 1);
+  await s.call('admin', 'post', '/leads', lead(2), randomUUID()).expect(200);
 });
