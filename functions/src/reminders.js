@@ -27,7 +27,13 @@ export async function dispatchReminders({
       const context = await deliveryContext(tx, j);
       const eligible = !!context;
       if (!eligible) {
-        tx.set(path('reminderDeliveries', j.id), { ...j, status: 'Cancelled' });
+        const finishedAt = now();
+        tx.set(path('reminderDeliveries', j.id), {
+          ...j,
+          status: 'Cancelled',
+          nextAttemptAt: finishedAt,
+          finishedAt,
+        });
         return { cancelled: true };
       }
       const { member, task } = context;

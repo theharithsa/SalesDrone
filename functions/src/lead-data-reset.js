@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { AppError } from './contracts.js';
+import { deliveryReceipts } from './delivery-retention.js';
 import { path, ROOT, hash, requireMember } from './policy.js';
 
 export const RESET_STATE = path('maintenance', 'lead-data-reset');
@@ -365,15 +366,7 @@ export async function advanceLeadReset({
             }
             // Drop receipts before the delivery record, leaving standalone task
             // retry receipts intact. A corrupt oversized set drains next time.
-            const receipts = await store.query(path('deviceDeliveries'), {
-              filters: [
-                ['id', '>=', row.id + '_'],
-                ['id', '<=', row.id + '_\uf8ff'],
-              ],
-              order: 'id',
-              direction: 'asc',
-              limit: 101,
-            });
+            const receipts = await deliveryReceipts(store, row.id, 101);
             deletions.push(
               ...receipts
                 .slice(0, 100)

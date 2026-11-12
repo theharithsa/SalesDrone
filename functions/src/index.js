@@ -30,6 +30,7 @@ import { defineString, defineSecret } from 'firebase-functions/params';
 import { createApp } from './app.js';
 import { firestoreStore } from './store.js';
 import { dispatchReminders } from './reminders.js';
+import { cleanTerminalDeliveries } from './delivery-retention.js';
 import { analyzeNotes as processNotes } from './automatic-reminders.js';
 import { geminiExtractor } from './gemini.js';
 import { AppError } from './contracts.js';
@@ -203,7 +204,7 @@ export const reminders = onSchedule(
     maxInstances: 1,
     secrets: [dtKey],
   },
-  async () =>
+  async (event) =>
     worker('reminders', async () => {
       try {
         const expiry = await backfillRateLimitExpiry(store, ROOT);
@@ -240,6 +241,21 @@ export const reminders = onSchedule(
         observability?.log('worker.stage',{'operation.stage':'cleanup',...cleanup},Object.values(cleanup).some(value=>typeof value==='number'&&value>0)?'INFO':'DEBUG');
       } catch(error) {
         observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'WARN');
+      }
+      if (new Date(event.scheduleTime).getUTCMinutes() === 0) {
+        try {
+          const cleanup = await cleanTerminalDeliveries(store, event.scheduleTime);
+          if (cleanup.removed)
+            observability?.log('worker.stage', {
+              'operation.stage': 'cleanup',
+              removed: cleanup.removed,
+            });
+        } catch (error) {
+          observability?.log('worker.stage', {
+            'operation.stage': 'failed',
+            'error.type': errorType(error),
+          }, 'WARN');
+        }
       }
       return stats;
     }),

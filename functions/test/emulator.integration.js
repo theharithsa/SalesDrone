@@ -1647,3 +1647,31 @@ test('upgraded Firebase client SDK signs in with Google, refreshes tokens and si
     await deleteApp(client);
   }
 });
+
+test('terminal delivery retention uses the existing Firestore status and due-time query', async () => {
+  const { cleanTerminalDeliveries } = await import('../src/delivery-retention.js');
+  const store = firestoreStore(db);
+  const id = 'retention-emulator-' + randomUUID();
+  const pendingId = id + '-pending';
+  const oldAt = '2000-01-01T00:00:00.000Z';
+  await store.run(async (tx) => {
+    tx.set(path('reminderDeliveries', id), { id, status: 'Failed', nextAttemptAt: oldAt });
+    tx.set(path('reminderDeliveries', pendingId), { id: pendingId, status: 'Pending', nextAttemptAt: oldAt });
+    for (const jobId of [id, pendingId]) {
+      const receiptId = jobId + '_device';
+      tx.set(path('deviceDeliveries', receiptId), { id: receiptId, status: 'Accepted', at: oldAt });
+    }
+  });
+  try {
+    await cleanTerminalDeliveries(store, '2000-06-01T00:00:00.000Z');
+    assert.equal(await store.get(path('reminderDeliveries', id)), null);
+    assert.equal(await store.get(path('deviceDeliveries', id + '_device')), null);
+    assert.equal((await store.get(path('reminderDeliveries', pendingId))).status, 'Pending');
+    assert.equal((await store.get(path('deviceDeliveries', pendingId + '_device'))).status, 'Accepted');
+  } finally {
+    await store.run(async (tx) => {
+      tx.delete(path('reminderDeliveries', pendingId));
+      tx.delete(path('deviceDeliveries', pendingId + '_device'));
+    });
+  }
+});

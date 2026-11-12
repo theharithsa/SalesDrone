@@ -47,7 +47,7 @@ tasks, version-keyed reminderDeliveries, per-device deviceDeliveries; users/{uid
 
 ## Change and diagnosis
 
-Follow task version and dueAt into reminderDeliveries, then eligibility and deviceDeliveries. Distinguish pending/suppressed/cancelled/failed send from browser permission or OS display; never log titles/tokens.
+Trace task versions to delivery jobs and receipts. Hourly cleanup removes terminal jobs and receipts after 90 days. Pending jobs keep retry receipts. Never log titles or tokens.
 
 ## Verification
 
