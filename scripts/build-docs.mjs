@@ -1,3 +1,4 @@
+import { renderReleaseNotes, renderRoadmap } from './whats-new.mjs';
 import { execFileSync } from 'node:child_process';
 import { renderProductGuide } from './product-guide.mjs';
 import { renderSettings } from './settings-reference.mjs';
@@ -231,3 +232,10 @@ await writeFile(out + '/product.html', stamp(product.html));
 await copyFile('site/product.css', out + '/product.css');
 if ((await readFile('docs/PRODUCT-GUIDE.md', 'utf8')) !== product.markdown)
   throw Error('Stale product handbook: npm run docs:product');
+
+const publicRoadmap = JSON.parse(await readFile('docs/whats-new/roadmap.json', 'utf8'));
+const publicReleases = JSON.parse(await readFile('docs/whats-new/releases.json', 'utf8'));
+const changelog = await readFile('CHANGELOG.md', 'utf8');
+await writeFile(out + '/roadmap.html', stamp(renderRoadmap(publicRoadmap)));
+await writeFile(out + '/releases.html', stamp(renderReleaseNotes(changelog, publicReleases, pkg.version)));
+await copyFile('site/whats-new.css', out + '/whats-new.css');

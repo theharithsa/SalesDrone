@@ -1,0 +1,304 @@
+{
+  "2.13.6": {
+    "summary": "More reliable checks before an update goes live.",
+    "published": "2026-11-12"
+  },
+  "2.13.5": {
+    "summary": "Old retries now expire while duplicate writes stay blocked."
+  },
+  "2.13.4": {
+    "summary": "Older dashboard and push-test counters now expire automatically.",
+    "published": "2026-11-12"
+  },
+  "2.13.3": {
+    "summary": "Clean up old reminder delivery records while keeping pending reminders.",
+    "published": "2026-11-12"
+  },
+  "2.13.2": {
+    "summary": "Verify the website before updating the live app.",
+    "published": "2026-11-12"
+  },
+  "2.13.1": {
+    "summary": "New dashboard and push-test counters expire automatically.",
+    "published": "2026-11-12"
+  },
+  "2.13.0": {
+    "summary": "Choose exactly which team members can export leads.",
+    "published": "2026-11-12"
+  },
+  "2.12.2": {
+    "summary": "Cleaner Tasks and mobile Leads, with a page turn that stays on the sheet.",
+    "published": "2026-11-11"
+  },
+  "2.12.1": {
+    "summary": "A handwritten notebook layout across the workspace.",
+    "published": "2026-11-11"
+  },
+  "2.12.0": {
+    "summary": "Personalize the logo, colors, fonts and Book mode.",
+    "published": "2026-11-11"
+  },
+  "2.11.0": {
+    "summary": "Give Admins control over exports and AI features for members.",
+    "published": "2026-11-11"
+  },
+  "2.10.5": {
+    "summary": "Choose whether to share anonymous workspace page counts.",
+    "published": "2026-11-09"
+  },
+  "2.10.4": {
+    "summary": "Reduce idle hosting costs while keeping API monitoring.",
+    "published": "2026-11-08"
+  },
+  "2.10.3": {
+    "summary": "Find dashboard, Team, Hygiene and import controls where you use them.",
+    "published": "2026-11-08"
+  },
+  "2.10.2": {
+    "summary": "Find Settings, Field order and Lead page header more easily.",
+    "published": "2026-11-08"
+  },
+  "2.10.1": {
+    "summary": "Scroll the mobile menu all the way to Settings and your account.",
+    "published": "2026-11-07"
+  },
+  "2.10.0": {
+    "summary": "Enter enquiries with a required phone number and an optional name, and find leads across more fields.",
+    "published": "2026-11-07"
+  },
+  "2.9.6": {
+    "summary": "Make service error and response-time reports more reliable.",
+    "published": "2026-11-06"
+  },
+  "2.9.5": {
+    "summary": "Record administrative tasks and manual follow-ups more accurately.",
+    "published": "2026-11-06"
+  },
+  "2.9.4": {
+    "summary": "Improve service monitoring and worker diagnostics.",
+    "published": "2026-11-06"
+  },
+  "2.9.3": {
+    "summary": "Update the tools that build the web app.",
+    "published": "2026-11-04"
+  },
+  "2.9.2": {
+    "summary": "Update reviewed testing and Firebase dependencies.",
+    "published": "2026-11-04"
+  },
+  "2.9.1": {
+    "summary": "Move the SalesDrone MCP integration to its own repository.",
+    "published": "2026-11-04"
+  },
+  "2.9.0": {
+    "summary": "Connect read-only SalesDrone tools to compatible assistants.",
+    "published": "2026-11-04"
+  },
+  "2.8.2": {
+    "summary": "Make API documentation easier to read and navigate.",
+    "published": "2026-11-03"
+  },
+  "2.8.1": {
+    "summary": "Correct the Leads screenshots in the handbook.",
+    "published": "2026-11-03"
+  },
+  "2.8.0": {
+    "summary": "See team workload and recorded activity, and filter leads by assignee.",
+    "published": "2026-11-03"
+  },
+  "2.7.2": {
+    "summary": "See shared lead tasks and the responsible person on the Tasks page.",
+    "published": "2026-11-02"
+  },
+  "2.7.1": {
+    "summary": "Call a lead from its header by tapping the number.",
+    "published": "2026-11-02"
+  },
+  "2.7.0": {
+    "summary": "Website publication was cancelled. The changes carried forward to v2.7.1."
+  },
+  "2.6.7": {
+    "summary": "Open the linked lead from a dedicated Tasks column.",
+    "published": "2026-11-02"
+  },
+  "2.6.6": {
+    "summary": "Get one conversational answer to a question with several parts.",
+    "published": "2026-11-02"
+  },
+  "2.6.5": {
+    "summary": "Keep Assistant history usable when reporting settings change.",
+    "published": "2026-11-02"
+  },
+  "2.6.4": {
+    "summary": "Ask the Assistant for values from configured lead fields.",
+    "published": "2026-11-02"
+  },
+  "2.6.3": {
+    "summary": "Restore Google sign-in after an App Check configuration issue.",
+    "published": "2026-11-02"
+  },
+  "2.6.2": {
+    "summary": "Improve the reliability of API ingress health checks.",
+    "published": "2026-11-01"
+  },
+  "2.6.1": {
+    "summary": "Restore archived leads with access checks and history."
+  },
+  "2.6.0": {
+    "summary": "Introduce Lead Assistant and Lead Hygiene for the workspace.",
+    "published": "2026-10-31"
+  },
+  "2.5.3": {
+    "summary": "Use Sales Stage explicitly in dashboard charts even when hidden on the enquiry form.",
+    "published": "2026-10-31"
+  },
+  "2.5.2": {
+    "summary": "Explain when lead edits and imports are temporarily paused during maintenance.",
+    "published": "2026-10-31"
+  },
+  "2.5.1": {
+    "summary": "Make chart labels and missing-category text easier to read.",
+    "published": "2026-10-31"
+  },
+  "2.5.0": {
+    "summary": "Import extra workbook columns into reusable fields.",
+    "published": "2026-10-31"
+  },
+  "2.4.1": {
+    "summary": "Fix the deployment default for the AI model.",
+    "published": "2026-10-31"
+  },
+  "2.4.0": {
+    "summary": "Use case-sensitive Exact match for supported lead fields."
+  },
+  "2.3.1": {
+    "summary": "Fix API token uploads for lead attachments.",
+    "published": "2026-10-30"
+  },
+  "2.3.0": {
+    "summary": "Review import history, duplicate rows and proposed updates.",
+    "published": "2026-10-30"
+  },
+  "2.2.1": {
+    "summary": "Align stage and assignee controls in the lead header.",
+    "published": "2026-10-29"
+  },
+  "2.2.0": {
+    "summary": "Improve field labels and mobile layout in Settings."
+  },
+  "2.1.1": {
+    "summary": "Center the workspace loading message on mobile.",
+    "published": "2026-10-29"
+  },
+  "2.1.0": {
+    "summary": "Find archived leads in Settings.",
+    "published": "2026-10-29"
+  },
+  "2.0.1": {
+    "summary": "Make mobile lead cards full width and simplify search.",
+    "published": "2026-10-26"
+  },
+  "2.0.0": {
+    "summary": "Refresh the workspace with Material 3 across sign-in, navigation and lead views.",
+    "published": "2026-10-26"
+  },
+  "1.9.1": {
+    "summary": "Keep the Files tab selected when expanding a lead.",
+    "published": "2026-10-26"
+  },
+  "1.9.0": {
+    "summary": "Review and edit up to 25 loaded leads in one batch.",
+    "published": "2026-10-26"
+  },
+  "1.8.0": {
+    "summary": "See lead identity, score, stage and assignee together.",
+    "published": "2026-10-26"
+  },
+  "1.7.0": {
+    "summary": "Choose a personal interface font and preview it first.",
+    "published": "2026-10-26"
+  },
+  "1.6.7": {
+    "summary": "Make desktop navigation and dashboard spacing more compact.",
+    "published": "2026-10-26"
+  },
+  "1.6.6": {
+    "summary": "Keep text readable across screen sizes.",
+    "published": "2026-10-26"
+  },
+  "1.6.5": {
+    "summary": "Apply reading fonts throughout Book mode.",
+    "published": "2026-10-26"
+  },
+  "1.6.4": {
+    "summary": "Find private lead tasks in one place.",
+    "published": "2026-10-26"
+  },
+  "1.6.3": {
+    "summary": "Switch to a personal Book mode with a paper-like layout.",
+    "published": "2026-10-26"
+  },
+  "1.6.2": {
+    "summary": "Improve how activity and deployment events appear in monitoring.",
+    "published": "2026-10-26"
+  },
+  "1.6.1": {
+    "summary": "Browse lead notes, calls and tasks through activity tabs.",
+    "published": "2026-10-25"
+  },
+  "1.6.0": {
+    "summary": "Open lead details beside the desktop list without shifting its columns.",
+    "published": "2026-10-25"
+  },
+  "1.5.1": {
+    "summary": "Resize the desktop lead panel and keep your preferred width.",
+    "published": "2026-10-25"
+  },
+  "1.5.0": {
+    "summary": "Manage lead fields and dropdown choices from one Settings section.",
+    "published": "2026-10-25"
+  },
+  "1.4.0": {
+    "summary": "Export matching leads and your chosen columns to Excel.",
+    "published": "2026-10-25"
+  },
+  "1.3.0": {
+    "summary": "Choose manual or automatic dashboard insights.",
+    "published": "2026-10-25"
+  },
+  "1.2.0": {
+    "summary": "Request dashboard insights from a compact control.",
+    "published": "2026-10-25"
+  },
+  "1.1.5": {
+    "summary": "Refresh the Avinya artwork in light and dark themes.",
+    "published": "2026-10-25"
+  },
+  "1.1.4": {
+    "summary": "Add development guides for the main SalesDrone modules.",
+    "published": "2026-10-25"
+  },
+  "1.1.3": {
+    "summary": "Illustrate how enquiries turn into conversations and next steps.",
+    "published": "2026-10-25"
+  },
+  "1.1.2": {
+    "summary": "Read the story behind SalesDrone in Settings.",
+    "published": "2026-10-25"
+  },
+  "1.1.1": {
+    "summary": "Align guide navigation with the sections it opens.",
+    "published": "2026-10-25"
+  },
+  "1.1.0": {
+    "summary": "Let Admins create scoped API tokens for integrations.",
+    "published": "2026-10-25"
+  },
+  "1.0.0": {
+    "summary": "Sign in with Google, manage leads and reminders, or explore the isolated demo.",
+    "published": "2026-10-25"
+  },
+  "2.13.7": {
+    "summary": "Follow the public roadmap and browse SalesDrone release notes by version."
+  }
+}

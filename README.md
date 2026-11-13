@@ -27,7 +27,7 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 
 A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
 
-[Open SalesDrone](https://sales-drone-avinya.firebaseapp.com) · [Illustrated guide](https://theharithsa.github.io/SalesDrone/) · [Releases](https://github.com/theharithsa/SalesDrone/releases) · [Deployment workflow](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
+[Open SalesDrone](https://sales-drone-avinya.firebaseapp.com) · [Illustrated guide](https://theharithsa.github.io/SalesDrone/) · [Roadmap](docs/whats-new/README.md) · [Release notes](https://theharithsa.github.io/SalesDrone/releases.html) · [Deployment workflow](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
 
 ![The dashboard shows lead counts grouped by the selected field. Synthetic demo data only.](site/assets/screenshots/dashboard-demo.jpg)
 
