@@ -1,4 +1,15 @@
 {
+  "2.13.9": {
+    "summary": "Explore an illustrated roadmap and a redesigned, searchable release archive."
+  },
+  "2.13.8": {
+    "summary": "Refresh several underlying libraries and the release checks.",
+    "published": "2026-11-13"
+  },
+  "2.13.7": {
+    "summary": "Follow the public roadmap and browse SalesDrone release notes by version.",
+    "published": "2026-11-13"
+  },
   "2.13.6": {
     "summary": "More reliable checks before an update goes live.",
     "published": "2026-11-12"
@@ -297,8 +308,5 @@
   "1.0.0": {
     "summary": "Sign in with Google, manage leads and reminders, or explore the isolated demo.",
     "published": "2026-10-25"
-  },
-  "2.13.7": {
-    "summary": "Follow the public roadmap and browse SalesDrone release notes by version."
   }
 }

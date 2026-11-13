@@ -40,6 +40,9 @@
     "obs:verify": "node scripts/validate-observability-pack.mjs --tenant"
   },
   "devDependencies": {
+    "@astryxdesign/core": "0.7.15",
+    "@astryxdesign/theme-neutral": "0.7.15",
+    "@stylexjs/stylex": "0.19.2",
     "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -65,5 +68,5 @@
       "uuid": "^11.1.1"
     }
   },
-  "version": "2.13.8"
+  "version": "2.13.9"
 }
