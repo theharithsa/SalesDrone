@@ -294,6 +294,8 @@
       padding: .35rem .5rem;
       overflow-wrap: normal;
     }
+    .display-heading { font-size: clamp(1.25rem, 8.5vw, 2.125rem); }
+    .editorial-copy { padding: clamp(1rem, 5vw, 1.75rem); }
     .editorial-card, .release-overview, .sprint-row { grid-template-columns: minmax(0, 1fr); }
     .redesign-flow { grid-template-columns: 1fr; }
     .updates-main .astryx-button { min-height: 2.75rem; }
