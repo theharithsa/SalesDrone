@@ -1,3 +1,4 @@
+import { renderReleaseNotes, renderRoadmap } from './whats-new.mjs';
 import { execFileSync } from 'node:child_process';
 import { renderProductGuide } from './product-guide.mjs';
 import { renderSettings } from './settings-reference.mjs';
@@ -30,6 +31,9 @@ function stamp(html) {
 }
 const screenshots = [
   'lead-feature-access-demo.jpg',
+  'lead-feature-access-guide.jpg',
+  'lead-feature-access-mobile-guide.jpg',
+  'people-export-guide.jpg',
   'lead-feature-access-mobile-demo.jpg',
   'team-demo.jpg',
   'team-mobile-demo.jpg',
@@ -132,6 +136,15 @@ for (const [source, target] of [
     'assets/brand/avinya-enterprises-mark.svg',
   ],
   ['apps/web/public/icon.svg', 'assets/brand/icon.svg'],
+  ['apps/web/public/brand/salesdrone-mark.png', 'assets/brand/salesdrone-mark.png'],
+  [
+    'node_modules/@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2',
+    'assets/fonts/open-sans.woff2',
+  ],
+  [
+    'node_modules/@fontsource-variable/open-sans/LICENSE',
+    'assets/fonts/open-sans-LICENSE.txt',
+  ],
   [
     'apps/web/public/fonts/google-sans/google-sans-latin-wght-normal.woff2',
     'assets/fonts/google-sans.woff2',
@@ -231,3 +244,15 @@ await writeFile(out + '/product.html', stamp(product.html));
 await copyFile('site/product.css', out + '/product.css');
 if ((await readFile('docs/PRODUCT-GUIDE.md', 'utf8')) !== product.markdown)
   throw Error('Stale product handbook: npm run docs:product');
+
+const publicRoadmap = JSON.parse(await readFile('docs/whats-new/roadmap.json', 'utf8'));
+const publicReleases = JSON.parse(await readFile('docs/whats-new/releases.json', 'utf8'));
+const changelog = await readFile('CHANGELOG.md', 'utf8');
+await writeFile(out + '/roadmap.html', stamp(renderRoadmap(publicRoadmap)));
+const releaseNotes = renderReleaseNotes(changelog, publicReleases, pkg.version);
+await writeFile(out + '/releases.html', stamp(releaseNotes.index));
+await mkdir(out + '/release-notes', { recursive: true });
+for (const [version, html] of releaseNotes.pages)
+  await writeFile(out + '/release-notes/v' + version + '.html', stamp(html));
+await copyFile('site/release-filter.js', out + '/release-filter.js');
+await copyFile('site/whats-new.css', out + '/whats-new.css');

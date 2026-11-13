@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "version": "2.13.7",
+  "summary": "Publish the public roadmap and release archive and refresh the SalesDrone product guide.",
+  "modules": [
+    "salesdrone-documentation",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/whats-new/README.md",
+    "docs/whats-new/roadmap.json",
+    "docs/whats-new/releases.json",
+    "docs/PRODUCT-GUIDE.md",
+    "site/index.html"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Static GitHub Pages documentation only.",
+    "contractVersion": "1.34.0",
+    "permissions": "No application access changes.",
+    "tests": [
+      "services/ingress/test/gateway.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "not-applicable",
+      "reason": "Static public documentation adds no application instrumentation or domain mutations.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "not-applicable",
+      "reason": "Static public documentation adds no application instrumentation or domain mutations.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "not-applicable",
+      "reason": "Static public documentation adds no application instrumentation or domain mutations.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "not-applicable",
+      "reason": "Static public documentation adds no application instrumentation or domain mutations.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The normal release workflow reports the exact deployed version and gate result.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review roadmap and release history at phone and desktop widths. Verify the published Pages routes, sprint order, historical dates, and navigation.",
+  "milestone": {
+    "number": 64,
+    "title": "v2.13.7 \u2014 Public roadmap and release notes",
+    "issues": [
+      205,
+      206
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "dashboard-demo.jpg",
+    "lead-filters-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "lead-tasks-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "lead-feature-access-mobile-guide.jpg",
+    "lead-feature-access-guide.jpg",
+    "field-manager-demo.jpg",
+    "people-export-guide.jpg"
+  ]
+}

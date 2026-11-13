@@ -88,3 +88,7 @@ These are tracked follow-ups, not implemented behavior: [#33](https://github.com
 Public release summaries include safe Archives restoration, author/Admin correction policy and the independently deployed API ingress before Hosting cutover. Keep README app version current; engineering ingress limits and native-provider boundaries belong in API-INGRESS.md. Preserve historical screenshot/release identities.
 
 Record partially activated deployment history and the forward repair explicitly in changelog/release notes. Unchanged UI captures retain their original reviewed candidate version/hash; operational health fixes do not authorize relabelling images.
+
+Maintain the public roadmap and release history in [docs/whats-new](../../docs/whats-new/README.md). Confirm sprint windows and prerequisites in GitHub before editing, and use published release evidence before labeling an archive entry as published. Run the curated guide build and inspect both pages at phone and desktop widths.
+
+Keep the release index filterable and individual release pages addressable by version. Generate their headings and contents from the changelog. Attach synthetic screenshots to their matching historical release pages with the reviewed capture version visible.

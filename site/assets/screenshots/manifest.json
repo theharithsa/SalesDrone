@@ -52,12 +52,12 @@
   {
     "file": "mobile-leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f0705a1b343b00d1dc60defb37ba15af1edf136653234ffedad558162621e0d2",
-    "capturedAt": "2026-11-11T16:32:13.445953Z",
-    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "b7bfaf28dc9182f118f20203b1b62860e7fb62cdf2b59a3defc20fc749d5cb5c",
+    "capturedAt": "2026-11-13",
+    "viewport": "390 x 900 CSS pixels; local synthetic browser preview",
     "capturePixels": "390 x 900",
-    "version": "2.12.2",
-    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
   },
   {
     "file": "batch-edit-mobile.jpg",
@@ -302,12 +302,12 @@
   {
     "file": "field-manager-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "48642d68345243fa72eb6f9f6800c06cc182b51503e0d4c9269aa4ae9f49165a",
-    "capturedAt": "2026-11-08T01:54:34.437630+05:30",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "70dab33c4e1c5c64dc2f116f881ed82d8bc8eb893d557d0c853d931f7ab7625f",
+    "capturedAt": "2026-11-13",
+    "viewport": "1440 x 900 CSS pixels; local synthetic browser preview",
     "capturePixels": "1440 x 900",
-    "version": "2.10.2",
-    "review": "Visually and privacy reviewed with the isolated fictional Settings preview. No customer records, credentials, or live writes. Browser viewport review."
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
   },
   {
     "file": "lead-header-mobile-demo.jpg",
@@ -342,12 +342,12 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "6912ede2ba288646ddb24c5f3e943392865b864e0ac5ec0aa3095e2e8ab8be3b",
-    "capturedAt": "2026-11-07",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "79ca5a57f78b9a6cc381f3a7be46dc2bf15cb95f4fbd1b25580e57d0f3f1d536",
+    "capturedAt": "2026-11-13",
+    "viewport": "1440 x 900 CSS pixels; local synthetic browser preview",
     "capturePixels": "1440 x 900",
-    "version": "2.10.1",
-    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
   },
   {
     "file": "import-review-demo.jpg",
@@ -372,12 +372,12 @@
   {
     "file": "lead-filters-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "3ea01c67386b321e681c093054165f6c8fefec32a68f21b9e708e322ad088e74",
-    "capturedAt": "2026-11-07T08:15:30.166769Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "af306f4587c254a78a1e80aae9bbd2603f610d69b8419b508bb71bb257c64f8d",
+    "capturedAt": "2026-11-13",
+    "viewport": "1440 x 900 CSS pixels; local synthetic browser preview",
     "capturePixels": "1440 x 900",
-    "version": "2.10.0",
-    "review": "Reviewed fictional guest workspace capture. No production records, credentials or server writes. Browser viewport review."
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
   },
   {
     "file": "lead-filters-mobile-demo.jpg",
@@ -612,22 +612,22 @@
   {
     "file": "dashboard-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "3b615fcba1bdbe9f398c1ee29cbc3c1900813a909fe444c5efd2545d37a241ea",
-    "capturedAt": "2026-11-11T16:32:11.173867Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "7d1b94e31d42b906153a00ceb99d3f4dcc5ae7a4f242b1d7e0d49034e635e069",
+    "capturedAt": "2026-11-13",
+    "viewport": "1440 x 900 CSS pixels; local synthetic browser preview",
     "capturePixels": "1440 x 900",
-    "version": "2.12.2",
-    "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
   },
   {
     "file": "lead-tasks-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "c9cacaead53a1adc841c8cebab2c3d9e9d1a16cef03ef554c98e11804be5c9bb",
-    "capturedAt": "2026-11-07",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "ab931aa0003b6a71bf58896307fc57bdec48a7eeeef616c97ca5485b2b284b1d",
+    "capturedAt": "2026-11-13",
+    "viewport": "1440 x 900 CSS pixels; local synthetic browser preview",
     "capturePixels": "1440 x 900",
-    "version": "2.10.1",
-    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
   },
   {
     "file": "team-demo.jpg",
@@ -718,5 +718,35 @@
     "capturePixels": "390 x 900",
     "version": "2.12.2",
     "review": "Visually reviewed synthetic SalesDrone workspace in isolated Chromium. No customer data, credentials or production writes."
+  },
+  {
+    "file": "lead-feature-access-mobile-guide.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "c61ace30628ecef1989812243d940ec9f0478eb35eaa1d9edd71399b3aa969af",
+    "capturedAt": "2026-11-13",
+    "viewport": "390 x 900 CSS pixels; local synthetic browser preview",
+    "capturePixels": "390 x 900",
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
+  },
+  {
+    "file": "lead-feature-access-guide.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "25fb542371d7318a628b45a27b38009da281a29183cda52553f83dc7d2851395",
+    "capturedAt": "2026-11-13",
+    "viewport": "1440 x 900 CSS pixels; local synthetic browser preview",
+    "capturePixels": "1440 x 900",
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
+  },
+  {
+    "file": "people-export-guide.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "01f48d5885b8aa6312d6632fa02be723a7e9080a90a04f6bdcf8ad12cb54c0e2",
+    "capturedAt": "2026-11-13",
+    "viewport": "1440 x 1080 CSS pixels; local synthetic browser preview",
+    "capturePixels": "1440 x 1080",
+    "version": "2.13.7",
+    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
   }
 ]
