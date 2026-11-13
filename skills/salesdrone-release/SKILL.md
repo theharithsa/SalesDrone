@@ -52,7 +52,7 @@ Inspect the failing job and exact step before retrying; distinguish already-depl
 
 ## Verification
 
-Use the release, metadata, secret, skill and curated documentation checks in the shared contract; inspect CI evidence.
+Review bot updates in a versioned PR. Check both npm lockfiles and CI evidence.
 
 Apply the shared verification matrix to the changed behavior; these are the
 module-specific regression entry points, not a substitute for integration checks.
