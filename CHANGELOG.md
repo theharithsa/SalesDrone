@@ -11,6 +11,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.13.8] - 2026-11-13
+
+### Changed
+- Update Java setup and ESLint global definitions used in CI.
+- Update the Hono development dependencies and align the XML parser update across both npm lockfiles.
+
 ## [2.13.7] - 2026-11-13
 
 ### Changed
