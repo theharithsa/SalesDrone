@@ -38,10 +38,35 @@ test('archive filtering handles matching, empty, and cleared queries', () => {
 });
 
 test('roadmap flow targets sprint sections and links the workspace redesign issue', () => {
-  const { sprints, redesign } = JSON.parse(read('docs/whats-new/roadmap.json'));
-  const document = new JSDOM(renderRoadmap(sprints, redesign)).window.document;
+  const { sprints, redesign, preview } = JSON.parse(read('docs/whats-new/roadmap.json'));
+  const document = new JSDOM(renderRoadmap(sprints, redesign, preview)).window.document;
   const targets = [...document.querySelectorAll('.dependency-flow a')].map((anchor) => anchor.getAttribute('href'));
   assert.deepEqual(targets, ['#sprint-4', '#sprint-4', '#sprint-5', '#sprint-6']);
   assert.ok(targets.every((target) => document.querySelector(target!)));
   assert.ok(document.querySelector(`section[aria-labelledby="workspace-redesign"] a[href$="/issues/${redesign.issue}"]`));
+});
+
+test('public roadmap only uses approved open issues and never publishes engineering notes', async () => {
+  const { publicRoadmapFeatures } = await import('../scripts/public-roadmap.mjs');
+  const approved = {
+    number: 217, title: 'Email reminders', state: 'open',
+    labels: [{ name: 'roadmap-public' }], milestone: { number: 48 },
+    body: '## Public summary\n\nSend <mail> to assigned team members.\n\n## Internal\nPrivate acceptance notes.',
+  };
+  const features = publicRoadmapFeatures([[approved, { ...approved, number: 218, state: 'closed' }], [
+    { ...approved, number: 219, labels: [] },
+    { ...approved, number: 220, pull_request: {} },
+  ]]);
+  assert.deepEqual(features, [{
+    number: 217, title: 'Email reminders', summary: 'Send <mail> to assigned team members.', milestone: 48,
+  }]);
+  assert.throws(() => publicRoadmapFeatures([{ ...approved, body: '## Internal\nOther notes.' }]), /#217/);
+  const { sprints, redesign } = JSON.parse(read('docs/whats-new/roadmap.json'));
+  const roadmap = new JSDOM(renderRoadmap(sprints, redesign, features)).window.document;
+  const upcoming = roadmap.querySelector('section[aria-labelledby="upcoming"]');
+  assert.match(upcoming?.textContent || '', /Sprint 3.*Send <mail>/);
+  assert.equal(upcoming?.querySelector('mail'), null);
+  assert.doesNotMatch(roadmap.body.textContent || '', /Private acceptance notes/);
+  assert.ok(new JSDOM(renderReleaseNotes(read('CHANGELOG.md'), {}, features).index)
+    .window.document.querySelector('section[aria-labelledby="upcoming"] a[href$="/issues/217"]'));
 });

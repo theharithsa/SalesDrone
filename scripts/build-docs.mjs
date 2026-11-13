@@ -1,4 +1,5 @@
 import { renderReleaseNotes, renderRoadmap } from './whats-new.mjs';
+import { publicRoadmapFeatures } from './public-roadmap.mjs';
 import { execFileSync } from 'node:child_process';
 import { renderProductGuide } from './product-guide.mjs';
 import { renderSettings } from './settings-reference.mjs';
@@ -246,7 +247,7 @@ await copyFile('site/product.css', out + '/product.css');
 if ((await readFile('docs/PRODUCT-GUIDE.md', 'utf8')) !== product.markdown)
   throw Error('Stale product handbook: npm run docs:product');
 
-const { sprints, redesign } = JSON.parse(await readFile('docs/whats-new/roadmap.json', 'utf8'));
+const { sprints, redesign, preview } = JSON.parse(await readFile('docs/whats-new/roadmap.json', 'utf8'));
 await mkdir(out + '/astryx', { recursive: true });
 for (const [source, target] of [
   ['@astryxdesign/core/reset.css', 'reset.css'],
@@ -278,8 +279,11 @@ if (process.env.DOCS_PUBLISHED_RELEASES) {
       publicReleases[version] = { ...publicReleases[version], published: date };
   }
 }
-await writeFile(out + '/roadmap.html', stamp(renderRoadmap(sprints, redesign)));
-const releaseNotes = renderReleaseNotes(changelog, publicReleases);
+const features = process.env.DOCS_ROADMAP_ISSUES
+  ? publicRoadmapFeatures(JSON.parse(await readFile(process.env.DOCS_ROADMAP_ISSUES, 'utf8')))
+  : preview;
+await writeFile(out + '/roadmap.html', stamp(renderRoadmap(sprints, redesign, features)));
+const releaseNotes = renderReleaseNotes(changelog, publicReleases, features, sprints);
 await writeFile(out + '/releases.html', stamp(releaseNotes.index));
 await mkdir(out + '/release-notes', { recursive: true });
 for (const [version, html] of releaseNotes.pages)

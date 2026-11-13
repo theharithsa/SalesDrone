@@ -9,7 +9,8 @@
     "CHANGELOG.md",
     "docs/whats-new/README.md",
     "skills/salesdrone-documentation/SKILL.md",
-    "THIRD-PARTY-NOTICES.md"
+    "THIRD-PARTY-NOTICES.md",
+    "docs/SDLC.md"
   ],
   "settingsSections": [],
   "api": {
@@ -81,7 +82,8 @@
     "number": 66,
     "title": "v2.13.9 \u2014 Astryx public roadmap and release notes",
     "issues": [
-      214
+      214,
+      218
     ],
     "readiness": "ready"
   },

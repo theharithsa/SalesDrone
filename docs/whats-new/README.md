@@ -16,3 +16,7 @@ Both illustrations were created with the built-in ImageGen tool and visually rev
 
 - [Flight plan](../../site/assets/roadmap/flight-plan.webp) depicts a blue survey drone above a folded ivory paper map with three cobalt waypoints. The prompt asked for an editorial, three-quarter view with warm paper, subtle shadows, and no text or logos.
 - [Workspace redesign](../../site/assets/roadmap/workspace-redesign.webp) depicts three overlapping cobalt and periwinkle paper UI panels for navigation, lead details and tasks. The prompt asked for precisely aligned paper cutouts, studio shadows and abstract UI marks without text or logos.
+
+## Publish an upcoming feature
+
+Write a customer-facing issue title and a one-line paragraph under `## Public summary`. Apply `roadmap-public` to opt those two fields into the public site. The Pages workflow fetches all pages of open labeled issues, excludes PRs, and passes them to the static generator. GitHub issue events refresh Pages, and a daily run reconciles missed updates. The workflow uses the published source and does not deploy the app. Remove the label to withdraw a feature from both pages. Keep the offline preview list for the two illustrated examples current when changing their copy. See the [delivery workflow](../SDLC.md).

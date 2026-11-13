@@ -18,6 +18,7 @@ API contract versions are independent from application versions.
 ### Changed
 - Redesign the public roadmap and release notes with Astryx, a searchable archive, and clearer individual release pages.
 - Illustrate upcoming work and show how workspace isolation and migration lead to the invoicing pilot and signup decision. Add the full Astryx workspace redesign to the roadmap.
+- Refresh public upcoming features from approved GitHub issues and keep their planning status separate from shipped changes. Wrap action labels at larger text sizes on mobile.
 
 ## [2.13.8] - 2026-11-13
 

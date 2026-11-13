@@ -1,0 +1,95 @@
+name: Publish SalesDrone documentation
+on:
+  workflow_call:
+  issues:
+    types: [opened, edited, labeled, unlabeled, closed, reopened, deleted, milestoned, demilestoned]
+  schedule:
+    - cron: '23 3 * * *'
+permissions: {}
+jobs:
+  documentation:
+    if: >-
+      github.event_name != 'issues' ||
+      github.event.label.name == 'roadmap-public' ||
+      contains(github.event.issue.labels.*.name, 'roadmap-public')
+    concurrency:
+      group: salesdrone-public-pages
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    permissions:
+      contents: read
+      issues: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Confirm a published source for roadmap-only updates
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo 'ready=false' >> "$GITHUB_OUTPUT"
+          if [ "$GITHUB_EVENT_NAME" != issues ] && [ "$GITHUB_EVENT_NAME" != schedule ]; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+            exit
+          fi
+          VERSION=$(node -p "require('./package.json').version")
+          TAG_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v$VERSION" --jq '.object.sha') || exit 0
+          MAIN_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq '.object.sha')
+          if [ "$TAG_SHA" = "$GITHUB_SHA" ] && [ "$MAIN_SHA" = "$GITHUB_SHA" ]; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.source.outputs.ready == 'true'
+        run: npm ci
+      - name: Build public documentation for the published release
+        if: steps.source.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RELEASES_FILE="$RUNNER_TEMP/salesdrone-published-releases.json"
+          gh release list --limit 1000 --json tagName,isDraft,publishedAt > "$RELEASES_FILE"
+          ISSUES_FILE="$RUNNER_TEMP/salesdrone-roadmap-issues.json"
+          gh api "repos/$GITHUB_REPOSITORY/issues?state=open&labels=roadmap-public&per_page=100" --paginate --slurp > "$ISSUES_FILE"
+          DOCS_PUBLISHED_RELEASES="$RELEASES_FILE" DOCS_ROADMAP_ISSUES="$ISSUES_FILE" npm run docs:build
+      - name: Recheck roadmap source before publication
+        id: publish-source
+        if: steps.source.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = issues ] || [ "$GITHUB_EVENT_NAME" = schedule ]; then
+            MAIN_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq '.object.sha')
+            if [ "$MAIN_SHA" != "$GITHUB_SHA" ]; then
+              echo 'ready=false' >> "$GITHUB_OUTPUT"
+              exit
+            fi
+          fi
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+        if: steps.publish-source.outputs.ready == 'true'
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: steps.publish-source.outputs.ready == 'true'
+        with:
+          path: site/.build
+      - id: publish
+        if: steps.publish-source.outputs.ready == 'true'
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+      - name: Verify public settings documentation
+        if: steps.publish-source.outputs.ready == 'true'
+        run: npm run release:postcheck -- --docs
+      - name: Archive documentation verification
+        if: always() && steps.publish-source.outputs.ready == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: salesdrone-docs-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: docs-verification.json
+          retention-days: 30

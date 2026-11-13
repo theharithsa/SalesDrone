@@ -13,7 +13,8 @@ const heading = (level, content, className) =>
 const paragraph = (content, className) =>
   h(Text, { as: 'p', type: 'body', className }, content);
 const link = (href, content, props = {}) => h(Link, { href, ...props }, content);
-const buttonLink = (href, label, variant = 'secondary') => h(Button, { href, label, variant });
+const buttonLink = (href, label, variant = 'secondary') => h(Button, { href, label, variant, className: 'wrap-button' },
+    h('span', { className: 'wrap-button-label' }, label));
 const section = (id, title, ...children) =>
   h(VStack, { as: 'section', gap: 5, 'aria-labelledby': id },
     h(Heading, { id, level: 2, weight: 'normal' }, title), ...children);
@@ -64,7 +65,21 @@ function sprintRows(sprints) {
             link(repository + '/milestone/' + milestone, 'View Sprint ' + sprint + ' milestone'))))));
 }
 
-export function renderRoadmap(sprints, redesign) {
+function upcomingFeatures(features, sprints = []) {
+  if (!features.length) return null;
+  return section('upcoming', 'Upcoming features',
+    h('ul', { className: 'upcoming-list' }, features.map(({ number, title, summary, milestone }) => {
+      const sprint = sprints.find((entry) => entry.milestone === milestone);
+      return h('li', { key: number }, h(Card, { padding: 4 },
+        h(VStack, { gap: 2 },
+          paragraph(sprint ? 'Sprint ' + sprint.sprint + ' · ' + sprint.window : 'Planned · Date to be confirmed', 'kicker'),
+          heading(3, title),
+          paragraph(summary, 'muted'),
+          link(repository + '/issues/' + number, 'Track this feature on GitHub'))));
+    })));
+}
+
+export function renderRoadmap(sprints, redesign, features = []) {
   if (sprints.length < 6 || sprints.some(({ sprint, milestone }, index) =>
     sprint !== index + 1 || !Number.isSafeInteger(milestone) || milestone < 1) ||
     !Number.isSafeInteger(redesign.issue) || redesign.issue < 1)
@@ -92,7 +107,7 @@ export function renderRoadmap(sprints, redesign) {
         h('li', { key: step }, h(Card, { className: 'flow-card', padding: 4 },
           h(VStack, { gap: 2 }, paragraph('Sprint ' + step, 'kicker'),
             heading(3, link('#sprint-' + sprint, title)), paragraph(summary, 'muted'))))))),
-    section('workspace-redesign', 'A redesigned SalesDrone workspace',
+    features.some(({ number }) => number === redesign.issue) && section('workspace-redesign', 'A redesigned SalesDrone workspace',
       h(Card, { className: 'editorial-card roadmap-feature', padding: 0 },
         h(VStack, { className: 'editorial-copy', gap: 3 },
           paragraph('Planned · Upcoming sprints', 'kicker'),
@@ -103,6 +118,7 @@ export function renderRoadmap(sprints, redesign) {
       h('ol', { className: 'redesign-flow', 'aria-label': 'Workspace redesign sequence' },
         ['Public docs', 'Workspace navigation', 'Leads and tasks', 'Dashboard and Settings'].map((phase) =>
           h('li', { key: phase }, paragraph(phase))))),
+    upcomingFeatures(features.filter(({ number }) => number !== redesign.issue), sprints),
     section('sprint-plan', 'Sprint plan',
       sprintRows(sprints),
       link('https://github.com/users/theharithsa/projects/4/views/10', 'Open Sprint Delivery on GitHub'))));
@@ -139,7 +155,7 @@ const dateLabel = (date) => new Intl.DateTimeFormat('en-GB', {
 }).format(new Date(date));
 const dateTime = (date) => h('time', { key: date, dateTime: date }, dateLabel(date));
 
-export function renderReleaseNotes(changelog, notes) {
+export function renderReleaseNotes(changelog, notes, features = [], sprints = []) {
   const headings = [...changelog.matchAll(/^## \[(\d+\.\d+\.\d+)\] - (\d{4}-\d{2}-\d{2})[ \t]*$/gm)];
   const history = headings.map((heading, index) => ({ heading, end: headings[index + 1]?.index }));
   const versions = new Set(headings.map(([, version]) => version));
@@ -205,7 +221,9 @@ export function renderReleaseNotes(changelog, notes) {
           paragraph('Product updates', 'kicker'),
           heading(1, 'Release notes', 'display-heading'),
           paragraph('Find new features, fixes and changes for every SalesDrone version.', 'lede'),
-          link('roadmap.html', 'See what’s planned →')),
+          h(HStack, { gap: 3, wrap: 'wrap' },
+            link('#release-history', 'Search versions'),
+            link('roadmap.html', 'View roadmap'))),
         latest && h(Card, { className: 'latest-release', padding: 5 },
           h(VStack, { gap: 3 },
             paragraph('Latest published', 'kicker'),
@@ -213,6 +231,7 @@ export function renderReleaseNotes(changelog, notes) {
             paragraph(latest.summary, 'muted'),
             paragraph(dateTime(latest.published), 'muted'),
             buttonLink(latest.href, 'Read the latest notes', 'primary')))),
+      upcomingFeatures(features, sprints),
       section('release-history', 'All versions',
         h('section', { className: 'release-filter', hidden: true, 'aria-label': 'Find releases' },
           h('label', { htmlFor: 'filter' }, 'Search releases'),

@@ -11,10 +11,11 @@
   [data-astryx-theme="neutral"] {
     --font-family-body: "Open Sans", system-ui, sans-serif;
     --font-family-heading: var(--font-family-body);
-    --page-gutter: clamp(1rem, 4vw, 3rem);
+    --page-gutter: clamp(16px, 4vw, 3rem);
     --editorial-padding: clamp(1.25rem, 4vw, 3.25rem);
     font-family: var(--font-family-body);
     color: var(--color-text-primary);
+    overflow-wrap: anywhere;
   }
 
   .shell {
@@ -35,10 +36,10 @@
     text-decoration: none;
   }
 
-  .brand { flex: none; color: var(--color-text-primary); }
+  .brand { flex: none; max-width: 100%; color: var(--color-text-primary); }
   .brand img { object-fit: contain; }
   .updates-nav a {
-    white-space: nowrap;
+    white-space: normal;
     padding-inline: var(--spacing-3);
     border-radius: var(--radius-element);
     color: var(--color-text-secondary);
@@ -110,6 +111,27 @@
   }
   .roadmap-feature .editorial-image { max-height: 20rem; }
   .editorial-copy .astryx-button { align-self: start; }
+  .wrap-button {
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    height: auto;
+    min-height: 2.75rem;
+    padding-block: var(--spacing-2);
+  }
+  .wrap-button span:has(> .wrap-button-label),
+  .wrap-button-label {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+  }
+  .upcoming-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    gap: var(--spacing-4);
+    margin: 0;
+    padding: 0;
+  }
 
   .dependency-flow, .sprint-list, .release-list {
     list-style: none;
@@ -261,7 +283,15 @@
       align-items: flex-start;
       gap: var(--spacing-1);
     }
-    .updates-nav a { padding-inline: var(--spacing-2); }
+    .updates-nav {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      width: 100%;
+    }
+    .updates-nav a {
+      min-height: 44px;
+      padding: var(--spacing-1) var(--spacing-2);
+    }
     .editorial-card, .release-overview, .sprint-row { grid-template-columns: minmax(0, 1fr); }
     .redesign-flow { grid-template-columns: 1fr; }
     .updates-main .astryx-button { min-height: 2.75rem; }
@@ -269,7 +299,7 @@
     .editorial-copy .astryx-button { max-width: 100%; }
     .release-overview { padding: 0 0 var(--spacing-4); }
     .latest-release { margin-inline: var(--spacing-4); }
-    .release-row { grid-template-columns: 1fr; gap: var(--spacing-1); }
+    .release-row { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-1); }
     .release-date { flex-direction: row; flex-wrap: wrap; gap: var(--spacing-2); text-align: start; }
   }
 }

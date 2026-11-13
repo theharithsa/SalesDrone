@@ -45,5 +45,17 @@
   ],
   "redesign": {
     "issue": 213
-  }
+  },
+  "preview": [
+    {
+      "number": 213,
+      "title": "SalesDrone workspace redesign with Astryx",
+      "summary": "A phased Astryx redesign starts with workspace navigation, leads and tasks, then extends to dashboards, Settings and the remaining screens."
+    },
+    {
+      "number": 217,
+      "title": "Email notifications and daily task reminders",
+      "summary": "Receive email when you’re invited to SalesDrone, assigned a lead, or a task is completed. Get updates when leads convert or fail, plus a daily reminder for tasks that need attention."
+    }
+  ]
 }
