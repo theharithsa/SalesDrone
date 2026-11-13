@@ -133,6 +133,10 @@ for (const [source, target] of [
     'assets/brand/avinya-enterprises-mark.svg',
   ],
   ['apps/web/public/icon.svg', 'assets/brand/icon.svg'],
+  ['node_modules/@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2', 'assets/fonts/source-sans-3.woff2'],
+  ['node_modules/@fontsource-variable/source-sans-3/LICENSE', 'assets/fonts/source-sans-3-LICENSE.txt'],
+  ['site/assets/fonts/source-code-pro.woff2', 'assets/fonts/source-code-pro.woff2'],
+  ['site/assets/fonts/source-code-pro-LICENSE.txt', 'assets/fonts/source-code-pro-LICENSE.txt'],
   [
     'apps/web/public/fonts/google-sans/google-sans-latin-wght-normal.woff2',
     'assets/fonts/google-sans.woff2',
@@ -237,5 +241,10 @@ const publicRoadmap = JSON.parse(await readFile('docs/whats-new/roadmap.json', '
 const publicReleases = JSON.parse(await readFile('docs/whats-new/releases.json', 'utf8'));
 const changelog = await readFile('CHANGELOG.md', 'utf8');
 await writeFile(out + '/roadmap.html', stamp(renderRoadmap(publicRoadmap)));
-await writeFile(out + '/releases.html', stamp(renderReleaseNotes(changelog, publicReleases, pkg.version)));
+const releaseNotes = renderReleaseNotes(changelog, publicReleases, pkg.version);
+await writeFile(out + '/releases.html', stamp(releaseNotes.index));
+await mkdir(out + '/release-notes', { recursive: true });
+for (const [version, html] of releaseNotes.pages)
+  await writeFile(out + '/release-notes/v' + version + '.html', stamp(html));
+await copyFile('site/release-filter.js', out + '/release-filter.js');
 await copyFile('site/whats-new.css', out + '/whats-new.css');

@@ -5,19 +5,21 @@ const escape = (text) =>
 
 const repository = 'https://github.com/theharithsa/SalesDrone';
 
-function page(title, current, intro, content) {
+function page(title, current, intro, content, detail = false) {
+  const base = detail ? '../' : '';
   const link = (name, href) =>
-    `<a href="${href}"${name === current ? ' aria-current="page"' : ''}>${name}</a>`;
+    `<a href="${base}${href}"${name === current ? ' aria-current="page"' : ''}>${name}</a>`;
   return `<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${title} | SalesDrone</title><link rel="stylesheet" href="whats-new.css">
-</head><body>
-<header><div class="shell"><a class="brand" href="index.html">SalesDrone</a>
+<title>${title} | SalesDrone</title><link rel="stylesheet" href="${detail ? '../' : ''}whats-new.css">
+${current === 'Release notes' && !detail ? '<script src="release-filter.js" defer></script>' : ''}
+</head><body class="${current === 'Release notes' ? 'release-docs' : ''}">
+<header><div class="shell"><a class="brand" href="${base}index.html">SalesDrone</a>
 <nav aria-label="Documentation">${link('Guide', 'index.html')}${link('Roadmap', 'roadmap.html')}${link('Release notes', 'releases.html')}</nav>
 </div></header>
 <main class="shell"><div class="intro"><h1>${title}</h1><p>${intro}</p></div>${content}</main>
-<footer class="shell"><a href="product.html">Product handbook</a> <a href="${repository}">SalesDrone on GitHub</a></footer>
+<footer class="shell"><a href="${base}product.html">Product handbook</a> <a href="${repository}">SalesDrone on GitHub</a></footer>
 </body></html>`;
 }
 
@@ -43,31 +45,80 @@ export function renderRoadmap(sprints) {
 <p><a href="https://github.com/users/theharithsa/projects/4/views/10">Follow work in GitHub Sprint Delivery</a></p>`);
 }
 
+const images = {
+  '2.13.0': ['lead-feature-access-demo.jpg', 'Synthetic SalesDrone feature access settings', 'Feature access settings from the v2.13.0 demo.'],
+  '2.12.2': ['book-dashboard-demo.jpg', 'Synthetic SalesDrone Book mode dashboard', 'Book mode dashboard from the v2.12.2 demo.'],
+};
+
+const renderChange = (text) => text.split(/(`[^`]+`)/).map((part) =>
+  part.startsWith('`') && part.endsWith('`') && part.length > 2
+    ? `<code>${escape(part.slice(1, -1))}</code>` : escape(part)).join('');
+
+function sectionsFor(entry) {
+  const groups = new Map();
+  for (const block of entry.split(/^### /m).slice(1)) {
+    const [heading, ...lines] = block.trim().split('\n');
+    const label = /^(Added|Initial release)$/.test(heading) ? 'New features'
+      : /^(Changed|Desktop density maintenance|Lead activity tabs)/.test(heading) ? 'Changes'
+      : /^Unpublished candidate$/.test(heading) ? 'Publication status'
+      : 'Fixes and maintenance';
+    const items = lines.filter((line) => line.startsWith('- ')).map((line) => line.slice(2));
+    if (!items.length) continue;
+    groups.set(label, [...(groups.get(label) || []), ...items]);
+  }
+  return [...groups].map(([label, items]) => ({
+    label, items, id: label.toLowerCase().replaceAll(' ', '-'),
+  }));
+}
+
+const dateLabel = (date) => new Intl.DateTimeFormat('en-GB', {
+  dateStyle: 'medium', timeZone: 'UTC',
+}).format(new Date(date));
+
 export function renderReleaseNotes(changelog, notes, candidate) {
-  const versions = [...changelog.matchAll(/^## \[(\d+\.\d+\.\d+)\] - (\d{4}-\d{2}-\d{2})\s*$/gm)];
-  const history = versions.filter(([, version]) => Object.hasOwn(notes, version));
-  if (history.length !== Object.keys(notes).length || new Set(versions.map(([, version]) => version)).size !== versions.length
-    || versions.some(([, version]) => version !== candidate && !Object.hasOwn(notes, version)))
+  const headings = [...changelog.matchAll(/^## \[(\d+\.\d+\.\d+)\] - (\d{4}-\d{2}-\d{2})[ \t]*$/gm)];
+  const history = headings.map((heading, index) => ({ heading, end: headings[index + 1]?.index }))
+    .filter(({ heading: [, version] }) => Object.hasOwn(notes, version));
+  if (history.length !== Object.keys(notes).length || new Set(headings.map(([, version]) => version)).size !== headings.length
+    || headings.some(([, version]) => version !== candidate && !Object.hasOwn(notes, version)))
     throw Error('Public release highlights must match changelog history');
 
-  const entries = history.map((heading) => {
+  const rows = [];
+  const pages = new Map();
+  for (const { heading, end } of history) {
     const [, version, date] = heading;
     const { summary, published } = notes[version];
     if (!summary || (published && !/^\d{4}-\d{2}-\d{2}$/.test(published)))
       throw Error('Invalid public release metadata for ' + version);
-    const changelogLink = `${repository}/blob/main/CHANGELOG.md#${version.replaceAll('.', '')}---${date}`;
-    return `<article id="v${version}" class="release">
-<div class="release-heading"><h2>v${version}</h2>
-<p class="meta">${published ? 'Published' : 'Changelog entry'} <time datetime="${published || date}">${published || date}</time></p></div>
-<p>${escape(summary)}</p>
-<div class="links">${published ? `<a href="${repository}/releases/tag/v${version}">GitHub release</a>` : ''}
-<a href="${changelogLink}">Full changelog entry</a></div></article>`;
-  }).join('');
+    const sections = sectionsFor(changelog.slice(heading.index + heading[0].length, end));
+    if (!sections.length) throw Error('Missing release details for ' + version);
+    const status = published ? 'Published' : 'Changelog entry';
+    const time = `<time datetime="${published || date}">${dateLabel(published || date)}</time>`;
+    rows.push(`<tr id="v${version}"><th scope="row"><a href="release-notes/v${version}.html">v${version}</a></th><td>${escape(summary)}</td><td>${time}<small>${status}</small></td></tr>`);
 
-  return page('SalesDrone release notes', 'Release notes',
-    'Find what changed in each version, from the first release through the latest verified publication.',
-    `<figure><img src="assets/screenshots/book-dashboard-demo.jpg" alt="Synthetic SalesDrone Book mode dashboard with handwritten labels">
-<figcaption>Book mode dashboard from a reviewed synthetic demo. See the v2.12 series for appearance changes.</figcaption></figure>
-<details class="index"><summary>Jump to a version</summary><ul>${history.map(([, v]) => `<li><a href="#v${v}">v${v}</a></li>`).join('')}</ul></details>
-<div class="releases">${entries}</div>`);
+    const figure = images[version];
+    const illustration = figure ? `<figure><img src="../assets/screenshots/${figure[0]}" alt="${figure[1]}" loading="lazy"><figcaption>${figure[2]}</figcaption></figure>` : '';
+    const changelogLink = `${repository}/blob/main/CHANGELOG.md#${version.replaceAll('.', '')}---${date}`;
+    pages.set(version, page(`What’s new in v${version}`, 'Release notes', escape(summary),
+      `<p class="meta">${status} · ${time}</p>
+<div class="release-detail">
+<article>${illustration}
+${sections.map(({ label, id, items }) => `<section id="${id}"><h2>${label}</h2><ul>${items.map(item => `<li>${renderChange(item)}</li>`).join('')}</ul></section>`).join('')}
+<p class="links"><a href="../releases.html#v${version}">All releases</a>
+${published ? `<a href="${repository}/releases/tag/v${version}">GitHub release</a>` : ''}
+<a href="${changelogLink}">Full changelog entry</a></p></article>
+<aside aria-labelledby="on-this-page"><h2 id="on-this-page">On this page</h2>
+<ul>${sections.map(({ label, id }) => `<li><a href="#${id}">${label}</a></li>`).join('')}</ul></aside></div>`, true));
+  }
+
+  return {
+    index: page('SalesDrone release notes', 'Release notes',
+      'Browse new features, changes and fixes by version.',
+      `<div class="release-filter" hidden><label for="filter">Filter releases</label>
+<input id="filter" type="search" placeholder="Version or keyword" autocomplete="off">
+<p id="results" role="status"></p></div>
+<table class="release-table"><thead><tr><th scope="col">Version</th><th scope="col">Highlights</th><th scope="col">Date</th></tr></thead>
+<tbody>${rows.join('')}</tbody></table>`),
+    pages,
+  };
 }
