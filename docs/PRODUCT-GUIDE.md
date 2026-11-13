@@ -30,7 +30,7 @@ The compact sidebar groups Workspace, Insights and Manage. Group headings collap
 
 **Why do I see sample data after Google login?**
 
-Your identity is authenticated, but workspace membership is missing or inactive. Ask an administrator to approve your account under Settings > People & permissions. Do not enter real customer information in demo mode.
+Your identity is authenticated, but workspace membership is missing or inactive. Ask an administrator to approve your account under Settings > Workspace > People & access. Do not enter real customer information in demo mode.
 
 **Does this application call leads automatically?**
 
@@ -114,7 +114,7 @@ Members; actions depend on capability
 
 2. Enter text and run search. Open Filters to choose the search field, stage or source; choose Filter any column for company, city, sector, name, dates or supported custom fields.
 
-3. Click a customer name for quick inspection. On desktop it opens above the unchanged table. At widths up to 1000 CSS pixels it opens the dedicated lead page directly, without an offset sheet. Use Back to leads; desktop overlays also close with Escape.
+3. Select a customer name to open the full lead page. Use Back to leads to return to your list.
 
 4. Drag the overlay’s left edge to change its width. Arrow Left/Right resize the focused separator; Shift doubles the step, Home/End select the limits, and double-click resets it. Width is remembered in this browser.
 
@@ -140,7 +140,7 @@ On mobile, New is the primary header action. Export Excel and permitted Import a
 
 Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
 
-The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Lead fields → Lead page header. Select a phone number to open your calling app.
+The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Leads Management → Lead page header. Select a phone number to open your calling app.
 
 Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices.
 
@@ -166,11 +166,11 @@ Equals normalizes text. Exact match requires the same saved case, spaces and Uni
 
 Members with lead-edit access; assignment permission for reassignment
 
-1. On desktop, filter Leads to the records you need, then tick individual selection boxes or Select loaded leads. A batch contains at most 25 explicitly selected loaded records; this does not select every record matching server filters.
+1. On desktop, filter Leads to the records you need, then tick individual selection boxes or Select first 25 leads. A batch contains at most 25 explicitly selected loaded records; this does not select every record matching server filters.
 
 2. Choose Batch edit. Pick shared fields and values; Add another field for additional changes. Leave unchanged retains each lead value. Clear value removes an optional value; required-field validation still applies.
 
-3. Choose an assignee only when permitted. Reassignment cancels pending tasks and alerts the new owner. Names, phone/email and discussion history are edited individually inside a lead.
+3. Choose an assignee only when permitted. Reassignment cancels pending outreach tasks and alerts the new owner. Names, phone/email and discussion history are edited individually inside a lead.
 
 4. Select Preview changes and inspect the before/after rows. Apply reviewed changes commits all selected updates together. A stale, archived or inaccessible lead rejects the whole batch; refresh and preview again.
 
@@ -190,17 +190,17 @@ No. Shared contact values would create duplicate identities, and conversations n
 
 One selected record may have changed, been archived or moved out of your scope, or a value may not match current field definitions. The API applies no partial batch. Refresh and preview using current versions.
 
-## Full lead page: All, Comments, Calls, Tasks and Review
+## Full lead page and activity tabs
 
 Members who can read the lead
 
-1. On desktop, select Open full lead page in the inspection overlay. On phones and narrow tablets, opening a lead goes directly to this page. The URL is /leads/{leadId}; bookmarks still require current authorization.
+1. Select a lead from the list to open its full page on desktop or mobile. The URL is /leads/{leadId}. Bookmarks require current workspace access.
 
-2. Use the stage and assignment controls at the top. Assignment editing is an administrator action. Read-only users see status rather than gaining access to the people directory.
+2. Check the current stage and assignee in the header. Open Edit lead to change the stage or assignment when your permissions allow it.
 
-3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Lead details & score when you need the full enquiry context.
+3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.
 
-4. Comments opens first. All includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser. Stage and assignee are read-only on the lead page and can be changed from Edit enquiry.
+4. Comments opens first. All includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser.
 
 5. Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission.
 
@@ -216,7 +216,7 @@ Lead actions at the bottom use full-size buttons. Mark as do not contact pauses 
 
 Mobile typography uses a 28px page-title role, 22px lead identity, 17px body/form text and 15px supporting text at default browser settings. Existing font families are retained. Stage/assignment controls reflow to available width and the journey scrolls horizontally, without widening the document. Browser text preferences and zoom may change the visual sizes.
 
-Log call and Remind me appear once above the tabs. Expanding Lead details & score shows a single labelled Lead information list, including email. Available phone/email links follow contact review and do-not-contact guards. The quick-inspection overlay has its own compact actions; those are not repeated on the full page.
+Log call and Remind me appear once above the tabs. Expanding Details & qualification shows a single labelled Lead information list, including email. Available phone/email links follow contact review and do-not-contact guards.
 
 The lead header groups the person, a small score ring, current sales stage and assignee. It reflows by available content width. The journey is a compact horizontally scrollable path; About this journey and Recorded stage changes expand separately. The ring shows a known score out of 100; a dashed ring means Unscored, which is different from a known zero. Reported risks retain an explicit warning label; a score is not a verified commercial guarantee.
 
@@ -276,7 +276,7 @@ Members with activities:write for changes
 
 1. Open a lead and choose Log call. Select the actual outcome, add discussion notes and any supported disposition or follow-up fields, then save.
 
-2. On the full lead page, type directly into Write a comment in All or Comments and choose Post comment. In the quick-inspection overlay, Add comment still opens the compact dialog. Each successful post creates a separate entry.
+2. On the full lead page, type directly into Write a comment in All or Comments and choose Post comment. Each successful post creates a separate entry.
 
 3. Check notes in Comments and logged calls in Calls; All combines both. The original author or an Admin with current lead access can choose Correct entry; the original revision remains part of the record.
 
@@ -424,7 +424,7 @@ Each nonblank selected discussion cell remains a distinct historical note. Accep
 
 Parsed rows, results and source values are retained until an Admin deletes details. Original workbook files are not stored. Deletion also clears the dataset’s source comparison baselines, so later uploads may need a new manual comparison; saved leads, discussions and summary audit history remain.
 
-View history requires imports:read. imports:write allows planning/review/execution; imports:share adds shared jobs. Lead create/edit capabilities and assigned/all policy still apply. Non-admin import permissions are opt-in in People & permissions.
+View history requires imports:read. imports:write allows planning/review/execution; imports:share adds shared jobs. Lead create/edit capabilities and assigned/all policy still apply. Non-admin import permissions are opt-in in People & access.
 
 Download results produces a local JSON report with permitted row details, provided workspace exports are enabled. History is not a substitute for authorization; changing roles or assignments can redact results or block the next chunk.
 
@@ -472,7 +472,7 @@ Members, when exports are enabled
 
 3. Cancel if you selected the wrong filter or columns. Download the completed workbook and handle it as private company data.
 
-4. Admins can turn off all lead exports in Settings > Workspace > Reports & lead access. To allow only selected members, turn off Export leads by default in Leads Management > Feature access. In People & access, open Edit access for each selected member and set Export leads to Allow.
+4. Admins can turn off all lead exports in Settings > Workspace > Reports & lead access. To allow only selected members, turn off Export leads by default in Leads Management > Feature access. In Workspace > People & access, open Edit access for each selected member and set Export leads to Allow.
 
 An export follows the active filters and current authorization; it is not an unrestricted database download. The server rechecks current access while report pages are read. Policy/account changes cancel pending work.
 
@@ -524,7 +524,7 @@ Personal controls for members; workspace controls for administrators
 
 1. Open Settings and search by name or browse the available categories. Desktop shows a category rail. On a phone, open a setting and use its back link to return to the category.
 
-2. Under Lead fields, choose Field definitions, Field order, Lead page header or Choice lists. Header choices show a fictional live preview.
+2. Under Leads Management, choose Field definitions, Field order, Lead page header or Choice lists. Header choices show a fictional live preview.
 
 3. Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members’ workflow.
 
@@ -532,15 +532,15 @@ Personal controls for members; workspace controls for administrators
 
 Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.
 
-Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. Name, enquiry date and at least one contact field remain available. Choice lists manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.
+Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. Choice lists manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.
 
-Reports & lead access controls exports and assigned-only visibility for non-admins. People & permissions manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.
+Reports & lead access controls exports and assigned-only visibility for non-admins. People & access manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.
 
 The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.
 
 The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.
 
-On phones, lead details stack Sales stage and Assigned to controls with matching labels and widths. Dashboard outreach labels align with their horizontal gridlines; use the metric switch and Day selector to inspect values.
+On phones, the lead header displays Sales stage and Assigned to. Open Edit lead to change either value when permitted.
 
 ![Settings: complete control reference — synthetic demo only](../site/assets/screenshots/field-manager-demo.jpg)
 
@@ -548,11 +548,11 @@ On phones, lead details stack Sales stage and Assigned to controls with matching
 
 **Can I rename a built-in field?**
 
-Use Lead fields > Field definitions. A label change does not rename its stable API key, so integrations keep using the documented schema.
+Use Leads Management > Field definitions. A label change does not rename its stable API key, so integrations keep using the documented schema.
 
 **Can I remove a field without losing historical data?**
 
-Use the delete icon in Lead fields > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Lead fields, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded.
+Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded.
 
 ## Book mode: a quieter reading workspace
 
@@ -594,19 +594,23 @@ Save preferences to apply it. If saving fails, the previous saved style remains 
 
 Administrators
 
-1. Open Settings > People & permissions. Invite or approve the intended Google account; verify its email carefully.
+1. Open Settings > Workspace > People & access. Invite or approve the intended Google account; verify its email carefully.
 
 2. Set the role, capabilities and supported lead scope appropriate to the person’s work. Review active status and current ownership before granting access.
 
-3. Assign a lead using the top-of-lead assignment control. The recipient receives an eligible assignment notification; pending old-owner outreach is cancelled.
+3. For an export exception, choose Edit access next to a member. Set Export leads to Use workspace default, Allow or Block, then save. Allow Excel reports must be enabled in Reports & lead access, and the member’s lead visibility still applies.
 
-4. Deactivate or adjust membership when responsibility changes. Recheck access with the affected user rather than assuming a cached page reflects current permission.
+4. Open Edit lead and change Assigned to when you have assignment access. The recipient receives an eligible assignment notification; pending old-owner outreach is cancelled.
+
+5. Deactivate or adjust membership when responsibility changes. Recheck access with the affected user rather than assuming a cached page reflects current permission.
 
 The two bootstrap administrator identities remain protected. Routine sign-in does not approve membership. Server policy is authoritative for every read, write, inference input and export; hiding a button alone is not an access boundary.
 
 Role labels and capabilities are related but not interchangeable. Personal reminders and notification delivery remain private; lead-linked tasks follow current lead access. Assigned-only policy can further restrict non-admin lead access even when other capabilities are present.
 
 Only grant access needed for the person’s responsibility. Do not share Google sessions or personal API tokens across employees.
+
+![People, permissions and assignment — synthetic demo only](../site/assets/screenshots/people-export-guide.jpg)
 
 ### Questions
 
@@ -722,7 +726,7 @@ Everyone
 
 Body and editable text use a 16px default, with 14px supporting text, 13px desktop table data and 12px metadata. Phone lead cards use 16px names with secondary details grouped below. Standard font families are unchanged. Book mode uses its own handwriting. Sizes scale with browser text preferences.
 
-On narrow screens a lead opens its dedicated page. On larger screens inspection overlays the table; expand opens the full page. Local table, stage and tab scrolling is intentional.
+A lead opens its dedicated page on desktop and mobile. The lead table, journey and activity tabs can scroll within their own sections.
 
 Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.
 

@@ -1,15 +1,18 @@
 {
   "schemaVersion": 1,
   "version": "2.13.7",
-  "summary": "Publish a public roadmap and a versioned release archive.",
+  "summary": "Publish the public roadmap and release archive and refresh the SalesDrone product guide.",
   "modules": [
-    "salesdrone-documentation"
+    "salesdrone-documentation",
+    "salesdrone-product-guide"
   ],
   "documentation": [
     "CHANGELOG.md",
     "docs/whats-new/README.md",
     "docs/whats-new/roadmap.json",
-    "docs/whats-new/releases.json"
+    "docs/whats-new/releases.json",
+    "docs/PRODUCT-GUIDE.md",
+    "site/index.html"
   ],
   "settingsSections": [],
   "api": {
@@ -81,8 +84,20 @@
     "number": 64,
     "title": "v2.13.7 \u2014 Public roadmap and release notes",
     "issues": [
-      205
+      205,
+      206
     ],
     "readiness": "ready"
-  }
+  },
+  "screenshots": [
+    "dashboard-demo.jpg",
+    "lead-filters-demo.jpg",
+    "lead-workspace-demo.jpg",
+    "lead-tasks-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "lead-feature-access-mobile-guide.jpg",
+    "lead-feature-access-guide.jpg",
+    "field-manager-demo.jpg",
+    "people-export-guide.jpg"
+  ]
 }

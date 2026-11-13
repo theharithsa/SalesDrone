@@ -31,6 +31,9 @@ function stamp(html) {
 }
 const screenshots = [
   'lead-feature-access-demo.jpg',
+  'lead-feature-access-guide.jpg',
+  'lead-feature-access-mobile-guide.jpg',
+  'people-export-guide.jpg',
   'lead-feature-access-mobile-demo.jpg',
   'team-demo.jpg',
   'team-mobile-demo.jpg',

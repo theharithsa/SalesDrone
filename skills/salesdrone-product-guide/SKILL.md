@@ -71,6 +71,6 @@ Team reporting guidance is in [operations](references/operations.md).
 
 Verify each capture heading against its caption; see [operations](references/operations.md).
 
-For the full-page lead workflow, capture Comments as the default and review the visible header, card order controls and lead task actions. Retire obsolete inspector captures.
+Capture Comments as the lead page default. Review the header, card order, shared tasks and member export controls. Keep guide captures separate from matching historical release screenshots.
 
 Refresh the chart grouping, Team controls, import history, Hygiene and Assistant screenshots from synthetic fixtures.

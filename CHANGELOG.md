@@ -15,6 +15,7 @@ API contract versions are independent from application versions.
 
 ### Changed
 - Add a public roadmap with sprint windows and prerequisites, plus a filterable release index and individual version notes linked from the guide.
+- Refresh the illustrated guide and product handbook for full-page leads, shared tasks and member export permissions, with current synthetic desktop and phone screenshots.
 
 ## [2.13.6] - 2026-11-12
 
