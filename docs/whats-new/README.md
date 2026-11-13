@@ -20,3 +20,5 @@ Both illustrations were created with the built-in ImageGen tool and visually rev
 ## Publish an upcoming feature
 
 Write a customer-facing issue title and a one-line paragraph under `## Public summary`. Apply `roadmap-public` to opt those two fields into the public site. The Pages workflow fetches all pages of open labeled issues, excludes PRs, and passes them to the static generator. GitHub issue events refresh Pages, and a daily run reconciles missed updates. The workflow uses the published source and does not deploy the app. Remove the label to withdraw a feature from both pages. Keep the offline preview list for the two illustrated examples current when changing their copy. See the [delivery workflow](../SDLC.md).
+
+The Product handbook shares the public Astryx layout, theme and navigation. Its content continues to come from `docs/product-guide.json` and its app images use the existing reviewed captures.

@@ -3,14 +3,17 @@
   "version": "2.13.9",
   "summary": "Redesign the public roadmap and release notes with Astryx.",
   "modules": [
-    "salesdrone-documentation"
+    "salesdrone-documentation",
+    "salesdrone-product-guide"
   ],
   "documentation": [
     "CHANGELOG.md",
     "docs/whats-new/README.md",
     "skills/salesdrone-documentation/SKILL.md",
     "THIRD-PARTY-NOTICES.md",
-    "docs/SDLC.md"
+    "docs/SDLC.md",
+    "docs/PRODUCT-GUIDE.md",
+    "skills/salesdrone-product-guide/SKILL.md"
   ],
   "settingsSections": [],
   "api": {
@@ -83,7 +86,8 @@
     "title": "v2.13.9 \u2014 Astryx public roadmap and release notes",
     "issues": [
       214,
-      218
+      218,
+      219
     ],
     "readiness": "ready"
   },

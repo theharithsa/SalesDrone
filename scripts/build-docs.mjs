@@ -244,6 +244,8 @@ const product = renderProductGuide(
 );
 await writeFile(out + '/product.html', stamp(product.html));
 await copyFile('site/product.css', out + '/product.css');
+await copyFile('site/product-search.js', out + '/product-search.js');
+
 if ((await readFile('docs/PRODUCT-GUIDE.md', 'utf8')) !== product.markdown)
   throw Error('Stale product handbook: npm run docs:product');
 
