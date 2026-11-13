@@ -1,48 +1,86 @@
-const escape = (text) =>
-  text.replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[character]);
+import { createElement as h, Fragment } from 'react';
+import { Card, HStack, VStack } from '@astryxdesign/core/Layout';
+import { Heading } from '@astryxdesign/core/Text';
+import { repository, heading, paragraph, link, buttonLink, page } from './public-docs-layout.mjs';
 
-const repository = 'https://github.com/theharithsa/SalesDrone';
+const section = (id, title, ...children) =>
+  h(VStack, { as: 'section', gap: 5, 'aria-labelledby': id },
+    h(Heading, { id, level: 2, weight: 'normal' }, title), ...children);
 
-function page(title, current, intro, content, detail = false) {
-  const base = detail ? '../' : '';
-  const link = (name, href) =>
-    `<a href="${base}${href}"${name === current ? ' aria-current="page"' : ''}>${name}</a>`;
-  return `<!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${title} | SalesDrone</title><link rel="stylesheet" href="${detail ? '../' : ''}whats-new.css">
-${current === 'Release notes' && !detail ? '<script src="release-filter.js" defer></script>' : ''}
-</head><body class="${current === 'Release notes' ? 'release-docs' : ''}">
-<header><div class="shell"><a class="brand" href="${base}index.html"><span class="brand-mark" aria-hidden="true"></span><span>SalesDrone<span class="brand-dot">.</span></span></a>
-<nav aria-label="Documentation">${link('Guide', 'index.html')}${link('Roadmap', 'roadmap.html')}${link('Release notes', 'releases.html')}</nav>
-</div></header>
-<main class="shell"><div class="intro"><h1>${title}</h1><p>${intro}</p></div>${content}</main>
-<footer class="shell"><a href="${base}product.html">Product handbook</a> <a href="${repository}">SalesDrone on GitHub</a></footer>
-</body></html>`;
+
+const artwork = (name, loading) => h('img', {
+  className: 'editorial-image', src: 'assets/roadmap/' + name + '.webp',
+  alt: '', width: 1200, height: 800, loading,
+});
+
+function sprintRows(sprints) {
+  return h('ol', { className: 'sprint-list', start: sprints[0]?.sprint },
+    sprints.map(({ sprint, title, window, summary, milestone }) =>
+      h('li', { key: sprint, id: 'sprint-' + sprint },
+        h(HStack, { as: 'article', className: 'sprint-row', gap: 4 },
+          h(VStack, { className: 'sprint-date', gap: 1 },
+            paragraph('Sprint ' + sprint, 'kicker'), paragraph(window, 'muted')),
+          h(VStack, { gap: 2 }, heading(3, title), paragraph(summary, 'muted'),
+            link(repository + '/milestone/' + milestone, 'View Sprint ' + sprint + ' milestone'))))));
 }
 
-export function renderRoadmap(sprints) {
-  if (!sprints.length || sprints.some(({ sprint, milestone }, index) =>
-    sprint !== index + 1 || !Number.isSafeInteger(milestone) || milestone < 1))
-    throw Error('Invalid public sprint sequence');
+function upcomingFeatures(features, sprints = []) {
+  if (!features.length) return null;
+  return section('upcoming', 'Upcoming features',
+    h('ul', { className: 'upcoming-list' }, features.map(({ number, title, summary, milestone }) => {
+      const sprint = sprints.find((entry) => entry.milestone === milestone);
+      return h('li', { key: number }, h(Card, { padding: 4 },
+        h(VStack, { gap: 2 },
+          paragraph(sprint ? 'Sprint ' + sprint.sprint + ' · ' + sprint.window : 'Planned · Date to be confirmed', 'kicker'),
+          heading(3, title),
+          paragraph(summary, 'muted'),
+          link(repository + '/issues/' + number, 'Track this feature on GitHub'))));
+    })));
+}
 
-  const product = sprints.filter(({ sprint }) => sprint >= 3);
-  const maintenance = sprints.filter(({ sprint }) => sprint < 3);
-  const cards = (items) => items.map(({ sprint, title, window, summary, milestone }) =>
-    `<li><article><p class="meta">Sprint ${sprint} · ${escape(window)}</p>
-<h3>${escape(title)}</h3><p>${escape(summary)}</p>
-<a href="${repository}/milestone/${milestone}">Sprint ${sprint} milestone</a></article></li>`).join('');
+export function renderRoadmap(sprints, redesign, features = []) {
+  if (sprints.length < 6 || sprints.some(({ sprint, milestone }, index) =>
+    sprint !== index + 1 || !Number.isSafeInteger(milestone) || milestone < 1) ||
+    !Number.isSafeInteger(redesign.issue) || redesign.issue < 1)
+    throw Error('Invalid public sprint sequence or redesign issue');
 
-  return page('SalesDrone roadmap', 'Roadmap',
-    'See what we’re working on, what it means for your team, and what has to happen first.',
-    `<section aria-labelledby="product"><h2 id="product">Product plans</h2>
-<p class="note">Dates are planning windows. Pilots and signup move if the required checks take longer.</p>
-<ol class="flow" start="3">${cards(product)}</ol></section>
-<section aria-labelledby="maintenance"><h2 id="maintenance">Maintenance and documentation</h2>
-<ol class="maintenance">${cards(maintenance)}</ol></section>
-<p><a href="https://github.com/users/theharithsa/projects/4/views/10">Follow work in GitHub Sprint Delivery</a></p>`);
+  const prerequisites = [
+    ['4', 'Isolate organizations', 'Verify that each workspace can access only its own data.', 4],
+    ['4', 'Move the existing workspace', 'Rehearse the migration and test how to roll it back.', 4],
+    ['5', 'Pilot invoicing', 'Try invoices and payments with a small group.', 5],
+    ['6', 'Decide on public signup', 'Review pilot and staged signup results before opening access.', 6],
+  ];
+  return page('Product roadmap', 'Roadmap', h(Fragment, null,
+    h(Card, { className: 'editorial-card', padding: 0 },
+      h(VStack, { className: 'editorial-copy', gap: 4 },
+        paragraph('Product updates', 'kicker'),
+        heading(1, 'Product roadmap', 'display-heading'),
+        paragraph('See what’s planned for SalesDrone, when we’re aiming to deliver it, and what needs to happen first.', 'lede'),
+        h(HStack, { gap: 2, wrap: 'wrap' },
+          buttonLink('#sprint-plan', 'Sprint plan', 'primary'),
+          buttonLink('releases.html', 'Release notes'))),
+      artwork('flight-plan', 'eager')),
+    section('dependencies', 'From isolated workspaces to public signup',
+      paragraph('Each step depends on the one before it. Sprint dates are targets and can move if a check takes longer.', 'muted'),
+      h('ol', { className: 'dependency-flow' }, prerequisites.map(([step, title, summary, sprint]) =>
+        h('li', { key: step }, h(Card, { className: 'flow-card', padding: 4 },
+          h(VStack, { gap: 2 }, paragraph('Sprint ' + step, 'kicker'),
+            heading(3, link('#sprint-' + sprint, title)), paragraph(summary, 'muted'))))))),
+    features.some(({ number }) => number === redesign.issue) && section('workspace-redesign', 'A redesigned SalesDrone workspace',
+      h(Card, { className: 'editorial-card roadmap-feature', padding: 0 },
+        h(VStack, { className: 'editorial-copy', gap: 3 },
+          paragraph('Planned · Upcoming sprints', 'kicker'),
+          heading(3, 'Astryx across SalesDrone'),
+          paragraph('This roadmap and the release notes are the first step. The next phase brings the same design system to the workspace, starting with navigation, leads and tasks. Dashboard, Settings and the remaining screens follow in stages.', 'muted'),
+          buttonLink(repository + '/issues/' + redesign.issue, 'View redesign plan')),
+        artwork('workspace-redesign', 'lazy')),
+      h('ol', { className: 'redesign-flow', 'aria-label': 'Workspace redesign sequence' },
+        ['Public docs', 'Workspace navigation', 'Leads and tasks', 'Dashboard and Settings'].map((phase) =>
+          h('li', { key: phase }, paragraph(phase))))),
+    upcomingFeatures(features.filter(({ number }) => number !== redesign.issue), sprints),
+    section('sprint-plan', 'Sprint plan',
+      sprintRows(sprints),
+      link('https://github.com/users/theharithsa/projects/4/views/10', 'Open Sprint Delivery on GitHub'))));
 }
 
 const images = {
@@ -50,9 +88,9 @@ const images = {
   '2.12.2': ['book-dashboard-demo.jpg', 'Synthetic SalesDrone Book mode dashboard', 'Book mode dashboard from the v2.12.2 demo.'],
 };
 
-const renderChange = (text) => text.split(/(`[^`]+`)/).map((part) =>
+const renderChange = (text) => text.split(/(`[^`]+`)/).map((part, index) =>
   part.startsWith('`') && part.endsWith('`') && part.length > 2
-    ? `<code>${escape(part.slice(1, -1))}</code>` : escape(part)).join('');
+    ? h('code', { key: index }, part.slice(1, -1)) : part);
 
 function sectionsFor(entry) {
   const groups = new Map();
@@ -74,51 +112,92 @@ function sectionsFor(entry) {
 const dateLabel = (date) => new Intl.DateTimeFormat('en-GB', {
   dateStyle: 'medium', timeZone: 'UTC',
 }).format(new Date(date));
+const dateTime = (date) => h('time', { key: date, dateTime: date }, dateLabel(date));
 
-export function renderReleaseNotes(changelog, notes, candidate) {
+export function renderReleaseNotes(changelog, notes, features = [], sprints = []) {
   const headings = [...changelog.matchAll(/^## \[(\d+\.\d+\.\d+)\] - (\d{4}-\d{2}-\d{2})[ \t]*$/gm)];
-  const history = headings.map((heading, index) => ({ heading, end: headings[index + 1]?.index }))
-    .filter(({ heading: [, version] }) => Object.hasOwn(notes, version));
-  if (history.length !== Object.keys(notes).length || new Set(headings.map(([, version]) => version)).size !== headings.length
-    || headings.some(([, version]) => version !== candidate && !Object.hasOwn(notes, version)))
+  const history = headings.map((heading, index) => ({ heading, end: headings[index + 1]?.index }));
+  const versions = new Set(headings.map(([, version]) => version));
+  if (versions.size !== headings.length || Object.keys(notes).some((version) => !versions.has(version)))
     throw Error('Public release highlights must match changelog history');
 
-  const rows = [];
-  const pages = new Map();
-  for (const { heading, end } of history) {
+  const records = history.map(({ heading, end }) => {
     const [, version, date] = heading;
-    const { summary, published } = notes[version];
-    if (!summary || (published && !/^\d{4}-\d{2}-\d{2}$/.test(published)))
-      throw Error('Invalid public release metadata for ' + version);
     const sections = sectionsFor(changelog.slice(heading.index + heading[0].length, end));
     if (!sections.length) throw Error('Missing release details for ' + version);
-    const status = published ? 'Published' : 'Changelog entry';
-    const time = `<time datetime="${published || date}">${dateLabel(published || date)}</time>`;
-    rows.push(`<tr id="v${version}"><th scope="row"><a href="release-notes/v${version}.html">v${version}</a></th><td>${escape(summary)}</td><td>${time}<small>${status}</small></td></tr>`);
-
+    const { summary = sections[0].items[0].replaceAll('`', ''), published } = notes[version] || {};
+    if (!summary || (published && !/^\d{4}-\d{2}-\d{2}$/.test(published)))
+      throw Error('Invalid public release metadata for ' + version);
+    return { version, date, summary, published, sections,
+      label: published ? 'Published' : 'Changelog entry',
+      href: 'release-notes/v' + version + '.html' };
+  });
+  const latest = records.find((record) => record.published);
+  const pages = new Map(records.map((record, index) => {
+    const { version, date, summary, published, sections, label } = record;
     const figure = images[version];
-    const illustration = figure ? `<figure><img src="../assets/screenshots/${figure[0]}" alt="${figure[1]}" loading="lazy"><figcaption>${figure[2]}</figcaption></figure>` : '';
-    const changelogLink = `${repository}/blob/main/CHANGELOG.md#${version.replaceAll('.', '')}---${date}`;
-    pages.set(version, page(`What’s new in v${version}`, 'Release notes', escape(summary),
-      `<p class="meta">${status} · ${time}</p>
-<div class="release-detail">
-<article>${illustration}
-${sections.map(({ label, id, items }) => `<section id="${id}"><h2>${label}</h2><ul>${items.map(item => `<li>${renderChange(item)}</li>`).join('')}</ul></section>`).join('')}
-<p class="links"><a href="../releases.html#v${version}">All releases</a>
-${published ? `<a href="${repository}/releases/tag/v${version}">GitHub release</a>` : ''}
-<a href="${changelogLink}">Full changelog entry</a></p></article>
-<aside aria-labelledby="on-this-page"><h2 id="on-this-page">On this page</h2>
-<ul>${sections.map(({ label, id }) => `<li><a href="#${id}">${label}</a></li>`).join('')}</ul></aside></div>`, true));
-  }
+    const illustration = figure && h('figure', { className: 'release-figure' },
+      h('img', { src: '../assets/screenshots/' + figure[0], alt: figure[1], loading: 'lazy' }),
+      h('figcaption', null, figure[2]));
+    const related = [[records[index - 1], 'Newer release'], [records[index + 1], 'Older release']];
+    return [version, page('What’s new in v' + version, 'Release notes', h(Fragment, null,
+      h(VStack, { gap: 3, className: 'detail-intro' },
+        link('../releases.html#v' + version, '← All release notes'),
+        paragraph([label, ' · ', dateTime(published || date)], 'kicker'),
+        heading(1, 'What’s new in v' + version, 'display-heading'),
+        paragraph(summary, 'lede')),
+      h('section', { className: 'release-detail', 'aria-label': 'Release changes' },
+        h(VStack, { as: 'aside', className: 'contents', gap: 2, 'aria-labelledby': 'on-this-page' },
+          h(Heading, { id: 'on-this-page', level: 2, weight: 'medium' }, 'On this page'),
+          h(VStack, { as: 'nav', 'aria-label': 'On this page', gap: 2 },
+            sections.map(({ label, id }) => link('#' + id, label, { key: id })))),
+        h(VStack, { as: 'article', gap: 5 }, illustration,
+          sections.map(({ label, id, items }) =>
+            h(VStack, { key: id, as: 'section', id, gap: 3, className: 'change-section' },
+              heading(2, label),
+              h('ul', { className: 'changes' }, items.map((item, index) =>
+                h('li', { key: index }, renderChange(item)))))),
+          h(HStack, { gap: 2, wrap: 'wrap' },
+            published && buttonLink(repository + '/releases/tag/v' + version, 'GitHub release'),
+            buttonLink(repository + '/blob/main/CHANGELOG.md#' + version.replaceAll('.', '') + '---' + date, 'View changelog')),
+          h(HStack, { as: 'nav', className: 'adjacent-releases', 'aria-label': 'Adjacent releases', gap: 4, wrap: 'wrap' },
+            related.filter(([item]) => item).map(([item, direction]) =>
+              link('../' + item.href, direction + ' · v' + item.version, { key: item.version })))))),
+    { detail: true })];
+  }));
+
+  const archive = records.map(({ version, date, published, label, summary, href }) =>
+    h('li', { key: version, id: 'v' + version },
+      h('article', { className: 'release-row' },
+        heading(3, link(href, 'v' + version)),
+        paragraph(summary),
+        paragraph([dateTime(published || date), h('small', { key: 'status' }, label)], 'release-date'))));
 
   return {
-    index: page('SalesDrone release notes', 'Release notes',
-      'Browse new features, changes and fixes by version.',
-      `<div class="release-filter" hidden><label for="filter">Filter releases</label>
-<input id="filter" type="search" placeholder="Version or keyword" autocomplete="off">
-<p id="results" role="status"></p></div>
-<table class="release-table"><thead><tr><th scope="col">Version</th><th scope="col">Highlights</th><th scope="col">Date</th></tr></thead>
-<tbody>${rows.join('')}</tbody></table>`),
+    index: page('Release notes', 'Release notes', h(Fragment, null,
+      h('section', { className: 'release-overview', 'aria-label': 'Release notes overview' },
+        h(VStack, { className: 'editorial-copy release-intro', gap: 3 },
+          paragraph('Product updates', 'kicker'),
+          heading(1, 'Release notes', 'display-heading'),
+          paragraph('Find new features, fixes and changes for every SalesDrone version.', 'lede'),
+          h(HStack, { gap: 3, wrap: 'wrap' },
+            link('#release-history', 'Search versions'),
+            link('roadmap.html', 'View roadmap'))),
+        latest && h(Card, { className: 'latest-release', padding: 5 },
+          h(VStack, { gap: 3 },
+            paragraph('Latest published', 'kicker'),
+            heading(2, 'v' + latest.version),
+            paragraph(latest.summary, 'muted'),
+            paragraph(dateTime(latest.published), 'muted'),
+            buttonLink(latest.href, 'Read the latest notes', 'primary')))),
+      upcomingFeatures(features, sprints),
+      section('release-history', 'All versions',
+        h('section', { className: 'release-filter', hidden: true, 'aria-label': 'Find releases' },
+          h('label', { htmlFor: 'filter' }, 'Search releases'),
+          h('input', { id: 'filter', type: 'search', placeholder: 'Version, feature or keyword', autoComplete: 'off' }),
+          h('p', { id: 'results', role: 'status' })),
+        h('ol', { className: 'release-list' }, archive))),
+    { filter: true }),
     pages,
   };
 }

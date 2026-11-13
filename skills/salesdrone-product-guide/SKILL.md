@@ -10,7 +10,7 @@ Read [SHARED.md](../SHARED.md) and the affected module skill before writing. The
 ## Source and outputs
 
 - [docs/product-guide.json](../../docs/product-guide.json): audience, ordered steps, explanations/limits and troubleshooting for each product module.
-- [scripts/product-guide.mjs](../../scripts/product-guide.mjs): escaped HTML and Markdown renderer, stable unique module anchors and local text search.
+- [scripts/product-guide.mjs](../../scripts/product-guide.mjs): Astryx HTML and Markdown, stable topic anchors and local search.
 - [docs/PRODUCT-GUIDE.md](../../docs/PRODUCT-GUIDE.md): generated repository handbook.
 - [scripts/build-docs.mjs](../../scripts/build-docs.mjs): explicit public asset allowlist and product.html build.
 - [site/assets/screenshots/manifest.json](../../site/assets/screenshots/manifest.json): reviewed captures with hash, measured viewport and release version.
@@ -21,7 +21,7 @@ Read [SHARED.md](../SHARED.md) and the affected module skill before writing. The
 2. For UI changes list every affected public screenshot, including README embeds and overview images. Capture those screens again with the approved browser tool using isolated synthetic demo data or a fresh public-schema-only Swagger tab. Disable RUM in local rehearsals. Never capture real leads, imports, tokens or signed-in customer details.
 3. Measure actual viewport dimensions and inspect each image before copying it to the curated path. Record sha256, capture date, measured viewport, mode, current app version and a short privacy/visual review. Reuse canonical filenames so README and guide references update together. Do not label desktop screenshots as mobile or an old capture as current.
 4. Add new images explicitly to build-docs; never recursively publish docs/, workbooks or capture directories. Keep release plan screenshots listing affected filenames. Validate their manifest version before publication. Unchanged screenshots can retain honest historical metadata; replace any image whose visible design or controls changed.
-5. Run docs:product, docs:settings, skills:tree, docs:check and docs:build. Inspect the generated handbook in a browser: search a feature, clear search, follow module anchors, open FAQs and settings/API links. Check that navigation labels match the real app and Documentation remains above Settings.
+5. Run docs:product, docs:settings, skills:tree, docs:check and docs:build. Review the Astryx handbook on phone and desktop: enlarge text, search, clear via the topic list, open FAQs and follow settings/API links. Check that navigation labels match the real app and Documentation remains above Settings.
 6. Update the owning module skill, README links, changelog and version impact plan. After authorized release check product.html and Settings reference versions independently of the application. Publication permission comes from the user, not this skill.
 
 ## Primary API ownership

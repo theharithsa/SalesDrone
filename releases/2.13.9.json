@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "2.13.9",
+  "summary": "Redesign the public roadmap and release notes with Astryx.",
+  "modules": [
+    "salesdrone-documentation",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/whats-new/README.md",
+    "skills/salesdrone-documentation/SKILL.md",
+    "THIRD-PARTY-NOTICES.md",
+    "docs/SDLC.md",
+    "docs/PRODUCT-GUIDE.md",
+    "skills/salesdrone-product-guide/SKILL.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "The public pages are pre-rendered from versioned files and call no application endpoints.",
+    "contractVersion": "1.34.0",
+    "permissions": "Public documentation remains anonymous. Workspace permissions are unaffected.",
+    "tests": [
+      "tests/whats-new.test.ts"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "not-applicable",
+      "reason": "The public build has no business mutations, instrumentation or authenticated traffic.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "not-applicable",
+      "reason": "The public build has no business mutations, instrumentation or authenticated traffic.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "not-applicable",
+      "reason": "The public build has no business mutations, instrumentation or authenticated traffic.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "not-applicable",
+      "reason": "The public build has no business mutations, instrumentation or authenticated traffic.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "The standard Actions workflow reports deployment and verification outcomes.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Open roadmap, archive and version details at desktop and narrow widths. Follow prerequisites, confirm release dates and historical image labels, and exercise search and empty results. Verify exact Pages revision after authorized publication.",
+  "milestone": {
+    "number": 66,
+    "title": "v2.13.9 \u2014 Astryx public roadmap and release notes",
+    "issues": [
+      214,
+      218,
+      219
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

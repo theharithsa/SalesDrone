@@ -27,3 +27,6 @@ Open Sans Variable, Source Serif 4 Variable and Patrick Hand are distributed by
 Fontsource under their upstream SIL Open Font License 1.1. See the LICENSE files
 in the corresponding `@fontsource-variable/open-sans`,
 `@fontsource-variable/source-serif-4` and `@fontsource/patrick-hand` packages.
+
+Astryx Core and the Neutral theme (Meta Platforms) are MIT-licensed. Their
+static stylesheets are published with the MIT notice at `/astryx/LICENSE.txt`.

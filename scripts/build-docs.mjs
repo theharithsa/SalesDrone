@@ -1,4 +1,5 @@
 import { renderReleaseNotes, renderRoadmap } from './whats-new.mjs';
+import { publicRoadmapFeatures } from './public-roadmap.mjs';
 import { execFileSync } from 'node:child_process';
 import { renderProductGuide } from './product-guide.mjs';
 import { renderSettings } from './settings-reference.mjs';
@@ -6,6 +7,7 @@ import { TOKEN_SCOPES } from '../functions/src/api-scopes.js';
 // Curated public build: never copy docs/, arbitrary captures or workspace files.
 import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 const pkg = JSON.parse(await readFile('package.json', 'utf8')),
   out = 'site/.build';
 const sourceCommit =
@@ -242,14 +244,48 @@ const product = renderProductGuide(
 );
 await writeFile(out + '/product.html', stamp(product.html));
 await copyFile('site/product.css', out + '/product.css');
+await copyFile('site/product-search.js', out + '/product-search.js');
+
 if ((await readFile('docs/PRODUCT-GUIDE.md', 'utf8')) !== product.markdown)
   throw Error('Stale product handbook: npm run docs:product');
 
-const publicRoadmap = JSON.parse(await readFile('docs/whats-new/roadmap.json', 'utf8'));
+const { sprints, redesign, preview } = JSON.parse(await readFile('docs/whats-new/roadmap.json', 'utf8'));
+await mkdir(out + '/astryx', { recursive: true });
+for (const [source, target] of [
+  ['@astryxdesign/core/reset.css', 'reset.css'],
+  ['@astryxdesign/core/astryx.css', 'core.css'],
+  ['@astryxdesign/theme-neutral/theme.css', 'neutral.css'],
+]) {
+  await copyFile(fileURLToPath(import.meta.resolve(source)), out + '/astryx/' + target);
+}
+await copyFile('node_modules/@astryxdesign/theme-neutral/LICENSE', out + '/astryx/LICENSE.txt');
+await mkdir(out + '/assets/roadmap', { recursive: true });
+for (const name of ['flight-plan.webp', 'workspace-redesign.webp']) {
+  await copyFile('site/assets/roadmap/' + name, out + '/assets/roadmap/' + name);
+}
 const publicReleases = JSON.parse(await readFile('docs/whats-new/releases.json', 'utf8'));
 const changelog = await readFile('CHANGELOG.md', 'utf8');
-await writeFile(out + '/roadmap.html', stamp(renderRoadmap(publicRoadmap)));
-const releaseNotes = renderReleaseNotes(changelog, publicReleases, pkg.version);
+if (process.env.DOCS_PUBLISHED_RELEASES) {
+  const releases = JSON.parse(await readFile(process.env.DOCS_PUBLISHED_RELEASES, 'utf8'));
+  const versions = new Set([...changelog.matchAll(/^## \[(\d+\.\d+\.\d+)\] - /gm)]
+    .map(([, version]) => version));
+  const dates = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit',
+  });
+  const published = new Map(releases
+    .filter(({ tagName, isDraft, publishedAt }) => !isDraft && publishedAt && /^v\d+\.\d+\.\d+$/.test(tagName))
+    .map(({ tagName, publishedAt }) => [tagName.slice(1), dates.format(new Date(publishedAt))]));
+  if (!published.has(pkg.version)) throw Error('Current GitHub release is missing a publication date');
+  for (const [version, date] of published) {
+    if (versions.has(version))
+      publicReleases[version] = { ...publicReleases[version], published: date };
+  }
+}
+const features = process.env.DOCS_ROADMAP_ISSUES
+  ? publicRoadmapFeatures(JSON.parse(await readFile(process.env.DOCS_ROADMAP_ISSUES, 'utf8')))
+  : preview;
+await writeFile(out + '/roadmap.html', stamp(renderRoadmap(sprints, redesign, features)));
+const releaseNotes = renderReleaseNotes(changelog, publicReleases, features, sprints);
 await writeFile(out + '/releases.html', stamp(releaseNotes.index));
 await mkdir(out + '/release-notes', { recursive: true });
 for (const [version, html] of releaseNotes.pages)

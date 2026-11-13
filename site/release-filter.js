@@ -1,6 +1,6 @@
 const filter = document.querySelector('#filter');
 const results = document.querySelector('#results');
-const rows = [...document.querySelectorAll('.release-table tbody tr')];
+const rows = [...document.querySelectorAll('.release-list > li')];
 const searchable = rows.map((row) => row.textContent.toLowerCase());
 
 function filterReleases() {

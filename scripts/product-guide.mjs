@@ -1,11 +1,13 @@
-const escape = (value) =>
-  String(value).replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[
-        c
-      ],
-  );
+import { createElement as h } from 'react';
+import { Card, HStack, VStack } from '@astryxdesign/core/Layout';
+import { heading, paragraph, link, buttonLink, page } from './public-docs-layout.mjs';
+
+const references = [
+  ['index.html', 'Product overview'],
+  ['settings.html', 'Settings reference'],
+  ['https://sales-drone-avinya.firebaseapp.com/api/docs', 'API portal'],
+];
+
 export function renderProductGuide(guide, version, screenshotManifest = []) {
   const ids = new Set();
   for (const m of guide.modules) {
@@ -22,8 +24,6 @@ export function renderProductGuide(guide, version, screenshotManifest = []) {
       throw Error('Incomplete or duplicate product module');
     ids.add(m.id);
   }
-  const links =
-    '<a href="index.html">Overview</a><a href="settings.html">Every setting</a><a href="https://sales-drone-avinya.firebaseapp.com/api/docs">API portal ↗</a>';
   const md = [
     '# ' + guide.title,
     '',
@@ -32,8 +32,19 @@ export function renderProductGuide(guide, version, screenshotManifest = []) {
     '[Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)',
     '',
   ];
-  const sections = guide.modules
-    .map((m) => {
+  const capture = (name, alt, caption, fallbackWidth, className) => {
+    const entry = screenshotManifest.find((item) => item.file === name);
+    const dimensions = entry && /^(\d+) x (\d+)$/.exec(entry.capturePixels || '');
+    if (entry && !dimensions) throw Error('Invalid screenshot dimensions: ' + name);
+    return h('figure', { className, key: name },
+      h('img', {
+        src: 'assets/screenshots/' + name, alt, loading: 'lazy',
+        width: dimensions ? Number(dimensions[1]) : fallbackWidth,
+        height: dimensions ? Number(dimensions[2]) : undefined,
+      }),
+      h('figcaption', null, caption));
+  };
+  const sections = guide.modules.map((m) => {
       md.push(
         '## ' + m.title,
         '',
@@ -51,22 +62,57 @@ export function renderProductGuide(guide, version, screenshotManifest = []) {
         '',
         ...m.faq.flatMap(([q, a]) => ['**' + q + '**', '', a, '']),
       );
-      return `<section id="${m.id}" data-guide-module><p class="eyebrow">${escape(m.audience)}</p><h2>${escape(m.title)}</h2><ol>${m.steps.map((s) => `<li>${escape(s)}</li>`).join('')}</ol>${m.details.map((p) => `<p>${escape(p)}</p>`).join('')}${m.screenshot ? `<figure><img src="assets/screenshots/${escape(m.screenshot)}" alt="${escape(m.title)} — synthetic demo only" loading="lazy"><figcaption>Fictional demo data only.</figcaption></figure>` : ''}<h3>Questions & troubleshooting</h3>${m.faq.map(([q, a]) => `<details><summary>${escape(q)}</summary><p>${escape(a)}</p></details>`).join('')}</section>`;
-    })
-    .join('');
-  let html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="salesdrone-version" content="${escape(version)}"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SalesDrone · Product handbook</title><link rel="stylesheet" href="product.css"></head><body><a class="skip" href="#content">Skip to handbook</a><aside><a class="wordmark" href="index.html">SalesDrone<span>by AvinyaTech</span></a><p>Product handbook · v${escape(version)}</p><label for="find">Find in handbook</label><input id="find" type="search" placeholder="Search a feature or question"><nav aria-label="Handbook modules">${guide.modules.map((m) => `<a href="#${m.id}">${escape(m.title)}</a>`).join('')}</nav><div class="reference-links">${links}</div></aside><main id="content"><header><p class="eyebrow">A next step for every lead</p><h1>Work confidently with SalesDrone.</h1><p>Step-by-step workflows, feature explanations and answers for founders, sales representatives and administrators. This handbook covers the product; the <a href="settings.html">Settings reference</a> lists every configurable control.</p><p id="search-status" role="status"></p><figure><img src="assets/screenshots/lead-workspace-demo.jpg" alt="Fictional lead workspace with Comments selected and the inline comment editor visible" width="1440" loading="lazy"><figcaption>Synthetic demonstration data. Your available controls depend on permission and viewport.</figcaption></figure></header>${sections}<figure class="phone-capture"><img src="assets/screenshots/mobile-leads-demo.jpg" alt="Synthetic mobile lead list with search and filter buttons in the header" width="390" loading="lazy"><figcaption>Phone layout with synthetic records. Filters are available without crowding the first view.</figcaption></figure><figure><img src="assets/screenshots/book-mode-light.jpg" alt="Fictional dashboard in Book mode with warm paper colours" width="1440" loading="lazy"><figcaption>Book mode is a personal setting under Appearance &amp; time. Synthetic demonstration data.</figcaption></figure><figure><img src="assets/screenshots/laptop-demo.jpg" alt="Compact laptop lead table without row edit controls" width="1280" loading="lazy"><figcaption>Laptop lead layout. Synthetic demonstration data.</figcaption></figure><figure><img src="assets/screenshots/tablet-demo.jpg" alt="Synthetic tablet lead list with local column scrolling" width="900" loading="lazy"><figcaption>Tablet-width lead list. Synthetic demonstration data.</figcaption></figure><figure><img src="assets/screenshots/import-demo.jpg" alt="Isolated import preview with uploads disabled" width="1280" loading="lazy"><figcaption>Labelled isolated import preview; workbook upload is disabled and no server import was committed.</figcaption></figure><figure><img src="assets/screenshots/lead-tasks-demo.jpg" alt="Fictional shared lead tasks with responsibility and a Complete task control" width="1440" loading="lazy"><figcaption>Shared lead work: current lead readers see responsibility; lead editors complete or reschedule pending tasks.</figcaption></figure><figure><img src="assets/screenshots/activity-demo.jpg" alt="Compact activity view with a fictional recorded call" width="1000" loading="lazy"><figcaption>Focused activity view with complete synthetic notes and compact type roles.</figcaption></figure><figure><img src="assets/screenshots/font-settings-demo.jpg" alt="Appearance settings with a personal font selector and preview" width="1280" loading="lazy"><figcaption>Choose a personal interface font, preview it and save. Synthetic demonstration account.</figcaption></figure><footer>${links}<p>SalesDrone by AvinyaTech · Part of Avinya Enterprises · v${escape(version)}</p></footer></main><script>const input=document.querySelector('#find'),sections=[...document.querySelectorAll('[data-guide-module]')];input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase();let shown=0;for(const s of sections){s.hidden=!!q&&!s.textContent.toLowerCase().includes(q);if(!s.hidden)shown++;}document.querySelector('#search-status').textContent=q?shown+' matching modules. Clear search to show all.':'';});document.querySelector('nav').addEventListener('click',e=>{if(e.target.closest('a')){input.value='';input.dispatchEvent(new Event('input'));}});</script></body></html>`;
-  // Current captures, not historical template widths, determine image geometry.
-  html = html.replace(
-    /<img\b[^>]*src="assets\/screenshots\/([a-z0-9-]+\.jpg)"[^>]*>/g,
-    (tag, name) => {
-      const entry = screenshotManifest.find((item) => item.file === name);
-      if (!entry) return tag;
-      const dimensions = /^(\d+) x (\d+)$/.exec(entry.capturePixels || '');
-      if (!dimensions) throw Error('Invalid screenshot dimensions: ' + name);
-      return tag
-        .replace(/\swidth="[^"]*"/g, '')
-        .replace(/>$/, ` width="${Number(dimensions[1])}">`);
-    },
-  );
+    return h('section', { id: m.id, key: m.id, 'data-guide-module': '' },
+      h(Card, { padding: 0 },
+        h(VStack, { gap: 4, className: 'guide-module' },
+          paragraph(m.audience, 'kicker'),
+          heading(2, m.title),
+          h('ol', { className: 'guide-steps' }, m.steps.map((step, i) => h('li', { key: i }, step))),
+          m.details.map((detail, i) => h('p', { key: i }, detail)),
+          m.screenshot && capture(m.screenshot, m.title + ' — synthetic demo only', 'Fictional demo data only.'),
+          heading(3, 'Questions & troubleshooting'),
+          h(VStack, { gap: 2 }, m.faq.map(([question, answer], i) =>
+            h('details', { key: i },
+              h('summary', null, question),
+              h('p', null, answer)))))));
+  });
+
+  const referenceLinks = references.map(([href, label]) => link(href, label, { key: href }));
+  const topicLinks = guide.modules.map(({ id, title }) => link('#' + id, title, { key: id }));
+  const gallery = [
+    ['mobile-leads-demo.jpg', 'Synthetic mobile lead list with search and filters', 'Phone layout with synthetic records.', 390, 'phone-capture'],
+    ['book-mode-light.jpg', 'Synthetic dashboard in Book mode', 'Book mode is a personal setting under Appearance & time.', 1440],
+    ['laptop-demo.jpg', 'Synthetic laptop lead table', 'Laptop lead layout.', 1280],
+    ['tablet-demo.jpg', 'Synthetic tablet lead list with column scrolling', 'Tablet-width lead list.', 900],
+    ['import-demo.jpg', 'Isolated import preview', 'Workbook upload is disabled in this isolated preview.', 1280],
+    ['lead-tasks-demo.jpg', 'Synthetic shared tasks with responsibility and task actions', 'Shared lead tasks with responsible team members.', 1440],
+    ['activity-demo.jpg', 'Synthetic lead activity and recorded calls', 'Lead activity with fictional notes.', 1000],
+    ['font-settings-demo.jpg', 'Appearance settings with font selector and preview', 'Personal font preferences.', 1280],
+  ];
+  const html = page('Product handbook', 'Handbook',
+    h(VStack, { gap: 6 },
+      h(Card, { padding: 0, className: 'editorial-card handbook-hero' },
+        h(VStack, { gap: 3, className: 'editorial-copy' },
+          paragraph('SalesDrone · v' + version, 'kicker'),
+          heading(1, 'Product handbook', 'display-heading'),
+          paragraph('Find step-by-step help for managing leads, following up, and configuring your workspace.', 'lede'),
+          h(HStack, { gap: 2, wrap: 'wrap' }, buttonLink('settings.html', 'Settings reference'), buttonLink(references[2][0], 'API portal')),
+h('section', { className: 'release-filter handbook-search', hidden: true, 'aria-label': 'Search the handbook' },
+        h('label', { htmlFor: 'find' }, 'Find in handbook'),
+        h('input', { id: 'find', type: 'search', placeholder: 'Search a feature or question', autoComplete: 'off' }),
+        h('p', { id: 'search-status', role: 'status' }))),
+        capture('lead-workspace-demo.jpg', 'Synthetic lead workspace with comments selected',
+          'Lead workspace with fictional demonstration data.', 1440)),
+      h('section', { className: 'handbook-grid', 'aria-label': 'Handbook content' },
+        h('aside', { className: 'handbook-topics' },
+          h('details', { id: 'handbook-topics', open: true },
+            h('summary', null, 'Browse topics'),
+            h(VStack, { as: 'nav', 'aria-label': 'Handbook modules', gap: 1 }, topicLinks))),
+        h(VStack, { className: 'handbook-content', gap: 4 }, sections,
+          h('section', { id: 'handbook-gallery', className: 'handbook-gallery', 'aria-label': 'Workspace examples' },
+            heading(2, 'Workspace examples'),
+            gallery.map((item) => capture(...item))),
+          h(HStack, { as: 'nav', 'aria-label': 'Related documentation', gap: 3, wrap: 'wrap' }, referenceLinks)))),
+    { handbook: true, version });
   return { html, markdown: md.join('\n').trimEnd() + '\n' };
 }

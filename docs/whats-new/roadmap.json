@@ -1,8 +1,61 @@
-[
-  {"sprint":1,"window":"Nov 12–25, 2026","title":"Keep the workspace reliable","summary":"Review updates to the software SalesDrone uses and verify sign-in on salesdrone.in. Settle who can manage administrator access before changing how it works.","milestone":52},
-  {"sprint":2,"window":"Nov 26–Dec 9, 2026","title":"Make everyday work easier to trust","summary":"Plan more consistent lead searches, reduce contention when requests arrive together, and refresh the public guide. Administrator setup depends on the ownership decision in Sprint 1.","milestone":8},
-  {"sprint":3,"window":"Dec 10–23, 2026","title":"Lead Intelligence pilot","summary":"Ask questions about leads you can access, see the evidence behind answers, and review suggested follow-ups before any action.","milestone":48},
-  {"sprint":4,"window":"Dec 24, 2026–Jan 6, 2027","title":"Separate workspaces for organizations","summary":"Verify that one organization cannot see another’s data, then move the existing SalesDrone workspace with a tested way back. Prepare signup and workspace switching.","milestone":50},
-  {"sprint":5,"window":"Jan 7–20, 2027","title":"Invoicing pilot","summary":"Try creating an invoice from a lead, issuing a PDF and recording a payment in a controlled trial. The pilot waits for workspace isolation and migration to pass.","milestone":49},
-  {"sprint":6,"window":"Jan 21–Feb 3, 2027","title":"Public signup decision","summary":"Review migration, staged signup and invoicing pilot results before deciding whether to let new organizations sign up.","milestone":63}
-]
+{
+  "sprints": [
+    {
+      "sprint": 1,
+      "window": "Nov 12–25, 2026",
+      "title": "Keep the workspace reliable",
+      "summary": "Review updates to the software SalesDrone uses and verify sign-in on salesdrone.in. Settle who can manage administrator access before changing how it works.",
+      "milestone": 52
+    },
+    {
+      "sprint": 2,
+      "window": "Nov 26–Dec 9, 2026",
+      "title": "Make everyday work easier to trust",
+      "summary": "Plan more consistent lead searches, reduce contention when requests arrive together, and refresh the public guide. Administrator setup depends on the ownership decision in Sprint 1.",
+      "milestone": 8
+    },
+    {
+      "sprint": 3,
+      "window": "Dec 10–23, 2026",
+      "title": "Lead Intelligence pilot",
+      "summary": "Ask questions about leads you can access, see the evidence behind answers, and review suggested follow-ups before any action.",
+      "milestone": 48
+    },
+    {
+      "sprint": 4,
+      "window": "Dec 24, 2026–Jan 6, 2027",
+      "title": "Separate workspaces for organizations",
+      "summary": "Verify that one organization cannot see another’s data, then move the existing SalesDrone workspace with a tested way back. Prepare signup and workspace switching.",
+      "milestone": 50
+    },
+    {
+      "sprint": 5,
+      "window": "Jan 7–20, 2027",
+      "title": "Invoicing pilot",
+      "summary": "Try creating an invoice from a lead, issuing a PDF and recording a payment in a controlled trial. The pilot waits for workspace isolation and migration to pass.",
+      "milestone": 49
+    },
+    {
+      "sprint": 6,
+      "window": "Jan 21–Feb 3, 2027",
+      "title": "Public signup decision",
+      "summary": "Review migration, staged signup and invoicing pilot results before deciding whether to let new organizations sign up.",
+      "milestone": 63
+    }
+  ],
+  "redesign": {
+    "issue": 213
+  },
+  "preview": [
+    {
+      "number": 213,
+      "title": "SalesDrone workspace redesign with Astryx",
+      "summary": "A phased Astryx redesign starts with workspace navigation, leads and tasks, then extends to dashboards, Settings and the remaining screens."
+    },
+    {
+      "number": 217,
+      "title": "Email notifications and daily task reminders",
+      "summary": "Receive email when you’re invited to SalesDrone, assigned a lead, or a task is completed. Get updates when leads convert or fail, plus a daily reminder for tasks that need attention."
+    }
+  ]
+}
