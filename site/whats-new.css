@@ -284,13 +284,15 @@
       gap: var(--spacing-1);
     }
     .updates-nav {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       width: 100%;
+      gap: .25rem;
     }
     .updates-nav a {
+      flex: 0 0 auto;
+      max-width: 100%;
       min-height: 44px;
-      padding: var(--spacing-1) var(--spacing-2);
+      padding: .35rem .5rem;
+      overflow-wrap: normal;
     }
     .editorial-card, .release-overview, .sprint-row { grid-template-columns: minmax(0, 1fr); }
     .redesign-flow { grid-template-columns: 1fr; }
