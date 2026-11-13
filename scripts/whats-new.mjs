@@ -15,7 +15,7 @@ function page(title, current, intro, content, detail = false) {
 <title>${title} | SalesDrone</title><link rel="stylesheet" href="${detail ? '../' : ''}whats-new.css">
 ${current === 'Release notes' && !detail ? '<script src="release-filter.js" defer></script>' : ''}
 </head><body class="${current === 'Release notes' ? 'release-docs' : ''}">
-<header><div class="shell"><a class="brand" href="${base}index.html">SalesDrone</a>
+<header><div class="shell"><a class="brand" href="${base}index.html"><span class="brand-mark" aria-hidden="true"></span><span>SalesDrone<span class="brand-dot">.</span></span></a>
 <nav aria-label="Documentation">${link('Guide', 'index.html')}${link('Roadmap', 'roadmap.html')}${link('Release notes', 'releases.html')}</nav>
 </div></header>
 <main class="shell"><div class="intro"><h1>${title}</h1><p>${intro}</p></div>${content}</main>

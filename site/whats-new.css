@@ -1,13 +1,7 @@
 @font-face {
-  font-family: "Source Sans 3";
-  src: url("assets/fonts/source-sans-3.woff2") format("woff2");
-  font-weight: 200 900;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Source Code Pro";
-  src: url("assets/fonts/source-code-pro.woff2") format("woff2");
-  font-weight: 200 900;
+  font-family: "Open Sans";
+  src: url("assets/fonts/open-sans.woff2") format("woff2");
+  font-weight: 300 800;
   font-display: swap;
 }
 :root {
@@ -27,7 +21,25 @@ header .shell, nav, footer, .links { display: flex; align-items: center; flex-wr
 header .shell { justify-content: space-between; padding-block: .7rem; }
 nav a { padding: .4rem .65rem; border-radius: 2rem; }
 nav a[aria-current] { background: #e1edff; }
-.brand { font-weight: 750; text-decoration: none; color: inherit; }
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 2.75rem;
+  font-weight: 650;
+  text-decoration: none;
+  color: inherit;
+}
+.brand-mark {
+  width: 2rem;
+  height: 2rem;
+  background: #0757a6;
+  mask: url("assets/brand/salesdrone-mark.png") center / 120% no-repeat;
+}
+.brand-dot { color: #0757a6; }
+@media (forced-colors: active) {
+  .brand-mark { background: CanvasText; forced-color-adjust: none; }
+}
 .intro { margin-block: clamp(2rem, 7vw, 5rem) 2rem; max-width: 50rem; }
 h1 { font-size: clamp(2rem, 5vw, 3.8rem); line-height: 1.1; letter-spacing: -.045em; margin: 0; }
 .intro p { font-size: clamp(1rem, 2vw, 1.25rem); color: #49586c; }
@@ -47,7 +59,8 @@ figure { margin: 0 0 1.5rem; }
 figure img { display: block; width: 100%; height: auto; border-radius: .6rem; }
 figcaption { margin-top: .6rem; font-size: .87rem; }
 footer { padding-block: 1.5rem 2.5rem; }
-.release-docs { font-family: "Source Sans 3", system-ui, sans-serif; background: #fff; }
+.release-docs { font-family: "Open Sans", system-ui, sans-serif; background: #fff; }
+.release-docs h1, .release-docs h2, .release-docs h3 { font-weight: 400; }
 .release-docs h1 { font-size: clamp(2.1rem, 4vw, 3rem); letter-spacing: -.025em; }
 .release-docs .intro { margin-block: 2.75rem 1.5rem; }
 .release-docs .intro p { margin-bottom: 0; }
@@ -67,8 +80,8 @@ footer { padding-block: 1.5rem 2.5rem; }
 .release-table { border-collapse: collapse; width: 100%; text-align: start; }
 .release-table th, .release-table td { padding: .75rem; border-bottom: 1px solid #dce3ee; vertical-align: top; text-align: start; }
 .release-table thead { background: #f0f4fa; }
-.release-table tbody th { font-family: "Source Code Pro", monospace; font-size: .88rem; }
-.release-table time, .release-detail code { font-family: "Source Code Pro", monospace; font-size: .86em; }
+.release-table tbody th { font-weight: 600; font-size: .9rem; }
+.release-table time { font-size: .9em; font-variant-numeric: tabular-nums; }
 .release-table small { display: block; color: #49586c; }
 .release-table tbody tr:target { background: #e9f1ff; }
 .release-detail { display: grid; grid-template-columns: minmax(0, 1fr) 12rem; gap: 3rem; margin-top: 1.5rem; }
