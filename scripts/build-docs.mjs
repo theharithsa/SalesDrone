@@ -1,3 +1,4 @@
+import { renderSdlcGuide } from './sdlc-guide.mjs';
 import { renderReleaseNotes, renderRoadmap } from './whats-new.mjs';
 import { publicRoadmapFeatures } from './public-roadmap.mjs';
 import { execFileSync } from 'node:child_process';
@@ -292,3 +293,9 @@ for (const [version, html] of releaseNotes.pages)
   await writeFile(out + '/release-notes/v' + version + '.html', stamp(html));
 await copyFile('site/release-filter.js', out + '/release-filter.js');
 await copyFile('site/whats-new.css', out + '/whats-new.css');
+
+await writeFile(out + '/sdlc.html', stamp(renderSdlcGuide()));
+await copyFile('site/sdlc.css', out + '/sdlc.css');
+await mkdir(out + '/assets/sdlc', { recursive: true });
+for (const name of ['delivery-workflow.webp', 'verification-evidence.webp'])
+  await copyFile('site/assets/sdlc/' + name, out + '/assets/sdlc/' + name);

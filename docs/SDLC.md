@@ -1,5 +1,7 @@
 # SalesDrone delivery workflow
 
+The [illustrated SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html) explains the delivery pipeline, GitHub Actions jobs, runtime architecture, and observability for developers. Preview locally with `npm run docs:build` and serve `site/.build`.
+
 | Stage | What happens | Tools and guidance |
 | --- | --- | --- |
 | Intake | Create or reuse an issue with user outcomes, acceptance checks and an assignee. Group related issues under an epic. Track outcomes in milestones and timing in GitHub Project sprints. | GitHub Issues and Projects, App Launchpad |
@@ -15,6 +17,10 @@
 
 Create the feature issue first. Add a customer-facing title and a one-line paragraph under `## Public summary`. Apply `roadmap-public` after reviewing both for publication. Open labeled issues appear under Upcoming. A matching roadmap milestone adds its sprint window on the Roadmap. Issue changes can refresh Pages independently of the app release, with a daily refresh as a backstop. Removing the label or closing the issue removes it from Upcoming. Add shipped behavior to the versioned changelog in the implementation PR, and link it to the verified GitHub release. Issue closure alone does not establish shipment.
 
-The static docs build uses Astryx and local assets for Roadmap and Release notes. It queries GitHub at build time and does not add application traffic or Firestore reads. The other site pages and the app follow their existing design systems while the Astryx workspace epic is in planning.
+The static docs build uses Astryx and local assets for the Roadmap, Release notes, Product handbook and SDLC guide. It queries GitHub at build time and does not add application traffic or Firestore reads. The other site pages and the app follow their existing design systems while the Astryx workspace epic is in planning.
 
 See [delivery policy](RELEASE-GOVERNANCE.md), [release runbook](RELEASE.md), [testing](TESTING.md), [observability](observability.md), and the [module skill tree](../skill-tree.md).
+
+## Artwork
+
+The two 1200 × 800 WebP illustrations in `site/assets/sdlc` were generated with ImageGen and visually reviewed. The delivery hero prompt used a cobalt survey drone over three folded paper tracks with illuminated waypoints. The verification illustration used overlapping sheets, a checkmark and a cobalt magnifying glass over a waveform. Both used warm ivory paper, an editorial paper-cut treatment, and no text or branding. The diagrams are HTML so their labels remain readable and selectable.
