@@ -30,6 +30,6 @@
   },
   "devDependencies": {
     "supertest": "^7.1.4",
-    "protobufjs": "7.6.6"
+    "protobufjs": "8.8.1"
   }
 }
