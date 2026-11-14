@@ -1,7 +1,7 @@
 # Changelog
 
-Application versions follow [Semantic Versioning](https://semver.org/).
-API contract versions are independent from application versions.
+Application versions follow the [weekly release policy](docs/RELEASE-GOVERNANCE.md#weekly-production-cadence).
+API contract versions track compatibility independently.
 
 
 
