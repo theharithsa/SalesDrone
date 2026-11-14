@@ -14,6 +14,13 @@ API contract versions are independent from application versions.
 
 
 
+
+## [2.13.11] - 2026-11-14
+
+### Fixed
+- Documentation publication now waits for the exact uploaded Pages artifact to become visible and uses a unique name for every workflow attempt. This prevents missing-artifact and duplicate-name failures during retries.
+- Restores publication of the illustrated SDLC guide and planned pre-production roadmap after the v2.13.10 app deployment.
+
 ## [2.13.10] - 2026-11-14
 
 ### Changed

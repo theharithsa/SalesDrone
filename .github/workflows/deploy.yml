@@ -34,6 +34,19 @@ jobs:
           distribution: temurin
           java-version: '21'
       - run: npm ci
+      - name: Upload harmless artifact readiness probe
+        id: artifact-probe
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}-probe
+          path: package.json
+          retention-days: 1
+      - name: Verify artifact readiness in the runner
+        timeout-minutes: 2
+        uses: ./.github/actions/pages-artifact-ready
+        env:
+          PAGES_ARTIFACT_NAME: github-pages-${{ github.run_id }}-${{ github.run_attempt }}-probe
+          PAGES_ARTIFACT_ID: ${{ steps.artifact-probe.outputs.artifact-id }}
       - name: Execute checks and retain per-test metadata
         run: node scripts/ci-checks.mjs
         env:

@@ -5,9 +5,7 @@ description: "Release SalesDrone modules through SemVer, GitHub Actions, Firebas
 
 # Release and deployment
 
-Read [the shared operating contract](../SHARED.md) before editing. Paths and commands
-are relative to the repository root. Inspect current source rather than assuming
-this map is an immutable schema or a standalone microservice.
+Read [the shared operating contract](../SHARED.md) before editing. Paths are relative to the repository root. Verify this map against current source.
 
 ## Responsibility and entry points
 
@@ -77,7 +75,7 @@ The initial published-version check retries boundedly for Hosting propagation, u
 
 Explicit human instructions may authorize a single same-version maintenance push. releases/maintenance.json pins the exact prior commit, version, date, instruction and reason; maintenance-policy rejects reuse for a later base. Default releases still require a SemVer advance. github-release verifies descendant status and preserves the original tag/notes instead of overwriting them; commit/run identify the maintenance deployment. The file alone never authorizes another agent to skip versioning.
 
-Public guide builds stamp the exact source commit and hash-version reviewed screenshot URLs. Post-deploy guide checks require commit as well as version, including same-version maintenance, so stale Pages HTML cannot satisfy the release gate.
+Verify Pages HTML commit/version stamps and reviewed screenshot hashes, including maintenance releases. Stale HTML cannot satisfy publication checks.
 
 For a later explicitly authorized maintenance push, bind the record to that push’s immediate parent, not the immutable original tag. github-release checks the current commit parent and verifies descent from the original tag before preserving it; an earlier maintenance record cannot authorize a subsequent push.
 
@@ -101,6 +99,6 @@ Plan the versioned GitHub milestone and assign scoped issues before the candidat
 
 Deploy/verify ingress after Functions and before Hosting cutover; require its revision/parser evidence alongside all five Functions. Follow [API-INGRESS.md](../../docs/API-INGRESS.md).
 
-For managed health and partial-rollout handling, read [operations](references/operations.md).
+For managed health and partial-rollout handling, read [operations](references/operations.md). Pages retries require unique attempt names and exact uploaded-ID readiness; follow [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery).
 
 Toolchain: [migration](../../docs/TOOLCHAIN-MIGRATION.md). SDLC routing/evidence: [journeys](../../docs/OBSERVABILITY-JOURNEYS.md).

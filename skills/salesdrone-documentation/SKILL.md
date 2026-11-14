@@ -5,9 +5,7 @@ description: "Maintain SalesDrone README, public guide, technical docs, demo scr
 
 # Public documentation and illustrations
 
-Read [the shared operating contract](../SHARED.md) before editing. Paths and commands
-are relative to the repository root. Inspect current source rather than assuming
-this map is an immutable schema or a standalone microservice.
+Read [the shared operating contract](../SHARED.md) before editing. Paths are relative to the repository root. Verify this map against current source.
 
 ## Responsibility and entry points
 
@@ -60,7 +58,7 @@ module-specific regression entry points, not a substitute for integration checks
 
 ## Deployment and handoff
 
-GitHub Pages for guide; Hosting when About/portal/app copy/assets change. Documentation releases still advance app PATCH under current release policy.
+GitHub Pages for guide; Hosting when About/portal/app copy/assets change. Documentation releases still advance app PATCH under current release policy. Use [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery) for exact artifact IDs and retry names.
 
 Use [the release skill](../salesdrone-release/SKILL.md) for authorized publication.
 Adjacent owners:
@@ -75,7 +73,7 @@ When full-page identity layout changes, refresh both journey-demo.jpg and lead-w
 
 Same-version maintenance remains visible in changelog/commit history. Document inline comment drafts, uncertain retries, left-aligned history and blocked-storage recovery; refresh affected desktop/mobile screenshots and retain explicit browser-only testing limits.
 
-Public guide builds stamp the exact source commit and hash-version reviewed screenshot URLs. Post-deploy guide checks require commit as well as version, including same-version maintenance, so stale Pages HTML cannot satisfy the release gate.
+Verify Pages HTML commit/version stamps and reviewed screenshot hashes, including maintenance releases. Stale HTML cannot satisfy publication checks.
 
 ## Conditional reference
 
