@@ -96,9 +96,34 @@ const art = (name, loading) => h('img', {
   width: 1200, height: 800, alt: '', loading,
 });
 
+const chapterIntros = {
+  lifecycle: 'One connected route from an idea to the live app. Follow the solid line; side branches explain publishing, failures and monitoring.',
+  delivery: 'A pull request is the handover between implementation and a production release.',
+  release: 'The merged commit travels through a sequence of gates. Hosting promotion happens only after the backend is ready.',
+  runtime: 'Two different journeys: shipping code to production, and handling a customer request once it gets there.',
+  observability: 'Connect the change to its behavior in production. Each system supplies a different piece of evidence.',
+  roadmap: 'Approved plans can reach customers before the feature is built, without redeploying the app.',
+  recovery: 'Find the failed gate and the live revision first. Then choose the smallest safe recovery.',
+  example: 'Follow a planned feature through the same process, from a public issue to a verified release.',
+  tools: 'A practical reference for the services, development tools and skills used along the way.',
+};
+const iconPaths = {
+  plan: 'M8 4h8v4H8z M7 6H5v15h14V6h-2 M8 12h8 M8 16h5',
+  build: 'm8 8-4 4 4 4 m8-8 4 4-4 4 m-3-11-2 14',
+  check: 'M12 3 3 7v6c0 5 9 9 9 9s9-4 9-9V7z m-5 9 3 3 5-6',
+  merge: 'M6 3v13 M6 8c9 0 12 2 12 8 M3 19a3 3 0 1 0 6 0a3 3 0 1 0-6 0 M15 19a3 3 0 1 0 6 0a3 3 0 1 0-6 0',
+  deploy: 'M12 16V3 m-5 5 5-5 5 5 M4 14v7h16v-7',
+  docs: 'M3 4h7l2 2 2-2h7v16h-7l-2 2-2-2H3z M12 6v16',
+  observe: 'M3 12h4l3-7 4 14 3-7h4',
+};
+const icon = (name) => h('svg', {viewBox:'0 0 24 24', fill:'none', stroke:'currentColor', strokeWidth:1.6, strokeLinecap:'round', strokeLinejoin:'round', 'aria-hidden':true}, h('path', {d:iconPaths[name]}));
 function block(id, title, ...children) {
-  return h(VStack, { as: 'section', gap: 4, id },
-    heading(2, title, 'sdlc-section-title'), ...children);
+  const number = String(sections.findIndex(([key]) => key === id) + 1).padStart(2, '0');
+  return h('section', {id, className:'sdlc-chapter'},
+    h('header', {className:'sdlc-chapter-heading'},
+      h('span', {className:'sdlc-chapter-number', 'aria-hidden':true}, number),
+      h('div', null, heading(2, title, 'sdlc-section-title'), paragraph(chapterIntros[id], 'sdlc-chapter-intro'))),
+    h('div', {className:'sdlc-chapter-content'}, ...children));
 }
 
 function flow(label, steps) {
@@ -114,17 +139,32 @@ function flow(label, steps) {
 }
 
 function lifecycleDiagram() {
+  const labels = ['GitHub · Plan', 'Local branch · Build', 'GitHub Actions · Quality gate', 'GitHub · Merge', 'Firebase & Cloud Run · Release', 'GitHub Pages · Publish', 'Dynatrace · Observe'];
+  const icons = ['plan','build','check','merge','deploy','docs','observe'];
   return h('figure', { className: 'sdlc-map', 'aria-labelledby': 'sdlc-map-caption' },
     h('figcaption', { id: 'sdlc-map-caption' },
-      'Follow the numbered path. Each side branch shows what can happen at that step.'),
+      h('span', null, 'Delivery map'), h('span', {className:'sdlc-map-legend'}, 'Solid line: release path · Dashed line: related action')),
     h('ol', { className: 'sdlc-map-path' },
       deliveryMap.map(([title, description, href, branch], index) =>
         h('li', { key: title, id: 'sdlc-step-' + (index + 1), className: 'sdlc-map-row' },
-          h('span', { className: 'sdlc-map-number', 'aria-hidden': true }, index + 1),
-          h(Card, { padding: 4, className: 'sdlc-map-stage' },
-            h(VStack, { gap: 1 }, heading(3, link(href, title)), paragraph(description, 'muted'))),
-          branch && h(VStack, { gap: 1, className: 'sdlc-map-branch' },
-            heading(4, link(branch[2], branch[0])), paragraph(branch[1], 'muted'))))));
+          h('span', { className: 'sdlc-map-number', 'aria-hidden': true }, icon(icons[index])),
+          h('div', {className:'sdlc-map-stage'},
+            paragraph(String(index + 1).padStart(2, '0') + ' / ' + labels[index], 'kicker'),
+            heading(3, link(href, title)), paragraph(description, 'muted')),
+          branch && h('aside', { className: 'sdlc-map-branch' + (index === 2 || index === 4 ? ' sdlc-map-warning' : '') },
+            heading(4, link(branch[2], branch[0])), paragraph(branch[1], 'muted'))))),
+    h('div', {className:'sdlc-map-return'}, icon('observe'),
+      paragraph('Production feedback informs the next issue. The cycle begins again.')));
+}
+
+function jobDiagram() {
+  return h('figure', {className:'sdlc-jobs', 'aria-label':'GitHub Actions dependencies on main'},
+    h('figcaption', null, 'On a push to main'),
+    h('ol', {className:'sdlc-job-path'}, ['verify','deploy','documentation'].map((job,i) =>
+      h('li', {key:job}, h('span', {className:'kicker'}, '0' + (i + 1)), h('code',null,job),
+        paragraph(['Checks the merged commit','Releases and verifies the app','Publishes and checks Pages'][i])))),
+    h('div', {className:'sdlc-job-observe'}, icon('observe'), h('code',null,'observe'),
+      paragraph('Waits for all three outcomes, including failures and skips. Sends the delivery evidence to Dynatrace.')));
 }
 
 function notes(items, label) {
@@ -136,17 +176,22 @@ function notes(items, label) {
 
 export function renderSdlcGuide() {
   return page('SalesDrone delivery workflow', 'SDLC', h(Fragment, null,
-    h(Card, { className: 'editorial-card sdlc-hero', padding: 0 },
+    h('section', { className: 'editorial-card sdlc-hero' },
       h(VStack, { gap: 4, className: 'editorial-copy' },
-        paragraph('Engineering handbook', 'kicker'),
-        heading(1, 'From issue to production', 'display-heading'),
-        paragraph('How SalesDrone plans, builds, verifies and releases a change, and what to check when something goes wrong.', 'lede'),
+        paragraph('SalesDrone / Engineering handbook', 'kicker'),
+        heading(1, h(Fragment,null,'From issue',h('br'), 'to ',h('em',null,'production.')), 'display-heading'),
+        paragraph('The people, tools and checks behind every release. A field guide to how SalesDrone is built, shipped and operated.', 'lede'),
         h(HStack, { wrap: 'wrap', gap: 2 },
           buttonLink('#lifecycle', 'Explore the workflow', 'primary'),
           buttonLink(source + 'docs/SDLC.md', 'Repository guide'))),
-      art('delivery-workflow', 'eager')),
-    h(HStack, { as: 'nav', wrap: 'wrap', gap: 2, className: 'sdlc-contents', 'aria-label': 'On this page' },
-      sections.map(([id, label]) => link('#' + id, label, { key: id }))),
+      h('div', {className:'sdlc-hero-art'}, art('delivery-workflow', 'eager'),
+        h('span', {className:'sdlc-art-caption'}, 'Plan → Build → Verify → Release → Observe'))),
+    h('div', {className:'sdlc-reading-layout'},
+    h('nav', {className:'sdlc-contents', 'aria-label':'Guide chapters'},
+      paragraph('IN THIS GUIDE', 'kicker'),
+      h('ol', null, sections.map(([id,label],i) => h('li',{key:id},link('#'+id,h(Fragment,null,h('span',{'aria-hidden':true},String(i+1).padStart(2,'0')),label))))),
+      h('div', {className:'sdlc-nav-note'},paragraph('Built from the source'), paragraph('Workflow and service links open the implementation in GitHub.', 'muted'))),
+    h('div', {className:'sdlc-article'},
     block('lifecycle', 'The whole delivery flow', lifecycleDiagram()),
     block('delivery', 'What must be ready before merge',
       h(VStack, { gap: 3, className: 'sdlc-gate' },
@@ -170,7 +215,7 @@ export function renderSdlcGuide() {
       paragraph('GitHub Actions uses workload identity for deployment. The Firebase app and the public documentation have separate verification steps.', 'muted'),
       flow('Production release sequence', rollout),
       heading(3, 'GitHub Actions job dependencies'),
-      paragraph('On main, verify → deploy → documentation. The observe job waits for all three outcomes, including failures and skips.', 'muted'),
+      jobDiagram(),
       notes(workflowJobs, 'Jobs in the main GitHub workflow'),
       h(HStack, { gap: 3, wrap: 'wrap' },
         link(source + '.github/workflows/deploy.yml', 'Open deploy.yml'),
@@ -217,6 +262,6 @@ export function renderSdlcGuide() {
         ['Build public docs', h('code', null, 'npm run docs:build'), 'Generates the curated site in site/.build, including this page.'],
         ['Validate monitoring definitions', h('code', null, 'npm run obs:check'), 'Checks generated monitoring content for drift. Live Dynatrace queries require separate tenant access.'],
       ], 'Local development and verification commands'),
-      link(source + 'skill-tree.md', 'Open the SalesDrone skill tree'))),
-  { stylesheet: 'sdlc.css' });
+      link(source + 'skill-tree.md', 'Open the SalesDrone skill tree'))))),
+  { stylesheet: 'sdlc.css', mainClass: 'sdlc-page' });
 }

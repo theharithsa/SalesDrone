@@ -17,6 +17,7 @@ API contract versions are independent from application versions.
 ## [2.13.10] - 2026-11-13
 
 ### Changed
+- Design the SDLC guide with a chapter sidebar, connected delivery map, explicit failure branches and a GitHub Actions dependency diagram.
 - Add an illustrated SDLC guide covering the SalesDrone release pipeline, Firebase request path, GitHub workflows, Dynatrace evidence, and developer tools and skills.
 
 ## [2.13.9] - 2026-11-13

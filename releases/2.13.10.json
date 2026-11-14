@@ -75,10 +75,10 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Open sdlc.html and verify navigation, artwork, flowcharts and readable text at phone and desktop widths. After authorized publication verify the Pages source commit.",
+  "manualVerification": "Open sdlc.html and review the editorial layout, chapter directory, connected lifecycle map, branch connectors, Actions dependency diagram and reference rows. Verify phone/desktop, 200% root text, keyboard links, short-window navigation and reduced motion. After authorized publication verify the Pages source commit.",
   "milestone": {
     "number": 68,
-    "title": "v2.13.10 \u2014 SalesDrone delivery guide",
+    "title": "v2.13.10 — SalesDrone delivery guide",
     "issues": [
       220
     ],

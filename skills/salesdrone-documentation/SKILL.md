@@ -97,4 +97,4 @@ The roadmap, release notes, handbook and SDLC guide are pre-rendered with Astryx
 
 For upcoming releases, read only approved open `roadmap-public` issues and publish their customer-facing title and one-line Public summary. A roadmap-only workflow rebuilds Pages from the published revision, independently of Firebase. Treat issue text as untrusted and render it as plain text. Check enlarged text and actual label truncation on narrow layouts as well as document overflow.
 
-Maintain the SDLC guide against the actual GitHub workflows, Firebase routing and observability contract. Verify diagram labels and branch outcomes, local artwork, navigation anchors, and readable text at narrow widths.
+Maintain SDLC diagrams against actual workflows and routing. Verify branch outcomes, artwork and narrow layouts; see [SDLC layout](references/operations.md#sdlc-layout) for Astryx typography and review checks.

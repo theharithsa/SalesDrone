@@ -24,3 +24,18 @@ See [delivery policy](RELEASE-GOVERNANCE.md), [release runbook](RELEASE.md), [te
 ## Artwork
 
 The two 1200 × 800 WebP illustrations in `site/assets/sdlc` were generated with ImageGen and visually reviewed. The delivery hero prompt used a cobalt survey drone over three folded paper tracks with illuminated waypoints. The verification illustration used overlapping sheets, a checkmark and a cobalt magnifying glass over a waveform. Both used warm ivory paper, an editorial paper-cut treatment, and no text or branding. The diagrams are HTML so their labels remain readable and selectable.
+
+## Reading and maintaining the illustrated guide
+
+The HTML guide uses a two-column editorial layout: a scrollable chapter directory
+on wide screens and an in-flow directory on narrow screens. Numbered section
+headings, a continuous release path, amber failure branches and the separate
+GitHub Actions dependency diagram distinguish sequence from reference material.
+Detailed service and tooling references use labeled rows instead of repeated cards.
+Open Sans and Astryx remain the shared documentation foundation; SDLC styles are
+scoped so the handbook, roadmap and release archive retain their own layouts.
+
+The guide requires no client-side JavaScript, application requests or Firestore
+reads/writes. Reuse the two existing local illustrations. Keep the main delivery
+flow as selectable HTML with real section links, and preserve the ordered mobile
+reading path and the named recovery branches when updating it.
