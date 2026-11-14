@@ -1,8 +1,8 @@
 # Pre-production foundation
 
-Status: **planned, not provisioned**. On 14 November 2026 the owner requested a
+Status: **provisioned, rollout in progress**. On 14 November 2026 the owner requested a
 plan and GitHub implementation issues first. The v2.13.10 documentation release
-does not create resources, change branch protection or enable a second deployment.
+recorded the initial plan. The implementation is tracked below.
 
 ## Outcome and constraints
 

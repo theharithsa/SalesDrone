@@ -18,4 +18,4 @@ gcloud run deploy "$service" --project "$project" --region "$region" --image "$i
   --set-env-vars "API_UPSTREAM=$upstream,SALESDRONE_ENVIRONMENT=pre-production,DYNATRACE_TENANT_URL=$DYNATRACE_TENANT_URL" \
   --set-secrets DYNATRACE_API_TOKEN=DYNATRACE_API_TOKEN:latest \
   --cpu 1 --memory 1Gi --concurrency 2 --min-instances 0 --max-instances 2 \
-  --timeout 75s --cpu-throttling --quiet
+  --timeout 75s --cpu-throttling --allow-unauthenticated --quiet

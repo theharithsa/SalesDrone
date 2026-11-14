@@ -12,7 +12,7 @@ gcloud storage cp "$archive/source.zip" "$source" --project "$project" --quiet
 env_file="$archive/environment.json"
 node --input-type=module -e 'import { writeFileSync } from "node:fs"; writeFileSync(process.argv[1], JSON.stringify({FIREBASE_CONFIG:JSON.stringify({projectId:process.env.GCP_PROJECT_ID}),SDR_REGION:"asia-south1",APP_CHECK_MODE:"enforce",DYNATRACE_TENANT_URL:process.env.DYNATRACE_TENANT_URL}));' "$env_file"
 gcloud functions deploy preprodApi --gen2 --region "$region" --project "$project" \
-  --runtime nodejs22 --trigger-http --entry-point preprodApi --source "$source" \
+  --runtime nodejs22 --trigger-http --allow-unauthenticated --entry-point preprodApi --source "$source" \
   --service-account "salesdrone-preprod-runtime@$project.iam.gserviceaccount.com" \
   --build-service-account "projects/$project/serviceAccounts/salesdrone-preprod-build@$project.iam.gserviceaccount.com" \
   --docker-repository "projects/$project/locations/$region/repositories/salesdrone-preprod-ingress" \
