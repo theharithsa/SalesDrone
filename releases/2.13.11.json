@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "version": "2.13.11",
+  "summary": "Make GitHub Pages publication wait for the exact uploaded artifact and isolate retry attempts.",
+  "modules": [
+    "salesdrone-release",
+    "salesdrone-documentation"
+  ],
+  "documentation": [
+    "CHANGELOG.md",
+    "docs/RELEASE.md",
+    "skills/salesdrone-release/SKILL.md",
+    "skills/salesdrone-documentation/SKILL.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Only the documentation publication workflow changes; application HTTP contracts are unchanged.",
+    "contractVersion": "1.34.0",
+    "permissions": "Application permissions and GitHub token scopes are unchanged; the local action uses job-scoped artifact runtime credentials.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing release reporting records the documentation job outcome; no runtime instrumentation or customer payload changes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing release reporting records the documentation job outcome; no runtime instrumentation or customer payload changes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing release reporting records the documentation job outcome; no runtime instrumentation or customer payload changes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Existing release reporting records the documentation job outcome; no runtime instrumentation or customer payload changes.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "existing",
+      "reason": "Existing release reporting records the documentation job outcome; no runtime instrumentation or customer payload changes.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Verify the public guide source SHA after Pages deployment, then inspect SDLC, roadmap, releases and product pages in native Safari and Chromium at phone and desktop widths. Verify salesdrone.in version/commit separately. Pre-production remains planning only.",
+  "milestone": {
+    "number": 70,
+    "title": "v2.13.11 \u2014 Reliable documentation publication",
+    "issues": [
+      228
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

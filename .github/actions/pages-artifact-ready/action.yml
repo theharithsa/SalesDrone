@@ -1,0 +1,5 @@
+name: Verify Pages artifact readiness
+description: Wait for the exact uploaded artifact using the same SDK lookup as deploy-pages.
+runs:
+  using: node24
+  main: ../../../scripts/wait-pages-artifact.mjs
