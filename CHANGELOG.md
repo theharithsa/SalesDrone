@@ -20,6 +20,7 @@ API contract versions are independent from application versions.
 
 ### Changed
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
+- Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
 
 ## [2.13.11] - 2026-11-14
 

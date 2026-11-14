@@ -53,13 +53,16 @@ A funnel is a current stage distribution, not evidence of historic conversion.
 ## Versions and releases
 
 - The first published app baseline is **v1.0.0**. API contract version is independent.
-- Later fixes increment PATCH; compatible features increment MINOR; breaking behavior
-  increments MAJOR. Use `npm run release -- patch|minor|major` and fill CHANGELOG.md.
+- Use one regular production release window per week. Advance the app MINOR for
+  regular releases with ready work, PATCH for urgent out-of-cycle fixes, and
+  MAJOR for breaking releases. Use `npm run release -- patch|minor|major` and
+  fill CHANGELOG.md.
 - Create the target version's GitHub milestone and assign the scoped issues before
   advancing a release candidate. Use release:plan, then bump once for that release;
   local refinements, commits and PR review keep the same candidate version.
 - Every published release needs a matching changelog and synchronized workspace versions.
-  Small fixes share a PATCH milestone; use MINOR for substantive compatible capabilities.
+  Batch routine fixes in the weekly milestone. Pre-production builds keep the
+  planned version and are identified by commit and Actions run/attempt.
   Publication requires completed milestone scope and required PR/CI checks. Old issues
   remain open until actual fix evidence or explicit carryover decisions; moving them is
   not completion. See docs/RELEASE-GOVERNANCE.md and issue #98.

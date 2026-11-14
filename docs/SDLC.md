@@ -8,7 +8,8 @@ The [illustrated SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html)
 | Plan | Review the applicable module skill, permissions, privacy, cost and rollout. Agree any material product decisions. Assign the scoped issues to a version milestone before advancing the candidate once. | AGENTS.md, skill tree, module skills, FinOps, release readiness, `release:plan` |
 | Build | Work on a branch. Use synthetic data, keep API contracts and docs current, record meaningful events, and update the changelog and impact plan. | React, Vite and TypeScript; Express/Firebase Functions, Firestore, Auth and App Check; OpenAPI and MCP; Git |
 | Verify | Run targeted regressions, then CI checks including unit/API and component tests, real Auth/Firestore emulators, types, lint, builds, generated docs, secrets, and release scope. Inspect visible changes in isolated Chromium at measured widths and text sizes. | Node test runner, Vitest, Testing Library, Firebase emulators, Java 21, Chromium CDP, GitHub Actions, CodeQL and GitGuardian |
-| Review and merge | Push a branch, open an issue-linked PR, review the diff and check the exact head. Merge through the PR after checks pass and publication is authorized. | GitHub PRs, Actions, release skill |
+| Review and rehearse | Open an issue-linked PR to `pre-prod`. Review the exact head, merge after checks and verify the resulting deployment with synthetic data. | GitHub PRs, Actions, release skill |
+| Promote | During the weekly window, promote the verified pre-production source through a PR to `main`. Confirm the promotion checks and authorization before merging. | GitHub PRs, pre-production deployment evidence |
 | Release | Main verification reruns. Actions stage and verify Hosting, deploy rules and wait for indexes, deploy Functions and verify ingress, then promote Hosting. Publish the versioned GitHub release and build the curated Pages site. | GitHub Actions, OIDC/WIF, Firebase CLI, Cloud Run ingress, GitHub Releases and Pages |
 | Observe and verify | Check exact version/SHA, API behavior and access denial, app UI where applicable, and Pages identity separately. Send safe CI/test/deployment events and application telemetry to Dynatrace. Record ingest acceptance separately from tenant queries. | OpenTelemetry, Dynatrace, dt-obs and the SalesDrone observability skill |
 | Recover | Identify the failed phase and the live revision before retrying. When a published release needs a rollback, ship the revert through a new checked forward release. | Release readiness, release runbook, GitHub Actions artifacts |
@@ -20,6 +21,22 @@ Create the feature issue first. Add a customer-facing title and a one-line parag
 The static docs build uses Astryx and local assets for the Roadmap, Release notes, Product handbook and SDLC guide. It queries GitHub at build time and does not add application traffic or Firestore reads. The other site pages and the app follow their existing design systems while the Astryx workspace epic is in planning.
 
 See [delivery policy](RELEASE-GOVERNANCE.md), [release runbook](RELEASE.md), [testing](TESTING.md), [observability](observability.md), and the [module skill tree](../skill-tree.md).
+
+## Weekly releases and pre-production builds
+
+Keep one versioned milestone for the weekly release. Pre-production can deploy
+the candidate throughout the week. For example, `2.14.0 · build 3` identifies
+an iteration of `2.14.0`; the Git commit and Actions run/attempt locate the
+actual deployment. At the weekly window, promote the tested source to
+production as `2.14.0` and publish one versioned changelog entry. The next
+regular release with ready changes is `2.15.0`. Skip empty or unready windows.
+
+Urgent incidents can take a reviewed out-of-cycle patch such as `2.14.1`.
+Validate only the fix against production-compatible scope in pre-production
+and carry the fix into the next weekly candidate. Public API versioning is
+independent. The weekly window is an operating policy. See
+[release governance](RELEASE-GOVERNANCE.md#weekly-production-cadence) for
+automation still to be defined.
 
 ## Artwork
 
@@ -40,7 +57,7 @@ reads/writes. Reuse the two existing local illustrations. Keep the main delivery
 flow as selectable HTML with real section links, and preserve the ordered mobile
 reading path and the named recovery branches when updating it.
 
-## Beginner explanations and planned pre-production
+## Beginner explanations and pre-production
 
 The HTML guide now explains each handoff with its input, actions, output and exit
 condition. It distinguishes local changes, pushed code, a merged PR, a deployment
@@ -48,11 +65,12 @@ and a published release. A daily-reminder example follows a proposed feature
 through the flow; a glossary explains the services and vocabulary. Runtime task
 completion is a separate walkthrough from the delivery pipeline.
 
-The pre-production chapter is **planned, not activated**. See the
-[resource and acceptance plan](PRE-PRODUCTION-PLAN.md) and
-[epic #222](https://github.com/theharithsa/SalesDrone/issues/222). This release does
-not provision a database, change branch gates or grant memberships. The future
-flow promotes verified code through `pre-prod` to `main`; it never promotes data.
+The [pre-production workspace](https://sales-drone-avinya-preprod.web.app/) is
+live for approved test users. It uses a named Firestore database for synthetic
+data. Promotion moves tested code from `pre-prod` to `main`; data stays in each
+environment. See the [resource and acceptance plan](PRE-PRODUCTION-PLAN.md) and
+[#226](https://github.com/theharithsa/SalesDrone/issues/226) for remaining
+verification.
 
 Teaching references are linked in the HTML guide: Atlassian's SDLC overview,
 Diátaxis explanation/tutorial guidance, and primary Firebase/GitHub environment

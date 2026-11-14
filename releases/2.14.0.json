@@ -5,12 +5,15 @@
   "modules": [
     "salesdrone-data-platform",
     "salesdrone-release",
+    "salesdrone-documentation",
     "salesdrone-observability",
     "salesdrone-finops"
   ],
   "documentation": [
     "docs/PRE-PRODUCTION-PLAN.md",
     "docs/RELEASE.md",
+    "docs/SDLC.md",
+    "docs/RELEASE-GOVERNANCE.md",
     "CHANGELOG.md"
   ],
   "settingsSections": [],

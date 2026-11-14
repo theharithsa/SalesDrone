@@ -28,8 +28,8 @@ const stages = [
     'Check results, browser evidence, retained artifacts and a reviewed PR.',
     'All required checks pass for the current commit and merge is authorized. A new commit needs fresh checks. A failed test sends the work back to the branch, not around the gate.'],
   ['04','Merge the approved code', 'A reviewed PR whose current checks pass.',
-    'Merge through GitHub into main. GitHub records a new merged source revision; its SHA is a fingerprint used to identify exactly what is being released. The production workflow starts and verifies that merged result again because it may include changes made on main while the PR was being reviewed.',
-    'A merged commit and a new main workflow run.',
+    'Merge the feature PR into pre-prod and verify the deployment with synthetic data. Bring the verified candidate to main through a promotion PR during the weekly release window. GitHub records a merged source revision and Actions checks the resulting source again before deployment.',
+    'A verified pre-production build, a merged promotion PR and a new main workflow run.',
     'Main verification passes before the deploy job starts. “Merged” means the repository accepted the code; users may still be running the previous release.'],
   ['05','Build, deploy and check the live app', 'Verified main source and authorized deployment identity.',
     'Actions builds the candidate and stages the frontend on a temporary Hosting channel. It prepares Firestore rules and indexes, waits for required indexes, deploys Storage rules, then deploys the backend and verifies ingress. Only then does it promote Hosting. Live version and API probes check what customers can reach. The release sequence below shows those gates in order.',
@@ -75,9 +75,10 @@ export const telemetryTerms = [
 
 export function preproduction() {
   return h('div',{className:'sdlc-preprod'},
-    h('aside',{className:'sdlc-callout sdlc-planned'},paragraph('PLANNED · NOT ACTIVATED', 'kicker'),heading(3,'A rehearsal environment before production'),
-      paragraph('Pre-production will run synthetic leads and tasks in the existing Firebase project, with a separate named Firestore database and isolated runtime resources. This release publishes the plan and issues only. The branch gate, resources, test data and owner Admin membership are not provisioned.')),
-    h('figure',{className:'sdlc-promotion'},h('figcaption',null,'Planned promotion route — code moves; customer data stays put'),
+    h('aside',{className:'sdlc-callout'},paragraph('LIVE TEST ENVIRONMENT', 'kicker'),heading(3,'A rehearsal environment before production'),
+      paragraph('Pre-production runs synthetic leads and tasks in the existing Firebase project, with a separate named Firestore database and runtime resources. Workspace access requires approved test membership.'),
+      link('https://sales-drone-avinya-preprod.web.app/', 'Open the pre-production workspace')),
+    h('figure',{className:'sdlc-promotion'},h('figcaption',null,'Promotion route for verified source code'),
       h('ol',null,...[
         ['Feature PR','Review the proposed change and run checks.'],
         ['pre-prod branch','Deploy only to isolated test resources.'],
@@ -87,8 +88,8 @@ export function preproduction() {
       ].map(([title,body])=>h('li',{key:title},heading(3,title),paragraph(body)))),
       paragraph('If acceptance fails, fix the feature and repeat pre-production checks. A new source change invalidates the earlier acceptance evidence.')),
     paragraph('A second database is not a second Firebase project. Auth identities, project-level quotas and billing are still shared, and a named database does not receive another free daily allowance. Separate Functions, ingress, attachment storage, worker targets and scoped service identities must prevent test operations from touching production.'),
-    paragraph('The requested owner will receive Admin membership only inside pre-production after identity verification. Fixtures will be explicitly fake and bounded. Notifications will be suppressed except for controlled tests. Browser caches will use the separate origin, and the app will display a clear pre-production banner.'),
-    paragraph('Dynatrace will use the same endpoint and secret references. Pre-production RUM, traces, logs, metrics and delivery events will carry deployment.environment.name = pre-production; production will retain production. This separates investigation without changing tenant configuration.'),
+    paragraph('Test fixtures are synthetic. The separate browser origin keeps local browser storage apart from production, and the pre-production banner identifies the workspace.'),
+    paragraph('The Dynatrace setup uses the same endpoint and secret references. Pre-production telemetry is configured with the pre-production environment name. The acceptance issue tracks the remaining isolation, usage and tenant verification.'),
     h('ol',{className:'sdlc-plan-links'},...[
       [223,'1. Isolate runtime and data','Remove production fallbacks and prove effective access boundaries.'],
       [224,'2. Seed synthetic data','Use idempotent fixtures and grant only the verified pre-production owner.'],
@@ -107,7 +108,7 @@ export function workedExample() {
       ['Design and branch','Define a queue record for an eligible reminder, a duplicate-prevention key and permission checks at send time. Sketch the preference control and explain it in user documentation.'],
       ['Implementation PR','Add the preference and worker behavior, tests, docs, changelog and cost budget. The PR explains the before/after behavior and links its issue. No real customers receive development mail.'],
       ['Verification','Use synthetic tasks and a controlled inbox. Test duplicate retries, time-zone boundaries, revoked access, opted-out users and a mail-provider failure. Inspect the preference on desktop and phone.'],
-      ['Review and release','Checks must pass for the reviewed commit. Today, merging main starts the production sequence. Once the planned pre-production gate exists, the same source must first pass the synthetic environment before its promotion PR.'],
+      ['Review and release','Deploy and check the exact candidate in the synthetic environment. When the weekly release is ready, promote it through a checked PR to main to start the production sequence.'],
       ['Live evidence and learning','Confirm the deployed version and an authorized controlled delivery. Compare queue, delivery and failure signals. A defect becomes a new issue; a provider receipt alone does not prove a human read the email.'],
     ].map(([title,body])=>h('li',{key:title},heading(3,title),paragraph(body)))),
     link(repository+'/issues/217','Follow planned email notifications'));
@@ -124,7 +125,7 @@ export const glossary = [
   ['Auth / App Check / authorization','Auth identifies the signed-in person. App Check attests the calling application. Authorization decides whether that person may perform this operation on this record. One does not replace the others.'],
   ['OIDC / Workload Identity Federation','A short-lived identity exchange lets a trusted GitHub workflow obtain scoped Google access. It avoids storing a long-lived service-account key in the repository.'],
   ['Environment / synthetic data / smoke test','An environment is a running app and its resources. Synthetic data is invented test data. A smoke test is a short check of essential behavior, not exhaustive acceptance.'],
-  ['SemVer / milestone / sprint / epic','Version numbers communicate release impact: major.minor.patch. A milestone groups an outcome or release; a sprint schedules a time window; an epic groups dependent issues. Their scopes should agree without being interchangeable.'],
+  ['App version / build / milestone','The app version identifies the planned or published release. The build identifies an individual deployment candidate by commit and Actions run. A milestone groups release scope, a sprint schedules work and an epic groups dependent issues.'],
 ];
 export const learningSources = [
   ['Atlassian: software development life cycle','https://www.atlassian.com/agile/software-development/sdlc'],
