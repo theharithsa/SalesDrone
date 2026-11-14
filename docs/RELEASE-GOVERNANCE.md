@@ -5,11 +5,60 @@ Pre-release production baseline verified on 31 October 2026: **2.5.3**, commit `
 ## Required release sequence
 
 1. Create the versioned GitHub milestone and assign its concrete issues. Use `release:plan`; a version bump without that scope fails.
-2. Keep one candidate version throughout implementation, local refinements and PR review. Group compatible fixes into a PATCH release; use MINOR for a substantive compatible capability.
+2. Keep one candidate version throughout implementation, local refinements and PR review. Follow the weekly cadence below when choosing the app version.
 3. Complete and review the scoped work. Mark the plan ready only after its acceptance criteria and required checks have evidence.
 4. A PR must cover every open issue in that milestone using explicit closing references, or link already completed work. CI checks current GitHub assignments.
 5. Publication requires the milestone issues to be closed after merge. Required CI, production version/SHA, documentation and monitoring evidence remain separate gates.
 6. Close the release milestone only after its release acceptance is complete. Preserve incomplete issues, decisions and historical scope; no paper closures or silent mass rescheduling.
+
+## Documentation review
+
+Every PR records a documentation decision. Use `Updated:` with the affected
+guides or `No change:` with a concrete reason. Before each production
+promotion, reconcile README.md and the dated CHANGELOG.md with the release
+scope. Review SECURITY.md and the affected product, technical, settings, SDLC,
+CI/CD and operator guides. Update changed claims in the PR and record why any
+unchanged guide still applies. Refresh affected synthetic screenshots as
+required by the documentation skill.
+
+Run the docs and link checks against the candidate. After a successful release,
+verify the published guide links and source revision independently of the app.
+Record publication failures separately and use the Pages recovery workflow.
+See the [App Launchpad audit](APP-LAUNCHPAD-AUDIT.md) for the adoption baseline.
+
+## Weekly production cadence
+
+Plan at most one regular production promotion per week. Put the planned work in
+one versioned GitHub milestone and keep that candidate version throughout
+development and pre-production verification. If the candidate is unready or
+there is nothing to ship, skip the window and explicitly carry unfinished
+issues forward.
+
+Pre-production can deploy repeatedly. Keep the app version fixed, for example
+`2.14.0`, and distinguish builds by commit, GitHub Actions run and attempt,
+and artifact identity where available. A label such as `2.14.0 · build 3` can
+display that build separately. Patch versions such as `2.14.1` identify actual
+production fixes. Promote the verified source tree through a PR to `main`.
+Publish one tag and changelog entry for the regular release after verification.
+Production may match the validated pre-production app version and must never
+ship a higher one.
+
+Use the next minor app version for the next regular release with shippable
+work, for example `2.15.0` after `2.14.0`. The minor number tracks the SalesDrone
+release cadence, including a fixes-only week. Reserve major changes for
+breaking releases, and manage the public API contract version independently.
+
+An incident that cannot wait for the next window can ship as an out-of-cycle
+patch. Build it from the currently published production scope, exclude
+unfinished weekly work, and verify it in a supported pre-production path
+before promotion. The current gate requires the checked `pre-prod` source tree.
+An isolated hotfix needs a compatible path if `pre-prod` already contains later
+work. Keep the same checks and record the incident, patch deployment and
+reintegration into the next weekly candidate.
+
+The release owner coordinates the weekly window. The day and time, automated
+window enforcement, numbered build labels and an isolated hotfix workflow
+remain to be defined. The existing GitHub Actions triggers still apply.
 
 ## Current candidate
 

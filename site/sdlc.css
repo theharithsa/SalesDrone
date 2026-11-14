@@ -123,8 +123,6 @@
   .sdlc-primer-grid h3, .sdlc-callout h3 { margin-bottom: .65rem; }
   .sdlc-callout { border-left: 3px solid #86a8da; background: #f0f5fc; border-radius: 0 .5rem .5rem 0; padding: 1.5rem; }
   .sdlc-callout p + p { margin-top: .75rem; }
-  .sdlc-planned { border-color: #ba8d42; background: #fff8e9; }
-  .sdlc-planned .kicker { color: #80550c; margin-bottom: .5rem; }
   .sdlc-handovers { list-style: none; padding: 0; margin: 0; display: grid; gap: 2rem; }
   .sdlc-handovers > li { border: 1px solid var(--sdlc-line); border-radius: .75rem; overflow: hidden; min-width: 0; }
   .sdlc-handovers h3 { padding: 1rem 1.5rem; background: var(--sdlc-paper); border-bottom: 1px solid var(--sdlc-line); }

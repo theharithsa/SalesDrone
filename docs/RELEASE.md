@@ -1,13 +1,13 @@
 # Versions, delivery and rollback
 
-The first published application baseline is v1.0.0. Later compatible features use
-MINOR, fixes/docs/security/deployment repairs use PATCH, and incompatible application
-changes use MAJOR. API contract versions are independent. All workspace package
-versions must match. A main push without a higher version and a completed dated
-CHANGELOG section fails verification, except the first repository commit.
+The first published application baseline is v1.0.0. Use MINOR for regular weekly
+releases, PATCH for urgent out-of-cycle fixes and MAJOR for breaking releases.
+See [weekly release governance](RELEASE-GOVERNANCE.md#weekly-production-cadence).
+API contract versions are independent. All workspace package versions must match.
+Main normally requires a higher app version and a completed dated CHANGELOG section.
 
 ```sh
-npm run release -- patch  # or minor / major
+npm run release -- minor  # regular weekly release
 # Complete the newly inserted CHANGELOG section.
 npm run release:check
 npm test

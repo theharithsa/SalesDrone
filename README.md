@@ -1,14 +1,8 @@
 # SalesDrone by AvinyaTech
 
-> v2.6.4 repairs compound Lead Assistant answers and completes CI test-case reporting.
-> Scoped Lead Hygiene and Lead Assistant were introduced in v2.6.0.
-> See the [monitoring handoff](observability/README.md) for offline queries/notebook and owner-managed Dynatrace setup.
-> See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
-
-SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
-filled forms, full-page lead details and automatic lead-list pagination.
-See the [product handbook](docs/PRODUCT-GUIDE.md), [settings reference](docs/SETTINGS.md)
-and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo data.
+SalesDrone is a responsive sales workspace for leads, follow-ups, team activity,
+and scoped AI assistance. It uses Material 3 and includes personal appearance
+options such as Book mode. Screenshots use fictional demo data.
 
 [![Verify, deploy and observe](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
 [![Latest release](https://img.shields.io/github/v/release/theharithsa/SalesDrone?color=0756a5)](https://github.com/theharithsa/SalesDrone/releases/latest)
@@ -23,11 +17,14 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.6.4 · MIT**
+**Part of Avinya Enterprises · MIT**
 
-A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
+[Open SalesDrone](https://salesdrone.in/) · [Live version](https://salesdrone.in/version.json) · [Product handbook](https://theharithsa.github.io/SalesDrone/product.html) · [Settings](https://theharithsa.github.io/SalesDrone/settings.html) · [Technical guide](https://theharithsa.github.io/SalesDrone/#engineering) · [Roadmap](https://theharithsa.github.io/SalesDrone/roadmap.html) · [Release notes](https://theharithsa.github.io/SalesDrone/releases.html)
 
-[Open SalesDrone](https://sales-drone-avinya.firebaseapp.com) · [Illustrated guide](https://theharithsa.github.io/SalesDrone/) · [Roadmap](docs/whats-new/README.md) · [Release notes](https://theharithsa.github.io/SalesDrone/releases.html) · [Deployment workflow](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
+The latest production documentation includes an illustrated delivery flow,
+searchable release notes and a public roadmap. An isolated
+[pre-production workspace](https://sales-drone-avinya-preprod.web.app/) serves
+approved testers with synthetic data ahead of production promotion.
 
 ![The dashboard shows lead counts grouped by the selected field. Synthetic demo data only.](site/assets/screenshots/dashboard-demo.jpg)
 
@@ -120,9 +117,14 @@ The automated checks cover domain policy, scoped access, imports, reminders, sta
 
 ## Releases
 
-Main-branch pushes run verification, deploy Firestore indexes/rules, wait for indexes, deploy Cloud Functions and Hosting, check published commit metadata, and send the deployment result and version to Dynatrace. A separate job publishes only the curated documentation site. Cloud authentication uses short-lived OIDC credentials; ingestion credentials stay in Secret Manager and GitHub Actions secrets.
+SalesDrone adopts selected delivery practices from the [App Launchpad template](https://github.com/theharithsa/app-launchpad-template). The [v1.14.0 adoption audit](docs/APP-LAUNCHPAD-AUDIT.md) records the audit baseline and the remaining gaps.
 
-The initial release was **v1.0.0**. Subsequent changes use `npm run release -- patch`, `minor` or `major`, fill the dated [changelog](CHANGELOG.md), and commit the resulting version files. The workflow rejects version regressions or unchanged release versions on subsequent pushes. API contract versions are independent of app versions.
+Feature PRs are checked in `pre-prod`. Promote the verified source through a PR
+to `main`. Actions verifies and deploys production, checks the published revision,
+publishes the curated docs, and reports outcomes to Dynatrace. Review the README,
+[changelog](CHANGELOG.md), [security policy](SECURITY.md) and affected guides in
+the release PR. Follow the [SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html)
+and [release runbook](docs/RELEASE.md).
 
 ## Licence and illustrations
 

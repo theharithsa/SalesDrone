@@ -2,8 +2,10 @@
 
 ## Supported releases
 
-Security fixes target the latest 1.x application release. The HTTP API contract
-has its own version. Report suspected vulnerabilities privately through this
+Security fixes target the current production application release. See the
+[published app version](https://salesdrone.in/version.json) and
+[release history](https://github.com/theharithsa/SalesDrone/releases). The HTTP API
+contract has its own version. Report suspected vulnerabilities privately through this
 repository's Security > Report a vulnerability feature. Do not put customer data,
 access tokens, account screenshots or exploit credentials in public issues.
 
@@ -29,7 +31,14 @@ workflow uses GitHub OIDC / Workload Identity Federation; it has no service-acco
 private key. The trust policy binds the numeric repository/owner IDs, main ref and
 exact deploy workflow. Production credentials are unavailable to PR verification.
 A deployment principal can run code as the application's runtime identity: control
-of main is therefore a production security boundary. Protect it appropriately.
+of main is therefore a production security boundary. Pre-production uses separate
+runtime identities and test data in a named Firestore database. Effective access
+is checked independently of the deployment. See the
+[isolation acceptance checklist](docs/PRE-PRODUCTION-PLAN.md#acceptance-and-activation-gates).
+
+Review this policy before each production release. Update affected access,
+environment, data-handling and reporting guidance in the release PR. Keep
+credentials, customer data and sensitive operational details in private runbooks.
 
 The Firebase web config, App Check site key, public VAPID key and RUM script URL
 are browser configuration, not authentication credentials. Never put a private API

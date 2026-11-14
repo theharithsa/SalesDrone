@@ -12,6 +12,10 @@ Do not spawn agents unless the human explicitly asks for delegation.
 
 ## Feature and release completion
 
+Record the documentation decision on every PR. Follow the
+[production documentation review](docs/RELEASE-GOVERNANCE.md#documentation-review)
+for README, CHANGELOG, SECURITY and affected guides.
+
 Use [FinOps](skills/salesdrone-finops/SKILL.md) for every feature review. Read it before changing query, caching, polling, MCP or runtime behavior, and include a usage budget and evidence with those changes.
 
 Use [release readiness](skills/salesdrone-release-readiness/SKILL.md) for every feature/setting and version release alongside its owner. [skill-tree.json](skill-tree.json) and [skill-tree.md](skill-tree.md) route user prompts. Update docs, module skills, API/permissions where applicable, metrics/traces/logs/committed events, tests, changelog and the versioned release impact plan. A UI-only change records why no API or business event is needed. Pre-deploy gates and post-deploy artifacts are separate; never label pending checks or HTTP ingest as tenant-query verification. Every setting needs default, scope, permissions, API and behavior/limits in the generated settings guide.
@@ -53,13 +57,16 @@ A funnel is a current stage distribution, not evidence of historic conversion.
 ## Versions and releases
 
 - The first published app baseline is **v1.0.0**. API contract version is independent.
-- Later fixes increment PATCH; compatible features increment MINOR; breaking behavior
-  increments MAJOR. Use `npm run release -- patch|minor|major` and fill CHANGELOG.md.
+- Use one regular production release window per week. Advance the app MINOR for
+  regular releases with ready work, PATCH for urgent out-of-cycle fixes, and
+  MAJOR for breaking releases. Use `npm run release -- patch|minor|major` and
+  fill CHANGELOG.md.
 - Create the target version's GitHub milestone and assign the scoped issues before
   advancing a release candidate. Use release:plan, then bump once for that release;
   local refinements, commits and PR review keep the same candidate version.
 - Every published release needs a matching changelog and synchronized workspace versions.
-  Small fixes share a PATCH milestone; use MINOR for substantive compatible capabilities.
+  Batch routine fixes in the weekly milestone. Pre-production builds keep the
+  planned version and are identified by commit and Actions run/attempt.
   Publication requires completed milestone scope and required PR/CI checks. Old issues
   remain open until actual fix evidence or explicit carryover decisions; moving them is
   not completion. See docs/RELEASE-GOVERNANCE.md and issue #98.
