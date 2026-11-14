@@ -158,3 +158,12 @@ If the rollout stops after backend changes, use the failed Actions run and its m
 Firebase Hosting and GitHub Pages publish independently. If the app is live but the documentation job fails, inspect the failing step before rerunning it. Each upload uses `github-pages-RUN_ID-RUN_ATTEMPT`; deployment uses that exact name. `scripts/wait-pages-artifact.mjs` matches the upload output ID using the same `@actions/artifact` lookup as `deploy-pages`, with a 90-second polling deadline, two-second intervals and a two-minute hard step timeout. Duplicate names, a different ID, empty/expired uploads and authorization failures stop publication. SDK/network failures stop the step; absent metadata is polled within the deadline. No token or response body is logged.
 
 The local JavaScript action receives the job-scoped artifact runtime credentials from GitHub; no new repository token permission is needed. This costs at most approximately 45 GitHub metadata reads and no Firestore reads or writes. Keep existing verification artifacts and unique attempt names when rerunning a failed documentation job; do not delete artifacts or redeploy Firebase blindly. After publication, verify the HTML source-commit stamp and the public settings/product guide checks. Artifact upload success alone is not Pages publication evidence.
+
+## Pre-production promotion
+
+Open change PRs against `pre-prod`. After merging, the pre-production workflow
+deploys the candidate and records its source tree, version and smoke checks.
+Open a PR from `pre-prod` to `main` after that workflow succeeds. Production
+verification requires matching source-tree evidence for both the proposed merge
+and the resulting main commit. Sync `main` back into `pre-prod` after a promotion.
+See [the resource plan and acceptance checklist](PRE-PRODUCTION-PLAN.md).

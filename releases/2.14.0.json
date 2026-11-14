@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "2.14.0",
+  "summary": "Pre-production SalesDrone deployments use a named Firestore database and checked promotion evidence.",
+  "modules": [
+    "salesdrone-data-platform",
+    "salesdrone-release",
+    "salesdrone-observability",
+    "salesdrone-finops"
+  ],
+  "documentation": [
+    "docs/PRE-PRODUCTION-PLAN.md",
+    "docs/RELEASE.md",
+    "CHANGELOG.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Existing API shapes are reused against an isolated synthetic workspace.",
+    "contractVersion": "1.34.0",
+    "permissions": "Verified pre-production membership and the separate App Check registration protect the test workspace.",
+    "tests": [
+      "functions/test/api-portal.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Check pre-production resource identity, authenticated Admin access, idempotent seed, effective IAM, anonymous denial, ingress transport and promotion source evidence before activation.",
+  "milestone": {
+    "number": 71,
+    "title": "v2.14.0 \u2014 Pre-production environment",
+    "issues": [
+      222,
+      223,
+      224,
+      225,
+      226
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": []
+}

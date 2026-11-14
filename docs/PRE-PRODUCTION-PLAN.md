@@ -1,8 +1,8 @@
 # Pre-production foundation
 
-Status: **planned, not provisioned**. On 14 November 2026 the owner requested a
+Status: **provisioned, rollout in progress**. On 14 November 2026 the owner requested a
 plan and GitHub implementation issues first. The v2.13.10 documentation release
-does not create resources, change branch protection or enable a second deployment.
+recorded the initial plan. The implementation is tracked below.
 
 ## Outcome and constraints
 
@@ -191,3 +191,21 @@ actual before/after usage and budget alerts before continuous test traffic is en
 ## Tracked implementation
 
 Milestone: [Pre-production foundation](https://github.com/theharithsa/SalesDrone/milestone/69). Parent: [#222](https://github.com/theharithsa/SalesDrone/issues/222). Native sub-issues and blocked-by relationships enforce the order: [#223 isolation](https://github.com/theharithsa/SalesDrone/issues/223) → [#224 synthetic seed](https://github.com/theharithsa/SalesDrone/issues/224) → [#225 delivery](https://github.com/theharithsa/SalesDrone/issues/225) → [#226 acceptance](https://github.com/theharithsa/SalesDrone/issues/226). All are assigned to the repository owner. Implementation dates and a versioned release milestone will be set when work is scheduled.
+
+## Initial rollout
+
+The separate Firebase site and named Firestore database were provisioned on
+14 November 2026. The runtime identity can read its seed manifest and list its
+private bucket. Equivalent read probes against the production database and bucket
+returned permission denied. The owner and 30 synthetic leads and 12 tasks were
+seeded in 116 writes. A replay issued zero writes.
+
+The initial deployment exposes only the API and ingress. Scheduled jobs, push
+delivery, browser RUM and GA4 have no active pre-production traffic. Paid AI
+requests are disabled on the test API. Shared Firebase Hosting IAM is project
+scoped. The pre-production workflow uses a separate deployment account and pins
+the site, function, service and source bucket in its deployment scripts.
+
+The production workflow compares the merged source tree with a successful
+pre-production workflow run. Keep the epic open until authentication, telemetry,
+cost and promotion acceptance have been exercised.

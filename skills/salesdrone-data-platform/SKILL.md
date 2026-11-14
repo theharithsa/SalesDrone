@@ -92,3 +92,5 @@ Outreach cancellation queries require the tasks leadId/state/kind/id composite i
 Committed summaries, audit and semantic projections are atomic even without the SDK. Count actual transaction attempts; propagate optional internal job origin as native span links, never fabricated parents. See [journey contract](../../docs/OBSERVABILITY-JOURNEYS.md); verify retry/rollback and real emulator behavior.
 
 Review [FinOps](../salesdrone-finops/SKILL.md) for budgets. Distinguish RPCs from billable reads, including index entries and empty queries. Browser repeat-read caching is tab-local and cannot bypass server policy on fresh requests.
+
+Pre-production uses the named `preprod` database and database-conditioned IAM. Verify both allowed test reads and denied production reads before enabling traffic. See [the deployment plan](../../docs/PRE-PRODUCTION-PLAN.md).

@@ -1,0 +1,402 @@
+import { observeQueue } from './worker-observability.js';
+import { errorType } from './observability-contract.js';
+import { researchStore } from './lead-research-store.js';
+import { researchGemini } from './lead-research-gemini.js';
+import { researchWork } from './lead-research-worker.js';
+import { backfillRateLimitExpiry } from './rate-limit.js';
+import { expireRequestReplays } from './request-replay.js';
+import { ROOT } from './policy.js';
+import { onInit } from 'firebase-functions/v2/core';
+import { requireCursorSecret } from './cursors.js';
+import { DEFAULT_GEMINI_MODEL } from './model-config.js';
+import {
+  guardLeadData,
+  advanceLeadReset,
+  resetActive,
+  RESET_STATE,
+} from './lead-data-reset.js';
+import { firebaseFiles } from './file-storage.js';
+import { cleanupAttachments } from './attachments.js';
+import { createTelemetry } from './telemetry.js';
+import { observableStore } from './observable-store.js';
+import { deliverTelemetry } from './telemetry-outbox.js';
+import { initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAppCheck } from 'firebase-admin/app-check';
+import { getMessaging } from 'firebase-admin/messaging';
+import { onRequest } from 'firebase-functions/v2/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { defineString, defineSecret } from 'firebase-functions/params';
+import { createApp } from './app.js';
+import { firestoreStore } from './store.js';
+import { dispatchReminders } from './reminders.js';
+import { cleanTerminalDeliveries } from './delivery-retention.js';
+import { backfillOperationalCounterExpiry } from './operational-counter-backfill.js';
+import { analyzeNotes as processNotes } from './automatic-reminders.js';
+import { geminiExtractor } from './gemini.js';
+import { AppError } from './contracts.js';
+import { intelligenceGemini } from './intelligence-gemini.js';
+import { scoreLeads } from './scoring.js';
+import { preproduction } from './preproduction.js';
+
+export function createRuntime(environment = 'production') {
+  if (!['production', 'pre-production'].includes(environment)) throw Error('Unknown runtime environment');
+  const { database, bucket, appId, runtimeAccount } = preproduction;
+  if (environment === 'pre-production') {
+    const project = JSON.parse(process.env.FIREBASE_CONFIG || '{}').projectId;
+    if (project !== preproduction.project || database !== 'preprod' ||
+        !bucket.endsWith('-preprod-files') || !appId || !runtimeAccount) {
+      throw Error('Invalid pre-production resource configuration');
+    }
+  }
+  // Keep Firestore's implicit SDK tracing off; the explicit wrapper exports allowlisted spans.
+  process.env.FIRESTORE_ENABLE_TRACING = 'false';
+  initializeApp();
+  const preprod = environment === 'pre-production';
+  const geminiKey = defineSecret('GEMINI_API_KEY');
+  const dtKey = defineSecret('DYNATRACE_API_TOKEN');
+  const cursorKey = defineSecret(preprod ? 'PREPROD_CURSOR_SECRET' : 'CURSOR_SECRET');
+  onInit(() => {
+    if (
+      ['api', 'preprodApi'].includes(process.env.FUNCTION_TARGET) &&
+      process.env.FUNCTIONS_EMULATOR !== 'true'
+    ) requireCursorSecret(cursorKey.value());
+  });
+  const dtTenant = defineString('DYNATRACE_TENANT_URL', {
+    default: 'https://indiacs.live.dynatrace.com',
+  });
+  let observability = null;
+  function monitoring(service) {
+    if (observability || process.env.FUNCTIONS_EMULATOR === 'true')
+      return observability;
+    try {
+      observability = createTelemetry({
+        tenant: dtTenant.value(),
+        key: dtKey.value(),
+        service: preprod ? service.replace('salesdrone-', 'salesdrone-preprod-') : service,
+        environment,
+      });
+    } catch {
+      console.warn(JSON.stringify({ event: 'telemetry_initialization_failed' }));
+    }
+    return observability;
+  }
+  async function dependency(name, fn) {
+    return observability ? observability.span(name, fn) : fn();
+  }
+  async function worker(name, fn) {
+    const t = monitoring('salesdrone-' + name);
+    try {
+      return t ? await t.worker(name, fn) : await fn();
+    } finally {
+      await t?.flush();
+    }
+  }
+  const geminiModel = defineString('GEMINI_MODEL', {
+    default: DEFAULT_GEMINI_MODEL,
+  });
+  const intelligence = intelligenceGemini({
+    telemetry: () => observability,
+    key: () => geminiKey.value(),
+    model: () => geminiModel.value(),
+  });
+  const region = defineString('SDR_REGION', {
+    default: 'asia-south1',
+    description:
+      'Choose the region matching the existing Firestore location before deployment.',
+  });
+  const appCheckMode = defineString('APP_CHECK_MODE', {
+    default: 'enforce',
+    description: 'enforce in production; disabled only for emulators.',
+  });
+  const store = guardLeadData(
+    observableStore(researchStore(firestoreStore(preprod ? getFirestore(database) : getFirestore()),()=>observability?.capture()?.traceparent), () => observability),
+  );
+  const research = researchGemini({telemetry:()=>observability,key:()=>geminiKey.value(),model:()=>geminiModel.value()});
+  async function researchDependency(kind,fn) {
+    const started=performance.now();let outcome='success';
+    try {return await dependency(kind==='batch'?'lead-research.batch':'gemini.lead-'+kind,fn);}
+    catch(error){outcome='failure';throw error;}
+    finally {try{observability?.researchOperation(kind,outcome,(performance.now()-started)/1000);}catch{}}
+  }
+  const observedResearch={
+    plan: input=>researchDependency('plan',()=>research.plan(input)),
+    themes: input=>researchDependency('themes',()=>research.themes(input)),
+    embed: (input,task)=>researchDependency('embedding',()=>research.embed(input,task)),
+  };
+  const handler = createApp({
+    cursorSecret: () => process.env.FUNCTIONS_EMULATOR === 'true'
+      ? process.env.CURSOR_SECRET || 'isolated-emulator-cursor-key'
+      : cursorKey.value(),
+    files: firebaseFiles(dependency, preprod ? bucket : undefined),
+    store,
+    bootstrapAdminEmails: preprod ? [] : undefined,
+    telemetry: () => observability,
+    extractScore: preprod ? null : (input) =>
+      dependency('gemini.qualification', () => intelligence.extract(input)),
+    summarizeDashboard: preprod ? null : (input) =>
+      dependency('gemini.dashboard', () => intelligence.summarize(input)),
+    verifyToken: (token) => getAuth().verifyIdToken(token, true),
+    verifyPersonalTokenOwner: async (uid) => {
+      try {
+        const owner = await getAuth().getUser(uid);
+        return (
+          !owner.disabled &&
+          owner.providerData.some((p) => p.providerId === 'google.com')
+        );
+      } catch (error) {
+        if (error.code === 'auth/user-not-found') return false;
+        throw new AppError(
+          503,
+          'AUTH_UNAVAILABLE',
+          'Account verification is temporarily unavailable',
+        );
+      }
+    },
+    verifyAppCheck: async (token) => {
+      if (process.env.FUNCTIONS_EMULATOR === 'true') return;
+      if (appCheckMode.value() !== 'enforce')
+        throw new AppError(
+          503,
+          'CONFIGURATION',
+          'Production App Check must be enabled',
+        );
+      if (!token)
+        throw new AppError(403, 'APP_CHECK', 'App verification is required');
+      try {
+        const attestation = await getAppCheck().verifyToken(token);
+        if (preprod && attestation.appId !== appId) throw Error('Wrong App Check app');
+      } catch {
+        throw new AppError(403, 'APP_CHECK', 'App verification failed');
+      }
+    },
+    sendTest: preprod ? async () => { throw new AppError(403, 'PUSH_DISABLED', 'Push is disabled in pre-production'); } : (device) =>
+      dependency('fcm.test', () =>
+        getMessaging().send({
+          token: device.token,
+          data: {
+            title: 'SalesDrone by AvinyaTech',
+            body: 'Your notifications are ready.',
+            deliveryId: 'test',
+            url: '/settings',
+          },
+        }),
+      ),
+  });
+  const api = onRequest(
+    {
+      region,
+      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      timeoutSeconds: 120,
+      memory: '512MiB',
+      maxInstances: preprod ? 2 : 10,
+      cors: false,
+      secrets: preprod ? [dtKey, cursorKey] : [geminiKey, dtKey, cursorKey],
+    },
+    async (req, res) => {
+      const t = monitoring('salesdrone-api');
+      await new Promise((resolve, reject) => {
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          Promise.resolve(t?.flush()).finally(resolve);
+        };
+        res.once('finish', finish);
+        res.once('close', finish);
+        try {
+          handler(req, res);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    },
+  );
+  const reminders = onSchedule(
+    {
+      region,
+      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      schedule: 'every 1 minutes',
+      timeZone: 'Etc/UTC',
+      timeoutSeconds: 120,
+      memory: '256MiB',
+      maxInstances: 1,
+      secrets: [dtKey],
+    },
+    async (event) =>
+      worker('reminders', async () => {
+        try {
+          const expiry = await backfillRateLimitExpiry(store, ROOT);
+          if (expiry.scanned)
+            observability?.log('worker.stage',{'operation.stage':'cleanup',processed:expiry.scanned});
+        } catch(error) {
+          // Internal retention maintenance must not prevent scheduled outreach delivery.
+          observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'WARN');
+        }
+        const reset = await advanceLeadReset({
+          store,
+          files: firebaseFiles(dependency, preprod ? bucket : undefined),
+        });
+        if (reset.active)
+          return {
+            reset: true,
+            processed: reset.processed,
+            removed: reset.removed,
+            blocked: reset.blocked,
+          };
+        await observeQueue(store,observability,'reminders');
+        const stats = await dispatchReminders({
+          store,
+          telemetry:observability,
+          send: (message) =>
+            dependency('fcm.delivery', () => getMessaging().send(message)),
+        });
+
+        try {
+          const cleanup = await cleanupAttachments({
+            store,
+            files: firebaseFiles(dependency, preprod ? bucket : undefined),
+          });
+          observability?.log('worker.stage',{'operation.stage':'cleanup',...cleanup},Object.values(cleanup).some(value=>typeof value==='number'&&value>0)?'INFO':'DEBUG');
+        } catch(error) {
+          observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'WARN');
+        }
+        if (new Date(event.scheduleTime).getUTCMinutes() === 0) {
+          try {
+            const replay = await expireRequestReplays(store, new Date(event.scheduleTime).toISOString());
+            if (replay.scanned)
+              observability?.log('worker.stage', {
+                'operation.stage': 'cleanup',
+                processed: replay.scanned,
+                removed: replay.redacted,
+              });
+          } catch (error) {
+            observability?.log('worker.stage', {
+              'operation.stage': 'failed',
+              'error.type': errorType(error),
+            }, 'WARN');
+          }
+          try {
+            const expiry = await backfillOperationalCounterExpiry(store);
+            if (expiry.scanned || expiry.completed)
+              observability?.log('worker.stage', {
+                'operation.stage': 'cleanup',
+                processed: expiry.converted,
+                completed: Number(expiry.completed),
+              });
+          } catch (error) {
+            observability?.log('worker.stage', {
+              'operation.stage': 'failed',
+              'error.type': errorType(error),
+            }, 'WARN');
+          }
+          try {
+            const cleanup = await cleanTerminalDeliveries(store, event.scheduleTime);
+            if (cleanup.removed)
+              observability?.log('worker.stage', {
+                'operation.stage': 'cleanup',
+                removed: cleanup.removed,
+              });
+          } catch (error) {
+            observability?.log('worker.stage', {
+              'operation.stage': 'failed',
+              'error.type': errorType(error),
+            }, 'WARN');
+          }
+        }
+        return stats;
+      }),
+  );
+
+  const analyzeNotes = onSchedule(
+    {
+      region,
+      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      schedule: 'every 1 minutes',
+      timeZone: 'Etc/UTC',
+      timeoutSeconds: 120,
+      memory: '256MiB',
+      maxInstances: 1,
+      secrets: [geminiKey, dtKey],
+    },
+    async () =>
+      worker('note-analysis', async () => {
+        if (resetActive(await store.get(RESET_STATE))) return { skipped: 1 };
+        await observeQueue(store,observability,'analysis');
+        const stats = await processNotes({
+          store,
+          telemetry:observability,
+          extract: (input) =>
+            dependency('gemini.reminder', () =>
+              geminiExtractor({
+                telemetry:()=>observability,
+                key: geminiKey.value(),
+                model: () => geminiModel.value(),
+              })(input),
+            ),
+        });
+
+        return stats;
+      }),
+  );
+
+  const leadIntelligence = onSchedule(
+    {
+      region,
+      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      schedule: 'every 1 minutes',
+      timeZone: 'Etc/UTC',
+      timeoutSeconds: 180,
+      memory: '512MiB',
+      maxInstances: 1,
+      concurrency: 1,
+      secrets: [geminiKey, dtKey],
+    },
+    async () =>
+      worker('lead-intelligence', async () => {
+        if (resetActive(await store.get(RESET_STATE))) return { skipped: 1 };
+        let researchStats={};
+        try {
+          await observeQueue(store,observability,'research');
+          researchStats = await researchDependency('batch',()=>researchWork({store,provider:observedResearch,budgetMs:40000,observe:(name,fn,parent)=>observability?observability.span('lead-research.'+name,fn,{},parent):fn()}));
+          if(researchStats.processed||researchStats.failed||researchStats.indexed)observability?.log('worker.stage',{'operation.stage':'completed',...researchStats},researchStats.failed?'WARN':'INFO');
+        } catch(error) {researchStats={failed:1};observability?.log('worker.stage',{'operation.stage':'failed','error.type':errorType(error)},'ERROR');}
+        const stats = await scoreLeads({
+          store,
+          extract: (input) =>
+            dependency('gemini.qualification', () => intelligence.extract(input)),
+        });
+
+        return Object.fromEntries([...new Set([...Object.keys(stats),...Object.keys(researchStats)])].map(key=>[key,Number(stats[key]||0)+Number(researchStats[key]||0)]));
+      }),
+  );
+
+  const exportTelemetry = onSchedule(
+    {
+      region,
+      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      schedule: 'every 1 minutes',
+      timeZone: 'Etc/UTC',
+      timeoutSeconds: 120,
+      memory: '512MiB',
+      maxInstances: 1,
+      concurrency: 1,
+      secrets: [dtKey],
+    },
+    async () =>
+      worker('telemetry', async () => {
+        const stats = await deliverTelemetry({
+          store,
+          tenant: dtTenant.value(),
+          key: dtKey.value(),
+          telemetry: observability,
+          environment,
+        });
+
+        return stats;
+      }),
+  );
+
+  return { api, reminders, analyzeNotes, leadIntelligence, exportTelemetry };
+}
