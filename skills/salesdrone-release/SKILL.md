@@ -101,4 +101,5 @@ Deploy/verify ingress after Functions and before Hosting cutover; require its re
 
 For managed health and partial-rollout handling, read [operations](references/operations.md). Pages retries require unique attempt names and exact uploaded-ID readiness; follow [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery).
 
-Toolchain: [migration](../../docs/TOOLCHAIN-MIGRATION.md). SDLC routing/evidence: [journeys](../../docs/OBSERVABILITY-JOURNEYS.md).
+
+Toolchain: [migration](../../docs/TOOLCHAIN-MIGRATION.md). SDLC [journeys](../../docs/OBSERVABILITY-JOURNEYS.md) and [pre-production promotion](../../docs/PRE-PRODUCTION-PLAN.md).

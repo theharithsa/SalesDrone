@@ -13,13 +13,22 @@ import {
   ReCaptchaEnterpriseProvider,
   getToken as appCheckToken,
 } from 'firebase/app-check';
+export const preproductionBuild = import.meta.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production';
+const preproductionSite = 'sales-drone-avinya-preprod';
+const allowedPreproductionHosts = new Set([
+  preproductionSite + '.web.app', preproductionSite + '.firebaseapp.com',
+]);
+if (preproductionBuild && (!allowedPreproductionHosts.has(window.location.hostname) ||
+    !import.meta.env.VITE_FIREBASE_APPCHECK_KEY || import.meta.env.VITE_USE_EMULATORS === 'true')) {
+  throw new Error('Pre-production build requires its Hosting origin and App Check key');
+}
 export const firebaseConfig = {
   apiKey: 'AIzaSyCHqWlqPaz1J117_vdm8NkH3koqcOGvkzw',
-  authDomain: 'sales-drone-avinya.firebaseapp.com',
+  authDomain: preproductionBuild ? window.location.hostname : 'sales-drone-avinya.firebaseapp.com',
   projectId: 'sales-drone-avinya',
-  storageBucket: 'sales-drone-avinya.firebasestorage.app',
+  storageBucket: preproductionBuild ? 'sales-drone-avinya-preprod-files' : 'sales-drone-avinya.firebasestorage.app',
   messagingSenderId: '510928501696',
-  appId: '1:510928501696:web:51489a43bc139eab55e625',
+  appId: preproductionBuild ? '1:510928501696:web:c79580e633cb1a6b55e625' : '1:510928501696:web:51489a43bc139eab55e625',
 };
 export const emulator = import.meta.env.VITE_USE_EMULATORS === 'true';
 const app = initializeApp(

@@ -148,6 +148,7 @@ export function createApp({
   cursorSecret = process.env.CURSOR_SECRET,
   telemetry = () => null,
   verifyToken,
+  bootstrapAdminEmails = ADMIN_EMAILS,
   verifyAppCheck,
   verifyPersonalTokenOwner = null,
   sendTest = async () => {},
@@ -475,7 +476,7 @@ export function createApp({
   }
   router.get('/me', async (req, res, next) => {
     try {
-      const rawMember = await resolveIdentity(store, req.identity);
+      const rawMember = await resolveIdentity(store, req.identity, bootstrapAdminEmails);
       const m = await effectiveMember(store, rawMember);
       const invitation = !m
         ? await store.get(path('invitations', hash(req.identity.email)))
@@ -2179,7 +2180,7 @@ export function createApp({
   );
   route('post', '/invitations', 'members:write', (req) => {
     const input = parse(GrantInput, req.body);
-    if (ADMIN_EMAILS.includes(input.email))
+    if (bootstrapAdminEmails.includes(input.email))
       throw new AppError(
         409,
         'ADMIN',

@@ -29,12 +29,18 @@ class ErrorBoundary extends React.Component<
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
+      {import.meta.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production' && (
+        <aside aria-label="Environment" style={{
+          padding: '0.4rem 1rem', textAlign: 'center',
+          background: '#fff0c9', color: '#332503', fontWeight: 600,
+        }}>Pre-production · Synthetic data</aside>
+      )}
       <App />
     </ErrorBoundary>
   </React.StrictMode>,
 );
 installRumErrorHandlers();
-if ('serviceWorker' in navigator)
+if ('serviceWorker' in navigator && import.meta.env.VITE_DEPLOYMENT_ENVIRONMENT !== 'pre-production')
   window.addEventListener('load', () =>
     navigator.serviceWorker
       .register('/firebase-messaging-sw.js')

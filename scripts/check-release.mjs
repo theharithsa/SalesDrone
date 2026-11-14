@@ -22,7 +22,7 @@ if (
 )
   throw Error("A dated, completed changelog entry is required for " + version);
 const base = process.env.BASE_SHA;
-if (base && !/^0+$/.test(base)) {
+if (base && !/^0+$/.test(base) && process.env.SDR_PREPROD_CHECK !== 'true') {
   if (!/^[a-f0-9]{40}$/.test(base)) throw Error("Invalid base SHA");
   const r = spawnSync("git", ["show", base + ":package.json"], {
     encoding: "utf8",

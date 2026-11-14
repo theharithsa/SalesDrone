@@ -30,6 +30,7 @@ export async function deliverTelemetry({
   fetchImpl = fetch,
   now = () => new Date().toISOString(),
   allowLocalTest = false,
+  environment = 'production',
 }) {
   const origin = tenantOrigin(tenant, { allowLocalTest }),
     queue = path('telemetryOutbox');
@@ -69,6 +70,9 @@ export async function deliverTelemetry({
       for(;cursor<events.length;){
         const remaining=deadline-Date.now();if(remaining<=0){budgetExpired=true;break;}
         const event={...events[cursor]};
+        if (environment === 'pre-production') {
+          event.data = { ...event.data, 'deployment.environment.name': environment, 'data.synthetic': true };
+        }
         if(!event.traceparent&&telemetry){event.traceparent=telemetry.capture().traceparent||undefined;if(!event.traceparent)delete event.traceparent;}
         try{
           const response=await fetchImpl(origin+'/api/v2/bizevents/ingest',{

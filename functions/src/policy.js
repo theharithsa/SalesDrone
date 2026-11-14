@@ -29,10 +29,10 @@ export function googleIdentity(token) {
       : {}),
   };
 }
-export async function resolveIdentity(store, identity) {
+export async function resolveIdentity(store, identity, bootstrapAdminEmails = ADMIN_EMAILS) {
   return store.run(async (tx) => {
     const member = await tx.get(path('members', identity.uid));
-    if (ADMIN_EMAILS.includes(identity.email)) {
+    if (bootstrapAdminEmails.includes(identity.email)) {
       const key = path('adminBindings', hash(identity.email));
       const binding = await tx.get(key);
       if (binding && binding.uid !== identity.uid)
