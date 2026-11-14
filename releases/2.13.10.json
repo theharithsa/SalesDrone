@@ -1,14 +1,15 @@
 {
   "schemaVersion": 1,
   "version": "2.13.10",
-  "summary": "Publish the illustrated SalesDrone SDLC guide.",
+  "summary": "Publish a beginner-friendly illustrated SDLC guide and pre-production plan.",
   "modules": [
     "salesdrone-documentation"
   ],
   "documentation": [
     "CHANGELOG.md",
     "docs/SDLC.md",
-    "skills/salesdrone-documentation/SKILL.md"
+    "skills/salesdrone-documentation/SKILL.md",
+    "docs/PRE-PRODUCTION-PLAN.md"
   ],
   "settingsSections": [],
   "api": {
@@ -75,10 +76,10 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Open sdlc.html and review the editorial layout, chapter directory, connected lifecycle map, branch connectors, Actions dependency diagram and reference rows. Verify phone/desktop, 200% root text, keyboard links, short-window navigation and reduced motion. After authorized publication verify the Pages source commit.",
+  "manualVerification": "Open sdlc.html and review the editorial layout, chapter directory, connected lifecycle map, branch connectors, Actions dependency diagram and reference rows. Verify phone/desktop, 200% root text, keyboard links, short-window navigation and reduced motion. After authorized publication verify the Pages source commit. Review all 12 chapters, seven explicit handoffs, the worked example and glossary. Confirm pre-production is labelled planned and links to #222\u2013#226. Record actual Safari results separately; no pre-production resources or memberships are changed.",
   "milestone": {
     "number": 68,
-    "title": "v2.13.10 — SalesDrone delivery guide",
+    "title": "v2.13.10 \u2014 SalesDrone delivery guide",
     "issues": [
       220
     ],

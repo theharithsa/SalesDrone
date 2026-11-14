@@ -11,7 +11,7 @@
     gap: 4rem;
   }
   .sdlc-page .muted { color: var(--sdlc-muted); }
-  .sdlc-page p { display: block; line-height: 1.7; }
+  .sdlc-page p { display: block; line-height: 1.7; overflow-wrap: anywhere; }
   .sdlc-page h3 { font-size: 1.125rem; font-weight: 600; line-height: 1.45; }
   .sdlc-page h4 { font-size: .875rem; font-weight: 600; line-height: 1.5; }
   .sdlc-page :is(h3,h4) .astryx-text { font: inherit; }
@@ -41,7 +41,7 @@
   .sdlc-contents ol { list-style: none; margin: 0; padding: 0; }
   .sdlc-contents a { display: flex; align-items: baseline; gap: .7rem; min-height: 2.75rem; padding: .7rem .5rem; font-size: .8125rem; border-radius: .375rem; text-decoration: none; }
   .sdlc-contents a > .astryx-text { display: flex; gap: .7rem; align-items: baseline; font: inherit; color: inherit; }
-  .sdlc-contents a > .astryx-text > span { font-size: .6875rem; color: #607084; font-variant-numeric: tabular-nums; }
+  .sdlc-contents a > .astryx-text > span { flex: none; white-space: nowrap; font-size: .6875rem; color: #607084; font-variant-numeric: tabular-nums; }
   .sdlc-contents a:hover { background: var(--sdlc-paper); }
   .sdlc-nav-note { border-top: 1px solid var(--sdlc-line); margin: 1rem .5rem 0; padding-top: 1.25rem; }
   .sdlc-nav-note p { font-size: .75rem; }
@@ -54,7 +54,7 @@
   .sdlc-chapter-number { flex: none; white-space: nowrap; font-size: .75rem; font-weight: 600; color: var(--sdlc-blue); border: 1px solid #c9d9f2; background: #f0f5fd; padding: .4rem .5rem; border-radius: .375rem; margin-top: .3rem; }
   .sdlc-section-title { font-size: clamp(1.5rem,2.5vw,2rem); font-weight: 400; letter-spacing: -.035em; line-height: 1.25; text-wrap: balance; }
   .sdlc-chapter-intro { max-width: 68ch; margin-top: .75rem; color: var(--sdlc-muted); font-size: .9375rem; }
-  .sdlc-chapter-content { display: grid; gap: 1.5rem; min-width: 0; }
+  .sdlc-chapter-content { display: grid; grid-template-columns: minmax(0,1fr); gap: 1.5rem; min-width: 0; }
   .sdlc-chapter-content > .astryx-link { justify-self: start; font-size: .875rem; }
   .sdlc-map { margin: 0; border: 1px solid var(--sdlc-line); border-radius: .75rem; background: #fff; overflow: hidden; }
   .sdlc-map figcaption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--sdlc-line); background: var(--sdlc-paper); font-size: .8125rem; font-weight: 600; }
@@ -118,6 +118,45 @@
   .sdlc-sources p { font-size: .8125rem; }
   .sdlc-signal-map > .sdlc-gate-question { background: #edf5f2; border: 1px solid #d8e7df; border-radius: .5rem; }
   #example .sdlc-chapter-content { border-left: 3px solid #c7a968; padding: .5rem 0 .5rem 1.5rem; }
+  .sdlc-primer, .sdlc-preprod, .sdlc-example { display: grid; grid-template-columns: minmax(0,1fr); gap: 1.5rem; min-width: 0; }
+  .sdlc-primer-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.5rem; }
+  .sdlc-primer-grid h3, .sdlc-callout h3 { margin-bottom: .65rem; }
+  .sdlc-callout { border-left: 3px solid #86a8da; background: #f0f5fc; border-radius: 0 .5rem .5rem 0; padding: 1.5rem; }
+  .sdlc-callout p + p { margin-top: .75rem; }
+  .sdlc-planned { border-color: #ba8d42; background: #fff8e9; }
+  .sdlc-planned .kicker { color: #80550c; margin-bottom: .5rem; }
+  .sdlc-handovers { list-style: none; padding: 0; margin: 0; display: grid; gap: 2rem; }
+  .sdlc-handovers > li { border: 1px solid var(--sdlc-line); border-radius: .75rem; overflow: hidden; min-width: 0; }
+  .sdlc-handovers h3 { padding: 1rem 1.5rem; background: var(--sdlc-paper); border-bottom: 1px solid var(--sdlc-line); }
+  .sdlc-handovers dl { padding: .25rem 1.5rem; margin: 0; }
+  .sdlc-handovers dl > div { display: grid; grid-template-columns: 8rem minmax(0,1fr); gap: 1.25rem; padding: 1rem 0; }
+  .sdlc-handovers dl > div + div { border-top: 1px solid #e8edf3; }
+  .sdlc-handovers dt { font-size: .75rem; line-height: 1.65; font-weight: 600; color: var(--sdlc-blue); }
+  .sdlc-handovers dd { margin: 0; font-size: .875rem; line-height: 1.75; }
+  .sdlc-promotion { margin: 0; padding: 1.5rem; background: #f4f7fb; border: 1px solid var(--sdlc-line); border-radius: .75rem; }
+  .sdlc-promotion figcaption { font-size: .8125rem; font-weight: 600; margin-bottom: 1.5rem; }
+  .sdlc-promotion ol { list-style: none; padding: 0 0 0 1rem; margin: 0; border-left: 2px solid #9ab7de; }
+  .sdlc-promotion li { position: relative; padding: 0 0 1.5rem 1rem; }
+  .sdlc-promotion li::before { content: ''; position: absolute; width: .65rem; height: .65rem; border-radius: 50%; background: #245bc0; top: .4rem; left: -1.4rem; }
+  .sdlc-promotion p { font-size: .875rem; }
+  .sdlc-plan-links, .sdlc-source-links { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+  .sdlc-plan-links li { border-bottom: 1px solid var(--sdlc-line); padding-bottom: 1rem; }
+  .sdlc-plan-links p { font-size: .875rem; margin-top: .35rem; }
+  .sdlc-example ol { grid-template-columns: minmax(0,1fr); padding-left: 1.5rem; margin: 0; display: grid; gap: 1.5rem; }
+  .sdlc-example li { min-width: 0; overflow-wrap: anywhere; }
+  .sdlc-example li::marker { color: var(--sdlc-blue); }
+  .sdlc-example li h3 { margin-bottom: .5rem; }
+  .sdlc-preprod > a { justify-self: start; }
+  /* Explicit min-size keeps long text from widening intrinsic grid tracks in WebKit. */
+  .sdlc-page :is(dd, dt, .sdlc-notes > div, .sdlc-handovers dl > div) { min-width: 0; overflow-wrap: anywhere; }
+  @media (max-width: 44rem) {
+    .sdlc-primer-grid, .sdlc-handovers dl > div { grid-template-columns: minmax(0,1fr); }
+    .sdlc-handovers dl > div { gap: .5rem; }
+    .sdlc-handovers h3, .sdlc-callout, .sdlc-promotion { padding: 1rem; }
+    .sdlc-handovers dl { padding-inline: 1rem; }
+    #example .sdlc-chapter-content { padding-left: .75rem; }
+    .sdlc-example ol { padding-left: 1rem; }
+  }
   @media (max-width: 65rem) {
     .sdlc-reading-layout { grid-template-columns: minmax(0,1fr); gap: 2.5rem; }
     .sdlc-contents { position: static; max-height: none; padding: 0 0 1.5rem; border-bottom: 1px solid var(--sdlc-line); }

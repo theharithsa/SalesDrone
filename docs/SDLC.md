@@ -39,3 +39,23 @@ The guide requires no client-side JavaScript, application requests or Firestore
 reads/writes. Reuse the two existing local illustrations. Keep the main delivery
 flow as selectable HTML with real section links, and preserve the ordered mobile
 reading path and the named recovery branches when updating it.
+
+## Beginner explanations and planned pre-production
+
+The HTML guide now explains each handoff with its input, actions, output and exit
+condition. It distinguishes local changes, pushed code, a merged PR, a deployment
+and a published release. A daily-reminder example follows a proposed feature
+through the flow; a glossary explains the services and vocabulary. Runtime task
+completion is a separate walkthrough from the delivery pipeline.
+
+The pre-production chapter is **planned, not activated**. See the
+[resource and acceptance plan](PRE-PRODUCTION-PLAN.md) and
+[epic #222](https://github.com/theharithsa/SalesDrone/issues/222). This release does
+not provision a database, change branch gates or grant memberships. The future
+flow promotes verified code through `pre-prod` to `main`; it never promotes data.
+
+Teaching references are linked in the HTML guide: Atlassian's SDLC overview,
+Diátaxis explanation/tutorial guidance, and primary Firebase/GitHub environment
+documentation. The actual SalesDrone sequence is checked against source rather
+than copied from a generic SDLC diagram. Explanations live in
+`scripts/sdlc-learning.mjs`; composition stays in `scripts/sdlc-guide.mjs`.

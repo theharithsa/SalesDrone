@@ -2,9 +2,12 @@ import { createElement as h, Fragment } from 'react';
 import { Card, HStack, VStack } from '@astryxdesign/core/Layout';
 import { heading, paragraph, link, buttonLink, page, repository } from './public-docs-layout.mjs';
 
+import { foundations, stageHandovers, checkExplanations, requestWalkthrough, telemetryTerms, preproduction, workedExample, glossary, learningSources } from './sdlc-learning.mjs';
+
 const source = repository + '/blob/main/';
 const sections = [
   ['lifecycle', 'End-to-end flow'],
+  ['handovers', 'Every stage explained'],
   ['delivery', 'Build and review'],
   ['release', 'Production release'],
   ['runtime', 'Runtime architecture'],
@@ -12,7 +15,9 @@ const sections = [
   ['roadmap', 'Public roadmap'],
   ['recovery', 'Failure recovery'],
   ['example', 'Worked example'],
+  ['preproduction', 'Pre-production plan'],
   ['tools', 'Tools and skills'],
+  ['glossary', 'Terms and further reading'],
 ];
 
 const deliveryMap = [
@@ -98,6 +103,9 @@ const art = (name, loading) => h('img', {
 
 const chapterIntros = {
   lifecycle: 'One connected route from an idea to the live app. Follow the solid line; side branches explain publishing, failures and monitoring.',
+  handovers: 'What arrives, what happens, what leaves, and the condition for moving on. Read these as a handover between people and tools.',
+  preproduction: 'The agreed next step: rehearse changes with synthetic data, then promote verified code. These gates are planned, not active today.',
+  glossary: 'Plain-language definitions for the terms used above, with references for deeper learning.',
   delivery: 'A pull request is the handover between implementation and a production release.',
   release: 'The merged commit travels through a sequence of gates. Hosting promotion happens only after the backend is ready.',
   runtime: 'Two different journeys: shipping code to production, and handling a customer request once it gets there.',
@@ -192,7 +200,8 @@ export function renderSdlcGuide() {
       h('ol', null, sections.map(([id,label],i) => h('li',{key:id},link('#'+id,h(Fragment,null,h('span',{'aria-hidden':true},String(i+1).padStart(2,'0')),label))))),
       h('div', {className:'sdlc-nav-note'},paragraph('Built from the source'), paragraph('Workflow and service links open the implementation in GitHub.', 'muted'))),
     h('div', {className:'sdlc-article'},
-    block('lifecycle', 'The whole delivery flow', lifecycleDiagram()),
+    block('lifecycle', 'The whole delivery flow', foundations(), lifecycleDiagram()),
+    block('handovers', 'Every stage, from input to outcome', stageHandovers()),
     block('delivery', 'What must be ready before merge',
       h(VStack, { gap: 3, className: 'sdlc-gate' },
         h(Card, { padding: 4, className: 'sdlc-gate-question' },
@@ -210,6 +219,8 @@ export function renderSdlcGuide() {
         ['Verification', 'Use synthetic data. Run unit, API and component checks, and Firebase emulators when behavior crosses auth or persistence boundaries. For UI, inspect reflow, keyboard use, and enlarged text in an isolated browser.'],
         ['Pull request', 'Link the issue with a closing reference, update the changelog and impact plan, and review checks against the exact PR head. Required checks and authorization must be in place before merge.'],
       ], 'Readiness before merge'),
+      heading(3, 'What do the checks actually tell us?'),
+      notes(checkExplanations, 'Purpose of the verification suites'),
       link(source + 'docs/RELEASE-GOVERNANCE.md', 'Read the release governance policy')),
     block('release', 'What happens after merge',
       paragraph('GitHub Actions uses workload identity for deployment. The Firebase app and the public documentation have separate verification steps.', 'muted'),
@@ -223,6 +234,7 @@ export function renderSdlcGuide() {
     block('runtime', 'How requests move through SalesDrone',
       flow('Request path from browser to data services', runtime.slice(0, 5)),
       notes([runtime[5].slice(1), ['Public documentation', 'GitHub Pages serves the roadmap, handbook, release notes and this guide as static HTML. It builds from the repository and GitHub metadata.']], 'Background services and documentation'),
+      requestWalkthrough(),
       link(source + 'firebase.json', 'Open Firebase Hosting and routing configuration')),
     block('observability', 'What each signal proves',
       h(Card, { padding: 0, className: 'editorial-card sdlc-evidence' },
@@ -239,6 +251,8 @@ export function renderSdlcGuide() {
           heading(3, 'Dynatrace'),
           paragraph('Check ingest receipts, then query the tenant for visibility and linkage.', 'muted'))),
       paragraph('Use the workflow run and commit to compare CI and runtime evidence. Use a trace ID or request ID for a request investigation and confirm native parent linkage separately. Logs and events exclude customer text, credentials and prompts.', 'muted'),
+      heading(3, 'Read the signals in plain language'),
+      notes(telemetryTerms, 'What monitoring terms mean'),
       notes(evidence, 'Sources of delivery evidence'),
       link(source + 'docs/OBSERVABILITY-JOURNEYS.md', 'Read the observability contract')),
     block('roadmap', 'How an issue reaches the public roadmap',
@@ -248,10 +262,8 @@ export function renderSdlcGuide() {
     block('recovery', 'Where to go when a gate fails',
       notes(failures, 'Failure recovery decisions'),
       link(source + 'docs/RELEASE.md', 'Open the release and recovery runbook')),
-    block('example', 'Worked example: email notifications',
-      paragraph('Email notifications are planned for invitations, lead assignments, completed tasks, lead outcomes and daily reminders. The approved issue already appears under Upcoming.'),
-      paragraph('Before implementation, confirm recipients, default preferences, time zone and provider. A delivery PR would define how committed events queue mail, test permission changes and duplicate events, and verify delivery with a controlled inbox. When it ships, the published changelog would describe the supported notifications.'),
-      link(repository + '/issues/217', 'Follow email notifications on GitHub')),
+    block('example', 'Worked example: a daily email reminder', workedExample()),
+    block('preproduction', 'The planned pre-production path', preproduction()),
     block('tools', 'Tools and skills by stage',
       paragraph('Developers use App Launchpad to plan issue-linked delivery, the repository skills to follow local module rules, and dt-obs to plan and verify telemetry. Codex can apply those skills during development. Production runs the application code and the configured services.'),
       notes(tools, 'Tools and skills'),
@@ -262,6 +274,11 @@ export function renderSdlcGuide() {
         ['Build public docs', h('code', null, 'npm run docs:build'), 'Generates the curated site in site/.build, including this page.'],
         ['Validate monitoring definitions', h('code', null, 'npm run obs:check'), 'Checks generated monitoring content for drift. Live Dynatrace queries require separate tenant access.'],
       ], 'Local development and verification commands'),
-      link(source + 'skill-tree.md', 'Open the SalesDrone skill tree'))))),
+      link(source + 'skill-tree.md', 'Open the SalesDrone skill tree')),
+    block('glossary', 'A field guide to the vocabulary',
+      notes(glossary, 'Delivery vocabulary'),
+      heading(3, 'Further reading and sources'),
+      paragraph('The workflow above is based on SalesDrone’s checked-in implementation. These references explain the broader lifecycle, teaching approach and platform constraints. The pre-production chapter describes a proposal, not deployed infrastructure.'),
+      h('ul', {className:'sdlc-source-links'}, learningSources.map(([title,url]) => h('li',{key:url},link(url,title)))))))),
   { stylesheet: 'sdlc.css', mainClass: 'sdlc-page' });
 }
