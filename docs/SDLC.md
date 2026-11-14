@@ -1,6 +1,6 @@
 # SalesDrone delivery workflow
 
-The [illustrated SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html) explains the delivery pipeline, GitHub Actions jobs, runtime architecture, and observability for developers. Preview locally with `npm run docs:build` and serve `site/.build`.
+The [illustrated SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html) opens with one connected flow from issue intake to production verification. Follow its branches for roadmap publication, failed checks, release recovery and runtime telemetry. The sections below it explain GitHub Actions, Firebase and Dynatrace in detail. Preview locally with `npm run docs:build` and serve `site/.build`.
 
 | Stage | What happens | Tools and guidance |
 | --- | --- | --- |

@@ -4,7 +4,7 @@ import { heading, paragraph, link, buttonLink, page, repository } from './public
 
 const source = repository + '/blob/main/';
 const sections = [
-  ['lifecycle', 'Lifecycle'],
+  ['lifecycle', 'End-to-end flow'],
   ['delivery', 'Build and review'],
   ['release', 'Production release'],
   ['runtime', 'Runtime architecture'],
@@ -15,13 +15,18 @@ const sections = [
   ['tools', 'Tools and skills'],
 ];
 
-const stages = [
-  ['Intake', 'Define the outcome', 'Open an issue with acceptance criteria. Use an epic for related work, a Project sprint for timing, and a milestone for the release scope.'],
-  ['Plan', 'Set the release scope', 'Resolve material decisions and choose the smallest version change that fits. Assign the scoped issues before advancing the candidate.'],
-  ['Build', 'Implement on a branch', 'Follow the owning module skill. Update contracts, permissions, tests, changelog, and the release impact plan where applicable.'],
-  ['Verify', 'Check the exact PR commit', 'Run focused tests and browser reviews locally. GitHub Actions runs the shared gates against the PR head. Failed checks send the work back to the branch.'],
-  ['Release', 'Merge and publish', 'After authorization, merge through the PR. The main workflow verifies the merged commit, deploys production, then publishes the GitHub release and Pages.'],
-  ['Operate', 'Verify and recover', 'Compare the live version and SHA, confirm public docs, review telemetry evidence, and recover from the phase that failed.'],
+const deliveryMap = [
+  ['Plan the change', 'GitHub issue, acceptance criteria and release milestone.', '#delivery',
+    ['Optional public roadmap', 'Approved issue → Pages refresh → Upcoming. This branch can run before implementation.', '#roadmap']],
+  ['Build and open a PR', 'Use the relevant skills, implement on a branch, and link the issue.', '#delivery'],
+  ['Verify the PR', 'GitHub Actions checks the exact PR commit. Continue after checks pass and merge is approved.', '#delivery',
+    ['Checks fail or are pending', 'Keep the PR open. For failures, return to step 2, fix the branch, and verify the updated commit.', '#sdlc-step-2']],
+  ['Merge and verify main', 'Merge through GitHub. Actions verifies the merged commit again before deploying.', '#release'],
+  ['Deploy and verify production', 'Stage Firebase Hosting → prepare Firestore and Storage → deploy Functions and verify Cloud Run ingress → promote Hosting → check the live app.', '#release',
+    ['A release gate fails', 'Stop at the failed gate. Inspect the live revisions and use the recovery runbook before retrying.', '#recovery']],
+  ['Publish the release and docs', 'After the deployment job succeeds, the GitHub release is available and the documentation job publishes and verifies Pages.', '#release'],
+  ['Review delivery and runtime evidence', 'The observe job reports verification, deployment and docs outcomes, including failures or skips. Live app telemetry reaches Dynatrace separately.', '#observability',
+    ['Runtime signals', 'Browser RUM, backend logs, traces and metrics, and committed events also feed Dynatrace.', '#runtime']],
 ];
 
 const rollout = [
@@ -108,6 +113,20 @@ function flow(label, steps) {
             paragraph(description, 'muted'))))));
 }
 
+function lifecycleDiagram() {
+  return h('figure', { className: 'sdlc-map', 'aria-labelledby': 'sdlc-map-caption' },
+    h('figcaption', { id: 'sdlc-map-caption' },
+      'Follow the numbered path. Each side branch shows what can happen at that step.'),
+    h('ol', { className: 'sdlc-map-path' },
+      deliveryMap.map(([title, description, href, branch], index) =>
+        h('li', { key: title, id: 'sdlc-step-' + (index + 1), className: 'sdlc-map-row' },
+          h('span', { className: 'sdlc-map-number', 'aria-hidden': true }, index + 1),
+          h(Card, { padding: 4, className: 'sdlc-map-stage' },
+            h(VStack, { gap: 1 }, heading(3, link(href, title)), paragraph(description, 'muted'))),
+          branch && h(VStack, { gap: 1, className: 'sdlc-map-branch' },
+            heading(4, link(branch[2], branch[0])), paragraph(branch[1], 'muted'))))));
+}
+
 function notes(items, label) {
   return h('dl', { className: 'sdlc-notes', 'aria-label': label },
     items.map(([title, primary, detail]) =>
@@ -128,8 +147,7 @@ export function renderSdlcGuide() {
       art('delivery-workflow', 'eager')),
     h(HStack, { as: 'nav', wrap: 'wrap', gap: 2, className: 'sdlc-contents', 'aria-label': 'On this page' },
       sections.map(([id, label]) => link('#' + id, label, { key: id }))),
-    block('lifecycle', 'The delivery lifecycle',
-      flow('Delivery lifecycle from intake to operations', stages)),
+    block('lifecycle', 'The whole delivery flow', lifecycleDiagram()),
     block('delivery', 'What must be ready before merge',
       h(VStack, { gap: 3, className: 'sdlc-gate' },
         h(Card, { padding: 4, className: 'sdlc-gate-question' },
