@@ -18,9 +18,7 @@ export default defineConfig(({ command }) => ({
     {
       name: 'production-rum-tag',
       transformIndexHtml(html) {
-        if (process.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production')
-          return html.replace('https://sales-drone-avinya.firebaseapp.com',
-            'https://sales-drone-avinya-preprod.web.app https://sales-drone-avinya-preprod.firebaseapp.com');
+        if (process.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production') return html;
         return command === 'build' &&
           process.env.VITE_ENABLE_RUM === 'true' &&
           process.env.VITE_USE_EMULATORS !== 'true'

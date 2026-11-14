@@ -93,4 +93,4 @@ Committed summaries, audit and semantic projections are atomic even without the 
 
 Review [FinOps](../salesdrone-finops/SKILL.md) for budgets. Distinguish RPCs from billable reads, including index entries and empty queries. Browser repeat-read caching is tab-local and cannot bypass server policy on fresh requests.
 
-Pre-production uses the named `preprod` database and database-conditioned IAM. Verify both allowed test reads and denied production reads before enabling traffic. See [the deployment plan](../../docs/PRE-PRODUCTION-PLAN.md).
+Pre-production uses the named `preprod` database and database-conditioned IAM. Verify both allowed test reads and denied production reads before enabling traffic. The test client shares the registered Google Auth handler and uses its own App Check app ID. See [the deployment plan](../../docs/PRE-PRODUCTION-PLAN.md).

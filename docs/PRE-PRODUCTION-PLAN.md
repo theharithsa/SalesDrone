@@ -200,6 +200,8 @@ private bucket. Equivalent read probes against the production database and bucke
 returned permission denied. The owner and 30 synthetic leads and 12 tasks were
 seeded in 116 writes. A replay issued zero writes.
 
+Google popup sign-in uses the existing registered Firebase Auth handler. The application and App Check registration use the separate pre-production origin and app ID.
+
 The initial deployment exposes only the API and ingress. Scheduled jobs, push
 delivery, browser RUM and GA4 have no active pre-production traffic. Paid AI
 requests are disabled on the test API. Shared Firebase Hosting IAM is project

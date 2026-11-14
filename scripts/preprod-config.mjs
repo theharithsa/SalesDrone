@@ -6,10 +6,6 @@ if (process.env.GCP_PROJECT_ID !== target.project)
   throw Error('Wrong pre-production Firebase project');
 
 const production = JSON.parse(await readFile('firebase.json', 'utf8'));
-const replaceOrigin = (value) => value.replace(
-  'https://sales-drone-avinya.firebaseapp.com',
-  target.origin + ' https://' + target.site + '.firebaseapp.com',
-);
 const config = {
   functions: [{ ...production.functions[0], codebase: 'salesdrone-preprod',
     ignore: [...production.functions[0].ignore, '.env.*.local'] }],
@@ -17,10 +13,8 @@ const config = {
   hosting: {
     ...production.hosting,
     site: target.site,
-    headers: [...production.hosting.headers.map((group) => ({
-      ...group,
-      headers: group.headers.map(({ key, value }) => ({ key, value: replaceOrigin(value) })),
-    })), { source: '**', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }],
+    headers: [...production.hosting.headers,
+      { source: '**', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }],
     rewrites: production.hosting.rewrites.map((rewrite) => rewrite.run
       ? { ...rewrite, run: { serviceId: target.ingress, region: target.region } }
       : rewrite),

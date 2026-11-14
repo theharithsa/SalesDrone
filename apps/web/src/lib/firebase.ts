@@ -24,7 +24,7 @@ if (preproductionBuild && (!allowedPreproductionHosts.has(window.location.hostna
 }
 export const firebaseConfig = {
   apiKey: 'AIzaSyCHqWlqPaz1J117_vdm8NkH3koqcOGvkzw',
-  authDomain: preproductionBuild ? window.location.hostname : 'sales-drone-avinya.firebaseapp.com',
+  authDomain: 'sales-drone-avinya.firebaseapp.com',
   projectId: 'sales-drone-avinya',
   storageBucket: preproductionBuild ? 'sales-drone-avinya-preprod-files' : 'sales-drone-avinya.firebasestorage.app',
   messagingSenderId: '510928501696',
