@@ -16,6 +16,11 @@ The [illustrated SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html)
 
 ## Roadmap and release notes
 
+Record a documentation decision on each PR. The production promotion PR
+reconciles the README and dated changelog with what ships and reviews the
+security policy and affected guides. Follow the
+[documentation review](RELEASE-GOVERNANCE.md#documentation-review).
+
 Create the feature issue first. Add a customer-facing title and a one-line paragraph under `## Public summary`. Apply `roadmap-public` after reviewing both for publication. Open labeled issues appear under Upcoming. A matching roadmap milestone adds its sprint window on the Roadmap. Issue changes can refresh Pages independently of the app release, with a daily refresh as a backstop. Removing the label or closing the issue removes it from Upcoming. Add shipped behavior to the versioned changelog in the implementation PR, and link it to the verified GitHub release. Issue closure alone does not establish shipment.
 
 The static docs build uses Astryx and local assets for the Roadmap, Release notes, Product handbook and SDLC guide. It queries GitHub at build time and does not add application traffic or Firestore reads. The other site pages and the app follow their existing design systems while the Astryx workspace epic is in planning.

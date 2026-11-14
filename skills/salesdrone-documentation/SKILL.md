@@ -58,7 +58,7 @@ module-specific regression entry points, not a substitute for integration checks
 
 ## Deployment and handoff
 
-Pages serves the guide. Hosting serves app copy and assets. Bundle routine guide changes in the weekly release. See [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery) for artifact IDs and retry names.
+Pages serves the guide. Follow [release documentation review](../../docs/RELEASE-GOVERNANCE.md#documentation-review) for README, changelog, security and guide changes. See [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery).
 
 Use [the release skill](../salesdrone-release/SKILL.md) for authorized publication.
 Adjacent owners:

@@ -11,6 +11,21 @@ Pre-release production baseline verified on 31 October 2026: **2.5.3**, commit `
 5. Publication requires the milestone issues to be closed after merge. Required CI, production version/SHA, documentation and monitoring evidence remain separate gates.
 6. Close the release milestone only after its release acceptance is complete. Preserve incomplete issues, decisions and historical scope; no paper closures or silent mass rescheduling.
 
+## Documentation review
+
+Every PR records a documentation decision. Use `Updated:` with the affected
+guides or `No change:` with a concrete reason. Before each production
+promotion, reconcile README.md and the dated CHANGELOG.md with the release
+scope. Review SECURITY.md and the affected product, technical, settings, SDLC,
+CI/CD and operator guides. Update changed claims in the PR and record why any
+unchanged guide still applies. Refresh affected synthetic screenshots as
+required by the documentation skill.
+
+Run the docs and link checks against the candidate. After a successful release,
+verify the published guide links and source revision independently of the app.
+Record publication failures separately and use the Pages recovery workflow.
+See the [App Launchpad audit](APP-LAUNCHPAD-AUDIT.md) for the adoption baseline.
+
 ## Weekly production cadence
 
 Plan at most one regular production promotion per week. Put the planned work in

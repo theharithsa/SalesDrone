@@ -232,7 +232,7 @@ export function renderSdlcGuide() {
         ], 'Weekly release and build examples'),
         paragraph('The weekly schedule is an operating policy. The release window and automated build numbering are still to be defined.', 'muted'),
         link(source + 'docs/RELEASE-GOVERNANCE.md#weekly-production-cadence', 'Read the weekly release policy')),
-      paragraph('GitHub Actions uses workload identity for deployment. The Firebase app and the public documentation have separate verification steps.', 'muted'),
+      paragraph('Before the production PR merges, review the README, dated changelog, security policy and affected guides. Record what changed in the PR. GitHub Actions uses workload identity for deployment and verifies the app and public documentation in separate jobs.', 'muted'),
       flow('Production release sequence', rollout),
       heading(3, 'GitHub Actions job dependencies'),
       jobDiagram(),

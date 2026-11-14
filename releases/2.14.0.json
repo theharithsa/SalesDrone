@@ -14,6 +14,9 @@
     "docs/RELEASE.md",
     "docs/SDLC.md",
     "docs/RELEASE-GOVERNANCE.md",
+    "docs/APP-LAUNCHPAD-AUDIT.md",
+    "README.md",
+    "SECURITY.md",
     "CHANGELOG.md"
   ],
   "settingsSections": [],
@@ -90,7 +93,9 @@
       223,
       224,
       225,
-      226
+      226,
+      232,
+      234
     ],
     "readiness": "ready"
   },

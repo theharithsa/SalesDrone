@@ -21,6 +21,7 @@ API contract versions track compatibility independently.
 ### Changed
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
 - Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
+- Refreshed the README and security policy, recorded the App Launchpad v1.14.0 audit, and documented the production release documentation review.
 
 ## [2.13.11] - 2026-11-14
 
