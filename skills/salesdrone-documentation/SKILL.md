@@ -93,6 +93,8 @@ Maintain the public roadmap and release history in [docs/whats-new](../../docs/w
 
 Keep the release index filterable and individual release pages addressable by version. Generate their headings and contents from the changelog. Attach synthetic screenshots to their matching historical release pages with the reviewed capture version visible.
 
-The roadmap and release notes are pre-rendered with Astryx Core and the Neutral theme. Scope the Astryx reset, theme, and Open Sans to those Pages outputs. Preserve version URLs and use verified GitHub publication dates for the latest release. Keep both roadmap sequences readable as ordered HTML on narrow screens and check search, historical capture links and prerequisite anchors with tests/whats-new.test.ts and the isolated browser.
+The roadmap, release notes, handbook and SDLC guide are pre-rendered with Astryx Core and the Neutral theme. Scope the Astryx reset, theme, and Open Sans to those Pages outputs. Preserve version URLs and use verified GitHub publication dates for the latest release. Keep both roadmap sequences readable as ordered HTML on narrow screens and check search, historical capture links and prerequisite anchors with tests/whats-new.test.ts and the isolated browser.
 
 For upcoming releases, read only approved open `roadmap-public` issues and publish their customer-facing title and one-line Public summary. A roadmap-only workflow rebuilds Pages from the published revision, independently of Firebase. Treat issue text as untrusted and render it as plain text. Check enlarged text and actual label truncation on narrow layouts as well as document overflow.
+
+Maintain SDLC diagrams against actual workflows and routing. Explain inputs, actions, outputs and gates; label planned environments explicitly. Verify Safari, artwork and narrow layouts; see [SDLC layout](references/operations.md#sdlc-layout) for Astryx typography and review checks.

@@ -15,9 +15,9 @@ export const paragraph = (content, className) =>
 export const link = (href, content, props = {}) => h(Link, { href, ...props }, content);
 export const buttonLink = (href, label, variant = 'secondary') => h(Button, { href, label, variant, className: 'wrap-button' },
     h('span', { className: 'wrap-button-label' }, label));
-export function page(title, current, content, { detail = false, filter = false, handbook = false, version } = {}) {
+export function page(title, current, content, { detail = false, filter = false, handbook = false, version, stylesheet: extraStylesheet, mainClass = '' } = {}) {
   const base = detail ? '../' : '';
-  const navigation = [['Roadmap', 'roadmap.html'], ['Release notes', 'releases.html'], ['Handbook', 'product.html']];
+  const navigation = [['Roadmap', 'roadmap.html'], ['Release notes', 'releases.html'], ['Handbook', 'product.html'], ['SDLC', 'sdlc.html']];
   const stylesheet = (path) => h('link', { key: path, rel: 'stylesheet', href: base + path });
   return '<!doctype html>\n' + renderToStaticMarkup(h('html', { lang: 'en', 'data-theme': 'light' },
     h('head', null,
@@ -27,6 +27,7 @@ export function page(title, current, content, { detail = false, filter = false, 
       h('title', null, title + ' | SalesDrone'),
       h('link', { rel: 'icon', href: base + 'assets/brand/icon.svg' }),
       ['astryx/reset.css', 'astryx/core.css', 'astryx/neutral.css', 'whats-new.css'].map(stylesheet),
+      extraStylesheet && stylesheet(extraStylesheet),
       filter && h('script', { src: 'release-filter.js', defer: true }),
       handbook && h('link', { rel: 'stylesheet', href: 'product.css' }),
       handbook && h('script', { src: 'product-search.js', defer: true })),
@@ -42,8 +43,8 @@ export function page(title, current, content, { detail = false, filter = false, 
               key: href, href: base + href,
               'aria-current': current === label ? (detail ? 'location' : 'page') : undefined,
             }, label))))),
-      h(VStack, { as: 'main', id: 'content', tabIndex: -1, className: 'shell updates-main', gap: 8 }, content),
+      h(VStack, { as: 'main', id: 'content', tabIndex: -1, className: 'shell updates-main ' + mainClass, gap: 8 }, content),
       h(HStack, { as: 'footer', className: 'shell updates-footer', justify: 'between', wrap: 'wrap', gap: 3 },
         h(Text, { type: 'supporting', color: 'secondary' }, 'SalesDrone by AvinyaTech'),
-        h(HStack, { gap: 4, wrap: 'wrap' }, link(base + 'index.html', 'Product overview'), link(repository, 'GitHub')))))));
+        h(HStack, { gap: 4, wrap: 'wrap' }, link(base + 'index.html', 'Product overview'), link(base + 'sdlc.html', 'SDLC guide'), link(repository, 'GitHub')))))));
 }
