@@ -68,7 +68,7 @@ The repository contains application code and reviewed synthetic screenshots. It 
 
 ## Run locally
 
-Use Node **22.18+ within Node 22 LTS**, npm, and Java **21** for the Firestore emulator. The deployed backend runs Node 22.
+Use Node **24.15.0 or later in the Node 24 series**, npm, and Java **21** for the Firestore emulator. The deployed backend runs Node 22.
 
 ```sh
 npm ci

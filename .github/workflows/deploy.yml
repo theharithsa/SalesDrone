@@ -27,7 +27,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
           cache: npm
       - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
@@ -106,7 +106,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - name: Validate public browser configuration
@@ -221,7 +221,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - name: Download available verification evidence
