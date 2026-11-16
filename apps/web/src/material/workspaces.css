@@ -915,6 +915,56 @@ tbody tr:last-child td {
   padding: 4px 8px;
   margin-left: -8px;
 }
+
+.combined-lead-timeline .timeline-item {
+  position: relative;
+}
+.combined-lead-timeline .timeline-icon {
+  position: relative;
+  z-index: 1;
+}
+.combined-lead-timeline .timeline-item:not(:last-child)::after {
+  position: absolute;
+  inset-block: 14px -16px;
+  inset-inline-start: 13px;
+  border-inline-start: 1px solid var(--line);
+  content: '';
+}
+.timeline-kind {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.timeline-item .timeline-task-title {
+  display: inline-flex;
+  max-width: 100%;
+  padding-inline: 0;
+  margin-inline: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.timeline-task-meta,
+.lead-timeline-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-block-start: 8px;
+}
+.timeline-task-meta {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+.lead-timeline-task-error {
+  margin-block-start: 12px;
+}
+.timeline-task-meta .task-state {
+  padding: 2px 7px;
+  border-radius: var(--md-sys-shape-full);
+  background: var(--md-sys-color-surface-container);
+}
 .automatic-reminder {
   border: 1px solid var(--line);
   background: var(--md-sys-color-surface-container-low);

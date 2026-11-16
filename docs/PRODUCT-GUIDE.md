@@ -200,11 +200,11 @@ Members who can read the lead
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.
 
-4. Comments opens first. All includes every loaded activity and review information. Shared lead tasks appear in Tasks. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser.
+4. All opens first with comments, logged calls, lead-linked reminders and tasks together. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser.
 
 5. Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission.
 
-Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All includes both plus other activity and the existing review cards, without duplicating entries. Entries preserve timestamps, original import columns where known, line breaks and correction controls. Earlier activity loads another page instead of rendering every entry at once.
+Comments includes only note entries, including imported discussion columns. Calls includes only logged calls and their outcomes. All orders loaded entries newest first by their recorded or creation time. Imported comments without a recorded date come after dated entries. Task and reminder cards show the responsible person, status and due date separately. Select the task title for details and available actions. Earlier activity loads more conversations. Load more tasks and reminders adds the next page of linked work. Newly loaded cards appear in timestamp order.
 
 Tasks for this lead is shared with everyone who can read the lead. Each task shows its responsible member. Lead editors add a comment when completing or rescheduling Pending work. They can reopen Completed work with a comment and a future due time. Status filtering and Load more tasks remain available. Personal reminders and notification delivery remain private; shared editors cannot retitle, delete or reassign another recipient’s task.
 
@@ -220,7 +220,7 @@ Log call and Remind me appear once above the tabs. Expanding Details & qualifica
 
 The lead header groups the person, a small score ring, current sales stage and assignee. It reflows by available content width. The journey is a compact horizontally scrollable path; About this journey and Recorded stage changes expand separately. The ring shows a known score out of 100; a dashed ring means Unscored, which is different from a known zero. Reported risks retain an explicit warning label; a score is not a verified commercial guarantee.
 
-Files is a separate tab for private lead attachments. It is not part of All activity; comments/calls and tasks keep their existing tabs. Existing Ready files stay with a lead when it is reassigned, while pending uploads are invalidated by assignment changes.
+Files is a separate tab for private lead attachments. It is not part of All activity; the Comments, Calls and Tasks tabs provide focused views. Existing Ready files stay with a lead when it is reassigned, while pending uploads are invalidated by assignment changes.
 
 On phones, tap a lead card to open it. Use a wider window for batch selection and editing.
 
