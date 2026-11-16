@@ -18,6 +18,9 @@ API contract versions are independent from application versions.
 
 ## [2.14.0] - 2026-11-14
 
+### Added
+- Opening a lead starts on All, with comments, calls, shared tasks and linked reminders together in one timeline.
+
 ### Changed
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
 

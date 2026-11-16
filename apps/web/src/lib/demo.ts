@@ -72,6 +72,7 @@ export function demoData() {
     ['Confirm the discovery meeting', 2, 3],
     ['Make an introductory call', 3, 5],
     ['Share the revised estimate', 4, 25],
+    ['Review the account brief', 0, 8],
   ].map(
     ([title, index, offset], i) =>
       ({
@@ -79,16 +80,24 @@ export function demoData() {
         title,
         leadId: leads[Number(index)].id,
         dueAt: new Date(Date.now() + Number(offset) * 3600000).toISOString(),
+        createdAt: new Date(Date.now() - (i + 1) * 1800000).toISOString(),
         state: 'Pending',
         version: 1,
         timezone: 'Asia/Kolkata',
-        kind: 'outreach',
+        kind: i === 5 ? 'administrative' : 'outreach',
       }) as Task,
   );
   return {
     leads,
     tasks,
-    activities: leads.slice(0, 4).map((l, i) => ({
+    activities: [{
+      id: 'demo-timeline-comment',
+      leadId: leads[0].id,
+      type: 'note',
+      notes: 'Asked for a product overview before the next conversation.',
+      createdAt: new Date(Date.now() - 15 * 60000).toISOString(),
+      revision: 1,
+    }, ...leads.slice(0, 4).map((l, i) => ({
       id: 'activity-' + i,
       leadId: l.id,
       type: 'call',
@@ -99,7 +108,7 @@ export function demoData() {
           : 'Try again later in the day.',
       createdAt: new Date(Date.now() - i * 3600000).toISOString(),
       revision: 1,
-    })),
+    }))],
     notifications: [
       {
         id: 'demo-assignment',

@@ -1,54 +1,30 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Task, displayDate } from '../lib/types';
+import { type LeadTaskPages, useLeadTasks } from '../lib/use-lead-tasks';
 import { ErrorMessage, Loading } from './UI';
+
 export default function LeadTaskTab({
   leadId,
+  scope,
   request,
   timezone,
   onOpen,
   onChange,
   refreshKey,
+  allTasks,
 }: {
   leadId: string;
+  scope: string;
   refreshKey: number;
-  request: (p: string, method?:string, body?:any, key?:string) => Promise<any>;
+  request: (path: string) => Promise<any>;
   timezone: string;
   onOpen: (t: Task) => void;
   onChange: (task: Task, action: 'complete' | 'reopen') => void;
+  allTasks: LeadTaskPages;
 }) {
-  const [items, setItems] = useState<Task[]>([]),
-    [cursor, setCursor] = useState<string | null>(null),
-    [state, setState] = useState(''),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState('');
-  const epoch = useRef(0);
-  async function load(next?: string) {
-    const current = ++epoch.current;
-    setBusy(true);
-    setError('');
-    try {
-      const q = new URLSearchParams({ limit: '50' });
-      if (state) q.set('state', state);
-      if (next) q.set('cursor', next);
-      const r = await request('/leads/' + encodeURIComponent(leadId) + '/tasks?' + q);
-      if (current === epoch.current) {
-        setItems((old) => (next ? [...old, ...r.items] : r.items));
-        setCursor(r.nextCursor);
-      }
-    } catch (e) {
-      if (current === epoch.current) setError((e as Error).message);
-    } finally {
-      if (current === epoch.current) setBusy(false);
-    }
-  }
-  useEffect(() => {
-    setItems([]);
-    setCursor(null);
-    void load();
-    return () => {
-      epoch.current++;
-    };
-  }, [leadId, state, request, refreshKey]);
+  const [state, setState] = useState('');
+  const filtered = useLeadTasks({ leadId: state ? leadId : null, scope, refreshKey, request, state });
+  const { items, nextCursor, busy, error, load } = state ? filtered : allTasks;
   return (
     <div className="lead-task-workspace">
       <div className="lead-task-toolbar">
@@ -83,11 +59,11 @@ export default function LeadTaskTab({
           {t.canManage && (t.state === 'Pending' || t.state === 'Completed') ? <button className="button" disabled={busy} onClick={() => onChange(t, t.state === 'Pending' ? 'complete' : 'reopen')}>{t.state === 'Pending' ? 'Complete task' : 'Reopen task'}</button> : null}
         </div>
       ))}
-      {cursor ? (
+      {nextCursor ? (
         <button
           className="button"
           disabled={busy}
-          onClick={() => void load(cursor)}
+          onClick={() => void load(nextCursor)}
         >
           Load more tasks
         </button>

@@ -381,3 +381,5 @@ Lead field and historical-note search, custom Team date ranges and report reads 
 Appearance settings record the static `accentPalette` key through the existing
 settings audit. Palette colours, chosen font names and book navigation content
 are excluded from committed audit metadata. Page turns add no API calls.
+
+The default lead timeline reuses the existing scoped activities and tasks GET routes and their HTTP metrics, traces, and logs. Loading the timeline emits no committed business event. Task titles, comment text and due dates stay out of telemetry.
