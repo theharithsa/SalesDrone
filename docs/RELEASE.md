@@ -20,7 +20,7 @@ git push -u origin <working-branch>
 ```
 
 The main push runs the deployment workflow. PRs run verification only. GitHub Actions
-pins actions to immutable commits, uses Node 22/Java 21, checks source/versions and
+pins actions to immutable commits, uses Node 24 tooling and Java 21, checks source/versions and
 contracts, runs domain tests and the real Auth/Firestore/Storage emulator integration, and
 builds production assets. The production job uses Google OIDC federation, deploys
 rules/indexes and waits READY, deploys the salesdrone function codebase, then the Cloud Run ingress and Hosting. Verify ingress identity and parser response before cutting over Hosting; retain ingress-deployment.json with the five Function revisions. Provision its isolated runtime/build accounts using scripts/provision-ingress.mjs before the first rollout. See API-INGRESS.md.

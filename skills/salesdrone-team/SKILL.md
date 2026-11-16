@@ -13,6 +13,7 @@ Read [SHARED.md](../SHARED.md), [release readiness](../salesdrone-release-readin
 - [app.js](../../functions/src/app.js): routes, encrypted member/period-bound activity continuations and minimal projections.
 - [TeamPage.tsx](../../apps/web/src/features/TeamPage.tsx), [team.css](../../apps/web/src/material/team.css): overview, member activity, current stages and lead drill-through.
 - [team-demo.ts](../../apps/web/src/lib/team-demo.ts): fictional local-only records. Never run live reporting to populate captures.
+- Team member activity buttons use explicit accessible names. Query the action name in component tests so the member name and role can wrap independently.
 
 ## Primary API ownership
 

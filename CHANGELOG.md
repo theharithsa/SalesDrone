@@ -23,6 +23,12 @@ API contract versions track compatibility independently.
 - Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
 - Refreshed the README and security policy, recorded the App Launchpad v1.14.0 audit, and documented the production release documentation review.
 
+### Security
+- Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.
+
+### Maintenance
+- Updated the Firebase web SDK and CLI, Lucide icons, and test dependencies. Development and CI now use Node 24. The deployed Functions runtime remains Node 22.
+
 ## [2.13.11] - 2026-11-14
 
 ### Fixed

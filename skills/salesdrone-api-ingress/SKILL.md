@@ -33,6 +33,10 @@ are not the supported Hosting /api/v1 contract. Document that boundary honestly.
 
 ## Delivery
 
+Build the Node 22 image with the standalone Functions production lockfile.
+Keep that lockfile in the Cloud Build upload allowlist. The web workspace
+engine and development dependencies belong to the build and test tooling.
+
 Stage the service and verify its revision before Hosting cutover. Retain five existing
 Functions and publish ingress metadata separately. Index/function/Hosting/ingress,
 public docs, signal acceptance and tenant searches are distinct checks. Failure must

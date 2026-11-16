@@ -56,7 +56,7 @@ describe("Admin Team", () => {
     render(<TeamPage request={request} onLeads={onLeads} />);
     await screen.findByText("People & progress");
     await user.click(
-      screen.getByRole("button", { name: "Synthetic SDR SDR · Active member" }),
+      screen.getByRole("button", { name: "Open team activity for Synthetic SDR" }),
     );
     await screen.findByText("Literal <script> text");
     expect(

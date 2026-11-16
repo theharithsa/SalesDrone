@@ -7,7 +7,9 @@
     "salesdrone-release",
     "salesdrone-documentation",
     "salesdrone-observability",
-    "salesdrone-finops"
+    "salesdrone-finops",
+    "salesdrone-api-ingress",
+    "salesdrone-team"
   ],
   "documentation": [
     "docs/PRE-PRODUCTION-PLAN.md",
@@ -17,7 +19,9 @@
     "docs/APP-LAUNCHPAD-AUDIT.md",
     "README.md",
     "SECURITY.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "docs/DEPENDENCY-REVIEW.md",
+    "docs/TECHNICAL.md"
   ],
   "settingsSections": [],
   "api": {
@@ -95,7 +99,8 @@
       225,
       226,
       232,
-      234
+      234,
+      235
     ],
     "readiness": "ready"
   },

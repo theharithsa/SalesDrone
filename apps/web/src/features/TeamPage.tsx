@@ -362,6 +362,7 @@ export default function TeamPage({
                           <th scope="row">
                             <button
                               className="team-person"
+                              aria-label={`Open team activity for ${m.name}`}
                               onClick={() => {
                                 setSelected(m.id);
                                 setView("activity");
