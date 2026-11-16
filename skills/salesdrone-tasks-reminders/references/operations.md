@@ -48,3 +48,7 @@ LeadTaskTab pages the existing recipient-private GET tasks endpoint by leadId an
 
 useSubmit supplies an isCurrent callback so a dismissed task form cannot close a replacement dialog after its request resolves. The synchronous submit lock blocks double-click writes before React commits busy state. Verify edit/delete/cancel and delayed completion in synthetic fixtures.
 
+
+## Task list layout and read scope
+
+The default recipient-only task list returns a minimal current authorized lead summary (id/name/company) after recipient/scope checks. Do not join names only from the browser's paginated Leads cache or persist copied names on tasks. TaskRow aligns the Lead, Responsible, Due and Actions columns on panels at least 740 CSS pixels wide. Narrower panels group lead and responsibility together beneath the title. Pending rows keep direct Reschedule where the member can manage the task. Personal reminders have no lead link. On phones place Reschedule beside the due time; use an accessible calendar icon when the panel has 290 CSS pixels or less. Standard and Book mode share these rules. No API, audit or delivery change is needed for the layout. Retain recipient ownership on legacy edits/deletion and lead-editor/version checks on shared completion/rescheduling, with stable idempotency keys. Regress privacy/current renames with custom-fields-and-tasks.test.js, actual Firestore integration and task-row.test.tsx; extract shared row styles without changing other lead-task cards.

@@ -128,12 +128,14 @@
       "automatedTests": [
         "functions/test/app.test.js",
         "functions/test/automatic-reminders.test.js",
-        "functions/test/workbook-and-filters.test.js"
+        "functions/test/workbook-and-filters.test.js",
+        "tests/lead-workspace.test.ts",
+        "apps/web/test/lead-shared-tasks.test.tsx"
       ],
       "manualCases": [
         {
           "id": "CONVERSATIONS-01",
-          "expected": "All includes loaded notes/calls/review; Comments and Calls filter without reordering.",
+          "expected": "Opening another lead starts on All. Loaded comments, calls, reminders and tasks appear by recorded time, with due dates shown separately. Comments and Calls preserve their filtered source order.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
         },
         {

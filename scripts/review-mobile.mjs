@@ -179,6 +179,17 @@ try {
   await wait('!!document.querySelector(".full-lead-page")');
   assert.equal(await js("document.querySelectorAll('.full-lead-page .detail-profile h1').length"), 1);
   evidence.push({case:'lead-record-heading', result:'passed'});
+  await wait('document.querySelectorAll(".combined-lead-timeline > li").length >= 4');
+  assert.equal(await js('document.querySelector("#lead-tab-all").getAttribute("aria-selected")'), 'true');
+  assert.deepEqual(
+    await js('[...document.querySelectorAll(".combined-lead-timeline > li time")].map(e => Date.parse(e.dateTime))'),
+    await js('[...document.querySelectorAll(".combined-lead-timeline > li time")].map(e => Date.parse(e.dateTime)).sort((a,b) => b-a)'),
+  );
+  assert.deepEqual(
+    await js('[...document.querySelectorAll(".combined-lead-timeline .timeline-kind")].map(e => e.textContent.trim())'),
+    ['Reminder', 'Task'],
+  );
+  evidence.push({case:'lead-combined-timeline-default', result:'passed'});
   for (const width of [320, 390, 600, 768])
     await geometry('lead-record', width);
   await viewport(390, 844);
@@ -281,11 +292,12 @@ try {
   await select('.task-status-picker select', 'Completed');
   assert.equal(await js('document.querySelectorAll(".task-row").length'), 0);
   await select('.task-status-picker select', 'Pending');
+  const pendingTaskCount = await js('document.querySelectorAll(".task-row").length');
   await tap('.task-row .task-check');
   await wait('!!document.querySelector("[role=dialog] textarea[name=comment]")');
   assert.equal(await js('document.querySelector("[role=dialog] textarea[name=comment]").required'),true);
   await js('document.querySelector("[role=dialog] textarea[name=comment]").value="Fictional task completed";document.querySelector("[role=dialog] form").requestSubmit()');
-  await wait('document.querySelectorAll(".task-row").length===4');
+  await wait(`document.querySelectorAll(".task-row").length===${pendingTaskCount - 1}`);
   await select('.task-status-picker select', 'Completed');
   await wait('document.querySelectorAll(".task-row").length===1');
   assert.equal(await js('document.querySelector(".task-check").disabled'), true);
@@ -299,9 +311,9 @@ try {
   await wait('!document.querySelector("[role=dialog]")');
   await select('.task-status-picker select', 'Pending');
   // The reopened fixture is the owned task. Menu hit testing is covered above.
-  await wait('document.querySelectorAll(".task-row").length===5');
+  await wait(`document.querySelectorAll(".task-row").length===${pendingTaskCount}`);
   await js(`[...document.querySelectorAll('.task-menu button')].find(button => button.textContent.trim() === 'Cancel task').click()`);
-  await wait('document.querySelectorAll(".task-row").length===4');
+  await wait(`document.querySelectorAll(".task-row").length===${pendingTaskCount - 1}`);
   await select('.task-status-picker select', 'Cancelled');
   await wait('document.querySelectorAll(".task-row").length===1');
   await tap('.task-menu summary');

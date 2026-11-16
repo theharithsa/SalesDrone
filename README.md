@@ -38,7 +38,7 @@ We currently use SalesDrone internally and shape it around everyday work. More m
 
 ## From enquiry to follow-through
 
-Import the first Excel worksheet or CSV, map the fields, and select several discussion columns to become separate timeline comments; historical discussion dates remain unknown rather than being invented. New enquiries then arrive through the form. Search and combine column filters, edit a lead, record a call, and keep its comments in one timeline.
+Import the first Excel worksheet or CSV, map the fields, and select several discussion columns to become separate timeline comments; historical discussion dates remain unknown rather than being invented. New enquiries then arrive through the form. Search and combine column filters, edit a lead, record a call, and review comments, calls, lead tasks and reminders together in the default All timeline.
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard groups current lead counts by your chosen field. Its headings and descriptions follow that field’s configured label; selecting a group opens matching leads. Recorded stage changes remain in the lead journey.
 
@@ -142,7 +142,7 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=6912ede2ba28)
+![The default All timeline with a fictional call, comment, reminder and task](site/assets/screenshots/lead-workspace-demo.jpg?sha=17b5395d33f1)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 

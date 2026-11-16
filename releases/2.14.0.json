@@ -1,63 +1,70 @@
 {
   "schemaVersion": 1,
   "version": "2.14.0",
-  "summary": "Pre-production SalesDrone deployments use a named Firestore database and checked promotion evidence.",
+  "summary": "Pre-production SalesDrone deployments use a named Firestore database and checked promotion evidence. Lead pages open to a combined activity timeline.",
   "modules": [
     "salesdrone-data-platform",
     "salesdrone-release",
-    "salesdrone-documentation",
+    "salesdrone-api-ingress",
+    "salesdrone-team",
     "salesdrone-observability",
     "salesdrone-finops",
-    "salesdrone-api-ingress",
-    "salesdrone-team"
+    "salesdrone-conversations",
+    "salesdrone-tasks-reminders",
+    "salesdrone-product-guide",
+    "salesdrone-documentation"
   ],
   "documentation": [
     "docs/PRE-PRODUCTION-PLAN.md",
     "docs/RELEASE.md",
+    "docs/DEPENDENCY-REVIEW.md",
+    "docs/TECHNICAL.md",
+    "README.md",
+    "CHANGELOG.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/observability.md",
     "docs/SDLC.md",
     "docs/RELEASE-GOVERNANCE.md",
     "docs/APP-LAUNCHPAD-AUDIT.md",
-    "README.md",
-    "SECURITY.md",
-    "CHANGELOG.md",
-    "docs/DEPENDENCY-REVIEW.md",
-    "docs/TECHNICAL.md"
+    "SECURITY.md"
   ],
   "settingsSections": [],
   "api": {
     "status": "unchanged",
-    "reason": "Existing API shapes are reused against an isolated synthetic workspace.",
+    "reason": "Existing API shapes are reused against an isolated synthetic workspace. The timeline combines the existing lead activities and scoped task pages in the browser.",
     "contractVersion": "1.34.0",
-    "permissions": "Verified pre-production membership and the separate App Check registration protect the test workspace.",
+    "permissions": "Verified pre-production membership and the separate App Check registration protect the test workspace. All uses the same current lead-read policy as the Tasks tab. Personal reminders are excluded.",
     "tests": [
-      "functions/test/api-portal.test.js"
+      "functions/test/api-portal.test.js",
+      "tests/lead-workspace.test.ts",
+      "functions/test/custom-fields-and-tasks.test.js"
     ]
   },
   "observability": {
     "metrics": {
       "status": "existing",
-      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract. The timeline reuses instrumentation on the existing task and activity reads.",
       "tests": [
         "functions/test/observability.test.js"
       ]
     },
     "traces": {
       "status": "existing",
-      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract. The timeline reuses instrumentation on the existing task and activity reads.",
       "tests": [
         "functions/test/observability.test.js"
       ]
     },
     "logs": {
       "status": "existing",
-      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract. The timeline reuses instrumentation on the existing task and activity reads.",
       "tests": [
         "functions/test/observability.test.js"
       ]
     },
     "businessEvents": {
       "status": "existing",
-      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract. Rendering a timeline is read-only and creates no business event.",
       "tests": [
         "functions/test/observability.test.js"
       ]
@@ -88,7 +95,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Check pre-production resource identity, authenticated Admin access, idempotent seed, effective IAM, anonymous denial, ingress transport and promotion source evidence before activation.",
+  "manualVerification": "Check pre-production resource identity, authenticated Admin access, idempotent seed, effective IAM, anonymous denial, ingress transport and promotion source evidence before activation. In the synthetic workspace verify default All, mixed creation-time order, linked task details, focused tabs and measured narrow and wide layouts.",
   "milestone": {
     "number": 71,
     "title": "v2.14.0 \u2014 Pre-production environment",
@@ -100,9 +107,14 @@
       226,
       232,
       234,
-      235
+      235,
+      238
     ],
     "readiness": "ready"
   },
-  "screenshots": []
+  "screenshots": [
+    "lead-workspace-demo.jpg",
+    "lead-header-mobile-demo.jpg",
+    "book-lead-detail-demo.jpg"
+  ]
 }
