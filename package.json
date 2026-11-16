@@ -50,9 +50,9 @@
     "@testing-library/user-event": "^14.6.8",
     "eslint": "^10.14.0",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "firebase-tools": "^15.34.2",
+    "firebase-tools": "^15.35.0",
     "globals": "^17.14.0",
-    "jsdom": "^26.1.0",
+    "jsdom": "^31.0.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.72.1",
     "vitest": "^5.0.5",
@@ -61,10 +61,15 @@
     "@vitejs/plugin-react": "^6.2.1"
   },
   "engines": {
-    "node": ">=22.18.0 <25"
+    "node": "^24.15.0"
   },
   "overrides": {
     "@grpc/grpc-js": "^1.14.6",
+    "glob@>=9.0.0 <=14.0.1": "14.0.3",
+    "minimatch@>=7.0.0 <11.0.1": "11.0.8",
+    "gaxios@6": {
+      "uuid": "11.1.1"
+    },
     "exceljs": {
       "uuid": "^11.1.1"
     }

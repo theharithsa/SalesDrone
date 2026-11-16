@@ -137,7 +137,7 @@ content-hashed assets are immutable. The public Pages site is built from site on
 
 ## Local development and tests
 
-Use Node 22.18+ and Java 21. Run npm ci, npm test, npm run check and npm run build.
+Use Node 24.15.0 or later in the Node 24 series and Java 21. Run npm ci, npm test, npm run check and npm run build.
 `npm run test:emulator` uses demo-salesdrone with real emulated Auth, Firestore,
 transactions and deny-all client rules. For browser tests run the emulators plus
 Vite with VITE_USE_EMULATORS=true and RUM disabled. Use synthetic accounts/data only.

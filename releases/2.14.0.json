@@ -5,12 +5,17 @@
   "modules": [
     "salesdrone-data-platform",
     "salesdrone-release",
+    "salesdrone-api-ingress",
+    "salesdrone-team",
     "salesdrone-observability",
     "salesdrone-finops"
   ],
   "documentation": [
     "docs/PRE-PRODUCTION-PLAN.md",
     "docs/RELEASE.md",
+    "docs/DEPENDENCY-REVIEW.md",
+    "docs/TECHNICAL.md",
+    "README.md",
     "CHANGELOG.md"
   ],
   "settingsSections": [],
@@ -87,7 +92,8 @@
       223,
       224,
       225,
-      226
+      226,
+      235
     ],
     "readiness": "ready"
   },

@@ -21,6 +21,12 @@ API contract versions are independent from application versions.
 ### Changed
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
 
+### Security
+- Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.
+
+### Maintenance
+- Updated the Firebase web SDK and CLI, Lucide icons, and test dependencies. Development and CI now use Node 24. The deployed Functions runtime remains Node 22.
+
 ## [2.13.11] - 2026-11-14
 
 ### Fixed

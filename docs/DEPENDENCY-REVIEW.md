@@ -1,5 +1,15 @@
 # Reviewed dependency maintenance
 
+## v2.14.0 candidate
+
+[Issue #235](https://github.com/theharithsa/SalesDrone/issues/235) covers Dependabot alerts #1, #3, #7 and #8 and dependency PRs #154, #155, #156, #157 and #172. The candidate updates Firebase 13 and its CLI, Lucide 1, jsdom 31 and the Functions test dependency on protobufjs 8. Cloud SDK consumers continue to resolve their supported protobufjs 7 versions. The Firebase web SDK packages and jsdom require a newer Node version, so development and CI use Node 24.15.0 or later in the Node 24 series. The Functions runtime stays on Node 22.
+
+The root and standalone Functions locks each resolve the affected glob and minimatch versions to patched releases. Keep overrides scoped to the affected ranges so older ExcelJS callbacks still use their supported glob API. The root also pins patched UUID for the Firebase CLI's gaxios 6 dependency, which uses its CommonJS v4 generator. The Node 22 ingress image installs only runtime dependencies from the standalone Functions lock so it shares the patched runtime graph without inheriting the Node 24 web toolchain. Verify both lockfiles independently and run the Auth, Firestore and Storage emulator tests before promotion.
+
+The full workspace audit additionally reports a moderate OpenTelemetry issue in the Firebase CLI's development-only Pub/Sub dependency chain. Its parent currently constrains OpenTelemetry Core to 1.x. Track this separately from the four Dependabot alerts and verify the production dependency audit and standalone Functions audit independently.
+
+### Earlier dependency reviews
+
 4 November 2026 · issue #136 · candidate v2.9.2 · API 1.29.0 unchanged.
 
 ## Six Dependabot PRs

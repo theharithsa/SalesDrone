@@ -50,7 +50,7 @@ Inspect the failing job and exact step before retrying; distinguish already-depl
 
 ## Verification
 
-Review bot updates in a versioned PR. Check both npm lockfiles and CI evidence.
+Check [dependency review](../../docs/DEPENDENCY-REVIEW.md) and both lockfiles.
 
 Apply the shared verification matrix to the changed behavior; these are the
 module-specific regression entry points, not a substitute for integration checks.
