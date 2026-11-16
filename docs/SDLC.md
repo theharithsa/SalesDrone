@@ -9,7 +9,7 @@ The [illustrated SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html)
 | Build | Work on a branch. Use synthetic data, keep API contracts and docs current, record meaningful events, and update the changelog and impact plan. | React, Vite and TypeScript; Express/Firebase Functions, Firestore, Auth and App Check; OpenAPI and MCP; Git |
 | Verify | Run targeted regressions, then CI checks including unit/API and component tests, real Auth/Firestore emulators, types, lint, builds, generated docs, secrets, and release scope. Inspect visible changes in isolated Chromium at measured widths and text sizes. | Node test runner, Vitest, Testing Library, Firebase emulators, Java 21, Chromium CDP, GitHub Actions, CodeQL and GitGuardian |
 | Review and rehearse | Open an issue-linked PR to `pre-prod`. Review the exact head, merge after checks and verify the resulting deployment with synthetic data. | GitHub PRs, Actions, release skill |
-| Promote | During the weekly window, promote the verified pre-production source through a PR to `main`. Confirm the promotion checks and authorization before merging. | GitHub PRs, pre-production deployment evidence |
+| Promote | On Sunday (Asia/Kolkata), promote the verified pre-production source through a PR to `main`. Confirm the promotion checks and authorization before merging. | GitHub PRs, pre-production deployment evidence |
 | Release | Main verification reruns. Actions stage and verify Hosting, deploy rules and wait for indexes, deploy Functions and verify ingress, then promote Hosting. Publish the versioned GitHub release and build the curated Pages site. | GitHub Actions, OIDC/WIF, Firebase CLI, Cloud Run ingress, GitHub Releases and Pages |
 | Observe and verify | Check exact version/SHA, API behavior and access denial, app UI where applicable, and Pages identity separately. Send safe CI/test/deployment events and application telemetry to Dynatrace. Record ingest acceptance separately from tenant queries. | OpenTelemetry, Dynatrace, dt-obs and the SalesDrone observability skill |
 | Recover | Identify the failed phase and the live revision before retrying. When a published release needs a rollback, ship the revert through a new checked forward release. | Release readiness, release runbook, GitHub Actions artifacts |
@@ -32,7 +32,7 @@ See [delivery policy](RELEASE-GOVERNANCE.md), [release runbook](RELEASE.md), [te
 Keep one versioned milestone for the weekly release. Pre-production can deploy
 the candidate throughout the week. For example, `2.14.0 · build 3` identifies
 an iteration of `2.14.0`; the Git commit and Actions run/attempt locate the
-actual deployment. At the weekly window, promote the tested source to
+actual deployment. On Sunday (Asia/Kolkata), promote the tested source to
 production as `2.14.0` and publish one versioned changelog entry. The next
 regular release with ready changes is `2.15.0`. Skip empty or unready windows.
 

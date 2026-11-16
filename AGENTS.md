@@ -57,7 +57,8 @@ A funnel is a current stage distribution, not evidence of historic conversion.
 ## Versions and releases
 
 - The first published app baseline is **v1.0.0**. API contract version is independent.
-- Use one regular production release window per week. Advance the app MINOR for
+- Use Sundays in Asia/Kolkata for regular production promotion. Send changes to
+  pre-prod first and promote the verified weekly candidate by PR. Advance the app MINOR for
   regular releases with ready work, PATCH for urgent out-of-cycle fixes, and
   MAJOR for breaking releases. Use `npm run release -- patch|minor|major` and
   fill CHANGELOG.md.

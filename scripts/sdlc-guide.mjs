@@ -227,10 +227,10 @@ export function renderSdlcGuide() {
         heading(3, 'One regular production release per week'),
         notes([
           ['Build in pre-production', 'Try the candidate as often as needed. For example, 2.14.0 · build 3 is the third build of 2.14.0. The Git commit and Actions run and attempt identify the actual deployment.'],
-          ['Promote during the weekly window', 'Ship the source that passed pre-production checks through a PR to main. Publish one tag and changelog entry. The next regular release with ready changes is 2.15.0. Skip the window if nothing is ready.'],
+          ['Promote on Sunday', 'In Asia/Kolkata, ship the weekly candidate that passed pre-production checks through a PR to main. Publish one tag and changelog entry. The next regular release with ready changes is 2.15.0. Skip the window if nothing is ready.'],
           ['Patch an urgent incident', 'A fix that cannot wait can ship as 2.14.1 after pre-production verification. Keep unfinished weekly work out of the fix and bring the fix into the next candidate.'],
         ], 'Weekly release and build examples'),
-        paragraph('The weekly schedule is an operating policy. The release window and automated build numbering are still to be defined.', 'muted'),
+        paragraph('The release owner coordinates Sunday promotion. GitHub Actions deploys after the checked promotion PR merges. The exact hour and automated build numbering are still to be defined.', 'muted'),
         link(source + 'docs/RELEASE-GOVERNANCE.md#weekly-production-cadence', 'Read the weekly release policy')),
       paragraph('Before the production PR merges, review the README, dated changelog, security policy and affected guides. Record what changed in the PR. GitHub Actions uses workload identity for deployment and verifies the app and public documentation in separate jobs.', 'muted'),
       flow('Production release sequence', rollout),

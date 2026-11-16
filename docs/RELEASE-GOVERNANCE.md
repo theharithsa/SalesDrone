@@ -28,7 +28,7 @@ See the [App Launchpad audit](APP-LAUNCHPAD-AUDIT.md) for the adoption baseline.
 
 ## Weekly production cadence
 
-Plan at most one regular production promotion per week. Put the planned work in
+Schedule the regular production promotion for Sunday in Asia/Kolkata. Put the planned work in
 one versioned GitHub milestone and keep that candidate version throughout
 development and pre-production verification. If the candidate is unready or
 there is nothing to ship, skip the window and explicitly carry unfinished
@@ -56,9 +56,7 @@ An isolated hotfix needs a compatible path if `pre-prod` already contains later
 work. Keep the same checks and record the incident, patch deployment and
 reintegration into the next weekly candidate.
 
-The release owner coordinates the weekly window. The day and time, automated
-window enforcement, numbered build labels and an isolated hotfix workflow
-remain to be defined. The existing GitHub Actions triggers still apply.
+The release owner coordinates the Sunday promotion. GitHub Actions deploys after the checked promotion PR merges. The exact hour, automated window enforcement, numbered build labels and an isolated hotfix workflow remain to be defined.
 
 ## Current candidate
 
