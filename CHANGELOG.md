@@ -1,7 +1,7 @@
 # Changelog
 
-Application versions follow [Semantic Versioning](https://semver.org/).
-API contract versions are independent from application versions.
+Application versions follow the [weekly release policy](docs/RELEASE-GOVERNANCE.md#weekly-production-cadence).
+API contract versions track compatibility independently.
 
 
 
@@ -23,6 +23,8 @@ API contract versions are independent from application versions.
 
 ### Changed
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
+- Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
+- Refreshed the README and security policy, recorded the App Launchpad v1.14.0 audit, and documented the production release documentation review.
 
 ### Security
 - Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.

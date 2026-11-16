@@ -11,7 +11,8 @@
     "salesdrone-finops",
     "salesdrone-conversations",
     "salesdrone-tasks-reminders",
-    "salesdrone-product-guide"
+    "salesdrone-product-guide",
+    "salesdrone-documentation"
   ],
   "documentation": [
     "docs/PRE-PRODUCTION-PLAN.md",
@@ -21,7 +22,11 @@
     "README.md",
     "CHANGELOG.md",
     "docs/PRODUCT-GUIDE.md",
-    "docs/observability.md"
+    "docs/observability.md",
+    "docs/SDLC.md",
+    "docs/RELEASE-GOVERNANCE.md",
+    "docs/APP-LAUNCHPAD-AUDIT.md",
+    "SECURITY.md"
   ],
   "settingsSections": [],
   "api": {
@@ -100,6 +105,8 @@
       224,
       225,
       226,
+      232,
+      234,
       235,
       238
     ],
