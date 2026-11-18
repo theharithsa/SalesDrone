@@ -1,3 +1,4 @@
+import { isoNow } from './clock.js';
 import { path } from "./policy.js";
 import {
   stepHygiene,
@@ -13,17 +14,17 @@ import { RESET_STATE, resetActive } from "./lead-data-reset.js";
 export async function researchWork({
   store,
   provider,
-  now = () => new Date().toISOString(),
+  now = isoNow,
   budgetMs = 45000,
   observe = (_name, fn) => fn(),
 }) {
   if (resetActive(await store.get(RESET_STATE)))
     return { processed: 0, skipped: 1 };
-  const until = Date.now() + budgetMs;
+  const until = performance.now() + budgetMs;
   const stats = { processed: 0, failed: 0, indexed: 0 };
   // One request/page per turn for fairness; scanning cannot starve the existing
   // scoring worker. Durable cursors survive function restarts.
-  for (let turn = 0; turn < 32 && Date.now() < until; turn++) {
+  for (let turn = 0; turn < 32 && performance.now() < until; turn++) {
     let work = false;
     for (const collection of ["hygieneScans", "assistantConversations"]) {
       const deleted = await store.query(path(collection), {
@@ -110,7 +111,7 @@ export async function researchWork({
       const backfill = await advanceIndexBackfill(store);
       work ||= backfill.queued > 0;
     }
-    if (Date.now() < until - 22000) {
+    if (performance.now() < until - 22000) {
       const jobs = await store.query(path("researchIndexJobs"), {
         filters: [["status", "==", "Pending"]],
         limit: 1,

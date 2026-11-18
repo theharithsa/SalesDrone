@@ -62,7 +62,9 @@ export function researchStore(base, getTrace = () => null) {
             let traceparent = null;
             try {
               traceparent = getTrace() || null;
-            } catch {}
+            } catch {
+              // The job can run without trace context if instrumentation is unavailable.
+            }
             tx.set(path("researchIndexJobs", id), {
               id,
               ...source,

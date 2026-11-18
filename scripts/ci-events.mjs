@@ -88,7 +88,9 @@ export async function sendCiEvent(tenant, token, event, fetchImpl = fetch) {
         signal: AbortSignal.timeout(10000),
       });
       status = r.status;
-    } catch {}
+    } catch {
+      // A network failure falls through to the same bounded retry as a timeout.
+    }
     if (
       status === 202 ||
       (status >= 400 && status < 500 && ![408, 429].includes(status))

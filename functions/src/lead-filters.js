@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AppError, parse } from './contracts.js';
+import { AppError, IsoDate, parse } from './contracts.js';
 export const FILTER_FIELDS = [
   'serial',
   'source',
@@ -70,13 +70,8 @@ export function parseLeadFilters(raw) {
       throw new AppError(400, 'FILTER', 'Enter a filter value');
     if (
       ['before', 'after'].includes(f.op) &&
-      (!(
-        ['enquiryDate', 'lastContactAt'].includes(f.field) ||
-        f.field.startsWith('cf_')
-      ) ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(f.value) ||
-        !Number.isFinite(Date.parse(f.value)) ||
-        new Date(f.value).toISOString().slice(0, 10) !== f.value)
+      (!(f.field === 'enquiryDate' || f.field === 'lastContactAt' || f.field.startsWith('cf_')) ||
+        !IsoDate.safeParse(f.value).success)
     )
       throw new AppError(
         400,

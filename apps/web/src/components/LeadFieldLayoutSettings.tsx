@@ -1,3 +1,4 @@
+import type { ApiClient } from '../lib/api';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { labelFor, orderedFields, standardFieldLabels, type FieldOptions } from '../lib/field-options';
@@ -14,7 +15,7 @@ const examples: Record<string, string> = {
 export default function LeadFieldLayoutSettings({ config, mode, request, onChanged, onEditingChange }: {
   config: FieldOptions;
   mode: 'order' | 'header';
-  request: (path: string, method: string, body: Record<string, unknown>) => Promise<FieldOptions>;
+  request: ApiClient;
   onChanged: (options: FieldOptions) => void;
   onEditingChange?: (state: { dirty: boolean; busy: boolean }) => void;
 }) {
@@ -40,7 +41,7 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
       expectedVersion,
       values: config.values,
       ...change,
-    });
+    }) as FieldOptions;
     if (isCurrent()) {
       setExpectedVersion(result.version);
       setBaseline({ order, header: isOrder ? header : draft });

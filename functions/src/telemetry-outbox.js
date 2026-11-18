@@ -1,3 +1,5 @@
+import { MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { settingsAuditLogFields } from './settings-audit.js';
 import { randomUUID } from 'node:crypto';
 import { path } from './policy.js';
@@ -28,7 +30,7 @@ export async function deliverTelemetry({
   key,
   telemetry,
   fetchImpl = fetch,
-  now = () => new Date().toISOString(),
+  now = isoNow,
   allowLocalTest = false,
   environment = 'production',
 }) {
@@ -59,7 +61,7 @@ export async function deliverTelemetry({
     const claimed=await store.run(async tx=>{
       const current=await tx.get(p);
       if(!current||!['Pending','Sending','PendingBatch','SendingBatch'].includes(current.status)||current.nextAttemptAt>now())return null;
-      const value={...current,status:current.additionalEvents?'SendingBatch':'Sending',lease,attemptCount:current.attemptCount+1,nextAttemptAt:new Date(Date.parse(now())+180000).toISOString()};
+      const value={...current,status:current.additionalEvents?'SendingBatch':'Sending',lease,attemptCount:current.attemptCount+1,nextAttemptAt:new Date(Date.parse(now())+(3 * MINUTE_MS)).toISOString()};
       tx.set(p,value);return value;
     });
     if(!claimed)return;

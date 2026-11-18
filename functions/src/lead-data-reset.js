@@ -1,3 +1,5 @@
+import { MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { AppError } from './contracts.js';
@@ -132,7 +134,7 @@ export async function previewReset({ store, identity, now }) {
     if (resetActive(state))
       throw new AppError(409, 'RESET_ACTIVE', 'Lead cleanup is already active');
     const id = randomUUID(),
-      expiresAt = new Date(Date.parse(now()) + 600000).toISOString();
+      expiresAt = new Date(Date.parse(now()) + (10 * MINUTE_MS)).toISOString();
     tx.set(path('leadResetPreviews', id), {
       id,
       uid: member.uid,
@@ -186,7 +188,7 @@ export async function startReset({ store, identity, input, key, now }) {
       version: 1,
       createdAt: now(),
       updatedAt: now(),
-      readyAt: new Date(Date.parse(now()) + 300000).toISOString(),
+      readyAt: new Date(Date.parse(now()) + (5 * MINUTE_MS)).toISOString(),
       deletedRecords: 0,
       deletedFiles: 0,
       redactedRequests: 0,
@@ -256,7 +258,7 @@ export async function resumeReset({
 export async function advanceLeadReset({
   store,
   files,
-  now = () => new Date().toISOString(),
+  now = isoNow,
   batches = 4,
 }) {
   store = store.maintenanceStore || store;

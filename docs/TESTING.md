@@ -19,6 +19,18 @@ For isolated graphics, render the real ScoreBadge/ScoreRing with labelled synthe
 
 ## API, integration and delivery
 
+`npm run docs:check` compares both checked-in OpenAPI copies against the generator.
+The command leaves stale or absent copies untouched and exits with a failure. Use
+`npm run api:docs` to regenerate and review both copies after changing a contract.
+The verification workflow records this under its documentation check.
+
+The lint ratchet checks explicit TypeScript `any` by file. Reduce the recorded
+count when removing a use. Lint also rejects unused parameters and caught errors,
+and expects each intentionally empty handler to state its fallback. For API error
+changes, test invalid JSON and absent error details with the original HTTP status
+and a redacted telemetry outcome. Timestamp and duration helpers add no queries
+or scheduled work, and existing emulator cases exercise the resulting writes.
+
 Test positive requests, unauthenticated/App Check/PAT/assigned-scope denials, stale expected versions, idempotency and transaction rollback. New personal preferences must preserve older clients and separate live identity from guest storage. The emulator suite confirms real persistence and committed audit/outbox keys. Queue existence, exporter HTTP acceptance and tenant-searchable Dynatrace data are different claims.
 
 After authorized deployment, inspect workflow artifacts for exact live version/SHA, contract, access denial, ACTIVE function revisions, current documentation and per-signal receipts. Prefer read-only production checks and demo UI; no live leads, invitations, token creation, reminders or imports are needed for a layout test. Record failed, blocked and unexecuted cases honestly, with a reproduction and expected/actual behavior.

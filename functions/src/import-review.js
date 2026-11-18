@@ -1,3 +1,4 @@
+import { DAY_MS } from './durations.js';
 import { applyImportStatus, importStatusTarget } from './import-status.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -242,7 +243,7 @@ export async function createImportReview(tx, m, input, now) {
     createdByName: m.name || m.email || 'Member',
     createdAt: now,
     updatedAt: now,
-    expiresAt: new Date(Date.parse(now) + 86400000).toISOString(),
+    expiresAt: new Date(Date.parse(now) + DAY_MS).toISOString(),
     version: 1,
     configVersion: options.version,
     total: rows.length,
@@ -1112,7 +1113,7 @@ export async function refreshImportReview(tx, m, id, input, now) {
     planCounts: {},
     configVersion: options.version,
     status: 'Preparing',
-    expiresAt: new Date(Date.parse(now) + 86400000).toISOString(),
+    expiresAt: new Date(Date.parse(now) + DAY_MS).toISOString(),
     lastError: null,
   });
 }

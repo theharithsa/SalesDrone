@@ -1,3 +1,4 @@
+import { DAY_MS } from './durations.js';
 import { matchStage } from './stage-match.js';
 import { AppError, STAGES, ImportComment, parse } from './contracts.js';
 import { normalizeLead } from './leads.js';
@@ -27,7 +28,7 @@ export function importDate(raw, order) {
   const s = String(raw ?? '').trim();
   if (!s) return '';
   if (/^\d{5}(?:\.\d+)?$/.test(s))
-    return new Date(Date.UTC(1899, 11, 30) + Math.floor(Number(s)) * 86400000)
+    return new Date(Date.UTC(1899, 11, 30) + Math.floor(Number(s)) * DAY_MS)
       .toISOString()
       .slice(0, 10);
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;

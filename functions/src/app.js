@@ -1,3 +1,5 @@
+import { DAY_MS, MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { leadComments, matchesLeadText, matchesCommentText } from './lead-text.js';
 import { errorType as telemetryErrorType } from './observability-contract.js';
 import {teamSnapshot, teamWindow, assertTeamAccess, authoredActivity} from './team.js';
@@ -155,7 +157,7 @@ export function createApp({
   files = null,
   extractScore = null,
   summarizeDashboard = null,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const maintenanceStore = store.maintenanceStore || store;
   store = guardLeadData(researchStore(store,()=>telemetry()?.capture()?.traceparent));
@@ -1284,7 +1286,7 @@ export function createApp({
   const contentRoute = '/leads/:id/attachments/:attachmentId/content';
   router.put(
     contentRoute,
-    async (req, res, next) => {
+    async (req, _res, next) => {
       try {
         if (req.identity.personalAccess)
           req.identity.personalAccess.requiredScopes = [
@@ -2221,7 +2223,7 @@ export function createApp({
           id,
           active: true,
           createdAt: now(),
-          expiresAt: new Date(Date.parse(now()) + 7 * 86400000).toISOString(),
+          expiresAt: new Date(Date.parse(now()) + 7 * DAY_MS).toISOString(),
           version: (prior?.version || 0) + 1,
         };
         tx.set(path('invitations', id), inv);
@@ -2524,7 +2526,7 @@ export function createApp({
           status: 'Preview',
           createdByUid: m.uid,
           createdAt: now(),
-          expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+          expiresAt: new Date(Date.parse(now()) + DAY_MS).toISOString(),
           errors: rows.filter((r) => r.error).slice(0, 100),
         };
         tx.set(path('imports', fingerprint), result);
@@ -2694,7 +2696,7 @@ export function createApp({
       const visibility = await Promise.all(
         result.items.map((n) => notificationVisible(store, req.member, n)),
       );
-      const items = result.items.filter((n, i) => visibility[i]);
+      const items = result.items.filter((_, i) => visibility[i]);
       return { ...result, items };
     }),
   );
@@ -2750,7 +2752,7 @@ export function createApp({
       const p = path('pushTests', req.member.uid);
       const old = await tx.get(p);
       const at = now();
-      if (old && Date.parse(at) - Date.parse(old.at) < 60000)
+      if (old && Date.parse(at) - Date.parse(old.at) < MINUTE_MS)
         throw new AppError(
           429,
           'RATE_LIMIT',
@@ -2873,7 +2875,7 @@ export function createApp({
       ['recipientUid', '==', req.member.uid],
       ['state', '==', 'Pending'],
     ];
-    const since = new Date(Date.parse(now()) - 7 * 86400000).toISOString();
+    const since = new Date(Date.parse(now()) - 7 * DAY_MS).toISOString();
     const activityFilters = [
       ['actorUid', '==', req.member.uid],
       ['type', '==', 'call'],
@@ -2901,7 +2903,7 @@ export function createApp({
       },
     }),
   );
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, _next) => {
     const parserError =
       err.type === 'entity.parse.failed'
         ? {

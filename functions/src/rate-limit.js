@@ -1,5 +1,6 @@
+import { DAY_MS } from './durations.js';
 // Firestore serializes Date as Timestamp; structuredClone preserves Date in both stores.
-export const rateLimitExpiry = (at) => new Date(Date.parse(at) + 86400000);
+export const rateLimitExpiry = (at) => new Date(Date.parse(at) + DAY_MS);
 
 // One bounded, resumable migration of internal counters; customer collections are untouched.
 export async function backfillRateLimitExpiry(store, root) {

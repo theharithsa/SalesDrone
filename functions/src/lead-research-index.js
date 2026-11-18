@@ -1,3 +1,4 @@
+import { isoNow } from './clock.js';
 import { AppError } from './contracts.js';
 import { path, hash, canReadLead } from "./policy.js";
 import { readResearchSettings } from "./lead-research-settings.js";
@@ -116,7 +117,7 @@ export async function processIndexJob({
   store,
   job,
   embed,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const settings = await readResearchSettings(store);
   if (!settings.indexingEnabled) return { processed: 0 };

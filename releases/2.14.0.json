@@ -15,7 +15,8 @@
     "salesdrone-documentation",
     "salesdrone-leads",
     "salesdrone-imports",
-    "salesdrone-interface"
+    "salesdrone-interface",
+    "salesdrone-release-readiness"
   ],
   "documentation": [
     "docs/PRE-PRODUCTION-PLAN.md",
@@ -33,7 +34,8 @@
     "docs/IMPORTS.md",
     "docs/API.md",
     "docs/WORKBOOK-ALIGNMENT.md",
-    "docs/FINOPS.md"
+    "docs/FINOPS.md",
+    "docs/TESTING.md"
   ],
   "settingsSections": [],
   "api": {
@@ -121,7 +123,8 @@
       237,
       238,
       241,
-      242
+      242,
+      245
     ],
     "readiness": "ready"
   },

@@ -1,3 +1,4 @@
+import { errorMessage } from '../lib/error-message';
 import { useCallback, useEffect, useRef, useState } from "react";
 import LeadAssistantView, {
   type AssistantMessage,
@@ -73,7 +74,7 @@ export default function LeadAssistantPage({
         if (mounted.current && current === epoch.current) {
           setRows([]);
           setResults({});
-          setError((e as Error).message);
+          setError(errorMessage(e));
         }
       }
     },
@@ -81,7 +82,7 @@ export default function LeadAssistantPage({
   );
   useEffect(() => {
     mounted.current = true;
-    void historyPage().catch((e) => setError(e.message));
+    void historyPage().catch((e) => setError(errorMessage(e)));
     return () => {
       mounted.current = false;
     };
@@ -104,7 +105,7 @@ export default function LeadAssistantPage({
     try {
       await fn();
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     } finally {
       if (mounted.current) setBusy(false);
     }

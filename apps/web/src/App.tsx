@@ -499,9 +499,7 @@ export default function App() {
         );
     };
     apply();
-    try {
-      localStorage.setItem('salesdrone.theme', appearance);
-    } catch {}
+    writeStored('localStorage', 'salesdrone.theme', appearance);
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
   }, [appearance, bookMode, fontStyle, displayScale, accentPalette]);
@@ -576,7 +574,9 @@ export default function App() {
           });
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        // Optional foreground push may be unavailable. The inbox still refreshes normally.
+      });
     return () => {
       alive = false;
       off?.();
