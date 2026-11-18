@@ -50,7 +50,8 @@ export default [
       "no-unused-vars": [
         "error",
         {
-          args: "all",
+          // Express middleware follows a positional signature. Require use after the final consumed parameter.
+          args: "after-used",
           argsIgnorePattern: "^_",
           caughtErrors: "all",
           varsIgnorePattern: "^_",

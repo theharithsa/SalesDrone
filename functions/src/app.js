@@ -187,7 +187,7 @@ export function createApp({
   });
   app.use(express.json({ limit: '12mb' }));
   const router = express.Router();
-  router.use(async (req, _res, next) => {
+  router.use(async (req, res, next) => {
     try {
       const bearer = req.headers.authorization?.match(/^Bearer (.+)$/)?.[1];
       if (!bearer)
