@@ -50,7 +50,7 @@ Inspect the failing job and exact step before retrying; distinguish already-depl
 
 ## Verification
 
-Check [dependency review](../../docs/DEPENDENCY-REVIEW.md) and both lockfiles.
+Check both lockfiles and [dependency tests](../../docs/DEPENDENCY-REVIEW.md), including Pub/Sub delivery.
 
 Apply the shared verification matrix to the changed behavior; these are the
 module-specific regression entry points, not a substitute for integration checks.
