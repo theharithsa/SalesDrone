@@ -30,6 +30,7 @@ export const safePage = (path: string) => {
     'assistant',
     'today',
     'leads',
+    'companies',
     'tasks',
     'notifications',
     'imports',
@@ -48,6 +49,7 @@ export const safeOperation = (path: string, method: string) => {
   const root = [
     'me',
     'leads',
+    'companies',
     'tasks',
     'notifications',
     'imports',

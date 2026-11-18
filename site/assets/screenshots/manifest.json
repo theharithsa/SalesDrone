@@ -748,5 +748,25 @@
     "capturePixels": "1440 x 1080",
     "version": "2.13.7",
     "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
+  },
+  {
+    "file": "companies-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "fed404133d80143c8b0a81cfd67e609ee7cc00d94e16380d7efc8335f5ecdb7f",
+    "capturedAt": "2026-11-18",
+    "viewport": "1440 x 900 CSS pixels",
+    "capturePixels": "1440 x 900",
+    "version": "2.14.0",
+    "review": "Company directory and prefilled Add lead in the fictional workspace. Cropped to the displayed application."
+  },
+  {
+    "file": "import-workbook-update-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "ff9a505e6bb65fd84b8f8bc2f8c73ea0e6d56d86772652317e543645ba640d18",
+    "capturedAt": "2026-11-18",
+    "viewport": "1440 x 1080 CSS pixels",
+    "capturePixels": "1360 x 472",
+    "version": "2.14.0",
+    "review": "Cropped stage-mapping and validation controls from a local fictional SalesDrone export. The selected replacement was confirmed in the preview."
   }
 ]

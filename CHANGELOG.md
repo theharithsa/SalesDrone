@@ -19,6 +19,9 @@ API contract versions track compatibility independently.
 ## [2.14.0] - 2026-11-14
 
 ### Added
+- Companies groups active leads by company. Open an organization to see its leads or add a new enquiry with its company filled in.
+- Lead fields display N/A when empty. Excel keeps those cells blank for the next update.
+- Exported workbooks now carry each lead ID and version. Import recognizes them, matches current sales stages, and prompts once per unfamiliar stage. Repeated uploads preserve recorded comments, and later team edits go to review.
 - Opening a lead starts on All, with comments, calls, shared tasks and linked reminders together in one timeline.
 
 ### Changed

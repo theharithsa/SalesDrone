@@ -146,7 +146,7 @@ Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/pr
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
-The full lead page opens in **Comments**. Switch to **All** to see loaded activity and review information. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
+The full lead page opens in **All** to show the combined timeline. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
 
 **v1.6.2** standardized Dynatrace CloudEvents delivery and added a sunrise/sunset theme control. [Book mode is available in v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
 
@@ -232,6 +232,12 @@ saved values.
 Stage and assignment stack on compact lead surfaces. Outreach tick labels share the chart gridline positions.
 
 <img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional phone lead header with two tappable numbers and read-only workflow summary" width="412">
+
+## Companies and daily Excel updates
+
+Open **Companies** to find an organization and see the active leads you can access. **Add lead** fills in its company name. Empty lead values display as **N/A**.
+
+For a daily update, use **Leads → Export Excel**, edit the **Leads** sheet, then upload it under **Import enquiries**. Keep each exported ID and version with its row. The preview shows the resulting sales stage and flags changes made after export. See the [workbook instructions](docs/IMPORTS.md#update-leads-from-an-excel-export).
 
 ## Collaborative imports (2.3)
 

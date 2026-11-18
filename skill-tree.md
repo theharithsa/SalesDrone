@@ -24,7 +24,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-interface, salesdrone-api-integrations, salesdrone-product-guide.
 - [salesdrone-finops](skills/salesdrone-finops/SKILL.md) — finops, firebase quota, firestore reads, firestore writes, browser cache, cloud cost, cost optimization, firebase migration, read amplification.
   Related: salesdrone-api-ingress, salesdrone-api-integrations, salesdrone-mcp.
-- [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping, import history, revised workbook, duplicate comparison, collaborative import.
+- [salesdrone-imports](skills/salesdrone-imports/SKILL.md) — excel import, csv import, xlsx import, spreadsheet mapping, import history, revised workbook, duplicate comparison, collaborative import, export edit reimport, sales stage mapping.
   Related: salesdrone-release, salesdrone-leads, salesdrone-conversations, salesdrone-workspace-settings, salesdrone-notifications.
 - [salesdrone-interface](skills/salesdrone-interface/SKILL.md) — sidebar, mobile ui, typography, theme, responsive, navigation, sunrise sunset, mobile typography, type scale, design system, apple typography, wondel design, all screen sizes, desktop typography, laptop layout, tablet layout, wide screen, responsive audit, lead header redesign, display zoom, design review, Material 3, make my site stunning, Tailwind styling, Awwwards, responsive UI.
   Related: salesdrone-leads, salesdrone-tasks-reminders, salesdrone-workspace-settings, salesdrone-book-mode, salesdrone-product-guide.
@@ -36,7 +36,7 @@ Machine-readable source: [skill-tree.json](skill-tree.json). Generated from modu
   Related: salesdrone-release, salesdrone-leads, salesdrone-workspace-settings, salesdrone-dashboard.
 - [salesdrone-lead-scoring](skills/salesdrone-lead-scoring/SKILL.md) — lead score, scoring factor, qualification.
   Related: salesdrone-release, salesdrone-dashboard, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-people-permissions.
-- [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report, batch edit, bulk edit, select leads.
+- [salesdrone-leads](skills/salesdrone-leads/SKILL.md) — lead filter, edit lead, create lead, excel export, filtered report, batch edit, bulk edit, select leads, company directory, company leads.
   Related: salesdrone-release, salesdrone-workspace-settings, salesdrone-conversations, salesdrone-lead-journey, salesdrone-imports, salesdrone-notifications.
 - [salesdrone-mcp](skills/salesdrone-mcp/SKILL.md) — MCP, MCP server, npm package, stdio, read-only integration.
   Related: salesdrone-release-readiness, salesdrone-api-integrations, salesdrone-team, salesdrone-people-permissions, salesdrone-finops.

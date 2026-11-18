@@ -1,3 +1,4 @@
+import { matchStage } from './stage-match.js';
 import { AppError } from './contracts.js';
 import { dashboardFields } from './dashboard-grouping.js';
 
@@ -18,7 +19,8 @@ export function applyImportStatus(row, input, config) {
   const mapped = Object.hasOwn(input.statusMap, original) ? input.statusMap[original] : undefined;
   const definition = config.customFields.find(f => f.id === field);
   const freeText = field === 'legacyStatus' || definition?.type === 'text' || !target.order?.length;
-  const value = mapped || (freeText || target.order.includes(original) ? original : '');
+  const value = field === 'stage' ? matchStage(mapped || original, target.order)
+    : mapped || (freeText || target.order.includes(original) ? original : '');
   if (!value || (!freeText && !target.order.includes(value)))
     throw new AppError(400, 'STATUS_MAP', 'Choose a configured value for every status or keep the original Enquiry status text');
   if (field !== 'legacyStatus' && String(row[field] || '').trim())

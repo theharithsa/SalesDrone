@@ -1,17 +1,23 @@
 # SalesDrone API integration guide
 
-Application release **v2.13.5**, OpenAPI contract **1.34.0**. All application operations
+Application release **v2.14.0**, OpenAPI contract **1.35.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
 - [Download OpenAPI 3.1 JSON](https://sales-drone-avinya.firebaseapp.com/openapi.json)
 - [Public source contract](openapi.json)
 
-The portal documents all **97 supported operations**, including GET (read), POST
+The portal documents all **98 supported operations**, including GET (read), POST
 (create or an explicit action), PATCH (update), PUT (attachment bytes) and DELETE (removal/revocation).
 Workspace lead-data reset is a separate Admin-only, previewed operation. Try it out performs
 real operations against the signed-in credential's workspace. Use synthetic test
 records for write experiments, and archive them afterward.
+
+## Company directory and workbook updates
+
+GET /api/v1/companies requires leads:read and applies current lead scope. It returns distinct company keys and display names from active leads. Use the optional case-insensitive name prefix and opaque cursor to page. To list the leads for a company, pass a company exact filter to GET /api/v1/leads.
+
+POST /api/v1/leads/export includes each row’s id and version. In reviewed import update mode, send these as leadId and leadVersion on the corresponding row. A supplied ID must resolve within current access. Preview compares editable nonblank columns, canonicalizes sales stage names and requires explicit review for differing values on a stale version. Changes after review require a refreshed comparison before commit.
 
 ## Choose authentication
 

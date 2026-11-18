@@ -443,3 +443,27 @@ test('individual lead export exceptions honor the workspace switch, member scope
   await report('rep').expect(403);
   await report('admin').expect(403);
 });
+
+test('company directory groups existing names, paginates across repeated names and respects member scope', async () => {
+  const { store, call } = await setup();
+  await store.run(async tx => {
+    const member = await tx.get(path('members', 'rep'));
+    tx.set(path('members','rep'), { ...member, scope: 'assigned' });
+    for (const [id, company, owner, archived] of [
+      ['a1','Acme','rep',false], ['a2','ACME','rep',false], ['a3','Acme','rep',false],
+      ['b','Beta','rep',false], ['c','Closed Co','rep',true], ['d','Different Co','other',false],
+    ]) tx.set(path('leads', id), { id, name: id, company, companyNormalized: company.toLowerCase(), archived, assignedToUid: owner });
+  });
+  const first = (await call('rep','get','/companies?limit=2').expect(200)).body;
+  assert.deepEqual(first.items.map(c => c.key), ['acme']);
+  assert.ok(first.nextCursor);
+  const next = (await call('rep','get','/companies?limit=2&cursor=' + first.nextCursor).expect(200)).body;
+  assert.deepEqual(next.items.map(c => c.key), ['beta']);
+  assert.equal(next.nextCursor, null);
+  await call('other','get','/companies?cursor=' + first.nextCursor).expect(400);
+  const search = (await call('rep','get','/companies?search=AC').expect(200)).body;
+  assert.deepEqual(search.items.map(c => c.key), ['acme']);
+  const filters = encodeURIComponent(JSON.stringify([{field: 'company', op:'exact', value:'AcMe'}]));
+  const leads = (await call('rep','get','/leads?filters=' + filters).expect(200)).body;
+  assert.deepEqual(leads.items.map(l => l.id).sort(), ['a1','a2','a3']);
+});

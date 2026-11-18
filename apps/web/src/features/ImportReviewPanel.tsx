@@ -36,7 +36,7 @@ function RowReview({
   const finished = !!row.outcome || job.status === 'DetailsDeleted';
   const text = (v: any) =>
     v === null || v === undefined || v === ''
-      ? 'Empty'
+      ? 'N/A'
       : typeof v === 'object'
         ? JSON.stringify(v)
         : String(v);

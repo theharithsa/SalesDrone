@@ -221,11 +221,11 @@ export function LeadName({
   name: string;
   detail?: boolean;
 }) {
-  if (!detail) return <>{name || 'Name not recorded'}</>;
+  if (!detail) return <>{name || 'N/A'}</>;
   const [first, ...rest] = name.trim().split(/\s+/);
   return (
     <>
-      <span className="lead-first-name">{first || 'Name not recorded'}</span>{' '}
+      <span className="lead-first-name">{first || 'N/A'}</span>{' '}
       {rest.length ? (
         <span className="lead-family-name">{rest.join(' ')}</span>
       ) : null}

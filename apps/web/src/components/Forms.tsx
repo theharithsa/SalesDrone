@@ -32,6 +32,7 @@ function arrangeFormFields(
 
 export function LeadForm({
   lead,
+  initialCompany,
   onSave,
   onCancel,
   admin = false,
@@ -40,6 +41,7 @@ export function LeadForm({
 }: {
   config?: FieldOptions;
   lead?: Lead;
+  initialCompany?: string;
   onSave: (data: any, key: string) => Promise<void>;
   onCancel: () => void;
   admin?: boolean;
@@ -115,6 +117,7 @@ export function LeadForm({
           <span className="field-label">{labelFor(config, 'name')}</span>
           <input
             name="name"
+            placeholder="N/A"
             autoFocus
             maxLength={200}
             defaultValue={lead?.name}
@@ -126,6 +129,7 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'phone')}</span>
             <input
               name="phone"
+              placeholder="N/A"
               required={!lead || (!lead.needsReview && !lead.email && !visible('email'))}
               type="tel"
               maxLength={40}
@@ -142,8 +146,9 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'company')}</span>
             <input
               name="company"
+              placeholder="N/A"
               maxLength={200}
-              defaultValue={lead?.company}
+              defaultValue={lead?.company ?? initialCompany}
               autoComplete="organization"
             />
           </label>
@@ -153,6 +158,7 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'location')}</span>
             <input
               name="location"
+              placeholder="N/A"
               list="workspace-location-options"
               maxLength={200}
               defaultValue={lead?.location}
@@ -164,6 +170,7 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'zone')}</span>
             <input
               name="zone"
+              placeholder="N/A"
               list="workspace-sector-options"
               maxLength={200}
               defaultValue={lead?.zone}
@@ -189,6 +196,7 @@ export function LeadForm({
             </span>
             <input
               name="legacyStatus"
+              placeholder="N/A"
               list="enquiry-statuses"
               maxLength={200}
               defaultValue={lead?.legacyStatus}
@@ -217,6 +225,7 @@ export function LeadForm({
             </span>
             <textarea
               name="initialDiscussion"
+              placeholder="N/A"
               rows={3}
               maxLength={4000}
               defaultValue={lead?.initialDiscussion}
@@ -229,6 +238,7 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'email')}</span>
             <input
               name="email"
+              placeholder="N/A"
               required={!!lead && !lead.needsReview && !visible('phone') && !lead.phone}
               type="email"
               maxLength={200}

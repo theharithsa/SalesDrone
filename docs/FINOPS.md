@@ -1,5 +1,9 @@
 # Firebase operating budget and ingress migration
 
+## Companies and workbook edits
+
+The directory reuses the lead company-name index. Opening it requests 30 projected lead records plus one lookahead, with a 100-row request ceiling before lookahead. A cursor seeks past the last company's key even if many leads belong to it. Search submits explicitly, and the first unfiltered page uses the member's 15-second in-memory read cache. Directory reads create zero documents and require no backfill. A reviewed workbook row with an exported ID uses one scoped lead lookup to identify its target. Changed contact keys and the comparison baseline are read separately. The emulator exercises the database query and staged update. Billed index reads and live usage depend on traffic.
+
 ## Baseline and attribution
 
 Firestore Standard lists 50,000 document reads and 20,000 writes per day in the free quota, plus a separate delete quota. The project can still accrue Blaze charges, including from eligible index entry reads, TTL deletes, Functions and ingress. Treat the reported 500,000 figure as a starting point. Obtain the project, database, exact interval, read/write/delete breakdown, request volume, callers and billing SKUs before attributing the total. [Firestore billing](https://firebase.google.com/docs/firestore/pricing)

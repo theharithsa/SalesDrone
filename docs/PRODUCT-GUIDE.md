@@ -146,6 +146,8 @@ Header phone numbers use the same monospace identifier font as phone fields and 
 
 Admins can choose Assigned to in desktop Filters or the phone filter dialog. Choose All assignees, Unassigned or a named member, including inactive members whose leads remain assigned. It composes with other conditions and applies to exports. Apply commits a phone draft; Cancel preserves current filters; Reset clears the assignee. Team workload links open Leads with that assignee and clear unrelated conditions.
 
+Visible empty lead fields show N/A. The display preserves numeric zero and an explicit No. A blank Excel cell still means keep the saved value on update.
+
 ![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/lead-filters-demo.jpg)
 
 ### Questions
@@ -161,6 +163,28 @@ A newer version may exist, or your access changed. Refresh and reapply the inten
 **Why does Equals find a row that Exact match does not?**
 
 Equals normalizes text. Exact match requires the same saved case, spaces and Unicode representation. Check the saved value or use Equals when tolerant matching is intended.
+
+## Companies
+
+Members with permission to read leads
+
+1. Open Companies in the Workspace menu. A company appears when an active lead you can access has a company name.
+
+2. Enter the start of a company name and choose Search. Select a company to open Leads filtered to that organization.
+
+3. Choose Add lead beside a company to open a new enquiry with the company filled in. Enter the enquiry details and save.
+
+Names that differ only in capitalization or surrounding spaces group together. Adding or changing the company on a lead updates its group. Leads with an empty company still appear in Leads.
+
+The directory follows assigned or all-lead access. Add lead requires permission to create leads. Hiding Company name in Settings hides the directory entries.
+
+![Companies — synthetic demo only](../site/assets/screenshots/companies-demo.jpg)
+
+### Questions
+
+**How do I add a new company?**
+
+Enter its name on a new or existing lead. The company appears in the directory when that lead is active and within your access.
 
 ## Batch edit existing leads
 
@@ -398,23 +422,27 @@ No. Read/unread organizes the inbox; it does not recreate reminder delivery.
 
 Members with optional import permissions and import-capable administrators
 
-1. Open Imports & history and choose View history. Find previous jobs by status or date; Load older imports follows server pagination. Your permissions determine which jobs and rows you can inspect.
+1. For daily Excel edits, open Leads, apply your filters and choose Export Excel. Include Sales stage and the fields you want to update. In Excel, edit the Leads sheet. Keep SalesDrone lead ID and SalesDrone version with each row when sorting or copying.
 
-2. Choose a new workbook, or choose Update this workbook on a completed import to link a revised upload to its source comparison history. Upload XLSX/CSV, map columns and choose the duplicate/update mode.
+2. Open Import enquiries and select the saved XLSX. A recognized export opens in Review updates. For a third-party file, select its header and map the columns. Update this workbook on an earlier completed import reuses the earlier comparison.
 
-3. Review Additional workbook fields. Every populated unmatched column is selected as a reusable text field by default. Rename if needed or explicitly exclude a column. Admins choose Create / reuse fields & validate; other importers must ask an Admin for setup or map/exclude those columns.
+3. Check the Sales stage column in the preview. Current stages match even with differences in capitalization or spacing. Under Match sales stages, choose what each unfamiliar workbook value means. For example, choose Supplied for a workbook value of Delivered if your team uses Supplied for that outcome.
 
-4. In Map existing statuses, Enquiry status is the default destination. Map statuses to lists all compatible active category and custom text/dropdown fields, including fields already mapped to workbook columns. Hidden or retired fields are excluded. Keep original text only applies no extra mapping.
+4. Review Additional workbook fields. Every populated unmatched column is selected as a reusable text field by default. Rename if needed or explicitly exclude a column. Admins choose Create / reuse fields & validate; other importers must ask an Admin for setup or map/exclude those columns.
 
-5. Validate records to prepare a row-by-row comparison. Inspect existing matches, current versus workbook values, worksheet row numbers and proposed actions. Exact name and phone matches are candidates; ambiguous matches require a decision.
+5. In Map existing statuses, Enquiry status is the default destination. Map statuses to lists all compatible active category and custom text/dropdown fields, including fields already mapped to workbook columns. Hidden or retired fields are excluded. Keep original text only applies no extra mapping.
 
-6. Choose Approve clear proposals for unambiguous changes. Compare selected lead resolves a match first; then review its fields. Conflict fields start unchecked, keeping the database value unless you explicitly choose the workbook value.
+6. Validate records to prepare a row-by-row comparison. Inspect existing matches, current versus workbook values, worksheet row numbers and proposed actions. Exact name and phone matches are candidates; ambiguous matches require a decision.
 
-7. Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.
+7. Choose Approve clear proposals for unambiguous changes. Compare selected lead resolves a match first; then review its fields. Conflict fields start unchecked, keeping the database value unless you explicitly choose the workbook value.
 
-8. Use View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
+8. Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.
 
-The current default is skip duplicates. Review updates to existing leads is a separate mode; Keep separate enquiry rows explicitly allows distinct enquiries with repeating contacts. Stable SalesDrone lead ID mapping helps when identifiers change. A filename or worksheet row position never identifies a person.
+9. Use View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
+
+SalesDrone reports identify the target by its exported ID. When the saved version still matches, clean field edits can be approved together. A later edit sends differences to review. An unknown or inaccessible ID cannot create a new lead. External sheets default to skipping duplicate contacts and allow a separate review-updates mode.
+
+Numbered comments, assignment and recorded activity columns are for reference on a SalesDrone export. Edit recorded notes in the lead timeline. An empty spreadsheet cell preserves the saved value. On screen N/A means that no value has been recorded.
 
 A linked source comparison checks the prior imported value, current database value and incoming value. Unchanged workbook cells preserve team edits. Different edits in both places are conflicts. Older imports without a source baseline require an initial explicit comparison.
 
@@ -428,9 +456,9 @@ View history requires imports:read. imports:write allows planning/review/executi
 
 Download results produces a local JSON report with permitted row details, provided workspace exports are enabled. History is not a substitute for authorization; changing roles or assignments can redact results or block the next chunk.
 
-Preview validity is one day before the first commit; Refresh remaining matches renews a preview. Active partial imports remain resumable. Per-route import write limits are 180 requests per minute; a rate-limit error retains progress for a later resume. Maximum 5,000 rows, 10 MB upload, 40 source columns and a 6 MiB parsed-payload budget apply.
+Preview validity is one day before the first commit; Refresh remaining matches renews a preview. Active partial imports remain resumable. Per-route import write limits are 180 requests per minute; a rate-limit error retains progress for a later resume. Use up to 5,000 populated rows, a file of up to 10 MB and up to 6 MiB of parsed data. External sheets allow 40 source columns.
 
-Text fields preserve leading zeros and codes. Repeat uploads reuse existing field IDs. Selected comment columns remain historical notes; uncheck one to import it as a field instead. Empty columns are skipped and duplicate/blank headers have positional names. Field setup is a workspace change before preview, so those fields remain even if the import is cancelled. Limits remain 40 workbook columns and 30 active custom fields; limit/conflict failures stop setup without dropping columns. When Sales stage is hidden, Enquiry status is retained without a stage mapping.
+Text fields preserve leading zeros and codes. Repeat uploads reuse existing field IDs. Selected comment columns remain historical notes; uncheck one to import it as a field instead. Empty columns are skipped and duplicate/blank headers have positional names. Field setup is a workspace change before preview, so those fields remain even if the import is cancelled. Limits for external workbooks are 40 workbook columns and 30 active custom fields; limit/conflict failures stop setup without dropping columns. When Sales stage is hidden, Enquiry status is retained without a stage mapping.
 
 Recheck positional field names when duplicate or unnamed headers move in a revised workbook. Positional defaults cannot establish which old column a moved blank header represents.
 
@@ -438,9 +466,13 @@ If a destination already uses a workbook column, Review existing column focuses 
 
 If an import says lead-data cleanup is still running, wait for Settings → Lead data management to show Completed, then retry. This temporary pause prevents newly imported records being deleted by cleanup; keep the same workbook/mapping or resume the existing job. Retry guidance does not promise completion within a minute.
 
-![Excel and CSV import — synthetic demo only](../site/assets/screenshots/import-fields-demo.jpg)
+![Excel and CSV import — synthetic demo only](../site/assets/screenshots/import-workbook-update-demo.jpg)
 
 ### Questions
+
+**Can I update only a sales stage?**
+
+Yes. Export Sales stage, edit the first worksheet and keep both SalesDrone identity columns. Validate, review and apply. Missing columns and blank cells leave other lead details alone.
 
 **Will the revised workbook overwrite a teammate’s edits?**
 
@@ -552,7 +584,7 @@ Use Leads Management > Field definitions. A label change does not rename its sta
 
 **Can I remove a field without losing historical data?**
 
-Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. Fields appear when a value is recorded.
+Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. A selected field displays N/A when it is empty.
 
 ## Book mode: a quieter reading workspace
 

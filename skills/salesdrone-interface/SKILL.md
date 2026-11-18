@@ -6,9 +6,7 @@ description: "Maintain SalesDrone Material 3 responsive shell, typography, theme
 # Interface and Material 3 design system
 
 Read [SHARED.md](../SHARED.md), [design system](../../docs/DESIGN-SYSTEM.md) and the
-[review evidence](../../docs/MATERIAL-3-REVIEW.md). The v2 user request replaces
-the earlier Apple-derived visual system. Keep the underlying web accessibility and
-policy guarantees. This module does not authorize deployment or delegation.
+[review evidence](../../docs/MATERIAL-3-REVIEW.md). Preserve web accessibility and policy guarantees.
 
 ## Responsibility and entry points
 
@@ -80,3 +78,5 @@ Settings uses a searchable directory with permission-filtered categories, focuse
 Use LeadPage for every lead at all breakpoints. Comments is the initial activity tab. LeadCardOrder renders Journey, Details and Activity in saved DOM order with a touch grip and keyboard/button equivalents. Card order is personal on the current browser, and reduced motion disables the animated rearrangement. Card controls share the heading row. Lead loading reserves the page shape and qualification and timeline updates fade briefly with reduced-motion support. Stage and assignee are read-only outside Edit enquiry.
 
 Use [workspace structure](../../docs/DESIGN-SYSTEM.md#workspace-structure) to align headings and contextual controls.
+
+Companies uses Workspace navigation and the lead form. Check wrapping, exact-company navigation and prefill on narrow and wide screens.

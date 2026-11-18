@@ -54,6 +54,8 @@ const screenshots = [
   'status-mapping-options-demo.jpg',
   'dashboard-missing-demo.jpg',
   'dashboard-missing-mobile-demo.jpg',
+  'companies-demo.jpg',
+  'import-workbook-update-demo.jpg',
   'import-fields-demo.jpg',
   'import-fields-mobile-demo.jpg',
   'import-comments-demo.jpg',

@@ -413,6 +413,17 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     )
   ).body;
   assert.equal(committed.imported, 1);
+  const fixture = (await store.query(path('leads'), { filters: [['nameNormalized','==','imported one']], limit: 1 }))[0];
+  let roundTrip = (await req('post', '/imports/preview', {
+    filename: 'daily.xlsx', sheet: 'Leads', reviewed: true, duplicateMode: 'update', statusField: 'none',
+    rows: [{ leadId: fixture.id, leadVersion: String(fixture.version), stage: ' qualified ', company: 'Fieldwork Group' }],
+  }, randomUUID()).expect(200)).body;
+  for (const action of ['plan','review','commit'])
+    roundTrip = (await req('post','/imports/' + roundTrip.id + '/' + action, {expectedVersion:roundTrip.version}, randomUUID()).expect(200)).body;
+  assert.equal(roundTrip.updated, 1);
+  assert.equal((await store.get(path('leads',fixture.id))).stage, 'Qualified');
+  const directory = (await req('get','/companies?search=fieldwork').expect(200)).body;
+  assert.deepEqual(directory.items, [{key:'fieldwork group',name:'Fieldwork Group'}]);
   assert.equal(committed.duplicates, 1);
   const current = (await req('get', '/leads/' + lead.id).expect(200)).body;
   const note = (

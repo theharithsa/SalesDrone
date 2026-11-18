@@ -10,6 +10,7 @@ const productionOrigins = new Set([
 const pageTitles = {
   today: 'Today',
   leads: 'Leads',
+  companies: 'Companies',
   tasks: 'Tasks',
   notifications: 'Notifications',
   team: 'Team',

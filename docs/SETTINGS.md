@@ -238,7 +238,7 @@ Existing records and values are preserved. This is workspace-wide presentation c
 
 Add up to 30 custom fields: text, long text, number, date, dropdown or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs/types cannot be changed or reused after retirement.
 
-Required rules apply to new manual entries or explicit custom-value edits, not unrelated edits to legacy records. The first-sheet importer currently maps standard enquiry fields, not arbitrary custom-field columns.
+Required rules apply to new manual entries or explicit custom-value edits. Import can map an existing compatible custom field. Only Admins can create new workspace fields during mapping.
 
 **Example:** Add a dropdown named Material category with Cement, Aggregates and Blocks.
 
@@ -290,7 +290,7 @@ New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order
 
 Choose up to six additional visible built-in or custom fields. The fictional preview shows the draft before saving.
 
-The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.
+Selected header fields appear below the lead name. An empty selected field displays N/A. Phone values open the dialer.
 
 **Example:** Show City / location and Product in the lead header.
 

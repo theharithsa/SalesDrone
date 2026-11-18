@@ -50,7 +50,9 @@ export function matchesColumnFilters(
           : f.field.startsWith('cf_')
             ? lead.customFields?.[f.field]
             : lead[f.field];
-    if (f.op === 'exact') return raw === f.value;
+    if (f.op === 'exact') return f.field === 'company'
+      ? String(raw ?? '').trim().toLowerCase() === f.value.trim().toLowerCase()
+      : raw === f.value;
     const value = String(raw ?? '')
         .normalize('NFKC')
         .trim()

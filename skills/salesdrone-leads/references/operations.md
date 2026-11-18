@@ -96,3 +96,9 @@ Archive uses strict ArchiveInput with a positive integer expectedVersion, return
 Exact match is additive for source, stage and configured custom dropdowns. It compares raw case/spacing/Unicode and pushes every equality into the query; Equals remains normalized and unchanged. Residual conditions and signed filter/member-bound pagination still apply. Verify exact-filters.test.js, emulator.integration.js and desktop/mobile component interactions.
 
 Stage edits validate against current Admin-configured values, including custom replacements. Never hardcode STAGES in edit controls. Refresh workspace reloads field options with identity-generation protection so another session’s changes can be picked up.
+
+## Navigation and search
+
+Mobile title icons open search and filters; batch selection stays on desktop. Admins can filter by assignee in both layouts. GET /leads assignedToUid accepts a member UID or reserved __unassigned__ for null assignments. Compose with stage/search/column filters; cursors bind the selected assignee. Export adds the equivalent Assigned user ID Equals/Is empty condition, preserving export policy. Team workload links clear other filters before opening a member’s assigned leads. Non-admin directory/filter privileges remain unchanged.
+
+Global Leads search uses field=all with bounded scope-first scans across current lead fields, configured custom values, formatted phone digits and recorded notes. Signed cursors bind the term and field settings, and sparse pages may continue. Dedicated lead pages select All on a new lead, retain the current tab on refresh and use the edit dialog for stage/assignment. See reports-policy.test.js and emulator.integration.js.

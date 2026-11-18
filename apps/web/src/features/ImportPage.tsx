@@ -5,15 +5,14 @@ import ImportFieldSetup from './ImportFieldSetup';
 import { unmatchedImportFields, resolveImportFields, fieldNameKey } from '../lib/import-fields';
 import ImportReviewPanel from './ImportReviewPanel';
 import { readStored, writeStored, removeStored } from '../lib/browser-storage';
-import { isCommentHeader, mapImportRows } from '../lib/import-mapping';
+import { matchStage } from '../../../../functions/src/stage-match.js';
+import { isCommentHeader, mapImportRows, matchWorkbookColumns, importColumns as columns } from '../lib/import-mapping';
 import {
   defaultFieldOptions,
   FieldOptions,
   labelFor,
 } from '../lib/field-options';
 import {
-  worksheetColumns,
-  legacyImportColumns,
   detectHeaderRow,
 } from '../lib/lead-fields';
 import { useEffect, useRef, useState } from 'react';
@@ -27,17 +26,7 @@ import {
 } from 'lucide-react';
 import { Entity } from '../lib/types';
 import { ErrorMessage } from '../components/UI';
-const columns: Record<string, string> = Object.fromEntries([
-  ...worksheetColumns.map(([key, label]) => [label, key]),
-  ['Email (optional)', 'email'],
-  ['Country code', 'countryCode'],
-  ['Sales stage', 'stage'],
-  ['Job title', 'jobTitle'],
-  ['Website', 'website'],
-  ['SalesDrone lead ID (optional)', 'leadId'],
-]);
-
-type Sheet = { name: string; rows: string[][] };
+type Sheet = { name: string; rows: string[][]; report?: boolean; fieldKeys?: string[] };
 function csvParse(text: string) {
   const rows: string[][] = [];
   let row: string[] = [],
@@ -112,7 +101,7 @@ export default function ImportPage({
   onImported: () => void;
 }) {
   const fieldColumns = {
-    ...columns,
+    ...Object.fromEntries(Object.entries(columns).filter(([,key]) => key !== 'stage' || !config.hiddenFields.includes(key))),
     ...Object.fromEntries(
       config.customFields.filter((f) => !f.deleted).map((f) => [f.label, f.id]),
     ),
@@ -126,6 +115,7 @@ export default function ImportPage({
     [dateOrder, setDateOrder] = useState('DMY'),
     [importMode, setImportMode] = useState('skip'),
     [sourceImportId, setSourceImportId] = useState(''),
+    [stageChoices, setStageChoices] = useState<Record<string, string>>({}),
     [statusMap, setStatusMap] = useState<Record<string, string>>({}),
     [statusField, setStatusField] = useState('legacyStatus'),
     [job, setJob] = useState<Entity | null>(null),
@@ -139,21 +129,17 @@ export default function ImportPage({
   const rawHeaders = sheet?.rows[headerRow] || [];
   const headers = Array.from({length:sheet?Math.max(rawHeaders.length,...sheet.rows.slice(headerRow+1).map(r=>r.length)):0},(_,i)=>rawHeaders[i]||'');
   useEffect(() => {
-    setExcludedColumns([]);
+    const keys = headerRow === 0 ? sheet?.fieldKeys ?? [] : [];
+    const nextMapping = matchWorkbookColumns(headers, fieldColumns, config, keys);
+    const claimed = new Set(Object.values(nextMapping).map(Number));
+    const ignored = headers.flatMap((header, index) => !claimed.has(index) &&
+      (keys[index] || config.hiddenFields.some(key => [key, labelFor(config,key)].some(name => fieldNameKey(name) === fieldNameKey(header)))) ? [index] : []);
+    setExcludedColumns(ignored);
     setFieldNames({});
-    const claimed = new Set<number>();
-    const nextMapping:Record<string,string>={};
-    for(const [header,key] of Object.entries(fieldColumns)){
-      const index=headers.findIndex((h,i)=>!claimed.has(i)&&(
-        fieldNameKey(h)===fieldNameKey(labelFor(config,key,header)) ||
-        fieldNameKey(h)===fieldNameKey(header) || fieldNameKey(h)===fieldNameKey(key) ||
-        legacyImportColumns.some(([legacyKey,label])=>legacyKey===key&&fieldNameKey(h)===fieldNameKey(label)) ||
-        (key==='zone'&&fieldNameKey(h)==='zone / sector')
-      ));
-      nextMapping[key]=String(index);if(index>=0)claimed.add(index);
-    }
+    setStageChoices({});
+    if (sheet) setImportMode(sheet.report || Number(nextMapping.leadId) >= 0 && sheet.rows.slice(headerRow + 1).some(row => row[Number(nextMapping.leadId)]?.trim()) || sourceImportId ? 'update' : 'skip');
     setMapping(nextMapping);
-    setCommentColumns(headers.flatMap((header,index)=>isCommentHeader(header)&&!claimed.has(index)?[index]:[]));
+    setCommentColumns(headers.flatMap((header,index)=>isCommentHeader(header)&&!claimed.has(index)&&!ignored.includes(index)?[index]:[]));
     setJob(null);
     setStatusMap({});
     setStatusField(config.hiddenFields.includes('legacyStatus')?'none':'legacyStatus');
@@ -171,6 +157,9 @@ export default function ImportPage({
   const distinctStatuses = [
     ...new Set(mapped.map((r) => r.legacyStatus.trim()).filter(Boolean)),
   ];
+  const unrecognizedStages = [...new Set(mapped.map(row => String(row.stage ?? '').trim()).filter(value => value && !matchStage(value, choices.stage)))];
+  const stageChoice = (value: string) => Object.hasOwn(stageChoices, value) ? stageChoices[value] : undefined;
+  const missingStage = unrecognizedStages.some(value => !stageChoice(value));
   const statusTargets=dashboardFields(config);
   const statusTarget=statusTargets.find(f=>f.field===statusField);
   const invalidStatusTarget=statusField!=='none'&&!statusTarget;
@@ -260,10 +249,12 @@ export default function ImportPage({
     setBusy(true);
     setError('');
     try {
+      if(missingStage) throw Error('Choose a sales stage for each unrecognized workbook value.');
       if(invalidStatusTarget)throw Error('Choose an available status mapping field.');
       if(statusConflict)throw Error(statusConflict.message);
       if (!mapped.length) throw Error('No populated data rows were found.');
       if (mapped.length > 5000) throw Error('Import at most 5,000 data rows.');
+      if (commentColumns.some(index => index >= 40)) throw Error('Move the selected comment columns into the first 40 editable columns, then upload the workbook again.');
       if (invalidCells)
         throw Error(
           'Replace formulas and links with literal values before importing.',
@@ -291,6 +282,7 @@ export default function ImportPage({
           sheet: sheet.name,
           rows: importRows.map((r, i) => ({
             ...r,
+            ...(typeof r.stage === 'string' ? { stage: stageChoice(r.stage.trim()) ?? r.stage } : {}),
             sourceRow: populatedRows[i].sourceRow,
           })),
           reviewed: true,
@@ -466,11 +458,14 @@ export default function ImportPage({
             <button
               className="button primary"
               onClick={preview}
-              disabled={busy || invalidCells || invalidStatusTarget || !!statusConflict || (!canManageFields && selectedFields.length>0)}
+              disabled={busy || invalidCells || missingStage || invalidStatusTarget || !!statusConflict || (!canManageFields && selectedFields.length>0)}
             >
               {selectedFields.length ? `Create / reuse ${selectedFields.length} fields & validate` : 'Validate records'} <ArrowRight size={16} />
             </button>
           </div>
+          {sheet.report && <p className="notice">SalesDrone export recognized. Review your changes, then approve and import. Blank cells keep the saved value. Recorded comments and system columns are for reference.</p>}
+          <details open={sheet.report ? undefined : true} key={filename + headerRow}>
+            <summary>Workbook and column options</summary>
           <p className="import-profile-note">
             Select the columns to import as comments below. Each nonempty cell
             becomes a separate comment inside its lead. Missing legacy names,
@@ -614,6 +609,17 @@ export default function ImportPage({
               nonempty comment cells
             </p>
           </fieldset>
+          </details>
+          {unrecognizedStages.length > 0 && <section className="import-status-mapping">
+            <h3>Match sales stages</h3>
+            <p>Choose the current sales stage for each workbook value.</p>
+            <div className="mapping-grid">{unrecognizedStages.map(value => <label key={value}>{value}
+              <select aria-label={'Sales stage for ' + value} value={stageChoice(value) ?? ''} onChange={e => setStageChoices(old => ({ ...old, [value]: e.target.value }))}>
+                <option value="">Choose a sales stage</option>
+                {choices.stage.map(stage => <option key={stage}>{stage}</option>)}
+              </select>
+            </label>)}</div>
+          </section>}
           {distinctStatuses.length ? (
             <ImportStatusMapping
               targets={statusTargets}
@@ -647,6 +653,7 @@ export default function ImportPage({
                     'Company',
                     'Date',
                     'Original status',
+                    'Sales stage',
                   ].map((h) => (
                     <th key={h}>{h}</th>
                   ))}
@@ -655,11 +662,12 @@ export default function ImportPage({
               <tbody>
                 {mapped.slice(0, 5).map((r, i) => (
                   <tr key={i}>
-                    <td>{r.name || '—'}</td>
-                    <td>{r.phone || '—'}</td>
-                    <td>{r.company || '—'}</td>
-                    <td>{r.enquiryDate || '—'}</td>
-                    <td>{r.legacyStatus || '—'}</td>
+                    <td>{r.name || 'N/A'}</td>
+                    <td>{r.phone || 'N/A'}</td>
+                    <td>{r.company || 'N/A'}</td>
+                    <td>{r.enquiryDate || 'N/A'}</td>
+                    <td>{r.legacyStatus || 'N/A'}</td>
+                    <td>{stageChoice(String(r.stage ?? '').trim()) || matchStage(r.stage, choices.stage) || (statusField === 'stage' && (statusMap[r.legacyStatus] || matchStage(r.legacyStatus, choices.stage))) || 'N/A'}</td>
                   </tr>
                 ))}
               </tbody>

@@ -88,7 +88,7 @@ export default function LeadReportExport({
       let columns = choices.filter((c) => keys.includes(c.key));
       const comments: ReportComment[] = [];
       let commentChars = 0;
-      const rows: { id: string; values: (string | number)[] }[] = [];
+      const rows: { id: string; version?: number; values: (string | number)[] }[] = [];
       let cursor: string | undefined;
       let policyVersion: number | undefined;
       const seen = new Set<string>();
@@ -101,6 +101,7 @@ export default function LeadReportExport({
           for (const lead of demoLeads)
             rows.push({
               id: lead.id,
+              version: lead.version,
               values: keys.map((key) => {
                 const v = key.startsWith('cf_')
                   ? lead.customFields?.[key]
@@ -235,7 +236,7 @@ export default function LeadReportExport({
       >
         <p className="field-hint">
           Current stage, source, search and applied column filters are included.
-          Up to 10,000 matching leads per file.
+          For Excel updates, keep the two SalesDrone columns with each row and upload the edited file in Import enquiries. Export up to 10,000 leads or select up to 5,000 for re-import.
         </p>
         <ErrorMessage error={error} />
         <fieldset className="report-columns" disabled={busy}>
