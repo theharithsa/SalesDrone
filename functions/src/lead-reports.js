@@ -40,6 +40,7 @@ export function exportColumns(keys, config) {
 export function exportRows(leads, selected) {
   return leads.map((lead) => ({
     id: lead.id,
+    version: lead.version,
     values: selected.map(({ key }) => {
       const value = key.startsWith('cf_')
         ? lead.customFields?.[key]

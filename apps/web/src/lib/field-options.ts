@@ -85,3 +85,10 @@ export function leadFieldValue(lead: Record<string, any>, key: string): string {
   const value = key.startsWith('cf_') ? lead.customFields?.[key] : lead[key];
   return typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value ?? '');
 }
+
+/** Keep missing data out of stored records, form submissions and Excel cells. */
+export function displayFieldValue(value: unknown): string {
+  if (value == null || (typeof value === 'string' && !value.trim())) return 'N/A';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  return String(value);
+}

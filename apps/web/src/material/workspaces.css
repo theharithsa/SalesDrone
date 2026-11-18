@@ -2802,3 +2802,11 @@ input[type='tel'] {
 }
 
 .import-history { scroll-margin-block-start: 80px; }
+
+.companies-page .company-search, .companies-page .company-directory { width: 100%; max-width: 58rem; box-sizing: border-box; }
+.company-search { display: flex; gap: .5rem; align-items: center; margin-block: 1rem; }
+.company-search input { min-width: 0; width: min(100%, 28rem); }
+.company-search .button, .company-row .button { flex-shrink: 0; white-space: nowrap; }
+.company-row { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: .75rem; padding-block: .45rem; }
+.company-row + .company-row { border-top: 1px solid var(--md-sys-color-outline-variant); }
+.company-name { justify-self: start; text-align: start; overflow-wrap: anywhere; }

@@ -13,7 +13,7 @@ test('published contract covers every route with explicit PAT or Google/App Chec
     ),
   ].map((m) => [m[1], m[2]]);
   endpoints.push(['get', '/me'], ['post', '/invitations/:id/accept']);
-  assert.equal(endpoints.length, 97);
+  assert.equal(endpoints.length, 98);
   for (const [method, url] of endpoints) {
     const op =
       spec.paths['/api/v1' + url.replace(/:([a-zA-Z]+)/g, '{$1}')][method];
@@ -105,7 +105,7 @@ test('Team contract exposes typed admin-only reporting and literal assignment ex
 
 test('OpenAPI documents the seven-day replay deadline and separates the reset contract', async () => {
   const spec = JSON.parse(await read('docs/openapi.json'));
-  assert.equal(spec.info.version, '1.34.0');
+  assert.equal(spec.info.version, '1.35.0');
   for (const [method, route] of [
     ['post', '/leads'],
     ['post', '/imports/{id}/commit'],

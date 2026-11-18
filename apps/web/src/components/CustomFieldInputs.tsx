@@ -33,7 +33,7 @@ export default function CustomFieldInputs({
                 defaultValue={values[f.id] ?? ''}
                 required={f.required}
               >
-                <option value="">Select {f.label.toLowerCase()}</option>
+                <option value="">{f.required ? "Select " + f.label.toLowerCase() : "N/A"}</option>
                 {withCurrent(f.options, values[f.id]).map((v) => (
                   <option key={v}>{v}</option>
                 ))}
@@ -42,6 +42,7 @@ export default function CustomFieldInputs({
               <textarea
                 name={'custom:' + f.id}
                 rows={3}
+                placeholder="N/A"
                 maxLength={4000}
                 defaultValue={values[f.id] ?? ''}
                 required={f.required}
@@ -58,6 +59,7 @@ export default function CustomFieldInputs({
                 name={'custom:' + f.id}
                 type={f.type}
                 step={f.type === 'number' ? 'any' : undefined}
+                placeholder="N/A"
                 maxLength={500}
                 defaultValue={values[f.id] ?? ''}
                 required={f.required}

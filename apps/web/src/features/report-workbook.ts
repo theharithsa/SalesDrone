@@ -2,7 +2,7 @@ import ExcelJS from 'exceljs';
 export type ReportComment = { leadId: string; leadName: string; createdAt: string; text: string };
 export type ReportData = {
   columns: { key: string; label: string }[];
-  rows: { id: string; values: (string | number)[] }[];
+  rows: { id: string; version?: number; values: (string | number)[] }[];
   context: string[];
   comments?: ReportComment[];
 };
@@ -35,12 +35,22 @@ export async function buildReportWorkbook(
       width: 55,
       style: { alignment: { wrapText: true, vertical: 'top' as const } },
     })),
+    { header: 'SalesDrone lead ID', width: 40 },
+    { header: 'SalesDrone version', width: 22 },
   ];
+  // Header notes travel with columns when users reorder them or rename a label.
+  columns.forEach((column, i) => { sheet.getCell(1, i + 1).note = 'SalesDrone field: ' + column.key; });
+  for (let i = 0; i < commentCount; i++) sheet.getCell(1, columns.length + i + 1).note = 'SalesDrone field: recordedComment';
+  const identityColumn = columns.length + commentCount + 1;
+  sheet.getCell(1, identityColumn).note = 'SalesDrone field: leadId';
+  sheet.getCell(1, identityColumn + 1).note = 'SalesDrone field: leadVersion';
   for (const row of rows) {
     const notes = commentsByLead.get(row.id) ?? [];
     notes.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     const values = row.values.map((value) => typeof value === 'number' ? value : String(value));
-    sheet.addRow([...values, ...notes.map((comment) => String(comment.text))]);
+    const record = sheet.addRow([...values, ...notes.map(note => note.text)]);
+    record.getCell(identityColumn).value = row.id;
+    record.getCell(identityColumn + 1).value = row.version ?? null;
   }
   sheet.views = [{ state: 'frozen', ySplit: 1 }];
   sheet.autoFilter = {
@@ -56,6 +66,7 @@ export async function buildReportWorkbook(
   // ExcelJS writes user-entered text as string cells, never formulas or hyperlinks.
   const meta = workbook.addWorksheet('Report details');
   for (const line of context) meta.addRow([String(line)]);
+  meta.addRow(['To update leads, edit the Leads sheet and upload it in Import enquiries. Keep each lead ID and version with its row. Blank cells keep saved values. Recorded comments and system columns are for reference.']);
   meta.getColumn(1).width = 100;
   const output = await workbook.xlsx.writeBuffer();
   const buffer =

@@ -130,3 +130,5 @@ for every lead, with no partial transaction on conflict.
 ## Read-only MCP adapter
 
 The local npm adapter calls fixed GET API routes and accepts only a process-memory PAT. It has no database/cloud credentials, arbitrary request tool, write tool, redirect following or unrestricted telemetry exporter; opt-in safe OTel configuration is maintained by the standalone MCP repository. Explicit team:read and people:read scopes remain Admin-only; directory output excludes email/security fields. They never grant member administration. Untrusted lead/import/model text is data, never instructions. The operator chooses the MCP host/model receiving authorized data. See [transport and publication limits](docs/MCP.md).
+
+Company directory reads inherit the caller's lead scope. A workbook ID identifies a row only after checking current lead access. Reviewed imports require the usual write and lead permissions, and commits check versions again. Exported workbooks contain business data and should only be shared with authorized recipients.

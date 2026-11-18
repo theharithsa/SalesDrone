@@ -226,3 +226,7 @@ Admin Team reporting is a bounded read module in functions/src/team.js, with Tea
 ### Browser read reuse
 
 Repeat workspace navigation can reuse eligible first-page reads and aggregates in per-tab memory. Identity/policy changes, access errors, writes, focus and manual refresh invalidate the cache. HTTP and Service Worker API caching remain disabled. See [FinOps](FINOPS.md) for lifetimes, visibility limits, scheduled work and the separate Firebase ingress migration plan.
+
+## Company directory and spreadsheet updates
+
+Company names are derived from active lead documents using the existing normalized company field and scope indexes. The directory projects two fields per document and pages past the last company key. Forms continue to write leads through the ordinary transaction. A lead report exports its stable ID and version. Reviewed import planning reads an accessible ID, checks the exported version and compares nonempty editable fields. Commit rechecks current membership, lead and baseline versions and changed contact ownership in the transaction. See [Imports](IMPORTS.md).

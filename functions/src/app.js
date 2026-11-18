@@ -273,7 +273,7 @@ export function createApp({
             'Lead data is being cleared. Try again after cleanup finishes.',
           );
         const allowed =
-          url === '/team' ? ['days','from','to'] : url === '/team/members/:uid/activities' ? ['days','from','to','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
+          url === '/companies' ? ['limit', 'cursor', 'search'] : url === '/team' ? ['days','from','to'] : url === '/team/members/:uid/activities' ? ['days','from','to','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
             ? ['ids']
             : url === '/leads'
               ? [
@@ -663,9 +663,10 @@ export function createApp({
     const exact = new Map();
     let contradiction = false;
     for (const f of filters.filter(f => f.op === 'exact')) {
-      const field = f.field.startsWith('cf_') ? 'customFields.' + f.field : f.field;
-      if (exact.has(field) && exact.get(field) !== f.value) contradiction = true;
-      exact.set(field, f.value);
+      const field = f.field === 'company' ? 'companyNormalized' : f.field.startsWith('cf_') ? 'customFields.' + f.field : f.field;
+      const term = f.field === 'company' ? f.value.trim().toLowerCase() : f.value;
+      if (exact.has(field) && exact.get(field) !== term) contradiction = true;
+      exact.set(field, term);
     }
     if (contradiction) return {items:[],nextCursor:null,scanLimited:false};
     // Default single-field indexes can merge raw equalities with document-ID order,
@@ -1153,6 +1154,28 @@ export function createApp({
       now,
     }),
   );
+  route('get', '/companies', 'leads:read', async (req) => {
+    const limit = parse(z.coerce.number().int().min(1).max(100), req.query.limit ?? 30);
+    const search = parse(z.string().trim().max(200), req.query.search ?? '').toLowerCase();
+    if ((await readFieldOptions(store)).hiddenFields.includes('company')) return { items: [], nextCursor: null };
+    const filters = [...scopeFilters(req.member), ['archived', '==', false]];
+    const binding = hash(JSON.stringify(['companies', req.member.uid, req.member.version, req.member.accessPolicyVersion, filters, search]));
+    const after = req.query.cursor ? openCursor(req.query.cursor, binding)[0] : '';
+    // Seek past the entire last company, including any remaining leads with the same name.
+    const startKey = after || search;
+    const includeStart = !!search && !after;
+    filters.push(['companyNormalized', includeStart ? '>=' : '>', startKey]);
+    const rows = await store.query(path('leads'), {
+      filters, order: 'companyNormalized', limit: limit + 1, fields: ['company', 'companyNormalized'],
+    });
+    const page = rows.slice(0, limit).filter(row => row.companyNormalized.startsWith(search));
+    const names = new Map(page.map(row => [row.companyNormalized, row.company]));
+    return {
+      items: Array.from(names, ([key, name]) => ({ key, name })),
+      nextCursor: rows[limit]?.companyNormalized.startsWith(search) && page.length
+        ? sealCursor([page.at(-1).companyNormalized], binding) : null,
+    };
+  });
   route('get', '/archived-leads', 'leads:read', (req) =>
     list(req, 'leads', [...scopeFilters(req.member), ['archived', '==', true]]),
   );

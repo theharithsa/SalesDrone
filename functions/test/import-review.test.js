@@ -723,3 +723,71 @@ test('owner API tokens cannot execute reviewed jobs through the legacy commit en
   await s.call('get', '/imports/' + j.id + '/rows', null, token).expect(403);
   assert.equal(await s.store.count(path('leads')), 0);
 });
+
+test('export → edit XLSX → review → reimport preserves IDs, custom stages, blanks and history', async () => {
+  const { default: ExcelJS } = await import('exceljs');
+  const { buildReportWorkbook } = await import('../../apps/web/src/features/report-workbook.ts');
+  const { readWorkbook } = await import('../../apps/web/src/features/read-workbook.ts');
+  const { importColumns, mapImportRows, matchWorkbookColumns } = await import('../../apps/web/src/lib/import-mapping.ts');
+  const s = await setup();
+  const config = (await s.call('get', '/field-options').expect(200)).body;
+  const options = (await s.call('patch', '/field-options', {
+    expectedVersion: config.version, values: { ...config.values, stage: ['New', 'Sample Sent', 'Supplied'] },
+  }).expect(200)).body;
+  const initial = await commit(s, await approve(s, await draft(s, [row()])));
+  const [lead] = await s.store.query(path('leads'));
+  assert.equal(initial.imported, 1);
+  const report = (await s.call('post', '/leads/export', {
+    columns: ['stage', 'company'], includeComments: true,
+  }).expect(200)).body;
+  assert.equal(report.rows[0].version, lead.version);
+  const excel = new ExcelJS.Workbook();
+  await excel.xlsx.load(await buildReportWorkbook({ ...report, context: ['SalesDrone by AvinyaTech'] }));
+  const sheet = excel.getWorksheet('Leads');
+  const stageColumn = report.columns.findIndex(c => c.key === 'stage') + 1;
+  const companyColumn = report.columns.findIndex(c => c.key === 'company') + 1;
+  sheet.getCell(1, stageColumn).value = 'Current pipeline position';
+  sheet.getCell(2, stageColumn).value = '  sample   SENT ';
+  sheet.getCell(2, companyColumn).value = null;
+  excel.addWorksheet('Extra').addRow(['Ignore this sheet']);
+  const pages = await readWorkbook(Uint8Array.from(await excel.xlsx.writeBuffer()).buffer);
+  assert.equal(pages.length, 1);
+  const { rows: [headers, ...cells], report: recognized, fieldKeys } = pages[0];
+  assert.equal(recognized, true);
+  assert.ok(!headers.includes('Comment 1'));
+  const mapping = matchWorkbookColumns(headers, importColumns, options, fieldKeys);
+  const records = mapImportRows(cells, headers, mapping, []);
+  const mode = { duplicateMode: 'update', statusField: 'none' };
+  const plan = await draft(s, records, mode);
+  const [comparison] = await rows(s, plan);
+  assert.deepEqual(comparison.changes.map(c => [c.key, c.incoming, c.conflict]), [['stage', 'Sample Sent', false]]);
+  assert.equal(plan.needsReview, 0);
+  const done = await commit(s, await approve(s, plan));
+  assert.equal(done.updated, 1);
+  const saved = await s.store.get(path('leads', lead.id));
+  assert.equal(saved.stage, 'Sample Sent');
+  assert.equal(saved.company, 'Before');
+  assert.equal(saved.version, lead.version + 1);
+  const again = await commit(s, await approve(s, await draft(s, records, mode)));
+  assert.equal(again.unchanged, 1);
+  const base = { leadId: lead.id, leadVersion: String(saved.version) };
+  const stale = await draft(s, [{ ...records[0], stage: 'Supplied' }], mode);
+  assert.ok((await rows(s, stale))[0].changes.find(c => c.key === 'stage').conflict);
+  assert.equal((await rows(s, await draft(s, [{ ...base, stage: '   ' }], mode)))[0].classification, 'Unchanged');
+  assert.equal((await rows(s, await draft(s, [{ ...base, stage: 'Retired stage' }], mode)))[0].classification, 'Invalid');
+  assert.equal((await s.store.query(path('leads'))).length, 1);
+  assert.equal((await s.store.query(path('activities'))).filter(a => a.type === 'note').length, 1);
+});
+
+test('identified updates accept an existing shared phone and flag newly conflicting contacts during preview', async () => {
+  const s = await setup();
+  const input = { name: 'Synthetic', phone: '+12025550123', enquiryDate: '2026-11-01', source: 'Direct enquiry' };
+  const first = (await s.call('post', '/leads', input).expect(200)).body;
+  await s.call('post', '/leads', { ...input, allowDuplicate: true }).expect(200);
+  await s.call('post', '/leads', { ...input, phone: '+12025550456' }).expect(200);
+  const mode = { duplicateMode: 'update', statusField: 'none' };
+  const change = { leadId: first.id, leadVersion: '1', phone: input.phone, company: 'Updated' };
+  assert.equal((await commit(s, await approve(s, await draft(s, [change], mode)))).updated, 1);
+  const [collision] = await rows(s, await draft(s, [{ ...change, phone: '+12025550456', leadVersion: '2' }], mode));
+  assert.equal(collision.classification, 'Conflict');
+});

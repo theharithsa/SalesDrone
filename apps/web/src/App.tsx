@@ -3,6 +3,7 @@ import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
+import CompaniesPage from './features/CompaniesPage';
 import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
 import AssigneeFilter, { type Assignee } from './components/AssigneeFilter';
 import { teamDemo, demoAssignees } from './lib/team-demo';
@@ -46,6 +47,7 @@ import {
   FieldOptions,
   withCurrent,
   leadFieldValue,
+  displayFieldValue,
   orderedFields,
   labelFor,
 } from './lib/field-options';
@@ -200,6 +202,7 @@ export default function App() {
       | 'correction'
       | null
     >(null),
+    [companyForNewLead, setCompanyForNewLead] = useState(''),
     [search, setSearch] = useState(''),
     [searchDraft, setSearchDraft] = useState(''),
     [searchField, setSearchField] = useState('all'),
@@ -1761,6 +1764,7 @@ export default function App() {
                   today: 'Today',
                   team: 'Team',
                   leads: 'Leads',
+                  companies: 'Companies',
                   tasks: 'Tasks',
                   notifications: 'Notifications',
                   settings: 'Settings',
@@ -1919,6 +1923,16 @@ export default function App() {
         ) : null}
         <main id="main-content">
           <Suspense fallback={<Loading />}>
+            {page === 'companies' && <CompaniesPage
+              key={[session?.identity.uid, session?.member?.version, session?.member?.accessPolicyVersion, demo].join(':')}
+              request={request} refreshKey={dashboardRefreshKey} hidden={fieldOptions.hiddenFields.includes('company')}
+              demoLeads={demo ? data.leads : undefined}
+              onLeads={company => {
+                setAssignee(''); setStage(''); setSource(''); setSearch(''); setSearchDraft('');
+                setColumnFilters([{ field: 'company', op: 'exact', value: company }]); go('leads');
+              }}
+              onAdd={can('leads:create') ? company => { setCompanyForNewLead(company); setModal('lead'); } : undefined}
+            />}
             {page==='team' ? (admin||demo ? <TeamPage key={(session?.identity.uid||'demo')+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} request={request} demo={!!demo} onLeads={id=>{setAssignee(id);setStage('');setSource('');setSearch('');setSearchDraft('');setColumnFilters([]);go('leads');}}/> : <div className="page-body"><ErrorMessage error="Team insights are available to workspace administrators."/></div>) : null}
 
             {page === 'today' ? (
@@ -2365,12 +2379,11 @@ export default function App() {
                           phone={selected.phone}
                           fields={orderedFields(fieldOptions, fieldOptions.headerFields || [], (key) => key)
                             .filter((key) => !fieldOptions.hiddenFields.includes(key))
-                            .flatMap((key) => {
+                            .map((key) => {
                               const value = leadFieldValue(selected, key).trim();
-                              if (!value) return [];
                               const label = fieldOptions.customFields.find((field) => field.id === key)?.label
                                 || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined);
-                              return [{ id: key, label, value }];
+                              return { id: key, label, value: displayFieldValue(value) };
                             })}
                         />
                       </div>
@@ -2466,7 +2479,7 @@ export default function App() {
                                       {field === 'name' ? (
                                         <LeadName name={selected.name} />
                                       ) : field === 'enquiryDate' ? (
-                                        displayDate(selected.enquiryDate)
+                                        selected.enquiryDate ? displayDate(selected.enquiryDate) : 'N/A'
                                       ) : field === 'phone' ? (
                                         !demo &&
                                         selected.phone &&
@@ -2478,12 +2491,10 @@ export default function App() {
                                         ) : (
                                           selected.phone ||
                                           selected.originalPhone ||
-                                          'Not recorded'
+                                          'N/A'
                                         )
                                       ) : (
-                                        String(
-                                          selected[field] || 'Not recorded',
-                                        )
+                                        displayFieldValue(selected[field])
                                       )}
                                     </dd>
                                   </div>
@@ -2502,7 +2513,7 @@ export default function App() {
                                         {selected.email}
                                       </a>
                                     ) : (
-                                      selected.email || 'Not recorded'
+                                      displayFieldValue(selected.email)
                                     )}
                                   </dd>
                                 </div>
@@ -2531,16 +2542,7 @@ export default function App() {
                                         {f.deleted ? ' (removed field)' : ''}
                                       </dt>
                                       <dd>
-                                        {typeof selected.customFields?.[
-                                          f.id
-                                        ] === 'boolean'
-                                          ? selected.customFields[f.id]
-                                            ? 'Yes'
-                                            : 'No'
-                                          : String(
-                                              selected.customFields?.[f.id] ??
-                                                'Not recorded',
-                                            )}
+                                        {displayFieldValue(selected.customFields?.[f.id])}
                                       </dd>
                                     </div>
                                   ))}
@@ -3293,6 +3295,7 @@ export default function App() {
           <LeadForm
             config={fieldOptions}
             lead={modal === 'edit' ? selected || undefined : undefined}
+            initialCompany={modal === 'lead' && page === 'companies' ? companyForNewLead : undefined}
             admin={admin}
             choices={fieldOptions.values}
             onCancel={() => setModal(null)}
