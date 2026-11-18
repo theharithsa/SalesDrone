@@ -31,6 +31,7 @@ API contract versions track compatibility independently.
 
 ### Security
 - Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.
+- Updated the Firebase CLI and its Pub/Sub dependency to resolve OpenTelemetry Core advisory GHSA-8988-4f7v-96qf in the development toolchain.
 
 ### Maintenance
 - Updated the Firebase web SDK and CLI, Lucide icons, and test dependencies. Development and CI now use Node 24. The deployed Functions runtime remains Node 22.

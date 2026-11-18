@@ -105,7 +105,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Check pre-production resource identity, authenticated Admin access, idempotent seed, effective IAM, anonymous denial, ingress transport and promotion source evidence before activation. In the synthetic workspace verify default All, mixed creation-time order, linked task details, focused tabs and measured narrow and wide layouts. In Companies, search and open company leads and check the prefilled new enquiry. With fictional records export a lead, edit its stage, check the preview, import and verify a second upload is unchanged.",
+  "manualVerification": "Check pre-production resource identity, authenticated Admin access, idempotent seed, effective IAM, anonymous denial, ingress transport and promotion source evidence before activation. In the synthetic workspace verify default All, mixed creation-time order, linked task details, focused tabs and measured narrow and wide layouts. Verify the resolved Firebase CLI OpenTelemetry Core path, both dependency installs, the local Pub/Sub message round trip and pre-production deployment. In Companies, search and open company leads and check the prefilled new enquiry. With fictional records export a lead, edit its stage, check the preview, import and verify a second upload is unchanged.",
   "milestone": {
     "number": 71,
     "title": "v2.14.0 \u2014 Pre-production environment",
@@ -118,6 +118,7 @@
       232,
       234,
       235,
+      237,
       238,
       241,
       242

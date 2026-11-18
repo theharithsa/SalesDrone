@@ -6,7 +6,28 @@
 
 The root and standalone Functions locks each resolve the affected glob and minimatch versions to patched releases. Keep overrides scoped to the affected ranges so older ExcelJS callbacks still use their supported glob API. The root also pins patched UUID for the Firebase CLI's gaxios 6 dependency, which uses its CommonJS v4 generator. The Node 22 ingress image installs only runtime dependencies from the standalone Functions lock so it shares the patched runtime graph without inheriting the Node 24 web toolchain. Verify both lockfiles independently and run the Auth, Firestore and Storage emulator tests before promotion.
 
-The full workspace audit additionally reports a moderate OpenTelemetry issue in the Firebase CLI's development-only Pub/Sub dependency chain. Its parent currently constrains OpenTelemetry Core to 1.x. Track this separately from the four Dependabot alerts and verify the production dependency audit and standalone Functions audit independently.
+[Issue #237](https://github.com/theharithsa/SalesDrone/issues/237) covers the development-only
+[OpenTelemetry Core advisory](https://github.com/advisories/GHSA-8988-4f7v-96qf).
+Firebase CLI 15.36.0 still requests Pub/Sub 5.x. The root npm override selects
+Google Pub/Sub 6.4.1 for the CLI alone. The locked CLI path resolves Core 2.12.1,
+above the patched minimum of 2.8.0. This does not change the published Firebase
+CLI manifest. The Node 24 deployment and developer toolchain satisfies Pub/Sub's
+Node 22 minimum. The standalone Node 22 Functions lock is unchanged.
+
+When removing the override, confirm the CLI's published dependency range resolves
+a patched Core, then rerun the whole workspace audit, production-only audit,
+standalone Functions audit, emulator integration and pre-production deployment.
+Exercise topic and subscription creation and message delivery against the local
+Pub/Sub emulator when changing the override. Keep the raw registry audit result
+separate from a withdrawn advisory or an active dependency finding.
+
+Local verification used clean workspace and standalone installs, 17 Auth,
+Firestore and Storage emulator cases, and a local Pub/Sub topic/subscription
+with one acknowledged message. The full registry audit dropped the three
+OpenTelemetry-related entries and still listed the same 14 dependency paths
+from the [withdrawn picomatch advisory](https://github.com/advisories/GHSA-fc5q-39xc-vjpf)
+on both the base and candidate. This change adds no application requests or
+Firestore operations.
 
 ### Earlier dependency reviews
 
