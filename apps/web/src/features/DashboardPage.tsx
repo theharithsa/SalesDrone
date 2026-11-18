@@ -1,3 +1,4 @@
+import { errorMessage } from '../lib/error-message';
 import BookPageControls from '../components/BookPageControls';
 import { useBookSheet } from '../lib/use-book-sheet';
 import WorkspacePageHeader from '../components/WorkspacePageHeader';
@@ -424,7 +425,7 @@ export default function DashboardPage({
         : await request('/dashboard');
       if (epoch === loadEpoch.current) setSnapshot(d);
     } catch (e) {
-      if (epoch === loadEpoch.current) setError((e as Error).message);
+      if (epoch === loadEpoch.current) setError(errorMessage(e));
     } finally {
       if (epoch === loadEpoch.current) setBusy(false);
     }
@@ -443,7 +444,7 @@ export default function DashboardPage({
     try{
       if(demo){setDemoField(value);if(!writeStored('localStorage','salesdrone.demo.dashboard-field',value))setCategoryError('Browser storage is unavailable; the choice lasts for this visit.');}
       else{await request('/me','PATCH',{dashboardField:value});onGroupingSaved?.(value);await load();}
-    }catch(e){setCategoryError((e as Error).message);}finally{setCategoryBusy(false);}
+    }catch(e){setCategoryError(errorMessage(e));}finally{setCategoryBusy(false);}
   }
   useEffect(() => {
     void load();
@@ -474,7 +475,7 @@ export default function DashboardPage({
       const result = await request('/dashboard/insights', 'POST', {});
       if (epoch === briefEpoch.current) setBrief(result);
     } catch (e) {
-      if (epoch === briefEpoch.current) setBriefError((e as Error).message);
+      if (epoch === briefEpoch.current) setBriefError(errorMessage(e));
     } finally {
       briefInFlight.current = false;
       if (epoch === briefEpoch.current) setBriefBusy(false);
@@ -495,7 +496,7 @@ export default function DashboardPage({
     try {
       await action();
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     }
   }
   const facts = snapshot?.facts || {},

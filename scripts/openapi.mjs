@@ -1380,13 +1380,27 @@ const spec = {
     schemas,
   },
 };
-await mkdir(new URL('../apps/web/public/', import.meta.url), {
-  recursive: true,
-});
 const json = JSON.stringify(spec, null, 2) + '\n';
-await writeFile(new URL('../docs/openapi.json', import.meta.url), json);
-await writeFile(
-  new URL('../apps/web/public/openapi.json', import.meta.url),
-  json,
-);
-console.log(`Generated ${endpoints.length} API operations.`);
+const outputs = ['docs/openapi.json', 'apps/web/public/openapi.json'];
+const checking = process.argv.includes('--check');
+if (!checking) {
+  await mkdir(new URL('../apps/web/public/', import.meta.url), { recursive: true });
+}
+for (const filename of outputs) {
+  const path = new URL('../' + filename, import.meta.url);
+  if (!checking) {
+    await writeFile(path, json);
+    continue;
+  }
+  const saved = await readFile(path, 'utf8').catch((error) => {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  });
+  if (saved !== json) {
+    console.error(filename + ' is missing or outdated. Run npm run api:docs.');
+    process.exitCode = 1;
+  }
+}
+if (!process.exitCode) {
+  console.log(`${checking ? 'Verified' : 'Generated'} ${endpoints.length} API operations.`);
+}

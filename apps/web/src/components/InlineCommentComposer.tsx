@@ -1,3 +1,4 @@
+import { errorMessage } from '../lib/error-message';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorMessage, SaveButton } from './UI';
 import { commentAttempt } from '../lib/comment-attempt';
@@ -36,7 +37,7 @@ export default function InlineCommentComposer({
     try {
       write = commentAttempt(attempt.current, notes, version);
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
       return;
     }
     attempt.current = write;
@@ -64,21 +65,28 @@ export default function InlineCommentComposer({
       await onSaved();
     } catch (e) {
       if (alive.current) {
-        const code = (e as { code?: string }).code;
+        const code = e && typeof e === 'object' && 'code' in e && typeof e.code === 'string'
+          ? e.code
+          : '';
         if (
           !saved &&
-          ['CONFLICT', 'VERSION_CONFLICT', 'STALE_VERSION'].includes(code || '')
+          ['CONFLICT', 'VERSION_CONFLICT', 'STALE_VERSION'].includes(code)
         ) {
           attempt.current = null;
           try {
             await onSaved();
-          } catch {}
+          } catch {
+            if (alive.current) {
+              setError('The lead changed and the timeline could not refresh. Refresh the workspace before trying again.');
+            }
+            return;
+          }
         }
         if (!alive.current) return;
         setError(
           saved
             ? 'Comment posted, but the timeline could not refresh. Refresh the workspace to see it.'
-            : (e as Error).message,
+            : errorMessage(e),
         );
       }
     } finally {

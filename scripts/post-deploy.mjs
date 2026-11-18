@@ -52,7 +52,9 @@ try {
             good = true;
             break;
           }
-        } catch {}
+        } catch {
+          // Pages publication can propagate late. The final failure is recorded after the retry window.
+        }
         await new Promise((resolve) => setTimeout(resolve, 5000));
       }
       if (!good) throw Error('Stale Pages guide');
@@ -67,7 +69,9 @@ try {
             checkProductPage(await r.text(), expected.version, expected.commit);
             return;
           }
-        } catch {}
+        } catch {
+          // Pages publication can propagate late. The final failure is recorded after the retry window.
+        }
         await new Promise((resolve) => setTimeout(resolve, 5000));
       }
       throw Error('Stale product handbook');

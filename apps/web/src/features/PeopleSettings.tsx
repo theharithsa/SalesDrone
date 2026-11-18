@@ -1,11 +1,24 @@
+import type { ApiClient } from '../lib/api';
+import { errorMessage } from '../lib/error-message';
 import { useCallback, useEffect, useState } from 'react';
 import MembersPage from './MembersPage';
 import { Entity } from '../lib/types';
 import { ErrorMessage, Loading } from '../components/UI';
+function memberPage(payload: unknown): { items: Entity[]; nextCursor: string | null } {
+  if (!payload || typeof payload !== 'object' || !('items' in payload)
+      || !Array.isArray(payload.items) || !('nextCursor' in payload)
+      || (payload.nextCursor !== null && typeof payload.nextCursor !== 'string')
+      || !payload.items.every((item: unknown) => item && typeof item === 'object'
+        && 'id' in item && typeof item.id === 'string')) {
+    throw new Error('The people list could not be loaded. Try again.');
+  }
+  return { items: payload.items, nextCursor: payload.nextCursor };
+}
+
 export default function PeopleSettings({
   request,
 }: {
-  request: (p: string, m?: string, b?: any, k?: string) => Promise<any>;
+  request: ApiClient;
 }) {
   const [members, setMembers] = useState<Entity[]>([]),
     [invitations, setInvitations] = useState<Entity[]>([]),
@@ -19,15 +32,17 @@ export default function PeopleSettings({
     setBusy(true);
     setError('');
     try {
-      const [m, i] = await Promise.all([
+      const [membersResult, invitationsResult] = await Promise.all([
         request('/members?limit=100'),
         request('/invitations?limit=100'),
       ]);
+      const m = memberPage(membersResult);
+      const i = memberPage(invitationsResult);
       setMembers(m.items);
       setInvitations(i.items);
       setCursors({ members: m.nextCursor, invitations: i.nextCursor });
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     } finally {
       setBusy(false);
     }
@@ -36,17 +51,19 @@ export default function PeopleSettings({
     void load();
   }, [load]);
   async function more(kind: 'members' | 'invitations') {
+    const cursor = cursors[kind];
+    if (!cursor) return;
     setBusy(true);
     setError('');
     try {
-      const r = await request(
-        '/' + kind + '?limit=100&cursor=' + encodeURIComponent(cursors[kind]!),
-      );
+      const r = memberPage(await request(
+        '/' + kind + '?limit=100&cursor=' + encodeURIComponent(cursor),
+      ));
       if (kind === 'members') setMembers((old) => [...old, ...r.items]);
       else setInvitations((old) => [...old, ...r.items]);
       setCursors((old) => ({ ...old, [kind]: r.nextCursor }));
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     } finally {
       setBusy(false);
     }

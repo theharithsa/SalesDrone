@@ -1,3 +1,5 @@
+import { MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import {businessCatalog} from './business-records.js';
 import {
   AgentPlan,
@@ -132,7 +134,7 @@ export async function createQuestion(
     limit: 10,
   });
   if (
-    recent.filter((r) => Date.parse(at) - Date.parse(r.createdAt) < 60000)
+    recent.filter((r) => Date.parse(at) - Date.parse(r.createdAt) < MINUTE_MS)
       .length >= 5
   )
     throw new AppError(
@@ -229,7 +231,7 @@ export async function processAssistantRequest({
   store,
   id,
   provider,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const r = await store.get(path("assistantRequests", id));
   if (!r || r.status !== "Pending") return { processed: 0 };

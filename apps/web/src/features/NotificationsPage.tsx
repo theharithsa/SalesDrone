@@ -1,3 +1,4 @@
+import { errorMessage } from '../lib/error-message';
 import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import { useState } from 'react';
 import { ArrowUpRight, Bell, CheckCheck, Mail, UserRound } from 'lucide-react';
@@ -30,7 +31,7 @@ export default function NotificationsPage({
     try {
       await action();
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     } finally {
       setBusy(null);
     }

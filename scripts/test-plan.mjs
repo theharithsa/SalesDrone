@@ -17,7 +17,7 @@ export const steps = {
   unit: ['test'],
   lint: ['run', 'lint'],
   types: ['run', 'check'],
-  contracts: ['run', 'api:docs'],
+  contracts: ['run', 'api:docs', '--', '--check'],
   documentation: ['run', 'docs:check'],
   skills: ['run', 'skills:check'],
   readiness: ['run', 'release:readiness'],

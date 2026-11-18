@@ -29,12 +29,14 @@ export default [
     rules: {
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
-      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "no-empty": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
-          args: "none",
-          caughtErrors: "none",
+          args: "all",
+          argsIgnorePattern: "^_",
+          caughtErrors: "all",
           varsIgnorePattern: "^(_|React)$",
           ignoreRestSiblings: true,
         },
@@ -44,12 +46,13 @@ export default [
   {
     files: ["functions/src/**/*.js", "scripts/**/*.mjs", "services/ingress/src/**/*.js", "tools/accessibility/*.mjs"],
     rules: {
-      "no-empty": ["error", { allowEmptyCatch: true }],
+      "no-empty": "error",
       "no-unused-vars": [
         "error",
         {
-          args: "none",
-          caughtErrors: "none",
+          args: "all",
+          argsIgnorePattern: "^_",
+          caughtErrors: "all",
           varsIgnorePattern: "^_",
           ignoreRestSiblings: true,
         },

@@ -115,10 +115,21 @@ export function createRuntime(environment = 'production') {
   );
   const research = researchGemini({telemetry:()=>observability,key:()=>geminiKey.value(),model:()=>geminiModel.value()});
   async function researchDependency(kind,fn) {
-    const started=performance.now();let outcome='success';
-    try {return await dependency(kind==='batch'?'lead-research.batch':'gemini.lead-'+kind,fn);}
-    catch(error){outcome='failure';throw error;}
-    finally {try{observability?.researchOperation(kind,outcome,(performance.now()-started)/1000);}catch{}}
+    const started = performance.now();
+    let outcome = 'success';
+    const operation = kind === 'batch' ? 'lead-research.batch' : 'gemini.lead-' + kind;
+    try {
+      return await dependency(operation, fn);
+    } catch (error) {
+      outcome = 'failure';
+      throw error;
+    } finally {
+      try {
+        observability?.researchOperation(kind, outcome, (performance.now() - started) / 1000);
+      } catch {
+        // Metrics are optional. Preserve the original Gemini result or failure.
+      }
+    }
   }
   const observedResearch={
     plan: input=>researchDependency('plan',()=>research.plan(input)),

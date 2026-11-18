@@ -1,3 +1,5 @@
+import type { ApiClient } from '../lib/api';
+import { errorMessage } from '../lib/error-message';
 import { accentPalettes, normalizeAccent } from '../lib/accent';
 import { UsageAnalyticsPreference } from '../components/UsageAnalytics';
 import LeadFieldLayoutSettings from '../components/LeadFieldLayoutSettings';
@@ -64,7 +66,7 @@ export default function SettingsPage({
   onFieldOptions: (options: FieldOptions) => void;
   demo: boolean;
   devices: Entity[];
-  request: (p: string, m?: string, b?: any, k?: string) => Promise<any>;
+  request: ApiClient;
   onRefresh: () => void;
   onPreferences: (p: any) => void;
 }) {
@@ -240,7 +242,7 @@ export default function SettingsPage({
       setMessage('Notifications enabled for this device.');
       onRefresh();
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     } finally {
       setBusy(false);
     }
@@ -258,7 +260,7 @@ export default function SettingsPage({
         onRefresh();
       }
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     }
   }
   return (

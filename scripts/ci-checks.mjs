@@ -34,17 +34,6 @@ const commands = {
   components: [npm, ['run', 'test:components']],
   types: [npm, ['run', 'check']],
   forms: [npm, ['run', 'design:forms']],
-  contracts: [npm, ['run', 'api:docs']],
-  'contract-diff': [
-    'git',
-    [
-      'diff',
-      '--exit-code',
-      '--',
-      'docs/openapi.json',
-      'apps/web/public/openapi.json',
-    ],
-  ],
   emulator: [npm, ['run', 'test:emulator']],
   audit: [npm, ['audit', '--omit=dev', '--audit-level=high']],
   docs: [npm, ['run', 'docs:build']],

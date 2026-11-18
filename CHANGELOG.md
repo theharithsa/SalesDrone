@@ -35,6 +35,8 @@ API contract versions track compatibility independently.
 
 ### Maintenance
 - Updated the Firebase web SDK and CLI, Lucide icons, and test dependencies. Development and CI now use Node 24. The deployed Functions runtime remains Node 22.
+- Added lint checks for existing TypeScript escape hatches and unexplained error handling. Verification checks the OpenAPI artifacts without rewriting them.
+- Browser API failures retain their HTTP status, and comment editing reports when a stale lead could not be refreshed.
 
 ## [2.13.11] - 2026-11-14
 
