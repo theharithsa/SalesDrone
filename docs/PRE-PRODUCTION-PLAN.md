@@ -259,8 +259,9 @@ GCP_PROJECT_ID=sales-drone-avinya node scripts/run-runtime-acceptance.mjs produc
 GCP_PROJECT_ID=sales-drone-avinya node scripts/run-runtime-acceptance.mjs preprod-outbox <commit>
 ```
 
-Each command starts one short private job from the deployed pre-prod image and
-removes the job afterward. The production identity check uses a nonexistent
+Each command starts one short private job using the deployed pre-prod ingress
+image and removes the job afterward. That image includes the build's Functions
+source and locked dependencies. The production identity check uses a nonexistent
 document and an empty Storage prefix, checks shared Auth with a nonexistent
 identity and validates an FCM payload without sending it. The outbox check commits
 one synthetic lead in the named test database, delivers only its outbox records,
