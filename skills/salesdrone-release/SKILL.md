@@ -93,7 +93,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 Verify the staged Hosting version before deploying the backend. Promote that exact version after ingress checks. Follow the [partial-release runbook](../../docs/RELEASE.md).
 
-Promotion validates the exact pre-prod receipt and SHA-256 digest. [Recovery](references/operations.md).
+Promotion validates the exact pre-prod receipt and SHA-256 digest. Verify runtime and Scheduler identities before Hosting cutover. [Recovery](references/operations.md).
 
 Plan the versioned GitHub milestone and assign scoped issues before the candidate bump. Use release:plan; release.mjs rechecks the real milestone and preserves its impact plan. Keep the same version through local review. CI validates PR coverage and requires completed milestone issue states before main publication. See docs/RELEASE-GOVERNANCE.md; unfinished old issues are not completion evidence.
 

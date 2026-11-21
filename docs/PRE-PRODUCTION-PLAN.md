@@ -36,7 +36,7 @@ allowance. Do not represent this plan as a new free environment.
 | Functions | Existing `salesdrone` codebase and scheduled workers | Dedicated `preprodApi` function deployed by the pre-prod workflow |
 | HTTP ingress | `salesdrone-ingress` | Distinct `salesdrone-preprod-ingress`; fixed upstream to the pre-production API |
 | Attachments | Existing private production bucket | Separate private pre-production bucket; never a shared customer prefix |
-| Runtime identity | Existing production identity | Dedicated least-privilege identity, database-conditioned Firestore grant and pre-production bucket access |
+| Runtime identity | Dedicated identity with a default-database-only Firestore grant and production bucket access | Dedicated identity with a named-database-only Firestore grant and pre-production bucket access |
 | Deployment identity | Existing production WIF/deployer | Separate pre-production WIF/deployer restricted to the repository, workflow and `pre-prod` ref |
 | Authentication | Firebase Google sign-in | Shared project identity directory; pre-production database membership authorizes access |
 | App Check | Existing production registration | Separate pre-production web app/key/domain configuration; keep enforcement |
@@ -248,3 +248,21 @@ records the remaining evidence.
 The Admin reset preview displays scope before confirmation. The Auth, Firestore
 and Storage emulators exercise actual reset, replay and configuration retention.
 An operator must explicitly authorize any permanent reset of the live test workspace.
+
+### On-demand runtime checks
+
+Use the operator's existing authorized Firebase CLI session with the exact deployed
+pre-prod commit:
+
+```sh
+GCP_PROJECT_ID=sales-drone-avinya node scripts/run-runtime-acceptance.mjs production-identity <commit>
+GCP_PROJECT_ID=sales-drone-avinya node scripts/run-runtime-acceptance.mjs preprod-outbox <commit>
+```
+
+Each command starts one short private job from the deployed pre-prod image and
+removes the job afterward. The production identity check uses a nonexistent
+document and an empty Storage prefix, checks shared Auth with a nonexistent
+identity and validates an FCM payload without sending it. The outbox check commits
+one synthetic lead in the named test database, delivers only its outbox records,
+and removes the generated fixture documents. It creates no scheduled job.
+Query accepted committed events by environment, source, and build commit.

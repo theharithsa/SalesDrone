@@ -80,8 +80,8 @@
       ]
     },
     "businessEvents": {
-      "status": "existing",
-      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract. Rendering a timeline is read-only and creates no business event.",
+      "status": "changed",
+      "reason": "An on-demand acceptance check delivers only events from its synthetic pre-production transaction. Production keeps the existing scheduled worker and telemetry contract.",
       "tests": [
         "functions/test/observability.test.js"
       ]

@@ -143,6 +143,8 @@ jobs:
       - name: Deploy Cloud Functions
         id: functions
         run: npx --no-install firebase deploy --project "$GCP_PROJECT_ID" --only functions:salesdrone --non-interactive
+      - name: Verify production runtime identities before Hosting cutover
+        run: node scripts/verify-production-runtime.mjs
       - name: Deploy and verify API ingress before cutover
         id: ingress
         run: node scripts/deploy-ingress.mjs

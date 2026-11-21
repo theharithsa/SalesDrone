@@ -18,11 +18,13 @@ API contract versions track compatibility independently.
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
 - Successful pre-production deployments report their exact build to Dynatrace with a pre-production environment label.
 - Added an opt-in browser check for pre-production. It sends timing data directly to its own Dynatrace frontend.
+- Added an on-demand pre-production check that verifies a synthetic lead's committed event delivery and cleans up the fixture.
 - Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
 - Refreshed the README, security policy, product, Settings and API guides. Added reviewed synthetic captures for the lead timeline, Companies, workbook updates and Product multi-select.
 - Recorded the App Launchpad v1.14.0 audit and documented the production release review.
 
 ### Security
+- Production Functions use a dedicated identity scoped to the production Firestore database, attachment bucket and required secrets.
 - Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.
 - Updated the Firebase CLI and its Pub/Sub dependency to resolve OpenTelemetry Core advisory GHSA-8988-4f7v-96qf in the development toolchain.
 
