@@ -226,13 +226,21 @@ available under existing grants.
 
 The v1.6.1 lead blade layout reuses existing stage/assignment/journey operations and permissions. Resizing is a local presentation preference, not a new API or workspace grant. Stage updates need leads:edit; assignment writes retain assignments:write and expectedVersion.
 
-The /leads/{id} browser route and Comments/Tasks/Review tabs are presentation surfaces. Existing scoped lead/activity/task endpoints remain authoritative; Review filters loaded analysis states. Lead Tasks pages GET /tasks?leadId=... with optional state, limit and cursor and never expands recipient-private access.
+The `/leads/{id}` browser route opens on All. The API remains authoritative
+for access to the lead, its activity, and its shared tasks. Review filters
+loaded analysis states.
 
 Inline comment entry uses the existing POST lead activities operation, including expectedVersion, activities:write and Idempotency-Key. Uncertain retries retain the same payload/version/key; editing text starts a new attempt. No permission or API contract expansion is introduced by the UI maintenance.
 
 ### Lead activity views
 
-All, Comments and Calls are presentation filters over the same authorized, paginated GET `/api/v1/leads/{id}/activities` result. Comments selects note entries (including imported discussions), Calls selects call entries, and All preserves all types and review metadata in source order. The Tasks tab uses recipient-private GET `/api/v1/tasks?leadId=...`; the task list is not repeated in All, and grants no access to another member’s tasks. No new endpoint, scope or API contract version is introduced. Earlier activity remains necessary to inspect unloaded history.
+Comments and Calls select notes and call entries from the authorized, paginated
+`GET /api/v1/leads/{id}/activities` result. All combines those activities with
+lead-linked tasks from `GET /api/v1/leads/{id}/tasks`, including the responsible
+member where available. The Tasks tab uses the same shared endpoint. Per-lead
+task writes require lead edit access. Unlinked personal reminders retain their
+owner-only boundary. The activity and task pages have independent cursors for
+earlier records.
 
 ## Preferences: Book mode (contract 1.13.0)
 

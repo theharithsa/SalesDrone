@@ -32,8 +32,9 @@ private key. The trust policy binds the numeric repository/owner IDs, main ref a
 exact deploy workflow. Production credentials are unavailable to PR verification.
 A deployment principal can run code as the application's runtime identity: control
 of main is therefore a production security boundary. Pre-production uses separate
-runtime identities and test data in a named Firestore database. Effective access
-is checked independently of the deployment. See the
+runtime identities and test data in a named Firestore database. Database and
+bucket scoping are reviewed separately from the deployer's project permissions.
+Effective IAM remains an acceptance check even when the configured grants are scoped. See the
 [isolation acceptance checklist](docs/PRE-PRODUCTION-PLAN.md#acceptance-and-activation-gates).
 
 Review this policy before each production release. Update affected access,

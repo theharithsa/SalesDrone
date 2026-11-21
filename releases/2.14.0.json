@@ -28,6 +28,8 @@
     "README.md",
     "CHANGELOG.md",
     "docs/PRODUCT-GUIDE.md",
+    "docs/SETTINGS.md",
+    "site/index.html",
     "docs/observability.md",
     "docs/SDLC.md",
     "docs/RELEASE-GOVERNANCE.md",
@@ -139,6 +141,7 @@
     "companies-demo.jpg",
     "import-workbook-update-demo.jpg",
     "field-manager-multi-select-demo.jpg",
-    "lead-product-multi-select-mobile-demo.jpg"
+    "lead-product-multi-select-mobile-demo.jpg",
+    "lead-product-multi-select-demo.jpg"
   ]
 }
