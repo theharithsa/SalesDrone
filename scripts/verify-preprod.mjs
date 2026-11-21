@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { preproduction as target } from '../functions/src/preproduction.js';
+import { preprodChecks } from './preprod-evidence.mjs';
 
 const sha = process.env.GITHUB_SHA;
 assert.match(sha || '', /^[a-f0-9]{40}$/);
@@ -32,6 +33,15 @@ assert.equal((await malformed.json()).error.code, 'BAD_JSON');
 await writeFile('preproduction-verification.json', JSON.stringify({
   environment: metadata.environment, origin: target.origin, version, commit: sha,
   tree: process.env.PREPROD_TESTED_TREE, checkedAt: new Date().toISOString(),
-  checks: ['hosting-identity', 'anonymous-denial', 'malformed-json-boundary'],
+  runId: Number(process.env.GITHUB_RUN_ID), attempt: Number(process.env.GITHUB_RUN_ATTEMPT),
+  checks: preprodChecks,
+}, null, 2));
+const repository = 'theharithsa/SalesDrone';
+await writeFile('deployment.json', JSON.stringify({
+  environment: metadata.environment, version, commit: sha, repository,
+  project: target.project, region: target.region, hosting: target.origin,
+  runId: process.env.GITHUB_RUN_ID, runAttempt: process.env.GITHUB_RUN_ATTEMPT,
+  runUrl: `https://github.com/${repository}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+  changelogUrl: `https://github.com/${repository}/blob/${sha}/CHANGELOG.md`,
 }, null, 2));
 console.log('Verified pre-production version, anonymous lead denial and JSON boundary.');

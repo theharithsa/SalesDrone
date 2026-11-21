@@ -41,7 +41,7 @@ telemetryOutbox committed CloudEvents; safe service/version/request context; pri
 
 Owner-approved member email RUM tags remain separate from hashed backend UIDs and anonymous demo identity. Preserve account-switch/sign-out and late-agent handling; regress rum-identity.test.ts. Details remain in the operational references.
 
-Each deployment probes real SDK-generated OTLP traces, logs and metrics under salesdrone-deployment-check and validates rejected counts, then records separate deployment BizEvent/marker acceptance. monitoring.json is safe CI evidence, not proof of tenant searchability. Use deployment-signals.mjs and release-readiness.test.ts for missing/partial/malformed responses; a reporting failure cannot undo customer operations.
+Successful pre-prod deploys report with the pre-production environment. Deployment probes validate OTLP rejected counts and separate BizEvent/SDLC acceptance. monitoring.json proves HTTP acceptance. Use deployment-signals.mjs and release-readiness.test.ts for negative cases. Reporting failures cannot undo a deployment.
 
 ## Change and diagnosis
 

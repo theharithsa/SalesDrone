@@ -16,6 +16,7 @@ API contract versions track compatibility independently.
 
 ### Changed
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
+- Successful pre-production deployments report their exact build to Dynatrace with a pre-production environment label.
 - Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
 - Refreshed the README, security policy, product, Settings and API guides. Added reviewed synthetic captures for the lead timeline, Companies, workbook updates and Product multi-select.
 - Recorded the App Launchpad v1.14.0 audit and documented the production release review.
@@ -30,6 +31,7 @@ API contract versions track compatibility independently.
 
 ### Fixed
 - Browser API failures retain their HTTP status, and comment editing reports when a stale lead could not be refreshed.
+- Production promotion validates the pre-production receipt checksum and its exact run, attempt, version, commit and source tree.
 
 ## [2.13.11] - 2026-11-14
 

@@ -102,6 +102,17 @@ acceptance invalidates that acceptance and needs another pre-production run.
 Production receives its own merge SHA and deployment evidence. Preserve the PR-first
 workflow and never bypass failed checks with an administrative merge.
 
+The promotion job downloads the short-lived smoke-test receipt for the successful
+pre-production run attempt. It verifies the archive against GitHub's SHA-256
+digest, then checks the version, commit, source tree, run and attempt recorded
+inside. The receipt covers Hosting identity, anonymous denial and parser behavior.
+The milestone separately tracks authenticated acceptance, isolation, telemetry and cost.
+Successful pre-production deployments emit environment-labelled deployment
+BizEvents, native SDLC events and a bounded OTLP transport probe. GitHub keeps
+the monitoring receipt separate from the Hosting/API smoke-test receipt.
+Runtime business events, browser monitoring and tenant search each have their
+own acceptance checks.
+
 Do not publish production release tags, production release notes or advance the
 public shipped version from a pre-production push. Add a conspicuous pre-production
 banner to the app and include environment identity in version metadata and API

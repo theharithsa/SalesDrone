@@ -63,7 +63,21 @@ jobs:
       - name: Record pre-production evidence
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: preproduction-verification
+          name: preproduction-verification-${{ github.run_id }}-${{ github.run_attempt }}
           path: preproduction-verification.json
           if-no-files-found: error
+          retention-days: 30
+      - name: Report the checked pre-production deployment to Dynatrace
+        id: observe
+        continue-on-error: true
+        env:
+          DYNATRACE_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
+          DEPLOYMENT_OUTCOME: succeeded
+        run: node scripts/notify-deployment.mjs
+      - name: Record pre-production telemetry receipts
+        if: always() && steps.observe.outcome != 'skipped'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: preproduction-monitoring-${{ github.run_id }}-${{ github.run_attempt }}
+          path: monitoring.json
           retention-days: 30

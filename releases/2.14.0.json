@@ -88,9 +88,10 @@
     },
     "deploymentEvents": {
       "status": "changed",
-      "reason": "Pre-production signals identify their environment. This release keeps the existing production telemetry contract.",
+      "reason": "Successful pre-production deployments report environment-labelled BizEvents, native SDLC events and bounded OTLP transport probes. The production reporting contract is preserved.",
       "tests": [
-        "tests/release-readiness.test.ts"
+        "tests/release-readiness.test.ts",
+        "tests/deployment-bizevents.test.ts"
       ]
     }
   },
