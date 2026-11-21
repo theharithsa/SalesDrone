@@ -1,7 +1,6 @@
 # Pre-production foundation
 
-Status: **live for approved testing, production acceptance in progress**.
-Open the [test workspace](https://sales-drone-avinya-preprod.web.app/) and check
+**Live for approved testing.** Open the [test workspace](https://sales-drone-avinya-preprod.web.app/) and check
 its [build identity](https://sales-drone-avinya-preprod.web.app/version.json).
 The [v2.14.0 promotion](https://github.com/theharithsa/SalesDrone/pull/240)
 tracks acceptance for the exact build.
@@ -13,9 +12,7 @@ workspace before opening a promotion PR to `main`. Production remains
 `salesdrone.in`. Use the existing `sales-drone-avinya` Firebase project, a separate
 named Firestore database, separate runtime resources and the existing Dynatrace
 endpoint/token references. Tag every pre-production signal with the environment.
-The owner's requested Google account becomes an Admin in pre-production only;
-resolve its verified Firebase UID during the future seed operation, rather than
-publishing account information in fixture files.
+The seed resolves the owner's verified Firebase UID and grants Admin in pre-production only. Fixture files contain no personal account information.
 
 Firebase recommends separate projects for environment isolation. The owner has
 requested a single project; this design therefore needs explicit data-plane and
@@ -211,7 +208,7 @@ actual before/after usage and budget alerts before continuous test traffic is en
 
 ## Tracked implementation
 
-Milestone: [Pre-production foundation](https://github.com/theharithsa/SalesDrone/milestone/69). Parent: [#222](https://github.com/theharithsa/SalesDrone/issues/222). Native sub-issues and blocked-by relationships enforce the order: [#223 isolation](https://github.com/theharithsa/SalesDrone/issues/223) → [#224 synthetic seed](https://github.com/theharithsa/SalesDrone/issues/224) → [#225 delivery](https://github.com/theharithsa/SalesDrone/issues/225) → [#226 acceptance](https://github.com/theharithsa/SalesDrone/issues/226). All are assigned to the repository owner. Implementation dates and a versioned release milestone will be set when work is scheduled.
+Milestone: [Pre-production foundation](https://github.com/theharithsa/SalesDrone/milestone/69). Parent: [#222](https://github.com/theharithsa/SalesDrone/issues/222). Native sub-issues and blocked-by relationships enforce the order: [#223 isolation](https://github.com/theharithsa/SalesDrone/issues/223) → [#224 synthetic seed](https://github.com/theharithsa/SalesDrone/issues/224) → [#225 delivery](https://github.com/theharithsa/SalesDrone/issues/225) → [#226 acceptance](https://github.com/theharithsa/SalesDrone/issues/226). All are assigned to the repository owner. Production promotion is tracked in the [v2.14.0 milestone](https://github.com/theharithsa/SalesDrone/milestone/71).
 
 ## Initial rollout
 
@@ -241,9 +238,9 @@ metrics. Verify the opt-in browser check separately from committed business
 events and native SDLC events. The workspace itself keeps the production RUM
 loader disabled. Verify cross-environment IAM
 against effective permissions in addition to the configured grants. Cloud
-Monitoring measures usage, while a billing export supplies SKU attribution.
-The [acceptance issue](https://github.com/theharithsa/SalesDrone/issues/226)
-records the remaining evidence.
+Monitoring measures usage. The cost baseline uses observed operations and public rates. Detailed billing export is disabled.
+See the [acceptance issue](https://github.com/theharithsa/SalesDrone/issues/226)
+for measured usage and verification evidence.
 
 The Admin reset preview displays scope before confirmation. The Auth, Firestore
 and Storage emulators exercise actual reset, replay and configuration retention.
