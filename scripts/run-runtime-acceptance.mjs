@@ -29,10 +29,9 @@ const deployed = await cloud('https://cloudfunctions.googleapis.com/v2/' + paren
 assert.equal(deployed.state, 'ACTIVE');
 assert.equal(deployed.serviceConfig?.serviceAccountEmail, preproduction.runtimeAccount);
 assert.ok(deployed.serviceConfig.service.startsWith(parent + '/services/'));
-const service = mode === 'production-identity'
-  ? parent + '/services/' + preproduction.ingress
-  : deployed.serviceConfig.service;
-const published = await cloud(runApi + service);
+// The ingress image contains Node, the backend source and its locked runtime
+// dependencies. Cloud Functions' application image relies on a service-only base.
+const published = await cloud(runApi + parent + '/services/' + preproduction.ingress);
 const revision = await cloud(runApi + published.latestReadyRevision);
 const image = revision.containers[0]?.image;
 assert.ok(image?.startsWith(`${region}-docker.pkg.dev/${project}/salesdrone-preprod-ingress/`), 'Unexpected image repository');
@@ -41,7 +40,6 @@ const env = ['DYNATRACE_API_TOKEN'].map(key => ({
   name: key, valueSource: { secretKeyRef: { secret: key, version: 'latest' } },
 }));
 let args;
-let command = ['node'];
 let serviceAccount = preproduction.runtimeAccount;
 if (mode === 'production-identity') {
   serviceAccount = productionRuntime.email;
@@ -49,11 +47,12 @@ if (mode === 'production-identity') {
     env.push({ name: key, valueSource: { secretKeyRef: { secret: key, version: 'latest' } } });
   args = ['--input-type=module', '-e', await readFile(new URL('./runtime-access-probe.mjs', import.meta.url), 'utf8')];
 } else {
-  env.push({ name: 'DYNATRACE_TENANT_URL', value: 'https://indiacs.live.dynatrace.com' },
+  const tenant = deployed.serviceConfig.environmentVariables?.DYNATRACE_TENANT_URL;
+  assert.ok(tenant, 'Pre-production ingestion endpoint is missing');
+  env.push({ name: 'DYNATRACE_TENANT_URL', value: tenant },
     { name: 'SDR_PREFLIGHT_ENVIRONMENT', value: 'pre-production' },
     { name: 'SDR_PREFLIGHT_COMMIT', value: expectedCommit });
-  command = ['/cnb/lifecycle/launcher'];
-  args = ['node', '/workspace/src/preprod-outbox-check.js'];
+  args = ['/app/functions/src/preprod-outbox-check.js'];
 }
 
 async function completed(operation) {
@@ -73,7 +72,7 @@ try {
   const creation = await invocation(runApi + parent + '/jobs?jobId=' + name, {
     template: { taskCount: 1, parallelism: 1, template: {
       serviceAccount, maxRetries: 0, timeout: '120s',
-      containers: [{ image, command, args, env, resources: { limits: { cpu: '1', memory: '512Mi' } } }],
+      containers: [{ image, command: ['node'], args, env, resources: { limits: { cpu: '1', memory: '512Mi' } } }],
     } },
   });
   created = true;
