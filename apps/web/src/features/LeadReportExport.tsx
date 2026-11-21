@@ -108,6 +108,10 @@ export default function LeadReportExport({
                   : key === 'phone'
                     ? lead.phone || lead.originalPhone
                     : lead[key];
+                if (config.customFields.some((field) => field.id === key && field.type === 'multiSelect')) {
+                  const choices = Array.isArray(v) ? v : v ? [v] : [];
+                  return choices.length ? JSON.stringify(choices) : '';
+                }
                 return typeof v === 'boolean'
                   ? v
                     ? 'Yes'

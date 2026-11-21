@@ -14,6 +14,7 @@ const types = {
   number: 'Number',
   date: 'Date',
   select: 'Dropdown',
+  multiSelect: 'Multi-select',
   checkbox: 'Checkbox',
 };
 export default function LeadFieldManager({
@@ -38,6 +39,7 @@ export default function LeadFieldManager({
     [message, setMessage] = useState('');
   const [query, setQuery] = useState('');
   const term = query.trim().toLowerCase();
+  const savedField = config.customFields.find((field) => field.id === editing?.id);
   const activeFields = config.customFields.filter((field) => !field.deleted);
   const matchingCustom = activeFields.filter((field) => field.label.toLowerCase().includes(term));
   const matchingStandard = Object.entries(standardFieldLabels).filter(([key, originalLabel]) =>
@@ -140,7 +142,7 @@ export default function LeadFieldManager({
               <small>
                 {types[f.type]}
                 {f.required ? ' · Required' : ' · Optional'}
-                {f.type === 'select' ? ` · ${f.options.length} choices` : ''}
+                {['select', 'multiSelect'].includes(f.type) ? ` · ${f.options.length} choices` : ''}
               </small>
             </span>
             <div className="field-row-actions">
@@ -180,7 +182,7 @@ export default function LeadFieldManager({
               ...editing,
               label: editing.label.trim(),
               options:
-                editing.type === 'select'
+                ['select', 'multiSelect'].includes(editing.type)
                   ? options
                       .split('\n')
                       .map((v) => v.trim())
@@ -228,7 +230,7 @@ export default function LeadFieldManager({
               <select
                 value={editing.type}
                 disabled={
-                  busy || config.customFields.some((f) => f.id === editing.id)
+                  busy || (!!savedField && savedField.type !== 'select')
                 }
                 onChange={(e) =>
                   setEditing({
@@ -237,7 +239,9 @@ export default function LeadFieldManager({
                   })
                 }
               >
-                {Object.entries(types).map(([value, label]) => (
+                {Object.entries(types).filter(([value]) =>
+                  !savedField || value === savedField.type || (savedField.type === 'select' && value === 'multiSelect'),
+                ).map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
                   </option>
@@ -245,9 +249,9 @@ export default function LeadFieldManager({
               </select>
             </label>
           </div>
-          {editing.type === 'select' ? (
+          {['select', 'multiSelect'].includes(editing.type) ? (
             <label>
-              Dropdown choices — one per line
+              Choices (one per line)
               <textarea
                 rows={5}
                 required
@@ -269,8 +273,9 @@ export default function LeadFieldManager({
             Required when saving an enquiry
           </label>
           <p className="field-hint">
-            Existing records keep their values. A field’s type stays fixed after
-            creation; add a new field to use a different type.
+            {savedField?.type === 'select'
+              ? 'Switch to Multi-select to let users choose several options. Saved choices carry over. This change is permanent.'
+              : 'Multi-select lets users choose up to 30 options per lead. To change another saved field type, create a new field.'}
           </p>
           <div className="form-actions">
             <button

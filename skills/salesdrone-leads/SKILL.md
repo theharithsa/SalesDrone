@@ -104,3 +104,5 @@ Use the [navigation and search reference](references/operations.md) for lead fil
 Use the record name as the full lead page heading.
 
 Companies groups accessible active leads by trimmed, case-insensitive company key. Preserve existing company indexes, prefix search, member-bound pagination and the normal create-lead permission. Test repeated names, scope isolation and exact-company list navigation. Visible empty lead fields render N/A without storing that string. Retain real zero and false values.
+
+Render multi-select arrays as a readable list and evaluate column filters against individual choices. Existing access checks and bounded reads apply. Editing an optional multi-select can clear it.

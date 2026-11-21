@@ -1460,6 +1460,18 @@ test('shared contact stage edits and hidden stage analytics persist in actual Fi
   assert.equal(refreshed.visualization.groups.find(g=>g.label==='Review').value,1);
   assert.ok(!refreshed.visualization.groups.some(g=>g.label==='Samples Given'));
   assert.equal((await store.get(path('leads',b.id))).stage,'Review');
+  const latest = (await call('get', '/field-options').expect(200)).body;
+  const product = { id: 'cf_products', label: 'Products', type: 'multiSelect', options: ['Panel', 'Trim'] };
+  await call('patch', '/field-options', { expectedVersion: latest.version, values: latest.values, customFields: [product] }).expect(200);
+  const saved = (await call('patch', '/leads/' + a.id, {
+    expectedVersion: a.version, customFields: { cf_products: ['Panel', 'Trim'] },
+  }).expect(200)).body;
+  assert.deepEqual((await store.get(path('leads', a.id))).customFields.cf_products, ['Panel', 'Trim']);
+  await call('patch', '/leads/' + a.id, { expectedVersion: saved.version, customFields: { cf_products: ['Unknown'] } }).expect(400);
+  const filter = encodeURIComponent(JSON.stringify([{ field: 'cf_products', op: 'equals', value: 'Trim' }]));
+  const filtered = (await call('get', '/leads?filters=' + filter).expect(200)).body;
+  assert.deepEqual(filtered.items.map((item) => item.id), [a.id]);
+
 });
 
 test('Lead research uses real scoped Firestore pages, private API history, source invalidation and ACL-prefiltered vectors',async()=>{

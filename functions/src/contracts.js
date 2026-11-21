@@ -73,6 +73,7 @@ export const LeadInput = z
         z.string().regex(/^cf_[a-z0-9_]{1,60}$/),
         z.union([
           z.string().max(4000),
+          z.array(z.string().min(1).max(100)).max(30),
           z.number().finite(),
           z.boolean(),
           z.null(),

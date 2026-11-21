@@ -5,6 +5,7 @@ import {
   withCurrent,
   orderedFields,
   type CustomField,
+  type CustomFieldValue,
   labelFor,
 } from '../lib/field-options';
 import { Children, isValidElement, useState, type FormEvent, type ReactElement, type ReactNode } from 'react';
@@ -51,6 +52,7 @@ export function LeadForm({
   const [again, setAgain] = useState(false),
     [allowDuplicate, setAllowDuplicate] = useState(false),
     [reset, setReset] = useState(0);
+  const [fieldError, setFieldError] = useState('');
   const submit = useSubmit(async (data, key, isCurrent) => {
     await onSave(data, key);
     if (!isCurrent()) return;
@@ -62,11 +64,24 @@ export function LeadForm({
       key={reset}
       onSubmit={(e) => {
         e.preventDefault();
-        const d = inputData(e);
-        const customFields: Record<string, string | number | boolean | null> =
-          {};
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const d = Object.fromEntries(formData);
+        const customFields: Record<string, CustomFieldValue> = {};
         for (const f of config.customFields.filter((f) => !f.deleted)) {
-          const raw = d['custom:' + f.id];
+          const key = 'custom:' + f.id;
+          if (f.type === 'multiSelect') {
+            const chosen = formData.getAll(key).map(String);
+            if ((f.required && !chosen.length) || chosen.length > 30) {
+              setFieldError(chosen.length ? `Choose up to 30 options for ${f.label}.` : `Choose at least one option for ${f.label}.`);
+              form.querySelector<HTMLElement>('#custom-field-' + f.id)?.focus();
+              return;
+            }
+            customFields[f.id] = chosen;
+            delete d[key];
+            continue;
+          }
+          const raw = d[key];
           customFields[f.id] =
             f.type === 'checkbox'
               ? raw === 'on'
@@ -77,6 +92,7 @@ export function LeadForm({
                   : String(raw);
           delete d['custom:' + f.id];
         }
+        setFieldError('');
         if (lead && !d.comments) delete d.comments;
         if (!lead) d.name ??= '';
         // Hidden country-code controls still use the configured default for new contacts.
@@ -284,7 +300,7 @@ export function LeadForm({
           confirmed; clear review in lead details after correcting the record.
         </p>
       ) : null}
-      <ErrorMessage error={submit.error} />
+      <ErrorMessage error={fieldError || submit.error} />
       {!lead && submit.error.toLowerCase().includes('already exists') ? (
         <label className="check">
           <input

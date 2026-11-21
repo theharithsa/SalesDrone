@@ -19,6 +19,7 @@ API contract versions track compatibility independently.
 ## [2.14.0] - 2026-11-14
 
 ### Added
+- Custom lead fields can allow multiple choices. Admins can convert an existing Product dropdown while keeping saved selections. Filtering and Excel updates support the new field type.
 - Companies groups active leads by company. Open an organization to see its leads or add a new enquiry with its company filled in.
 - Lead fields display N/A when empty. Excel keeps those cells blank for the next update.
 - Exported workbooks now carry each lead ID and version. Import recognizes them, matches current sales stages, and prompts once per unfamiliar stage. Repeated uploads preserve recorded comments, and later team edits go to review.

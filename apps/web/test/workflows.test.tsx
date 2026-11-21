@@ -447,6 +447,27 @@ describe('configured enquiry form order', () => {
   });
 });
 
+it('opens saved Product selections and submits several selected choices', async () => {
+  const user = userEvent.setup();
+  const onSave = vi.fn().mockResolvedValue(undefined);
+  render(<LeadForm lead={{ ...lead, customFields: { cf_products: 'Panel' } }} config={{
+    ...config,
+    customFields: [{ id: 'cf_products', label: 'Products', type: 'multiSelect', options: ['Panel', 'Trim'], required: true, deleted: false }],
+  }} onSave={onSave} onCancel={vi.fn()} />);
+  const panel = screen.getByRole('checkbox', { name: 'Panel' });
+  expect(panel).toBeChecked();
+  await user.click(panel);
+  await user.click(screen.getByRole('button', { name: 'Save changes' }));
+  await screen.findByText('Choose at least one option for Products.');
+  expect(onSave).not.toHaveBeenCalled();
+  await user.click(panel);
+  await user.click(screen.getByRole('checkbox', { name: 'Trim' }));
+  await user.click(screen.getByRole('button', { name: 'Save changes' }));
+  await waitFor(() => expect(onSave).toHaveBeenCalledWith(
+    expect.objectContaining({ customFields: { cf_products: ['Panel', 'Trim'] } }), expect.any(String),
+  ));
+});
+
 describe('lead layout settings', () => {
   it('saves header choices independently from field order', async () => {
     const user = userEvent.setup();
