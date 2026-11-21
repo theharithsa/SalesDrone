@@ -41,7 +41,7 @@ telemetryOutbox committed CloudEvents; safe service/version/request context; pri
 
 Owner-approved member email RUM tags remain separate from hashed backend UIDs and anonymous demo identity. Preserve account-switch/sign-out and late-agent handling; regress rum-identity.test.ts. Details remain in the operational references.
 
-Successful pre-prod deploys report with the pre-production environment. Deployment probes validate OTLP rejected counts and separate BizEvent/SDLC acceptance. monitoring.json proves HTTP acceptance. Use deployment-signals.mjs and release-readiness.test.ts for negative cases. Reporting failures cannot undo a deployment.
+Pre-prod deploys report their environment and keep OTLP, BizEvent and SDLC receipts in monitoring.json. Its opt-in browser check sends directly to a dedicated Dynatrace frontend. Verify the beacon and tenant records separately. Reporting failures cannot undo a deployment.
 
 ## Change and diagnosis
 

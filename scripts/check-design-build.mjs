@@ -1,6 +1,9 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 const root = 'apps/web/dist';
+const browserCheck = 'preprod-monitoring.html';
+const checkExpected = process.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production' &&
+  process.env.VITE_USE_EMULATORS !== 'true';
 async function files(dir) {
   return (
     await Promise.all(
@@ -22,3 +25,5 @@ for (const file of await files(root)) {
 console.log(
   'Local bundle excludes design entries and fictional admin fixtures. This is not deployment verification.',
 );
+if ((await readdir(root)).includes(browserCheck) !== checkExpected)
+  throw Error('The browser check must be confined to deployed pre-production builds');

@@ -88,10 +88,11 @@
     },
     "deploymentEvents": {
       "status": "changed",
-      "reason": "Successful pre-production deployments report environment-labelled BizEvents, native SDLC events and bounded OTLP transport probes. The production reporting contract is preserved.",
+      "reason": "Successful pre-production deployments report environment-labelled BizEvents, native SDLC events and bounded OTLP transport probes. A pre-production-only opt-in page checks browser RUM directly against its dedicated Dynatrace frontend, with a restricted CSP and no Firebase API calls. The production reporting contract is preserved.",
       "tests": [
         "tests/release-readiness.test.ts",
-        "tests/deployment-bizevents.test.ts"
+        "tests/deployment-bizevents.test.ts",
+        "tests/spa-security.test.ts"
       ]
     }
   },
