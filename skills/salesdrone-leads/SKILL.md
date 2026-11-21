@@ -23,6 +23,8 @@ Form or scoped API → field and contact validation → member/lead policy → a
 
 ## Primary API ownership
 
+- GET /api/v1/companies
+
 - GET /api/v1/leads
 - GET /api/v1/archived-leads
 - POST /api/v1/leads/export
@@ -97,8 +99,10 @@ Archive/restore uses current leads:edit scope and expectedVersion. Restore retai
 
 LeadHeaderContext groups label-free values with masked monospace dial links. Keep accessible field names. Lead editors can complete shared tasks and see responsibility; private reminders stay private. Regress links, task versions and access.
 
-Mobile title icons open search and filters; batch selection stays on desktop. Admins can filter by assignee in both layouts. GET /leads assignedToUid accepts a member UID or reserved __unassigned__ for null assignments. Compose with stage/search/column filters; cursors bind the selected assignee. Export adds the equivalent Assigned user ID Equals/Is empty condition, preserving export policy. Team workload links clear other filters before opening a member’s assigned leads. Non-admin directory/filter privileges remain unchanged.
-
-Global Leads search uses field=all with bounded scope-first scans across current lead fields, configured custom values, formatted phone digits and recorded notes. Signed cursors bind the term and field settings, and sparse pages may continue. Dedicated lead pages select Comments on a new lead, retain the current tab on refresh and use the edit dialog for stage/assignment. See reports-policy.test.js and emulator.integration.js.
+Use the [navigation and search reference](references/operations.md) for lead filters, scoped cursors and the default All timeline.
 
 Use the record name as the full lead page heading.
+
+Companies groups accessible active leads by trimmed, case-insensitive company key. Preserve existing company indexes, prefix search, member-bound pagination and the normal create-lead permission. Test repeated names, scope isolation and exact-company list navigation. Visible empty lead fields render N/A without storing that string. Retain real zero and false values.
+
+Render multi-select arrays as a readable list and evaluate column filters against individual choices. Existing access checks and bounded reads apply. Editing an optional multi-select can clear it.

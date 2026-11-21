@@ -312,12 +312,12 @@
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2f7ed01114d77a35480a8247ebc8f68e3233f0c1e6c430eba432bdf5e5c9f43a",
-    "capturedAt": "2026-11-07T20:39:23.967Z",
+    "sha256": "8c7d3a1ae2c19d6886cb3819581dea0f7578e58db3a9ab3d2f8e317be22b82fd",
+    "capturedAt": "2026-11-16",
     "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "390 x 900",
-    "version": "2.10.3",
-    "review": "Reviewed fictional workspace capture. No customer records, credentials or server writes. Browser viewport, not physical-device certification."
+    "version": "2.14.0",
+    "review": "Visually reviewed fictional lead with the All tab selected. No customer data or production writes. Browser viewport evidence."
   },
   {
     "file": "outreach-mobile-demo.jpg",
@@ -342,12 +342,12 @@
   {
     "file": "lead-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "79ca5a57f78b9a6cc381f3a7be46dc2bf15cb95f4fbd1b25580e57d0f3f1d536",
-    "capturedAt": "2026-11-13",
-    "viewport": "1440 x 900 CSS pixels; local synthetic browser preview",
-    "capturePixels": "1440 x 900",
-    "version": "2.13.7",
-    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
+    "sha256": "17b5395d33f17d1312969f1b99c4c8bb9aa33529a529fafd1610cba9aafe04e3",
+    "capturedAt": "2026-11-16",
+    "viewport": "1440 x 1024 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 1024",
+    "version": "2.14.0",
+    "review": "Visually reviewed fictional lead with the All tab selected. No customer data or production writes. Browser viewport evidence."
   },
   {
     "file": "import-review-demo.jpg",
@@ -692,12 +692,12 @@
   {
     "file": "book-lead-detail-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "fad43ba46fe35866a64105c7025814099cceef6315067331100cf2307976378c",
-    "capturedAt": "2026-11-11T14:51:56.993Z",
+    "sha256": "f81c16df3f779d8512b28b2cf81567f8607dfdee605ef0f81ed29d40b7dc256a",
+    "capturedAt": "2026-11-16",
     "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
     "capturePixels": "1440 x 900",
-    "version": "2.12.1",
-    "review": "Visually reviewed SalesDrone sample workspace in isolated Chromium. No customer records or production writes. Browser viewport evidence."
+    "version": "2.14.0",
+    "review": "Visually reviewed fictional lead with the All tab selected. No customer data or production writes. Browser viewport evidence."
   },
   {
     "file": "book-dashboard-demo.jpg",
@@ -748,5 +748,55 @@
     "capturePixels": "1440 x 1080",
     "version": "2.13.7",
     "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
+  },
+  {
+    "file": "companies-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "fed404133d80143c8b0a81cfd67e609ee7cc00d94e16380d7efc8335f5ecdb7f",
+    "capturedAt": "2026-11-18",
+    "viewport": "1440 x 900 CSS pixels",
+    "capturePixels": "1440 x 900",
+    "version": "2.14.0",
+    "review": "Company directory and prefilled Add lead in the fictional workspace. Cropped to the displayed application."
+  },
+  {
+    "file": "import-workbook-update-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "ff9a505e6bb65fd84b8f8bc2f8c73ea0e6d56d86772652317e543645ba640d18",
+    "capturedAt": "2026-11-18",
+    "viewport": "1440 x 1080 CSS pixels",
+    "capturePixels": "1360 x 472",
+    "version": "2.14.0",
+    "review": "Cropped stage-mapping and validation controls from a local fictional SalesDrone export. The selected replacement was confirmed in the preview."
+  },
+  {
+    "file": "field-manager-multi-select-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "21f302b197e96817faa8aa6300bd58b94e18a2c1724ed2d688d3e153798ae52f",
+    "capturedAt": "2026-11-21T13:26:53.336Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.14.0",
+    "review": "Reviewed fictional Field definitions editor with Multi-select selected; no backend write."
+  },
+  {
+    "file": "lead-product-multi-select-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "d64f5b3efaeaa68997252987b7371be76fff0392eb0d5da1ce1d5db382eb85c4",
+    "capturedAt": "2026-11-21T13:25:42.374Z",
+    "viewport": "390 x 760 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 760",
+    "version": "2.14.0",
+    "review": "Reviewed fictional enquiry form with two selected choices; browser viewport, no backend write or physical-device claim."
+  },
+  {
+    "file": "lead-product-multi-select-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "6d639ace782a086be4c5d8bb4d00f86c609a1120d13e0b5fd79d77708b2210ee",
+    "capturedAt": "2026-11-21T13:25:45.724Z",
+    "viewport": "1440 x 900 CSS pixels at 100% scale in isolated Chromium",
+    "capturePixels": "1440 x 900",
+    "version": "2.14.0",
+    "review": "Reviewed fictional enquiry form with two chosen products. The local form fixture performs no server writes."
   }
 ]

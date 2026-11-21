@@ -301,6 +301,7 @@ schemas.LeadExportPage = {
         required: ['id', 'values'],
         properties: {
           id: { type: 'string' },
+          version: { type: 'integer', minimum: 1, description: 'Lead version when this row was exported.' },
           values: { type: 'array', items: { type: ['string', 'number'] } },
         },
       },
@@ -1112,6 +1113,14 @@ for (const e of endpoints) {
     operation.responses[200].content['application/json'].schema=e.url==='/team'?ref('TeamSnapshot'):pageOf('TeamActivity');
     if(e.url!=='/team')operation.parameters.push({in:'query',name:'limit',schema:{type:'integer',minimum:1,maximum:100,default:30}},{in:'query',name:'cursor',schema:{type:'string'},description:'Encrypted continuation bound to member, period, requester and current access. Sparse pages can continue.'});
   }
+  if (e.url === '/companies') {
+    operation.description += ' Distinct company names from accessible active leads. The company field must be visible. Results group by trimmed lowercase name, using one bounded lead index page. Follow nextCursor for more companies.';
+    operation.parameters.push({ in: 'query', name: 'search', schema: { type: 'string', maxLength: 200 }, description: 'Case-insensitive company name prefix.' });
+    operation.responses[200].content['application/json'].schema = { type: 'object', required: ['items', 'nextCursor'], properties: {
+      items: { type: 'array', items: { type: 'object', required: ['key', 'name'], properties: { key: string, name: string } } }, nextCursor: { type: ['string', 'null'] },
+    }};
+  }
+  if (e.url === '/imports/preview') operation.description += ' Reviewed spreadsheet rows can include leadId and leadVersion. In update mode an exact current version permits bulk approval of changed fields. Stale differences require row review. Blank values preserve existing fields. Sales stages must resolve to an active workspace choice.';
   if(e.url==='/lead-assignees'){operation.description+=' Admin-only minimal assignee directory, including inactive members. Google sessions require members:write; PATs require explicit people:read scope. No account email or capabilities are returned.';operation.responses[200].content['application/json'].schema=pageOf('LeadAssignee');}
   if(e.url==='/lead-assistant/requests/:id/leads')operation.parameters.push({in:'query',name:'part',schema:{type:'integer',minimum:0,maximum:3,default:0},description:'Zero-based answer part. The signed cursor is bound to this result set; a different part cannot reuse it.'});
   if(e.method==='get'&&e.url==='/tasks'){operation.responses[200].content['application/json'].schema=pageOf('Task');operation.parameters.push({in:'query',name:'view',schema:{type:'string',enum:['accessible']},description:'Optional Google/App Check member-only accessible lead work plus own personal reminders. Omit for legacy recipient-only tasks; PAT cannot opt in. Sparse pages may continue through nextCursor. Current lead scope and mutation capabilities are rechecked.'});}
@@ -1346,7 +1355,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.34.0',
+    version: '1.36.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
@@ -1371,13 +1380,27 @@ const spec = {
     schemas,
   },
 };
-await mkdir(new URL('../apps/web/public/', import.meta.url), {
-  recursive: true,
-});
 const json = JSON.stringify(spec, null, 2) + '\n';
-await writeFile(new URL('../docs/openapi.json', import.meta.url), json);
-await writeFile(
-  new URL('../apps/web/public/openapi.json', import.meta.url),
-  json,
-);
-console.log(`Generated ${endpoints.length} API operations.`);
+const outputs = ['docs/openapi.json', 'apps/web/public/openapi.json'];
+const checking = process.argv.includes('--check');
+if (!checking) {
+  await mkdir(new URL('../apps/web/public/', import.meta.url), { recursive: true });
+}
+for (const filename of outputs) {
+  const path = new URL('../' + filename, import.meta.url);
+  if (!checking) {
+    await writeFile(path, json);
+    continue;
+  }
+  const saved = await readFile(path, 'utf8').catch((error) => {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  });
+  if (saved !== json) {
+    console.error(filename + ' is missing or outdated. Run npm run api:docs.');
+    process.exitCode = 1;
+  }
+}
+if (!process.exitCode) {
+  console.log(`${checking ? 'Verified' : 'Generated'} ${endpoints.length} API operations.`);
+}

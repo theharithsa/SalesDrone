@@ -62,7 +62,7 @@ change; `npm run skills:check` rejects missing, duplicate or obsolete ownership.
 
 ## Verification selection
 
-Use repository-root commands with Node 22.18+ (Node 22 LTS recommended); real
+Use repository-root commands with Node 24.15.0 or later in the Node 24 series; real
 Firestore emulator tests require Java 21. Use the checked-in package lock.
 
 | Change              | Verification                                                                                                                                                                        |

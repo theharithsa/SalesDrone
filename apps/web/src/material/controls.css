@@ -182,3 +182,20 @@ select:disabled {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+.form-grid > .custom-multi-field {
+  align-self: start;
+  margin: 0;
+  padding: 0 12px 4px;
+}
+.custom-multi-field legend {
+  padding-inline: 4px;
+}
+.custom-choice-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  column-gap: 16px;
+  max-block-size: 15rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}

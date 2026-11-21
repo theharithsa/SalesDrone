@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   UsersRound,
+  Building2,
   ListTodo,
   Bell,
   Upload,
@@ -17,6 +18,7 @@ export const navigationGroups = [
     items: [
       { id: "today", label: "Today", icon: LayoutDashboard },
       { id: "leads", label: "Leads", icon: UsersRound },
+      { id: "companies", label: "Companies", icon: Building2, access: "leads:read" },
       { id: "tasks", label: "Tasks", icon: ListTodo },
       { id: "notifications", label: "Notifications", icon: Bell },
     ],

@@ -71,6 +71,6 @@ Team reporting guidance is in [operations](references/operations.md).
 
 Verify each capture heading against its caption; see [operations](references/operations.md).
 
-Capture Comments as the lead page default. Review the header, card order, shared tasks and member export controls. Keep guide captures separate from matching historical release screenshots.
+Capture the default All timeline with all four entry types. Review header, card order, shared tasks and export controls. Preserve historical release captures.
 
 Refresh the chart grouping, Team controls, import history, Hygiene and Assistant screenshots from synthetic fixtures.

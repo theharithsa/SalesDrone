@@ -1,3 +1,5 @@
+import { DAY_MS } from './durations.js';
+import { matchStage } from './stage-match.js';
 import { AppError, STAGES, ImportComment, parse } from './contracts.js';
 import { normalizeLead } from './leads.js';
 import { DISCUSSION_FIELDS } from './discussions.js';
@@ -26,7 +28,7 @@ export function importDate(raw, order) {
   const s = String(raw ?? '').trim();
   if (!s) return '';
   if (/^\d{5}(?:\.\d+)?$/.test(s))
-    return new Date(Date.UTC(1899, 11, 30) + Math.floor(Number(s)) * 86400000)
+    return new Date(Date.UTC(1899, 11, 30) + Math.floor(Number(s)) * DAY_MS)
       .toISOString()
       .slice(0, 10);
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
@@ -42,7 +44,7 @@ export function importDate(raw, order) {
     day = order === 'DMY' ? a : b;
   return `${y}-${mo.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }
-export function previewRows(input, allowedStages = STAGES, {stageHidden = false} = {}) {
+export function previewRows(input, allowedStages = STAGES, {stageHidden = false, identifiedUpdate = false} = {}) {
   return input.rows.map((row, index) => {
     try {
       const r = { ...row };
@@ -92,8 +94,8 @@ export function previewRows(input, allowedStages = STAGES, {stageHidden = false}
       const nonemptyComments = comments.filter((c) => c.notes);
 
       if (
-        !Object.hasOwn(r, 'name') ||
-        (!Object.hasOwn(r, 'phone') && !Object.hasOwn(r, 'email'))
+        !identifiedUpdate && (!Object.hasOwn(r, 'name') ||
+        (!Object.hasOwn(r, 'phone') && !Object.hasOwn(r, 'email')))
       )
         throw new AppError(
           400,
@@ -116,11 +118,14 @@ export function previewRows(input, allowedStages = STAGES, {stageHidden = false}
         if (typeof v === 'string' && v.length > 4000)
           throw new AppError(400, 'CELL', 'Cell exceeds 4,000 characters');
       }
+      if (typeof r.stage === 'string') r.stage = r.stage.trim();
       const original = String(r.legacyStatus || '').trim();
+      const originalStage = matchStage(original, allowedStages);
+      const mappedStage = Object.hasOwn(input.statusMap, original) ? input.statusMap[original] : undefined;
       if (
         original && !r.stage && !stageHidden &&
-        !allowedStages.includes(original) &&
-        !input.statusMap[original]
+        !originalStage &&
+        !mappedStage
       )
         throw new AppError(
           400,
@@ -128,18 +133,20 @@ export function previewRows(input, allowedStages = STAGES, {stageHidden = false}
           `Map the status “${original}” before importing`,
         );
       if (
-        !stageHidden && input.statusMap[original] &&
-        !allowedStages.includes(input.statusMap[original])
+        !stageHidden && mappedStage && !matchStage(mappedStage, allowedStages)
       )
         throw new AppError(
           400,
           'STATUS',
           'Choose an active sales stage for this status',
         );
-      if(r.stage && !allowedStages.includes(r.stage))throw new AppError(400,'STATUS','Choose an active sales stage');
+      if (r.stage) {
+        const stage = matchStage(r.stage, allowedStages);
+        if (!stage) throw new AppError(400, 'STATUS', 'Choose an active sales stage for this workbook value');
+        r.stage = stage;
+      }
       r.stage =
-        r.stage || (!stageHidden && input.statusMap[original]) ||
-        (!stageHidden && allowedStages.includes(original) ? original : 'New');
+        r.stage || (!stageHidden && (matchStage(mappedStage, allowedStages) || originalStage)) || 'New';
       const warnings = [];
       try {
         r.enquiryDate = importDate(r.enquiryDate, input.dateOrder);
@@ -164,8 +171,16 @@ export function previewRows(input, allowedStages = STAGES, {stageHidden = false}
       }
       if (!r.phone && !r.email)
         warnings.push('Valid contact details are missing');
+      if (identifiedUpdate && (r.originalPhone || r.originalEnquiryDate))
+        throw new AppError(400, 'CELL', 'Correct the contact number or enquiry date before updating this lead');
       if (warnings.length) r.needsReview = true;
+      if (!String(r.countryCode ?? '').trim()) delete r.countryCode;
       const normalized = normalizeLead(r);
+      // A partial export omits required creation fields. Only mapped differences are applied.
+      if (identifiedUpdate) {
+        warnings.length = 0;
+        normalized.needsReview = false;
+      }
       if (
         Buffer.byteLength(
           JSON.stringify({ row: normalized, comments: nonemptyComments }),

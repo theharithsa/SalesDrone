@@ -1,3 +1,5 @@
+import { matchStage } from '../../../../functions/src/stage-match.js';
+
 type Target = { field: string; label: string; order?: string[] };
 export default function ImportStatusMapping({
   targets, field, statuses, mapping, onField, onValue, conflict,
@@ -30,7 +32,8 @@ export default function ImportStatusMapping({
       </div> : null}
       {field==='none'?<p className="field-hint">Original workbook status text is retained; no additional status mapping is applied.</p>:target?<div className="mapping-grid">
         {statuses.map(status=>{
-          const value=Object.hasOwn(mapping,status)?mapping[status]:keepOriginal||(target.order||[]).includes(status)?status:'';
+          const value = Object.hasOwn(mapping, status) ? mapping[status] : field === 'stage'
+            ? matchStage(status, target.order ?? []) ?? '' : keepOriginal || target.order?.includes(status) ? status : '';
           return <label key={status}>
             <span className="import-status-source" title={status}>{status}</span>
             <select aria-label={`Map status ${status}`} value={value} onChange={e=>onValue(status,e.target.value)}>

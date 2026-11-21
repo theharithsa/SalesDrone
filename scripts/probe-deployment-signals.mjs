@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { once } from 'node:events';
 import { createTelemetry } from '../functions/src/telemetry.js';
 import { otlpReceipt } from './deployment-signals.mjs';
-export async function probeSignals(tenant, token, fetchImpl = fetch) {
+export async function probeSignals(tenant, token, fetchImpl = fetch, environment = 'production') {
   const batches = [],
     server = createServer(async (req, res) => {
       const chunks = [];
@@ -16,8 +16,8 @@ export async function probeSignals(tenant, token, fetchImpl = fetch) {
   const telemetry = createTelemetry({
     tenant: 'http://127.0.0.1:' + server.address().port,
     key: 'synthetic-not-a-credential',
-    service: 'salesdrone-deployment-check',
-    environment: 'production-verification',
+    service: environment === 'pre-production' ? 'salesdrone-preprod-deployment-check' : 'salesdrone-deployment-check',
+    environment: environment === 'pre-production' ? environment : 'production-verification',
     allowLocalTest: true,
   });
   let probeContext;

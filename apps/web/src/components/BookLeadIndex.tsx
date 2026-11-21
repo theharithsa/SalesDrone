@@ -69,7 +69,7 @@ export default function BookLeadIndex({
                 <span className="book-index-identity">
                   <strong>{title}</strong>
                   {context && <span>{context}</span>}
-                  {!hiddenFields.includes('phone') && lead.phone && <span className="phone-number">{lead.phone}</span>}
+                  {!hiddenFields.includes('phone') && <span className="phone-number">{lead.phone || lead.originalPhone || 'N/A'}</span>}
                 </span>
                 <span className="book-index-status">
                   {!hiddenFields.includes('stage') && <Badge stage={lead.stage} />}

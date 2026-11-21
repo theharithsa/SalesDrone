@@ -1,3 +1,4 @@
+import { MINUTE_MS } from './durations.js';
 import { errorType, dependencyErrorType, policyRejection, WORK_STATS, COLLECTIONS, OPERATIONS, WORKERS, LOG_EVENTS, safeLogFields } from './observability-contract.js';
 import { CI_CHECKS, CI_STATUSES } from './ci-contract.js';
 import { performance } from 'node:perf_hooks';
@@ -96,7 +97,7 @@ export function createTelemetry({
           temporalityPreference: AggregationTemporality.DELTA,
         }),
     ),
-    exportIntervalMillis: 60000,
+    exportIntervalMillis: MINUTE_MS,
     exportTimeoutMillis: 1500,
     cardinalityLimits: { default: 256 },
     maxExportBatchSize: 256,
@@ -250,7 +251,12 @@ export function createTelemetry({
     diagnostics: () => structuredClone(health),
     researchOperation(kind,outcome,seconds) {
       if(!['plan','themes','embedding','batch'].includes(kind)||!['success','failure'].includes(outcome)||!Number.isFinite(seconds)||seconds<0)return;
-      try {researchOperations.add(1,{kind,outcome});researchDuration.record(seconds,{kind,outcome});} catch {}
+      try {
+        researchOperations.add(1, { kind, outcome });
+        researchDuration.record(seconds, { kind, outcome });
+      } catch {
+        // SDK cleanup or export errors must not change the completed research result.
+      }
     },
     outboxHealth(counts, age) {
       if (

@@ -1,19 +1,40 @@
 # Changelog
 
-Application versions follow [Semantic Versioning](https://semver.org/).
-API contract versions are independent from application versions.
+Application versions follow the [weekly release policy](docs/RELEASE-GOVERNANCE.md#weekly-production-cadence).
+API contract versions track compatibility independently.
 
+> The v2.14.0 section describes the pre-production candidate. Confirm the published version and date in [GitHub Releases](https://github.com/theharithsa/SalesDrone/releases).
 
+## [2.14.0] - 2026-11-22
 
+### Added
+- Custom lead fields can allow multiple choices. Admins can convert an existing Product dropdown while keeping saved selections. Filtering and Excel updates support the new field type.
+- Companies groups active leads by company. Open an organization to see its leads or add a new enquiry with its company filled in.
+- Lead fields display N/A when empty. Excel keeps those cells blank for the next update.
+- Exported workbooks now carry each lead ID and version. Import recognizes them, matches current sales stages, and prompts once per unfamiliar stage. Repeated uploads preserve recorded comments, and later team edits go to review.
+- Opening a lead starts on All, with comments, calls, shared tasks and linked reminders together in one timeline.
 
+### Changed
+- Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
+- Successful pre-production deployments report their exact build to Dynatrace with a pre-production environment label.
+- Added an opt-in browser check for pre-production. It sends timing data directly to its own Dynatrace frontend.
+- Added an on-demand pre-production check that verifies a synthetic lead's committed event delivery and cleans up the fixture.
+- Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
+- Refreshed the README, security policy, product, Settings and API guides. Added reviewed synthetic captures for the lead timeline, Companies, workbook updates and Product multi-select.
+- Recorded the App Launchpad v1.14.0 audit and documented the production release review.
 
+### Security
+- Production Functions use a dedicated identity scoped to the production Firestore database, attachment bucket and required secrets.
+- Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.
+- Updated the Firebase CLI and its Pub/Sub dependency to resolve OpenTelemetry Core advisory GHSA-8988-4f7v-96qf in the development toolchain.
 
+### Maintenance
+- Updated the Firebase web SDK and CLI, Lucide icons, and test dependencies. Development and CI now use Node 24. The deployed Functions runtime remains Node 22.
+- Added lint checks for existing TypeScript escape hatches and unexplained error handling. Verification checks the OpenAPI artifacts without rewriting them.
 
-
-
-
-
-
+### Fixed
+- Browser API failures retain their HTTP status, and comment editing reports when a stale lead could not be refreshed.
+- Production promotion validates the pre-production receipt checksum and its exact run, attempt, version, commit and source tree.
 
 ## [2.13.11] - 2026-11-14
 

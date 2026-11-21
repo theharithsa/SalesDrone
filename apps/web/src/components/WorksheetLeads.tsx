@@ -2,7 +2,7 @@ import BookLeadIndex from './BookLeadIndex';
 import { Badge } from './UI';
 import { ScoreBadge } from './LeadScore';
 import { Lead, displayDate } from '../lib/types';
-import {defaultFieldOptions, FieldOptions} from '../lib/field-options';
+import {defaultFieldOptions, displayFieldValue, FieldOptions} from '../lib/field-options';
 import { leadTableColumns } from '../lib/lead-table';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -57,18 +57,11 @@ export default function WorksheetLeads({
       checkedIds={checkedIds} onToggle={onToggle} onSelect={onSelect}
       returnLeadId={returnLeadId} onRestoreFocus={onRestoreFocus} />
   );
-  const value = (lead: Lead, field: string) =>
-    field === 'enquiryDate'
-      ? displayDate(lead.enquiryDate)
-      : field === 'phone'
-        ? lead.phone || lead.originalPhone || '—'
-        : field.startsWith('cf_')
-          ? typeof lead.customFields?.[field] === 'boolean'
-            ? lead.customFields[field]
-              ? 'Yes'
-              : 'No'
-            : String(lead.customFields?.[field] ?? '—')
-          : String(lead[field] || '—');
+  const value = (lead: Lead, field: string) => {
+    if (field === 'enquiryDate' && lead.enquiryDate) return displayDate(lead.enquiryDate);
+    if (field === 'phone') return displayFieldValue(lead.phone || lead.originalPhone);
+    return displayFieldValue(field.startsWith('cf_') ? lead.customFields?.[field] : lead[field]);
+  };
   return (
     <>
       <div className="worksheet-desktop">
@@ -197,7 +190,7 @@ export default function WorksheetLeads({
                             onSelect(lead);
                           }}
                         >
-                          <span>{lead.name || 'Name not recorded'}</span>
+                          <span>{displayFieldValue(lead.name)}</span>
                           {!config.hiddenFields.includes('company') &&
                           lead.company ? (
                             <small className="worksheet-company">
@@ -249,14 +242,14 @@ export default function WorksheetLeads({
               aria-label={'Open ' + (lead.name || 'lead')}
               onClick={() => onSelect(lead)}
             >
-              <strong>{lead.name || 'Name not recorded'}</strong>
+              <strong>{displayFieldValue(lead.name)}</strong>
               {showScores && <ScoreBadge score={scores[lead.id]} />}
               <span className="worksheet-card-company">
-                {lead.company || 'Company not recorded'}
+                {displayFieldValue(lead.company)}
               </span>
               <span className="worksheet-card-location">
                 {[lead.location, lead.zone].filter(Boolean).join(' · ') ||
-                  'City / sector not recorded'}
+                  'N/A'}
               </span>
               <small className="worksheet-card-meta">
                 <span className="phone-number">{value(lead, 'phone')}</span> ·{' '}

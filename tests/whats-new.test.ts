@@ -71,17 +71,16 @@ test('public roadmap only uses approved open issues and never publishes engineer
     .window.document.querySelector('section[aria-labelledby="upcoming"] a[href$="/issues/217"]'));
 });
 
-test('SDLC reading path has valid links and distinguishes the planned environment from current delivery', async () => {
+test('SDLC reading path links to the pre-production environment and weekly release policy', async () => {
   const { renderSdlcGuide } = await import('../scripts/sdlc-guide.mjs');
   const document = new JSDOM(renderSdlcGuide()).window.document;
   for (const anchor of document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
     assert.ok(document.getElementById(anchor.hash.slice(1)), `Missing guide target ${anchor.hash}`);
   }
-  const planned = document.querySelector('#preproduction');
-  assert.match(planned?.textContent || '', /PLANNED · NOT ACTIVATED/);
-  assert.match(planned?.textContent || '', /not provisioned/);
-  assert.deepEqual([...planned!.querySelectorAll<HTMLAnchorElement>('a[href*="/issues/"]')].map(a => a.href.split('/').at(-1)), ['223','224','225','226','222']);
-  assert.match(document.querySelector('#lifecycle')?.textContent || '', /Merge and verify main/);
+  const preprod = document.querySelector('#preproduction')!;
+  assert.ok(preprod.querySelector('a[href="https://sales-drone-avinya-preprod.web.app/"]'));
+  assert.deepEqual([...preprod.querySelectorAll<HTMLAnchorElement>('a[href*="/issues/"]')].map(a => a.href.split('/').at(-1)), ['223','224','225','226','222']);
+  assert.ok(document.querySelector('#weekly-releases a[href$="RELEASE-GOVERNANCE.md#weekly-production-cadence"]'));
   assert.match(document.querySelector('#example')?.textContent || '', /planned, not shipped/);
   assert.equal(document.querySelectorAll('script[src*="firebase"]').length, 0);
 });

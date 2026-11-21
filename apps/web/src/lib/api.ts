@@ -11,7 +11,26 @@ export class ApiError extends Error {
     super(message);
   }
 }
-export async function api<T = any>(
+export type ApiClient<T = unknown> = (
+  path: string,
+  method?: string,
+  body?: unknown,
+  key?: string,
+  signal?: AbortSignal,
+) => Promise<T>;
+
+function readError(body: unknown) {
+  if (!body || typeof body !== 'object' || !('error' in body)) return {};
+  const error = body.error;
+  if (!error || typeof error !== 'object') return {};
+  return {
+    code: 'code' in error && typeof error.code === 'string' ? error.code : undefined,
+    message: 'message' in error && typeof error.message === 'string' ? error.message : undefined,
+    details: 'details' in error ? error.details : undefined,
+  };
+}
+
+export async function api<T = unknown>(
   path: string,
   method = 'GET',
   body?: unknown,
@@ -40,7 +59,7 @@ export async function api<T = any>(
     endObservation(e instanceof DOMException&&e.name==='AbortError'?RUM_OUTCOMES.cancelled:RUM_OUTCOMES.network);
     throw e;
   }
-  let data;
+  let data: unknown;
   try {
     data = await res.json();
   } catch {
@@ -51,15 +70,22 @@ export async function api<T = any>(
       'The API is unavailable. Check your connection or Firebase setup.',
     );
   }
-  endObservation(res.ok?RUM_OUTCOMES.success:RUM_OUTCOMES.failure,res.headers.get('X-Request-Id')||undefined,res.status,data?.error?.code);
-  if (!res.ok)
+  const error = readError(data);
+  endObservation(
+    res.ok ? RUM_OUTCOMES.success : RUM_OUTCOMES.failure,
+    res.headers.get('X-Request-Id') || undefined,
+    res.status,
+    error.code,
+  );
+  if (!res.ok) {
     throw new ApiError(
       res.status,
-      data.error?.code || 'REQUEST',
-      data.error?.message || 'Request failed',
-      data.error?.details,
+      error.code || 'REQUEST',
+      error.message || 'Request failed',
+      error.details,
     );
-  return data;
+  }
+  return data as T;
 }
 export async function enablePush(label: string) {
   if (!('Notification' in window) || !('serviceWorker' in navigator))
@@ -107,12 +133,12 @@ export async function revokeThisDevice() {
   }
 }
 
-export async function uploadFileBytes(
+export async function uploadFileBytes<T = unknown>(
   path: string,
   file: File,
   onProgress: (value: number) => void,
   signal: AbortSignal,
-): Promise<any> {
+): Promise<T> {
   const user = auth.currentUser;
   if (!user) throw new ApiError(401, 'SIGN_IN', 'Sign in to continue');
   const [token, check] = await Promise.all([user.getIdToken(), attestation()]);
@@ -132,24 +158,24 @@ export async function uploadFileBytes(
     };
     xhr.onload = () => {
       finish();
-      let data;
+      let data: unknown;
       try {
         data = JSON.parse(xhr.responseText);
       } catch {
         end(RUM_OUTCOMES.failure,xhr.getResponseHeader('X-Request-Id')||undefined,xhr.status,'API_UNAVAILABLE');
-        reject(Error('The file API is unavailable.'));
+        reject(new ApiError(xhr.status, 'API_UNAVAILABLE', 'The file API is unavailable.'));
         return;
       }
-      end(xhr.status>=200&&xhr.status<300?RUM_OUTCOMES.success:RUM_OUTCOMES.failure,xhr.getResponseHeader('X-Request-Id')||undefined,xhr.status,data?.error?.code);
-      if (xhr.status >= 200 && xhr.status < 300) resolve(data);
-      else
-        reject(
-          new ApiError(
-            xhr.status,
-            data.error?.code || 'UPLOAD',
-            data.error?.message || 'Upload failed',
-          ),
-        );
+      const error = readError(data);
+      const ok = xhr.status >= 200 && xhr.status < 300;
+      end(
+        ok ? RUM_OUTCOMES.success : RUM_OUTCOMES.failure,
+        xhr.getResponseHeader('X-Request-Id') || undefined,
+        xhr.status,
+        error.code,
+      );
+      if (ok) resolve(data as T);
+      else reject(new ApiError(xhr.status, error.code || 'UPLOAD', error.message || 'Upload failed'));
     };
     xhr.onerror = () => {
       finish();
@@ -187,13 +213,9 @@ export async function downloadFileBytes(path: string): Promise<Blob> {
     throw e;
   }
   if (!response.ok) {
-    const data = await response.json().catch(() => null);
-    end(RUM_OUTCOMES.failure,response.headers.get('X-Request-Id')||undefined,response.status,data?.error?.code);
-    throw new ApiError(
-      response.status,
-      data?.error?.code || 'DOWNLOAD',
-      data?.error?.message || 'Download failed',
-    );
+    const error = readError(await response.json().catch(() => null));
+    end(RUM_OUTCOMES.failure, response.headers.get('X-Request-Id') || undefined, response.status, error.code);
+    throw new ApiError(response.status, error.code || 'DOWNLOAD', error.message || 'Download failed');
   }
   try {const blob=await response.blob();end(RUM_OUTCOMES.success,response.headers.get('X-Request-Id')||undefined,response.status);return blob;}
   catch(error){end(RUM_OUTCOMES.network,response.headers.get('X-Request-Id')||undefined,response.status);throw error;}

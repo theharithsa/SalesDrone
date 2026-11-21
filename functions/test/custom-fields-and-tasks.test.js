@@ -676,3 +676,32 @@ test('manual enquiry accepts a missing name and requires phone; field layout is 
   assert.deepEqual(updated.headerFields, change.headerFields);
   await s.call('patch', '/field-options', change).expect(409);
 });
+
+test('a workspace dropdown can upgrade to multiple choices without altering existing leads', async () => {
+  const s = await setup();
+  const id = 'cf_products';
+  const field = { id, label: 'Products', type: 'select', options: ['Panel', 'Trim, exterior'], required: true };
+  const saveField = (expectedVersion, type, who = 'admin') => s.call('patch', '/field-options',
+    { expectedVersion, values: DEFAULT_FIELD_OPTIONS, customFields: [{ ...field, type }] }, who);
+  await saveField(1, 'select').expect(200);
+  const original = (await s.call('post', '/leads', { ...lead, customFields: { [id]: 'Panel' } }).expect(200)).body;
+  await saveField(2, 'multiSelect', 'viewer').expect(403);
+  await saveField(2, 'multiSelect').expect(200);
+  const url = '/leads/' + original.id;
+  const retained = (await s.call('get', url).expect(200)).body;
+  assert.equal(retained.customFields[id], 'Panel');
+  assert.equal(retained.version, original.version);
+
+  await saveField(3, 'select').expect(400);
+  for (const invalid of [[], ['Panel', 'Panel'], ['Unknown'], [42]]) {
+    await s.call('patch', url, { expectedVersion: original.version, customFields: { [id]: invalid } }).expect(400);
+  }
+  const selections = ['Panel', 'Trim, exterior'];
+  const updated = (await s.call('patch', url, { expectedVersion: original.version, customFields: { [id]: selections } }).expect(200)).body;
+  assert.deepEqual(updated.customFields[id], selections);
+
+  const query = encodeURIComponent(JSON.stringify([{ field: id, op: 'equals', value: 'trim, exterior' }]));
+  const results = (await s.call('get', '/leads?filters=' + query).expect(200)).body;
+  assert.deepEqual(results.items.map((item) => item.id), [original.id]);
+  assert.deepEqual((await s.call('get', url).expect(200)).body.customFields[id], selections);
+});

@@ -1,8 +1,9 @@
 # Pre-production foundation
 
-Status: **planned, not provisioned**. On 14 November 2026 the owner requested a
-plan and GitHub implementation issues first. The v2.13.10 documentation release
-does not create resources, change branch protection or enable a second deployment.
+**Live for approved testing.** Open the [test workspace](https://sales-drone-avinya-preprod.web.app/) and check
+its [build identity](https://sales-drone-avinya-preprod.web.app/version.json).
+The [v2.14.0 promotion](https://github.com/theharithsa/SalesDrone/pull/240)
+tracks acceptance for the exact build.
 
 ## Outcome and constraints
 
@@ -11,9 +12,7 @@ workspace before opening a promotion PR to `main`. Production remains
 `salesdrone.in`. Use the existing `sales-drone-avinya` Firebase project, a separate
 named Firestore database, separate runtime resources and the existing Dynatrace
 endpoint/token references. Tag every pre-production signal with the environment.
-The owner's requested Google account becomes an Admin in pre-production only;
-resolve its verified Firebase UID during the future seed operation, rather than
-publishing account information in fixture files.
+The seed resolves the owner's verified Firebase UID and grants Admin in pre-production only. Fixture files contain no personal account information.
 
 Firebase recommends separate projects for environment isolation. The owner has
 requested a single project; this design therefore needs explicit data-plane and
@@ -22,7 +21,7 @@ Secret Manager, billing or project-wide configuration. Firebase Functions v2 use
 Cloud Run underneath. A second database does not receive another free Firestore
 allowance. Do not represent this plan as a new free environment.
 
-## Resource contract (proposed names)
+## Resource contract
 
 | Concern | Production | Pre-production target |
 | --- | --- | --- |
@@ -31,10 +30,10 @@ allowance. Do not represent this plan as a new free environment.
 | GitHub environment | `production` | `pre-production` |
 | Hosting | Existing production site and domain | Separate `sales-drone-avinya-preprod` site, initially its `web.app` domain |
 | Firestore | `(default)` | Named database `preprod`, same verified region |
-| Functions | Existing `salesdrone` codebase | Separate `salesdrone-preprod` codebase and distinct function names |
+| Functions | Existing `salesdrone` codebase and scheduled workers | Dedicated `preprodApi` function deployed by the pre-prod workflow |
 | HTTP ingress | `salesdrone-ingress` | Distinct `salesdrone-preprod-ingress`; fixed upstream to the pre-production API |
 | Attachments | Existing private production bucket | Separate private pre-production bucket; never a shared customer prefix |
-| Runtime identity | Existing production identity | Dedicated least-privilege identity, database-conditioned Firestore grant and pre-production bucket access |
+| Runtime identity | Dedicated identity with a default-database-only Firestore grant and production bucket access | Dedicated identity with a named-database-only Firestore grant and pre-production bucket access |
 | Deployment identity | Existing production WIF/deployer | Separate pre-production WIF/deployer restricted to the repository, workflow and `pre-prod` ref |
 | Authentication | Firebase Google sign-in | Shared project identity directory; pre-production database membership authorizes access |
 | App Check | Existing production registration | Separate pre-production web app/key/domain configuration; keep enforcement |
@@ -99,6 +98,25 @@ source tree, workflow run, artifact digests, checks and approval. A new commit a
 acceptance invalidates that acceptance and needs another pre-production run.
 Production receives its own merge SHA and deployment evidence. Preserve the PR-first
 workflow and never bypass failed checks with an administrative merge.
+
+The promotion job downloads the short-lived smoke-test receipt for the successful
+pre-production run attempt. It verifies the archive against GitHub's SHA-256
+digest, then checks the version, commit, source tree, run and attempt recorded
+inside. The receipt covers Hosting identity, anonymous denial and parser behavior.
+The milestone separately tracks authenticated acceptance, isolation, telemetry and cost.
+Successful pre-production deployments emit environment-labelled deployment
+BizEvents, native SDLC events and a bounded OTLP transport probe. GitHub keeps
+the monitoring receipt separate from the Hosting/API smoke-test receipt.
+Runtime business events, browser monitoring and tenant search each have their
+own acceptance checks.
+
+Open [the pre-prod browser check](https://sales-drone-avinya-preprod.web.app/preprod-monitoring.html)
+and select **Send browser test** to verify the dedicated SalesDrone Pre-production
+frontend. The check is an isolated Hosting page and loads the agent from
+Dynatrace only after the visitor opts in. It creates no Firebase Auth, App Check,
+Firestore, Storage or Functions requests. Session Replay is off. Check the
+browser beacon and tenant records separately. This check does not exercise
+authenticated workspace monitoring or browser-to-backend trace linkage.
 
 Do not publish production release tags, production release notes or advance the
 public shipped version from a pre-production push. Add a conspicuous pre-production
@@ -190,4 +208,59 @@ actual before/after usage and budget alerts before continuous test traffic is en
 
 ## Tracked implementation
 
-Milestone: [Pre-production foundation](https://github.com/theharithsa/SalesDrone/milestone/69). Parent: [#222](https://github.com/theharithsa/SalesDrone/issues/222). Native sub-issues and blocked-by relationships enforce the order: [#223 isolation](https://github.com/theharithsa/SalesDrone/issues/223) → [#224 synthetic seed](https://github.com/theharithsa/SalesDrone/issues/224) → [#225 delivery](https://github.com/theharithsa/SalesDrone/issues/225) → [#226 acceptance](https://github.com/theharithsa/SalesDrone/issues/226). All are assigned to the repository owner. Implementation dates and a versioned release milestone will be set when work is scheduled.
+Milestone: [Pre-production foundation](https://github.com/theharithsa/SalesDrone/milestone/69). Parent: [#222](https://github.com/theharithsa/SalesDrone/issues/222). Native sub-issues and blocked-by relationships enforce the order: [#223 isolation](https://github.com/theharithsa/SalesDrone/issues/223) → [#224 synthetic seed](https://github.com/theharithsa/SalesDrone/issues/224) → [#225 delivery](https://github.com/theharithsa/SalesDrone/issues/225) → [#226 acceptance](https://github.com/theharithsa/SalesDrone/issues/226). All are assigned to the repository owner. Production promotion is tracked in the [v2.14.0 milestone](https://github.com/theharithsa/SalesDrone/milestone/71).
+
+## Initial rollout
+
+The separate Firebase site and named Firestore database were provisioned on
+14 November 2026. The runtime identity can read its seed manifest and list its
+private bucket. Equivalent read probes against the production database and bucket
+returned permission denied. The owner and 30 synthetic leads and 12 tasks were
+seeded in 116 writes. A replay issued zero writes.
+
+Google popup sign-in uses the existing registered Firebase Auth handler. The application and App Check registration use the separate pre-production origin and app ID.
+
+The initial deployment exposes only the API and ingress. Scheduled jobs, push
+delivery and GA4 have no active pre-production traffic. Paid AI
+requests are disabled on the test API. Shared Firebase Hosting IAM is project
+scoped. The pre-production workflow uses a separate deployment account and pins
+the site, function, service and source bucket in its deployment scripts.
+
+### v2.14.0 acceptance evidence
+
+The [pre-production deployment](https://github.com/theharithsa/SalesDrone/actions/runs/44909551450)
+recorded Hosting identity, anonymous denial and malformed JSON handling.
+The [production PR recheck](https://github.com/theharithsa/SalesDrone/actions/runs/44909556147/attempts/2)
+matched the tested code tree and held promotion at milestone acceptance.
+
+The API and ingress emit environment-labelled traces, logs and request
+metrics. Verify the opt-in browser check separately from committed business
+events and native SDLC events. The workspace itself keeps the production RUM
+loader disabled. Verify cross-environment IAM
+against effective permissions in addition to the configured grants. Cloud
+Monitoring measures usage. The cost baseline uses observed operations and public rates. Detailed billing export is disabled.
+See the [acceptance issue](https://github.com/theharithsa/SalesDrone/issues/226)
+for measured usage and verification evidence.
+
+The Admin reset preview displays scope before confirmation. The Auth, Firestore
+and Storage emulators exercise actual reset, replay and configuration retention.
+An operator must explicitly authorize any permanent reset of the live test workspace.
+
+### On-demand runtime checks
+
+Use the operator's existing authorized Firebase CLI session with the exact deployed
+pre-prod commit:
+
+```sh
+GCP_PROJECT_ID=sales-drone-avinya node scripts/run-runtime-acceptance.mjs production-identity <commit>
+GCP_PROJECT_ID=sales-drone-avinya node scripts/run-runtime-acceptance.mjs preprod-outbox <commit>
+```
+
+Each command starts one short private job using the deployed pre-prod ingress
+image and removes the job afterward. That image includes the build's Functions
+source and locked dependencies. The production identity check uses a nonexistent
+document and an empty Storage prefix, checks shared Auth with a nonexistent
+identity and validates an FCM payload without sending it. The outbox check commits
+one synthetic lead in the named test database, delivers only its outbox records,
+and removes the generated fixture documents. It creates no scheduled job.
+Query accepted committed events by environment, source, and build commit.

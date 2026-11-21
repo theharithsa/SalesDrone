@@ -2,6 +2,10 @@
 
 The source workbook was inspected read-only. Only Sheet1 was used; sheets 2 and 3 were excluded. The detected header is row 3. Its 14 columns are preserved in order: Sl No, Enq Source, Name, Contact No., Company Name, Location, City (one column), Sector, Enq Date, Status, Initial discussion, 1st follow up, 2nd follow up, 3rd follow up, 4th follow up.
 
+## Daily SalesDrone exports
+
+The export's **Sales stage** column carries the current workflow stage. A third-party **Status** column follows the selected status destination. Exported field metadata also identifies renamed headings. Follow the [daily editing workflow](IMPORTS.md#update-leads-from-an-excel-export) for matching stages, resolving stale edits and reusing a workbook.
+
 ## Capture and discussion history
 
 The new/edit lead form, worksheet table and import template use these labels. Sector is the existing API field `zone`, city/location is `location`, and the original worksheet Status is `legacyStatus`; the application's sales stage is separate. Won is an available sales stage. The original status remains available even when mapped to a sales stage.

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AppError, parse } from './contracts.js';
+import { AppError, IsoDate, parse } from './contracts.js';
 export const FILTER_FIELDS = [
   'serial',
   'source',
@@ -64,19 +64,14 @@ export function parseLeadFilters(raw) {
   }
   const filters = parse(LeadFilters, data);
   for (const f of filters) {
-    if (f.op === 'exact' && !['stage','source'].includes(f.field) && !f.field.startsWith('cf_'))
-      throw new AppError(400, 'FILTER', 'Exact match supports source, stage and custom dropdown fields');
+    if (f.op === 'exact' && !['stage','source','company'].includes(f.field) && !f.field.startsWith('cf_'))
+      throw new AppError(400, 'FILTER', 'Exact match supports company, source, stage and custom dropdown fields');
     if (!['empty', 'notEmpty'].includes(f.op) && !(f.op === 'exact' ? f.value.length : f.value.trim()))
       throw new AppError(400, 'FILTER', 'Enter a filter value');
     if (
       ['before', 'after'].includes(f.op) &&
-      (!(
-        ['enquiryDate', 'lastContactAt'].includes(f.field) ||
-        f.field.startsWith('cf_')
-      ) ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(f.value) ||
-        !Number.isFinite(Date.parse(f.value)) ||
-        new Date(f.value).toISOString().slice(0, 10) !== f.value)
+      (!(f.field === 'enquiryDate' || f.field === 'lastContactAt' || f.field.startsWith('cf_')) ||
+        !IsoDate.safeParse(f.value).success)
     )
       throw new AppError(
         400,
@@ -96,7 +91,20 @@ export function matchesLead(lead, filters) {
           : f.field.startsWith('cf_')
             ? lead.customFields?.[f.field]
             : lead[f.field];
-    if (f.op === 'exact') return raw === f.value;
+    if (Array.isArray(raw)) {
+      if (f.op === 'empty') return !raw.length;
+      if (f.op === 'notEmpty') return !!raw.length;
+      return raw.some((choice) => {
+        const value = String(choice).normalize('NFKC').trim().toLowerCase();
+        const term = f.value.normalize('NFKC').trim().toLowerCase();
+        if (f.op === 'equals') return value === term;
+        if (f.op === 'startsWith') return value.startsWith(term);
+        return f.op === 'contains' && value.includes(term);
+      });
+    }
+    if (f.op === 'exact') return f.field === 'company'
+      ? String(raw ?? '').trim().toLowerCase() === f.value.trim().toLowerCase()
+      : raw === f.value;
     const value = normalized(raw),
       term = normalized(f.value);
     if (f.op === 'empty') return !value;

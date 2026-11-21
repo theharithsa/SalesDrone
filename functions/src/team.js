@@ -1,3 +1,4 @@
+import { DAY_MS } from './durations.js';
 import { assertAdmin } from "./personal-access-tokens.js";
 import { AppError } from "./contracts.js";
 import { path, requireMember, sameAccess, scopeFilters } from "./policy.js";
@@ -9,7 +10,7 @@ export function teamDays(raw = "30") {
 }
 export const teamSince = (now, days) =>
   new Date(
-    Date.parse(now.slice(0, 10) + "T00:00:00Z") - (days - 1) * 86400000,
+    Date.parse(now.slice(0, 10) + "T00:00:00Z") - (days - 1) * DAY_MS,
   ).toISOString();
 export function teamWindow(now, query) {
   if (query.from === undefined && query.to === undefined) {
@@ -20,11 +21,11 @@ export function teamWindow(now, query) {
   const from = Date.parse(query.from), to = Date.parse(query.to);
   if (!iso.test(query.from) || !iso.test(query.to) || !Number.isFinite(from) ||
       !Number.isFinite(to) || new Date(from).toISOString() !== query.from ||
-      new Date(to).toISOString() !== query.to || to <= from || to - from > 90 * 86400000)
+      new Date(to).toISOString() !== query.to || to <= from || to - from > 90 * DAY_MS)
     throw new AppError(400, "TEAM_PERIOD", "Choose a valid date range of up to 90 days");
   const since = query.from;
   const until = query.to;
-  const days = 1 + Math.round((Date.parse(until.slice(0, 10)) - Date.parse(since.slice(0, 10))) / 86400000);
+  const days = 1 + Math.round((Date.parse(until.slice(0, 10)) - Date.parse(since.slice(0, 10))) / DAY_MS);
   return { since, until, days, explicit: true };
 }
 export async function assertTeamAccess(store, identity, before) {
@@ -134,7 +135,7 @@ export async function teamSnapshot(store, member, now, period) {
     worked = new Map(),
     stages = new Map();
   const trend = Array.from({ length: days }, (_, i) => ({
-    date: new Date(Date.parse(since.slice(0, 10)) + i * 86400000)
+    date: new Date(Date.parse(since.slice(0, 10)) + i * DAY_MS)
       .toISOString()
       .slice(0, 10),
     comments: 0,

@@ -16,13 +16,10 @@ import {
   dragBladeWidth,
   keyboardBladeWidth,
 } from '../lib/lead-blade';
+import { readStored, writeStored } from '../lib/browser-storage';
 function savedWidth() {
-  try {
-    const saved = localStorage.getItem(BLADE_WIDTH_KEY);
-    return saved === null ? DEFAULT_BLADE_WIDTH : Number(saved);
-  } catch {
-    return DEFAULT_BLADE_WIDTH;
-  }
+  const saved = readStored('localStorage', BLADE_WIDTH_KEY);
+  return saved === null ? DEFAULT_BLADE_WIDTH : Number(saved);
 }
 export default function LeadBlade({
   toolbar,
@@ -65,9 +62,7 @@ export default function LeadBlade({
     return next;
   }
   function persist(value: number) {
-    try {
-      localStorage.setItem(BLADE_WIDTH_KEY, String(value));
-    } catch {}
+    writeStored('localStorage', BLADE_WIDTH_KEY, String(value));
   }
   useLayoutEffect(() => {
     const previous = document.activeElement as HTMLElement | null;

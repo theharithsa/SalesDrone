@@ -44,7 +44,7 @@ export const PRESETS = {
   Admin: CAPABILITIES,
 };
 const text = (max = 200) => z.string().trim().max(max);
-const date = z.iso.date();
+export const IsoDate = z.iso.date();
 const instant = z.iso.datetime({ offset: true });
 export const LeadInput = z
   .object({
@@ -56,7 +56,7 @@ export const LeadInput = z
     source: text().default(''),
     location: text().default(''),
     zone: text().default(''),
-    enquiryDate: z.union([date, z.literal('')]).default(''),
+    enquiryDate: z.union([IsoDate, z.literal('')]).default(''),
     stage: text(100).min(1).default('New'),
     comments: text(4000).default(''),
     initialDiscussion: text(4000).default(''),
@@ -73,6 +73,7 @@ export const LeadInput = z
         z.string().regex(/^cf_[a-z0-9_]{1,60}$/),
         z.union([
           z.string().max(4000),
+          z.array(z.string().min(1).max(100)).max(30),
           z.number().finite(),
           z.boolean(),
           z.null(),

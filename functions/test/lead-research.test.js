@@ -234,6 +234,25 @@ test('agent exact custom-field counts scan all rows; lists persist paginated aut
   const matches=await store.query(path('assistantContributions'),{filters:[['requestId','==',r.id]],limit:1100});
   assert.equal(matches.length,1030);assert.equal(matches[0].lead.phone,undefined);
 });
+test('assistant counts a selected Product once and respects lead assignment scope', async () => {
+  const { store, raw } = await prepared();
+  await raw.set(path('settings', 'fields'), {
+    version: 1, values: {}, customFields: [
+      { id: 'cf_product', label: 'Product', type: 'multiSelect', options: ['Board', 'Panel'] },
+    ],
+  });
+  await store.run(async (tx) => {
+    tx.set(path('leads', 'multiple'), sourceLead('multiple', { customFields: { cf_product: ['Panel', 'Board'] } }));
+    tx.set(path('leads', 'legacy'), sourceLead('legacy', { customFields: { cf_product: 'Board' } }));
+    tx.set(path('leads', 'other'), sourceLead('other', { assignedToUid: 'other', customFields: { cf_product: ['Board'] } }));
+    tx.set(path('leads', 'no-match'), sourceLead('no-match', { customFields: { cf_product: ['Panel'] } }));
+  });
+  const plan = toolPlan({ tool: 'aggregate_leads', filters: [
+    { field: 'customFields.cf_product', operator: 'equals', value: 'Board' },
+  ] });
+  const result = await agentQuestion(store, plan);
+  assert.equal(result.answer.count, 2);
+});
 test('own followups use calendar week, exclude other recipients, blocked leads and duplicate tasks; edits invalidate results',async()=>{
   const {store,raw}=await prepared();
   const rep=await raw.get(path('members','rep'));await raw.set(path('members','rep'),{...rep,capabilities:[...rep.capabilities,'tasks:read']});

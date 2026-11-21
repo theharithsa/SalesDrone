@@ -41,6 +41,8 @@ Describe both insight modes in the public guide: manual is the default, automati
 
 Document the Reports & lead access settings, selected-column filtered XLSX workflow and reports API limits. Public screenshots/exports must remain synthetic. Distinguish approved RUM email tags from still-pseudonymous backend actors and report tenant query limitations.
 
+Align technical versions with the candidate. Link metadata for both environments.
+
 Every release regenerates docs/SETTINGS.md and publishes settings.html from the shared section/control catalogs, including every control’s default, scope, permissions, API, effect and example. The public API count comes from OpenAPI, not a hardcoded number. docs:check rejects stale settings and skill-tree outputs. No recursive publication of engineering docs or private evidence.
 
 Document the local-only lead blade width, pointer/keyboard controls, reset, content-driven journey reflow and mobile/reduced-motion behavior in LEAD-BLADE.md. The appearance guide points to this gesture preference without presenting it as a server-side account setting. Use synthetic captures and state measured viewport limits.
@@ -58,7 +60,7 @@ module-specific regression entry points, not a substitute for integration checks
 
 ## Deployment and handoff
 
-GitHub Pages for guide; Hosting when About/portal/app copy/assets change. Documentation releases still advance app PATCH under current release policy. Use [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery) for exact artifact IDs and retry names.
+Pages serves the guide. Follow [release documentation review](../../docs/RELEASE-GOVERNANCE.md#documentation-review) for README, changelog, security and guide changes. See [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery).
 
 Use [the release skill](../salesdrone-release/SKILL.md) for authorized publication.
 Adjacent owners:
@@ -95,4 +97,4 @@ The roadmap, release notes, handbook and SDLC guide are pre-rendered with Astryx
 
 For upcoming releases, read only approved open `roadmap-public` issues and publish their customer-facing title and one-line Public summary. A roadmap-only workflow rebuilds Pages from the published revision, independently of Firebase. Treat issue text as untrusted and render it as plain text. Check enlarged text and actual label truncation on narrow layouts as well as document overflow.
 
-Maintain SDLC diagrams against actual workflows and routing. Explain inputs, actions, outputs and gates; label planned environments explicitly. Verify Safari, artwork and narrow layouts; see [SDLC layout](references/operations.md#sdlc-layout) for Astryx typography and review checks.
+Keep SDLC diagrams and release/build examples aligned with actual workflows and [release governance](../../docs/RELEASE-GOVERNANCE.md). Mark pending automation explicitly. See [SDLC layout](references/operations.md#sdlc-layout) for Safari and narrow-layout checks.

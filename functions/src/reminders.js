@@ -1,3 +1,5 @@
+import { HOUR_MS, MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { randomUUID } from 'node:crypto';
 import { path } from './policy.js';
 import { deliveryContext } from './notifications.js';
@@ -7,7 +9,7 @@ export async function dispatchReminders({
   store,
   telemetry,
   send,
-  now = () => new Date().toISOString(),
+  now = isoNow,
   limit = 50,
 }) {
   const jobs = await store.query(path('reminderDeliveries'), {
@@ -53,7 +55,7 @@ export async function dispatchReminders({
       const updated = {
         ...j,
         lease,
-        nextAttemptAt: new Date(Date.parse(now()) + 120000).toISOString(),
+        nextAttemptAt: new Date(Date.parse(now()) + (2 * MINUTE_MS)).toISOString(),
         attemptCount: j.attemptCount + 1,
       };
       tx.set(path('reminderDeliveries', j.id), updated);
@@ -144,7 +146,7 @@ export async function dispatchReminders({
               : 'Pending'
             : 'Dispatched',
         nextAttemptAt: new Date(
-          Date.parse(now()) + Math.min(3600000, 60000 * 2 ** job.attemptCount),
+          Date.parse(now()) + Math.min(HOUR_MS, MINUTE_MS * 2 ** job.attemptCount),
         ).toISOString(),
         finishedAt: now(),
       });

@@ -1,5 +1,36 @@
 # Reviewed dependency maintenance
 
+## v2.14.0 candidate
+
+[Issue #235](https://github.com/theharithsa/SalesDrone/issues/235) covers Dependabot alerts #1, #3, #7 and #8 and dependency PRs #154, #155, #156, #157 and #172. The candidate updates Firebase 13 and its CLI, Lucide 1, jsdom 31 and the Functions test dependency on protobufjs 8. Cloud SDK consumers continue to resolve their supported protobufjs 7 versions. The Firebase web SDK packages and jsdom require a newer Node version, so development and CI use Node 24.15.0 or later in the Node 24 series. The Functions runtime stays on Node 22.
+
+The root and standalone Functions locks each resolve the affected glob and minimatch versions to patched releases. Keep overrides scoped to the affected ranges so older ExcelJS callbacks still use their supported glob API. The root also pins patched UUID for the Firebase CLI's gaxios 6 dependency, which uses its CommonJS v4 generator. The Node 22 ingress image installs only runtime dependencies from the standalone Functions lock so it shares the patched runtime graph without inheriting the Node 24 web toolchain. Verify both lockfiles independently and run the Auth, Firestore and Storage emulator tests before promotion.
+
+[Issue #237](https://github.com/theharithsa/SalesDrone/issues/237) covers the development-only
+[OpenTelemetry Core advisory](https://github.com/advisories/GHSA-8988-4f7v-96qf).
+Firebase CLI 15.36.0 still requests Pub/Sub 5.x. The root npm override selects
+Google Pub/Sub 6.4.1 for the CLI alone. The locked CLI path resolves Core 2.12.1,
+above the patched minimum of 2.8.0. This does not change the published Firebase
+CLI manifest. The Node 24 deployment and developer toolchain satisfies Pub/Sub's
+Node 22 minimum. The standalone Node 22 Functions lock is unchanged.
+
+When removing the override, confirm the CLI's published dependency range resolves
+a patched Core, then rerun the whole workspace audit, production-only audit,
+standalone Functions audit, emulator integration and pre-production deployment.
+Exercise topic and subscription creation and message delivery against the local
+Pub/Sub emulator when changing the override. Keep the raw registry audit result
+separate from a withdrawn advisory or an active dependency finding.
+
+Local verification used clean workspace and standalone installs, 17 Auth,
+Firestore and Storage emulator cases, and a local Pub/Sub topic/subscription
+with one acknowledged message. The full registry audit dropped the three
+OpenTelemetry-related entries and still listed the same 14 dependency paths
+from the [withdrawn picomatch advisory](https://github.com/advisories/GHSA-fc5q-39xc-vjpf)
+on both the base and candidate. This change adds no application requests or
+Firestore operations.
+
+### Earlier dependency reviews
+
 4 November 2026 · issue #136 · candidate v2.9.2 · API 1.29.0 unchanged.
 
 ## Six Dependabot PRs

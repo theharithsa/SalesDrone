@@ -1,3 +1,5 @@
+import { HOUR_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
 import { AppError } from './contracts.js';
@@ -133,7 +135,7 @@ export async function reserveAttachment(tx, m, leadId, input, id, now) {
     createdAt: now,
     createdByUid: m.uid,
     assignmentRevision: lead.assignmentRevision || 1,
-    expiresAt: new Date(Date.parse(now) + 3600000).toISOString(),
+    expiresAt: new Date(Date.parse(now) + HOUR_MS).toISOString(),
     objectPath: `workspaces/avinyatech/lead-files/${leadId}/${id}`,
   };
   tx.set(path('leads', leadId), {
@@ -235,7 +237,7 @@ export async function removeAttachment(
     ...record,
     state: 'Deleting',
     version: record.version + 1,
-    deleteAfter: new Date(Date.parse(now) + 3600000).toISOString(),
+    deleteAfter: new Date(Date.parse(now) + HOUR_MS).toISOString(),
   });
   tx.set(path('leads', leadId), {
     ...lead,
@@ -246,7 +248,7 @@ export async function removeAttachment(
 export async function cleanupAttachments({
   store,
   files,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const stats = { removed: 0, failed: 0 };
   for (const state of ['Pending', 'Deleting']) {
@@ -274,7 +276,7 @@ export async function cleanupAttachments({
               ...r,
               state: 'Deleting',
               version: r.version + 1,
-              deleteAfter: new Date(Date.parse(now()) + 3600000).toISOString(),
+              deleteAfter: new Date(Date.parse(now()) + HOUR_MS).toISOString(),
             };
             tx.set(path('leadAttachments', r.id), deleting);
             return deleting;

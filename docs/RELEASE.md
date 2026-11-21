@@ -1,13 +1,13 @@
 # Versions, delivery and rollback
 
-The first published application baseline is v1.0.0. Later compatible features use
-MINOR, fixes/docs/security/deployment repairs use PATCH, and incompatible application
-changes use MAJOR. API contract versions are independent. All workspace package
-versions must match. A main push without a higher version and a completed dated
-CHANGELOG section fails verification, except the first repository commit.
+The first published application baseline is v1.0.0. Use MINOR for regular weekly
+releases, PATCH for urgent out-of-cycle fixes and MAJOR for breaking releases.
+See [weekly release governance](RELEASE-GOVERNANCE.md#weekly-production-cadence).
+API contract versions are independent. All workspace package versions must match.
+Main normally requires a higher app version and a completed dated CHANGELOG section.
 
 ```sh
-npm run release -- patch  # or minor / major
+npm run release -- minor  # regular weekly release
 # Complete the newly inserted CHANGELOG section.
 npm run release:check
 npm test
@@ -20,7 +20,7 @@ git push -u origin <working-branch>
 ```
 
 The main push runs the deployment workflow. PRs run verification only. GitHub Actions
-pins actions to immutable commits, uses Node 22/Java 21, checks source/versions and
+pins actions to immutable commits, uses Node 24 tooling and Java 21, checks source/versions and
 contracts, runs domain tests and the real Auth/Firestore/Storage emulator integration, and
 builds production assets. The production job uses Google OIDC federation, deploys
 rules/indexes and waits READY, deploys the salesdrone function codebase, then the Cloud Run ingress and Hosting. Verify ingress identity and parser response before cutting over Hosting; retain ingress-deployment.json with the five Function revisions. Provision its isolated runtime/build accounts using scripts/provision-ingress.mjs before the first rollout. See API-INGRESS.md.
@@ -42,8 +42,13 @@ The one-time operator provisioning scripts use the operator's existing Firebase/
 login, preserve IAM policies with etags, and create no service-account private key.
 Federation is restricted by numeric owner/repository ID, main ref and exact deploy
 workflow. The deployment service account has product-specific deploy roles plus
-narrow IAM-publication permissions and actAs on both the compute runtime account and the App Engine default service account (required by Firebase CLI preflight). That actAs
-permission makes main a production trust boundary even without a direct data role.
+narrow IAM-publication permissions. Existing Firebase CLI preflight grants are
+retained. Run `GCP_PROJECT_ID=sales-drone-avinya node scripts/provision-production-runtime.mjs --apply`
+once to provision the dedicated Functions identity and grant the existing
+production deployer actAs on it. The client, scheduler and runtime keep the same
+application routes. The production pipeline verifies all five function identities
+and the four scheduled OIDC identities before Hosting cutover. These grants make
+main a production trust boundary even without a direct deployer data role.
 
 The public documentation job uploads only site/ after its curated build. It does
 not publish docs/, production captures, workbooks, local fixtures or internal evidence.
@@ -158,3 +163,12 @@ If the rollout stops after backend changes, use the failed Actions run and its m
 Firebase Hosting and GitHub Pages publish independently. If the app is live but the documentation job fails, inspect the failing step before rerunning it. Each upload uses `github-pages-RUN_ID-RUN_ATTEMPT`; deployment uses that exact name. `scripts/wait-pages-artifact.mjs` matches the upload output ID using the same `@actions/artifact` lookup as `deploy-pages`, with a 90-second polling deadline, two-second intervals and a two-minute hard step timeout. Duplicate names, a different ID, empty/expired uploads and authorization failures stop publication. SDK/network failures stop the step; absent metadata is polled within the deadline. No token or response body is logged.
 
 The local JavaScript action receives the job-scoped artifact runtime credentials from GitHub; no new repository token permission is needed. This costs at most approximately 45 GitHub metadata reads and no Firestore reads or writes. Keep existing verification artifacts and unique attempt names when rerunning a failed documentation job; do not delete artifacts or redeploy Firebase blindly. After publication, verify the HTML source-commit stamp and the public settings/product guide checks. Artifact upload success alone is not Pages publication evidence.
+
+## Pre-production promotion
+
+Open change PRs against `pre-prod`. After merging, the pre-production workflow
+deploys the candidate and records its source tree, version and smoke checks.
+Open a PR from `pre-prod` to `main` after that workflow succeeds. Production
+verification requires matching source-tree evidence for both the proposed merge
+and the resulting main commit. Sync `main` back into `pre-prod` after a promotion.
+See [the resource plan and acceptance checklist](PRE-PRODUCTION-PLAN.md).

@@ -18,6 +18,7 @@ export default defineConfig(({ command }) => ({
     {
       name: 'production-rum-tag',
       transformIndexHtml(html) {
+        if (process.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production') return html;
         return command === 'build' &&
           process.env.VITE_ENABLE_RUM === 'true' &&
           process.env.VITE_USE_EMULATORS !== 'true'
@@ -36,6 +37,7 @@ export default defineConfig(({ command }) => ({
     },
   ],
   define: {
+    __PREPROD_BUILD_COMMIT__: JSON.stringify(process.env.GITHUB_SHA || 'local'),
     __APP_VERSION__: JSON.stringify(
       JSON.parse(
         readFileSync(new URL('../../package.json', import.meta.url), 'utf8'),
@@ -63,7 +65,14 @@ export default defineConfig(({ command }) => ({
     target: ['chrome107', 'edge107', 'firefox104', 'safari16'],
     chunkSizeWarningLimit: 750,
     rolldownOptions: {
-      input: ['index.html', 'usage-analytics.html'],
+      input: [
+        'index.html',
+        'usage-analytics.html',
+        ...(process.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production' &&
+        process.env.VITE_USE_EMULATORS !== 'true'
+          ? ['preprod-monitoring.html']
+          : []),
+      ],
     },
   },
 }));

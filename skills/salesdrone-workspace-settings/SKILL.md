@@ -100,6 +100,8 @@ Cleanup blocks use fixed 503 LEAD_DATA_RESET copy and Retry-After:60; preserve t
 
 Lead research: [settings contract](references/research.md).
 
-Lead fields has separate Field order and Lead page header settings. Both are workspace-wide Admin controls saved through the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports up to six additional visible fields. Existing layouts keep their defaults, and retired field IDs are removed from the saved arrangement. Settings audit events include static changed control keys only.
+Field order and Lead page header are separate Admin controls on the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports six visible fields. Keep existing defaults and remove retired IDs. Audit only static control keys.
 
 Align About cards to the section width. Limit the story text and illustration within the card.
+
+Admins can convert an active custom Dropdown to Multi-select in place. Keep the field ID, accept the previous scalar as one selection and reject reversal. The editor accepts up to 30 distinct choices.

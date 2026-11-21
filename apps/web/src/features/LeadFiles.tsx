@@ -1,3 +1,4 @@
+import { errorMessage } from '../lib/error-message';
 import { useEffect, useRef, useState } from 'react';
 import { FileUp, FileText, Download, Trash2 } from 'lucide-react';
 import { ErrorMessage, Loading } from '../components/UI';
@@ -65,7 +66,7 @@ export default function LeadFiles({
         );
       }
     } catch (e) {
-      if (alive.current) setError((e as Error).message);
+      if (alive.current) setError(errorMessage(e));
     } finally {
       if (alive.current) setLoading(false);
     }
@@ -119,7 +120,7 @@ export default function LeadFiles({
         ready = { ...record!, state: 'Ready', version: 2 };
         setProgress(100);
       } else
-        ready = await uploadFileBytes(
+        ready = await uploadFileBytes<Attachment>(
           base + '/' + record!.id + '/content',
           file,
           (value) => {
@@ -136,7 +137,7 @@ export default function LeadFiles({
         setError(
           (e as Error).name === 'AbortError'
             ? 'Upload cancelled. You can retry or discard this pending upload.'
-            : (e as Error).message,
+            : errorMessage(e),
         );
         setStatus('Upload not completed.');
       }
@@ -165,7 +166,7 @@ export default function LeadFiles({
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       setStatus('Download started.');
     } catch (e) {
-      if (alive.current) setError((e as Error).message);
+      if (alive.current) setError(errorMessage(e));
     } finally {
       if (alive.current) setBusy(false);
     }
@@ -185,7 +186,7 @@ export default function LeadFiles({
       setConfirm(null);
       setStatus('File removed.');
     } catch (e) {
-      if (alive.current) setError((e as Error).message);
+      if (alive.current) setError(errorMessage(e));
     } finally {
       if (alive.current) setBusy(false);
     }

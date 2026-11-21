@@ -2,8 +2,10 @@
 
 ## Supported releases
 
-Security fixes target the latest 1.x application release. The HTTP API contract
-has its own version. Report suspected vulnerabilities privately through this
+Security fixes target the current production application release. See the
+[published app version](https://salesdrone.in/version.json) and
+[release history](https://github.com/theharithsa/SalesDrone/releases). The HTTP API
+contract has its own version. Report suspected vulnerabilities privately through this
 repository's Security > Report a vulnerability feature. Do not put customer data,
 access tokens, account screenshots or exploit credentials in public issues.
 
@@ -29,7 +31,15 @@ workflow uses GitHub OIDC / Workload Identity Federation; it has no service-acco
 private key. The trust policy binds the numeric repository/owner IDs, main ref and
 exact deploy workflow. Production credentials are unavailable to PR verification.
 A deployment principal can run code as the application's runtime identity: control
-of main is therefore a production security boundary. Protect it appropriately.
+of main is therefore a production security boundary. Pre-production uses separate
+runtime identities and test data in a named Firestore database. Database and
+bucket scoping are reviewed separately from the deployer's project permissions.
+Effective IAM remains an acceptance check even when the configured grants are scoped. See the
+[isolation acceptance checklist](docs/PRE-PRODUCTION-PLAN.md#acceptance-and-activation-gates).
+
+Review this policy before each production release. Update affected access,
+environment, data-handling and reporting guidance in the release PR. Keep
+credentials, customer data and sensitive operational details in private runbooks.
 
 The Firebase web config, App Check site key, public VAPID key and RUM script URL
 are browser configuration, not authentication credentials. Never put a private API
@@ -121,3 +131,5 @@ for every lead, with no partial transaction on conflict.
 ## Read-only MCP adapter
 
 The local npm adapter calls fixed GET API routes and accepts only a process-memory PAT. It has no database/cloud credentials, arbitrary request tool, write tool, redirect following or unrestricted telemetry exporter; opt-in safe OTel configuration is maintained by the standalone MCP repository. Explicit team:read and people:read scopes remain Admin-only; directory output excludes email/security fields. They never grant member administration. Untrusted lead/import/model text is data, never instructions. The operator chooses the MCP host/model receiving authorized data. See [transport and publication limits](docs/MCP.md).
+
+Company directory reads inherit the caller's lead scope. A workbook ID identifies a row only after checking current lead access. Reviewed imports require the usual write and lead permissions, and commits check versions again. Exported workbooks contain business data and should only be shared with authorized recipients.

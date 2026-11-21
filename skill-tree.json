@@ -254,7 +254,9 @@
         "import history",
         "revised workbook",
         "duplicate comparison",
-        "collaborative import"
+        "collaborative import",
+        "export edit reimport",
+        "sales stage mapping"
       ],
       "related": [
         "salesdrone-release",
@@ -435,7 +437,9 @@
         "filtered report",
         "batch edit",
         "bulk edit",
-        "select leads"
+        "select leads",
+        "company directory",
+        "company leads"
       ],
       "related": [
         "salesdrone-release",
@@ -446,6 +450,7 @@
         "salesdrone-notifications"
       ],
       "apiOperations": [
+        "GET /api/v1/companies",
         "GET /api/v1/leads",
         "GET /api/v1/archived-leads",
         "POST /api/v1/leads/export",

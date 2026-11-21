@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://js-cdn.dynatrace.com; style-src 'self'; connect-src https://bf12470wrz.bf.dynatrace.com; img-src data: https://bf12470wrz.bf.dynatrace.com; base-uri 'none'; form-action 'none'">
+  <title>SalesDrone pre-production browser check</title>
+  <script type="module" src="/src/preprod-monitoring.ts"></script>
+</head>
+<body>
+  <main>
+    <h1>Pre-production browser check</h1>
+    <p>Send a browser timing test to Dynatrace. This page does not open the SalesDrone workspace.</p>
+    <button type="button" id="send-check">Send browser test</button>
+    <p role="status" id="check-status"></p>
+  </main>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.13.11**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.14.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -236,17 +236,17 @@ Existing records and values are preserved. This is workspace-wide presentation c
 
 **Default:** No custom fields.
 
-Add up to 30 custom fields: text, long text, number, date, dropdown or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs/types cannot be changed or reused after retirement.
+Add up to 30 custom fields: text, long text, number, date, dropdown, multi-select or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs stay fixed. Edit an active Dropdown and select Multi-select to retain its existing values and allow up to 30 choices per lead. This type change is permanent.
 
-Required rules apply to new manual entries or explicit custom-value edits, not unrelated edits to legacy records. The first-sheet importer currently maps standard enquiry fields, not arbitrary custom-field columns.
+Required rules apply to new manual entries or explicit custom-value edits. Import can map an existing compatible custom field. Only Admins can create new workspace fields during mapping.
 
-**Example:** Add a dropdown named Material category with Cement, Aggregates and Blocks.
+**Example:** Edit Product, change Field type to Multi-select, review its choices and save the field.
 
-### Custom dropdown choices
+### Custom dropdown and multi-select choices
 
-**Default:** Provided when creating the dropdown.
+**Default:** Provided when creating the field.
 
-A custom dropdown needs at least one distinct nonempty choice. Choice labels are bounded and case-normalized duplicates are rejected.
+A custom dropdown or multi-select needs at least one distinct nonempty choice. Choice labels are bounded and case-normalized duplicates are rejected.
 
 Removing a choice preserves unchanged historical values but prevents new use of that retired value.
 
@@ -290,7 +290,7 @@ New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order
 
 Choose up to six additional visible built-in or custom fields. The fictional preview shows the draft before saving.
 
-The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.
+Selected header fields appear below the lead name. An empty selected field displays N/A. Phone values open the dialer.
 
 **Example:** Show City / location and Product in the lead header.
 
