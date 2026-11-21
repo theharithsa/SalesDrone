@@ -30,6 +30,7 @@ API contract versions track compatibility independently.
 
 ### Fixed
 - Browser API failures retain their HTTP status, and comment editing reports when a stale lead could not be refreshed.
+- Production promotion validates the pre-production receipt checksum and its exact run, attempt, version, commit and source tree.
 
 ## [2.13.11] - 2026-11-14
 
