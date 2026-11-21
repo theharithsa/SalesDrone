@@ -30,6 +30,10 @@ const metadata = JSON.parse(await readFile('deployment.json', 'utf8')),
     )
     .digest('hex');
 const version = metadata.version;
+const environment = metadata.environment ?? 'production';
+if (!['production', 'pre-production'].includes(environment))
+  throw Error('Invalid deployment telemetry environment');
+const service = environment === 'pre-production' ? 'salesdrone-preprod-api' : 'salesdrone-api';
 async function send(path, body, contentType = 'application/json') {
   for (let attempt = 0; attempt < 3; attempt++) {
     let r;
@@ -57,9 +61,9 @@ const data = {
   'event.provider': 'com.avinyatech.salesdrone.github-actions',
   'event.authority': 'automation-confirmed',
   'schema.version': 1,
-  'service.name':'salesdrone-api',
+  'service.name':service,
   'service.namespace':'avinyatech',
-  'deployment.environment.name':'production',
+  'deployment.environment.name':environment,
   'app.version': version,
   'deployment.outcome': outcome,
   'build.commit': metadata.commit,
@@ -70,7 +74,7 @@ const data = {
   'deployment.project': metadata.project,
   'deployment.region': metadata.region,
   'deployment.hosting': metadata.hosting,
-  'deployment.functions': JSON.stringify(metadata.functions),
+  'deployment.functions': JSON.stringify(metadata.functions || []),
   'deployment.ingress': JSON.stringify(metadata.ingress || {}),
   'deployment.storage': JSON.stringify(metadata.storage || {}),
   'changelog.url': metadata.changelogUrl,
@@ -92,7 +96,7 @@ const receipts = {
   version,
   outcome,
   eventId: id,
-  signals: await probeSignals(u.origin, token),
+  signals: await probeSignals(u.origin, token, fetch, environment),
   bizEventStatus: biz.status,
   sdlcEventStatus:marker.status,
   sdlcEventId:deploymentEvent(metadata,outcome)['event.id'],

@@ -36,4 +36,12 @@ await writeFile('preproduction-verification.json', JSON.stringify({
   runId: Number(process.env.GITHUB_RUN_ID), attempt: Number(process.env.GITHUB_RUN_ATTEMPT),
   checks: preprodChecks,
 }, null, 2));
+const repository = 'theharithsa/SalesDrone';
+await writeFile('deployment.json', JSON.stringify({
+  environment: metadata.environment, version, commit: sha, repository,
+  project: target.project, region: target.region, hosting: target.origin,
+  runId: process.env.GITHUB_RUN_ID, runAttempt: process.env.GITHUB_RUN_ATTEMPT,
+  runUrl: `https://github.com/${repository}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+  changelogUrl: `https://github.com/${repository}/blob/${sha}/CHANGELOG.md`,
+}, null, 2));
 console.log('Verified pre-production version, anonymous lead denial and JSON boundary.');
