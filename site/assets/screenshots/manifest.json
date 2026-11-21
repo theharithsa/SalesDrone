@@ -768,5 +768,25 @@
     "capturePixels": "1360 x 472",
     "version": "2.14.0",
     "review": "Cropped stage-mapping and validation controls from a local fictional SalesDrone export. The selected replacement was confirmed in the preview."
+  },
+  {
+    "file": "field-manager-multi-select-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "21f302b197e96817faa8aa6300bd58b94e18a2c1724ed2d688d3e153798ae52f",
+    "capturedAt": "2026-11-21T13:26:53.336Z",
+    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1440 x 900",
+    "version": "2.14.0",
+    "review": "Reviewed fictional Field definitions editor with Multi-select selected; no backend write."
+  },
+  {
+    "file": "lead-product-multi-select-mobile-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "d64f5b3efaeaa68997252987b7371be76fff0392eb0d5da1ce1d5db382eb85c4",
+    "capturedAt": "2026-11-21T13:25:42.374Z",
+    "viewport": "390 x 760 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "390 x 760",
+    "version": "2.14.0",
+    "review": "Reviewed fictional enquiry form with two selected choices; browser viewport, no backend write or physical-device claim."
   }
 ]

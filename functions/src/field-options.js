@@ -50,23 +50,24 @@ export const CustomField = z
   .object({
     id: z.string().regex(/^cf_[a-z0-9_]{1,60}$/),
     label: z.string().trim().min(1).max(80),
-    type: z.enum(['text', 'textarea', 'number', 'date', 'select', 'checkbox']),
+    type: z.enum(['text', 'textarea', 'number', 'date', 'select', 'multiSelect', 'checkbox']),
     options: values.default([]),
     required: z.boolean().default(false),
     deleted: z.boolean().default(false),
   })
   .strict()
   .superRefine((f, ctx) => {
-    if (f.type === 'select' && !f.deleted && !f.options.length)
+    const hasChoices = ['select', 'multiSelect'].includes(f.type);
+    if (hasChoices && !f.deleted && !f.options.length)
       ctx.addIssue({
         code: 'custom',
-        message: 'Add at least one dropdown choice',
+        message: 'Add at least one choice',
         path: ['options'],
       });
-    if (f.type !== 'select' && f.options.length)
+    if (!hasChoices && f.options.length)
       ctx.addIssue({
         code: 'custom',
-        message: 'Only dropdown fields have choices',
+        message: 'Only dropdown and multi-select fields have choices',
         path: ['options'],
       });
   });
@@ -181,11 +182,12 @@ export function mergeFieldSettings(current, input) {
   const fields = input.customFields || current.customFields;
   for (const old of current.customFields) {
     const next = fields.find((f) => f.id === old.id);
-    if (!next || next.type !== old.type || (old.deleted && !next.deleted))
+    const canConvert = !old.deleted && !next?.deleted && old.type === 'select' && next?.type === 'multiSelect';
+    if (!next || (next.type !== old.type && !canConvert) || (old.deleted && !next.deleted))
       throw new AppError(
         400,
         'FIELD_DEFINITION',
-        'Retire existing fields without changing their IDs or types. Retired IDs cannot be reused.',
+        'A dropdown can become a multi-select field. Other field types and retired IDs are fixed.',
       );
   }
   const labels = {
@@ -231,7 +233,7 @@ export function validateCustomValues(
   for (const [id, value] of Object.entries(values || {})) {
     const field = fields.find((f) => f.id === id);
     if (!field || field.deleted) {
-      if (!(id in previous) || previous[id] !== value)
+      if (!(id in previous) || JSON.stringify(previous[id]) !== JSON.stringify(value))
         throw new AppError(
           400,
           'CUSTOM_FIELD',
@@ -240,6 +242,16 @@ export function validateCustomValues(
       continue;
     }
     if (value === '' || value === null) continue;
+    if (field.type === 'multiSelect') {
+      const selections = Array.isArray(value) ? value : [value];
+      const prior = Array.isArray(previous[id]) ? previous[id] : [previous[id]];
+      if (selections.length > 30 || new Set(selections).size !== selections.length ||
+          selections.some((option) => typeof option !== 'string' || !option || option.length > 100 ||
+            !(field.options.includes(option) || prior.includes(option)))) {
+        throw new AppError(400, 'CUSTOM_FIELD', `Choose up to 30 distinct options for ${field.label}`);
+      }
+      continue;
+    }
     const valid =
       field.type === 'checkbox'
         ? typeof value === 'boolean'
@@ -266,7 +278,8 @@ export function validateCustomValues(
         value === undefined ||
         value === null ||
         value === '' ||
-        (f.type === 'checkbox' && value !== true)
+        (f.type === 'checkbox' && value !== true) ||
+        (f.type === 'multiSelect' && Array.isArray(value) && !value.length)
       )
         throw new AppError(
           400,

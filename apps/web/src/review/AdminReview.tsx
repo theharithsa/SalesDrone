@@ -187,6 +187,14 @@ function AdminReview() {
         const fields=structuredClone(defaultFieldOptions);
         const query=new URLSearchParams(location.search);
         if(['lead-form-selects','settings'].includes(query.get('preview') || ''))fields.customFields.push({id:'cf_preview_product',label:'Product',type:'select',options:['Sample board','Sample panel'],required:false,deleted:false});
+        if (query.get('preview') === 'lead-form-multi-select') {
+          fields.customFields.push({
+            id: 'cf_preview_product', label: 'Product', type: 'multiSelect',
+            options: ['Sample board', 'Edge trim', 'Exterior panel'],
+            required: false, deleted: false,
+          });
+          fields.fieldOrder = ['source', 'name', 'cf_preview_product', 'phone'];
+        }
         if(['dashboard-fields','import-fields'].includes(query.get('preview')||'')){
           fields.labels={...fields.labels,zone:'Zone'};
           fields.values.zone=['North','South'];

@@ -37,7 +37,7 @@ export function exportColumns(keys, config) {
     return { key, label: custom?.label || config.labels[key] || columns[key] };
   });
 }
-export function exportRows(leads, selected) {
+export function exportRows(leads, selected, config) {
   return leads.map((lead) => ({
     id: lead.id,
     version: lead.version,
@@ -47,6 +47,11 @@ export function exportRows(leads, selected) {
         : key === 'phone'
           ? lead.phone || lead.originalPhone
           : lead[key];
+      const multiSelect = config?.customFields.some((field) => field.id === key && field.type === 'multiSelect');
+      if (multiSelect || Array.isArray(value)) {
+        const choices = Array.isArray(value) ? value : value ? [value] : [];
+        return choices.length ? JSON.stringify(choices) : '';
+      }
       return typeof value === 'boolean'
         ? value
           ? 'Yes'

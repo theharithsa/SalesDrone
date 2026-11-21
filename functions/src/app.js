@@ -921,7 +921,7 @@ export function createApp({
     });
     return {
       columns: selected,
-      rows: exportRows(result.items, selected),
+      rows: exportRows(result.items, selected, config),
       ...(comments ? { comments } : {}),
       nextCursor: result.nextCursor,
       scanLimited: result.scanLimited,

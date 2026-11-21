@@ -97,3 +97,5 @@ Render one Assistant message per submitted question. Presentation can shorten ex
 business-records.js owns static read-only business datasets: lead tasks, notes/calls, transitions, import summaries, own Hygiene reports, Ready file metadata and current score views. Current lead/job/report policies apply per record and result page; personal reminders/chats/accounts/secrets and file bytes are excluded. Source/business/task epochs invalidate saved reads. Scan 100 records per page, cap 25,000 with Partial status, and never send the database to the planner. Keep RAG for qualitative evidence. Regress multi-page counts, projection, aliases, source changes and scope revocation.
 
 Keep history available on demand and show New chat as a labelled tonal action on wide layouts. Use one conversation page heading and a subordinate welcome heading.
+
+Multi-select filters match individual choices on each scoped lead. Keep grouping single-valued.

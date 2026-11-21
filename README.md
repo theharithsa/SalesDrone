@@ -243,6 +243,8 @@ For a daily update, use **Leads → Export Excel**, edit the **Leads** sheet, th
 
 Collaborative import review supports history, visible duplicate matches and linked workbook updates preserving team edits. Admins can grant member import access and explicitly delete retained details. See [Imports](docs/IMPORTS.md).
 
+Admins can configure **Multi-select** lead fields in **Settings → Leads Management → Field definitions**. Existing custom dropdowns such as Product can switch types and retain their saved choice. See the [mobile form preview](site/assets/screenshots/lead-product-multi-select-mobile-demo.jpg) and [Excel round-trip guide](docs/IMPORTS.md#update-leads-from-an-excel-export).
+
 Column filters include an indexed **Exact match** option for enquiry source, sales stage and custom dropdowns. It compares the saved case, spacing and Unicode literally; existing **Equals** retains tolerant matching. See the [product handbook](docs/PRODUCT-GUIDE.md#leads).
 
 [Reviewed mobile filter example](site/assets/screenshots/lead-filters-mobile-demo.jpg) (fictional demo data).

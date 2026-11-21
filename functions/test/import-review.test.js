@@ -791,3 +791,34 @@ test('identified updates accept an existing shared phone and flag newly conflict
   const [collision] = await rows(s, await draft(s, [{ ...change, phone: '+12025550456', leadVersion: '2' }], mode));
   assert.equal(collision.classification, 'Conflict');
 });
+
+test('exported multi-select cells preserve punctuation, retired choices, and unchanged legacy values', async () => {
+  const s = await setup();
+  const key = 'cf_products';
+  const originalConfig = (await s.call('get', '/field-options').expect(200)).body;
+  const updateConfig = (current, type, options) => s.call('patch', '/field-options', {
+    expectedVersion: current.version, values: current.values,
+    customFields: [{ id: key, label: 'Products', type, options }],
+  }).expect(200);
+  const config = (await updateConfig(originalConfig, 'select', ['Panel, exterior', 'Trim'])).body;
+  const { importComments, ...original } = row();
+  const lead = (await s.call('post', '/leads', { ...original, customFields: { [key]: 'Panel, exterior' } }).expect(200)).body;
+  await updateConfig(config, 'multiSelect', ['Trim']);
+
+  const exported = (await s.call('post', '/leads/export', { columns: [key] }).expect(200)).body.rows[0];
+  assert.deepEqual(exported.values, ['["Panel, exterior"]']);
+  const source = { leadId: exported.id, leadVersion: exported.version, [key]: exported.values[0] };
+  const unchanged = await commit(s, await approve(s, await draft(s, [source], { duplicateMode: 'update' })));
+  assert.equal(unchanged.updated, 0);
+
+  const changed = { ...source, [key]: '["Panel, exterior","Trim"]' };
+  const update = await commit(s, await approve(s, await draft(s, [changed], { duplicateMode: 'update' })));
+  assert.equal(update.updated, 1);
+  const saved = await s.store.get(path('leads', lead.id));
+  assert.deepEqual(saved.customFields[key], ['Panel, exterior', 'Trim']);
+
+  const clear = { ...source, leadVersion: saved.version, [key]: '[]' };
+  const cleared = await commit(s, await approve(s, await draft(s, [clear], { duplicateMode: 'update' })));
+  assert.equal(cleared.updated, 1);
+  assert.deepEqual((await s.store.get(path('leads', lead.id))).customFields[key], []);
+});

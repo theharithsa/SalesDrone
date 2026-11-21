@@ -25,7 +25,7 @@ export function sourceChunks(collection, source) {
           source.legacyStatus,
           source.initialDiscussion,
           source.comments,
-          ...Object.values(source.customFields || {}).filter(
+          ...Object.values(source.customFields || {}).flat().filter(
             (v) => typeof v === "string",
           ),
         ]

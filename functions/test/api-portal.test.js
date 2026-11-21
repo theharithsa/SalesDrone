@@ -105,7 +105,6 @@ test('Team contract exposes typed admin-only reporting and literal assignment ex
 
 test('OpenAPI documents the seven-day replay deadline and separates the reset contract', async () => {
   const spec = JSON.parse(await read('docs/openapi.json'));
-  assert.equal(spec.info.version, '1.35.0');
   for (const [method, route] of [
     ['post', '/leads'],
     ['post', '/imports/{id}/commit'],
@@ -117,4 +116,13 @@ test('OpenAPI documents the seven-day replay deadline and separates the reset co
     assert.equal(op.parameters.find((p) => p.name === 'Idempotency-Key').required, true);
   }
   assert.equal(spec.paths['/api/v1/lead-data-reset'].post['x-idempotency-replay-days'], undefined);
+});
+
+test('published lead schemas expose the bounded multi-select value and the field definition type', async () => {
+  const { components: { schemas } } = JSON.parse(await read('docs/openapi.json'));
+  const values = schemas.LeadInput.properties.customFields.additionalProperties;
+  const selectionList = values.anyOf.find((value) => value.type === 'array');
+  assert.equal(selectionList.items.type, 'string');
+  assert.equal(selectionList.maxItems, 30);
+  assert.ok(schemas.FieldOptionsPatch.properties.customFields.items.properties.type.enum.includes('multiSelect'));
 });

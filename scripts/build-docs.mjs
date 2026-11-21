@@ -72,6 +72,8 @@ const screenshots = [
   'outreach-demo.jpg',
   'field-manager-mobile-demo.jpg',
   'field-manager-demo.jpg',
+  'field-manager-multi-select-demo.jpg',
+  'lead-product-multi-select-mobile-demo.jpg',
   'startup-mobile-demo.jpg',
   'archives-demo.jpg',
   'archives-mobile.jpg',

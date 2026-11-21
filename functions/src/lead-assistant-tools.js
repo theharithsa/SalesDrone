@@ -175,7 +175,7 @@ export function validateAgentPlan(
       );
     if (
       !f ||
-      !["text", "textarea", "select", "date", "number", "checkbox"].includes(
+      !["text", "textarea", "select", "multiSelect", "date", "number", "checkbox"].includes(
         f.type,
       )
     )
@@ -235,6 +235,8 @@ export function validateAgentPlan(
       "AGENT_CLARIFY",
       "Choose a configured grouping field.",
     );
+  if (byId.get(plan.groupBy)?.type === "multiSelect")
+    throw new AppError(400, "AGENT_CLARIFY", "Choose one option to filter this multi-select field.");
   if (plan.outcome !== "none") {
     const stages =
       config[plan.outcome === "converted" ? "convertedStages" : "failedStages"];
@@ -293,13 +295,13 @@ export function matchesAgentLead(lead, plan, config) {
   )
     return false;
   for (const f of plan.filters) {
-    const actual = valueAt(lead, f.field),
-      a = normalize(actual),
-      b = normalize(f.value);
-    if (f.operator === "equals" && a !== b) return false;
-    if (f.operator === "contains" && !a.includes(b)) return false;
-    if (f.operator === "not_equals" && a === b) return false;
-    if (f.operator === "not_contains" && a.includes(b)) return false;
+    const actual = valueAt(lead, f.field);
+    const choices = (Array.isArray(actual) ? actual : [actual]).map(normalize);
+    const expected = normalize(f.value);
+    if (f.operator === "equals" && !choices.includes(expected)) return false;
+    if (f.operator === "contains" && !choices.some((choice) => choice.includes(expected))) return false;
+    if (f.operator === "not_equals" && choices.includes(expected)) return false;
+    if (f.operator === "not_contains" && choices.some((choice) => choice.includes(expected))) return false;
     if (f.operator === "before" && !(actual < f.value)) return false;
     if (f.operator === "after" && !(actual > f.value)) return false;
   }

@@ -146,7 +146,7 @@ Header phone numbers use the same monospace identifier font as phone fields and 
 
 Admins can choose Assigned to in desktop Filters or the phone filter dialog. Choose All assignees, Unassigned or a named member, including inactive members whose leads remain assigned. It composes with other conditions and applies to exports. Apply commits a phone draft; Cancel preserves current filters; Reset clears the assignee. Team workload links open Leads with that assignee and clear unrelated conditions.
 
-Visible empty lead fields show N/A. The display preserves numeric zero and an explicit No. A blank Excel cell still means keep the saved value on update.
+Visible empty lead fields show N/A. The display preserves numeric zero and an explicit No. A blank Excel cell keeps the saved value on update. For multi-select fields, keep the exported list of quoted choices inside brackets. Enter [] to clear an optional selection.
 
 ![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/lead-filters-demo.jpg)
 
@@ -564,7 +564,7 @@ Personal controls for members; workspace controls for administrators
 
 Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.
 
-Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. Choice lists manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.
+Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. To let users select several products, open Settings > Leads Management > Field definitions, edit Product, choose Multi-select and save. Existing choices carry over. New custom fields can also start as Multi-select. Up to 30 choices can be selected per lead. Filter by an individual choice in Leads or Lead Assistant. Dashboard grouping uses single-valued fields. Retirement preserves stored values.
 
 Reports & lead access controls exports and assigned-only visibility for non-admins. People & access manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.
 
@@ -574,7 +574,7 @@ The top-right theme switch shows sun and moon icons with a solid indicator on th
 
 On phones, the lead header displays Sales stage and Assigned to. Open Edit lead to change either value when permitted.
 
-![Settings: complete control reference — synthetic demo only](../site/assets/screenshots/field-manager-demo.jpg)
+![Settings: complete control reference — synthetic demo only](../site/assets/screenshots/field-manager-multi-select-demo.jpg)
 
 ### Questions
 

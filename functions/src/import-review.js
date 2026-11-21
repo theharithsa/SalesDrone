@@ -56,6 +56,25 @@ const nameKey = (name) =>
     .replace(/\s+/g, ' ')
     .toLowerCase();
 const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+const choices = (value) => Array.isArray(value) ? value : value ? [value] : [];
+const sameField = (key, a, b) => {
+  if (!key.startsWith('cf_') || !(Array.isArray(a) || Array.isArray(b))) return same(a, b);
+  const left = choices(a);
+  const right = choices(b);
+  return left.length === right.length && left.every((choice) => right.includes(choice));
+};
+
+function workbookChoices(value, label) {
+  const cell = String(value).trim();
+  if (!cell.startsWith('[')) return [cell];
+  try {
+    const parsed = JSON.parse(cell);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+  }
+  throw new AppError(400, 'CUSTOM_FIELD', `Use a list of quoted choices for ${label}`);
+}
 const value = (lead, key) =>
   key.startsWith('cf_')
     ? (lead.customFields?.[key] ?? null)
@@ -129,10 +148,21 @@ function normalizeSource(raw, input, options, index) {
       decision: 'skip',
     };
   const custom = {};
+  const selectionValues = {};
   for (const f of options.customFields.filter((f) => !f.deleted)) {
     if (!Object.hasOwn(fields, f.id)) continue;
     const rawValue = fields[f.id];
     delete fields[f.id];
+    if (f.type === 'multiSelect' && String(rawValue ?? '').trim()) {
+      try {
+        custom[f.id] = workbookChoices(rawValue, f.label);
+      } catch (e) {
+        return { index, sourceRow: sourceRow || index + 1, error: e.message, decision: 'skip', row: null };
+      }
+      // Check structure now. The matched lead determines whether a retired choice is permitted.
+      selectionValues[f.id] = custom[f.id];
+      continue;
+    }
     custom[f.id] =
       String(rawValue ?? '').trim() === ''
         ? null
@@ -154,7 +184,7 @@ function normalizeSource(raw, input, options, index) {
   if (result.row) {
     result.row.customFields = custom;
     try {
-      validateCustomValues(options, result.row.customFields, {}, false);
+      validateCustomValues(options, result.row.customFields, selectionValues, false);
     } catch (e) {
       result.error = e.message;
       result.row = null;
@@ -300,7 +330,12 @@ async function candidates(tx, m, row) {
     return { restricted: true, leads: [] };
   return { restricted: false, leads };
 }
-async function compare(tx, j, r, lead) {
+async function compare(tx, j, r, lead, options) {
+  try {
+    validateCustomValues(options, r.row.customFields, lead.customFields, false);
+  } catch (e) {
+    return { ...r, classification: 'Invalid', error: e.message, decision: 'skip' };
+  }
   const baseline = await tx.get(baselinePath(j.datasetId, lead.id));
   const exported = r.suppliedLeadId === lead.id && r.sourceVersion != null;
   const currentExport = exported && r.sourceVersion === lead.version;
@@ -309,18 +344,18 @@ async function compare(tx, j, r, lead) {
   for (const key of r.mapped) {
     const incoming = value(r.row, key),
       current = value(lead, key);
-    if (incoming === '' || incoming === null || same(incoming, current))
+    if (incoming === '' || incoming === null || sameField(key, incoming, current))
       continue;
     if (
       !exported && baseline &&
       Object.hasOwn(baseline.values, key) &&
-      same(incoming, baseline.values[key])
+      sameField(key, incoming, baseline.values[key])
     )
       continue;
     const conflict = exported ? !currentExport :
       !baseline ||
       !Object.hasOwn(baseline.values, key) ||
-      !same(current, baseline.values[key]);
+      !sameField(key, current, baseline.values[key]);
     changes.push({
       key,
       current,
@@ -378,7 +413,7 @@ async function compare(tx, j, r, lead) {
       : 'Matched existing lead',
   };
 }
-async function planRow(tx, m, j, r, forcedId) {
+async function planRow(tx, m, j, r, options, forcedId) {
   if (r.error) return { ...r, classification: 'Invalid', decision: 'skip' };
   const found = await candidates(tx, m, r);
   if (found.restricted)
@@ -463,7 +498,7 @@ async function planRow(tx, m, j, r, forcedId) {
       classification: 'Conflict',
       reason: 'Archived leads cannot be updated by import',
     };
-  if (match && j.duplicateMode === 'update') return compare(tx, j, base, match);
+  if (match && j.duplicateMode === 'update') return compare(tx, j, base, match, options);
   if (found.leads.length || r.suppliedLeadId)
     return {
       ...base,
@@ -471,7 +506,7 @@ async function planRow(tx, m, j, r, forcedId) {
       reason: 'Name/contact do not identify one lead; select a match or skip',
     };
   try {
-    validateCustomValues(await readFieldOptions(tx), r.row.customFields);
+    validateCustomValues(options, r.row.customFields);
   } catch (e) {
     return {
       ...base,
@@ -488,6 +523,7 @@ export async function planImportChunk(tx, m, id, input, now) {
   if (j.status !== 'Preparing') fail('IMPORT_STATE', 'Import is not preparing');
   const c = await tx.get(chunkPath(id, j.planOffset));
   if (!c) fail('IMPORT_CHUNK', 'Import chunk missing');
+  const options = await readFieldOptions(tx);
   const rows = [];
   for (const r of c.rows) {
     const source = Object.fromEntries(
@@ -508,7 +544,7 @@ export async function planImportChunk(tx, m, id, input, now) {
         .filter((k) => Object.hasOwn(r, k))
         .map((k) => [k, r[k]]),
     );
-    rows.push(await planRow(tx, m, j, source));
+    rows.push(await planRow(tx, m, j, source, options));
   }
   if (Buffer.byteLength(JSON.stringify(rows)) > 850 * 1024)
     fail(
@@ -593,6 +629,7 @@ export async function decideImportRow(tx, m, id, index, input, now) {
       m,
       j,
       row,
+      await readFieldOptions(tx),
       input.action === 'match' ? input.leadId : row.leadId,
     );
     if (input.action === 'match' && !input.leadId)
@@ -770,7 +807,8 @@ async function prepareUpdate(tx, m, j, r, now, options) {
   for (const f of options.customFields.filter((f) => f.required && !f.deleted))
     if (
       Object.hasOwn(r.patch || {}, f.id) &&
-      [null, '', false, undefined].includes(candidate.customFields[f.id])
+      ([null, '', false, undefined].includes(candidate.customFields[f.id]) ||
+        (Array.isArray(candidate.customFields[f.id]) && !candidate.customFields[f.id].length))
     )
       fail(
         'CUSTOM_FIELD_REQUIRED',

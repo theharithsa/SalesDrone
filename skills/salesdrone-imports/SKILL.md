@@ -100,3 +100,5 @@ The Excel export uses the workspace field order and can include numbered comment
 The Imports page links directly to history when the operator has access and announces the current upload, mapping or commit step.
 
 Test a real report export through ExcelJS, the first-sheet worker reader, column mapping, reviewed API and saved lead. Keep the exported ID and version together. Native reports default to update, blanks preserve saved values, numbered comments are reference columns and stale exports require explicit decisions. Resolve active stages by canonical label or an explicit mapping. Verify repeat uploads, shared contacts and unknown or hidden stages.
+
+Export Multi-select cells as JSON string lists to preserve punctuation. Imports compare arrays and legacy single selections without false changes. An empty list clears optional choices. Blank cells preserve values.

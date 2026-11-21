@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "2.14.0",
-  "summary": "Pre-production SalesDrone deployments use a named Firestore database and checked promotion evidence. Lead pages open to a combined activity timeline. Companies groups existing leads, empty fields show N/A and daily XLSX edits preserve lead identity and sales stage.",
+  "summary": "Pre-production SalesDrone deployments use a named Firestore database and checked promotion evidence. Lead pages open to a combined activity timeline. Companies groups existing leads, empty fields show N/A and daily XLSX edits preserve lead identity and sales stage. Custom lead fields support multiple product selections.",
   "modules": [
     "salesdrone-data-platform",
     "salesdrone-release",
@@ -16,7 +16,9 @@
     "salesdrone-leads",
     "salesdrone-imports",
     "salesdrone-interface",
-    "salesdrone-release-readiness"
+    "salesdrone-release-readiness",
+    "salesdrone-workspace-settings",
+    "salesdrone-lead-assistant"
   ],
   "documentation": [
     "docs/PRE-PRODUCTION-PLAN.md",
@@ -37,11 +39,11 @@
     "docs/FINOPS.md",
     "docs/TESTING.md"
   ],
-  "settingsSections": [],
+  "settingsSections": ["fields"],
   "api": {
     "status": "changed",
-    "reason": "Adds the scoped company directory, case-insensitive exact company filter and versioned exported rows for reviewed Excel updates.",
-    "contractVersion": "1.35.0",
+    "reason": "Adds the scoped company directory, case-insensitive exact company filter and versioned exported rows for reviewed Excel updates. Adds a compatible custom choice array and an Admin-only dropdown conversion that adds no lead rewrites or extra reads per lead.",
+    "contractVersion": "1.36.0",
     "permissions": "Verified pre-production membership and the separate App Check registration protect the test workspace. All uses the same current lead-read policy as the Tasks tab. Personal reminders are excluded. Directory and import matches follow lead scope and existing read, export, import and edit capabilities.",
     "tests": [
       "functions/test/api-portal.test.js",
@@ -49,7 +51,8 @@
       "functions/test/custom-fields-and-tasks.test.js",
       "functions/test/reports-policy.test.js",
       "functions/test/import-review.test.js",
-      "functions/test/emulator.integration.js"
+      "functions/test/emulator.integration.js",
+      "functions/test/lead-research.test.js"
     ]
   },
   "observability": {
@@ -107,7 +110,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Check pre-production resource identity, authenticated Admin access, idempotent seed, effective IAM, anonymous denial, ingress transport and promotion source evidence before activation. In the synthetic workspace verify default All, mixed creation-time order, linked task details, focused tabs and measured narrow and wide layouts. Verify the resolved Firebase CLI OpenTelemetry Core path, both dependency installs, the local Pub/Sub message round trip and pre-production deployment. In Companies, search and open company leads and check the prefilled new enquiry. With fictional records export a lead, edit its stage, check the preview, import and verify a second upload is unchanged.",
+  "manualVerification": "Check pre-production resource identity, authenticated Admin access, idempotent seed, effective IAM, anonymous denial, ingress transport and promotion source evidence before activation. In the synthetic workspace verify default All, mixed creation-time order, linked task details, focused tabs and measured narrow and wide layouts. Verify the resolved Firebase CLI OpenTelemetry Core path, both dependency installs, the local Pub/Sub message round trip and pre-production deployment. In Companies, search and open company leads and check the prefilled new enquiry. With fictional records export a lead, edit its stage, check the preview, import and verify a second upload is unchanged. Convert a synthetic Product dropdown, add and remove choices on desktop and mobile, reload, filter, and verify the workbook.",
   "milestone": {
     "number": 71,
     "title": "v2.14.0 \u2014 Pre-production environment",
@@ -124,7 +127,8 @@
       238,
       241,
       242,
-      245
+      245,
+      253
     ],
     "readiness": "ready"
   },
@@ -133,6 +137,8 @@
     "lead-header-mobile-demo.jpg",
     "book-lead-detail-demo.jpg",
     "companies-demo.jpg",
-    "import-workbook-update-demo.jpg"
+    "import-workbook-update-demo.jpg",
+    "field-manager-multi-select-demo.jpg",
+    "lead-product-multi-select-mobile-demo.jpg"
   ]
 }

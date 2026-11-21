@@ -13,6 +13,8 @@ Imports parse the first CSV/XLSX sheet in the browser. No original workbook is u
 
 Each upload accepts the first worksheet, up to 5,000 populated lead rows, a 10 MB file and a 6 MiB parsed request. Export in smaller filtered batches when necessary. Original third-party workbooks accept up to 40 columns. An exported report can also carry reference columns. For older workbooks without identity columns, choose an earlier completed import's **Update this workbook**, or manually choose **Review updates** and confirm matches.
 
+For a multi-select column, keep the bracketed list of quoted choices from the export, such as `["Panel","Trim, exterior"]`. A plain choice works for single-value input. Keep commas inside quotes when they are part of the label. Use `[]` to clear an optional multi-select or leave the cell blank to keep the saved selection. A retired choice can be retained on the same lead.
+
 ## Workflow
 
 External files default to Skip existing contacts. SalesDrone exports default to Review updates. Keep separate enquiries is available for new enquiries without SalesDrone IDs. Select a previous import with Update this workbook to reuse its dataset baseline. A different filename alone does not establish lineage. Upload, compare bounded chunks, inspect row matches/differences, approve clear proposals, resolve remaining decisions, then apply. Nothing changes in leads during comparison/review. History is paginated and shows uploader, status and created/updated/unchanged/skipped counts. Details show the actual duplicate candidates rather than only a total.

@@ -115,7 +115,7 @@
         "The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings \u2192 Leads Management \u2192 Lead page header. Select a phone number to open your calling app.",
         "Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices.",
         "Admins can choose Assigned to in desktop Filters or the phone filter dialog. Choose All assignees, Unassigned or a named member, including inactive members whose leads remain assigned. It composes with other conditions and applies to exports. Apply commits a phone draft; Cancel preserves current filters; Reset clears the assignee. Team workload links open Leads with that assignee and clear unrelated conditions.",
-        "Visible empty lead fields show N/A. The display preserves numeric zero and an explicit No. A blank Excel cell still means keep the saved value on update."
+        "Visible empty lead fields show N/A. The display preserves numeric zero and an explicit No. A blank Excel cell keeps the saved value on update. For multi-select fields, keep the exported list of quoted choices inside brackets. Enter [] to clear an optional selection."
       ],
       "faq": [
         [
@@ -478,7 +478,7 @@
       ],
       "details": [
         "Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.",
-        "Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. Choice lists manages allowed values for supported field types. Retirement preserves stored values; incompatible type changes are constrained.",
+        "Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. To let users select several products, open Settings > Leads Management > Field definitions, edit Product, choose Multi-select and save. Existing choices carry over. New custom fields can also start as Multi-select. Up to 30 choices can be selected per lead. Filter by an individual choice in Leads or Lead Assistant. Dashboard grouping uses single-valued fields. Retirement preserves stored values.",
         "Reports & lead access controls exports and assigned-only visibility for non-admins. People & access manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.",
         "The linked Settings reference is the authoritative per-control checklist. This chapter explains navigation; it does not replace that detailed reference.",
         "The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.",
@@ -494,7 +494,7 @@
           "Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead\u2019s name. A selected field displays N/A when it is empty."
         ]
       ],
-      "screenshot": "field-manager-demo.jpg"
+      "screenshot": "field-manager-multi-select-demo.jpg"
     },
     {
       "id": "book-mode",

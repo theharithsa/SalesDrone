@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.14.0**, OpenAPI contract **1.35.0**. All application operations
+Application release **v2.14.0**, OpenAPI contract **1.36.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -305,6 +305,11 @@ The managed Functions Framework can reject malformed JSON before this Express ap
 ## Exact match column filters
 
 Use `op: "exact"` for source, stage or an available custom dropdown (`cf_*`). This additive option compares saved strings literally, including case, spacing and Unicode; existing `equals` is unchanged. Unsupported fields/types return 400 FILTER. All Exact predicates are sent to Firestore along with archived/assignment scope. Exact queries use descending document-ID order and signed cursors; other conditions remain bounded residual filters. Continue sparse pages until nextCursor is null. Export uses the same filter semantics and permissions. No lead migration or new permission is required.
+
+
+### Multi-select lead fields
+
+Admins can create a field with `type: "multiSelect"` using `PATCH /field-options`, or convert an active `select` field in place with the same ID. Lead create, edit, bulk changes and read responses accept up to 30 distinct configured choice strings in a `customFields` array. A legacy scalar remains a valid single choice. Required fields need at least one choice. Existing retired choices may be kept on the same lead. Multi-select supports Equals, Contains, Starts with, Empty and Not empty filters. The existing bounded residual scan evaluates any selected choice; this change adds no index or permission.
 
 ## Import field setup and personal dashboard grouping
 

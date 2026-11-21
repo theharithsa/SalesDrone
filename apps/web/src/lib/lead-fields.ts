@@ -50,6 +50,17 @@ export function matchesColumnFilters(
           : f.field.startsWith('cf_')
             ? lead.customFields?.[f.field]
             : lead[f.field];
+    if (Array.isArray(raw)) {
+      if (f.op === 'empty') return !raw.length;
+      if (f.op === 'notEmpty') return !!raw.length;
+      return raw.some((choice) => {
+        const value = String(choice).normalize('NFKC').trim().toLowerCase();
+        const term = f.value.normalize('NFKC').trim().toLowerCase();
+        if (f.op === 'equals') return value === term;
+        if (f.op === 'startsWith') return value.startsWith(term);
+        return f.op === 'contains' && value.includes(term);
+      });
+    }
     if (f.op === 'exact') return f.field === 'company'
       ? String(raw ?? '').trim().toLowerCase() === f.value.trim().toLowerCase()
       : raw === f.value;
