@@ -36,7 +36,7 @@ if (plan.milestone) {
         plan.milestone.number +
         " is still in planning; production publication is held",
     );
-  if (process.env.GITHUB_ACTIONS === "true") {
+  if (process.env.GITHUB_ACTIONS === "true" && process.env.SDR_PREPROD_CHECK !== "true") {
     const event = process.env.GITHUB_EVENT_PATH
       ? JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH, "utf8"))
       : {};

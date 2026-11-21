@@ -1,3 +1,4 @@
+import { DAY_MS } from './durations.js';
 import { rateLimitExpiry } from './rate-limit.js';
 import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
@@ -49,7 +50,7 @@ export function generateToken(ownerUid, input, at) {
       prefix: `sd_pat_${id.slice(0, 8)}…`,
       createdAt: at,
       expiresAt: new Date(
-        Date.parse(at) + input.expiresInDays * 86400000,
+        Date.parse(at) + input.expiresInDays * DAY_MS,
       ).toISOString(),
       lastUsedAt: null,
       revokedAt: null,

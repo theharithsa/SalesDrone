@@ -40,10 +40,13 @@ export function finishAction(
     try {
       agent?.addActionProperties?.(id, undefined, undefined, properties);
     } catch {
+      // The agent can reject properties independently of closing the action.
     } finally {
       try {
         agent?.leaveAction?.(id);
-      } catch {}
+      } catch {
+        // An unavailable RUM agent cannot interrupt the workspace.
+      }
     }
   };
 }

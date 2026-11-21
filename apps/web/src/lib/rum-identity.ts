@@ -46,13 +46,17 @@ export function createRumIdentity(deps: {
         current = tag;
         applied = true;
         deps.onReady(normalized ? 'email' : uid ? 'pseudonymous' : 'anonymous');
-      } catch {}
+      } catch {
+        // Optional RUM identification may be unavailable before the next ready event.
+      }
     };
     const unlisten = deps.listen(apply);
     void (async () => {
       tag = normalized || (uid ? await deps.hash(uid) : deps.anonymous());
       apply();
-    })().catch(() => {});
+    })().catch(() => {
+      // An unavailable browser hash leaves the optional RUM identity unset.
+    });
     return () => {
       cancelled = true;
       deps.clear(timer);

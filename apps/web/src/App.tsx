@@ -3,6 +3,7 @@ import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
+import CompaniesPage from './features/CompaniesPage';
 import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
 import AssigneeFilter, { type Assignee } from './components/AssigneeFilter';
 import { teamDemo, demoAssignees } from './lib/team-demo';
@@ -18,10 +19,13 @@ import { resolveVisualPreferences } from './lib/appearance';
 import { readStored, writeStored, removeStored } from './lib/browser-storage';
 import InlineCommentComposer from './components/InlineCommentComposer';
 import LeadTaskTab from './components/LeadTaskTab';
+import { useLeadTasks } from './lib/use-lead-tasks';
 import {
   leadPathId,
   reviewActivities,
   filterLeadActivities,
+  buildLeadTimeline,
+  defaultLeadTab,
   leadWorkspaceTabs,
   tabAfterLeadLoad,
   type LeadWorkspaceTab,
@@ -43,6 +47,7 @@ import {
   FieldOptions,
   withCurrent,
   leadFieldValue,
+  displayFieldValue,
   orderedFields,
   labelFor,
 } from './lib/field-options';
@@ -178,7 +183,7 @@ export default function App() {
     [routeLeadId, setRouteLeadId] = useState(() =>
       leadPathId(window.location.pathname),
     ),
-    [leadTab, setLeadTab] = useState<LeadWorkspaceTab>('comments'),
+    [leadTab, setLeadTab] = useState<LeadWorkspaceTab>(defaultLeadTab),
     [timeline, setTimeline] = useState<Entity[]>([]),
     [timelineCursor, setTimelineCursor] = useState<string | null>(null),
     [modal, setModal] = useState<
@@ -197,6 +202,7 @@ export default function App() {
       | 'correction'
       | null
     >(null),
+    [companyForNewLead, setCompanyForNewLead] = useState(''),
     [search, setSearch] = useState(''),
     [searchDraft, setSearchDraft] = useState(''),
     [searchField, setSearchField] = useState('all'),
@@ -493,9 +499,7 @@ export default function App() {
         );
     };
     apply();
-    try {
-      localStorage.setItem('salesdrone.theme', appearance);
-    } catch {}
+    writeStored('localStorage', 'salesdrone.theme', appearance);
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
   }, [appearance, bookMode, fontStyle, displayScale, accentPalette]);
@@ -570,7 +574,9 @@ export default function App() {
           });
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        // Optional foreground push may be unavailable. The inbox still refreshes normally.
+      });
     return () => {
       alive = false;
       off?.();
@@ -813,6 +819,7 @@ export default function App() {
                 ...body.followUp,
                 id: crypto.randomUUID(),
                 leadId: id,
+                createdAt: activity.createdAt,
                 state: 'Pending',
                 version: 1,
               },
@@ -824,6 +831,7 @@ export default function App() {
         result = {
           ...body,
           id: crypto.randomUUID(),
+          createdAt: new Date().toISOString(),
           state: 'Pending',
           version: 1,
         };
@@ -1132,6 +1140,24 @@ export default function App() {
         }
       }
   }
+  const taskReadScope = JSON.stringify([
+    demo, generation.current, session?.identity.uid, session?.member?.version,
+    session?.member?.scope, session?.member?.accessPolicyVersion,
+  ]);
+  const leadTasks = useLeadTasks({
+    leadId: active && routeLeadId === selected?.id && can('leads:read') ? routeLeadId : null,
+    scope: taskReadScope,
+    refreshKey: dashboardRefreshKey,
+    request,
+  });
+  const showCombinedTimeline = !!routeLeadId && leadTab === 'all';
+  const visibleActivities = filterLeadActivities(timeline, routeLeadId ? leadTab : 'all');
+  const activityEntries = buildLeadTimeline(
+    visibleActivities,
+    showCombinedTimeline ? leadTasks.items : [],
+    showCombinedTimeline,
+  );
+
   const pendingAutomatic = timeline.some(
     (a) => a.autoReminder?.status === 'Pending',
   );
@@ -1213,7 +1239,7 @@ export default function App() {
     setSelected(null);
     setDetailBusy(true);
     setPage('leads');
-    setLeadTab('comments');
+    setLeadTab(defaultLeadTab);
     window.history.pushState({}, '', '/leads/' + encodeURIComponent(lead.id));
     setRouteLeadId(lead.id);
     window.scrollTo(0, 0);
@@ -1267,7 +1293,7 @@ export default function App() {
       const id = leadPathId(window.location.pathname);
       detailEpoch.current++;
       setRouteLeadId(id);
-      setLeadTab('comments');
+      setLeadTab(defaultLeadTab);
       if (id) setPage('leads');
       else {
         detailEpoch.current++;
@@ -1738,6 +1764,7 @@ export default function App() {
                   today: 'Today',
                   team: 'Team',
                   leads: 'Leads',
+                  companies: 'Companies',
                   tasks: 'Tasks',
                   notifications: 'Notifications',
                   settings: 'Settings',
@@ -1896,6 +1923,16 @@ export default function App() {
         ) : null}
         <main id="main-content">
           <Suspense fallback={<Loading />}>
+            {page === 'companies' && <CompaniesPage
+              key={[session?.identity.uid, session?.member?.version, session?.member?.accessPolicyVersion, demo].join(':')}
+              request={request} refreshKey={dashboardRefreshKey} hidden={fieldOptions.hiddenFields.includes('company')}
+              demoLeads={demo ? data.leads : undefined}
+              onLeads={company => {
+                setAssignee(''); setStage(''); setSource(''); setSearch(''); setSearchDraft('');
+                setColumnFilters([{ field: 'company', op: 'exact', value: company }]); go('leads');
+              }}
+              onAdd={can('leads:create') ? company => { setCompanyForNewLead(company); setModal('lead'); } : undefined}
+            />}
             {page==='team' ? (admin||demo ? <TeamPage key={(session?.identity.uid||'demo')+':'+session?.member?.version+':'+session?.member?.accessPolicyVersion} request={request} demo={!!demo} onLeads={id=>{setAssignee(id);setStage('');setSource('');setSearch('');setSearchDraft('');setColumnFilters([]);go('leads');}}/> : <div className="page-body"><ErrorMessage error="Team insights are available to workspace administrators."/></div>) : null}
 
             {page === 'today' ? (
@@ -2342,12 +2379,11 @@ export default function App() {
                           phone={selected.phone}
                           fields={orderedFields(fieldOptions, fieldOptions.headerFields || [], (key) => key)
                             .filter((key) => !fieldOptions.hiddenFields.includes(key))
-                            .flatMap((key) => {
+                            .map((key) => {
                               const value = leadFieldValue(selected, key).trim();
-                              if (!value) return [];
                               const label = fieldOptions.customFields.find((field) => field.id === key)?.label
                                 || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined);
-                              return [{ id: key, label, value }];
+                              return { id: key, label, value: displayFieldValue(value) };
                             })}
                         />
                       </div>
@@ -2443,7 +2479,7 @@ export default function App() {
                                       {field === 'name' ? (
                                         <LeadName name={selected.name} />
                                       ) : field === 'enquiryDate' ? (
-                                        displayDate(selected.enquiryDate)
+                                        selected.enquiryDate ? displayDate(selected.enquiryDate) : 'N/A'
                                       ) : field === 'phone' ? (
                                         !demo &&
                                         selected.phone &&
@@ -2455,12 +2491,10 @@ export default function App() {
                                         ) : (
                                           selected.phone ||
                                           selected.originalPhone ||
-                                          'Not recorded'
+                                          'N/A'
                                         )
                                       ) : (
-                                        String(
-                                          selected[field] || 'Not recorded',
-                                        )
+                                        displayFieldValue(selected[field])
                                       )}
                                     </dd>
                                   </div>
@@ -2479,7 +2513,7 @@ export default function App() {
                                         {selected.email}
                                       </a>
                                     ) : (
-                                      selected.email || 'Not recorded'
+                                      displayFieldValue(selected.email)
                                     )}
                                   </dd>
                                 </div>
@@ -2508,16 +2542,7 @@ export default function App() {
                                         {f.deleted ? ' (removed field)' : ''}
                                       </dt>
                                       <dd>
-                                        {typeof selected.customFields?.[
-                                          f.id
-                                        ] === 'boolean'
-                                          ? selected.customFields[f.id]
-                                            ? 'Yes'
-                                            : 'No'
-                                          : String(
-                                              selected.customFields?.[f.id] ??
-                                                'Not recorded',
-                                            )}
+                                        {displayFieldValue(selected.customFields?.[f.id])}
                                       </dd>
                                     </div>
                                   ))}
@@ -2646,9 +2671,7 @@ export default function App() {
                               <p>
                                 Follow-ups needing a date, failed analysis and
                                 pending checks appear below. Load earlier
-                                activity to inspect older entries. Tasks belong
-                                to their recipient; this view does not expose
-                                another member’s private reminders.
+                                activity to inspect older entries.
                               </p>
                             </section>
                           ) : null}
@@ -2693,80 +2716,100 @@ export default function App() {
                                         : 'ALL ACTIVITY'}
                                 </h3>
                                 <span>
-                                  {
-                                    filterLeadActivities(
-                                      timeline,
-                                      routeLeadId ? leadTab : 'all',
-                                    ).length
-                                  }{' '}
-                                  {filterLeadActivities(
-                                    timeline,
-                                    routeLeadId ? leadTab : 'all',
-                                  ).length === 1
-                                    ? 'entry'
-                                    : 'entries'}
+                                  {activityEntries.length} {activityEntries.length === 1 ? 'entry' : 'entries'}
                                 </span>
                               </div>
+                              {showCombinedTimeline && leadTasks.error ? (
+                                <div className="lead-timeline-task-error">
+                                  <ErrorMessage error={`Could not load lead tasks and reminders. ${leadTasks.error}`} />
+                                  <button type="button" className="text-button" disabled={leadTasks.busy}
+                                    onClick={() => void leadTasks.load(leadTasks.nextCursor ?? undefined)}>
+                                    Retry tasks and reminders
+                                  </button>
+                                </div>
+                              ) : null}
                               {detailBusy ? (
                                 <Loading label="Loading lead activity…" />
-                              ) : filterLeadActivities(
-                                  timeline,
-                                  routeLeadId ? leadTab : 'all',
-                                ).length ? (
-                                <div className="timeline" key={leadTab}>
-                                  {filterLeadActivities(
-                                    timeline,
-                                    routeLeadId ? leadTab : 'all',
-                                  ).map((a) => (
-                                    <div key={a.id} className="timeline-item">
-                                      <span
-                                        className={
-                                          'timeline-icon ' +
-                                          (a.type === 'call' ? 'call' : '')
-                                        }
-                                      >
-                                        {a.type === 'call' ? (
-                                          <Phone size={13} />
-                                        ) : (
-                                          <FileText size={13} />
-                                        )}
-                                      </span>
-                                      <div>
-                                        <strong>
-                                          {a.type === 'call'
-                                            ? a.outcome
-                                            : a.type === 'note'
-                                              ? a.sourceColumn || 'Comment'
-                                              : 'Lead updated'}
-                                        </strong>
-                                        <time>
-                                          {a.imported
-                                            ? 'Imported history · original date not recorded'
-                                            : displayDate(
-                                                a.createdAt,
-                                                timezone,
-                                              )}
-                                        </time>
-                                        <p className="comment-body">
-                                          {a.notes}
-                                        </p>
-                                        {canUseIntelligence && <AutomaticReminder
-                                          key={a.id + '_' + a.revision}
-                                          activity={a}
-                                          timezone={timezone}
-                                          canManage={
-                                            !demo &&
-                                            can('tasks:write') &&
-                                            a.autoReminder?.ownerUid ===
-                                              session?.member?.uid
+                              ) : activityEntries.length ? (
+                                <ol
+                                  className={showCombinedTimeline ? 'timeline combined-lead-timeline' : 'timeline'}
+                                  aria-label="Lead activity"
+                                  key={leadTab}
+                                >
+                                  {activityEntries.map((entry) => {
+                                    if (entry.kind !== 'activity') {
+                                      const task = entry.task;
+                                      const Icon = entry.kind === 'reminder' ? Bell : ListTodo;
+                                      return (
+                                        <li key={entry.id} className="timeline-item">
+                                          <span className="timeline-icon" aria-hidden="true"><Icon size={14} /></span>
+                                          <div>
+                                            <span className="timeline-kind">
+                                              {entry.kind === 'reminder' ? 'Reminder' : 'Task'}
+                                            </span>
+                                            <button className="text-button timeline-task-title" type="button" onClick={() => void openTask(task)}>
+                                              {task.title}
+                                            </button>
+                                            <time dateTime={entry.date ?? undefined}>
+                                              {entry.date ? displayDate(entry.date, timezone) : 'Creation date not recorded'}
+                                            </time>
+                                            <div className="timeline-task-meta">
+                                              <span className="task-state">{task.state}</span>
+                                              <span>{task.responsible?.name || 'Member unavailable'}</span>
+                                              <span>Due {displayDate(task.dueAt, timezone)}</span>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      );
+                                    }
+                                    const { activity: a, date } = entry;
+                                    return (
+                                      <li key={entry.id} className="timeline-item">
+                                        <span
+                                          className={
+                                            'timeline-icon ' +
+                                            (a.type === 'call' ? 'call' : '')
                                           }
-                                          onAction={async (body) => {
-                                            await request(
-                                              '/activities/' +
-                                                a.id +
-                                                '/automatic-reminder',
-                                              'PATCH',
-                                              body,
+                                        >
+                                          {a.type === 'call' ? (
+                                            <Phone size={13} />
+                                          ) : (
+                                            <FileText size={13} />
+                                          )}
+                                        </span>
+                                        <div>
+                                          <strong>
+                                            {a.type === 'call'
+                                              ? (showCombinedTimeline ? 'Call · ' : '') + (a.outcome || 'Logged')
+                                              : a.type === 'note'
+                                                ? a.sourceColumn || 'Comment'
+                                                : 'Lead updated'}
+                                          </strong>
+                                          <time dateTime={date ?? undefined}>
+                                            {a.imported
+                                              ? 'Imported history · original date not recorded'
+                                              : date ? displayDate(date, timezone) : 'Date not recorded'}
+                                          </time>
+                                          <p className="comment-body">
+                                            {a.notes}
+                                          </p>
+                                          {canUseIntelligence && <AutomaticReminder
+                                            key={a.id + '_' + a.revision}
+                                            activity={a}
+                                            timezone={timezone}
+                                            canManage={
+                                              !demo &&
+                                              can('tasks:write') &&
+                                              a.autoReminder?.ownerUid ===
+                                                session?.member?.uid
+                                            }
+                                            onAction={async (body) => {
+                                              await request(
+                                                '/activities/' +
+                                                  a.id +
+                                                  '/automatic-reminder',
+                                                'PATCH',
+                                                body,
                                             );
                                             await refresh();
                                           }}
@@ -2791,10 +2834,11 @@ export default function App() {
                                           </span>
                                         ) : null}
                                       </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
+                                    </li>
+                                    );
+                                  })}
+                                </ol>
+                              ) : (showCombinedTimeline && (leadTasks.busy || leadTasks.error)) ? null : (
                                 <p className="field-hint">
                                   {routeLeadId && leadTab === 'review'
                                     ? 'No follow-ups need review in the loaded activity. Use Earlier activity to check older entries.'
@@ -2805,56 +2849,69 @@ export default function App() {
                                         : 'No activity yet. Start with a conversation or a note.'}
                                 </p>
                               )}
-                              {timelineCursor ? (
-                                <button
-                                  className="text-button"
-                                  disabled={timelineMoreBusy}
-                                  onClick={async () => {
-                                    if (timelineMoreLock.current) return;
-                                    timelineMoreLock.current = true;
-                                    setTimelineMoreBusy(true);
-                                    const token = ++timelineMoreRequest.current;
-                                    const epoch = detailEpoch.current,
-                                      current = generation.current;
-                                    try {
-                                      const a = await request(
-                                        '/leads/' +
-                                          selected.id +
-                                          '/activities?cursor=' +
-                                          encodeURIComponent(timelineCursor),
-                                      );
-                                      if (
-                                        epoch !== detailEpoch.current ||
-                                        current !== generation.current
-                                      )
-                                        return;
-                                      setTimeline((t) => [
-                                        ...new Map(
-                                          [...t, ...a.items].map((item) => [
-                                            item.id,
-                                            item,
-                                          ]),
-                                        ).values(),
-                                      ]);
-                                      setTimelineCursor(a.nextCursor);
-                                    } catch (e) {
-                                      if (
-                                        epoch === detailEpoch.current &&
-                                        current === generation.current
-                                      )
-                                        setError((e as Error).message);
-                                    } finally {
-                                      if (
-                                        token === timelineMoreRequest.current
-                                      ) {
-                                        timelineMoreLock.current = false;
-                                        setTimelineMoreBusy(false);
-                                      }
-                                    }
-                                  }}
-                                >
-                                  Earlier activity
-                                </button>
+                              {showCombinedTimeline && leadTasks.busy ? (
+                                <Loading label="Loading tasks and reminders…" />
+                              ) : null}
+                              {(timelineCursor || (showCombinedTimeline && leadTasks.nextCursor && !leadTasks.error)) ? (
+                                <div className="lead-timeline-pagination">
+                                  {timelineCursor ? (
+                                    <button
+                                      className="text-button"
+                                      disabled={timelineMoreBusy}
+                                      onClick={async () => {
+                                        if (timelineMoreLock.current) return;
+                                        timelineMoreLock.current = true;
+                                        setTimelineMoreBusy(true);
+                                        const token = ++timelineMoreRequest.current;
+                                        const epoch = detailEpoch.current,
+                                          current = generation.current;
+                                        try {
+                                          const a = await request(
+                                            '/leads/' +
+                                              selected.id +
+                                              '/activities?cursor=' +
+                                              encodeURIComponent(timelineCursor),
+                                          );
+                                          if (
+                                            epoch !== detailEpoch.current ||
+                                            current !== generation.current
+                                          )
+                                            return;
+                                          setTimeline((t) => [
+                                            ...new Map(
+                                              [...t, ...a.items].map((item) => [
+                                                item.id,
+                                                item,
+                                              ]),
+                                            ).values(),
+                                          ]);
+                                          setTimelineCursor(a.nextCursor);
+                                        } catch (e) {
+                                          if (
+                                            epoch === detailEpoch.current &&
+                                            current === generation.current
+                                          )
+                                            setError((e as Error).message);
+                                        } finally {
+                                          if (
+                                            token === timelineMoreRequest.current
+                                          ) {
+                                            timelineMoreLock.current = false;
+                                            setTimelineMoreBusy(false);
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      Earlier activity
+                                    </button>
+                                  ) : null}
+                                  {showCombinedTimeline && leadTasks.nextCursor && !leadTasks.error ? (
+                                    <button type="button" className="text-button" disabled={leadTasks.busy}
+                                      onClick={() => void leadTasks.load(leadTasks.nextCursor ?? undefined)}>
+                                      Load more tasks and reminders
+                                    </button>
+                                  ) : null}
+                                </div>
                               ) : null}
                             </div>
                           ) : null}
@@ -2873,10 +2930,12 @@ export default function App() {
                                 refreshKey={dashboardRefreshKey}
                                 key={selected.id}
                                 leadId={selected.id}
+                                scope={taskReadScope}
+                                allTasks={leadTasks}
                                 request={request}
                                 timezone={timezone}
                                 onOpen={openTask}
-                              onChange={changeTask}
+                                onChange={changeTask}
                               />
                             </section>
                           ) : null}
@@ -3236,6 +3295,7 @@ export default function App() {
           <LeadForm
             config={fieldOptions}
             lead={modal === 'edit' ? selected || undefined : undefined}
+            initialCompany={modal === 'lead' && page === 'companies' ? companyForNewLead : undefined}
             admin={admin}
             choices={fieldOptions.values}
             onCancel={() => setModal(null)}

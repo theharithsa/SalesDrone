@@ -30,6 +30,7 @@ export const safePage = (path: string) => {
     'assistant',
     'today',
     'leads',
+    'companies',
     'tasks',
     'notifications',
     'imports',
@@ -48,6 +49,7 @@ export const safeOperation = (path: string, method: string) => {
   const root = [
     'me',
     'leads',
+    'companies',
     'tasks',
     'notifications',
     'imports',
@@ -149,7 +151,9 @@ export function rumPage(path: string) {
     const action=r.enterAction?.('View '+name);
     finishAction(r,action)({'app_version':APP_VERSION,'interaction_intent':'View '+name});
     lastPage = name;
-  } catch {}
+  } catch {
+    // Leave the page unrecorded so a later navigation can retry.
+  }
 }
 export function safeIntent(path:string,method:string){
   if(method==='GET')return 'Read workspace';
@@ -167,7 +171,9 @@ export function beginRumRequest(path: string, method: string) {
   let id: number | undefined;
   try {
     id = r?.enterAction?.(method==='GET'?'API '+safeOperation(path,method):safeIntent(path,method));
-  } catch {}
+  } catch {
+    // Fetch still runs when the optional agent fails to start an action.
+  }
   const finish = finishAction(r, id);
   let done=false;
   return (outcome: string, requestId?: string, status?:number, code?:string) => {

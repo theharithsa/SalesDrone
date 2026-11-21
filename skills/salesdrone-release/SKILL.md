@@ -34,7 +34,7 @@ and the route handler in [app.js](../../functions/src/app.js) when changing an A
 
 Synchronized root/web/functions versions and lockfiles, build metadata, GitHub release, Firebase Hosting/functions/indexes, Pages and Dynatrace deployment events.
 
-- Every main code/docs push advances SemVer and completes a dated changelog. API schema version is independent. Never overwrite tags, force-push or bypass failed checks.
+- Follow [weekly release governance](../../docs/RELEASE-GOVERNANCE.md). Keep API versions independent and release tags immutable.
 - Use existing OIDC/WIF deployment flow, not new service-account keys. Preserve exact repository/project boundaries and secret bindings.
 - Deploy api and four scheduled functions as required by dependencies; module ownership is logical, not separate deployable services. Current workflow deploys the shared salesdrone codebase.
 - Rules/indexes precede dependent code, wait READY, then functions and Hosting. Shared contracts must remain compatible with queued jobs and active clients.
@@ -50,7 +50,7 @@ Inspect the failing job and exact step before retrying; distinguish already-depl
 
 ## Verification
 
-Review bot updates in a versioned PR. Check both npm lockfiles and CI evidence.
+Check both lockfiles and [dependency tests](../../docs/DEPENDENCY-REVIEW.md), including Pub/Sub delivery.
 
 Apply the shared verification matrix to the changed behavior; these are the
 module-specific regression entry points, not a substitute for integration checks.
@@ -101,4 +101,5 @@ Deploy/verify ingress after Functions and before Hosting cutover; require its re
 
 For managed health and partial-rollout handling, read [operations](references/operations.md). Pages retries require unique attempt names and exact uploaded-ID readiness; follow [Pages recovery](../../docs/RELEASE.md#pages-artifact-readiness-and-recovery).
 
-Toolchain: [migration](../../docs/TOOLCHAIN-MIGRATION.md). SDLC routing/evidence: [journeys](../../docs/OBSERVABILITY-JOURNEYS.md).
+
+Toolchain: [migration](../../docs/TOOLCHAIN-MIGRATION.md). SDLC [journeys](../../docs/OBSERVABILITY-JOURNEYS.md) and [pre-production promotion](../../docs/PRE-PRODUCTION-PLAN.md).

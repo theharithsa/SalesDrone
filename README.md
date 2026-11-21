@@ -1,14 +1,8 @@
 # SalesDrone by AvinyaTech
 
-> v2.6.4 repairs compound Lead Assistant answers and completes CI test-case reporting.
-> Scoped Lead Hygiene and Lead Assistant were introduced in v2.6.0.
-> See the [monitoring handoff](observability/README.md) for offline queries/notebook and owner-managed Dynatrace setup.
-> See [import recovery](docs/IMPORTS.md) and the [Observability agent](skills/salesdrone-observability/SKILL.md); deployment evidence is retained per workflow run.
-
-SalesDrone 2.0 uses Material 3 across the workspace, with responsive navigation,
-filled forms, full-page lead details and automatic lead-list pagination.
-See the [product handbook](docs/PRODUCT-GUIDE.md), [settings reference](docs/SETTINGS.md)
-and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo data.
+SalesDrone is a responsive sales workspace for leads, follow-ups, team activity,
+and scoped AI assistance. It uses Material 3 and includes personal appearance
+options such as Book mode. Screenshots use fictional demo data.
 
 [![Verify, deploy and observe](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
 [![Latest release](https://img.shields.io/github/v/release/theharithsa/SalesDrone?color=0756a5)](https://github.com/theharithsa/SalesDrone/releases/latest)
@@ -23,11 +17,14 @@ and [design system](docs/DESIGN-SYSTEM.md). All screenshots use fictional demo d
 [![Node.js 22](https://img.shields.io/badge/Node.js-22-43853d?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini-0756a5?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 
-**Part of Avinya Enterprises · v2.6.4 · MIT**
+**Part of Avinya Enterprises · MIT**
 
-A sales workspace that keeps an enquiry, its conversations and its next step together. Built with React, Firebase and Gemini, with a responsive interface for desktop and mobile.
+[Open SalesDrone](https://salesdrone.in/) · [Live version](https://salesdrone.in/version.json) · [Product handbook](https://theharithsa.github.io/SalesDrone/product.html) · [Settings](https://theharithsa.github.io/SalesDrone/settings.html) · [Technical guide](https://theharithsa.github.io/SalesDrone/#engineering) · [Roadmap](https://theharithsa.github.io/SalesDrone/roadmap.html) · [Release notes](https://theharithsa.github.io/SalesDrone/releases.html)
 
-[Open SalesDrone](https://sales-drone-avinya.firebaseapp.com) · [Illustrated guide](https://theharithsa.github.io/SalesDrone/) · [Roadmap](docs/whats-new/README.md) · [Release notes](https://theharithsa.github.io/SalesDrone/releases.html) · [Deployment workflow](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
+The latest production documentation includes an illustrated delivery flow,
+searchable release notes and a public roadmap. An isolated
+[pre-production workspace](https://sales-drone-avinya-preprod.web.app/) serves
+approved testers with synthetic data ahead of production promotion.
 
 ![The dashboard shows lead counts grouped by the selected field. Synthetic demo data only.](site/assets/screenshots/dashboard-demo.jpg)
 
@@ -41,7 +38,7 @@ We currently use SalesDrone internally and shape it around everyday work. More m
 
 ## From enquiry to follow-through
 
-Import the first Excel worksheet or CSV, map the fields, and select several discussion columns to become separate timeline comments; historical discussion dates remain unknown rather than being invented. New enquiries then arrive through the form. Search and combine column filters, edit a lead, record a call, and keep its comments in one timeline.
+Import the first Excel worksheet or CSV, map the fields, and select several discussion columns to become separate timeline comments; historical discussion dates remain unknown rather than being invented. New enquiries then arrive through the form. Search and combine column filters, edit a lead, record a call, and review comments, calls, lead tasks and reminders together in the default All timeline.
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard groups current lead counts by your chosen field. Its headings and descriptions follow that field’s configured label; selecting a group opens matching leads. Recorded stage changes remain in the lead journey.
 
@@ -68,7 +65,7 @@ The repository contains application code and reviewed synthetic screenshots. It 
 
 ## Run locally
 
-Use Node **22.18+ within Node 22 LTS**, npm, and Java **21** for the Firestore emulator. The deployed backend runs Node 22.
+Use Node **24.15.0 or later in the Node 24 series**, npm, and Java **21** for the Firestore emulator. The deployed backend runs Node 22.
 
 ```sh
 npm ci
@@ -120,9 +117,14 @@ The automated checks cover domain policy, scoped access, imports, reminders, sta
 
 ## Releases
 
-Main-branch pushes run verification, deploy Firestore indexes/rules, wait for indexes, deploy Cloud Functions and Hosting, check published commit metadata, and send the deployment result and version to Dynatrace. A separate job publishes only the curated documentation site. Cloud authentication uses short-lived OIDC credentials; ingestion credentials stay in Secret Manager and GitHub Actions secrets.
+SalesDrone adopts selected delivery practices from the [App Launchpad template](https://github.com/theharithsa/app-launchpad-template). The [v1.14.0 adoption audit](docs/APP-LAUNCHPAD-AUDIT.md) records the audit baseline and the remaining gaps.
 
-The initial release was **v1.0.0**. Subsequent changes use `npm run release -- patch`, `minor` or `major`, fill the dated [changelog](CHANGELOG.md), and commit the resulting version files. The workflow rejects version regressions or unchanged release versions on subsequent pushes. API contract versions are independent of app versions.
+Feature PRs are checked in `pre-prod`. Promote the verified source through a PR
+to `main`. Actions verifies and deploys production, checks the published revision,
+publishes the curated docs, and reports outcomes to Dynatrace. Review the README,
+[changelog](CHANGELOG.md), [security policy](SECURITY.md) and affected guides in
+the release PR. Follow the [SDLC guide](https://theharithsa.github.io/SalesDrone/sdlc.html)
+and [release runbook](docs/RELEASE.md).
 
 ## Licence and illustrations
 
@@ -140,11 +142,11 @@ The [lead overlay](docs/LEAD-BLADE.md) can be resized on desktop without changin
 
 Read the [complete product handbook](https://theharithsa.github.io/SalesDrone/product.html) for module workflows, permissions, troubleshooting and FAQs. The [full settings reference](https://theharithsa.github.io/SalesDrone/settings.html) explains every control. Documentation is also linked above Settings in the app.
 
-![Lead workspace with All, Comments, Calls, Tasks, Files and Review tabs](site/assets/screenshots/lead-workspace-demo.jpg?sha=6912ede2ba28)
+![The default All timeline with a fictional call, comment, reminder and task](site/assets/screenshots/lead-workspace-demo.jpg?sha=17b5395d33f1)
 
 The v1.6.1 maintenance improved inline comment entry and UI recovery without changing the displayed version, as requested. The original tag is preserved; deployments remain distinguishable by commit and Actions run. See [UI stability review](docs/UI-STABILITY.md).
 
-The full lead page opens in **Comments**. Switch to **All** to see loaded activity and review information. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
+The full lead page opens in **All** to show the combined timeline. Shared lead tasks and their responsible members appear in **Tasks**; personal reminders remain private. **Comments** shows notes and imported discussions; **Calls** shows only logged calls. Filtered views still offer Earlier activity for unloaded history.
 
 **v1.6.2** standardized Dynatrace CloudEvents delivery and added a sunrise/sunset theme control. [Book mode is available in v1.6.3](docs/BOOK-MODE-PLAN.md). See the [BizEvents catalog and troubleshooting guide](docs/BUSINESS-EVENTS.md).
 
@@ -231,9 +233,17 @@ Stage and assignment stack on compact lead surfaces. Outreach tick labels share 
 
 <img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional phone lead header with two tappable numbers and read-only workflow summary" width="412">
 
+## Companies and daily Excel updates
+
+Open **Companies** to find an organization and see the active leads you can access. **Add lead** fills in its company name. Empty lead values display as **N/A**.
+
+For a daily update, use **Leads → Export Excel**, edit the **Leads** sheet, then upload it under **Import enquiries**. Keep each exported ID and version with its row. The preview shows the resulting sales stage and flags changes made after export. See the [workbook instructions](docs/IMPORTS.md#update-leads-from-an-excel-export).
+
 ## Collaborative imports (2.3)
 
 Collaborative import review supports history, visible duplicate matches and linked workbook updates preserving team edits. Admins can grant member import access and explicitly delete retained details. See [Imports](docs/IMPORTS.md).
+
+Admins can configure **Multi-select** lead fields in **Settings → Leads Management → Field definitions**. Existing custom dropdowns such as Product can switch types and retain their saved choice. See the [mobile form preview](site/assets/screenshots/lead-product-multi-select-mobile-demo.jpg) and [Excel round-trip guide](docs/IMPORTS.md#update-leads-from-an-excel-export).
 
 Column filters include an indexed **Exact match** option for enquiry source, sales stage and custom dropdowns. It compares the saved case, spacing and Unicode literally; existing **Equals** retains tolerant matching. See the [product handbook](docs/PRODUCT-GUIDE.md#leads).
 

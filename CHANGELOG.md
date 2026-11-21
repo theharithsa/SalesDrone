@@ -1,7 +1,7 @@
 # Changelog
 
-Application versions follow [Semantic Versioning](https://semver.org/).
-API contract versions are independent from application versions.
+Application versions follow the [weekly release policy](docs/RELEASE-GOVERNANCE.md#weekly-production-cadence).
+API contract versions track compatibility independently.
 
 
 
@@ -14,6 +14,30 @@ API contract versions are independent from application versions.
 
 
 
+
+
+## [2.14.0] - 2026-11-14
+
+### Added
+- Custom lead fields can allow multiple choices. Admins can convert an existing Product dropdown while keeping saved selections. Filtering and Excel updates support the new field type.
+- Companies groups active leads by company. Open an organization to see its leads or add a new enquiry with its company filled in.
+- Lead fields display N/A when empty. Excel keeps those cells blank for the next update.
+- Exported workbooks now carry each lead ID and version. Import recognizes them, matches current sales stages, and prompts once per unfamiliar stage. Repeated uploads preserve recorded comments, and later team edits go to review.
+- Opening a lead starts on All, with comments, calls, shared tasks and linked reminders together in one timeline.
+
+### Changed
+- Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
+- Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
+- Refreshed the README and security policy, recorded the App Launchpad v1.14.0 audit, and documented the production release documentation review.
+
+### Security
+- Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.
+- Updated the Firebase CLI and its Pub/Sub dependency to resolve OpenTelemetry Core advisory GHSA-8988-4f7v-96qf in the development toolchain.
+
+### Maintenance
+- Updated the Firebase web SDK and CLI, Lucide icons, and test dependencies. Development and CI now use Node 24. The deployed Functions runtime remains Node 22.
+- Added lint checks for existing TypeScript escape hatches and unexplained error handling. Verification checks the OpenAPI artifacts without rewriting them.
+- Browser API failures retain their HTTP status, and comment editing reports when a stale lead could not be refreshed.
 
 ## [2.13.11] - 2026-11-14
 

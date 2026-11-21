@@ -413,6 +413,17 @@ test('actual Firestore transactions, Auth Google tokens, queries, rules and sche
     )
   ).body;
   assert.equal(committed.imported, 1);
+  const fixture = (await store.query(path('leads'), { filters: [['nameNormalized','==','imported one']], limit: 1 }))[0];
+  let roundTrip = (await req('post', '/imports/preview', {
+    filename: 'daily.xlsx', sheet: 'Leads', reviewed: true, duplicateMode: 'update', statusField: 'none',
+    rows: [{ leadId: fixture.id, leadVersion: String(fixture.version), stage: ' qualified ', company: 'Fieldwork Group' }],
+  }, randomUUID()).expect(200)).body;
+  for (const action of ['plan','review','commit'])
+    roundTrip = (await req('post','/imports/' + roundTrip.id + '/' + action, {expectedVersion:roundTrip.version}, randomUUID()).expect(200)).body;
+  assert.equal(roundTrip.updated, 1);
+  assert.equal((await store.get(path('leads',fixture.id))).stage, 'Qualified');
+  const directory = (await req('get','/companies?search=fieldwork').expect(200)).body;
+  assert.deepEqual(directory.items, [{key:'fieldwork group',name:'Fieldwork Group'}]);
   assert.equal(committed.duplicates, 1);
   const current = (await req('get', '/leads/' + lead.id).expect(200)).body;
   const note = (
@@ -1449,6 +1460,18 @@ test('shared contact stage edits and hidden stage analytics persist in actual Fi
   assert.equal(refreshed.visualization.groups.find(g=>g.label==='Review').value,1);
   assert.ok(!refreshed.visualization.groups.some(g=>g.label==='Samples Given'));
   assert.equal((await store.get(path('leads',b.id))).stage,'Review');
+  const latest = (await call('get', '/field-options').expect(200)).body;
+  const product = { id: 'cf_products', label: 'Products', type: 'multiSelect', options: ['Panel', 'Trim'] };
+  await call('patch', '/field-options', { expectedVersion: latest.version, values: latest.values, customFields: [product] }).expect(200);
+  const saved = (await call('patch', '/leads/' + a.id, {
+    expectedVersion: a.version, customFields: { cf_products: ['Panel', 'Trim'] },
+  }).expect(200)).body;
+  assert.deepEqual((await store.get(path('leads', a.id))).customFields.cf_products, ['Panel', 'Trim']);
+  await call('patch', '/leads/' + a.id, { expectedVersion: saved.version, customFields: { cf_products: ['Unknown'] } }).expect(400);
+  const filter = encodeURIComponent(JSON.stringify([{ field: 'cf_products', op: 'equals', value: 'Trim' }]));
+  const filtered = (await call('get', '/leads?filters=' + filter).expect(200)).body;
+  assert.deepEqual(filtered.items.map((item) => item.id), [a.id]);
+
 });
 
 test('Lead research uses real scoped Firestore pages, private API history, source invalidation and ACL-prefiltered vectors',async()=>{

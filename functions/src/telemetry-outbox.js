@@ -1,3 +1,5 @@
+import { MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { settingsAuditLogFields } from './settings-audit.js';
 import { randomUUID } from 'node:crypto';
 import { path } from './policy.js';
@@ -28,8 +30,9 @@ export async function deliverTelemetry({
   key,
   telemetry,
   fetchImpl = fetch,
-  now = () => new Date().toISOString(),
+  now = isoNow,
   allowLocalTest = false,
+  environment = 'production',
 }) {
   const origin = tenantOrigin(tenant, { allowLocalTest }),
     queue = path('telemetryOutbox');
@@ -58,7 +61,7 @@ export async function deliverTelemetry({
     const claimed=await store.run(async tx=>{
       const current=await tx.get(p);
       if(!current||!['Pending','Sending','PendingBatch','SendingBatch'].includes(current.status)||current.nextAttemptAt>now())return null;
-      const value={...current,status:current.additionalEvents?'SendingBatch':'Sending',lease,attemptCount:current.attemptCount+1,nextAttemptAt:new Date(Date.parse(now())+180000).toISOString()};
+      const value={...current,status:current.additionalEvents?'SendingBatch':'Sending',lease,attemptCount:current.attemptCount+1,nextAttemptAt:new Date(Date.parse(now())+(3 * MINUTE_MS)).toISOString()};
       tx.set(p,value);return value;
     });
     if(!claimed)return;
@@ -69,6 +72,9 @@ export async function deliverTelemetry({
       for(;cursor<events.length;){
         const remaining=deadline-Date.now();if(remaining<=0){budgetExpired=true;break;}
         const event={...events[cursor]};
+        if (environment === 'pre-production') {
+          event.data = { ...event.data, 'deployment.environment.name': environment, 'data.synthetic': true };
+        }
         if(!event.traceparent&&telemetry){event.traceparent=telemetry.capture().traceparent||undefined;if(!event.traceparent)delete event.traceparent;}
         try{
           const response=await fetchImpl(origin+'/api/v2/bizevents/ingest',{

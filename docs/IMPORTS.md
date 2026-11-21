@@ -1,10 +1,23 @@
-# Collaborative imports (2.3 / API 1.19)
+# Import enquiries and update leads in Excel
 
 Imports parse the first CSV/XLSX sheet in the browser. No original workbook is uploaded or retained. Mapped source values, comparisons, row decisions and outcomes are private application data retained until an Admin deletes details. Workspace lead-data reset also removes import baselines.
 
+## Update leads from an Excel export
+
+1. Open **Leads**, set your filters and choose **Export Excel**. Include **Sales stage** and the fields you want to edit. Use a fresh export before each editing session.
+2. Edit the first sheet, **Leads**. For example, replace **New** with **Supplied** if Supplied is an active stage in your workspace. Sort whole rows so **SalesDrone lead ID** and **SalesDrone version** stay with their lead. Keep both columns in the file.
+3. Open **Import enquiries**, choose the saved XLSX and check the preview. SalesDrone recognizes its export and selects **Review updates**. It accepts current stage names with differences in capitalization or spacing. If a value was renamed or retired, choose its current equivalent under **Match sales stages**. A blank cell keeps the saved value. To leave one lead untouched, omit its row.
+4. Choose **Validate records**, then **Approve clear proposals**. If someone edited the lead since export, compare the saved and workbook values and select the changes you still want. Use **Apply reviewed changes**. Import history shows updated, unchanged and skipped rows. Uploading the same unchanged values again leaves each lead and its recorded notes in place.
+
+**Conditions.** You need workspace export access to download a file and import write plus lead edit access to update its leads. Use literal values and dates in YYYY-MM-DD form. A fresh SalesDrone export can contain just the fields you need. Saved comments and assignment, audit and workflow flags are reference columns. Use the lead timeline to correct a saved comment. For a new lead, leave both identity cells empty and include customer name and a contact column. Manual clear is available for optional mapped fields during review.
+
+Each upload accepts the first worksheet, up to 5,000 populated lead rows, a 10 MB file and a 6 MiB parsed request. Export in smaller filtered batches when necessary. Original third-party workbooks accept up to 40 columns. An exported report can also carry reference columns. For older workbooks without identity columns, choose an earlier completed import's **Update this workbook**, or manually choose **Review updates** and confirm matches.
+
+For a multi-select column, keep the bracketed list of quoted choices from the export, such as `["Panel","Trim, exterior"]`. A plain choice works for single-value input. Keep commas inside quotes when they are part of the label. Use `[]` to clear an optional multi-select or leave the cell blank to keep the saved selection. A retired choice can be retained on the same lead.
+
 ## Workflow
 
-Choose Skip existing contacts (default), Review updates, or explicitly Keep separate enquiries. Select a previous import with Update this workbook to reuse its dataset baseline. A different filename alone does not establish lineage. Upload, compare bounded chunks, inspect row matches/differences, approve clear proposals, resolve remaining decisions, then apply. Nothing changes in leads during comparison/review. History is paginated and shows uploader, status and created/updated/unchanged/skipped counts. Details show the actual duplicate candidates rather than only a total.
+External files default to Skip existing contacts. SalesDrone exports default to Review updates. Keep separate enquiries is available for new enquiries without SalesDrone IDs. Select a previous import with Update this workbook to reuse its dataset baseline. A different filename alone does not establish lineage. Upload, compare bounded chunks, inspect row matches/differences, approve clear proposals, resolve remaining decisions, then apply. Nothing changes in leads during comparison/review. History is paginated and shows uploader, status and created/updated/unchanged/skipped counts. Details show the actual duplicate candidates rather than only a total.
 
 Review updates requires normalized name plus phone/email contact match. Name alone, reused phone with a different name, multiple candidates, overlapping source rows or missing source baselines need explicit review. A mapped SalesDrone lead ID or a manually chosen accessible candidate can establish identity; choosing a candidate compares it without approving changes. Contact normalization reuses lead validation. Inaccessible candidates are redacted and cannot be used to bypass assigned scope. Archived leads cannot be updated. Missing rows never delete leads.
 

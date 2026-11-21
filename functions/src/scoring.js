@@ -1,3 +1,5 @@
+import { DAY_MS, MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { AppError } from './contracts.js';
@@ -376,7 +378,7 @@ export async function processLeadScore({
   store,
   leadId,
   extract,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const lease = randomUUID();
   const claim = await store.run(async (tx) => {
@@ -403,7 +405,7 @@ export async function processLeadScore({
       configVersion: config.version,
       status: 'Processing',
       lease,
-      leaseUntil: new Date(Date.parse(now()) + 120000).toISOString(),
+      leaseUntil: new Date(Date.parse(now()) + (2 * MINUTE_MS)).toISOString(),
       attemptCount: same ? (old.attemptCount || 0) + 1 : 1,
     };
     tx.set(path('leadScores', lead.id), record);
@@ -465,7 +467,7 @@ export async function processLeadScore({
           status: 'Failed',
           errorCode: error.code || 'AI_UNAVAILABLE',
           nextAttemptAt: new Date(
-            Date.parse(now()) + (current.attemptCount >= 3 ? 86400000 : 300000),
+            Date.parse(now()) + (current.attemptCount >= 3 ? DAY_MS : (5 * MINUTE_MS)),
           ).toISOString(),
         });
     });
@@ -475,7 +477,7 @@ export async function processLeadScore({
 export async function scoreLeads({
   store,
   extract,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const lease = randomUUID(),
     workerPath = path('settings', 'score-worker');
@@ -485,7 +487,7 @@ export async function scoreLeads({
     const value = {
       ...old,
       lease,
-      leaseUntil: new Date(Date.parse(now()) + 180000).toISOString(),
+      leaseUntil: new Date(Date.parse(now()) + (3 * MINUTE_MS)).toISOString(),
     };
     tx.set(workerPath, value);
     return value;

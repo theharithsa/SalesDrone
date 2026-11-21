@@ -1,5 +1,7 @@
+import { DAY_MS, HOUR_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { z } from "zod";
-import { AppError } from "./contracts.js";
+import { IsoDate, AppError } from "./contracts.js";
 import { path, hash, scopeFilters } from "./policy.js";
 import { documentKey } from "./store.js";
 import { readFieldOptions, validateCustomValues } from "./field-options.js";
@@ -49,7 +51,7 @@ export async function createHygieneScan(tx, identity, id, at, options = {}) {
     throw new AppError(409, "SCAN_PENDING", "A scan is already running");
   if (
     recent.length === 5 &&
-    Date.parse(at) - Date.parse(recent[4].createdAt) < 3600000
+    Date.parse(at) - Date.parse(recent[4].createdAt) < HOUR_MS
   )
     throw new AppError(429, "RATE_LIMIT", "Run at most five scans per hour");
   const settings = await readResearchSettings(tx),
@@ -124,7 +126,7 @@ export async function readHygieneScan(store, identity, id) {
 export function inspectLead(lead, fields) {
   const issues = [];
   if (!String(lead.name || "").trim()) issues.push("missing_name");
-  if (!z.iso.date().safeParse(lead.enquiryDate).success)
+  if (!IsoDate.safeParse(lead.enquiryDate).success)
     issues.push("invalid_enquiry_date");
   if (!lead.phone && !lead.email) issues.push("missing_contact");
   const contacts = [];
@@ -166,7 +168,7 @@ export function inspectLead(lead, fields) {
 export async function stepHygiene({
   store,
   id,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   return store.run(async (tx) => {
     const job = await tx.get(path("hygieneScans", id));
@@ -329,7 +331,7 @@ export async function stepHygiene({
         const last = Date.parse(lead.lastContactAt);
         if (
           Number.isFinite(last) &&
-          Date.parse(now()) - last >= settings.inactivityDays * 86400000
+          Date.parse(now()) - last >= settings.inactivityDays * DAY_MS
         ) {
           const tasks = await tx.query(path("tasks"), {
             filters: [
@@ -510,7 +512,7 @@ export async function summarizeHygiene({
   store,
   job,
   provider,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const current = await readHygieneScan(store, { uid: job.ownerUid }, job.id);
   await researchMember(

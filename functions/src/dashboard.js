@@ -1,3 +1,5 @@
+import { DAY_MS, MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { dashboardGrouping } from './dashboard-grouping.js';
 import { rateLimitExpiry } from './rate-limit.js';
 import { readAISettings } from './ai-settings.js';
@@ -104,7 +106,7 @@ export async function dashboardSnapshot(
   const timezone = prefs?.timezone || 'Asia/Kolkata',
     today = localParts(now, timezone).date;
   const day = (offset) =>
-    new Date(Date.parse(today + 'T12:00:00Z') + offset * 86400000)
+    new Date(Date.parse(today + 'T12:00:00Z') + offset * DAY_MS)
       .toISOString()
       .slice(0, 10);
   const trend = Array.from({ length: 14 }, (_, i) => ({
@@ -116,7 +118,7 @@ export async function dashboardSnapshot(
   const recentCalls = callScan.items.filter(
     (a) =>
       map.has(a.leadId) &&
-      a.createdAt >= new Date(Date.parse(now) - 14 * 86400000).toISOString(),
+      a.createdAt >= new Date(Date.parse(now) - 14 * DAY_MS).toISOString(),
   );
   for (const a of recentCalls) {
     const bucket = trend.find(
@@ -329,7 +331,7 @@ export async function dashboardBrief({
   member,
   snapshot,
   summarize,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const p = `users/${member.uid}/insights/dashboard`,
     lease = randomUUID();
@@ -380,7 +382,7 @@ export async function dashboardBrief({
     tx.set(p, {
       status: 'Processing',
       lease,
-      leaseUntil: new Date(Date.parse(now()) + 120000).toISOString(),
+      leaseUntil: new Date(Date.parse(now()) + (2 * MINUTE_MS)).toISOString(),
       fingerprint,
       memberVersion: member.version,
     });

@@ -1,17 +1,23 @@
 # SalesDrone API integration guide
 
-Application release **v2.13.5**, OpenAPI contract **1.34.0**. All application operations
+Application release **v2.14.0**, OpenAPI contract **1.36.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
 - [Download OpenAPI 3.1 JSON](https://sales-drone-avinya.firebaseapp.com/openapi.json)
 - [Public source contract](openapi.json)
 
-The portal documents all **97 supported operations**, including GET (read), POST
+The portal documents all **98 supported operations**, including GET (read), POST
 (create or an explicit action), PATCH (update), PUT (attachment bytes) and DELETE (removal/revocation).
 Workspace lead-data reset is a separate Admin-only, previewed operation. Try it out performs
 real operations against the signed-in credential's workspace. Use synthetic test
 records for write experiments, and archive them afterward.
+
+## Company directory and workbook updates
+
+GET /api/v1/companies requires leads:read and applies current lead scope. It returns distinct company keys and display names from active leads. Use the optional case-insensitive name prefix and opaque cursor to page. To list the leads for a company, pass a company exact filter to GET /api/v1/leads.
+
+POST /api/v1/leads/export includes each row’s id and version. In reviewed import update mode, send these as leadId and leadVersion on the corresponding row. A supplied ID must resolve within current access. Preview compares editable nonblank columns, canonicalizes sales stage names and requires explicit review for differing values on a stale version. Changes after review require a refreshed comparison before commit.
 
 ## Choose authentication
 
@@ -299,6 +305,11 @@ The managed Functions Framework can reject malformed JSON before this Express ap
 ## Exact match column filters
 
 Use `op: "exact"` for source, stage or an available custom dropdown (`cf_*`). This additive option compares saved strings literally, including case, spacing and Unicode; existing `equals` is unchanged. Unsupported fields/types return 400 FILTER. All Exact predicates are sent to Firestore along with archived/assignment scope. Exact queries use descending document-ID order and signed cursors; other conditions remain bounded residual filters. Continue sparse pages until nextCursor is null. Export uses the same filter semantics and permissions. No lead migration or new permission is required.
+
+
+### Multi-select lead fields
+
+Admins can create a field with `type: "multiSelect"` using `PATCH /field-options`, or convert an active `select` field in place with the same ID. Lead create, edit, bulk changes and read responses accept up to 30 distinct configured choice strings in a `customFields` array. A legacy scalar remains a valid single choice. Required fields need at least one choice. Existing retired choices may be kept on the same lead. Multi-select supports Equals, Contains, Starts with, Empty and Not empty filters. The existing bounded residual scan evaluates any selected choice; this change adds no index or permission.
 
 ## Import field setup and personal dashboard grouping
 

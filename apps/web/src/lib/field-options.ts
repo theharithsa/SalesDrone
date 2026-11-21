@@ -28,11 +28,13 @@ export type FieldKey = keyof typeof defaultFieldValues;
 export type CustomField = {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'number' | 'date' | 'select' | 'checkbox';
+  type: 'text' | 'textarea' | 'number' | 'date' | 'select' | 'multiSelect' | 'checkbox';
   options: string[];
   required: boolean;
   deleted: boolean;
 };
+export type CustomFieldValue = string | string[] | number | boolean | null;
+
 export function fieldRemovalReason(_config: FieldOptions, key: string) {
   if (key === 'phone' || key === 'enquiryDate')
     return 'Required to save an enquiry';
@@ -83,5 +85,14 @@ export function orderedFields<T>(config: FieldOptions, fields: T[], key: (field:
 
 export function leadFieldValue(lead: Record<string, any>, key: string): string {
   const value = key.startsWith('cf_') ? lead.customFields?.[key] : lead[key];
+  if (Array.isArray(value)) return value.join(', ');
   return typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value ?? '');
+}
+
+/** Keep missing data out of stored records, form submissions and Excel cells. */
+export function displayFieldValue(value: unknown): string {
+  if (value == null || (typeof value === 'string' && !value.trim())) return 'N/A';
+  if (Array.isArray(value)) return value.length ? value.join(', ') : 'N/A';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  return String(value);
 }

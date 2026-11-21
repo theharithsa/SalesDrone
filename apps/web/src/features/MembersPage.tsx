@@ -1,3 +1,5 @@
+import type { ApiClient } from '../lib/api';
+import { errorMessage } from '../lib/error-message';
 import { useState } from 'react';
 import { UserPlus, ShieldCheck, Mail, Users } from 'lucide-react';
 import { Entity } from '../lib/types';
@@ -40,7 +42,7 @@ export default function MembersPage({
   embedded?: boolean;
   members: Entity[];
   invitations: Entity[];
-  request: (p: string, m?: string, b?: any, k?: string) => Promise<any>;
+  request: ApiClient;
   onRefresh: () => void;
 }) {
   const [open, setOpen] = useState(false),
@@ -89,7 +91,7 @@ export default function MembersPage({
       await request('/invitations/' + id, 'DELETE');
       onRefresh();
     } catch (e) {
-      setError((e as Error).message);
+      setError(errorMessage(e));
     }
   }
   return (

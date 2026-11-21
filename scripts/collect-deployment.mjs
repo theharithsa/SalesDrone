@@ -53,7 +53,9 @@ if (sr.status === 0)
       JSON.parse(sr.stdout),
       process.env.STORAGE_DEPLOYMENT_OUTCOME,
     );
-  } catch {}
+  } catch {
+    // A malformed Storage describe result leaves the evidence unverified.
+  }
 const metadata = {
   storage,
   application: 'SalesDrone',

@@ -137,7 +137,7 @@ content-hashed assets are immutable. The public Pages site is built from site on
 
 ## Local development and tests
 
-Use Node 22.18+ and Java 21. Run npm ci, npm test, npm run check and npm run build.
+Use Node 24.15.0 or later in the Node 24 series and Java 21. Run npm ci, npm test, npm run check and npm run build.
 `npm run test:emulator` uses demo-salesdrone with real emulated Auth, Firestore,
 transactions and deny-all client rules. For browser tests run the emulators plus
 Vite with VITE_USE_EMULATORS=true and RUM disabled. Use synthetic accounts/data only.
@@ -146,7 +146,7 @@ for Firebase setup and SECURITY.md for deployment trust boundaries.
 
 Release readiness is the cross-module completion owner. Shared settings catalogs generate the full reference, and skill-tree.json routes prompts to the 21 module skills. CI validates impact plans and retains post-deployment/telemetry acceptance separately from manual and tenant-query evidence. See RELEASE.md.
 
-Browser lead routing uses /leads/{id} with history state and current API authorization. Desktop quick inspection is fixed above the unchanged table; full pages separate paginated conversations, shared lead-linked tasks and loaded-activity review. Product handbook JSON generates both Markdown and searchable public HTML. Changed-screen captures carry reviewed hashes and release versions; readiness validates those declared in the release plan.
+Browser lead routing uses /leads/{id} with history state and current API authorization. Desktop quick inspection is fixed above the unchanged table; full pages open to a combined timeline of paginated activities and lead-linked tasks. All and the unfiltered Tasks tab share the task page for that lead and session. Task pages use the existing due-date API order; the UI rejoins loaded records by creation time, with separate explicit continuations. The first page adds at most 51 task records plus 50 responsible-member reads and one scoped lead lookup on top of existing request authorization. No extra polling, writes, indexes, or durable cache are needed. Product handbook JSON generates both Markdown and searchable public HTML. Changed-screen captures carry reviewed hashes and release versions; readiness validates those declared in the release plan.
 
 Settings mutations also persist per-control `settingsChanges` and atomic, chunked `settings.audit.committed` outbox records independently of OTel availability. Accepted export emits an allowlisted `settings.audit.delivered` log; values and secrets are excluded. See [settings audit coverage and delivery](SETTINGS-AUDIT.md) and the dedicated [Book mode module skill](../skills/salesdrone-book-mode/SKILL.md).
 
@@ -226,3 +226,7 @@ Admin Team reporting is a bounded read module in functions/src/team.js, with Tea
 ### Browser read reuse
 
 Repeat workspace navigation can reuse eligible first-page reads and aggregates in per-tab memory. Identity/policy changes, access errors, writes, focus and manual refresh invalidate the cache. HTTP and Service Worker API caching remain disabled. See [FinOps](FINOPS.md) for lifetimes, visibility limits, scheduled work and the separate Firebase ingress migration plan.
+
+## Company directory and spreadsheet updates
+
+Company names are derived from active lead documents using the existing normalized company field and scope indexes. The directory projects two fields per document and pages past the last company key. Forms continue to write leads through the ordinary transaction. A lead report exports its stable ID and version. Reviewed import planning reads an accessible ID, checks the exported version and compares nonempty editable fields. Commit rechecks current membership, lead and baseline versions and changed contact ownership in the transaction. See [Imports](IMPORTS.md).

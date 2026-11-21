@@ -6,7 +6,7 @@ function lifetime(path: string) {
   if (params.has('cursor') || params.has('search')) return 0;
   if (route === '/field-options' && !query) return 45_000;
   if ((route === '/summary' || route === '/dashboard') && !query) return 30_000;
-  if (route === '/leads' || route === '/tasks') return 15_000;
+  if (route === '/leads' || route === '/tasks' || route === '/companies') return 15_000;
   return 0;
 }
 

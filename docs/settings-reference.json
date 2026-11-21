@@ -209,15 +209,15 @@
           "id": "customDefinition",
           "label": "Custom field name, type and required flag",
           "default": "No custom fields",
-          "description": "Add up to 30 custom fields: text, long text, number, date, dropdown or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs/types cannot be changed or reused after retirement.",
-          "effect": "Required rules apply to new manual entries or explicit custom-value edits, not unrelated edits to legacy records. The first-sheet importer currently maps standard enquiry fields, not arbitrary custom-field columns.",
-          "example": "Add a dropdown named Material category with Cement, Aggregates and Blocks."
+          "description": "Add up to 30 custom fields: text, long text, number, date, dropdown, multi-select or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs stay fixed. Edit an active Dropdown and select Multi-select to retain its existing values and allow up to 30 choices per lead. This type change is permanent.",
+          "effect": "Required rules apply to new manual entries or explicit custom-value edits. Import can map an existing compatible custom field. Only Admins can create new workspace fields during mapping.",
+          "example": "Edit Product, change Field type to Multi-select, review its choices and save the field."
         },
         {
           "id": "customChoices",
-          "label": "Custom dropdown choices",
-          "default": "Provided when creating the dropdown",
-          "description": "A custom dropdown needs at least one distinct nonempty choice. Choice labels are bounded and case-normalized duplicates are rejected.",
+          "label": "Custom dropdown and multi-select choices",
+          "default": "Provided when creating the field",
+          "description": "A custom dropdown or multi-select needs at least one distinct nonempty choice. Choice labels are bounded and case-normalized duplicates are rejected.",
           "effect": "Removing a choice preserves unchanged historical values but prevents new use of that retired value.",
           "example": ""
         },
@@ -258,7 +258,7 @@
           "label": "Extra lead header fields",
           "default": "None",
           "description": "Choose up to six additional visible built-in or custom fields. The fictional preview shows the draft before saving.",
-          "effect": "The full lead page displays chosen visible fields with recorded values. The workspace field order determines their order.",
+          "effect": "Selected header fields appear below the lead name. An empty selected field displays N/A. Phone values open the dialer.",
           "example": "Show City / location and Product in the lead header."
         }
       ]

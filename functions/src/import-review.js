@@ -1,3 +1,4 @@
+import { DAY_MS } from './durations.js';
 import { applyImportStatus, importStatusTarget } from './import-status.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -55,6 +56,25 @@ const nameKey = (name) =>
     .replace(/\s+/g, ' ')
     .toLowerCase();
 const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+const choices = (value) => Array.isArray(value) ? value : value ? [value] : [];
+const sameField = (key, a, b) => {
+  if (!key.startsWith('cf_') || !(Array.isArray(a) || Array.isArray(b))) return same(a, b);
+  const left = choices(a);
+  const right = choices(b);
+  return left.length === right.length && left.every((choice) => right.includes(choice));
+};
+
+function workbookChoices(value, label) {
+  const cell = String(value).trim();
+  if (!cell.startsWith('[')) return [cell];
+  try {
+    const parsed = JSON.parse(cell);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+  }
+  throw new AppError(400, 'CUSTOM_FIELD', `Use a list of quoted choices for ${label}`);
+}
 const value = (lead, key) =>
   key.startsWith('cf_')
     ? (lead.customFields?.[key] ?? null)
@@ -109,12 +129,18 @@ function assertDraft(j, version) {
     fail('IMPORT_STATE', 'This import cannot be changed');
 }
 function normalizeSource(raw, input, options, index) {
-  const { leadId, sourceRow, ...originalFields } = raw;
+  const { leadId, leadVersion, sourceRow, ...originalFields } = raw;
+  const hasVersion = leadVersion != null && leadVersion !== '';
+  const sourceVersion = hasVersion ? Number(leadVersion) : null;
+  if (hasVersion && (!leadId || !['string', 'number'].includes(typeof leadVersion) || !Number.isSafeInteger(sourceVersion) || sourceVersion < 1))
+    return { index, sourceRow: sourceRow || index + 1, error: 'Keep the exported lead ID and a positive version together', decision: 'skip', row: null };
+  if (options.hiddenFields.includes('stage') && String(originalFields.stage ?? '').trim())
+    return { index, sourceRow: sourceRow || index + 1, error: 'Sales stage is hidden. Remove its column mapping or enable the field in Settings.', decision: 'skip', row: null };
   let transformed;
   try { transformed=applyImportStatus(originalFields,input,options); }
   catch(e){return {index,sourceRow:sourceRow||index+1,error:e.message,decision:'skip',row:null};}
   const fields=transformed.row;
-  if (leadId && !/^[A-Za-z0-9_.:-]{1,150}$/.test(leadId))
+  if (leadId && (typeof leadId !== 'string' || !/^[A-Za-z0-9_.:-]{1,150}$/.test(leadId) || ['.', '..'].includes(leadId)))
     return {
       index,
       sourceRow: sourceRow || index + 1,
@@ -122,19 +148,30 @@ function normalizeSource(raw, input, options, index) {
       decision: 'skip',
     };
   const custom = {};
+  const selectionValues = {};
   for (const f of options.customFields.filter((f) => !f.deleted)) {
     if (!Object.hasOwn(fields, f.id)) continue;
     const rawValue = fields[f.id];
     delete fields[f.id];
+    if (f.type === 'multiSelect' && String(rawValue ?? '').trim()) {
+      try {
+        custom[f.id] = workbookChoices(rawValue, f.label);
+      } catch (e) {
+        return { index, sourceRow: sourceRow || index + 1, error: e.message, decision: 'skip', row: null };
+      }
+      // Check structure now. The matched lead determines whether a retired choice is permitted.
+      selectionValues[f.id] = custom[f.id];
+      continue;
+    }
     custom[f.id] =
-      rawValue === ''
+      String(rawValue ?? '').trim() === ''
         ? null
         : f.type === 'number'
           ? Number(rawValue)
           : f.type === 'checkbox'
-            ? rawValue === 'true'
+            ? ['true', 'yes'].includes(String(rawValue).trim().toLowerCase())
               ? true
-              : rawValue === 'false'
+              : ['false', 'no'].includes(String(rawValue).trim().toLowerCase())
                 ? false
                 : rawValue
             : rawValue;
@@ -142,18 +179,19 @@ function normalizeSource(raw, input, options, index) {
   const result = previewRows(
     { ...input, rows: [fields] },
     options.values.stage,
-    {stageHidden:!transformed.legacyStageMapping || options.hiddenFields.includes('stage')},
+    {stageHidden:!transformed.legacyStageMapping || options.hiddenFields.includes('stage'), identifiedUpdate: !!leadId && input.duplicateMode === 'update'},
   )[0];
   if (result.row) {
     result.row.customFields = custom;
     try {
-      validateCustomValues(options, result.row.customFields, {}, false);
+      validateCustomValues(options, result.row.customFields, selectionValues, false);
     } catch (e) {
       result.error = e.message;
       result.row = null;
     }
   }
-  const mapped = editable.filter((k) => Object.hasOwn(fields, k) && (k!=='stage'||String(fields.stage||'').trim()));
+  const mapped = editable.filter(key => Object.hasOwn(fields, key) &&
+    (!['stage', 'countryCode'].includes(key) || Boolean(String(fields[key] ?? '').trim())));
   if (transformed.legacyStageMapping && fields.legacyStatus && !options.hiddenFields.includes('stage') && !mapped.includes('stage')) mapped.push('stage');
   mapped.push(...Object.keys(custom));
   return {
@@ -163,6 +201,7 @@ function normalizeSource(raw, input, options, index) {
     sourceRow:
       Number.isInteger(sourceRow) && sourceRow > 0 ? sourceRow : index + 1,
     suppliedLeadId: leadId || null,
+    ...(sourceVersion ? { sourceVersion } : {}),
     mapped,
     decision: result.error ? 'skip' : 'pending',
   };
@@ -183,10 +222,9 @@ export async function createImportReview(tx, m, input, now) {
   // Mark every member of an overlapping workbook group, not just a later row.
   const groups = new Map();
   for (const r of rows.filter((r) => !r.error)) {
-    const keys = [
+    const keys = r.suppliedLeadId ? ['id:' + r.suppliedLeadId] : [
       ...contactKeys(r.row),
       ...(r.row.name ? ['name:' + nameKey(r.row.name)] : []),
-      ...(r.suppliedLeadId ? ['id:' + r.suppliedLeadId] : []),
     ];
     for (const key of keys) {
       if (!groups.has(key)) groups.set(key, []);
@@ -235,7 +273,7 @@ export async function createImportReview(tx, m, input, now) {
     createdByName: m.name || m.email || 'Member',
     createdAt: now,
     updatedAt: now,
-    expiresAt: new Date(Date.parse(now) + 86400000).toISOString(),
+    expiresAt: new Date(Date.parse(now) + DAY_MS).toISOString(),
     version: 1,
     configVersion: options.version,
     total: rows.length,
@@ -266,6 +304,10 @@ export async function createImportReview(tx, m, input, now) {
   return j;
 }
 async function candidates(tx, m, row) {
+  if (row.suppliedLeadId) {
+    const lead = await tx.get(path('leads', row.suppliedLeadId));
+    return lead && canReadLead(m, lead) ? { restricted: false, leads: [lead] } : { restricted: true, leads: [] };
+  }
   const ids = new Set();
   for (const key of contactKeys(row.row)) {
     const keyDoc = await tx.get(path('dedupeKeys', key));
@@ -273,7 +315,6 @@ async function candidates(tx, m, row) {
       return { restricted: true, leads: [] };
     for (const id of keyDoc?.leadIds || []) ids.add(id);
   }
-  if (row.suppliedLeadId) ids.add(row.suppliedLeadId);
   const names = row.row.name
     ? await tx.query(path('leads'), {
         filters: [['nameNormalized', '==', row.row.name.trim().toLowerCase()]],
@@ -289,25 +330,32 @@ async function candidates(tx, m, row) {
     return { restricted: true, leads: [] };
   return { restricted: false, leads };
 }
-async function compare(tx, j, r, lead) {
+async function compare(tx, j, r, lead, options) {
+  try {
+    validateCustomValues(options, r.row.customFields, lead.customFields, false);
+  } catch (e) {
+    return { ...r, classification: 'Invalid', error: e.message, decision: 'skip' };
+  }
   const baseline = await tx.get(baselinePath(j.datasetId, lead.id));
+  const exported = r.suppliedLeadId === lead.id && r.sourceVersion != null;
+  const currentExport = exported && r.sourceVersion === lead.version;
   const changes = [],
     patch = {};
   for (const key of r.mapped) {
     const incoming = value(r.row, key),
       current = value(lead, key);
-    if (incoming === '' || incoming === null || same(incoming, current))
+    if (incoming === '' || incoming === null || sameField(key, incoming, current))
       continue;
     if (
-      baseline &&
+      !exported && baseline &&
       Object.hasOwn(baseline.values, key) &&
-      same(incoming, baseline.values[key])
+      sameField(key, incoming, baseline.values[key])
     )
       continue;
-    const conflict =
+    const conflict = exported ? !currentExport :
       !baseline ||
       !Object.hasOwn(baseline.values, key) ||
-      !same(current, baseline.values[key]);
+      !sameField(key, current, baseline.values[key]);
     changes.push({
       key,
       current,
@@ -358,14 +406,14 @@ async function compare(tx, j, r, lead) {
     changes,
     patch,
     commentChanges: comments,
-    initialComparison: !baseline,
+    initialComparison: !baseline && !currentExport,
     classification: changes.length || comments.length ? 'Update' : 'Unchanged',
-    reason: !baseline
+    reason: exported ? (currentExport ? 'Matched exported lead and version' : 'Lead changed after export. Review any differences.') : !baseline
       ? 'No previous source baseline; compare explicitly'
       : 'Matched existing lead',
   };
 }
-async function planRow(tx, m, j, r, forcedId) {
+async function planRow(tx, m, j, r, options, forcedId) {
   if (r.error) return { ...r, classification: 'Invalid', decision: 'skip' };
   const found = await candidates(tx, m, r);
   if (found.restricted)
@@ -401,6 +449,10 @@ async function planRow(tx, m, j, r, forcedId) {
     nameKey(contactLeads[0].name) === nameKey(r.row.name)
   )
     match = contactLeads[0];
+  if (r.suppliedLeadId && forcedId && forcedId !== r.suppliedLeadId)
+    fail('IMPORT_MATCH', 'Keep the exported lead ID with its original row');
+  if (r.suppliedLeadId && j.duplicateMode === 'keep')
+    return { ...base, classification: 'Conflict', reason: 'Use update mode for rows with a SalesDrone lead ID' };
   if (j.duplicateMode === 'keep' && !forcedId)
     return {
       ...base,
@@ -408,11 +460,8 @@ async function planRow(tx, m, j, r, forcedId) {
       reason: 'Explicitly keep separate enquiries',
     };
   if (
-    j.duplicateMode === 'skip' &&
-    contactLeads.length === 1 &&
-    match &&
-    !forcedId &&
-    nameKey(match.name) === nameKey(r.row.name)
+    j.duplicateMode === 'skip' && match && !forcedId &&
+    (r.suppliedLeadId || (contactLeads.length === 1 && nameKey(match.name) === nameKey(r.row.name)))
   )
     return {
       ...base,
@@ -425,6 +474,18 @@ async function planRow(tx, m, j, r, forcedId) {
       classification: 'Conflict',
       reason: 'Overlapping rows in this workbook; choose an action for each',
     };
+  if (match && r.suppliedLeadId) {
+    const identity = { phone: match.phone, email: match.email, countryCode: match.countryCode, needsReview: true };
+    for (const key of ['phone', 'email', 'countryCode'])
+      if (r.mapped.includes(key) && r.row[key]) identity[key] = r.row[key];
+    const previous = contactKeys(match);
+    for (const key of contactKeys(normalizeLead(identity)).filter(key => !previous.includes(key))) {
+      const owners = await tx.get(path('dedupeKeys', key));
+      if (owners?.leadIds.some(id => id !== match.id)) return {
+        ...base, classification: 'Conflict', reason: 'The new contact is already in use. Correct the workbook or skip this row.',
+      };
+    }
+  }
   if (match && contactLeads.some((l) => l.id !== match.id))
     return {
       ...base,
@@ -437,7 +498,7 @@ async function planRow(tx, m, j, r, forcedId) {
       classification: 'Conflict',
       reason: 'Archived leads cannot be updated by import',
     };
-  if (match && j.duplicateMode === 'update') return compare(tx, j, base, match);
+  if (match && j.duplicateMode === 'update') return compare(tx, j, base, match, options);
   if (found.leads.length || r.suppliedLeadId)
     return {
       ...base,
@@ -445,7 +506,7 @@ async function planRow(tx, m, j, r, forcedId) {
       reason: 'Name/contact do not identify one lead; select a match or skip',
     };
   try {
-    validateCustomValues(await readFieldOptions(tx), r.row.customFields);
+    validateCustomValues(options, r.row.customFields);
   } catch (e) {
     return {
       ...base,
@@ -462,6 +523,7 @@ export async function planImportChunk(tx, m, id, input, now) {
   if (j.status !== 'Preparing') fail('IMPORT_STATE', 'Import is not preparing');
   const c = await tx.get(chunkPath(id, j.planOffset));
   if (!c) fail('IMPORT_CHUNK', 'Import chunk missing');
+  const options = await readFieldOptions(tx);
   const rows = [];
   for (const r of c.rows) {
     const source = Object.fromEntries(
@@ -474,6 +536,7 @@ export async function planImportChunk(tx, m, id, input, now) {
         'comments',
         'mapped',
         'suppliedLeadId',
+        'sourceVersion',
         'relatedRows',
         'relatedSourceRows',
         'warnings',
@@ -481,7 +544,7 @@ export async function planImportChunk(tx, m, id, input, now) {
         .filter((k) => Object.hasOwn(r, k))
         .map((k) => [k, r[k]]),
     );
-    rows.push(await planRow(tx, m, j, source));
+    rows.push(await planRow(tx, m, j, source, options));
   }
   if (Buffer.byteLength(JSON.stringify(rows)) > 850 * 1024)
     fail(
@@ -566,6 +629,7 @@ export async function decideImportRow(tx, m, id, index, input, now) {
       m,
       j,
       row,
+      await readFieldOptions(tx),
       input.action === 'match' ? input.leadId : row.leadId,
     );
     if (input.action === 'match' && !input.leadId)
@@ -743,7 +807,8 @@ async function prepareUpdate(tx, m, j, r, now, options) {
   for (const f of options.customFields.filter((f) => f.required && !f.deleted))
     if (
       Object.hasOwn(r.patch || {}, f.id) &&
-      [null, '', false, undefined].includes(candidate.customFields[f.id])
+      ([null, '', false, undefined].includes(candidate.customFields[f.id]) ||
+        (Array.isArray(candidate.customFields[f.id]) && !candidate.customFields[f.id].length))
     )
       fail(
         'CUSTOM_FIELD_REQUIRED',
@@ -756,13 +821,15 @@ async function prepareUpdate(tx, m, j, r, now, options) {
       .map((k) => [k, candidate[k]]),
   );
   const { allowDuplicate, ...normalized } = normalizeLead(base);
-  const keys = [...new Set([...contactKeys(old), ...contactKeys(normalized)])],
+  const oldKeys = contactKeys(old);
+  const newKeys = contactKeys(normalized);
+  const keys = [...oldKeys.filter(key => !newKeys.includes(key)), ...newKeys.filter(key => !oldKeys.includes(key))],
     docs = [];
   for (const key of keys) docs.push(await tx.get(path('dedupeKeys', key)));
   if (
     docs.some(
       (d, i) =>
-        contactKeys(normalized).includes(keys[i]) &&
+        newKeys.includes(keys[i]) &&
         d?.leadIds.some((id) => id !== old.id),
     )
   )
@@ -809,7 +876,7 @@ async function prepareUpdate(tx, m, j, r, now, options) {
             id: k,
             leadIds: [
               ...(docs[i]?.leadIds || []).filter((id) => id !== old.id),
-              ...(contactKeys(normalized).includes(k) ? [old.id] : []),
+              ...(newKeys.includes(k) ? [old.id] : []),
             ],
           }),
         );
@@ -1084,7 +1151,7 @@ export async function refreshImportReview(tx, m, id, input, now) {
     planCounts: {},
     configVersion: options.version,
     status: 'Preparing',
-    expiresAt: new Date(Date.parse(now) + 86400000).toISOString(),
+    expiresAt: new Date(Date.parse(now) + DAY_MS).toISOString(),
     lastError: null,
   });
 }

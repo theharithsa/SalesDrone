@@ -18,6 +18,7 @@ export default defineConfig(({ command }) => ({
     {
       name: 'production-rum-tag',
       transformIndexHtml(html) {
+        if (process.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production') return html;
         return command === 'build' &&
           process.env.VITE_ENABLE_RUM === 'true' &&
           process.env.VITE_USE_EMULATORS !== 'true'

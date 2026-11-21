@@ -1,7 +1,8 @@
+import { DAY_MS } from './durations.js';
 import {businessPage,businessAnswer,validateBusinessPlan} from './business-records.js';
 // Model proposals are data. Only these server-validated read operations execute.
 import { z } from "zod";
-import { AppError } from "./contracts.js";
+import { AppError, IsoDate } from "./contracts.js";
 import { path, canReadLead, scopeFilters, hash } from "./policy.js";
 import { documentKey } from "./store.js";
 import {
@@ -98,16 +99,7 @@ const normalize = (v) =>
   String(v ?? "")
     .normalize("NFKC")
     .toLowerCase();
-function dateOnly(v) {
-  try {
-    return (
-      /^\d{4}-\d{2}-\d{2}$/.test(v) &&
-      new Date(v + "T00:00:00Z").toISOString().slice(0, 10) === v
-    );
-  } catch {
-    return false;
-  }
-}
+const dateOnly = (value) => IsoDate.safeParse(value).success;
 function shift(date, days) {
   const d = new Date(date + "T12:00:00Z");
   d.setUTCDate(d.getUTCDate() + days);
@@ -120,7 +112,7 @@ export function agentWindow(period, at, timezone) {
       !dateOnly(period.startDate) ||
       !dateOnly(period.endDate) ||
       period.endDate < period.startDate ||
-      Date.parse(period.endDate) - Date.parse(period.startDate) > 366 * 86400000
+      Date.parse(period.endDate) - Date.parse(period.startDate) > 366 * DAY_MS
     )
       throw new AppError(
         400,
@@ -183,7 +175,7 @@ export function validateAgentPlan(
       );
     if (
       !f ||
-      !["text", "textarea", "select", "date", "number", "checkbox"].includes(
+      !["text", "textarea", "select", "multiSelect", "date", "number", "checkbox"].includes(
         f.type,
       )
     )
@@ -243,6 +235,8 @@ export function validateAgentPlan(
       "AGENT_CLARIFY",
       "Choose a configured grouping field.",
     );
+  if (byId.get(plan.groupBy)?.type === "multiSelect")
+    throw new AppError(400, "AGENT_CLARIFY", "Choose one option to filter this multi-select field.");
   if (plan.outcome !== "none") {
     const stages =
       config[plan.outcome === "converted" ? "convertedStages" : "failedStages"];
@@ -301,13 +295,13 @@ export function matchesAgentLead(lead, plan, config) {
   )
     return false;
   for (const f of plan.filters) {
-    const actual = valueAt(lead, f.field),
-      a = normalize(actual),
-      b = normalize(f.value);
-    if (f.operator === "equals" && a !== b) return false;
-    if (f.operator === "contains" && !a.includes(b)) return false;
-    if (f.operator === "not_equals" && a === b) return false;
-    if (f.operator === "not_contains" && a.includes(b)) return false;
+    const actual = valueAt(lead, f.field);
+    const choices = (Array.isArray(actual) ? actual : [actual]).map(normalize);
+    const expected = normalize(f.value);
+    if (f.operator === "equals" && !choices.includes(expected)) return false;
+    if (f.operator === "contains" && !choices.some((choice) => choice.includes(expected))) return false;
+    if (f.operator === "not_equals" && choices.includes(expected)) return false;
+    if (f.operator === "not_contains" && choices.some((choice) => choice.includes(expected))) return false;
     if (f.operator === "before" && !(actual < f.value)) return false;
     if (f.operator === "after" && !(actual > f.value)) return false;
   }

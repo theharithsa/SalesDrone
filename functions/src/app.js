@@ -1,3 +1,5 @@
+import { DAY_MS, MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { leadComments, matchesLeadText, matchesCommentText } from './lead-text.js';
 import { errorType as telemetryErrorType } from './observability-contract.js';
 import {teamSnapshot, teamWindow, assertTeamAccess, authoredActivity} from './team.js';
@@ -148,13 +150,14 @@ export function createApp({
   cursorSecret = process.env.CURSOR_SECRET,
   telemetry = () => null,
   verifyToken,
+  bootstrapAdminEmails = ADMIN_EMAILS,
   verifyAppCheck,
   verifyPersonalTokenOwner = null,
   sendTest = async () => {},
   files = null,
   extractScore = null,
   summarizeDashboard = null,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const maintenanceStore = store.maintenanceStore || store;
   store = guardLeadData(researchStore(store,()=>telemetry()?.capture()?.traceparent));
@@ -272,7 +275,7 @@ export function createApp({
             'Lead data is being cleared. Try again after cleanup finishes.',
           );
         const allowed =
-          url === '/team' ? ['days','from','to'] : url === '/team/members/:uid/activities' ? ['days','from','to','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
+          url === '/companies' ? ['limit', 'cursor', 'search'] : url === '/team' ? ['days','from','to'] : url === '/team/members/:uid/activities' ? ['days','from','to','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
             ? ['ids']
             : url === '/leads'
               ? [
@@ -475,7 +478,7 @@ export function createApp({
   }
   router.get('/me', async (req, res, next) => {
     try {
-      const rawMember = await resolveIdentity(store, req.identity);
+      const rawMember = await resolveIdentity(store, req.identity, bootstrapAdminEmails);
       const m = await effectiveMember(store, rawMember);
       const invitation = !m
         ? await store.get(path('invitations', hash(req.identity.email)))
@@ -662,9 +665,10 @@ export function createApp({
     const exact = new Map();
     let contradiction = false;
     for (const f of filters.filter(f => f.op === 'exact')) {
-      const field = f.field.startsWith('cf_') ? 'customFields.' + f.field : f.field;
-      if (exact.has(field) && exact.get(field) !== f.value) contradiction = true;
-      exact.set(field, f.value);
+      const field = f.field === 'company' ? 'companyNormalized' : f.field.startsWith('cf_') ? 'customFields.' + f.field : f.field;
+      const term = f.field === 'company' ? f.value.trim().toLowerCase() : f.value;
+      if (exact.has(field) && exact.get(field) !== term) contradiction = true;
+      exact.set(field, term);
     }
     if (contradiction) return {items:[],nextCursor:null,scanLimited:false};
     // Default single-field indexes can merge raw equalities with document-ID order,
@@ -917,7 +921,7 @@ export function createApp({
     });
     return {
       columns: selected,
-      rows: exportRows(result.items, selected),
+      rows: exportRows(result.items, selected, config),
       ...(comments ? { comments } : {}),
       nextCursor: result.nextCursor,
       scanLimited: result.scanLimited,
@@ -1152,6 +1156,28 @@ export function createApp({
       now,
     }),
   );
+  route('get', '/companies', 'leads:read', async (req) => {
+    const limit = parse(z.coerce.number().int().min(1).max(100), req.query.limit ?? 30);
+    const search = parse(z.string().trim().max(200), req.query.search ?? '').toLowerCase();
+    if ((await readFieldOptions(store)).hiddenFields.includes('company')) return { items: [], nextCursor: null };
+    const filters = [...scopeFilters(req.member), ['archived', '==', false]];
+    const binding = hash(JSON.stringify(['companies', req.member.uid, req.member.version, req.member.accessPolicyVersion, filters, search]));
+    const after = req.query.cursor ? openCursor(req.query.cursor, binding)[0] : '';
+    // Seek past the entire last company, including any remaining leads with the same name.
+    const startKey = after || search;
+    const includeStart = !!search && !after;
+    filters.push(['companyNormalized', includeStart ? '>=' : '>', startKey]);
+    const rows = await store.query(path('leads'), {
+      filters, order: 'companyNormalized', limit: limit + 1, fields: ['company', 'companyNormalized'],
+    });
+    const page = rows.slice(0, limit).filter(row => row.companyNormalized.startsWith(search));
+    const names = new Map(page.map(row => [row.companyNormalized, row.company]));
+    return {
+      items: Array.from(names, ([key, name]) => ({ key, name })),
+      nextCursor: rows[limit]?.companyNormalized.startsWith(search) && page.length
+        ? sealCursor([page.at(-1).companyNormalized], binding) : null,
+    };
+  });
   route('get', '/archived-leads', 'leads:read', (req) =>
     list(req, 'leads', [...scopeFilters(req.member), ['archived', '==', true]]),
   );
@@ -1260,7 +1286,7 @@ export function createApp({
   const contentRoute = '/leads/:id/attachments/:attachmentId/content';
   router.put(
     contentRoute,
-    async (req, res, next) => {
+    async (req, _res, next) => {
       try {
         if (req.identity.personalAccess)
           req.identity.personalAccess.requiredScopes = [
@@ -2179,7 +2205,7 @@ export function createApp({
   );
   route('post', '/invitations', 'members:write', (req) => {
     const input = parse(GrantInput, req.body);
-    if (ADMIN_EMAILS.includes(input.email))
+    if (bootstrapAdminEmails.includes(input.email))
       throw new AppError(
         409,
         'ADMIN',
@@ -2197,7 +2223,7 @@ export function createApp({
           id,
           active: true,
           createdAt: now(),
-          expiresAt: new Date(Date.parse(now()) + 7 * 86400000).toISOString(),
+          expiresAt: new Date(Date.parse(now()) + 7 * DAY_MS).toISOString(),
           version: (prior?.version || 0) + 1,
         };
         tx.set(path('invitations', id), inv);
@@ -2500,7 +2526,7 @@ export function createApp({
           status: 'Preview',
           createdByUid: m.uid,
           createdAt: now(),
-          expiresAt: new Date(Date.parse(now()) + 86400000).toISOString(),
+          expiresAt: new Date(Date.parse(now()) + DAY_MS).toISOString(),
           errors: rows.filter((r) => r.error).slice(0, 100),
         };
         tx.set(path('imports', fingerprint), result);
@@ -2670,7 +2696,7 @@ export function createApp({
       const visibility = await Promise.all(
         result.items.map((n) => notificationVisible(store, req.member, n)),
       );
-      const items = result.items.filter((n, i) => visibility[i]);
+      const items = result.items.filter((_, i) => visibility[i]);
       return { ...result, items };
     }),
   );
@@ -2726,7 +2752,7 @@ export function createApp({
       const p = path('pushTests', req.member.uid);
       const old = await tx.get(p);
       const at = now();
-      if (old && Date.parse(at) - Date.parse(old.at) < 60000)
+      if (old && Date.parse(at) - Date.parse(old.at) < MINUTE_MS)
         throw new AppError(
           429,
           'RATE_LIMIT',
@@ -2849,7 +2875,7 @@ export function createApp({
       ['recipientUid', '==', req.member.uid],
       ['state', '==', 'Pending'],
     ];
-    const since = new Date(Date.parse(now()) - 7 * 86400000).toISOString();
+    const since = new Date(Date.parse(now()) - 7 * DAY_MS).toISOString();
     const activityFilters = [
       ['actorUid', '==', req.member.uid],
       ['type', '==', 'call'],
@@ -2877,7 +2903,7 @@ export function createApp({
       },
     }),
   );
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, _next) => {
     const parserError =
       err.type === 'entity.parse.failed'
         ? {

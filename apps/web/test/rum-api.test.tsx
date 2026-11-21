@@ -19,7 +19,7 @@ it('actual API success, denied response, network error and cancellation export c
  expect(leave).toHaveBeenCalledTimes(4);expect(JSON.stringify(properties.mock.calls)+JSON.stringify(report.mock.calls)).not.toContain('PRIVATE');
 });
 it('malformed responses, repeated completion and global failures never export exception content',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>new Response('PRIVATE',{status:502})));await expect(api('/leads')).rejects.toThrow();expect(properties.mock.lastCall?.[3]['error_code']).toBe('API_UNAVAILABLE');
+ vi.stubGlobal('fetch',vi.fn(async()=>new Response('PRIVATE',{status:502})));await expect(api('/leads')).rejects.toMatchObject({status:502,code:'API_UNAVAILABLE'});expect(properties.mock.lastCall?.[3]['error_code']).toBe('API_UNAVAILABLE');
  const finish=beginRumRequest('/leads','GET');finish('success',undefined,200);finish('failure',undefined,503);expect(leave).toHaveBeenCalledTimes(2);
  const remove=installRumErrorHandlers();window.dispatchEvent(new ErrorEvent('error',{message:'PRIVATE',error:new Error('PRIVATE')}));remove();expect(report.mock.lastCall?.[1]).toBe('UNHANDLED');expect(JSON.stringify(report.mock.calls)).not.toContain('PRIVATE');
 });
@@ -29,4 +29,14 @@ it('an already cancelled upload closes its RUM action',async()=>{
 
 it('page navigation reports a bounded page intent and app version once',()=>{
  rumPage('/settings?private=PRIVATE');rumPage('/settings?private=OTHER');expect(leave).toHaveBeenCalledTimes(1);expect(properties.mock.lastCall?.[3]).toMatchObject({app_version:'component-test',interaction_intent:'View settings'});expect(JSON.stringify(properties.mock.calls)).not.toContain('PRIVATE');
+});
+
+it('handles a JSON null error body without losing the HTTP status', async () => {
+  vi.stubGlobal('fetch', vi.fn(async () => new Response('null', { status: 503 })));
+  await expect(api('/leads')).rejects.toMatchObject({
+    status: 503,
+    code: 'REQUEST',
+    message: 'Request failed',
+  });
+  expect(leave).toHaveBeenCalledTimes(1);
 });

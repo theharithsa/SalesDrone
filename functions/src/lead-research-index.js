@@ -1,3 +1,4 @@
+import { isoNow } from './clock.js';
 import { AppError } from './contracts.js';
 import { path, hash, canReadLead } from "./policy.js";
 import { readResearchSettings } from "./lead-research-settings.js";
@@ -24,7 +25,7 @@ export function sourceChunks(collection, source) {
           source.legacyStatus,
           source.initialDiscussion,
           source.comments,
-          ...Object.values(source.customFields || {}).filter(
+          ...Object.values(source.customFields || {}).flat().filter(
             (v) => typeof v === "string",
           ),
         ]
@@ -116,7 +117,7 @@ export async function processIndexJob({
   store,
   job,
   embed,
-  now = () => new Date().toISOString(),
+  now = isoNow,
 }) {
   const settings = await readResearchSettings(store);
   if (!settings.indexingEnabled) return { processed: 0 };

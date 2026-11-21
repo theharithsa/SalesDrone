@@ -10,7 +10,11 @@ export function matchesLeadText(lead, query, config) {
   return fields.some((key) => !config.hiddenFields.includes(key) && fold(lead[key]).includes(term)) ||
     (!config.hiddenFields.includes('phone') && digits.length >= 3 && /^\+?[\d\s().-]+$/.test(term) &&
       [lead.phone, lead.phoneNormalized, lead.originalPhone].some((phone) => String(phone ?? '').replace(/\D/g, '').includes(digits))) ||
-    config.customFields.some((field) => !field.deleted && fold(lead.customFields?.[field.id]).includes(term));
+    config.customFields.some((field) => {
+      if (field.deleted) return false;
+      const value = lead.customFields?.[field.id];
+      return (Array.isArray(value) ? value : [value]).some((choice) => fold(choice).includes(term));
+    });
 }
 export async function leadComments(store, leadId) {
   const rows = await store.query(path('activities'), {

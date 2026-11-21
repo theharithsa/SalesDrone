@@ -59,6 +59,7 @@ export const PAT_ROUTES = {
   'post /leads/batch': 'leads:bulk-edit',
   'post /leads/export': 'leads:export',
   'get /workspace-settings': 'configuration:read',
+  'get /companies': 'leads:read',
   'get /leads': 'leads:read',
   'get /archived-leads': 'leads:read',
   'get /leads/:id': 'leads:read',

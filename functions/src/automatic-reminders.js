@@ -1,3 +1,5 @@
+import { DAY_MS, HOUR_MS, MINUTE_MS } from './durations.js';
+import { isoNow } from './clock.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { path, canReadLead, effectiveMember } from './policy.js';
@@ -73,7 +75,7 @@ export function zonedInstant(date, time, timezone) {
     throw Error('Choose a valid date.');
   const offsets = new Set();
   for (const h of [-36, -12, 0, 12, 36]) {
-    const probe = wall + h * 3600000,
+    const probe = wall + h * HOUR_MS,
       p = localParts(probe, timezone);
     offsets.add(Date.parse(p.date + 'T' + p.time + ':00Z') - probe);
   }
@@ -119,7 +121,7 @@ export function resolveExtraction(
     if (x.minutes === null)
       return review('Choose a duration for this follow-up.');
     const dueAt = new Date(
-      Date.parse(referenceAt) + x.minutes * 60000,
+      Date.parse(referenceAt) + x.minutes * MINUTE_MS,
     ).toISOString();
     if (Date.parse(dueAt) <= Date.parse(now))
       return review('This follow-up time has passed. Choose a future time.');
@@ -176,7 +178,7 @@ export function resolveExtraction(
   }
   if (Date.parse(dueAt) <= Date.parse(now))
     return review('The interpreted time has passed. Choose a future time.');
-  if (Date.parse(dueAt) > Date.parse(now) + 366 * 86400000)
+  if (Date.parse(dueAt) > Date.parse(now) + 366 * DAY_MS)
     return review('Confirm follow-ups more than a year away.');
   return {
     status: 'Scheduled',
@@ -279,7 +281,7 @@ export async function analyzeNotes({
   store,
   telemetry,
   extract,
-  now = () => new Date().toISOString(),
+  now = isoNow,
   limit = 5,
 }) {
   const stats = {
@@ -322,7 +324,7 @@ export async function analyzeNotes({
         ...job,
         lease,
         attemptCount: job.attemptCount + 1,
-        nextAttemptAt: new Date(Date.parse(now()) + 180000).toISOString(),
+        nextAttemptAt: new Date(Date.parse(now()) + (3 * MINUTE_MS)).toISOString(),
       };
       tx.set(path('noteAnalyses', job.id), updated);
       return { ...updated, notes: context.activity.notes };
@@ -375,7 +377,7 @@ export async function analyzeNotes({
           status: terminal ? 'Failed' : 'Pending',
           errorCode,
           nextAttemptAt: new Date(
-            Date.parse(now()) + 60000 * 2 ** job.attemptCount,
+            Date.parse(now()) + MINUTE_MS * 2 ** job.attemptCount,
           ).toISOString(),
         });
         tx.set(path('activities', job.activityId), {
