@@ -42,8 +42,13 @@ The one-time operator provisioning scripts use the operator's existing Firebase/
 login, preserve IAM policies with etags, and create no service-account private key.
 Federation is restricted by numeric owner/repository ID, main ref and exact deploy
 workflow. The deployment service account has product-specific deploy roles plus
-narrow IAM-publication permissions and actAs on both the compute runtime account and the App Engine default service account (required by Firebase CLI preflight). That actAs
-permission makes main a production trust boundary even without a direct data role.
+narrow IAM-publication permissions. Existing Firebase CLI preflight grants are
+retained. Run `GCP_PROJECT_ID=sales-drone-avinya node scripts/provision-production-runtime.mjs --apply`
+once to provision the dedicated Functions identity and grant the existing
+production deployer actAs on it. The client, scheduler and runtime keep the same
+application routes. The production pipeline verifies all five function identities
+and the four scheduled OIDC identities before Hosting cutover. These grants make
+main a production trust boundary even without a direct deployer data role.
 
 The public documentation job uploads only site/ after its curated build. It does
 not publish docs/, production captures, workbooks, local fixtures or internal evidence.

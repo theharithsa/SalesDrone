@@ -39,6 +39,7 @@ import { AppError } from './contracts.js';
 import { intelligenceGemini } from './intelligence-gemini.js';
 import { scoreLeads } from './scoring.js';
 import { preproduction } from './preproduction.js';
+import { productionRuntime } from './runtime-identity.js';
 
 export function createRuntime(environment = 'production') {
   if (!['production', 'pre-production'].includes(environment)) throw Error('Unknown runtime environment');
@@ -54,6 +55,7 @@ export function createRuntime(environment = 'production') {
   process.env.FIRESTORE_ENABLE_TRACING = 'false';
   initializeApp();
   const preprod = environment === 'pre-production';
+  const runtimeIdentity = preprod ? runtimeAccount : productionRuntime.email;
   const geminiKey = defineSecret('GEMINI_API_KEY');
   const dtKey = defineSecret('DYNATRACE_API_TOKEN');
   const cursorKey = defineSecret(preprod ? 'PREPROD_CURSOR_SECRET' : 'CURSOR_SECRET');
@@ -140,7 +142,7 @@ export function createRuntime(environment = 'production') {
     cursorSecret: () => process.env.FUNCTIONS_EMULATOR === 'true'
       ? process.env.CURSOR_SECRET || 'isolated-emulator-cursor-key'
       : cursorKey.value(),
-    files: firebaseFiles(dependency, preprod ? bucket : undefined),
+    files: firebaseFiles(dependency, preprod ? bucket : productionRuntime.bucket),
     store,
     bootstrapAdminEmails: preprod ? [] : undefined,
     telemetry: () => observability,
@@ -198,7 +200,8 @@ export function createRuntime(environment = 'production') {
   const api = onRequest(
     {
       region,
-      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      serviceAccount: runtimeIdentity,
+      ...(preprod ? { minInstances: 0 } : {}),
       timeoutSeconds: 120,
       memory: '512MiB',
       maxInstances: preprod ? 2 : 10,
@@ -227,7 +230,8 @@ export function createRuntime(environment = 'production') {
   const reminders = onSchedule(
     {
       region,
-      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      serviceAccount: runtimeIdentity,
+      ...(preprod ? { minInstances: 0 } : {}),
       schedule: 'every 1 minutes',
       timeZone: 'Etc/UTC',
       timeoutSeconds: 120,
@@ -323,7 +327,8 @@ export function createRuntime(environment = 'production') {
   const analyzeNotes = onSchedule(
     {
       region,
-      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      serviceAccount: runtimeIdentity,
+      ...(preprod ? { minInstances: 0 } : {}),
       schedule: 'every 1 minutes',
       timeZone: 'Etc/UTC',
       timeoutSeconds: 120,
@@ -355,7 +360,8 @@ export function createRuntime(environment = 'production') {
   const leadIntelligence = onSchedule(
     {
       region,
-      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      serviceAccount: runtimeIdentity,
+      ...(preprod ? { minInstances: 0 } : {}),
       schedule: 'every 1 minutes',
       timeZone: 'Etc/UTC',
       timeoutSeconds: 180,
@@ -386,7 +392,8 @@ export function createRuntime(environment = 'production') {
   const exportTelemetry = onSchedule(
     {
       region,
-      ...(preprod ? { serviceAccount: runtimeAccount, minInstances: 0 } : {}),
+      serviceAccount: runtimeIdentity,
+      ...(preprod ? { minInstances: 0 } : {}),
       schedule: 'every 1 minutes',
       timeZone: 'Etc/UTC',
       timeoutSeconds: 120,
