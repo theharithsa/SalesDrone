@@ -1,8 +1,10 @@
 # Pre-production foundation
 
-Status: **provisioned, rollout in progress**. On 14 November 2026 the owner requested a
-plan and GitHub implementation issues first. The v2.13.10 documentation release
-recorded the initial plan. The implementation is tracked below.
+Status: **live for approved testing, production acceptance in progress**.
+Open the [test workspace](https://sales-drone-avinya-preprod.web.app/) and check
+its [build identity](https://sales-drone-avinya-preprod.web.app/version.json).
+The [v2.14.0 promotion](https://github.com/theharithsa/SalesDrone/pull/240)
+tracks acceptance for the exact build.
 
 ## Outcome and constraints
 
@@ -22,7 +24,7 @@ Secret Manager, billing or project-wide configuration. Firebase Functions v2 use
 Cloud Run underneath. A second database does not receive another free Firestore
 allowance. Do not represent this plan as a new free environment.
 
-## Resource contract (proposed names)
+## Resource contract
 
 | Concern | Production | Pre-production target |
 | --- | --- | --- |
@@ -31,7 +33,7 @@ allowance. Do not represent this plan as a new free environment.
 | GitHub environment | `production` | `pre-production` |
 | Hosting | Existing production site and domain | Separate `sales-drone-avinya-preprod` site, initially its `web.app` domain |
 | Firestore | `(default)` | Named database `preprod`, same verified region |
-| Functions | Existing `salesdrone` codebase | Separate `salesdrone-preprod` codebase and distinct function names |
+| Functions | Existing `salesdrone` codebase and scheduled workers | Dedicated `preprodApi` function deployed by the pre-prod workflow |
 | HTTP ingress | `salesdrone-ingress` | Distinct `salesdrone-preprod-ingress`; fixed upstream to the pre-production API |
 | Attachments | Existing private production bucket | Separate private pre-production bucket; never a shared customer prefix |
 | Runtime identity | Existing production identity | Dedicated least-privilege identity, database-conditioned Firestore grant and pre-production bucket access |
@@ -208,6 +210,22 @@ requests are disabled on the test API. Shared Firebase Hosting IAM is project
 scoped. The pre-production workflow uses a separate deployment account and pins
 the site, function, service and source bucket in its deployment scripts.
 
-The production workflow compares the merged source tree with a successful
-pre-production workflow run. Keep the epic open until authentication, telemetry,
-cost and promotion acceptance have been exercised.
+### v2.14.0 acceptance evidence
+
+The [pre-production deployment](https://github.com/theharithsa/SalesDrone/actions/runs/44909551450)
+recorded Hosting identity, anonymous denial and malformed JSON handling.
+The [production PR recheck](https://github.com/theharithsa/SalesDrone/actions/runs/44909556147/attempts/2)
+matched the tested code tree and held promotion at milestone acceptance.
+
+The current API and ingress emit environment-labelled traces, logs and request
+metrics. Confirm browser monitoring, committed business-event delivery and
+native SDLC events separately. The pre-prod build currently disables browser
+monitoring and deploys only the API and ingress. Verify cross-environment IAM
+against effective permissions in addition to the configured grants. Cloud
+Monitoring measures usage, while a billing export supplies SKU attribution.
+The [acceptance issue](https://github.com/theharithsa/SalesDrone/issues/226)
+records the remaining evidence.
+
+The Admin reset preview displays scope before confirmation. The Auth, Firestore
+and Storage emulators exercise actual reset, replay and configuration retention.
+An operator must explicitly authorize any permanent reset of the live test workspace.

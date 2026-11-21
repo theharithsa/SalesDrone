@@ -3,20 +3,9 @@
 Application versions follow the [weekly release policy](docs/RELEASE-GOVERNANCE.md#weekly-production-cadence).
 API contract versions track compatibility independently.
 
+> The v2.14.0 section describes the pre-production candidate. Confirm the published version and date in [GitHub Releases](https://github.com/theharithsa/SalesDrone/releases).
 
-
-
-
-
-
-
-
-
-
-
-
-
-## [2.14.0] - 2026-11-14
+## [2.14.0] - 2026-11-22
 
 ### Added
 - Custom lead fields can allow multiple choices. Admins can convert an existing Product dropdown while keeping saved selections. Filtering and Excel updates support the new field type.
@@ -28,7 +17,8 @@ API contract versions track compatibility independently.
 ### Changed
 - Added a separate SalesDrone pre-production environment for synthetic data and a verified promotion path through GitHub Actions.
 - Updated the SDLC guide with the live pre-production path, weekly production releases, build identification and urgent patch policy.
-- Refreshed the README and security policy, recorded the App Launchpad v1.14.0 audit, and documented the production release documentation review.
+- Refreshed the README, security policy, product, Settings and API guides. Added reviewed synthetic captures for the lead timeline, Companies, workbook updates and Product multi-select.
+- Recorded the App Launchpad v1.14.0 audit and documented the production release review.
 
 ### Security
 - Patched alerted glob, minimatch, and UUID dependencies in the workspace and Functions install paths.
@@ -37,6 +27,8 @@ API contract versions track compatibility independently.
 ### Maintenance
 - Updated the Firebase web SDK and CLI, Lucide icons, and test dependencies. Development and CI now use Node 24. The deployed Functions runtime remains Node 22.
 - Added lint checks for existing TypeScript escape hatches and unexplained error handling. Verification checks the OpenAPI artifacts without rewriting them.
+
+### Fixed
 - Browser API failures retain their HTTP status, and comment editing reports when a stale lead could not be refreshed.
 
 ## [2.13.11] - 2026-11-14

@@ -1,18 +1,21 @@
 # SalesDrone technical guide
 
-Application release: **2.6.0** (initial baseline **1.0.0**). Product: SalesDrone by AvinyaTech, part of Avinya
-Enterprises. Code is MIT-licensed; third-party notices and trademarks remain separate.
+This guide describes the **v2.14.0** source and **OpenAPI 1.36.0**. Check the
+[published app version](https://salesdrone.in/version.json) and
+[pre-production build](https://sales-drone-avinya-preprod.web.app/version.json)
+separately. SalesDrone by AvinyaTech is part of Avinya Enterprises. The code
+uses the MIT license. See the third-party notices for bundled assets and libraries.
 
 ## Stack and repository
 
 | Layer       | Implementation                                                                             |
 | ----------- | ------------------------------------------------------------------------------------------ |
-| UI          | React 19, TypeScript 5, Vite 7, Lucide icons, Radix Dialog, responsive CSS                 |
+| UI          | React 19, TypeScript 5, Vite 8, Lucide icons, Radix Dialog, responsive CSS                 |
 | Fonts       | Manrope body; Google Sans headings; Google Sans first names in lead details; monospace contacts |
 | API         | Node.js 22, Express 5, Zod 4, Firebase Admin SDK                                           |
 | Identity    | Firebase Auth Google provider, App Check, server memberships/capabilities                  |
 | Persistence | Firestore Standard, transactionally consistent writes and service-owned outboxes           |
-| Hosting     | Firebase Hosting SPA with function rewrites and immutable fingerprinted assets             |
+| Hosting     | Firebase Hosting SPA with a Cloud Run API ingress and immutable fingerprinted assets             |
 | Background  | Cloud Functions v2 + Cloud Scheduler, Firebase Cloud Messaging                             |
 | AI          | Server-side Gemini structured JSON, validation and evidence grounding                      |
 | Import      | ExcelJS in a dedicated browser worker, CSV/XLSX, bounded validated chunks                  |
@@ -27,7 +30,7 @@ illustrations. `scripts` contains release, contract, security and operator tooli
 
 ## Module skills and agent ownership
 
-The [module skill catalog](../skills/README.md) covers 23 logical domains and
+The [module skill catalog](../skills/README.md) covers 29 logical domains and
 platform modules. Each entry maps source files, primary API ownership, state,
 invariants, diagnosis, tests and deployment impact. The [shared contract](../skills/SHARED.md)
 keeps policy and release rules consistent. Project discovery uses .agents/skills,
@@ -132,8 +135,16 @@ and build metadata. Functions emit X-App-Version and resource service.version.
 Production is `sales-drone-avinya`, with Firestore/functions in asia-south1. The
 Firebase CLI reads runtime configuration; private keys are Secret Manager bindings.
 Index creation is asynchronous: deploy indexes, wait READY, then publish dependent
-queries. Do not redeploy shared/unrelated projects. Hosting route HTML revalidates;
-content-hashed assets are immutable. The public Pages site is built from site only.
+queries. Hosting route HTML revalidates and content-hashed assets are immutable.
+GitHub Pages publishes the curated `site` build independently of Firebase Hosting.
+
+Pre-production uses a separate Hosting site, API and ingress in the same Firebase
+project. It uses the `preprod` Firestore database, a dedicated private Storage
+bucket, a separate App Check app registration and database-specific membership.
+Firebase Auth identities are shared. The single-project design still requires
+effective IAM checks. Production promotion goes through `pre-prod` to `main` and
+rechecks both the tested source tree and milestone acceptance before deployment.
+See [the environment checklist](PRE-PRODUCTION-PLAN.md#acceptance-and-activation-gates).
 
 ## Local development and tests
 
@@ -144,9 +155,34 @@ Vite with VITE_USE_EMULATORS=true and RUM disabled. Use synthetic accounts/data 
 Never attach production data or telemetry credentials to a rehearsal. See SETUP.md
 for Firebase setup and SECURITY.md for deployment trust boundaries.
 
-Release readiness is the cross-module completion owner. Shared settings catalogs generate the full reference, and skill-tree.json routes prompts to the 21 module skills. CI validates impact plans and retains post-deployment/telemetry acceptance separately from manual and tenant-query evidence. See RELEASE.md.
+Release readiness is the cross-module completion owner. Shared settings catalogs generate the full reference, and skill-tree.json routes prompts to the module catalog. CI validates impact plans and retains post-deployment/telemetry acceptance separately from manual and tenant-query evidence. See RELEASE.md.
 
-Browser lead routing uses /leads/{id} with history state and current API authorization. Desktop quick inspection is fixed above the unchanged table; full pages open to a combined timeline of paginated activities and lead-linked tasks. All and the unfiltered Tasks tab share the task page for that lead and session. Task pages use the existing due-date API order; the UI rejoins loaded records by creation time, with separate explicit continuations. The first page adds at most 51 task records plus 50 responsible-member reads and one scoped lead lookup on top of existing request authorization. No extra polling, writes, indexes, or durable cache are needed. Product handbook JSON generates both Markdown and searchable public HTML. Changed-screen captures carry reviewed hashes and release versions; readiness validates those declared in the release plan.
+## Lead detail, Companies and workbook updates
+
+Lead links open the full `/leads/{id}` page. The default **All** view combines
+scoped activities and lead-linked tasks, ordered by creation time. It shares the
+lead task page with the unfiltered **Tasks** tab and offers separate continuations
+for older task and activity pages. The first task page reads up to 51 task records
+and 50 responsible-member records plus the scoped lead lookup. Unlinked personal
+reminders remain private.
+
+**Companies** groups active, accessible leads by normalized company name. Open a
+company to return to Leads with its company filter applied. Creating an enquiry
+from that company prefills the company name and uses ordinary lead creation
+permissions. Company lookups and lists use bounded pages and the current
+workspace or assigned scope.
+
+**Excel** writes the stable lead ID and optimistic version alongside edited
+fields. Review uses those identifiers to preserve identity, compare current
+values, and surface intervening edits. An empty imported cell preserves the
+saved value. Sales stage uses the workspace's current choices. A Multi-select
+cell encodes its labels as a JSON string list, so commas inside labels round-trip.
+An explicit empty list clears an optional value. Dropdown-to-Multi-select
+conversion saves only the field configuration and reads existing scalar values
+as one selection. See [the workbook guide](IMPORTS.md) and [the contract](API.md).
+
+Product handbook JSON generates the Markdown and public HTML. Release evidence
+lists synthetic screenshot files, measured viewports and content hashes.
 
 Settings mutations also persist per-control `settingsChanges` and atomic, chunked `settings.audit.committed` outbox records independently of OTel availability. Accepted export emits an allowlisted `settings.audit.delivered` log; values and secrets are excluded. See [settings audit coverage and delivery](SETTINGS-AUDIT.md) and the dedicated [Book mode module skill](../skills/salesdrone-book-mode/SKILL.md).
 

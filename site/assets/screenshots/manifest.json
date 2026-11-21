@@ -788,5 +788,15 @@
     "capturePixels": "390 x 760",
     "version": "2.14.0",
     "review": "Reviewed fictional enquiry form with two selected choices; browser viewport, no backend write or physical-device claim."
+  },
+  {
+    "file": "lead-product-multi-select-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "6d639ace782a086be4c5d8bb4d00f86c609a1120d13e0b5fd79d77708b2210ee",
+    "capturedAt": "2026-11-21T13:25:45.724Z",
+    "viewport": "1440 x 900 CSS pixels at 100% scale in isolated Chromium",
+    "capturePixels": "1440 x 900",
+    "version": "2.14.0",
+    "review": "Reviewed fictional enquiry form with two chosen products. The local form fixture performs no server writes."
   }
 ]

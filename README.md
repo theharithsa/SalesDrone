@@ -21,10 +21,11 @@ options such as Book mode. Screenshots use fictional demo data.
 
 [Open SalesDrone](https://salesdrone.in/) · [Live version](https://salesdrone.in/version.json) · [Product handbook](https://theharithsa.github.io/SalesDrone/product.html) · [Settings](https://theharithsa.github.io/SalesDrone/settings.html) · [Technical guide](https://theharithsa.github.io/SalesDrone/#engineering) · [Roadmap](https://theharithsa.github.io/SalesDrone/roadmap.html) · [Release notes](https://theharithsa.github.io/SalesDrone/releases.html)
 
-The latest production documentation includes an illustrated delivery flow,
-searchable release notes and a public roadmap. An isolated
-[pre-production workspace](https://sales-drone-avinya-preprod.web.app/) serves
-approved testers with synthetic data ahead of production promotion.
+The public site includes the illustrated SDLC, searchable release notes, and the
+product and Settings guides. The [pre-production workspace](https://sales-drone-avinya-preprod.web.app/)
+serves approved testers with synthetic data. Use [live app metadata](https://salesdrone.in/version.json)
+and [pre-production metadata](https://sales-drone-avinya-preprod.web.app/version.json)
+to identify the builds in each environment.
 
 ![The dashboard shows lead counts grouped by the selected field. Synthetic demo data only.](site/assets/screenshots/dashboard-demo.jpg)
 

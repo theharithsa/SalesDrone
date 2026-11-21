@@ -41,6 +41,8 @@ Describe both insight modes in the public guide: manual is the default, automati
 
 Document the Reports & lead access settings, selected-column filtered XLSX workflow and reports API limits. Public screenshots/exports must remain synthetic. Distinguish approved RUM email tags from still-pseudonymous backend actors and report tenant query limitations.
 
+Align technical versions with the candidate. Link metadata for both environments.
+
 Every release regenerates docs/SETTINGS.md and publishes settings.html from the shared section/control catalogs, including every control’s default, scope, permissions, API, effect and example. The public API count comes from OpenAPI, not a hardcoded number. docs:check rejects stale settings and skill-tree outputs. No recursive publication of engineering docs or private evidence.
 
 Document the local-only lead blade width, pointer/keyboard controls, reset, content-driven journey reflow and mobile/reduced-motion behavior in LEAD-BLADE.md. The appearance guide points to this gesture preference without presenting it as a server-side account setting. Use synthetic captures and state measured viewport limits.
