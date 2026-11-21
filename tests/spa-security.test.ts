@@ -54,3 +54,14 @@ test('Google Tag is permitted only in the first-party analytics frame', () => {
    }
  }
 });
+
+test('the isolated browser check permits telemetry only to its Dynatrace origin', () => {
+  const html = readFileSync('apps/web/preprod-monitoring.html', 'utf8');
+  const document = new JSDOM(html).window.document;
+  const policy = parsePolicy(document.querySelector('meta[http-equiv="Content-Security-Policy"]')!.getAttribute('content')!);
+  assert.deepEqual([...policy['default-src']], ["'none'"]);
+  assert.deepEqual([...policy['connect-src']], ['https://bf12470wrz.bf.dynatrace.com']);
+  assert.deepEqual([...policy['script-src']], ["'self'", 'https://js-cdn.dynatrace.com']);
+  assert.deepEqual(Array.from(document.scripts, script => script.getAttribute('src')), ['/src/preprod-monitoring.ts']);
+  assert.equal(document.querySelector('meta[name="referrer"]')?.getAttribute('content'), 'no-referrer');
+});

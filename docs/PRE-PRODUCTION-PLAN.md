@@ -113,6 +113,14 @@ the monitoring receipt separate from the Hosting/API smoke-test receipt.
 Runtime business events, browser monitoring and tenant search each have their
 own acceptance checks.
 
+Open [the pre-prod browser check](https://sales-drone-avinya-preprod.web.app/preprod-monitoring.html)
+and select **Send browser test** to verify the dedicated SalesDrone Pre-production
+frontend. The check is an isolated Hosting page and loads the agent from
+Dynatrace only after the visitor opts in. It creates no Firebase Auth, App Check,
+Firestore, Storage or Functions requests. Session Replay is off. Check the
+browser beacon and tenant records separately. This check does not exercise
+authenticated workspace monitoring or browser-to-backend trace linkage.
+
 Do not publish production release tags, production release notes or advance the
 public shipped version from a pre-production push. Add a conspicuous pre-production
 banner to the app and include environment identity in version metadata and API
@@ -216,7 +224,7 @@ seeded in 116 writes. A replay issued zero writes.
 Google popup sign-in uses the existing registered Firebase Auth handler. The application and App Check registration use the separate pre-production origin and app ID.
 
 The initial deployment exposes only the API and ingress. Scheduled jobs, push
-delivery, browser RUM and GA4 have no active pre-production traffic. Paid AI
+delivery and GA4 have no active pre-production traffic. Paid AI
 requests are disabled on the test API. Shared Firebase Hosting IAM is project
 scoped. The pre-production workflow uses a separate deployment account and pins
 the site, function, service and source bucket in its deployment scripts.
@@ -228,10 +236,10 @@ recorded Hosting identity, anonymous denial and malformed JSON handling.
 The [production PR recheck](https://github.com/theharithsa/SalesDrone/actions/runs/44909556147/attempts/2)
 matched the tested code tree and held promotion at milestone acceptance.
 
-The current API and ingress emit environment-labelled traces, logs and request
-metrics. Confirm browser monitoring, committed business-event delivery and
-native SDLC events separately. The pre-prod build currently disables browser
-monitoring and deploys only the API and ingress. Verify cross-environment IAM
+The API and ingress emit environment-labelled traces, logs and request
+metrics. Verify the opt-in browser check separately from committed business
+events and native SDLC events. The workspace itself keeps the production RUM
+loader disabled. Verify cross-environment IAM
 against effective permissions in addition to the configured grants. Cloud
 Monitoring measures usage, while a billing export supplies SKU attribution.
 The [acceptance issue](https://github.com/theharithsa/SalesDrone/issues/226)

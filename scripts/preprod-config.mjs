@@ -14,6 +14,10 @@ const config = {
     ...production.hosting,
     site: target.site,
     headers: [...production.hosting.headers,
+      { source: '/preprod-monitoring.html', headers: [
+        { key: 'Referrer-Policy', value: 'no-referrer' },
+        { key: 'X-Frame-Options', value: 'DENY' },
+      ] },
       { source: '**', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }],
     rewrites: production.hosting.rewrites.map((rewrite) => rewrite.run
       ? { ...rewrite, run: { serviceId: target.ingress, region: target.region } }
