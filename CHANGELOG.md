@@ -3,7 +3,14 @@
 Application versions follow the [weekly release policy](docs/RELEASE-GOVERNANCE.md#weekly-production-cadence).
 API contract versions track compatibility independently.
 
-> The v2.14.0 section describes the pre-production candidate. Confirm the published version and date in [GitHub Releases](https://github.com/theharithsa/SalesDrone/releases).
+Confirm the published version and date in [GitHub Releases](https://github.com/theharithsa/SalesDrone/releases).
+
+
+## [2.14.1] - 2026-11-29
+
+### Changed
+- Migrated Import enquiries to Astryx. Upload, column mapping, review and import history share a clearer layout, with touch-sized actions and a scrollable workbook preview on phones.
+- Refreshed the workbook guide with updated desktop and phone views.
 
 ## [2.14.0] - 2026-11-22
 

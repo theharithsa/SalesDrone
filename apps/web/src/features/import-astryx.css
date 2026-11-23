@@ -1,0 +1,270 @@
+/* The lazy import route uses Astryx's prebuilt styles without a workspace reset. */
+.import-astryx {
+  --color-accent: var(--accent);
+  --color-accent-muted: var(--accent-soft);
+  --color-text-accent: var(--accent);
+  --color-on-accent: var(--md-sys-color-on-primary);
+  --import-card: var(--color-background-card, var(--panel));
+  --import-muted: var(--color-background-muted, var(--md-sys-color-surface-container-low));
+  --import-border: var(--color-border, var(--line));
+  --import-secondary: var(--color-text-secondary, var(--muted));
+  --import-radius: var(--radius-container, 12px);
+  color: var(--color-text-primary);
+  color-scheme: light;
+}
+
+html[data-color-scheme='dark'] .import-astryx {
+  color-scheme: dark;
+}
+
+html[data-reading-mode='book'] .import-astryx {
+  --import-card: var(--panel);
+  --import-muted: var(--md-sys-color-surface-container-low);
+  --import-border: var(--line);
+  --import-secondary: var(--muted);
+  color: var(--md-sys-color-on-surface);
+}
+
+.import-astryx.import-page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.import-astryx .workspace-page-header,
+.import-astryx .section-heading {
+  gap: 12px;
+  align-items: start;
+}
+
+.import-astryx .workspace-page-header {
+  margin-block-end: 0;
+}
+
+.import-astryx .workspace-page-heading,
+.import-astryx .section-heading > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Let Astryx resolve foreground colours over the shared, unlayered button reset. */
+.import-astryx .astryx-button {
+  max-inline-size: 100%;
+  color: revert-layer;
+}
+
+.import-astryx .title-actions,
+.import-astryx .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.import-astryx > .panel {
+  min-width: 0;
+  padding: clamp(12px, 2.2vw, 24px);
+  margin: 0;
+  margin-block-start: 0;
+  background: var(--import-card);
+  border: 1px solid var(--import-border);
+  border-radius: var(--import-radius);
+  box-shadow: none;
+}
+
+.import-astryx .import-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  margin: 0;
+  background: var(--import-muted);
+  border: 1px solid var(--import-border);
+  border-radius: var(--import-radius);
+}
+
+.import-astryx .import-steps > div {
+  min-width: 0;
+  min-height: 40px;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-element, 8px);
+  background: transparent;
+  color: var(--import-secondary);
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+
+.import-astryx .import-steps .current {
+  background: var(--import-card);
+  color: var(--color-text-accent);
+  font-weight: 650;
+}
+
+.import-astryx .import-steps span {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  inline-size: 1.4em;
+  block-size: 1.4em;
+  font-variant-numeric: tabular-nums;
+}
+
+.import-astryx .upload-area {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(12px, 2.5vw, 24px);
+  border: 1px dashed var(--color-border-emphasized, var(--import-border));
+  border-radius: var(--import-radius);
+  background: var(--import-muted);
+  text-align: start;
+}
+
+.import-astryx .import-file-summary .upload-area {
+  border-style: solid;
+  border-color: var(--import-border);
+}
+
+.import-astryx .import-upload-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-element, 8px);
+  color: var(--color-text-accent);
+}
+
+.import-astryx .import-upload-copy {
+  display: grid;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}
+
+.import-astryx .import-upload-copy :is(h2, p) {
+  margin: 0;
+}
+
+.import-astryx .import-upload-copy p,
+.import-astryx .field-hint,
+.import-astryx .import-profile-note {
+  color: var(--import-secondary);
+}
+
+.import-astryx .import-upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.import-astryx :where(.mapping-grid, .form-grid, .comment-column-options) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr));
+  gap: 12px;
+}
+
+.import-astryx :is(select, input:not([type='checkbox'], [type='file'])) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: 40px;
+  border: 1px solid var(--import-border);
+  border-radius: var(--radius-element, 8px);
+  background-color: var(--import-card);
+  color: inherit;
+  font-family: inherit;
+}
+
+/* Long workbook headers stay inside the closed control at large text sizes. */
+.import-astryx select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+@supports (appearance: base-select) {
+  .import-astryx select::picker(select) {
+    appearance: auto;
+  }
+}
+
+.import-astryx :is(select, input[type='checkbox'], progress) {
+  accent-color: var(--color-accent);
+}
+
+.import-astryx .import-history-filter {
+  align-self: end;
+  justify-self: start;
+}
+
+.import-astryx :is(.import-result-card, .comment-column-picker, .import-new-fields, .import-new-field-list > div) {
+  border-color: var(--import-border);
+  border-radius: var(--import-radius);
+}
+
+.import-astryx :is(.comment-column-options > label, .import-counts > div, .import-candidates) {
+  background-color: var(--import-muted);
+  border-radius: var(--radius-element, 8px);
+}
+
+.import-astryx .comment-column-options > label:has(input:checked) {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent);
+}
+
+.import-astryx .table-scroll {
+  max-inline-size: 100%;
+  margin-block-start: 16px;
+  overflow: auto;
+  border: 1px solid var(--import-border);
+  border-radius: var(--import-radius);
+}
+
+.import-astryx .table-scroll table {
+  min-inline-size: 38rem;
+  margin: 0;
+}
+
+.import-astryx .table-scroll th {
+  background: var(--import-muted);
+  color: var(--import-secondary);
+}
+
+.import-astryx :is(.table-scroll, button, input, select, summary):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 599.99px) {
+  .import-astryx .section-heading {
+    flex-wrap: wrap;
+  }
+
+  .import-astryx .astryx-button {
+    block-size: auto;
+  }
+
+  .import-astryx .astryx-button > span {
+    min-inline-size: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .import-astryx .upload-area {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .import-astryx .import-upload-actions {
+    grid-column: 1 / -1;
+  }
+
+  .import-astryx .import-steps > div {
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 6px;
+  }
+
+  .import-astryx :is(button, select, input:not([type='checkbox'], [type='file'])) {
+    min-block-size: 44px;
+  }
+}

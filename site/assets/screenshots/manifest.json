@@ -222,12 +222,12 @@
   {
     "file": "import-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "2a3890d07825fc01828d5d1e49f78c2c5fd8b734f2b9e9448c331bc12bbdd26f",
-    "capturedAt": "2026-11-07T20:39:24.112Z",
-    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "faa5689d7591b028cb256b0cdcaf7839f25e1586be1fd3780b1d49a20139296f",
+    "capturedAt": "2026-11-23T21:22:36.244Z",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium",
     "capturePixels": "1440 x 1000",
-    "version": "2.10.3",
-    "review": "Reviewed fictional workspace capture. No customer records, credentials or server writes. Browser viewport, not physical-device certification."
+    "version": "2.14.1",
+    "review": "XLSX and CSV upload and mapping controls with a fictional CSV. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "api-portal-demo.jpg",
@@ -352,22 +352,22 @@
   {
     "file": "import-review-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "1ed5844913f78987d2f2df7a8d52ecc728baad65db66e53bc051e78a9322ecc3",
-    "capturedAt": "2026-10-30T13:29:19.269880+00:00",
-    "viewport": "1440 x 1000 CSS pixels; isolated installed Chromium at 100% scale",
+    "sha256": "e5adb6308e6908924b93c693f337198c5dce4efa7126aa7c3266c3c0d9e595af",
+    "capturedAt": "2026-11-23T21:22:33.345Z",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium",
     "capturePixels": "1440 x 1000",
-    "version": "2.3.0",
-    "review": "Visually/privacy reviewed fictional CSV mapping or import row-review component. No API transport, customer data or database writes. Mobile comparison capture is scrolled to the first row in dark mode. Browser emulation, not physical-device/Safari certification."
+    "version": "2.14.1",
+    "review": "Saved job review and a fictional field conflict. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "import-review-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "f2853350ad6f59b0c169a2e6aef6a880d1634f0b10eaa200c78b0fa45d1cc93e",
-    "capturedAt": "2026-10-30T13:29:20.297711+00:00",
-    "viewport": "390 x 1000 CSS pixels; isolated installed Chromium at 100% scale",
+    "sha256": "d6584e471f4ab17bb2ea29261f16835f1d6f9b6c7e6a2a88819f5b366a479e93",
+    "capturedAt": "2026-11-23T21:22:29.160Z",
+    "viewport": "390 x 1000 CSS pixels; isolated Chromium",
     "capturePixels": "390 x 1000",
-    "version": "2.3.0",
-    "review": "Visually/privacy reviewed fictional CSV mapping or import row-review component. No API transport, customer data or database writes. Mobile comparison capture is scrolled to the first row in dark mode. Browser emulation, not physical-device/Safari certification."
+    "version": "2.14.1",
+    "review": "Saved job field conflict in the dark palette on a narrow screen. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "lead-filters-demo.jpg",
@@ -452,42 +452,42 @@
   {
     "file": "import-fields-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "a7be01bbaaf2a2ca3f2455748843974f63fb884fb325a2bc99af0714a50b27a3",
-    "capturedAt": "2026-10-31T10:10:46.577741+00:00",
-    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "d2df034c050e4ac2528566363c4682ef37607003972d4bfb5fb2aa4ce42dbbe4",
+    "capturedAt": "2026-11-23T21:23:29.515Z",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium",
     "capturePixels": "1440 x 1000",
-    "version": "2.5.2",
-    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+    "version": "2.14.1",
+    "review": "Additional field setup using a fictional CSV. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "import-fields-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "14b3f27742645532847408eaccc39982fffa2f6b50433eb6a32bbf3f3c3a7abc",
-    "capturedAt": "2026-10-31T10:10:46.849882+00:00",
-    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 1000",
-    "version": "2.5.2",
-    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+    "sha256": "c8302562837f88923149505b2c50f904f328d3dca10364bc70d7d1ddc306cb8a",
+    "capturedAt": "2026-11-23T21:23:30.095Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium",
+    "capturePixels": "390 x 900",
+    "version": "2.14.1",
+    "review": "Additional field setup on a narrow screen using a fictional CSV. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "import-comments-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "aa1117fd8d7b626dea1d9c5ba56067387e18415d5517baa060d5df5ac9f08346",
-    "capturedAt": "2026-10-31T10:10:47.145182+00:00",
-    "viewport": "1440 x 1000 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "897b39924c589fb0121c4718227a2107151ce63893da01725e2cef2b57fba4aa",
+    "capturedAt": "2026-11-23T21:23:29.793Z",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium",
     "capturePixels": "1440 x 1000",
-    "version": "2.5.2",
-    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+    "version": "2.14.1",
+    "review": "Two selected discussion columns mapped as separate comments in a fictional CSV. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "import-comments-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "a6720edb0f48eba7b4831f6f7a1c7e385e838d46b0166b5f6ac097cbdee4175b",
-    "capturedAt": "2026-10-31T10:10:47.420098+00:00",
-    "viewport": "390 x 1000 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 1000",
-    "version": "2.5.2",
-    "review": "Visually/privacy reviewed isolated Admin mapping preview with fictional CSV data, configured categories/custom text field and stubbed transport. Already-mapped targets remain listed with explicit conflict review; no server validation/commit or live writes claimed. Not device/Safari certification."
+    "sha256": "3389e38c0eb34e6efe9c646f3c1506d40357626306ea083e3a7294162c151aae",
+    "capturedAt": "2026-11-23T21:23:30.372Z",
+    "viewport": "390 x 900 CSS pixels; isolated Chromium",
+    "capturePixels": "390 x 900",
+    "version": "2.14.1",
+    "review": "Two selected discussion columns on a narrow screen. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "status-mapping-demo.jpg",
@@ -762,12 +762,12 @@
   {
     "file": "import-workbook-update-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "ff9a505e6bb65fd84b8f8bc2f8c73ea0e6d56d86772652317e543645ba640d18",
-    "capturedAt": "2026-11-18",
-    "viewport": "1440 x 1080 CSS pixels",
-    "capturePixels": "1360 x 472",
-    "version": "2.14.0",
-    "review": "Cropped stage-mapping and validation controls from a local fictional SalesDrone export. The selected replacement was confirmed in the preview."
+    "sha256": "1055f30dbd60da72df8f906639a6bcc71ad9a26a36fbfb7963764f051a857fc0",
+    "capturedAt": "2026-11-23T21:23:31.457Z",
+    "viewport": "1440 x 1000 CSS pixels; isolated Chromium",
+    "capturePixels": "1440 x 1000",
+    "version": "2.14.1",
+    "review": "A recognized fictional SalesDrone export maps a retired stage and updates its row preview. Reviewed in the isolated import fixture with no live data or server writes."
   },
   {
     "file": "field-manager-multi-select-demo.jpg",

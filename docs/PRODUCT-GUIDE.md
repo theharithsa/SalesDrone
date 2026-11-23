@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.14.0
+Version 2.14.1
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -424,7 +424,7 @@ Members with optional import permissions and import-capable administrators
 
 1. For daily Excel edits, open Leads, apply your filters and choose Export Excel. Include Sales stage and the fields you want to update. In Excel, edit the Leads sheet. Keep SalesDrone lead ID and SalesDrone version with each row when sorting or copying.
 
-2. Open Import enquiries and select the saved XLSX. A recognized export opens in Review updates. For a third-party file, select its header and map the columns. Update this workbook on an earlier completed import reuses the earlier comparison.
+2. Open Import enquiries and choose Choose a workbook. The step bar tracks your progress. A recognized SalesDrone export opens in Review updates. For a third-party file, select its header and map the columns under Match your columns. Update this workbook on an earlier completed import reuses the earlier comparison.
 
 3. Check the Sales stage column in the preview. Current stages match even with differences in capitalization or spacing. Under Match sales stages, choose what each unfamiliar workbook value means. For example, choose Supplied for a workbook value of Delivered if your team uses Supplied for that outcome.
 
@@ -438,7 +438,7 @@ Members with optional import permissions and import-capable administrators
 
 8. Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.
 
-9. Use View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
+9. Choose View history to find a saved job, then View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
 
 SalesDrone reports identify the target by its exported ID. When the saved version still matches, clean field edits can be approved together. A later edit sends differences to review. An unknown or inaccessible ID cannot create a new lead. External sheets default to skipping duplicate contacts and allow a separate review-updates mode.
 

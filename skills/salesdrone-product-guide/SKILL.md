@@ -57,7 +57,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 These are tracked follow-ups, not implemented behavior: [#37](https://github.com/theharithsa/SalesDrone/issues/37), [#55](https://github.com/theharithsa/SalesDrone/issues/55), [#56](https://github.com/theharithsa/SalesDrone/issues/56), [#58](https://github.com/theharithsa/SalesDrone/issues/58), [#59](https://github.com/theharithsa/SalesDrone/issues/59), [#60](https://github.com/theharithsa/SalesDrone/issues/60). Check their current status before changing the contract.
 
-Capture Source, Zone and custom-field selections with configured labels, mapped import destinations/conflicts, and empty groups. Keep primary/helper rows separate; refresh affected states without restamping unchanged captures.
+Capture configured fields and empty groups. For Astryx Imports use the isolated workbook and saved-job fixtures. Show each relevant mapping or review action, and refresh only affected captures.
 
 Task-list, research and one-reply Assistant/Hygiene capture guidance: [guide notes](references/research.md).
 
