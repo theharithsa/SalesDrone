@@ -159,6 +159,8 @@ Release readiness is the cross-module completion owner. Shared settings catalogs
 
 ## Lead detail, Companies and workbook updates
 
+The lazy Import enquiries route loads Astryx controls and theme CSS. It uses the same browser worker, readiness checks, versioned requests and saved job cursors. Rendering the route adds no database reads or writes.
+
 Lead links open the full `/leads/{id}` page. The default **All** view combines
 scoped activities and lead-linked tasks, ordered by creation time. It shares the
 lead task page with the unfiltered **Tasks** tab and offers separate continuations

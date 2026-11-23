@@ -242,6 +242,8 @@ For a daily update, use **Leads → Export Excel**, edit the **Leads** sheet, th
 
 ## Collaborative imports (2.3)
 
+The Import enquiries page uses Astryx for its upload, mapping, review and history controls. Its row preview scrolls within the table on narrow screens.
+
 Collaborative import review supports history, visible duplicate matches and linked workbook updates preserving team edits. Admins can grant member import access and explicitly delete retained details. See [Imports](docs/IMPORTS.md).
 
 Admins can configure **Multi-select** lead fields in **Settings → Leads Management → Field definitions**. Existing custom dropdowns such as Product can switch types and retain their saved choice. See the [mobile form preview](site/assets/screenshots/lead-product-multi-select-mobile-demo.jpg) and [Excel round-trip guide](docs/IMPORTS.md#update-leads-from-an-excel-export).

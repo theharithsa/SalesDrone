@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "version": "2.14.1",
+  "summary": "Migrate Import enquiries to Astryx as the approved patch release for 29 November.",
+  "modules": [
+    "salesdrone-imports",
+    "salesdrone-interface",
+    "salesdrone-product-guide"
+  ],
+  "documentation": [
+    "README.md",
+    "docs/IMPORTS.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/TECHNICAL.md",
+    "docs/product-guide.json",
+    "docs/observability.md"
+  ],
+  "settingsSections": [],
+  "api": {
+    "status": "unchanged",
+    "reason": "Workbook parsing, review and history use the current API and identical payloads.",
+    "contractVersion": "1.36.0",
+    "permissions": "Existing import read, write and share permissions and assigned-lead scope continue to gate every operation.",
+    "tests": [
+      "functions/test/import-review.test.js",
+      "functions/test/workbook-and-filters.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "existing",
+      "reason": "Existing import counters describe the same operations across the redesigned controls.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "traces": {
+      "status": "existing",
+      "reason": "Existing request and commit spans follow the same endpoints and callbacks.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "logs": {
+      "status": "existing",
+      "reason": "Existing redacted import lifecycle logs remain appropriate for the same operation boundaries.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "existing",
+      "reason": "The visual migration creates no new business operation or committed event.",
+      "tests": [
+        "functions/test/observability.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "The standard pre-production and production workflows report the candidate version and exact deployment commit.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Review desktop, tablet, narrow phone, short windows and large text using fictional CSV, XLSX and saved-job fixtures. Check filename and mapping controls, keyboard-accessible file and table controls, status and conflict review, and the history jump. Verify the exact pre-production build through GitHub Actions before Sunday promotion. No customer workbook or physical-device certification.",
+  "milestone": {
+    "number": 74,
+    "title": "v2.14.1 — Import enquiries Astryx UI",
+    "issues": [
+      276
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "import-demo.jpg",
+    "import-review-demo.jpg",
+    "import-review-mobile-demo.jpg",
+    "import-fields-demo.jpg",
+    "import-fields-mobile-demo.jpg",
+    "import-comments-demo.jpg",
+    "import-comments-mobile-demo.jpg",
+    "import-workbook-update-demo.jpg"
+  ]
+}

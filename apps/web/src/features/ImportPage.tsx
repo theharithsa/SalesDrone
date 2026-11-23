@@ -1,3 +1,5 @@
+import ImportSurface from './ImportSurface';
+import { Button } from '@astryxdesign/core/Button';
 import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import ImportStatusMapping from './ImportStatusMapping';
 import { dashboardFields } from '../../../../functions/src/dashboard-grouping.js';
@@ -100,6 +102,7 @@ export default function ImportPage({
   ) => Promise<any>;
   onImported: () => void;
 }) {
+  const fileInput = useRef<HTMLInputElement>(null);
   const fieldColumns = {
     ...Object.fromEntries(Object.entries(columns).filter(([,key]) => key !== 'stage' || !config.hiddenFields.includes(key))),
     ...Object.fromEntries(
@@ -354,16 +357,14 @@ export default function ImportPage({
     }
   }
   return (
-    <div className="page-body import-page">
+    <ImportSurface className="page-body import-page">
       <WorkspacePageHeader
         title="Imports & history"
         description="Upload a workbook to add or update enquiries, or return to a saved job."
         actions={
           <div className="title-actions">
-            {!demo ? <a className="button" href="#import-job-history">View history</a> : null}
-            <button className="button" onClick={downloadTemplate}>
-              <Download size={16} /> Get template
-            </button>
+            {!demo ? <Button label="View history" href="#import-job-history" /> : null}
+            <Button label="Get template" onClick={downloadTemplate} icon={<Download size={16} aria-hidden="true" />} />
           </div>
         }
       />
@@ -402,27 +403,29 @@ export default function ImportPage({
             className={'panel' + (sheets.length ? ' import-file-summary' : '')}
           >
             <div className="upload-area">
-              <FileSpreadsheet size={36} strokeWidth={1.4} />
-              <h2>Choose an enquiry workbook</h2>
-              <p>
-                Excel (.xlsx) or CSV · first worksheet only · up to 5,000
-                records · 10 MB maximum
-              </p>
-              <label
-                className={
-                  'button primary ' +
-                  (demo || busy || !canWrite ? 'disabled' : '')
-                }
-              >
-                <Upload size={16} />{' '}
-                {busy
-                  ? 'Processing…'
-                  : sheets.length
-                    ? 'Choose another workbook'
-                    : 'Choose a workbook'}
+              <div className="import-upload-icon">
+                <FileSpreadsheet size={24} aria-hidden="true" />
+              </div>
+              <div className="import-upload-copy">
+                <h2>{filename || 'Choose an enquiry workbook'}</h2>
+                <p>
+                  Excel (.xlsx) or CSV · first worksheet only · up to 5,000 records
+                  · 10 MB maximum
+                </p>
+              </div>
+              <div className="import-upload-actions">
+                <Button
+                  label={busy ? 'Processing…' : sheets.length ? 'Choose another workbook' : 'Choose a workbook'}
+                  variant={sheets.length ? 'secondary' : 'primary'}
+                  isDisabled={demo || busy || !canWrite}
+                  onClick={() => fileInput.current?.click()}
+                  icon={<Upload size={16} aria-hidden="true" />}
+                />
                 <input
+                  ref={fileInput}
                   type="file"
                   accept=".xlsx,.csv"
+                  aria-label="Choose a workbook"
                   disabled={demo || busy || !canWrite}
                   hidden
                   onChange={(e) => {
@@ -431,16 +434,15 @@ export default function ImportPage({
                     e.currentTarget.value = '';
                   }}
                 />
-              </label>
-              {!demo && readStored('sessionStorage', 'salesdrone.import') ? (
-                <button
-                  className="text-button"
-                  onClick={resume}
-                  disabled={busy}
-                >
-                  Resume previous import
-                </button>
-              ) : null}
+                {!demo && readStored('sessionStorage', 'salesdrone.import') ? (
+                  <Button
+                    label="Resume previous import"
+                    variant="ghost"
+                    onClick={resume}
+                    isDisabled={busy}
+                  />
+                ) : null}
+              </div>
             </div>
           </section>
         </>
@@ -455,13 +457,13 @@ export default function ImportPage({
                 {filename} · {rows.length} populated rows
               </p>
             </div>
-            <button
-              className="button primary"
+            <Button
+              label={selectedFields.length ? `Create / reuse ${selectedFields.length} fields & validate` : 'Validate records'}
+              variant="primary"
               onClick={preview}
-              disabled={busy || invalidCells || missingStage || invalidStatusTarget || !!statusConflict || (!canManageFields && selectedFields.length>0)}
-            >
-              {selectedFields.length ? `Create / reuse ${selectedFields.length} fields & validate` : 'Validate records'} <ArrowRight size={16} />
-            </button>
+              isDisabled={busy || invalidCells || missingStage || invalidStatusTarget || !!statusConflict || (!canManageFields && selectedFields.length>0)}
+              endContent={<ArrowRight size={16} aria-hidden="true" />}
+            />
           </div>
           {sheet.report && <p className="notice">SalesDrone export recognized. Review your changes, then approve and import. Blank cells keep the saved value. Recorded comments and system columns are for reference.</p>}
           <details open={sheet.report ? undefined : true} key={filename + headerRow}>
@@ -529,13 +531,12 @@ export default function ImportPage({
           {sourceImportId ? (
             <p className="notice">
               Linked to the completed import selected in history.{' '}
-              <button
-                className="text-button"
+              <Button
+                label="Unlink previous import"
+                variant="ghost"
                 type="button"
                 onClick={() => setSourceImportId('')}
-              >
-                Unlink previous import
-              </button>
+              />
             </p>
           ) : null}
           <div className="mapping-grid">
@@ -643,7 +644,12 @@ export default function ImportPage({
               })}
             />
           ) : null}
-          <div className="table-scroll">
+          <div
+            className="table-scroll"
+            role="region"
+            aria-label="Workbook row preview"
+            tabIndex={0}
+          >
             <table>
               <thead>
                 <tr>
@@ -655,7 +661,7 @@ export default function ImportPage({
                     'Original status',
                     'Sales stage',
                   ].map((h) => (
-                    <th key={h}>{h}</th>
+                    <th scope="col" key={h}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -701,18 +707,17 @@ export default function ImportPage({
                 <Check size={16} /> Complete
               </span>
             ) : (
-              <button
-                className="button primary"
-                onClick={commit}
-                disabled={busy || !canWrite}
-              >
-                {busy
+              <Button
+                label={busy
                   ? 'Importing…'
                   : job.offset
                     ? 'Resume import'
                     : 'Import valid records'}
-                <ArrowRight size={16} />
-              </button>
+                variant="primary"
+                onClick={commit}
+                isDisabled={busy || !canWrite}
+                endContent={<ArrowRight size={16} aria-hidden="true" />}
+              />
             )}
           </div>
           <div className="import-counts">
@@ -750,8 +755,8 @@ export default function ImportPage({
                   </li>
                 ))}
               </ul>
-              <button
-                className="button"
+              <Button
+                label="Download error report"
                 onClick={() => {
                   void (async () => {
                     try {
@@ -783,9 +788,7 @@ export default function ImportPage({
                     }
                   })();
                 }}
-              >
-                Download error report
-              </button>
+              />
               <p className="field-hint">Preview displays at most 100 errors.</p>
             </>
           ) : null}
@@ -810,6 +813,6 @@ export default function ImportPage({
           }}
         />
       ) : null}
-    </div>
+    </ImportSurface>
   );
 }

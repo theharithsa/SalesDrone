@@ -1,3 +1,4 @@
+import { Button } from '@astryxdesign/core/Button';
 import { matchStage } from '../../../../functions/src/stage-match.js';
 
 type Target = { field: string; label: string; order?: string[] };
@@ -28,7 +29,12 @@ export default function ImportStatusMapping({
       </label>
       {conflict ? <div className="notice import-status-conflict" role="status">
         <p>{conflict.message}</p>
-        <button type="button" className="text-button" onClick={conflict.onReview}>{conflict.reviewLabel}</button>
+        <Button
+          label={conflict.reviewLabel}
+          variant="ghost"
+          type="button"
+          onClick={conflict.onReview}
+        />
       </div> : null}
       {field==='none'?<p className="field-hint">Original workbook status text is retained; no additional status mapping is applied.</p>:target?<div className="mapping-grid">
         {statuses.map(status=>{

@@ -42,7 +42,7 @@ For domain controls, also load [leads](../salesdrone-leads/SKILL.md), [tasks](..
 
 Shared desktop/mobile column filters expose Exact match only for source, stage and active custom dropdowns. Keep Equals available and explain literal case/spacing/Unicode matching. Changing columns resets comparison. Mobile search and filters open from the title with focus return. Align Tasks by panel width.
 
-Import comment choices use separate header and column-position rows, explicit associated labels, compact selectable surfaces and single-column phones. Popup selects keep one-line closed labels and bounded trigger-width pickers; desktop filter dialogs put the value on a second row so selects remain readable. Retain native fallback, Escape/focus and real-browser open-picker review. Dialogs use native platform pickers to avoid customizable-select conflicts with modal Escape handling; keep comfortable closed-control widths.
+Imports use a lazy Astryx theme without its global reset. Keep native mapping controls and labelled comment choices with column positions. Popup selects keep one-line labels and bounded pickers. In dialogs use native pickers for Escape and focus, and review opened pickers in a browser.
 
 ## Conditional reference
 

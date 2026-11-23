@@ -4,6 +4,8 @@
 visual system for this redesign, replacing the previous Apple-derived size cascade.
 This does not claim native platform behavior, Material certification or Dynamic Type.
 
+**Import enquiries.** This route loads the pinned Astryx component CSS and neutral theme without the global reset. Use semantic Astryx actions and retain native form controls for workbook mapping. The route inherits workspace typography, accent and display preferences. Keep Astryx styles local when migrating later pages.
+
 ## Architecture
 
 `apps/web/src/main.tsx` loads only the Material entry files:
