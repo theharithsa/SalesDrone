@@ -940,7 +940,7 @@ The daily digest shows due and overdue shared tasks, the next deadline and the a
 
 The sender uses generic copy. Lead names, contact details, task titles, private reminders and comments stay in SalesDrone. The links check current access each time you open them.
 
-![Email updates and task digests — synthetic demo only](../site/assets/screenshots/email-workspace-demo.jpg)
+![Email updates and task digests — synthetic demo only](../site/assets/screenshots/email-weekly-branded-demo.jpg)
 
 ### Questions
 

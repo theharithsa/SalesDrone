@@ -16,6 +16,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 - Resend delivery with signed receipts, a scoped pilot, bounded retries and verified task facts for AvinyaIntelligence takeaways.
 
 ### Changed
+- Email templates share the SalesDrone drone mark, Open Sans typography, and Astryx Neutral layout and spacing.
 - Includes the Astryx Import enquiries experience for workbook mapping, review and job history.
 
 ## [2.14.1] - 2026-11-29

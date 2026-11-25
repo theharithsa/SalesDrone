@@ -44,6 +44,11 @@ Shared desktop/mobile column filters expose Exact match only for source, stage a
 
 Imports use a lazy Astryx theme without its global reset. Keep native mapping controls and labelled comment choices with column positions. Popup selects keep one-line labels and bounded pickers. In dialogs use native pickers for Escape and focus, and review opened pickers in a browser.
 
+Transactional emails apply Astryx Neutral spacing and typography with the same
+Open Sans and SalesDrone mark as the public docs. Keep email CSS inline and the
+settings preview sandboxed. Use a measured phone-width preview and verify actual
+inbox fallback separately.
+
 ## Conditional reference
 
 For detailed UI, recovery and integration recipes, read [operations](references/operations.md) when the affected behavior requires it. Follow current source and the shared contract when older examples differ.
