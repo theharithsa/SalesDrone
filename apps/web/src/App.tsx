@@ -123,6 +123,7 @@ import {
   LeadForm,
   NoteForm,
   TaskForm,
+  TaskAssignmentForm,
   RescheduleForm,
   CorrectionForm,
 } from './components/Forms';
@@ -167,6 +168,13 @@ function demoTaskChange(task: Task, body: Record<string, any>): Task {
   };
 }
 
+function taskDigestWindow() {
+  if (window.location.pathname !== '/tasks') return null;
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get('from'), until = params.get('until'), tz = params.get('tz');
+  return params.get('status') === 'Completed' && from && until && tz &&
+    [from, until].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value)) ? { from, until, tz } : null;
+}
 export default function App() {
   const [session, setSession] = useState<Session | null>(null),
     [guest, setGuest] = useState(false),
@@ -213,7 +221,8 @@ export default function App() {
     [assignees, setAssignees] = useState<Assignee[]>([]),
     [assigneesLoading, setAssigneesLoading] = useState(false),
     [assigneesError, setAssigneesError] = useState(''),
-    [taskFilter, setTaskFilter] = useState('Pending'),
+    [taskFilter, setTaskFilter] = useState(() => taskDigestWindow() ? 'Completed' : 'Pending'),
+    [taskWindow, setTaskWindow] = useState(taskDigestWindow),
     [nextCursor, setNextCursor] = useState<string | null>(null),
     [demoLeadLimit, setDemoLeadLimit] = useState(30),
     [listLoadError, setListLoadError] = useState(false),
@@ -935,7 +944,12 @@ export default function App() {
             params.set('field', searchField);
           }
         }
-        if (page === 'tasks') {params.set('state', taskFilter);params.set('view','accessible');}
+        if (page === 'tasks') {
+          params.set('state', taskFilter);
+          params.set('view', 'accessible');
+          if (taskFilter === 'Completed' && taskWindow)
+            for (const [key, value] of Object.entries(taskWindow)) params.set(key, value);
+        }
         if (append && nextCursor) params.set('cursor', nextCursor);
         const endpoint =
           page === 'leads'
@@ -1011,6 +1025,7 @@ export default function App() {
       searchField,
       columnFilters,
       taskFilter,
+      taskWindow,
       nextCursor,
       request,
     ],
@@ -1039,6 +1054,7 @@ export default function App() {
     searchField,
     columnFilters,
     taskFilter,
+    taskWindow,
     session?.member?.version,
   ]);
   useEffect(() => {
@@ -1294,6 +1310,9 @@ export default function App() {
       detailEpoch.current++;
       setRouteLeadId(id);
       setLeadTab(defaultLeadTab);
+      const digestWindow = taskDigestWindow();
+      setTaskWindow(digestWindow);
+      if (digestWindow) setTaskFilter('Completed');
       if (id) setPage('leads');
       else {
         detailEpoch.current++;
@@ -1327,6 +1346,7 @@ export default function App() {
     listEpoch.current++;
     detailEpoch.current++;
     setPage(p);
+    setTaskWindow(null);
     selectedIdRef.current = undefined;
     setRouteLeadId(null);
     setSelected(null);
@@ -3077,6 +3097,13 @@ export default function App() {
                   <div className="task-list-context">
                     <Clock size={14} aria-hidden="true" />
                     <span>Times in {timezone}</span>
+                    {taskWindow && taskFilter === 'Completed' && !demo ? <>
+                      <span>· Week of {taskWindow.from}</span>
+                      <button className="text-button" onClick={() => {
+                        setTaskWindow(null);
+                        window.history.replaceState({}, '', '/tasks');
+                      }}>Show all completed tasks</button>
+                    </> : null}
                   </div>
                   <div className="task-list-head" aria-hidden="true">
                     <span /><span>Task</span><span>Lead</span><span>Responsible</span><span>Due</span><span>Actions</span>
@@ -3362,6 +3389,8 @@ export default function App() {
         {modal === 'task' ? (
           <TaskForm
             leadId={selected?.id}
+            members={admin && can('assignments:write') && can('leads:edit')
+              ? assignees.filter(member => member.active && member.id !== session?.member?.uid) : undefined}
             onCancel={() => setModal(null)}
             onSave={async (d, k) => {
               await request('/tasks', 'POST', d, k);
@@ -3512,6 +3541,21 @@ export default function App() {
                     <p>{entry.comment}</p>
                   </li>
                 ))}</ul>
+              </details>
+            ) : null}
+            {!demo && focusedTask.leadId && focusedTask.state === 'Pending' &&
+              can('assignments:write') && can('leads:edit') && assignees.some(member => member.active) ? (
+              <details className="task-assignment">
+                <summary>Change responsible member</summary>
+                <TaskAssignmentForm key={focusedTask.version} task={focusedTask} members={assignees.filter(member => member.active)}
+                  onSave={async (data, key) => {
+                    const next = await request('/leads/' + encodeURIComponent(focusedTask.leadId!) +
+                      '/tasks/' + encodeURIComponent(focusedTask.id) + '/assignment', 'PATCH', data, key);
+                    setModal(null);
+                    setFocusedTask(next);
+                    await refresh();
+                    notify('Task assigned.');
+                  }} />
               </details>
             ) : null}
             {(focusedTask.sharedLeadContext ? focusedTask.canManage && can('leads:edit') : (demo || focusedTask.recipientUid === session?.member?.uid) && can('tasks:write')) &&

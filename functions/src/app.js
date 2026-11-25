@@ -100,6 +100,7 @@ import {
   FIELD_SETTINGS_PATH,
 } from './field-options.js';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import { randomUUID } from 'node:crypto';
 import {
   AppError,
@@ -111,7 +112,8 @@ import {
   NotificationPatch,
   ActivityInput,
   AutomaticReminderAction,
-  TaskInput,
+  SharedTaskInput,
+  TaskAssignment,
   TaskPatch,
   SharedTaskPatch,
   TaskDelete,
@@ -143,7 +145,15 @@ import { appendDiscussions, appendImportedComments } from './discussions.js';
 import { prepareLead, normalizeLead, contactKeys } from './leads.js';
 import { IMPORT_CHUNK_SIZE, previewRows } from './imports.js';
 import { makeTask, queueTask } from './tasks.js';
-import { enqueueAnalysis, AUTO_DEFAULTS } from './automatic-reminders.js';
+import { enqueueAnalysis, AUTO_DEFAULTS, localParts } from './automatic-reminders.js';
+import {
+  EmailSettingsPatch, EmailPreferencesPatch, EmailInvitationResend, EmailPreview, EmailTest,
+  enqueueEmail, readEmailSettings, MAIL_SETTINGS, readEmailPreferences, saveEmailPreferences,
+  emailOn, writeEmailJob, datePlus,
+} from './email-policy.js';
+import { applyEmailReceipt, verifyEmailReceipt } from './email-delivery.js';
+import { assertTaskRecipient, queueLeadEmails, queueTaskEmail } from './email-events.js';
+import { templatePreview } from './email-templates.js';
 const uid = () => Date.now().toString(36) + '_' + randomUUID();
 export function createApp({
   store,
@@ -157,6 +167,7 @@ export function createApp({
   files = null,
   extractScore = null,
   summarizeDashboard = null,
+  emailRuntime = null,
   now = isoNow,
 }) {
   const maintenanceStore = store.maintenanceStore || store;
@@ -184,6 +195,30 @@ export function createApp({
   app.use((req, res, next) => {
     const t = telemetry();
     return t ? t.http(req, res, next) : next();
+  });
+  const receiptRoute = '/api/v1/email/receipts/resend';
+  const receiptLimiter = rateLimit({
+    windowMs: 60_000,
+    limit: 120,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    // One budget per instance avoids both untrusted proxy headers and per-address storage.
+    keyGenerator: () => 'resend',
+    handler: (_req, _res, next) => next(new AppError(429, 'RATE_LIMIT', 'Email receipt rate limit reached')),
+  });
+  app.post(receiptRoute, receiptLimiter, express.raw({ type: 'application/json', limit: '32kb', inflate: false }), async (req, res, next) => {
+    try {
+      telemetry()?.operation?.('POST /email/receipts/resend');
+      const secret = await emailRuntime?.webhookSecret();
+      if (!secret) throw new AppError(503, 'EMAIL_SETUP', 'Email receipts are unavailable');
+      const at = now();
+      const event = verifyEmailReceipt(req.rawBody || req.body, req.headers, secret, at);
+      const outcome = await applyEmailReceipt(store, event, emailRuntime.environment, at);
+      if (outcome) telemetry()?.emailOperation?.('receipt', outcome.toLowerCase(), 0);
+      res.json({ ok: true });
+    } catch (error) {
+      next(error);
+    }
   });
   app.use(express.json({ limit: '12mb' }));
   const router = express.Router();
@@ -291,7 +326,7 @@ export function createApp({
               : url === '/imports'
                 ? ['limit', 'cursor', 'status', 'uploader', 'from', 'to']
                 : (url === '/tasks' || url === '/leads/:id/tasks')
-                  ? ['limit', 'cursor', 'state', 'leadId', ...(url==='/tasks'?['view']:[])]
+                  ? ['limit', 'cursor', 'state', 'leadId', ...(url==='/tasks'?['view','from','until','tz']:[])]
                   : ['limit', 'cursor'];
         for (const [key, value] of Object.entries(req.query))
           if (!allowed.includes(key) || typeof value !== 'string')
@@ -468,6 +503,11 @@ export function createApp({
   }
   const taskRecord = (input, member, id, leadId) =>
     makeTask(input, member, id, leadId, now());
+  const emailReady = () => emailRuntime?.ready() === true;
+  const emailTrace = () => telemetry()?.capture()?.traceparent;
+  const eventMail = (tx, event, identity, context) => emailReady()
+    ? enqueueEmail(tx, { event, identity, at: now(), trace: emailTrace(), ...context })
+    : null;
   async function readTask(db, m, id) {
     const t = await db.get(path('tasks', id));
     if (!t || t.deleted) throw new AppError(404, 'NOT_FOUND', 'Task not found');
@@ -809,6 +849,93 @@ export function createApp({
         });
       return { ok: true };
     });
+  });
+  route('get', '/email/settings', 'members:write', async req => {
+    assertAdmin(req.member);
+    return { ...await readEmailSettings(store), deliveryReady: emailReady() };
+  });
+  route('patch', '/email/settings', 'members:write', req => {
+    const input = parse(EmailSettingsPatch, req.body);
+    return mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      const current = await readEmailSettings(tx);
+      assertVersion(current, input.expectedVersion);
+      if (input.outcomeRecipientUid) {
+        const recipient = await effectiveMember(tx, await tx.get(path('members', input.outcomeRecipientUid)));
+        if (!recipient?.active || recipient.scope !== 'all' || !recipient.capabilities.includes('leads:read'))
+          throw new AppError(400, 'ASSIGNEE', 'Choose a member who can view unassigned leads');
+      }
+      const { expectedVersion, ...values } = input;
+      if (current.enabled === values.enabled && current.outcomeRecipientUid === values.outcomeRecipientUid &&
+          Object.keys(current.events).every(event => current.events[event] === values.events[event]))
+        return { ...current, deliveryReady: emailReady() };
+      const next = { ...values, version: current.version + 1 };
+      tx.set(MAIL_SETTINGS, { ...next, updatedAt: now(), updatedByUid: member.uid });
+      return { ...next, deliveryReady: emailReady() };
+    });
+  });
+  route('get', '/email/preferences', null, req => readEmailPreferences(store, req.member.uid));
+  route('patch', '/email/preferences', null, req => {
+    const input = parse(EmailPreferencesPatch, req.body);
+    return mutate(req, null, (tx, member) => saveEmailPreferences(tx, member.uid, input, now()));
+  });
+  route('post', '/email/preview', 'members:write', req => {
+    assertAdmin(req.member);
+    const { template } = parse(EmailPreview, req.body);
+    return templatePreview(template, emailRuntime?.origin || 'https://salesdrone.in');
+  });
+  route('get', '/email/deliveries', 'members:write', async req => {
+    assertAdmin(req.member);
+    const result = await list(req, 'emailJobs', [], undefined, 'createdAt', 'desc');
+    return {
+      items: result.items.map(job => ({
+        id: job.id, event: job.template || job.event, createdAt: job.createdAt,
+        state: job.state, attempts: job.attempts, reason: job.reason || null,
+      })),
+      nextCursor: result.nextCursor,
+    };
+  });
+  route('post', '/email/test', 'members:write', req => {
+    const input = parse(EmailTest, req.body);
+    return mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      if (!emailReady())
+        throw new AppError(503, 'EMAIL_SETUP', 'Email delivery is unavailable in this environment');
+      if (input.scenario === 'bounce' && emailRuntime.environment !== 'pre-production')
+        throw new AppError(400, 'EMAIL_SETUP', 'Bounce simulations are available in pre-production');
+      const at = now();
+      const rate = path('emailTestLimits', member.uid);
+      const last = await tx.get(rate);
+      if (last?.nextAt > at) throw new AppError(429, 'RATE_LIMIT', 'Wait five minutes between email tests');
+      tx.set(rate, { nextAt: new Date(Date.parse(at) + 5 * 60_000).toISOString() });
+      const id = writeEmailJob(tx, {
+        event: 'test', identity: member.uid + ':' + req.headers['idempotency-key'],
+        at, settings: { version: 0 }, trace: emailTrace(), uid: member.uid, ...input,
+      });
+      return { id, state: 'Queued' };
+    }, { idempotent: true });
+  });
+  route('post', '/email/invitations/:id/resend', 'members:write', req => {
+    const { expectedVersion } = parse(EmailInvitationResend, req.body);
+    return mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      const invite = await tx.get(path('invitations', req.params.id));
+      if (!invite?.active || invite.expiresAt <= now())
+        throw new AppError(404, 'INVITATION', 'This invitation is no longer active');
+      assertVersion(invite, expectedVersion);
+      const settings = await readEmailSettings(tx);
+      if (!emailReady() || !emailOn(settings, 'invitation'))
+        throw new AppError(409, 'EMAIL_SETUP', 'Enable invitation emails before resending');
+      const at = now();
+      if (invite.emailResendAt && Date.parse(at) - Date.parse(invite.emailResendAt) < 5 * 60_000)
+        throw new AppError(429, 'RATE_LIMIT', 'Wait five minutes between resends');
+      const id = writeEmailJob(tx, {
+        event: 'invitation', identity: invite.id + ':resend:' + req.headers['idempotency-key'],
+        at, settings, trace: emailTrace(), invitationId: invite.id, sourceVersion: invite.version,
+      });
+      tx.set(path('invitations', invite.id), { ...invite, emailResendAt: at });
+      return { id, state: 'Queued' };
+    }, { idempotent: true });
   });
   route('get', '/workspace-settings', 'leads:read', () =>
     readWorkspaceSettings(store),
@@ -1412,7 +1539,7 @@ export function createApp({
     return mutate(
       req,
       'leads:edit',
-      (tx, m) => planBulkLeads(tx, m, input, now(), true),
+      (tx, m) => planBulkLeads(tx, m, input, now(), true, emailReady() ? emailTrace() || '' : null),
       { idempotent: true },
     );
   });
@@ -1502,6 +1629,7 @@ export function createApp({
       });
       tx.set(path('leads', old.id), updated);
       recordStage(tx, updated, old.stage, m.uid, now(), 'edited');
+      if (emailReady()) await queueLeadEmails(tx, [{ old, lead: updated }], now(), emailTrace());
       for (const t of tasks)
         if (t.kind === 'outreach')
           tx.set(path('tasks', t.id), {
@@ -1621,6 +1749,7 @@ export function createApp({
       };
       tx.set(path('leads', l.id), updated);
       queueLeadNotification(tx, updated, m.uid, 'lead_assigned', now());
+      if (emailReady()) await queueLeadEmails(tx, [{ old: l, lead: updated }], now(), emailTrace());
       for (const t of tasks)
         tx.set(path('tasks', t.id), {
           ...t,
@@ -1730,6 +1859,7 @@ export function createApp({
         );
         tx.set(path('leads', l.id), updated);
         recordStage(tx, updated, l.stage, m.uid, now(), 'conversation');
+        if (emailReady()) await queueLeadEmails(tx, [{ old: l, lead: updated }], now(), emailTrace());
         if (followUp) {
           const task = taskRecord(followUp, m, uid(), l.id);
           if (task.kind === 'outreach' && (l.doNotContact || l.needsReview))
@@ -1950,15 +2080,36 @@ export function createApp({
   });
   route('get', '/tasks', 'leads:read', async (req) => {
     if(req.query.view && req.query.view!=='accessible')throw new AppError(400,'TASK_VIEW','Choose the accessible task view or omit view for your reminders.');
+    const { from, until, tz } = req.query;
+    const weekly = from !== undefined || until !== undefined || tz !== undefined;
+    if (weekly) {
+      const validDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+        Number.isFinite(Date.parse(value + 'T00:00:00Z')) && datePlus(value, 0) === value;
+      if (req.identity.personalAccess || req.query.view !== 'accessible' || req.query.state !== 'Completed' ||
+          req.query.leadId || !validDate(from) || !validDate(until) || datePlus(from, 7) !== until || !tz)
+        throw new AppError(400, 'FILTER', 'Choose a seven-day window for your shared completed tasks');
+      validateTimezone(tz);
+    }
     if(req.query.view==='accessible') {
       if(req.identity.personalAccess)throw new AppError(403,'GOOGLE_REQUIRED','Shared task browsing requires Google sign-in and App Check.');
       const filters=[];
       if(req.query.state)filters.push(['state','==',String(req.query.state)]);
       if(req.query.leadId)filters.push(['leadId','==',String(req.query.leadId)]);
-      const result=await list(req,'tasks',filters,undefined,'dueAt','asc','accessible:'+req.member.scope);
+      if (weekly) filters.push(['recipientUid', '==', req.member.uid],
+        ['completedAt', '>=', datePlus(from, -1) + 'T00:00:00.000Z'],
+        ['completedAt', '<', datePlus(until, 1) + 'T00:00:00.000Z']);
+      const result=await list(req,'tasks',filters,undefined,weekly?'completedAt':'dueAt',weekly?'desc':'asc',
+        'accessible:'+req.member.scope+(weekly?':'+from+':'+until+':'+tz:''));
       const leadIds=[...new Set(result.items.filter(t=>!t.deleted&&t.leadId).map(t=>t.leadId))];
       const records=await store.getAll(leadIds.map(id=>path('leads',id))),leads=new Map(leadIds.map((id,i)=>[id,records[i]]));
-      const rows=result.items.filter(t=>!t.deleted&&(t.leadId?canReadLead(req.member,leads.get(t.leadId)):t.recipientUid===req.member.uid&&t.creatorUid===req.member.uid));
+      const rows=result.items.filter(t=>{
+        if (t.deleted || (weekly && (!t.leadId || leads.get(t.leadId)?.archived))) return false;
+        if (weekly) {
+          const date = localParts(t.completedAt, tz).date;
+          if (date < from || date >= until) return false;
+        }
+        return t.leadId ? canReadLead(req.member,leads.get(t.leadId)) : t.recipientUid===req.member.uid&&t.creatorUid===req.member.uid;
+      });
       const owners=[...new Set(rows.map(t=>t.recipientUid))],members=await store.getAll(owners.map(id=>path('members',id)));
       const names=new Map(owners.map((id,i)=>[id,typeof members[i]?.name==='string'&&!members[i].name.includes('@')?members[i].name:'Member unavailable']));
       return {...result,items:rows.map(t=>{
@@ -1996,13 +2147,20 @@ export function createApp({
       : task;
   });
   route('post', '/tasks', 'tasks:write', (req) => {
-    const input = parse(TaskInput, req.body);
+    const { recipientUid, ...input } = parse(SharedTaskInput, req.body);
     return mutate(
       req,
       'tasks:write',
       async (tx, m) => {
+        if (recipientUid && (req.identity.personalAccess || !input.leadId ||
+            !m.capabilities.includes('assignments:write') || !m.capabilities.includes('leads:edit')))
+          throw new AppError(403, 'FORBIDDEN', 'Shared task assignment requires lead edit and assignment access');
         if (input.leadId) {
           const l = await leadAccess(tx, m, input.leadId);
+          if (recipientUid) {
+            if (l.archived) throw new AppError(409, 'ARCHIVED', 'Restore this lead before assigning a task');
+            await assertTaskRecipient(tx, recipientUid, l);
+          }
           if (
             input.kind === 'outreach' &&
             (l.doNotContact || l.needsReview || l.archived)
@@ -2014,7 +2172,9 @@ export function createApp({
             );
         }
         const task = taskRecord(input, m, uid(), input.leadId);
+        if (recipientUid) task.recipientUid = recipientUid;
         queueTask(tx, task);
+        if (emailReady()) await queueTaskEmail(tx, 'Assigned', task, m.uid, now(), emailTrace());
         return task;
       },
       { idempotent: true },
@@ -2051,6 +2211,7 @@ export function createApp({
           changeHistory: [...(old.changeHistory || []).slice(-99), { action, comment, actorUid: m.uid, createdAt: timestamp }],
         } : {}),
         version: old.version + 1,
+        ...(completing ? { completedDueAt: old.dueAt } : reopening ? { completedDueAt: null } : {}),
         completedAt:
           (enforceWorkflow ? completing : input.state === 'Completed')
             ? timestamp
@@ -2097,6 +2258,7 @@ export function createApp({
             },
           });
       }
+      if (emailReady()) await queueTaskEmail(tx, action, t, m.uid, timestamp, emailTrace());
       return t;
   }
   route('patch', '/tasks/:id', 'tasks:write', (req) => {
@@ -2130,6 +2292,31 @@ export function createApp({
         throw new AppError(409, 'TASK_STATE', 'Only completed tasks can be reopened');
       return applyTaskChange(tx,m,old,input);
     },{idempotent:true});
+  });
+  route('patch', '/leads/:id/tasks/:taskId/assignment', 'assignments:write', req => {
+    const input = parse(TaskAssignment, req.body);
+    return mutate(req, 'assignments:write', async (tx, member) => {
+      if (!member.capabilities.includes('leads:edit'))
+        throw new AppError(403, 'FORBIDDEN', 'Lead edit access is required');
+      const lead = await leadAccess(tx, member, req.params.id);
+      const task = await readTask(tx, member, req.params.taskId);
+      if (task.leadId !== lead.id) throw new AppError(404, 'NOT_FOUND', 'Task not found');
+      assertVersion(task, input.expectedVersion);
+      if (task.recipientUid === input.recipientUid) return task;
+      if (task.state !== 'Pending' || lead.archived)
+        throw new AppError(409, 'TASK_FINISHED', 'Only pending tasks on active leads can be assigned');
+      if (task.kind === 'outreach' && (lead.doNotContact || lead.needsReview))
+        throw new AppError(409, 'SUPPRESSED', 'Outreach is disabled for this lead');
+      await assertTaskRecipient(tx, input.recipientUid, lead);
+      const at = now();
+      const previous = await tx.get(path('reminderDeliveries', task.id + '_' + task.version));
+      const updated = { ...task, recipientUid: input.recipientUid, version: task.version + 1, updatedAt: at };
+      if (previous?.status === 'Pending')
+        tx.set(path('reminderDeliveries', previous.id), { ...previous, status: 'Cancelled', finishedAt: at });
+      queueTask(tx, updated);
+      if (emailReady()) await queueTaskEmail(tx, 'Assigned', updated, member.uid, at, emailTrace());
+      return updated;
+    }, { idempotent: true });
   });
   route('delete', '/tasks/:id', 'tasks:write', (req) => {
     const input = parse(TaskDelete, req.body);
@@ -2217,9 +2404,13 @@ export function createApp({
       async (tx) => {
         const id = hash(input.email);
         const prior = await tx.get(path('invitations', id));
+        const capabilities = input.capabilities || PRESETS[input.role];
+        if (prior?.active && prior.expiresAt > now() && prior.role === input.role &&
+            prior.scope === input.scope && JSON.stringify(prior.capabilities) === JSON.stringify(capabilities))
+          return prior;
         const inv = {
           ...input,
-          capabilities: input.capabilities || PRESETS[input.role],
+          capabilities,
           id,
           active: true,
           createdAt: now(),
@@ -2227,6 +2418,7 @@ export function createApp({
           version: (prior?.version || 0) + 1,
         };
         tx.set(path('invitations', id), inv);
+        await eventMail(tx, 'invitation', inv.id + ':' + inv.version, { invitationId: inv.id, sourceVersion: inv.version });
         return inv;
       },
       { idempotent: true },
@@ -2261,6 +2453,8 @@ export function createApp({
         version: old.version + 1,
       };
       tx.set(path('members', m.uid), m);
+      if (!old.active && m.active)
+        await eventMail(tx, 'access_ready', m.uid + ':' + m.version, { uid: m.uid, sourceVersion: m.version });
       return m;
     });
   });

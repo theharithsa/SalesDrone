@@ -1,0 +1,113 @@
+.email-settings {
+  display: grid;
+  gap: 16px;
+  min-inline-size: 0;
+}
+
+.email-settings form {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+}
+
+.email-settings-group {
+  display: grid;
+  gap: 8px 20px;
+  inline-size: 100%;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--outline-variant);
+  border-radius: 12px;
+}
+
+.email-settings-group legend {
+  padding-inline: 6px;
+  font-weight: 600;
+}
+
+.email-settings-group .report-setting-option {
+  min-height: 44px;
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.email-settings-group .material-field {
+  min-inline-size: 0;
+  inline-size: 100%;
+  max-inline-size: 420px;
+}
+
+.email-event-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 219px), 1fr));
+}
+
+.email-schedule {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
+  align-items: center;
+  gap: 8px 16px;
+  padding-block: 6px;
+}
+
+.email-settings-tabs,
+.email-preview-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.email-settings-tabs {
+  margin-block-end: 14px;
+}
+
+.email-preview-controls .material-field {
+  min-inline-size: min(100%, 220px);
+  flex: 1;
+}
+
+.email-preview {
+  display: block;
+  width: 100%;
+  height: clamp(420px, 60vh, 600px);
+  border: 1px solid var(--outline-variant);
+  border-radius: 12px;
+}
+
+.email-plain pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.email-delivery-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.email-delivery-list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: start;
+  gap: 8px 12px;
+  padding-block: 10px;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.email-delivery-list small {
+  display: block;
+  color: var(--on-surface-variant);
+}
+
+.email-state {
+  padding: 3px 10px;
+  color: var(--on-secondary-container);
+  background: var(--secondary-container);
+  border-radius: 8px;
+  font-size: .875rem;
+}

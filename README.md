@@ -271,3 +271,13 @@ Admins can use **Team** for current lead workload, recorded comments/calls, task
 ## Read SalesDrone through MCP
 
 Use [`@theharithsa/salesdrone-mcp`](https://github.com/theharithsa/salesdrone-mcp) in a local stdio MCP client to read leads, recorded calls/comments, tasks, dashboards, Team and a minimal people directory through the same scoped API. No write tools or cloud/database credentials are included. [Standalone repository, screenshots, setup and observability](https://github.com/theharithsa/salesdrone-mcp#readme). MCP source, tests, CI and npm releases are maintained there; this repository owns the HTTP API and its policy.
+
+## Email updates and task digests
+
+Members choose lead and shared-task emails and schedule daily and weekly digests
+under Settings → Personal → Email preferences. Admins set workspace controls,
+preview templates and check delivery under Settings → Workspace → Email
+notifications. The [email guide](docs/EMAIL.md) describes event rules,
+pre-production verification and rollback.
+
+[Preview email preferences on a phone](site/assets/screenshots/email-preferences-demo.jpg)

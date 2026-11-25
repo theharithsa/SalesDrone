@@ -66,3 +66,10 @@ Preserve validated W3C traceparent **and tracestate** through native ingress/api
 A Firebase-managed replacement needs the staged parser and rollout gates in [FinOps](../salesdrone-finops/SKILL.md). A transport switch does not remove the Functions Framework pre-parser.
 
 Under request-based billing, finish forwarding and flush OTel before releasing the final response byte. Stage the tagged revision with zero traffic and confirm both minimums, CPU throttling and parser behavior before promotion.
+
+## Resend callback
+
+Forward the raw uncompressed JSON body and Svix headers for
+/api/v1/email/receipts/resend. Enforce the 32 KiB endpoint limit before buffering,
+then validate the signature inside the API. Do not authenticate the provider
+with a user token or log the payload.

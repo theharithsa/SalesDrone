@@ -10,6 +10,8 @@ import { displayScales, normalizeDisplayScale } from '../lib/display-scale';
 import { interfaceFonts, normalizeFontStyle } from '../lib/fonts';
 import settingsSections from '../lib/settings-sections.json';
 import WorkspacePolicySettings from './WorkspacePolicySettings';
+import { EmailPreferences, WorkspaceEmail } from './EmailSettings';
+import './email-settings.css';
 import AIPersonalizationSettings from './AIPersonalizationSettings';
 import aboutStoryIllustration from '../../../../assets/salesdrone-guide-illustrations/04-the-story-behind-each-row.png';
 import DeveloperSettings from './DeveloperSettings';
@@ -72,7 +74,8 @@ export default function SettingsPage({
 }) {
   const isAdmin = !demo && session?.member?.role === 'Admin';
   const canUseIntelligence = demo || session?.member?.leadFeatureAccess?.intelligence !== false;
-  const sections = settingsSections.filter((item) => !item.admin || isAdmin);
+  const sections = settingsSections.filter((item) =>
+    (!item.admin || isAdmin) && (item.id !== 'email-preferences' || !demo));
   const [location, setLocation] = useState(() => initialSection ? { section: initialSection } : readSettingsLocation());
   const [sectionDraft, setSectionDraft] = useState(cleanDraft);
   const navigationHandler = useRef<() => void>(() => {});
@@ -306,6 +309,12 @@ export default function SettingsPage({
               request={request}
               onChanged={onWorkspacePolicyChanged || onRefresh}
             />
+          ) : null}
+          {isAdmin && section === 'email-workspace' ? (
+            <WorkspaceEmail request={request} onEditingChange={setSectionDraft} timezone={preferences.timezone} />
+          ) : null}
+          {!demo && section === 'email-preferences' ? (
+            <EmailPreferences request={request} onEditingChange={setSectionDraft} canUseIntelligence={canUseIntelligence} />
           ) : null}
           {isAdmin && section === 'fields' ? (
             <LeadFieldManager

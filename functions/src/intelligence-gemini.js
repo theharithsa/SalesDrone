@@ -4,13 +4,14 @@ import { AppError } from './contracts.js';
 import { z } from 'zod';
 import { ScoreExtraction } from './scoring.js';
 import { BriefOutput } from './dashboard.js';
+const DigestInsight = z.object({ choice: z.string().max(24) }).strict();
 export function intelligenceGemini({
   key,
   model = DEFAULT_GEMINI_MODEL,
   fetchImpl = fetch,
   telemetry,
 }) {
-  async function generate(schema, instruction, input) {
+  async function generate(schema, instruction, input, maxOutputTokens = 5000, timeoutMs = 25_000) {
     const response = await geminiRequest(fetchImpl,
       `https://generativelanguage.googleapis.com/v1beta/models/${resolveModel(model)}:generateContent`,
       {
@@ -19,7 +20,7 @@ export function intelligenceGemini({
           'Content-Type': 'application/json',
           'x-goog-api-key': typeof key === 'function' ? key() : key,
         },
-        signal: AbortSignal.timeout(25000),
+        signal: AbortSignal.timeout(timeoutMs),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: instruction }] },
           contents: [
@@ -29,7 +30,7 @@ export function intelligenceGemini({
             temperature: 0,
             responseMimeType: 'application/json',
             responseJsonSchema: z.toJSONSchema(schema, { target: 'draft-7' }),
-            maxOutputTokens: 5000,
+            maxOutputTokens,
           },
         }),
       },
@@ -50,6 +51,13 @@ export function intelligenceGemini({
     return validateProvider(()=>schema.parse(JSON.parse(text || 'null')),telemetry);
   }
   return {
+    chooseDigestInsight: async (input) => (await generate(
+      DigestInsight,
+      'Select the most actionable insight key from choices for this sales task digest. Use only the verified counts and due-time facts. Prefer overdue urgency for daily digests and material progress or upcoming deadlines for weekly digests. Return one supplied key.',
+      input,
+      120,
+      7000,
+    )).choice,
     extract: (input) =>
       generate(
         ScoreExtraction,

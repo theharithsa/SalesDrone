@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.14.1**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.15.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -762,6 +762,102 @@ Opt in to Google Analytics counts for workspace page categories. This choice is 
 Takes effect immediately. Turning it off stops new page measurements. Only fixed page categories are shared; lead details, search terms and account identifiers are excluded. Demo and emulator use is excluded.
 
 **Example:** A visit to any individual lead counts under Leads.
+
+## Personal → Email preferences
+
+**Who/where:** Personal workspace member.
+
+**API:** GET /api/v1/email/preferences and PATCH /api/v1/email/preferences.
+
+**Permissions:** Active membership, Google sign-in and App Check. Writes require the current expectedVersion..
+
+### Email me lead updates
+
+**Default:** Off.
+
+Opt in to assignments and configured outcome updates for accessible leads.
+
+The workspace master switch and per-event switches also apply.
+
+### Email me shared task updates
+
+**Default:** Off.
+
+Opt in to updates made by teammates on shared tasks you own.
+
+Private reminders and your own task changes do not generate mail.
+
+### Daily task reminder
+
+**Default:** Off; 9:00 a.m. when enabled.
+
+Choose a local send time for your shared lead task summary.
+
+Includes due and overdue counts, the next deadline and the oldest overdue age when available. Empty days are skipped.
+
+### Weekly task recap
+
+**Default:** Off; Monday at 9:00 a.m. when enabled.
+
+Choose a weekday and local send time. The recap covers the previous Monday through Sunday.
+
+Shows completed tasks, distinct leads and work due in the next seven days. Open the email link to review your completed lead tasks for the period. Empty weeks are skipped.
+
+### Digest time zone
+
+**Default:** Your existing account time zone until saved.
+
+Use an IANA time zone such as Asia/Kolkata.
+
+A missing or ambiguous daylight-saving time skips that day. Scheduling changes apply to upcoming runs.
+
+### Choose takeaways with AvinyaIntelligence
+
+**Default:** Off.
+
+Allow a brief takeaway chosen from verified task facts.
+
+Also requires your current AI access. When unavailable, both digests still show the verified summary.
+
+## Workspace → Email notifications
+
+**Who/where:** Workspace.
+
+**API:** GET/PATCH /api/v1/email/settings, POST /api/v1/email/preview, POST /api/v1/email/test and GET /api/v1/email/deliveries.
+
+**Permissions:** Admin role with members:write, Google sign-in and App Check. Writes require expectedVersion where documented..
+
+### Enable workspace email
+
+**Default:** Off.
+
+Enable email for the workspace after the environment sender is ready.
+
+Pausing or changing workspace email policy invalidates pending work from the old policy. In-app notifications continue.
+
+### Email event switches
+
+**Default:** On individually; master switch off.
+
+Switch access, lead, shared task, daily and weekly events on or off.
+
+Routine notifications require member opt-in. Outcomes use configured Lead research mappings.
+
+### Outcomes for unassigned leads
+
+**Default:** None.
+
+Choose an active member with all-lead visibility to receive configured outcomes for unassigned leads.
+
+If the chosen member loses access the worker suppresses the delivery.
+
+### Template preview and test send
+
+**Default:** Synthetic preview; test sending available when provider setup is ready.
+
+Review each layout and plain text. An Admin can queue a test every five minutes.
+
+Pre-production uses a controlled destination. Delivery history records queued, accepted, delayed, delivered, failed or suppressed states.
 
 ## Settings audit trail
 

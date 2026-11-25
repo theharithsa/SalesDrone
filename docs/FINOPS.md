@@ -46,3 +46,18 @@ Target the existing Firebase Hosting, Cloud Functions, Auth/App Check, Firestore
 2. Prove a Hosting rewrite directly to the existing Firebase HTTP function on a test project or an isolated preview channel. Test API routing, JSON/strict/compressed and malformed body behavior, upload/download bytes, request/version headers, authorization, PAT scope, retries, CORS, CSP, timeouts and trace propagation. Hosting has a 60-second ceiling. Preserve the existing public host and path. [Firebase Hosting rewrites](https://firebase.google.com/docs/hosting/serverless-overview)
 3. The current ingress is the fix for #30. The Functions Framework may reject invalid JSON before the app runs. An HTTPS function wrapper or Express middleware cannot intercept that outer parser. If the staged environment confirms the difference, obtain approval for provider-owned malformed-body errors and explicitly revise the supported API contract before cutover, or keep the ingress until a Firebase-only design can preserve the behavior. Keep valid-request compatibility and test MCP handling of non-JSON platform errors. [Current ingress contract](API-INGRESS.md)
 4. Run the checked PR and Functions-before-Hosting release with the current ingress available for rollback. Verify custom host, default host, authorized synthetic traffic, parser/denial probes, trace/telemetry receipts and usage. Only after the agreed observation window should a separate reviewed change remove unused ingress resources and IAM grants. No production route, service or billing setting was changed during the Settings preview.
+
+## Transactional email
+
+The enabled worker uses the existing production scheduling interval, with an
+isolated five-minute pre-production pilot. Each tick reads a single settings
+document and the bounded due indexes. At idle the estimate is roughly 600–900
+billed Firestore reads daily per enabled environment, including the reset guard
+on periodic cleanup. The daily caps are 30 send attempts, 12 digest computations
+and eight optional Gemini selections. One worst-case weekly digest reads up to
+242 projected tasks plus two passes over at most 240 unique lead references.
+Twelve such digests therefore account for fewer than 9,000 document reads in
+addition to base scheduling, transaction, index entries and normal application
+traffic. Query overflow skips delivery and never claims a partial total.
+Treat the estimate as a design budget. Recheck billable index reads, retries,
+idle schedules and provider usage from pilot metrics before promoting.

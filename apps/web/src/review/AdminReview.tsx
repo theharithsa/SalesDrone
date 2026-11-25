@@ -24,6 +24,7 @@ import { demoData } from '../lib/demo';
 import { defaultFieldOptions, type FieldOptions } from '../lib/field-options';
 import type { Session } from '../lib/types';
 import { TOKEN_SCOPES } from '../../../../functions/src/api-scopes.js';
+import { templatePreview } from '../../../../functions/src/email-templates.js';
 import '@fontsource-variable/manrope';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/source-sans-3';
@@ -220,6 +221,16 @@ function AdminReview() {
   const request = useCallback(
     async (path: string, method = 'GET', body: any = {}) => {
       const key = path.split('?')[0];
+      if (key === '/email/settings')
+        return { version: 1, enabled: false, deliveryReady: false, outcomeRecipientUid: null,
+          events: Object.fromEntries(['invitation','access_ready','lead_assigned','lead_converted','lead_failed',
+            'task_assigned','task_completed','task_rescheduled','task_reopened','daily','weekly'].map(event => [event, true])) };
+      if (key === '/email/preferences')
+        return { version: 1, leadUpdates: true, taskUpdates: true, dailyEnabled: true, dailyTime: '09:00',
+          weeklyEnabled: true, weeklyTime: '09:00', weeklyDay: 1, timezone: 'Asia/Kolkata', digestInsights: true };
+      if (key === '/email/deliveries') return { items: [], nextCursor: null };
+      if (key === '/email/preview')
+        return templatePreview(body.template, 'https://salesdrone.example.test');
       if(key.startsWith('/lead-hygiene/')||key.startsWith('/lead-assistant/'))return structuredClone(researchFixture(path,method,body));
       if (key === '/lead-data-reset/preview')
         return {

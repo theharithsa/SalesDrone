@@ -6,6 +6,18 @@ API contract versions track compatibility independently.
 Confirm the published version and date in [GitHub Releases](https://github.com/theharithsa/SalesDrone/releases).
 
 
+
+## [2.15.0] - 2026-11-29
+
+### Added
+- Workspace email controls, synthetic template previews and delivery history, plus email preferences for each member.
+- Optional access, lead and shared-task email notifications with independent daily and weekly task digests.
+- Shared-task assignment for eligible team members and a completed-week task view linked from the weekly recap.
+- Resend delivery with signed receipts, a scoped pilot, bounded retries and verified task facts for AvinyaIntelligence takeaways.
+
+### Changed
+- Includes the Astryx Import enquiries experience for workbook mapping, review and job history.
+
 ## [2.14.1] - 2026-11-29
 
 ### Changed
