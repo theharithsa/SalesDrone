@@ -35,7 +35,7 @@ for (const index of needed) {
     if (!current.some(value => match(index, value))) throw error;
   }
 }
-for (let attempt = 0; attempt < 36; attempt++) {
+for (let attempt = 0; attempt < 90; attempt++) {
   current = list();
   if (needed.every(index => current.some(value => match(index, value) && value.state === 'READY'))) {
     console.log('Pre-production email and digest indexes are ready.');

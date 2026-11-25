@@ -46,6 +46,11 @@ exhausted. The worker reserves one model attempt per delivery.
 
 ## Pre-production setup and verification
 
+Before the first email candidate deploys, use the index operator identity to
+run node scripts/preprod-email-indexes.mjs and verify the three indexes in
+the named preprod database are READY. Use --verify for subsequent checks.
+The GitHub deployment identity does not need Firestore index administration.
+
 1. Verify outbound authentication for salesdrone.in with the records assigned
    by Resend. DKIM and the provider return path are added at GoDaddy. Preserve
    the existing DMARC enforcement policy and Hosting records.

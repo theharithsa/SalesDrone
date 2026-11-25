@@ -51,7 +51,6 @@ jobs:
       - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
       - name: Deploy the isolated API and ingress
         run: |
-          node scripts/preprod-email-indexes.mjs
           bash scripts/deploy-preprod-api.sh
           bash scripts/deploy-preprod-ingress.sh
       - name: Validate ingress before Hosting release

@@ -11,7 +11,7 @@ export function intelligenceGemini({
   fetchImpl = fetch,
   telemetry,
 }) {
-  async function generate(schema, instruction, input, maxOutputTokens = 5000) {
+  async function generate(schema, instruction, input, maxOutputTokens = 5000, timeoutMs = 25_000) {
     const response = await geminiRequest(fetchImpl,
       `https://generativelanguage.googleapis.com/v1beta/models/${resolveModel(model)}:generateContent`,
       {
@@ -20,7 +20,7 @@ export function intelligenceGemini({
           'Content-Type': 'application/json',
           'x-goog-api-key': typeof key === 'function' ? key() : key,
         },
-        signal: AbortSignal.timeout(25000),
+        signal: AbortSignal.timeout(timeoutMs),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: instruction }] },
           contents: [
@@ -56,6 +56,7 @@ export function intelligenceGemini({
       'Select the most actionable insight key from choices for this sales task digest. Use only the verified counts and due-time facts. Prefer overdue urgency for daily digests and material progress or upcoming deadlines for weekly digests. Return one supplied key.',
       input,
       120,
+      7000,
     )).choice,
     extract: (input) =>
       generate(
