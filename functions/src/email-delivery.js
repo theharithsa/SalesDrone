@@ -313,10 +313,10 @@ export function verifyEmailReceipt(body, headers, secret, at) {
   const id = headers['svix-id'];
   const ts = headers['svix-timestamp'];
   const signatures = headers['svix-signature'];
-  if (typeof id !== 'string' || typeof ts !== 'string' || typeof signatures !== 'string')
+  if (!Buffer.isBuffer(body) || typeof id !== 'string' || typeof ts !== 'string' || typeof signatures !== 'string')
     throw new AppError(401, 'EMAIL_SIGNATURE', 'Invalid email receipt signature');
   const epoch = Number(ts);
-  const valid = Buffer.isBuffer(body) && body.length <= 32_768 &&
+  const valid = Buffer.byteLength(body) <= 32_768 &&
     /^[A-Za-z0-9_-]{1,100}$/.test(id) && /^\d{10}$/.test(ts) &&
     Math.abs(Date.parse(at) / 1000 - epoch) <= 300 &&
     signatures.length <= 1024 && /^whsec_[A-Za-z0-9+/=]+$/.test(secret || '');
@@ -330,7 +330,7 @@ export function verifyEmailReceipt(body, headers, secret, at) {
   });
   if (!matched) throw new AppError(401, 'EMAIL_SIGNATURE', 'Invalid email receipt signature');
   try {
-    return JSON.parse(body.toString('utf8'));
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(body));
   } catch {
     throw new AppError(400, 'BAD_JSON', 'Invalid email receipt');
   }
