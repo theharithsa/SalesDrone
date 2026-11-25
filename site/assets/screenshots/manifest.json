@@ -818,5 +818,15 @@
     "capturePixels": "557 x 1870",
     "version": "2.15.0",
     "review": "Member preferences for a fictional account with both digest schedules shown. No live data or account."
+  },
+  {
+    "file": "email-weekly-branded-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "7c6601f76f888d638b96affd44826f89bc6818f4f8d31ca8b5236d899a86c300",
+    "capturedAt": "2026-11-25T23:23:45Z",
+    "viewport": "390 CSS pixels in a sandboxed Chromium email frame",
+    "capturePixels": "391 x 601",
+    "version": "2.15.0",
+    "review": "Weekly digest from the actual renderer with fictional task totals. Checked the first-party mark and font, blocked-asset fallback, and 320 to 1440 CSS pixels. Inbox rendering requires separate verification."
   }
 ]

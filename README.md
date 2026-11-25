@@ -280,4 +280,5 @@ preview templates and check delivery under Settings → Workspace → Email
 notifications. The [email guide](docs/EMAIL.md) describes event rules,
 pre-production verification and rollback.
 
-[Preview email preferences on a phone](site/assets/screenshots/email-preferences-demo.jpg)
+[Preview the branded weekly digest](site/assets/screenshots/email-weekly-branded-demo.jpg)
+or [review the email preferences on a phone](site/assets/screenshots/email-preferences-demo.jpg).

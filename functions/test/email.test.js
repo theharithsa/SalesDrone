@@ -10,7 +10,7 @@ import { PRESETS } from '../src/contracts.js';
 import { dispatchEmails, verifyEmailReceipt } from '../src/email-delivery.js';
 import { emailSettings, emailPreferences, nextDigestSlot } from '../src/email-policy.js';
 import { digestFacts } from '../src/email-digests.js';
-import { templatePreview } from '../src/email-templates.js';
+import { renderEmail, sampleDigest, templateInfo, templatePreview } from '../src/email-templates.js';
 
 const initial = '2026-11-23T03:29:00.000Z';
 const signingKey = Buffer.alloc(32, 125);
@@ -95,6 +95,23 @@ test('email controls are scoped, versioned and paused by default', async () => {
   assert.match(preview.body.html, /Weekly insight/);
   assert.match(preview.body.text, /Leads covered: 5/);
   assert.match(preview.body.text, /previous|prior week/);
+});
+
+test('every email uses first-party SalesDrone branding in delivery and the sandboxed preview', () => {
+  const origin = 'https://example-preprod.test';
+  for (const template of Object.keys(templateInfo)) {
+    const preview = templatePreview(template, origin);
+    const delivery = renderEmail({ template, origin, preprod: true, facts: sampleDigest[template] });
+    assert.match(preview.html, /src="\/brand\/salesdrone-mark\.png"/);
+    assert.match(preview.html, /url\("\/fonts\/open-sans\/open-sans-latin\.woff2"\)/);
+    assert.doesNotMatch(preview.html, /<a\s/);
+    assert.match(delivery.html, /src="https:\/\/example-preprod\.test\/brand\/salesdrone-mark\.png"/);
+    assert.match(delivery.html, /url\("https:\/\/example-preprod\.test\/fonts\/open-sans\/open-sans-latin\.woff2"\)/);
+    assert.match(delivery.html, /<!--\[if mso\]><style>/);
+    assert.match(delivery.html, />SalesDrone<\/td>/);
+    assert.match(delivery.subject, /^\[Pre-prod\]/);
+    assert.match(delivery.text, /^SalesDrone\n/);
+  }
 });
 
 test('invitation is atomic, only a genuine reissue sends, and acceptance emits no second access job', async () => {

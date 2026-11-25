@@ -16,6 +16,7 @@
     "README.md",
     "SECURITY.md",
     "docs/EMAIL.md",
+    "docs/DESIGN-SYSTEM.md",
     "docs/API.md",
     "docs/SETTINGS.md",
     "docs/TECHNICAL.md",
@@ -91,7 +92,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Verify the same pre-production tree through GitHub Actions, review synthetic layouts at phone and desktop widths, and exercise the signed receipt and provider simulator before enabling the pilot. Actual inbox rendering, provider quota evidence and production promotion are separate checks.",
+  "manualVerification": "Verify the same pre-production tree through GitHub Actions, review the sandboxed Astryx email layout and font and logo fallback from 320 to 1440 CSS pixels, and exercise the signed receipt and provider simulator before enabling the pilot. Actual inbox rendering, provider quota evidence and production promotion are separate checks. Branding adds public static assets and no new API operations, database reads or telemetry.",
   "milestone": {
     "number": 72,
     "title": "v2.15.0 — Weekly production release",
@@ -111,6 +112,7 @@
   },
   "screenshots": [
     "email-workspace-demo.jpg",
-    "email-preferences-demo.jpg"
+    "email-preferences-demo.jpg",
+    "email-weekly-branded-demo.jpg"
   ]
 }

@@ -101,3 +101,8 @@ Review email-delivery.js, email-policy.js, email-templates.js and email.test.js
 before operating this path. Keep addresses, provider payloads, names, notes and
 AI content out of monitoring. Use the pre-production simulator and verify an
 actual inbox separately.
+
+All email events share one branded Astryx template with Open Sans, the public
+drone mark, and a text wordmark. Keep the font and image URLs fixed, with native
+font and text fallbacks. The sandboxed preview uses current-site assets and
+synthetic data. Keep visual changes inside the existing preview/render path.

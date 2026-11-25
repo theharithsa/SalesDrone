@@ -6,6 +6,12 @@ This does not claim native platform behavior, Material certification or Dynamic 
 
 **Import enquiries.** This route loads the pinned Astryx component CSS and neutral theme without the global reset. Use semantic Astryx actions and retain native form controls for workbook mapping. The route inherits workspace typography, accent and display preferences. Keep Astryx styles local when migrating later pages.
 
+**Transactional email.** The shared mail renderer uses Astryx Neutral surface,
+border, spacing, and heading roles with the SalesDrone blue accent and Open Sans
+from the public Astryx pages. Use inline sRGB values, table layout, the existing
+drone mark, and a live text wordmark. Web fonts fall back to the Astryx system
+stack in mail clients that block them. [Email runbook](EMAIL.md).
+
 ## Architecture
 
 `apps/web/src/main.tsx` loads only the Material entry files:

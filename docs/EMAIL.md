@@ -7,6 +7,13 @@ Settings → Personal → Email preferences. Admins manage workspace controls,
 synthetic previews, test sends and delivery history under Settings → Workspace →
 Email notifications.
 
+All templates use the SalesDrone drone mark and Open Sans in the Astryx Neutral
+layout. Supporting numbers and the next action are visible in the message.
+Mail clients that block web fonts use the Astryx system font stack. The text
+wordmark remains readable when images are blocked. The logo and font are fixed
+public Hosting assets with no recipient data, tracking parameters or new
+Firestore reads. Template Preview loads them from the app inside its sandbox.
+
 ## Events and recipient rules
 
 | Event | Recipient and condition |
@@ -73,7 +80,8 @@ The GitHub deployment identity does not need Firestore index administration.
    is Resend’s delivery simulator. A separately authorized test inbox can be
    set as SDR_EMAIL_TEST_INBOX on the private worker for a real inbox check.
    Use the bounce scenario only with synthetic data. In app Delivery history,
-   compare Accepted with Delivered from the signed callback. Recheck pause,
+   compare Accepted with Delivered from the signed callback. Verify the brand
+   mark, type, compact layout and fallback when an inbox blocks assets. Recheck pause,
    opt-out, retries, revoked access and all template layouts on the exact
    deployed candidate. Record actual receipt and client rendering separately
    from the provider test.
