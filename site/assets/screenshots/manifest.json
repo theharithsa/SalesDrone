@@ -798,5 +798,25 @@
     "capturePixels": "1440 x 900",
     "version": "2.14.0",
     "review": "Reviewed fictional enquiry form with two chosen products. The local form fixture performs no server writes."
+  },
+  {
+    "file": "email-workspace-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "9cbad8ff0c817216d4e5ccab73a5cb34e625a1a412241ae705b5577950a233db",
+    "capturedAt": "2026-11-25T22:17:11.374Z",
+    "viewport": "1440 x 900 CSS pixels; checked in the in-app Chromium browser",
+    "capturePixels": "2027 x 1286",
+    "version": "2.15.0",
+    "review": "Workspace controls for a fictional admin. Sender setup is paused. No live data or account."
+  },
+  {
+    "file": "email-preferences-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "f36427285d43a4e2ee939f9a5781853d62d6c87f924210d7afa07affa90b0219",
+    "capturedAt": "2026-11-25T22:17:11.374Z",
+    "viewport": "390 x 1400 CSS pixels; checked in the in-app Chromium browser",
+    "capturePixels": "557 x 1870",
+    "version": "2.15.0",
+    "review": "Member preferences for a fictional account with both digest schedules shown. No live data or account."
   }
 ]

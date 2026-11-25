@@ -113,6 +113,8 @@ const screenshots = [
   'book-lead-detail-demo.jpg',
   'book-dashboard-demo.jpg',
   'book-form-mobile-demo.jpg',
+  'email-workspace-demo.jpg',
+  'email-preferences-demo.jpg',
 ];
 for (const name of screenshots) {
   const source = 'site/assets/screenshots/' + name,

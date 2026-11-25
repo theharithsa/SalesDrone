@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.14.1
+Version 2.15.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -921,3 +921,33 @@ Current source/settings access is authoritative. Ask again after data or permiss
 **Can another Admin read my chats?**
 
 The app’s conversation APIs expose only your own chats. Admin status alone does not grant another person’s chat history.
+
+## Email updates and task digests
+
+Workspace members and administrators
+
+1. Open Settings > Personal > Email preferences. Choose the lead and shared-task updates you want to receive.
+
+2. Enable the daily or weekly digest, choose the local time and time zone, and save. Turn on AvinyaIntelligence takeaways if you have access and want a highlighted priority.
+
+3. Admins configure delivery under Settings > Workspace > Email notifications. Use Template preview to review a sample and Delivery history to check a test.
+
+4. Open a message’s main link, then sign in with your approved Google account to see the linked work.
+
+Emails cover workspace invitations and active access, lead assignments and configured outcomes, and meaningful changes to a teammate’s shared task. A task’s responsible member appears in the app. Admins can use Resend email on an active invitation in People & access.
+
+The daily digest shows due and overdue shared tasks, the next deadline and the age of the oldest overdue task. The weekly recap shows completed tasks, leads covered and upcoming work. The on-time statistic is included when the original deadlines are known.
+
+The sender uses generic copy. Lead names, contact details, task titles, private reminders and comments stay in SalesDrone. The links check current access each time you open them.
+
+![Email updates and task digests — synthetic demo only](../site/assets/screenshots/email-workspace-demo.jpg)
+
+### Questions
+
+**Why did I not get a digest?**
+
+Check that your workspace enabled the digest, your own preference is on, and you have eligible lead tasks. Empty periods, revoked access and the pilot limit can suppress a scheduled delivery.
+
+**Why does Delivery history say Accepted?**
+
+The email provider accepted the request. After a verified delivery receipt arrives, SalesDrone shows Delivered.

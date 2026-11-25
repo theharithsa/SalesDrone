@@ -38,6 +38,9 @@ export const APPLICATION_ERRORS = new Set([
   "DEPENDENCY_UNAVAILABLE",
   "DEVICE_LIMIT",
   "DUPLICATE",
+  "EMAIL_SCHEDULE",
+  "EMAIL_SETUP",
+  "EMAIL_SIGNATURE",
   "EXPIRED",
   "EXPORT_COLUMN",
   "EXPORT_DISABLED",
@@ -166,7 +169,7 @@ export function dependencyErrorType(error) {
 }
 export const policyRejection=error=>Number.isInteger(error?.status)&&error.status>=400&&error.status<500&&APPLICATION_ERRORS.has(error.code);
 export const ERROR_TYPES = new Set([...APPLICATION_ERRORS, ...grpc.map(x=>'GRPC_'+x), ...Object.values(firebase)]);
-export const WORK_STATS = ['examined','claimed','processed','ready','sent','failed','cancelled','skipped','created','indexed','delivered','retried','rejected','removed','blocked','scheduled','review','stale','completed','unchanged','noAction'];
+export const WORK_STATS = ['examined','claimed','processed','ready','sent','failed','cancelled','skipped','created','indexed','delivered','retried','rejected','removed','blocked','scheduled','review','stale','completed','unchanged','noAction','accepted','delayed','suppressed'];
 export const COLLECTIONS = new Set(['leads','leadScores','leadTransitions','leadAttachments','activities','activityRevisions','tasks','members','personalAccessTokens','invitations','imports','importRows','importChunks','requests','auditEvents','settings','notifications','devices','reminderDeliveries','deviceDeliveries','noteAnalyses','leadDataResets','hygieneScans','assistantRequests','assistantConversations','assistantResults','researchIndex','researchWork','aiBudgets','rateLimits','pushTests','telemetryOutbox','other','multiple']);
 export function collectionName(path) {
   const parts=String(path||'').split('/');
@@ -174,8 +177,8 @@ export function collectionName(path) {
   return COLLECTIONS.has(value) ? value : 'other';
 }
 export const OPERATIONS = new Set(['get','getAll','query','count','scan','nearest','transaction']);
-export const WORKERS = new Set(['reminders','note-analysis','lead-intelligence','telemetry','validation','release.verification','bizevent-verification','settings-audit-verification','ci.report','other']);
-export const STAGES = new Set(['received','authenticated','authorized','validated','executing','replayed','committed','responded','rejected','claimed','processing','retried','cancelled','completed','failed','indexed','retrieval','provider','response_validation','cleanup']);
+export const WORKERS = new Set(['reminders','note-analysis','lead-intelligence','telemetry','validation','release.verification','bizevent-verification','settings-audit-verification','ci.report','email','other']);
+export const STAGES = new Set(['received','authenticated','authorized','validated','executing','replayed','committed','responded','rejected','claimed','processing','retried','cancelled','completed','failed','indexed','retrieval','provider','response_validation','cleanup','fallback']);
 export const LOG_EVENTS = new Set(['http.received','http.completed','http.failed','http.rejected','operation.stage','operation.failed','domain.transaction.committed','dependency.failed','worker.completed','worker.failed','worker.stage','worker.health.failed','audit.delivered','settings.audit.delivered','telemetry.delivery','telemetry.health.failed','ci.result','release.instrumentation','instrumentation.validation']);
 export const LOG_KEYS = new Set(['audit.id','audit.action','settings.section','settings.changed_count','operation','operation.stage','outcome','error.type','http.status_code','request.id','transaction.id','operation.id','actor.id','event.id','event.type','event.occurred_at','record.domain','entity.ref','origin.trace_id','origin.span_id','origin.transaction.id','origin.operation','origin.actor.id','origin.request.id','worker','duration.ms','ci.check','ci.case.id','ci.run.id','dependency.name','db.collection.name','db.operation.name','db.query.result_count','db.transaction.attempts','field.count','changed.fields','reset','disabled','busy','request.has_body','request.size','correlation.has_parent',...WORK_STATS]);
 export function safeLogFields(fields) {

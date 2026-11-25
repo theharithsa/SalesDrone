@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.14.0**, OpenAPI contract **1.36.0**. All application operations
+Application release **v2.15.0**, OpenAPI contract **1.37.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -414,3 +414,20 @@ Design bounded, indexed list and search operations with validated filters, minim
 Personal appearance preferences on GET/PATCH /api/v1/me include the optional
 `accentPalette` allowlist and additional font choices. Saved preferences are
 self-owned. Older clients can omit the new fields and retain the saved choices.
+
+## Workspace email and digests
+
+- Admins read or update /api/v1/email/settings, preview synthetic templates,
+  queue controlled tests and read bounded /api/v1/email/deliveries pages. Test
+  sends and invitation resends require Idempotency-Key and are rate limited.
+- Members read and write only their /api/v1/email/preferences. Versioned writes
+  validate an IANA zone, weekday and local time. PATs cannot use email routes.
+- /api/v1/email/receipts/resend authenticates the original request bytes through
+  Resend’s Svix headers. Uncompressed bodies are limited to 32 KiB.
+- Browser users with lead edit and assignment permissions can supply recipientUid
+  for a shared task or PATCH /api/v1/leads/{id}/tasks/{taskId}/assignment with
+  expectedVersion and Idempotency-Key. The recipient needs current lead read
+  access. Personal reminders and PAT task creation keep their existing semantics.
+- GET /api/v1/tasks supports an optional local week with from, until and tz
+  for the signed-in member’s accessible Completed lead tasks. The exclusive
+  until date is seven days after from.

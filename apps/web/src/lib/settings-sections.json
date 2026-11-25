@@ -124,5 +124,19 @@
     "description": "Our story, our mission and the people we build for.",
     "group": "product",
     "admin": false
+  },
+  {
+    "id": "email-preferences",
+    "label": "Email preferences",
+    "description": "Choose lead and task emails and when your digests arrive.",
+    "group": "personal",
+    "admin": false
+  },
+  {
+    "id": "email-workspace",
+    "label": "Email notifications",
+    "description": "Control what the workspace sends, preview templates and check delivery.",
+    "group": "workspace",
+    "admin": true
   }
 ]

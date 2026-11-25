@@ -679,6 +679,102 @@
           "effect": "Enabling queues a bounded initial scan. Source edits atomically queue updates. Retrieval uses Firestore vectors with ACL prefilters and current source checks. Counts work independently of indexing. Index processing is bounded and may lag; failed jobs can be retried by an Admin rebuild."
         }
       ]
+    },
+    {
+      "sectionId": "email-preferences",
+      "scope": "Personal workspace member",
+      "api": "GET /api/v1/email/preferences and PATCH /api/v1/email/preferences",
+      "permissions": "Active membership, Google sign-in and App Check. Writes require the current expectedVersion.",
+      "controls": [
+        {
+          "id": "leadUpdates",
+          "label": "Email me lead updates",
+          "default": "Off",
+          "description": "Opt in to assignments and configured outcome updates for accessible leads.",
+          "effect": "The workspace master switch and per-event switches also apply.",
+          "example": ""
+        },
+        {
+          "id": "taskUpdates",
+          "label": "Email me shared task updates",
+          "default": "Off",
+          "description": "Opt in to updates made by teammates on shared tasks you own.",
+          "effect": "Private reminders and your own task changes do not generate mail.",
+          "example": ""
+        },
+        {
+          "id": "daily",
+          "label": "Daily task reminder",
+          "default": "Off; 9:00 a.m. when enabled",
+          "description": "Choose a local send time for your shared lead task summary.",
+          "effect": "Includes due and overdue counts, the next deadline and the oldest overdue age when available. Empty days are skipped.",
+          "example": ""
+        },
+        {
+          "id": "weekly",
+          "label": "Weekly task recap",
+          "default": "Off; Monday at 9:00 a.m. when enabled",
+          "description": "Choose a weekday and local send time. The recap covers the previous Monday through Sunday.",
+          "effect": "Shows completed tasks, distinct leads and work due in the next seven days. Open the email link to review your completed lead tasks for the period. Empty weeks are skipped.",
+          "example": ""
+        },
+        {
+          "id": "timezone",
+          "label": "Digest time zone",
+          "default": "Your existing account time zone until saved",
+          "description": "Use an IANA time zone such as Asia/Kolkata.",
+          "effect": "A missing or ambiguous daylight-saving time skips that day. Scheduling changes apply to upcoming runs.",
+          "example": ""
+        },
+        {
+          "id": "digestInsights",
+          "label": "Choose takeaways with AvinyaIntelligence",
+          "default": "Off",
+          "description": "Allow a brief takeaway chosen from verified task facts.",
+          "effect": "Also requires your current AI access. When unavailable, both digests still show the verified summary.",
+          "example": ""
+        }
+      ]
+    },
+    {
+      "sectionId": "email-workspace",
+      "scope": "Workspace",
+      "api": "GET/PATCH /api/v1/email/settings, POST /api/v1/email/preview, POST /api/v1/email/test and GET /api/v1/email/deliveries",
+      "permissions": "Admin role with members:write, Google sign-in and App Check. Writes require expectedVersion where documented.",
+      "controls": [
+        {
+          "id": "enabled",
+          "label": "Enable workspace email",
+          "default": "Off",
+          "description": "Enable email for the workspace after the environment sender is ready.",
+          "effect": "Pausing or changing workspace email policy invalidates pending work from the old policy. In-app notifications continue.",
+          "example": ""
+        },
+        {
+          "id": "events",
+          "label": "Email event switches",
+          "default": "On individually; master switch off",
+          "description": "Switch access, lead, shared task, daily and weekly events on or off.",
+          "effect": "Routine notifications require member opt-in. Outcomes use configured Lead research mappings.",
+          "example": ""
+        },
+        {
+          "id": "outcomeRecipientUid",
+          "label": "Outcomes for unassigned leads",
+          "default": "None",
+          "description": "Choose an active member with all-lead visibility to receive configured outcomes for unassigned leads.",
+          "effect": "If the chosen member loses access the worker suppresses the delivery.",
+          "example": ""
+        },
+        {
+          "id": "preview",
+          "label": "Template preview and test send",
+          "default": "Synthetic preview; test sending available when provider setup is ready",
+          "description": "Review each layout and plain text. An Admin can queue a test every five minutes.",
+          "effect": "Pre-production uses a controlled destination. Delivery history records queued, accepted, delayed, delivered, failed or suppressed states.",
+          "example": ""
+        }
+      ]
     }
   ],
   "environment": [

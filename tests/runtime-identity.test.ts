@@ -20,9 +20,10 @@ test('all deployed production functions use the dedicated runtime identity', () 
     Object.fromEntries(productionFunctions.map(name => [name, productionRuntime.email])));
 });
 
-test('pre-production deploys the isolated API and does not export production workers', () => {
+test('pre-production exports only its isolated API and email worker', () => {
   assert.deepEqual(endpoints('./functions/src/preproduction-entry.js'), {
     preprodApi: preproduction.runtimeAccount,
+    preprodEmail: preproduction.runtimeAccount,
   });
   assert.notEqual(productionRuntime.email, preproduction.runtimeAccount);
   assert.notEqual(productionRuntime.database, preproduction.database);

@@ -21,3 +21,10 @@ None. The route's domain module owns its HTTP contract. Coordinate pagination an
 Dashboard AI and push-test TTL add one eventual billed delete per expired document and no new request-path operation. Attribute those deletes separately from reads and writes.
 
 Compare ingress billable instance time per request and SKU totals before and after request-based billing. Confirm both service and revision minimums are zero. Tenant searchability of ingress signals is a separate gate from cost measurement.
+
+## Transactional email budget
+
+The pilot caps daily delivery attempts, digest computations, Gemini calls,
+and per-job query sizes. Reuse bounded due indexes and report the actual
+pre-production billing and volume evidence described in [FinOps](../../docs/FINOPS.md)
+before enabling production delivery.

@@ -268,3 +268,14 @@ Repeat workspace navigation can reuse eligible first-page reads and aggregates i
 ## Company directory and spreadsheet updates
 
 Company names are derived from active lead documents using the existing normalized company field and scope indexes. The directory projects two fields per document and pages past the last company key. Forms continue to write leads through the ordinary transaction. A lead report exports its stable ID and version. Reviewed import planning reads an accessible ID, checks the exported version and compares nonempty editable fields. Commit rechecks current membership, lead and baseline versions and changed contact ownership in the transaction. See [Imports](IMPORTS.md).
+
+## Transactional email
+
+Live lead, task and access mutations enqueue email in the same Firestore
+transaction as the source operation. A due-time index built from sortable job
+keys and a bounded worker process claims without periodic scans of leads or
+membership. The worker rechecks membership, scopes and workspace policy before
+sending. Raw Resend callbacks verify the signature and update monotone provider
+states. Scheduled digests use projected task and lead fields and a finite
+Gemini choice constrained to server-generated insights. See
+[Email](EMAIL.md) for indexes, schedules, retention and environment gates.

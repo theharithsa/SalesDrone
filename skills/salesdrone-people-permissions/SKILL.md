@@ -21,6 +21,7 @@ Admin invitation/member edit → verified capability → versioned transaction �
 
 ## Primary API ownership
 
+- POST /api/v1/email/invitations/{id}/resend
 - GET /api/v1/members
 - GET /api/v1/invitations
 - POST /api/v1/invitations
@@ -94,3 +95,11 @@ The Admin-only minimal assignee directory returns paged id/name/active values wi
 Read-only MCP integration uses explicit `team:read` and `people:read` PAT scopes for Admin owners. Existing tokens gain no new permissions. Team/directory reads recheck token validity and current access before publication; Google sessions still require members:write. PATs cannot read full membership/security records or mutate people. See [MCP adapter](../salesdrone-mcp/SKILL.md) and [integration contract](../../docs/MCP.md). Shared lead task reads accept tasks:read without exposing unrelated personal reminders.
 
 Member export and AvinyaIntelligence switches intersect existing grants. Admins manage them in Leads Management. See [API behavior](../../docs/API.md).
+
+## Email grants
+
+Invitations and direct approvals can enqueue an email in the committed write.
+Accepting an invitation grants access through the existing Google identity
+binding. It never creates a second access email. Resend is an explicit Admin
+action for an active invitation. Recheck actual identity, state and access at
+delivery. See [Transactional email](../../docs/EMAIL.md).

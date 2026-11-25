@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "version": "2.15.0",
+  "summary": "Introduce controlled transactional email, task digests and the Astryx Import enquiries experience for the weekly release candidate.",
+  "modules": [
+    "salesdrone-notifications",
+    "salesdrone-people-permissions",
+    "salesdrone-tasks-reminders",
+    "salesdrone-finops",
+    "salesdrone-observability",
+    "salesdrone-product-guide",
+    "salesdrone-imports",
+    "salesdrone-api-ingress"
+  ],
+  "documentation": [
+    "README.md",
+    "SECURITY.md",
+    "docs/EMAIL.md",
+    "docs/API.md",
+    "docs/SETTINGS.md",
+    "docs/TECHNICAL.md",
+    "docs/observability.md",
+    "docs/FINOPS.md",
+    "docs/product-guide.json"
+  ],
+  "settingsSections": [
+    "email-workspace",
+    "email-preferences"
+  ],
+  "api": {
+    "status": "changed",
+    "contractVersion": "1.37.0",
+    "reason": "Adds email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment.",
+    "permissions": "Use Google sign-in, App Check and current access for application requests. Workspace configuration and tests need Admin. Resend callbacks require their own signature. No new PAT scope.",
+    "tests": [
+      "functions/test/email.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Track bounded delivery outcomes and dispatch duration without mail address or content dimensions.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Link queue consumers to the original committed workflow and trace provider sends.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Emit bounded queue and signed receipt outcomes with no message or provider payload.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Record committed email job states and changed setting names through the durable telemetry outbox.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "The standard checked pre-production and production workflows report release identity through Dynatrace.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Verify the same pre-production tree through GitHub Actions, review synthetic layouts at phone and desktop widths, and exercise the signed receipt and provider simulator before enabling the pilot. Actual inbox rendering, provider quota evidence and production promotion are separate checks.",
+  "milestone": {
+    "number": 72,
+    "title": "v2.15.0 — Weekly production release",
+    "issues": [
+      217,
+      255,
+      256,
+      257,
+      258,
+      259,
+      260,
+      261,
+      262,
+      276
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "email-workspace-demo.jpg",
+    "email-preferences-demo.jpg"
+  ]
+}

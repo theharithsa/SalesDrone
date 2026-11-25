@@ -27,6 +27,7 @@ jobs:
       VITE_ENABLE_RUM: 'false'
       VITE_FIREBASE_APPCHECK_KEY: ${{ vars.PREPROD_APPCHECK_KEY }}
       VITE_FIREBASE_APPCHECK_PROVIDER: enterprise
+      PREPROD_EMAIL_ENABLED: ${{ vars.PREPROD_EMAIL_ENABLED }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -50,6 +51,7 @@ jobs:
       - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
       - name: Deploy the isolated API and ingress
         run: |
+          node scripts/preprod-email-indexes.mjs
           bash scripts/deploy-preprod-api.sh
           bash scripts/deploy-preprod-ingress.sh
       - name: Validate ingress before Hosting release

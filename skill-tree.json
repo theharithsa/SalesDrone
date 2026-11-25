@@ -502,6 +502,14 @@
         "salesdrone-interface"
       ],
       "apiOperations": [
+        "GET /api/v1/email/settings",
+        "PATCH /api/v1/email/settings",
+        "GET /api/v1/email/preferences",
+        "PATCH /api/v1/email/preferences",
+        "POST /api/v1/email/preview",
+        "GET /api/v1/email/deliveries",
+        "POST /api/v1/email/test",
+        "POST /api/v1/email/receipts/resend",
         "GET /api/v1/notifications",
         "PATCH /api/v1/notifications/{id}",
         "GET /api/v1/devices",
@@ -554,6 +562,7 @@
         "salesdrone-mcp"
       ],
       "apiOperations": [
+        "POST /api/v1/email/invitations/{id}/resend",
         "GET /api/v1/members",
         "GET /api/v1/invitations",
         "POST /api/v1/invitations",
@@ -633,6 +642,7 @@
         "salesdrone-people-permissions"
       ],
       "apiOperations": [
+        "PATCH /api/v1/leads/{id}/tasks/{taskId}/assignment",
         "GET /api/v1/tasks",
         "POST /api/v1/tasks",
         "GET /api/v1/tasks/{id}",

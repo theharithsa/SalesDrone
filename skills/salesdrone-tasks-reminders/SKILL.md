@@ -23,6 +23,7 @@ Task create/edit → atomic task+versioned delivery queue → reminders every mi
 
 ## Primary API ownership
 
+- PATCH /api/v1/leads/{id}/tasks/{taskId}/assignment
 - GET /api/v1/tasks
 - POST /api/v1/tasks
 - GET /api/v1/tasks/{id}
@@ -104,3 +105,5 @@ Completing, rescheduling and reopening require a nonblank comment of up to 500 c
 Keep the primary reminder action in the workspace heading and task status alongside the task list. Preserve compact status controls on phones.
 
 The All timeline and the unfiltered Tasks tab reuse the same scoped lead-task pages while the lead is open. Outreach is labelled Reminder and administrative work Task. Render the current state, responsible member and due date without treating a due date as a recorded timeline event. Reuse task details and existing editor controls. Keep personal reminders and private delivery records out of the lead. Reject stale responses on lead or scope changes, and keep cursor controls available on sparse pages.
+
+Shared task assignment requires lead edit and assignment access, an eligible recipient and atomic reminder replacement. Capture the due time at completion for weekly digests. See [email rules](../../docs/EMAIL.md).

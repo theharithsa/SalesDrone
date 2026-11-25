@@ -23,6 +23,14 @@ Domain write → recipient inbox/outbox → reminders dispatch → FCM data mess
 
 ## Primary API ownership
 
+- GET /api/v1/email/settings
+- PATCH /api/v1/email/settings
+- GET /api/v1/email/preferences
+- PATCH /api/v1/email/preferences
+- POST /api/v1/email/preview
+- GET /api/v1/email/deliveries
+- POST /api/v1/email/test
+- POST /api/v1/email/receipts/resend
 - GET /api/v1/notifications
 - PATCH /api/v1/notifications/{id}
 - GET /api/v1/devices
@@ -80,3 +88,16 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#39](https://github.com/theharithsa/SalesDrone/issues/39), [#40](https://github.com/theharithsa/SalesDrone/issues/40). Check their current status before changing the contract.
 
 The inbox shows unread counts for the loaded rows only. Keep the overlay compact and retain independent pagination.
+
+## Transactional email
+
+Read [the email runbook](../../docs/EMAIL.md), the tasks and people skills, and
+FinOps. Versioned email controls, template previews and delivery receipts are
+owned here. The worker consumes atomic emailJobs and emailDue entries from live
+mutations, rechecks active access and an environment allowlist, and uses Resend
+idempotency. A Resend callback verifies raw bytes and advances a finite status.
+Keep production paused until a separate credential and pilot are approved.
+Review email-delivery.js, email-policy.js, email-templates.js and email.test.js
+before operating this path. Keep addresses, provider payloads, names, notes and
+AI content out of monitoring. Use the pre-production simulator and verify an
+actual inbox separately.

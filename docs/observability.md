@@ -385,3 +385,13 @@ are excluded from committed audit metadata. Page turns add no API calls.
 The default lead timeline reuses the existing scoped activities and tasks GET routes and their HTTP metrics, traces, and logs. Loading the timeline emits no committed business event. Task titles, comment text and due dates stay out of telemetry.
 
 The Companies directory uses the authenticated HTTP route's existing duration, status and datastore-read telemetry. The browser emits only the Companies page identity. Company names, search text, workbook cells, IDs and phone numbers stay out of telemetry. Reviewed Excel changes retain the import completion and stage-transition records already used by imports.
+
+## Transactional email
+
+Committed email job states emit email.delivery events through the existing
+outbox. Each worker attempt links the original trace to the email.deliver and
+resend.send spans. The email.operations counter and email.duration histogram
+record finite dispatch outcomes and receipt states. They omit provider IDs,
+addresses, raw callbacks, message contents and Gemini input and output.
+Accepted means Resend accepted the request. Delivered requires a signed provider
+receipt. Tenant-search evidence is a separate pre-production acceptance item.

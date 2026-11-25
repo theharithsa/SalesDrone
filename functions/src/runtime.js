@@ -9,6 +9,8 @@ import { ROOT } from './policy.js';
 import { onInit } from 'firebase-functions/v2/core';
 import { requireCursorSecret } from './cursors.js';
 import { DEFAULT_GEMINI_MODEL } from './model-config.js';
+import { cleanEmailRetention, dispatchEmails } from './email-delivery.js';
+import { createEmailConfig } from './email-runtime.js';
 import {
   guardLeadData,
   advanceLeadReset,
@@ -103,6 +105,16 @@ export function createRuntime(environment = 'production') {
     key: () => geminiKey.value(),
     model: () => geminiModel.value(),
   });
+  const preprodEmailIntelligence = process.env.SDR_EMAIL_GEMINI_KEY ? intelligenceGemini({
+    telemetry: () => observability,
+    key: () => process.env.SDR_EMAIL_GEMINI_KEY,
+    model: () => geminiModel.value(),
+  }) : null;
+  const emailRuntime = createEmailConfig({
+    environment,
+    origin: preprod ? preproduction.origin : 'https://salesdrone.in',
+    chooseInsight: preprod ? preprodEmailIntelligence?.chooseDigestInsight : intelligence.chooseDigestInsight,
+  });
   const region = defineString('SDR_REGION', {
     default: 'asia-south1',
     description:
@@ -144,6 +156,7 @@ export function createRuntime(environment = 'production') {
       : cursorKey.value(),
     files: firebaseFiles(dependency, preprod ? bucket : productionRuntime.bucket),
     store,
+    emailRuntime,
     bootstrapAdminEmails: preprod ? [] : undefined,
     telemetry: () => observability,
     extractScore: preprod ? null : (input) =>
@@ -267,6 +280,13 @@ export function createRuntime(environment = 'production') {
           send: (message) =>
             dependency('fcm.delivery', () => getMessaging().send(message)),
         });
+        if (!preprod && emailRuntime.ready() && new Date(event.scheduleTime).getUTCMinutes() % 5 === 0) {
+          try {
+            await runEmailWorker();
+          } catch (error) {
+            observability?.log('worker.stage', { worker: 'email', 'operation.stage': 'failed', 'error.type': errorType(error) }, 'WARN');
+          }
+        }
 
         try {
           const cleanup = await cleanupAttachments({
@@ -416,5 +436,21 @@ export function createRuntime(environment = 'production') {
       }),
   );
 
-  return { api, reminders, analyzeNotes, leadIntelligence, exportTelemetry };
+  async function runEmailWorker() {
+    return worker('email', async () => {
+      const at = new Date().toISOString();
+      const stats = await dispatchEmails({ store, telemetry: observability, config: emailRuntime, at });
+      if (Number(at.slice(14, 16)) < 5) await cleanEmailRetention(store, at);
+      return stats;
+    });
+  }
+  const emailWorker = preprod ? onRequest({
+    region, serviceAccount: runtimeIdentity, invoker: 'private', minInstances: 0,
+    maxInstances: 1, concurrency: 1, timeoutSeconds: 120, memory: '256MiB', cors: false,
+  }, async (req, res) => {
+    if (req.method !== 'POST') return res.status(405).end();
+    if (!emailRuntime.ready()) return res.status(503).json({ error: 'EMAIL_SETUP' });
+    return res.json(await runEmailWorker());
+  }) : undefined;
+  return { api, reminders, analyzeNotes, leadIntelligence, exportTelemetry, emailWorker };
 }
