@@ -40557,7 +40557,7 @@
       "post": {
         "operationId": "post_email_receipts_resend",
         "summary": "POST /email/receipts/resend",
-        "description": "Provider-only callback. Verifies Resend headers and the original uncompressed JSON bytes, up to 32 KiB. Duplicate, unrelated and out-of-order callbacks are safe to retry.",
+        "description": "Provider-only callback. Verifies Resend headers and the original uncompressed JSON bytes, up to 32 KiB. Per-instance limit of 120 requests per minute. Duplicate, unrelated and out-of-order callbacks are safe to retry.",
         "tags": [
           "email"
         ],

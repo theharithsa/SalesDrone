@@ -7,7 +7,7 @@ import { memoryStore } from '../src/store.js';
 import { observableStore } from '../src/observable-store.js';
 import { path, hash } from '../src/policy.js';
 import { PRESETS } from '../src/contracts.js';
-import { dispatchEmails } from '../src/email-delivery.js';
+import { dispatchEmails, verifyEmailReceipt } from '../src/email-delivery.js';
 import { emailSettings, emailPreferences, nextDigestSlot } from '../src/email-policy.js';
 import { digestFacts } from '../src/email-digests.js';
 import { templatePreview } from '../src/email-templates.js';
@@ -222,6 +222,18 @@ test('digests respect the local calendar, factual fallback and one AI selection 
   assert.equal(f.transport.length, 1);
   assert.equal(nextDigestSlot('daily', { dailyTime: '02:30', timezone: 'America/New_York' }, '2026-03-07T08:00:00.000Z').date, '2026-03-09');
   assert.equal(nextDigestSlot('daily', { dailyTime: '01:30', timezone: 'America/New_York' }, '2026-10-31T07:00:00.000Z').date, '2026-11-02');
+});
+
+test('receipt abuse limit applies before parsing and header types must be strings', async () => {
+  const f = await fixture();
+  assert.throws(() => verifyEmailReceipt(Buffer.from('{}'), {
+    'svix-id': 'msg_fixture', 'svix-timestamp': ['1', '2'], 'svix-signature': 'fixture',
+  }, signatureSecret, initial), { status: 401, code: 'EMAIL_SIGNATURE' });
+  for (let count = 0; count < 120; count++)
+    await f.rawReceipt({}, undefined, false).expect(401);
+  const limited = await f.rawReceipt({}, undefined, false).expect(429);
+  assert.ok(Number(limited.headers['retry-after']) > 0);
+  assert.deepEqual(await f.jobs(), []);
 });
 
 test('weekly recap counts distinct accessible leads and prior week, and its link filters completion dates', async () => {

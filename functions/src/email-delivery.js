@@ -313,11 +313,12 @@ export function verifyEmailReceipt(body, headers, secret, at) {
   const id = headers['svix-id'];
   const ts = headers['svix-timestamp'];
   const signatures = headers['svix-signature'];
+  if (typeof id !== 'string' || typeof ts !== 'string' || typeof signatures !== 'string')
+    throw new AppError(401, 'EMAIL_SIGNATURE', 'Invalid email receipt signature');
   const epoch = Number(ts);
   const valid = Buffer.isBuffer(body) && body.length <= 32_768 &&
-    typeof id === 'string' && /^[A-Za-z0-9_-]{1,100}$/.test(id) &&
-    typeof ts === 'string' && /^\d{10}$/.test(ts) &&
-    Math.abs(Date.parse(at) / 1000 - epoch) <= 300 && typeof signatures === 'string' &&
+    /^[A-Za-z0-9_-]{1,100}$/.test(id) && /^\d{10}$/.test(ts) &&
+    Math.abs(Date.parse(at) / 1000 - epoch) <= 300 &&
     signatures.length <= 1024 && /^whsec_[A-Za-z0-9+/=]+$/.test(secret || '');
   if (!valid) throw new AppError(401, 'EMAIL_SIGNATURE', 'Invalid email receipt signature');
   const key = Buffer.from(secret.slice(6), 'base64');

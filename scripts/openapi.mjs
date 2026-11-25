@@ -1140,7 +1140,7 @@ for (const e of endpoints) {
   }
   if (e.url === '/email/receipts/resend') {
     operation.security = [{ resendSignature: [] }];
-    operation.description = 'Provider-only callback. Verifies Resend headers and the original uncompressed JSON bytes, up to 32 KiB. Duplicate, unrelated and out-of-order callbacks are safe to retry.';
+    operation.description = 'Provider-only callback. Verifies Resend headers and the original uncompressed JSON bytes, up to 32 KiB. Per-instance limit of 120 requests per minute. Duplicate, unrelated and out-of-order callbacks are safe to retry.';
     operation.requestBody = { required: true, content: { 'application/json': { schema: { type: 'object' } } } };
     for (const name of ['svix-id', 'svix-timestamp'])
       operation.parameters.push({ in: 'header', name, required: true, schema: { type: 'string' } });

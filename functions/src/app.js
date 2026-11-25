@@ -100,6 +100,7 @@ import {
   FIELD_SETTINGS_PATH,
 } from './field-options.js';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import { randomUUID } from 'node:crypto';
 import {
   AppError,
@@ -196,7 +197,16 @@ export function createApp({
     return t ? t.http(req, res, next) : next();
   });
   const receiptRoute = '/api/v1/email/receipts/resend';
-  app.post(receiptRoute, express.raw({ type: 'application/json', limit: '32kb', inflate: false }), async (req, res, next) => {
+  const receiptLimiter = rateLimit({
+    windowMs: 60_000,
+    limit: 120,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    // One budget per instance avoids both untrusted proxy headers and per-address storage.
+    keyGenerator: () => 'resend',
+    handler: (_req, _res, next) => next(new AppError(429, 'RATE_LIMIT', 'Email receipt rate limit reached')),
+  });
+  app.post(receiptRoute, receiptLimiter, express.raw({ type: 'application/json', limit: '32kb', inflate: false }), async (req, res, next) => {
     try {
       telemetry()?.operation?.('POST /email/receipts/resend');
       const secret = await emailRuntime?.webhookSecret();

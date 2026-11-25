@@ -93,7 +93,8 @@ in 20 hours, with a three-minute lease and exponential backoff inside Resend’s
 24-hour idempotency window. The provider sees the same request and key on a
 retry. An accepted request is not delivered until a matching signed receipt
 arrives. Duplicate and late callbacks cannot regress a delivered outcome.
-Hard bounces and complaints suppress that address. Suppressions retain only
+The callback has a per-instance rate limit of 120 requests per minute before
+parsing or verifying signatures. Hard bounces and complaints suppress that address. Suppressions retain only
 an address hash, the reason category and date. The worker retires delivery
 records after 30 days and deletes expired counters in bounded batches.
 
