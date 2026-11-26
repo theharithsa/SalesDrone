@@ -2811,14 +2811,74 @@ input[type='tel'] {
 .company-row + .company-row { border-top: 1px solid var(--md-sys-color-outline-variant); }
 .company-name { justify-self: start; text-align: start; overflow-wrap: anywhere; }
 
-.full-lead-page .lead-stage-select {
-  width: auto;
+.lead-stage-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   max-width: 100%;
   min-height: 44px;
-  padding-inline: 12px 32px;
-  border: 1px solid var(--line);
+  padding: 8px 12px;
+  border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 12px;
-  background-color: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
-  text-overflow: ellipsis;
+  background: var(--md-sys-color-secondary-container);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.lead-stage-trigger span, .lead-stage-options button span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.lead-stage-trigger svg, .lead-stage-options button svg { flex: none; }
+.lead-stage-trigger[aria-disabled='true'] { opacity: .68; cursor: wait; }
+
+.dialog:has(.lead-stage-options) { width: min(420px, calc(100% - 32px)); }
+.dialog:has(.lead-stage-options) .dialog-heading { margin-bottom: 14px; }
+.lead-stage-options {
+  display: grid;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.lead-stage-options button {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 12px;
+  text-align: start;
+  color: var(--md-sys-color-on-surface);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+.lead-stage-options button:hover { background: var(--md-sys-color-surface-container-highest); }
+.lead-stage-options button[aria-pressed='true'] {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.lead-stage-options button:focus-visible { outline-offset: -3px; }
+
+@media (max-width: 600px) {
+  .dialog:has(.lead-stage-options) {
+    top: auto;
+    inset-inline: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: calc(100dvh / var(--interface-scale, 1) - 20px);
+    padding: 20px 16px max(16px, env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0;
+    transform: none;
+    animation: md-fade 160ms both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog:has(.lead-stage-options) { animation: none; }
 }

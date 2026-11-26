@@ -98,7 +98,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Review the sandboxed email templates and fallback assets. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify quick stage edits, independent header field order and custom phone types. These reuse existing writes with no new polling or migration reads.",
+  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Review the sandboxed email templates and fallback assets. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify stage selection and focus return in the phone sheet and desktop dialog. Check independent header order and custom phone types. These reuse existing writes with no new polling or migration reads.",
   "milestone": {
     "number": 72,
     "title": "v2.15.0 \u2014 Weekly production release",

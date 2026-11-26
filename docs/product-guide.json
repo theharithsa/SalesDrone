@@ -186,7 +186,7 @@
       "audience": "Members who can read the lead",
       "steps": [
         "Select a lead from the list to open its full page on desktop or mobile. The URL is /leads/{leadId}. Bookmarks require current workspace access.",
-        "Select the current sales stage in the lead header to change it. Use Edit lead to change the assignee when your permissions allow it.",
+        "Tap the current sales stage in the lead header, then choose a stage from the list. A checkmark identifies the active stage. Use Edit lead to change the assignee when your permissions allow it.",
         "Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.",
         "All opens first with comments, logged calls, lead-linked reminders and tasks together. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser.",
         "Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission."

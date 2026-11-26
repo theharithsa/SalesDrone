@@ -220,7 +220,7 @@ Members who can read the lead
 
 1. Select a lead from the list to open its full page on desktop or mobile. The URL is /leads/{leadId}. Bookmarks require current workspace access.
 
-2. Select the current sales stage in the lead header to change it. Use Edit lead to change the assignee when your permissions allow it.
+2. Tap the current sales stage in the lead header, then choose a stage from the list. A checkmark identifies the active stage. Use Edit lead to change the assignee when your permissions allow it.
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.
 
