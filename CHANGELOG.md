@@ -10,6 +10,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 ## [2.15.0] - 2026-11-29
 
 ### Added
+- Change the sales stage from the lead header. Admins can order extra header fields and choose Phone number for new or existing custom fields. Saved values carry over when a custom field changes type.
 - Workspace email controls, synthetic template previews and delivery history, plus email preferences for each member.
 - Optional access, lead and shared-task email notifications with independent daily and weekly task digests.
 - Shared-task assignment for eligible team members and a completed-week task view linked from the weekly recap.

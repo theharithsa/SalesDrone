@@ -61,3 +61,5 @@ addition to base scheduling, transaction, index entries and normal application
 traffic. Query overflow skips delivery and never claims a partial total.
 Treat the estimate as a design budget. Recheck billable index reads, retries,
 idle schedules and provider usage from pilot metrics before promoting.
+
+Quick stage edits reuse one versioned lead PATCH and the existing refresh. Header order and custom type changes reuse one field-options write and its existing audit. Type changes perform zero lead reads or writes to migrate saved values. These controls add no idle requests.

@@ -9,6 +9,8 @@ Read [the shared operating contract](../SHARED.md) before editing. Paths and com
 are relative to the repository root. Inspect current source rather than assuming
 this map is an immutable schema or a standalone microservice.
 
+Treat mapped custom phone numbers as text and apply the shared custom-field validation. A workbook numeric cell cannot restore leading zeroes.
+
 ## Responsibility and entry points
 
 Browser worker parses first sheet → mapping/comment selection → server preview → persisted job/chunks → bounded validated commit → replay-safe recovery/errors.

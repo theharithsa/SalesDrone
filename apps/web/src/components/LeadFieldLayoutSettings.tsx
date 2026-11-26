@@ -26,11 +26,12 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
     ...custom.map((field) => field.id),
   ], (key) => key);
   const headerFields = available.filter((key) => !fixedHeaderFields.has(key));
+  const configuredHeader = (config.headerFields || []).filter((key) => headerFields.includes(key));
   const [order, setOrder] = useState(available);
-  const [header, setHeader] = useState(() => headerFields.filter((key) => config.headerFields?.includes(key)));
+  const [header, setHeader] = useState(() => configuredHeader);
   const [baseline, setBaseline] = useState(() => ({ order, header }));
   const isOrder = mode === 'order';
-  const draft = isOrder ? order : headerFields.filter((key) => header.includes(key));
+  const draft = isOrder ? order : header;
   const dirty = JSON.stringify(draft) !== JSON.stringify(isOrder ? baseline.order : baseline.header);
   const getLabel = (key: string) => custom.find((field) => field.id === key)?.label
     || labelFor(config, key, key === 'createdAt' ? 'Created at' : undefined);
@@ -54,7 +55,7 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
   useEffect(() => () => onEditingChange?.({ dirty: false, busy: false }), [onEditingChange]);
 
   function discard() {
-    const selected = headerFields.filter((key) => config.headerFields?.includes(key));
+    const selected = configuredHeader;
     setBaseline({ order: available, header: selected });
     setExpectedVersion(config.version);
     setOrder(available);
@@ -68,7 +69,7 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
 
   function move(index: number, direction: number) {
     setSaved(false);
-    setOrder((current) => {
+    (isOrder ? setOrder : setHeader)((current) => {
       const next = current.slice();
       [next[index], next[index + direction]] = [next[index + direction], next[index]];
       return next;
@@ -84,27 +85,26 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
     }}>
       <p className="field-hint">{isOrder
         ? 'Arrange fields for enquiry forms, the Leads table and Excel exports.'
-        : 'Choose up to six fields to show under the lead name and contact details. Fields appear when they have a value.'}</p>
+        : 'Choose up to six fields and use the arrows to set their order under the lead name.'}</p>
       {!isOrder && <>
         <div className="settings-header-example">
           <small>Live preview · fictional lead</small>
           <h3>Asha Raman</h3>
           <LeadHeaderContext company="Northstar Buildworks" phone="+1 202 555 0100" fields={draft.map((id) => {
-            return { id, label: getLabel(id), value: examples[id] || 'Sample ' + getLabel(id).toLowerCase() };
+            return { id, label: getLabel(id), value: custom.find((field) => field.id === id)?.type === 'phone' ? '+1 202 555 0110' : examples[id] || 'Sample ' + getLabel(id).toLowerCase(), phone: custom.some((field) => field.id === id && field.type === 'phone') };
           })} />
         </div>
         <p className="field-hint" role="status">{header.length} of {headerLimit} selected</p>
       </>}
       <ol>
-        {(isOrder ? order : headerFields).map((key, index) => {
+        {(isOrder ? order : [...header, ...headerFields.filter((key) => !header.includes(key))]).map((key, index) => {
           const label = getLabel(key);
+          const position = draft.indexOf(key);
           return (
             <li key={key} data-selected={!isOrder && header.includes(key) || undefined}>
               {isOrder ? <>
                 <span className="field-position" aria-hidden="true">{index + 1}</span>
                 <span className="field-order-name">{label}</span>
-                <button className="icon-button" type="button" aria-label={'Move ' + label + ' up'} disabled={!index || submit.busy} onClick={() => move(index, -1)}><ArrowUp size={17} /></button>
-                <button className="icon-button" type="button" aria-label={'Move ' + label + ' down'} disabled={index === order.length - 1 || submit.busy} onClick={() => move(index, 1)}><ArrowDown size={17} /></button>
               </> : (
                 <label className="check">
                   <input type="checkbox" checked={header.includes(key)}
@@ -117,6 +117,10 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
                   {label}
                 </label>
               )}
+              {position >= 0 && <>
+                <button className="icon-button" type="button" aria-label={'Move ' + label + ' up'} disabled={position === 0 || submit.busy} onClick={() => move(position, -1)}><ArrowUp size={17} /></button>
+                <button className="icon-button" type="button" aria-label={'Move ' + label + ' down'} disabled={position === draft.length - 1 || submit.busy} onClick={() => move(position, 1)}><ArrowDown size={17} /></button>
+              </>}
             </li>
           );
         })}

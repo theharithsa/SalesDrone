@@ -279,3 +279,5 @@ sending. Raw Resend callbacks verify the signature and update monotone provider
 states. Scheduled digests use projected task and lead fields and a finite
 Gemini choice constrained to server-generated insights. See
 [Email](EMAIL.md) for indexes, schedules, retention and environment gates.
+
+The lead header uses the saved `headerFields` sequence. Quick stage changes go through the existing versioned lead update. An Admin field-type edit updates the configuration document without scanning or rewriting leads. Unchanged custom values stay intact and replacements validate against the active field definition.

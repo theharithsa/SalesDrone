@@ -1329,7 +1329,9 @@ button[role='switch'][aria-checked='true'] > span {
 }
 .field-layout-settings[data-mode='header'] label {
   display: flex;
-  width: 100%;
+  align-items: center;
+  flex: 1 1 8ch;
+  min-width: 0;
   min-height: 44px;
   overflow-wrap: anywhere;
 }

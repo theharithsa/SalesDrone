@@ -220,7 +220,7 @@ Members who can read the lead
 
 1. Select a lead from the list to open its full page on desktop or mobile. The URL is /leads/{leadId}. Bookmarks require current workspace access.
 
-2. Check the current stage and assignee in the header. Open Edit lead to change the stage or assignment when your permissions allow it.
+2. Select the current sales stage in the lead header to change it. Use Edit lead to change the assignee when your permissions allow it.
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.
 
@@ -234,7 +234,7 @@ Tasks for this lead is shared with everyone who can read the lead. Each task sho
 
 Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.
 
-The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers.
+The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage control moving below the name in narrow containers.
 
 Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.
 
@@ -556,7 +556,7 @@ Personal controls for members; workspace controls for administrators
 
 1. Open Settings and search by name or browse the available categories. Desktop shows a category rail. On a phone, open a setting and use its back link to return to the category.
 
-2. Under Leads Management, choose Field definitions, Field order, Lead page header or Choice lists. Header choices show a fictional live preview.
+2. Under Leads Management, choose Field definitions, Field order, Lead page header or Choice lists. Use the arrows to arrange the selected header fields and check the fictional preview before saving.
 
 3. Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members’ workflow.
 
@@ -564,7 +564,7 @@ Personal controls for members; workspace controls for administrators
 
 Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.
 
-Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. To let users select several products, open Settings > Leads Management > Field definitions, edit Product, choose Multi-select and save. Existing choices carry over. New custom fields can also start as Multi-select. Up to 30 choices can be selected per lead. Filter by an individual choice in Leads or Lead Assistant. Dashboard grouping uses single-valued fields. Retirement preserves stored values.
+Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. To let users select several products, open Settings > Leads Management > Field definitions, edit Product, choose Multi-select and save. Existing choices carry over. New custom fields can also start as Multi-select. Use Phone number for a secondary contact field to make valid values tappable. Admins can change an active custom field type and retain its saved values. Up to 30 choices can be selected per lead. Filter by an individual choice in Leads or Lead Assistant. Dashboard grouping uses single-valued fields. Retirement preserves stored values.
 
 Reports & lead access controls exports and assigned-only visibility for non-admins. People & access manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.
 
@@ -572,7 +572,7 @@ The linked Settings reference is the authoritative per-control checklist. This c
 
 The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.
 
-On phones, the lead header displays Sales stage and Assigned to. Open Edit lead to change either value when permitted.
+On phones, the Sales stage control is beside the assignment summary under the lead name. Use Edit lead to change the assignee.
 
 ![Settings: complete control reference — synthetic demo only](../site/assets/screenshots/field-manager-multi-select-demo.jpg)
 
@@ -584,7 +584,7 @@ Use Leads Management > Field definitions. A label change does not rename its sta
 
 **Can I remove a field without losing historical data?**
 
-Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. A selected field displays N/A when it is empty.
+Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose and order up to six fields to show under a lead’s name. Fields appear when they have a value.
 
 ## Book mode: a quieter reading workspace
 

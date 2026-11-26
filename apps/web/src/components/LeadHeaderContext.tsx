@@ -1,8 +1,8 @@
 import { Phone } from 'lucide-react';
 
-type HeaderField = { id: string; label: string; value: string };
+type HeaderField = { id: string; label: string; value: string; phone?: boolean };
 
-function dialNumber(value: string) {
+export function dialNumber(value: string) {
   const trimmed = value.trim();
   if (!/^\+?[0-9\s().-]+$/.test(trimmed)) return null;
   const dial = trimmed.replace(/[\s().-]/g, '');
@@ -32,21 +32,22 @@ function HeaderValue({ value, label, phone }: {
   );
 }
 
-export default function LeadHeaderContext({ company, phone, fields = [] }: {
+export default function LeadHeaderContext({ company, phone, fields = [], allowDial = true }: {
   company?: string;
   phone?: string;
   fields?: HeaderField[];
+  allowDial?: boolean;
 }) {
   return (
     <p className="lead-header-context">
       <span>{company || 'Individual Customer'}</span>
-      {phone && <HeaderValue value={phone} phone />}
-      {fields.map(({ id, label, value }) => (
+      {phone && <HeaderValue value={phone} phone={allowDial} />}
+      {fields.map(({ id, label, value, phone: phoneField }) => (
         <HeaderValue
           key={id}
           label={label}
           value={value}
-          phone={/\b(?:phone|mobile|telephone|tel|whatsapp)\b/i.test(label) || value.trim().startsWith('+') && !!dialNumber(value)}
+          phone={allowDial && (phoneField || /\b(?:phone|mobile|telephone|tel|whatsapp)\b/i.test(label) || value.trim().startsWith('+') && !!dialNumber(value))}
         />
       ))}
     </p>

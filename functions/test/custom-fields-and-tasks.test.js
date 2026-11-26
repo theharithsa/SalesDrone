@@ -369,15 +369,6 @@ test('custom lead fields enforce types, required values, dropdown choices, permi
       .expect(200)
   ).body;
   assert.equal(l.customFields.cf_budget, 0);
-  await s
-    .call('patch', '/field-options', {
-      expectedVersion: saved.version,
-      values: saved.values,
-      customFields: fields.map((f) =>
-        f.id === 'cf_budget' ? { ...f, type: 'text' } : f,
-      ),
-    })
-    .expect(400);
   const retired = (
     await s
       .call('patch', '/field-options', {
@@ -692,7 +683,6 @@ test('a workspace dropdown can upgrade to multiple choices without altering exis
   assert.equal(retained.customFields[id], 'Panel');
   assert.equal(retained.version, original.version);
 
-  await saveField(3, 'select').expect(400);
   for (const invalid of [[], ['Panel', 'Panel'], ['Unknown'], [42]]) {
     await s.call('patch', url, { expectedVersion: original.version, customFields: { [id]: invalid } }).expect(400);
   }
@@ -704,4 +694,30 @@ test('a workspace dropdown can upgrade to multiple choices without altering exis
   const results = (await s.call('get', '/leads?filters=' + query).expect(200)).body;
   assert.deepEqual(results.items.map((item) => item.id), [original.id]);
   assert.deepEqual((await s.call('get', url).expect(200)).body.customFields[id], selections);
+});
+
+test('changing a custom field type preserves existing values and validates new phone edits', async () => {
+  const s = await setup();
+  const id = 'cf_alternate';
+  const field = { id, label: 'Alternate contact', type: 'text' };
+  const config = (await s.call('get', '/field-options').expect(200)).body;
+  const patch = (expectedVersion, type) => ({
+    expectedVersion, values: config.values, customFields: [{ ...field, type }],
+    headerFields: [id, 'location'],
+  });
+  const originalConfig = (await s.call('patch', '/field-options', patch(config.version, 'text')).expect(200)).body;
+  const original = (await s.call('post', '/leads', { ...lead, customFields: { [id]: 'Ask reception' } }).expect(200)).body;
+  await s.call('patch', '/field-options', patch(originalConfig.version, 'phone'), 'viewer').expect(403);
+  const converted = (await s.call('patch', '/field-options', patch(originalConfig.version, 'phone')).expect(200)).body;
+  assert.deepEqual(converted.headerFields, [id, 'location']);
+  const url = '/leads/' + original.id;
+  const retained = (await s.call('patch', url, {
+    expectedVersion: original.version, customFields: { [id]: 'Ask reception' },
+  }).expect(200)).body;
+  assert.equal(retained.customFields[id], 'Ask reception');
+  await s.call('patch', url, { expectedVersion: retained.version, customFields: { [id]: 'not a number' } }).expect(400);
+  const updated = (await s.call('patch', url, {
+    expectedVersion: retained.version, customFields: { [id]: '+91 98765 43210' },
+  }).expect(200)).body;
+  assert.equal(updated.customFields[id], '+91 98765 43210');
 });
