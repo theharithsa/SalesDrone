@@ -50,7 +50,7 @@ export const CustomField = z
   .object({
     id: z.string().regex(/^cf_[a-z0-9_]{1,60}$/),
     label: z.string().trim().min(1).max(80),
-    type: z.enum(['text', 'textarea', 'number', 'date', 'select', 'multiSelect', 'checkbox']),
+    type: z.enum(['text', 'textarea', 'number', 'date', 'phone', 'select', 'multiSelect', 'checkbox']),
     options: values.default([]),
     required: z.boolean().default(false),
     deleted: z.boolean().default(false),
@@ -182,12 +182,11 @@ export function mergeFieldSettings(current, input) {
   const fields = input.customFields || current.customFields;
   for (const old of current.customFields) {
     const next = fields.find((f) => f.id === old.id);
-    const canConvert = !old.deleted && !next?.deleted && old.type === 'select' && next?.type === 'multiSelect';
-    if (!next || (next.type !== old.type && !canConvert) || (old.deleted && !next.deleted))
+    if (!next || (old.deleted && (!next.deleted || next.type !== old.type)))
       throw new AppError(
         400,
         'FIELD_DEFINITION',
-        'A dropdown can become a multi-select field. Other field types and retired IDs are fixed.',
+        'Retire fields to keep their saved values. Retired field definitions cannot be reopened or changed to another type.',
       );
   }
   const labels = {
@@ -242,6 +241,8 @@ export function validateCustomValues(
       continue;
     }
     if (value === '' || value === null) continue;
+    if (requireAll && Object.hasOwn(previous, id) && JSON.stringify(previous[id]) === JSON.stringify(value))
+      continue;
     if (field.type === 'multiSelect') {
       const selections = Array.isArray(value) ? value : [value];
       const prior = Array.isArray(previous[id]) ? previous[id] : [previous[id]];
@@ -261,6 +262,10 @@ export function validateCustomValues(
             ? z.iso.date().safeParse(value).success
             : typeof value === 'string' &&
               value.length <= (field.type === 'textarea' ? 4000 : 500) &&
+              (field.type !== 'phone' || (
+                /^\+?[0-9\s().-]+$/.test(value.trim()) &&
+                /^\+?[0-9]{7,15}$/.test(value.replace(/[\s().-]/g, ''))
+              )) &&
               (field.type !== 'select' ||
                 field.options.includes(value) ||
                 previous[id] === value);
@@ -278,7 +283,8 @@ export function validateCustomValues(
         value === undefined ||
         value === null ||
         value === '' ||
-        (f.type === 'checkbox' && value !== true) ||
+        (f.type === 'checkbox' && value !== true &&
+          (typeof value === 'boolean' || JSON.stringify(previous[f.id]) !== JSON.stringify(value))) ||
         (f.type === 'multiSelect' && Array.isArray(value) && !value.length)
       )
         throw new AppError(

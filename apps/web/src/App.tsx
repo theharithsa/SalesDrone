@@ -7,7 +7,7 @@ import CompaniesPage from './features/CompaniesPage';
 import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
 import AssigneeFilter, { type Assignee } from './components/AssigneeFilter';
 import { teamDemo, demoAssignees } from './lib/team-demo';
-import LeadHeaderContext from './components/LeadHeaderContext';
+import LeadHeaderContext, { dialNumber } from './components/LeadHeaderContext';
 import TaskRow from './components/TaskRow';
 import './research.css';
 import LeadFiles from './features/LeadFiles';
@@ -48,7 +48,6 @@ import {
   withCurrent,
   leadFieldValue,
   displayFieldValue,
-  orderedFields,
   labelFor,
 } from './lib/field-options';
 import LeadFilters from './components/LeadFilters';
@@ -2397,14 +2396,16 @@ export default function App() {
                         <LeadHeaderContext
                           company={selected.company}
                           phone={selected.phone}
-                          fields={orderedFields(fieldOptions, fieldOptions.headerFields || [], (key) => key)
+                          allowDial={!selected.doNotContact && !selected.needsReview}
+                          fields={(fieldOptions.headerFields || [])
                             .filter((key) => !fieldOptions.hiddenFields.includes(key))
                             .map((key) => {
                               const value = leadFieldValue(selected, key).trim();
-                              const label = fieldOptions.customFields.find((field) => field.id === key)?.label
+                              const definition = fieldOptions.customFields.find((field) => field.id === key);
+                              const label = definition?.label
                                 || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined);
-                              return { id: key, label, value: displayFieldValue(value) };
-                            })}
+                              return { id: key, label, value, phone: definition?.type === 'phone' };
+                            }).filter((field) => field.value)}
                         />
                       </div>
                     }
@@ -2424,7 +2425,19 @@ export default function App() {
                           <h3>
                             {labelFor(fieldOptions, 'stage', 'Sales stage')}
                           </h3>
-                          <Badge stage={selected.stage} />
+                          {can('leads:edit') && !fieldOptions.hiddenFields.includes('stage') ? (
+                            <select
+                              className="lead-stage-select"
+                              aria-label={labelFor(fieldOptions, 'stage', 'Sales stage')}
+                              value={selected.stage}
+                              disabled={mutationBusy}
+                              onChange={(event) => void leadAction({ stage: event.currentTarget.value })}
+                            >
+                              {withCurrent(fieldOptions.values.stage, selected.stage).map((value) => (
+                                <option key={value} value={value}>{value}</option>
+                              ))}
+                            </select>
+                          ) : <Badge stage={selected.stage} />}
                         </div>
                         <div className="lead-assignment-summary">
                           <h3>Assigned to</h3>
@@ -2555,17 +2568,22 @@ export default function App() {
                                       selected.customFields?.[f.id] !==
                                         undefined,
                                   )
-                                  .map((f) => (
+                                  .map((f) => {
+                                    const value = displayFieldValue(selected.customFields?.[f.id]);
+                                    const dial = f.type === 'phone' && !selected.doNotContact && !selected.needsReview
+                                      ? dialNumber(value) : null;
+                                    return (
                                     <div key={f.id}>
                                       <dt>
                                         {f.label}
                                         {f.deleted ? ' (removed field)' : ''}
                                       </dt>
                                       <dd>
-                                        {displayFieldValue(selected.customFields?.[f.id])}
+                                        {dial ? <a className="phone-number" href={'tel:' + dial}>{value}</a> : value}
                                       </dd>
                                     </div>
-                                  ))}
+                                    );
+                                  })}
                               </dl>
                             </details>
                           ) : null}

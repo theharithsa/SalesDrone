@@ -100,8 +100,8 @@ Cleanup blocks use fixed 503 LEAD_DATA_RESET copy and Retry-After:60; preserve t
 
 Lead research: [settings contract](references/research.md).
 
-Field order and Lead page header are separate Admin controls on the versioned field-options PATCH. Order mixes built-in and custom fields. The header supports six visible fields. Keep existing defaults and remove retired IDs. Audit only static control keys.
+Field order and Lead page header are separate Admin controls on the versioned field-options PATCH. Order mixes built-in and custom fields. The header keeps its own order of six visible fields. Remove retired IDs. Audit only static control keys.
 
 Align About cards to the section width. Limit the story text and illustration within the card.
 
-Admins can convert an active custom Dropdown to Multi-select in place. Keep the field ID, accept the previous scalar as one selection and reject reversal. The editor accepts up to 30 distinct choices.
+Admins can change active custom field types while keeping saved values and IDs. Validate replacements against the new type. Phone values accept seven to fifteen digits with an optional calling prefix.

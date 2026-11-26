@@ -312,12 +312,12 @@
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "8c7d3a1ae2c19d6886cb3819581dea0f7578e58db3a9ab3d2f8e317be22b82fd",
-    "capturedAt": "2026-11-16",
-    "viewport": "390 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "390 x 900",
-    "version": "2.14.0",
-    "review": "Visually reviewed fictional lead with the All tab selected. No customer data or production writes. Browser viewport evidence."
+    "sha256": "da8307f07ab4ad7a740926fb5795b9ad2762a7b65717b59700f8d0454643e302",
+    "capturedAt": "2026-11-26",
+    "viewport": "390 x 900 CSS pixels; Chrome viewport override",
+    "capturePixels": "375 x 865",
+    "version": "2.15.0",
+    "review": "Reviewed a fictional lead after a stage change from the header. Browser emulation. No production data or writes."
   },
   {
     "file": "outreach-mobile-demo.jpg",
@@ -772,12 +772,12 @@
   {
     "file": "field-manager-multi-select-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "21f302b197e96817faa8aa6300bd58b94e18a2c1724ed2d688d3e153798ae52f",
-    "capturedAt": "2026-11-21T13:26:53.336Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.14.0",
-    "review": "Reviewed fictional Field definitions editor with Multi-select selected; no backend write."
+    "sha256": "db189b19a80bc4768b4f258d6cb34c6ec9240c7953352783704cb865f6fd12cc",
+    "capturedAt": "2026-11-26",
+    "viewport": "1440 x 800 CSS pixels; Chrome viewport override",
+    "capturePixels": "1425 x 792",
+    "version": "2.15.0",
+    "review": "Reviewed the real LeadFieldManager component in a synthetic Admin fixture with stubbed saves. Phone number selected for an existing field."
   },
   {
     "file": "lead-product-multi-select-mobile-demo.jpg",

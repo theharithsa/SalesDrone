@@ -1,6 +1,6 @@
 # SalesDrone API integration guide
 
-Application release **v2.15.0**, OpenAPI contract **1.37.0**. All application operations
+Application release **v2.15.0**, OpenAPI contract **1.38.0**. All application operations
 use `/api/v1`; version numbers for the app and contract are independent.
 
 - [Interactive Swagger portal](https://sales-drone-avinya.firebaseapp.com/api/docs)
@@ -431,3 +431,5 @@ self-owned. Older clients can omit the new fields and retain the saved choices.
 - GET /api/v1/tasks supports an optional local week with from, until and tz
   for the signed-in member’s accessible Completed lead tasks. The exclusive
   until date is seven days after from.
+
+Admins can edit active custom field types and send an independently ordered `headerFields` array in the versioned field-options PATCH. The `phone` type accepts local and international numbers as strings. Type changes keep previously saved values, and edits validate the replacement value. The lead header stage control uses the existing versioned lead PATCH.

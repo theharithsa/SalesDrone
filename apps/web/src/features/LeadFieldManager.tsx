@@ -13,6 +13,7 @@ const types = {
   textarea: 'Long text',
   number: 'Number',
   date: 'Date',
+  phone: 'Phone number',
   select: 'Dropdown',
   multiSelect: 'Multi-select',
   checkbox: 'Checkbox',
@@ -229,9 +230,7 @@ export default function LeadFieldManager({
               Field type
               <select
                 value={editing.type}
-                disabled={
-                  busy || (!!savedField && savedField.type !== 'select')
-                }
+                disabled={busy}
                 onChange={(e) =>
                   setEditing({
                     ...editing,
@@ -239,9 +238,7 @@ export default function LeadFieldManager({
                   })
                 }
               >
-                {Object.entries(types).filter(([value]) =>
-                  !savedField || value === savedField.type || (savedField.type === 'select' && value === 'multiSelect'),
-                ).map(([value, label]) => (
+                {Object.entries(types).map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
                   </option>
@@ -273,9 +270,11 @@ export default function LeadFieldManager({
             Required when saving an enquiry
           </label>
           <p className="field-hint">
-            {savedField?.type === 'select'
-              ? 'Switch to Multi-select to let users choose several options. Saved choices carry over. This change is permanent.'
-              : 'Multi-select lets users choose up to 30 options per lead. To change another saved field type, create a new field.'}
+            {savedField && savedField.type !== editing.type
+              ? 'Saved values stay on each lead. The new type applies when a value is edited.'
+              : editing.type === 'phone'
+                ? 'Enter a local number or include the international calling code. Saved numbers can be tapped to call.'
+                : editing.type === 'multiSelect' ? 'Choose up to 30 options per lead.' : null}
           </p>
           <div className="form-actions">
             <button

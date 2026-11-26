@@ -10,7 +10,10 @@
     "salesdrone-observability",
     "salesdrone-product-guide",
     "salesdrone-imports",
-    "salesdrone-api-ingress"
+    "salesdrone-api-ingress",
+    "salesdrone-workspace-settings",
+    "salesdrone-leads",
+    "salesdrone-interface"
   ],
   "documentation": [
     "README.md",
@@ -31,12 +34,13 @@
   ],
   "api": {
     "status": "changed",
-    "contractVersion": "1.37.0",
-    "reason": "Adds email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment.",
+    "contractVersion": "1.38.0",
+    "reason": "Adds email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment. Adds the custom phone type and accepts changes to active custom field types through the existing settings route.",
     "permissions": "Use Google sign-in, App Check and current access for application requests. Workspace configuration and tests need Admin. Resend callbacks require their own signature. No new PAT scope.",
     "tests": [
       "functions/test/email.test.js",
-      "services/ingress/test/gateway.test.js"
+      "services/ingress/test/gateway.test.js",
+      "functions/test/custom-fields-and-tasks.test.js"
     ]
   },
   "observability": {
@@ -94,10 +98,10 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Review the sandboxed email templates and fallback assets. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry.",
+  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Review the sandboxed email templates and fallback assets. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify quick stage edits, independent header field order and custom phone types. These reuse existing writes with no new polling or migration reads.",
   "milestone": {
     "number": 72,
-    "title": "v2.15.0 — Weekly production release",
+    "title": "v2.15.0 \u2014 Weekly production release",
     "issues": [
       217,
       255,
@@ -108,7 +112,8 @@
       260,
       261,
       262,
-      276
+      276,
+      284
     ],
     "readiness": "ready"
   },
@@ -116,6 +121,8 @@
     "email-workspace-demo.jpg",
     "email-preferences-demo.jpg",
     "email-weekly-branded-demo.jpg",
-    "email-preprod-test-outcome-demo.jpg"
+    "email-preprod-test-outcome-demo.jpg",
+    "lead-header-mobile-demo.jpg",
+    "field-manager-multi-select-demo.jpg"
   ]
 }

@@ -8,7 +8,7 @@ import {
   type CustomFieldValue,
   labelFor,
 } from '../lib/field-options';
-import { Children, isValidElement, useState, type FormEvent, type ReactElement, type ReactNode } from 'react';
+import { Children, isValidElement, useRef, useState, type FormEvent, type ReactElement, type ReactNode } from 'react';
 import { localInstant } from '../lib/dates';
 import {Lead, dateOnly} from '../lib/types';
 import { ErrorMessage, SaveButton, useSubmit } from './UI';
@@ -53,6 +53,7 @@ export function LeadForm({
     [allowDuplicate, setAllowDuplicate] = useState(false),
     [reset, setReset] = useState(0);
   const [fieldError, setFieldError] = useState('');
+  const changedCustomFields = useRef(new Set<string>());
   const submit = useSubmit(async (data, key, isCurrent) => {
     await onSave(data, key);
     if (!isCurrent()) return;
@@ -62,6 +63,12 @@ export function LeadForm({
   return (
     <form
       key={reset}
+      onChange={(event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+        const { name } = target;
+        if (name?.startsWith('custom:')) changedCustomFields.current.add(name);
+      }}
       onSubmit={(e) => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -70,6 +77,11 @@ export function LeadForm({
         const customFields: Record<string, CustomFieldValue> = {};
         for (const f of config.customFields.filter((f) => !f.deleted)) {
           const key = 'custom:' + f.id;
+          const prior = lead?.customFields?.[f.id];
+          if (prior !== undefined && prior !== null && prior !== '' && !changedCustomFields.current.has(key)) {
+            delete d[key];
+            continue;
+          }
           if (f.type === 'multiSelect') {
             const chosen = formData.getAll(key).map(String);
             if ((f.required && !chosen.length) || chosen.length > 30) {

@@ -232,7 +232,7 @@ saved values.
 
 Stage and assignment stack on compact lead surfaces. Outreach tick labels share the chart gridline positions.
 
-<img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional phone lead header with two tappable numbers and read-only workflow summary" width="412">
+<img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional lead with a tappable phone number and inline stage picker" width="412">
 
 ## Companies and daily Excel updates
 

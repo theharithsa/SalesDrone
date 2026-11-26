@@ -395,3 +395,5 @@ record finite dispatch outcomes and receipt states. They omit provider IDs,
 addresses, raw callbacks, message contents and Gemini input and output.
 Accepted means Resend accepted the request. Delivered requires a signed provider
 receipt. Tenant-search evidence is a separate pre-production acceptance item.
+
+The inline stage control reuses the lead mutation’s transition event and HTTP signals. Header order and field-type edits reuse field-options audit keys and HTTP signals. Phone values stay out of telemetry.

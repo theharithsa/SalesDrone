@@ -236,7 +236,7 @@ Existing records and values are preserved. This is workspace-wide presentation c
 
 **Default:** No custom fields.
 
-Add up to 30 custom fields: text, long text, number, date, dropdown, multi-select or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs stay fixed. Edit an active Dropdown and select Multi-select to retain its existing values and allow up to 30 choices per lead. This type change is permanent.
+Add up to 30 custom fields: text, long text, number, date, phone number, dropdown, multi-select or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs stay fixed. Admins can edit the type of an active custom field. The saved values remain attached to the same field ID and new edits follow the chosen type.
 
 Required rules apply to new manual entries or explicit custom-value edits. Import can map an existing compatible custom field. Only Admins can create new workspace fields during mapping.
 
@@ -256,7 +256,7 @@ Removing a choice preserves unchanged historical values but prevents new use of 
 
 Remove an unused custom field from new-entry controls without erasing historical lead values.
 
-Retired IDs cannot be reused. Create a new field for a different data type instead of rewriting existing values.
+Retired IDs cannot be reused. Change the type while a field is active to keep its saved values.
 
 ## Leads Management → Field order
 
@@ -290,7 +290,7 @@ New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order
 
 Choose up to six additional visible built-in or custom fields. The fictional preview shows the draft before saving.
 
-Selected header fields appear below the lead name. An empty selected field displays N/A. Phone values open the dialer.
+Use the arrows to order the selected fields independently from the general field order. Fields with values appear below the lead name. Valid phone values open the dialer.
 
 **Example:** Show City / location and Product in the lead header.
 
