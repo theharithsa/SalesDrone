@@ -20,6 +20,7 @@
     "@fontsource-variable/source-serif-4": "^5.3.1",
     "@fontsource/patrick-hand": "^5.3.0",
     "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-select": "2.4.1",
     "@stylexjs/stylex": "0.19.2",
     "exceljs": "^4.4.0",
     "firebase": "^13.2.0",

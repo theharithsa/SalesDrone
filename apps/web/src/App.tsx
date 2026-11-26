@@ -1411,18 +1411,21 @@ export default function App() {
       setMutationBusy(false);
     }
   }
-  async function leadAction(patch: any) {
-    if (!selected) return;
+  async function leadAction(patch: any, lead = selected) {
+    if (!lead || mutationBusy) return;
+    const currentGeneration = generation.current;
     setMutationBusy(true);
     try {
-      await request('/leads/' + selected.id, 'PATCH', {
-        expectedVersion: selected.version,
+      await request('/leads/' + encodeURIComponent(lead.id), 'PATCH', {
+        expectedVersion: lead.version,
         ...patch,
       });
-      await refresh();
-      notify('Lead updated.');
+      if (currentGeneration !== generation.current) return;
+      if (selectedIdRef.current === lead.id) await refresh();
+      else await loadRef.current();
+      if (currentGeneration === generation.current) notify('Lead updated.');
     } catch (e) {
-      setError((e as Error).message);
+      if (currentGeneration === generation.current) setError((e as Error).message);
     } finally {
       setMutationBusy(false);
     }
@@ -2294,6 +2297,10 @@ export default function App() {
                         key={leadQueryKey}
                         canEdit={!compactLeads && !!can('leads:edit')}
                         canAssign={!!can('assignments:write')}
+                        stageBusy={mutationBusy}
+                        onStageChange={can('leads:edit')
+                          ? (lead, value) => void leadAction({ stage: value }, lead)
+                          : undefined}
                         request={request}
                         onDone={() => void load()}
                         config={fieldOptions}

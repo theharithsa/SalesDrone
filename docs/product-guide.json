@@ -108,7 +108,7 @@
         "Do not contact pauses eligible outreach; a review flag means the contact should be checked before outreach. Archive removes a lead from ordinary active work and cancels pending outreach; it is not permanent deletion.",
         "On mobile, tap the magnifying glass in the top-right corner to search. Clear search restores the unsearched list. The adjacent filter icon opens search field, stage, source, assignment and column conditions. Apply filters commits the draft; Cancel or Escape keeps the existing filters. Reset clears the draft until applied. Desktop keeps inline search, the filter disclosure and stage shortcuts.",
         "Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment.",
-        "The list has no row-level Edit controls or Actions column. Open the customer name (or the mobile lead card), then choose Edit lead. When the customer-name column is hidden by configuration, the desktop row remains keyboard-focusable: press Enter or Space to open its details.",
+        "To change Sales stage, select the current stage in the table or on a mobile lead card, then choose a stage. The change saves immediately when you have edit access. Open the lead to edit its other details. If the customer-name column is hidden, press Enter or Space on the focused desktop row to open the lead.",
         "Infinite scrolling loads the next page automatically as you approach the bottom of the lead list. The initial live page requests up to 30 leads; sparse filtered scans may contain fewer results with another cursor. Loading continues until the API returns no cursor. Load more leads remains available as a keyboard/browser fallback; failures pause automatic loading and show Retry loading leads. Changing filters starts a fresh list. Demo mode uses 96 fictional leads, revealed 30 at a time.",
         "On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and Filters sit beside the title, so the lead list starts immediately below the header. Small screens shorten action labels, and large mobile counts use compact notation.",
         "Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.",
@@ -131,7 +131,7 @@
           "Equals normalizes text. Exact match requires the same saved case, spaces and Unicode representation. Check the saved value or use Equals when tolerant matching is intended."
         ]
       ],
-      "screenshot": "lead-filters-demo.jpg"
+      "screenshot": "leads-demo.jpg"
     },
     {
       "id": "companies",
@@ -186,7 +186,7 @@
       "audience": "Members who can read the lead",
       "steps": [
         "Select a lead from the list to open its full page on desktop or mobile. The URL is /leads/{leadId}. Bookmarks require current workspace access.",
-        "Tap the current sales stage in the lead header, then choose a stage from the list. A checkmark identifies the active stage. Use Edit lead to change the assignee when your permissions allow it.",
+        "Tap the current sales stage in the lead header, then choose a stage from the dropdown. A checkmark identifies the active stage. Use Edit lead to change the assignee when your permissions allow it.",
         "Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.",
         "All opens first with comments, logged calls, lead-linked reminders and tasks together. Choose Comments for notes and imported discussion comments, Calls for call entries only, Tasks for shared lead work, or Review for issues needing attention. All and Comments include the inline Write a comment field. Arrow keys move between tabs; Home/End select the first/last tab. The card grip and move buttons save your Journey, Details and Activity order in this browser.",
         "Use Back to leads to return to the list. Filters remain available during the current session; a shared link still requires sign-in and current permission."

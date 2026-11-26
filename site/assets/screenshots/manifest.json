@@ -42,22 +42,22 @@
   {
     "file": "leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "46cce0fa40a750feada6b23d1d16d34a26869ab9afef74491d7de0d4d2bfe306",
-    "capturedAt": "2026-11-07T20:39:23.907Z",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
+    "sha256": "142c97ef2615f4be8ebde87d96c7362f001388d54e2093dcc729b017262e2226",
+    "capturedAt": "2026-11-27",
+    "viewport": "1440 x 900 CSS pixels; Chrome viewport override",
     "capturePixels": "1440 x 900",
-    "version": "2.10.3",
-    "review": "Reviewed fictional workspace capture. No customer records, credentials or server writes. Browser viewport, not physical-device certification."
+    "version": "2.15.0",
+    "review": "Fictional Leads table with an open stage dropdown. Measured with Chrome viewport emulation."
   },
   {
     "file": "mobile-leads-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "b7bfaf28dc9182f118f20203b1b62860e7fb62cdf2b59a3defc20fc749d5cb5c",
-    "capturedAt": "2026-11-13",
-    "viewport": "390 x 900 CSS pixels; local synthetic browser preview",
+    "sha256": "7bc3cee1bedda9cf7f588f856a32ca3328405368d949c040f197b26bf57b1452",
+    "capturedAt": "2026-11-27",
+    "viewport": "390 x 900 CSS pixels; Chrome viewport override",
     "capturePixels": "390 x 900",
-    "version": "2.13.7",
-    "review": "Visually and privacy reviewed in the local demo or fictional Admin preview. Cropped to the measured viewport. No customer data, credentials or production writes."
+    "version": "2.15.0",
+    "review": "Fictional mobile lead card with an open stage dropdown. Measured with Chrome viewport emulation."
   },
   {
     "file": "batch-edit-mobile.jpg",
@@ -312,12 +312,12 @@
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "7e8cd37d13b8b48acc6aa21dae57761633681285d3d66306a52de5e3b9b8ae60",
+    "sha256": "b3a03a958884ad2ca16f9f153db651928d5b6bfd256f250dce025e59a3e47bce",
     "capturedAt": "2026-11-27",
     "viewport": "390 x 900 CSS pixels; Chrome viewport override",
-    "capturePixels": "375 x 865",
+    "capturePixels": "390 x 900",
     "version": "2.15.0",
-    "review": "Reviewed a fictional lead with the inline stage chip. Chrome viewport emulation."
+    "review": "Fictional mobile lead header with an anchored stage dropdown. Measured with Chrome viewport emulation."
   },
   {
     "file": "outreach-mobile-demo.jpg",

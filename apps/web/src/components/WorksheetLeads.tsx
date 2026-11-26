@@ -1,8 +1,9 @@
 import BookLeadIndex from './BookLeadIndex';
 import { Badge } from './UI';
+import LeadStagePicker from './LeadStagePicker';
 import { ScoreBadge } from './LeadScore';
 import { Lead, displayDate } from '../lib/types';
-import {defaultFieldOptions, displayFieldValue, FieldOptions} from '../lib/field-options';
+import {defaultFieldOptions, displayFieldValue, labelFor, FieldOptions} from '../lib/field-options';
 import { leadTableColumns } from '../lib/lead-table';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -18,8 +19,12 @@ export default function WorksheetLeads({
   onRestoreFocus,
   checkedIds,
   onToggle,
+  stageBusy = false,
+  onStageChange,
 }: {
   checkedIds?: Set<string>;
+  stageBusy?: boolean;
+  onStageChange?: (lead: Lead, stage: string) => void;
   onToggle?: (id: string) => void;
   scores?: Record<string, any>;
   showScores?: boolean;
@@ -62,6 +67,17 @@ export default function WorksheetLeads({
     if (field === 'phone') return displayFieldValue(lead.phone || lead.originalPhone);
     return displayFieldValue(field.startsWith('cf_') ? lead.customFields?.[field] : lead[field]);
   };
+  const stageControl = (lead: Lead) => (
+    onStageChange ? (
+      <LeadStagePicker
+        label={labelFor(config, 'stage', 'Sales stage') + ' for ' + (lead.name || 'unnamed lead')}
+        stage={lead.stage}
+        stages={config.values.stage}
+        busy={stageBusy}
+        onChange={(stage) => onStageChange(lead, stage)}
+      />
+    ) : <Badge stage={lead.stage} />
+  );
   return (
     <>
       <div className="worksheet-desktop">
@@ -177,11 +193,15 @@ export default function WorksheetLeads({
                     </td>
                   )}
                   {columns.map(([field]) => (
-                    <td key={field} data-field={field}>
+                    <td
+                      key={field}
+                      data-field={field}
+                      onClick={field === 'stage' && onStageChange ? (event) => event.stopPropagation() : undefined}
+                    >
                       {field === 'leadScore' ? (
                         <ScoreBadge score={scores[lead.id]} />
                       ) : field === 'stage' ? (
-                        <Badge stage={lead.stage} />
+                        stageControl(lead)
                       ) : field === 'name' ? (
                         <button
                           className="text-button worksheet-name-button"
@@ -252,10 +272,13 @@ export default function WorksheetLeads({
                   'N/A'}
               </span>
               <small className="worksheet-card-meta">
-                <span className="phone-number">{value(lead, 'phone')}</span> ·{' '}
-                {lead.legacyStatus || lead.stage}
+                <span className="phone-number">{value(lead, 'phone')}</span>
+                {lead.legacyStatus ? ' · ' + lead.legacyStatus : ''}
               </small>
             </button>
+            {!config.hiddenFields.includes('stage') && (
+              <div className="worksheet-card-stage">{stageControl(lead)}</div>
+            )}
           </article>
         ))}
       </div>
