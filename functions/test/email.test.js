@@ -23,7 +23,7 @@ const basicTask = { id: 'shared', title: 'Internal task title', leadId: lead.id,
   dueAt: '2026-11-23T07:00:00.000Z', timezone: 'Asia/Kolkata', creatorUid: 'admin', recipientUid: rep.uid,
   state: 'Pending', createdAt: '2026-11-21T00:00:00.000Z', version: 1, completedAt: null };
 
-async function fixture({ send, chooseInsight } = {}) {
+async function fixture({ send, chooseInsight, environment = 'pre-production', allowlist } = {}) {
   let tick = initial, ready = true;
   const transport = [];
   const base = memoryStore({
@@ -33,7 +33,8 @@ async function fixture({ send, chooseInsight } = {}) {
   });
   const store = observableStore(base);
   const config = {
-    environment: 'pre-production', origin: 'https://example-preprod.test',
+    environment, allowlist,
+    origin: environment === 'production' ? 'https://example-production.test' : 'https://example-preprod.test',
     webhookSecret: () => signatureSecret, ready: () => ready, verifiedEmail: async member => member.email,
     chooseInsight,
     send: async (payload, key) => {
@@ -156,19 +157,56 @@ test('lead assignment, configured outcomes and shared task changes respect permi
     expectedVersion: 2, state: 'Pending', dueAt: '2026-11-24T04:00:00.000Z', comment: 'A new action',
   }).expect(200);
   assert.equal((await f.drain()).accepted, 1);
+  await f.call('admin', 'patch', endpoint, {
+    expectedVersion: 3, dueAt: '2026-11-24T05:00:00.000Z', comment: 'A teammate moved it',
+  }).expect(200);
+  assert.equal((await f.drain()).accepted, 1);
+  assert.match(f.transport.at(-1).payload.subject, /rescheduled your task/);
   await f.call('rep', 'patch', endpoint, {
-    expectedVersion: 3, dueAt: '2026-11-24T05:00:00.000Z', comment: 'I moved it',
+    expectedVersion: 4, dueAt: '2026-11-24T06:00:00.000Z', comment: 'I moved it',
   }).expect(200);
   await f.call('admin', 'patch', '/leads/' + lead.id, { stage: 'Lost', expectedVersion: 5 }).expect(200);
+  assert.equal((await f.drain()).accepted, 1);
+  assert.match(f.transport.at(-1).payload.subject, /reached a failed stage/);
+  await f.call('admin', 'patch', '/leads/' + lead.id, { stage: 'Won', expectedVersion: 6 }).expect(200);
   await f.write('members', 'rep', { ...rep, active: false, version: 2 });
   assert.equal((await f.drain()).suppressed, 1);
   const events = (await f.jobs()).map(job => job.event);
   assert.ok(events.includes('task_completed') && events.includes('task_reopened') && events.includes('lead_failed'));
-  assert.ok(!events.includes('task_rescheduled'));
+  assert.equal(events.filter(event => event === 'task_rescheduled').length, 1);
   for (const { payload } of f.transport) {
     assert.doesNotMatch(payload.html + payload.text, /Private context|Synthetic Customer|5550100|Internal task title/);
     assert.match(payload.text, /example-preprod\.test/);
   }
+});
+
+test('a queued task update is suppressed after the recipient opts out', async () => {
+  const f = await fixture();
+  await f.policy();
+  await f.preferences('rep', { taskUpdates: true });
+  await f.call('admin', 'patch', '/leads/' + lead.id + '/tasks/' + basicTask.id, {
+    expectedVersion: 1, state: 'Completed', comment: 'Completed the synthetic follow-up',
+  }).expect(200);
+  assert.equal((await f.jobs())[0].event, 'task_completed');
+  await f.preferences('rep', { taskUpdates: false });
+  assert.equal((await f.drain()).suppressed, 1);
+  assert.equal(f.transport.length, 0);
+});
+
+test('production delivery requires an explicit pilot address and uses production links', async () => {
+  const allowed = 'approved-pilot@example.test';
+  const f = await fixture({ environment: 'production', allowlist: [allowed] });
+  await f.policy();
+  for (const email of [allowed, 'outside-pilot@example.test']) {
+    await f.call('admin', 'post', '/invitations', { email, role: 'SDR', scope: 'assigned' }).expect(200);
+  }
+  const result = await f.drain();
+  assert.equal(result.accepted, 1);
+  assert.equal(result.suppressed, 1);
+  assert.deepEqual(f.transport.map(({ payload }) => payload.to), [[allowed]]);
+  assert.doesNotMatch(f.transport[0].payload.subject, /\[Pre-prod\]/);
+  assert.match(f.transport[0].payload.text, /https:\/\/example-production\.test/);
+  await f.call('admin', 'post', '/email/test', { template: 'daily', scenario: 'bounce' }).expect(400);
 });
 
 test('concurrent drains, bounded retries, raw signed receipts and suppression are distinct', async () => {
@@ -216,6 +254,43 @@ test('concurrent drains, bounded retries, raw signed receipts and suppression ar
   assert.ok(types.includes('com.avinyatech.salesdrone.email.delivery.delivered'));
   assert.ok(types.includes('com.avinyatech.salesdrone.email.delivery.suppressed'));
   assert.doesNotMatch(JSON.stringify(events), /bounced@|Weekly Completion|Internal task title/);
+});
+
+test('all supported signed provider events update only their matching delivery', async t => {
+  for (const [type, state, bounce, suppression] of [
+    ['email.sent', 'Accepted'],
+    ['email.delivery_delayed', 'Delayed'],
+    ['email.delivered', 'Delivered'],
+    ['email.failed', 'Failed'],
+    ['email.bounced', 'Failed', 'Transient'],
+    ['email.bounced', 'Suppressed', 'Permanent', 'hard_bounce'],
+    ['email.complained', 'Suppressed', null, 'complaint'],
+    ['email.suppressed', 'Suppressed'],
+  ]) {
+    await t.test(type + (bounce ? ' ' + bounce : ''), async () => {
+      const f = await fixture();
+      const queued = await f.call('admin', 'post', '/email/test', { template: 'test' }).expect(200);
+      assert.equal((await f.drain()).accepted, 1);
+      const job = (await f.jobs())[0];
+      const recipient = 'delivered@resend.dev';
+      const event = {
+        type, created_at: initial,
+        data: { email_id: job.providerId, to: [recipient],
+          tags: { salesdrone_job: queued.body.id, salesdrone_env: 'pre-production' },
+          ...(bounce ? { bounce: { type: bounce } } : {}),
+        },
+      };
+      await f.rawReceipt({ ...event, data: { ...event.data, email_id: randomUUID() } }).expect(200);
+      await f.rawReceipt({ ...event, data: { ...event.data, to: ['other@example.test'] } }).expect(200);
+      assert.equal((await f.jobs())[0].providerState, undefined);
+      await f.rawReceipt(event).expect(200);
+      await f.rawReceipt(event).expect(200);
+      const after = (await f.jobs())[0];
+      assert.equal(after.state, state);
+      assert.equal(after.providerState, state);
+      assert.equal((await f.store.get(path('emailSuppressions', hash(recipient))))?.reason, suppression);
+    });
+  }
 });
 
 test('digests respect the local calendar, factual fallback and one AI selection per job', async () => {

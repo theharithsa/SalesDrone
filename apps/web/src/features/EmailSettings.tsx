@@ -238,7 +238,10 @@ export function WorkspaceEmail({ request, onEditingChange, timezone }: {
 }
 
 function TemplatePreview({ request, ready }: { request: ApiClient; ready: boolean }) {
+  const canSimulateBounce = import.meta.env.VITE_DEPLOYMENT_ENVIRONMENT === 'pre-production' ||
+    (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === 'true');
   const [template, setTemplate] = useState<Template>('weekly');
+  const [scenario, setScenario] = useState<'delivery' | 'bounce'>('delivery');
   const [preview, setPreview] = useState<{ subject: string; html: string; text: string } | null>(null);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -265,8 +268,18 @@ function TemplatePreview({ request, ready }: { request: ApiClient; ready: boolea
           {(Object.keys(templates) as Template[]).map(key => <option key={key} value={key}>{templates[key]}</option>)}
         </select>
       </label>
+      {canSimulateBounce ? <label className="material-field">
+        <span className="field-label">Test outcome</span>
+        <select value={scenario} onChange={event => {
+          setScenario(event.currentTarget.value === 'bounce' ? 'bounce' : 'delivery');
+          setMessage('');
+        }}>
+          <option value="delivery">Simulated delivery</option>
+          <option value="bounce">Simulated bounce</option>
+        </select>
+      </label> : null}
       <button type="button" className="button" disabled={!ready || send.busy}
-        onClick={() => send.run({ template, scenario: 'delivery' })}>{send.busy ? 'Queuing…' : 'Send test email'}</button>
+        onClick={() => send.run({ template, scenario })}>{send.busy ? 'Queuing…' : 'Send test email'}</button>
     </div>
     <ErrorMessage error={error || send.error} />
     {message ? <p role="status">{message}</p> : null}

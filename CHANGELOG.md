@@ -17,7 +17,11 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 ### Changed
 - Email templates share the SalesDrone drone mark, Open Sans typography, and Astryx Neutral layout and spacing.
+- Admins can select a simulated delivery or bounce from the pre-production email preview.
 - Includes the Astryx Import enquiries experience for workbook mapping, review and job history.
+
+### Fixed
+- Repeated pre-production deployments of the same commit use a separate build archive for each workflow run and retry.
 
 ## [2.14.1] - 2026-11-29
 
