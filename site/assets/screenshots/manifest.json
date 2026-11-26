@@ -312,12 +312,12 @@
   {
     "file": "lead-header-mobile-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "da8307f07ab4ad7a740926fb5795b9ad2762a7b65717b59700f8d0454643e302",
-    "capturedAt": "2026-11-26",
+    "sha256": "7e8cd37d13b8b48acc6aa21dae57761633681285d3d66306a52de5e3b9b8ae60",
+    "capturedAt": "2026-11-27",
     "viewport": "390 x 900 CSS pixels; Chrome viewport override",
     "capturePixels": "375 x 865",
     "version": "2.15.0",
-    "review": "Reviewed a fictional lead after a stage change from the header. Browser emulation. No production data or writes."
+    "review": "Reviewed a fictional lead with the inline stage chip. Chrome viewport emulation."
   },
   {
     "file": "outreach-mobile-demo.jpg",

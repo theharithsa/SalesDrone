@@ -32,6 +32,7 @@ import {
 } from './lib/lead-workspace';
 import Assignment from './components/Assignment';
 import LeadPage, { LeadPageLoading } from './components/LeadPage';
+import LeadStagePicker from './components/LeadStagePicker';
 import LeadReportExport from './features/LeadReportExport';
 import NotificationsPage from './features/NotificationsPage';
 import { setRumIdentity, rumPage } from './lib/rum';
@@ -2426,17 +2427,14 @@ export default function App() {
                             {labelFor(fieldOptions, 'stage', 'Sales stage')}
                           </h3>
                           {can('leads:edit') && !fieldOptions.hiddenFields.includes('stage') ? (
-                            <select
-                              className="lead-stage-select"
-                              aria-label={labelFor(fieldOptions, 'stage', 'Sales stage')}
-                              value={selected.stage}
-                              disabled={mutationBusy}
-                              onChange={(event) => void leadAction({ stage: event.currentTarget.value })}
-                            >
-                              {withCurrent(fieldOptions.values.stage, selected.stage).map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                              ))}
-                            </select>
+                            <LeadStagePicker
+                              key={selected.id}
+                              label={labelFor(fieldOptions, 'stage', 'Sales stage')}
+                              stage={selected.stage}
+                              stages={fieldOptions.values.stage}
+                              busy={mutationBusy}
+                              onChange={(stage) => void leadAction({ stage })}
+                            />
                           ) : <Badge stage={selected.stage} />}
                         </div>
                         <div className="lead-assignment-summary">
