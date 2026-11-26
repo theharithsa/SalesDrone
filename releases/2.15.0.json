@@ -16,6 +16,7 @@
     "README.md",
     "SECURITY.md",
     "docs/EMAIL.md",
+    "docs/API-INGRESS.md",
     "docs/DESIGN-SYSTEM.md",
     "docs/API.md",
     "docs/SETTINGS.md",
@@ -34,7 +35,8 @@
     "reason": "Adds email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment.",
     "permissions": "Use Google sign-in, App Check and current access for application requests. Workspace configuration and tests need Admin. Resend callbacks require their own signature. No new PAT scope.",
     "tests": [
-      "functions/test/email.test.js"
+      "functions/test/email.test.js",
+      "services/ingress/test/gateway.test.js"
     ]
   },
   "observability": {

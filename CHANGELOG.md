@@ -21,6 +21,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 - Includes the Astryx Import enquiries experience for workbook mapping, review and job history.
 
 ### Fixed
+- Signed Resend callbacks now reach the API through Hosting so delivery history can show the provider’s final status.
 - Repeated pre-production deployments of the same commit use a separate build archive for each workflow run and retry.
 
 ## [2.14.1] - 2026-11-29
