@@ -828,5 +828,15 @@
     "capturePixels": "391 x 601",
     "version": "2.15.0",
     "review": "Weekly digest from the actual renderer with fictional task totals. Checked the first-party mark and font, blocked-asset fallback, and 320 to 1440 CSS pixels. Inbox rendering requires separate verification."
+  },
+  {
+    "file": "email-preprod-test-outcome-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "f7df9652dc982f34059774b62aa06deb65614c357d629ca4dfafad98924d9b91",
+    "capturedAt": "2026-11-26T01:01:53Z",
+    "viewport": "391 CSS pixels in the Chromium review fixture",
+    "capturePixels": "400 x 750",
+    "version": "2.15.0",
+    "review": "Fictional Admin selects a simulated bounce. Fixture disables outgoing sends. Controls fit at 368, 391 and 1807 CSS pixels."
   }
 ]

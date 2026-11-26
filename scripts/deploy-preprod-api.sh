@@ -2,12 +2,13 @@
 set -euo pipefail
 project=sales-drone-avinya
 region=asia-south1
-[[ "${GCP_PROJECT_ID:-}" == "$project" && "${GITHUB_SHA:-}" =~ ^[0-9a-f]{40}$ ]]
+[[ "${GCP_PROJECT_ID:-}" == "$project" && "${GITHUB_SHA:-}" =~ ^[0-9a-f]{40}$ &&
+  "${GITHUB_RUN_ID:-}" =~ ^[1-9][0-9]*$ && "${GITHUB_RUN_ATTEMPT:-}" =~ ^[1-9][0-9]*$ ]]
 : "${DYNATRACE_TENANT_URL:?Missing Dynatrace endpoint}"
 archive=$(mktemp -d)
 trap 'rm -r "$archive"' EXIT
 (cd functions && zip -q -r "$archive/source.zip" package.json package-lock.json src)
-source="gs://$project-preprod-build/functions/$GITHUB_SHA-$GITHUB_RUN_ATTEMPT.zip"
+source="gs://$project-preprod-build/functions/$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.zip"
 gcloud storage cp "$archive/source.zip" "$source" --project "$project" --quiet
 env_file="$archive/environment.json"
 node --input-type=module -e 'import { writeFileSync } from "node:fs"; writeFileSync(process.argv[1], JSON.stringify({FIREBASE_CONFIG:JSON.stringify({projectId:process.env.GCP_PROJECT_ID}),SDR_REGION:"asia-south1",APP_CHECK_MODE:"enforce",DYNATRACE_TENANT_URL:process.env.DYNATRACE_TENANT_URL,SDR_EMAIL_ENABLED:process.env.PREPROD_EMAIL_ENABLED==="true"?"true":"false"}));' "$env_file"

@@ -71,13 +71,18 @@ The GitHub deployment identity does not need Firestore index administration.
    Secret Manager. Grant only the pre-production runtime access to those
    secrets. Set PREPROD_EMAIL_ENABLED=true in the GitHub pre-production
    environment and run the checked Deploy pre-production workflow. This adds
-   the private preprodEmail function alongside the existing API.
+   the private preprodEmail function alongside the existing API. Each workflow
+   run and retry uses a distinct build archive, including for the same commit.
+   The pre-production build identity reads only the worker’s managed source
+   archive. The deployment identity manages only the named worker and its
+   invocation policy for this feature. Verify authenticated invocation.
 4. Use scripts/preprod-email-schedule.sh configure to associate the five-minute
    UTC job with the private function through its OIDC identity. No pre-production
    traffic reaches the production database, worker or secrets. The workflow
    deploys to the preprod database and pre-production Hosting site.
 5. Open the Admin template preview and use Send test email. The default recipient
-   is Resend’s delivery simulator. A separately authorized test inbox can be
+   is Resend’s delivery simulator. To check hard-bounce handling, select
+   **Simulated bounce** in the pre-production preview. A separately authorized test inbox can be
    set as SDR_EMAIL_TEST_INBOX on the private worker for a real inbox check.
    Use the bounce scenario only with synthetic data. In app Delivery history,
    compare Accepted with Delivered from the signed callback. Verify the brand
@@ -115,3 +120,8 @@ SALESDRONE_RESEND_WEBHOOK_SECRET and grant only the production runtime access
 before enabling it. Production uses the existing scheduled worker. Clear the
 production master switch and the environment flag for rollback. Never reuse a
 key disclosed in chat for a production pilot.
+
+If the pre-production callback shares a Resend workspace with production, disable
+that subscription before any production send. Resend subscriptions can deliver
+workspace-wide events. Use a separate pilot workspace when both endpoints need
+to stay enabled.

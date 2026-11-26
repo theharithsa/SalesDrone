@@ -116,6 +116,7 @@ const screenshots = [
   'email-workspace-demo.jpg',
   'email-preferences-demo.jpg',
   'email-weekly-branded-demo.jpg',
+  'email-preprod-test-outcome-demo.jpg',
 ];
 for (const name of screenshots) {
   const source = 'site/assets/screenshots/' + name,
