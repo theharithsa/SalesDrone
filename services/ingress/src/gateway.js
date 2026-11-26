@@ -10,6 +10,7 @@ export const JSON_LIMIT = 12 * 1024 * 1024;
 export const BINARY_LIMIT = 8 * 1024 * 1024;
 const WIRE_LIMIT=32 * 1024 * 1024;
 const forwarding = ['authorization', 'x-firebase-appcheck', 'idempotency-key', 'content-type', 'content-encoding', 'accept', 'if-none-match'];
+const receiptForwarding = [...forwarding, 'svix-id', 'svix-timestamp', 'svix-signature'];
 const hop = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade']);
 const failure = (status, code) => Object.assign(new Error(code), { status, code });
 const messages = { BAD_JSON: 'Invalid JSON body', PAYLOAD_TOO_LARGE: 'Request body is too large', UNSUPPORTED_ENCODING: 'Unsupported content encoding', NOT_FOUND: 'Route not found', UPSTREAM_UNAVAILABLE: 'API temporarily unavailable', REQUEST_TIMEOUT: 'Request timed out' };
@@ -116,7 +117,8 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
         forwardingRequest = true;
         let tail;
         const forward = (span) => new Promise((resolve, reject) => {
-          const headers = Object.fromEntries(forwarding.filter(k => req.headers[k] !== undefined).map(k => [k, req.headers[k]]));
+          const allowedHeaders = callback ? receiptForwarding : forwarding;
+          const headers = Object.fromEntries(allowedHeaders.filter(k => req.headers[k] !== undefined).map(k => [k, req.headers[k]]));
           headers['content-length'] = String(body.length);
           const propagated=telemetry?.capture()||incomingTraceHeaders(req.headers);
           if(propagated.traceparent)headers.traceparent=propagated.traceparent;

@@ -99,9 +99,10 @@ idempotency. A Resend callback verifies raw bytes and advances a finite status.
 Keep production paused until a separate credential and pilot are approved.
 Review email-delivery.js, email-policy.js, email-templates.js and email.test.js
 before operating this path. Keep addresses, provider payloads, names, notes and
-AI content out of monitoring. Exercise both simulator outcomes in pre-production
-Template preview, then verify an approved inbox. Disable a shared pre-production
-subscription before live production sending.
+AI content out of monitoring. Pre-production deploys preserve the scheduler's
+worker access and probe for anonymous denial. Verify an OIDC invocation with a
+signed test delivery and check the simulator outcomes and an approved inbox.
+Disable a shared pre-production subscription before live production sending.
 
 All email events share one branded Astryx template with Open Sans, the public
 drone mark, and a text wordmark. Keep the font and image URLs fixed, with native

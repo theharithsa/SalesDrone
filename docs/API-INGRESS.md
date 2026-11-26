@@ -25,6 +25,11 @@ an arbitrary upstream or fabricate a member identity. Backend auth/capabilities,
 lead/task scope and transactional validation remain authoritative. Malformed bodies
 never reach domain handlers or create records.
 
+For `POST /api/v1/email/receipts/resend`, the gateway also forwards the three
+Svix signing headers and preserves the uncompressed body byte for byte. This
+route has a 32 KiB limit. The API checks the signature before updating delivery
+history. The gateway keeps those headers and the body out of telemetry.
+
 Existing native Function URLs remain for compatibility; their provider-level parser
 responses are outside the supported Hosting contract. Do not claim this proxy changes
 the native Functions Framework or every load-balancer error on unrelated hostnames.
