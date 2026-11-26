@@ -24,8 +24,23 @@ deploy_args=(--gen2 --region "$region" --project "$project" --runtime nodejs22 -
   --env-vars-file "$env_file" --set-secrets "$secrets" --timeout 120s --min-instances 0 --quiet)
 gcloud functions deploy preprodApi "${deploy_args[@]}" \
   --allow-unauthenticated --entry-point preprodApi --memory 512Mi --max-instances 2
-if [[ "${PREPROD_EMAIL_ENABLED:-}" == true ]] ||
-  gcloud functions describe preprodEmail --gen2 --project "$project" --region "$region" --format='value(name)' >/dev/null 2>&1; then
-  gcloud functions deploy preprodEmail "${deploy_args[@]}" \
-    --no-allow-unauthenticated --entry-point preprodEmail --memory 256Mi --max-instances 1 --concurrency 1
+worker_identity=(preprodEmail --gen2 --project "$project" --region "$region" --quiet)
+worker_exists=false
+if gcloud functions describe "${worker_identity[@]}" --format='value(name)' >/dev/null 2>&1; then
+  worker_exists=true
+fi
+if [[ "${PREPROD_EMAIL_ENABLED:-}" == true || "$worker_exists" == true ]]; then
+  worker_args=(--entry-point preprodEmail --memory 256Mi --max-instances 1 --concurrency 1)
+  # Private on creation. Updates keep the scheduler's invocation policy intact.
+  if [[ "$worker_exists" == false ]]; then
+    worker_args+=(--no-allow-unauthenticated)
+  fi
+  gcloud functions deploy preprodEmail "${deploy_args[@]}" "${worker_args[@]}"
+  worker_url=$(gcloud functions describe "${worker_identity[@]}" --format='value(serviceConfig.uri)')
+  [[ "$worker_url" =~ ^https://preprodemail-[a-z0-9-]+\.a\.run\.app$ ]]
+  status=$(curl --silent --show-error --connect-timeout 5 --max-time 15 --output /dev/null --write-out '%{http_code}' "$worker_url")
+  if [[ "$status" != 401 && "$status" != 403 ]]; then
+    echo 'Pre-production email worker did not deny unauthenticated access.' >&2
+    exit 1
+  fi
 fi

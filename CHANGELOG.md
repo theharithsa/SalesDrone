@@ -23,6 +23,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 ### Fixed
 - Signed Resend callbacks now reach the API through Hosting so delivery history can show the provider’s final status.
 - Repeated pre-production deployments of the same commit use a separate build archive for each workflow run and retry.
+- Pre-production email worker updates preserve the private scheduler’s access and check that anonymous callers are denied.
 
 ## [2.14.1] - 2026-11-29
 

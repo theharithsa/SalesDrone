@@ -74,8 +74,10 @@ The GitHub deployment identity does not need Firestore index administration.
    the private preprodEmail function alongside the existing API. Each workflow
    run and retry uses a distinct build archive, including for the same commit.
    The pre-production build identity reads only the worker’s managed source
-   archive. The deployment identity manages only the named worker and its
-   invocation policy for this feature. Verify authenticated invocation.
+   archive. The deployment identity updates the named worker. Creation requires
+   authentication and subsequent deployments preserve the scheduler's invocation
+   grant. The workflow checks that unauthenticated requests receive 401 or 403.
+   Confirm that a scheduled invocation can still process a synthetic send.
 4. Use scripts/preprod-email-schedule.sh configure to associate the five-minute
    UTC job with the private function through its OIDC identity. No pre-production
    traffic reaches the production database, worker or secrets. The workflow
