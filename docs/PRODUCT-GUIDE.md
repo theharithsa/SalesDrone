@@ -940,6 +940,8 @@ In pre-production, admins can select Simulated delivery or Simulated bounce in T
 
 The daily digest shows due and overdue shared tasks, the next deadline and the age of the oldest overdue task. The weekly recap shows completed tasks, leads covered and upcoming work. The on-time statistic is included when the original deadlines are known.
 
+Email clients that support dark-mode styling show the white SalesDrone logo. The text wordmark remains visible if images are blocked.
+
 The sender uses generic copy. Lead names, contact details, task titles, private reminders and comments stay in SalesDrone. The links check current access each time you open them.
 
 ![Email updates and task digests — synthetic demo only](../site/assets/screenshots/email-weekly-branded-demo.jpg)

@@ -10,8 +10,9 @@ Email notifications.
 All templates use the SalesDrone drone mark and Open Sans in the Astryx Neutral
 layout. Supporting numbers and the next action are visible in the message.
 Mail clients that block web fonts use the Astryx system font stack. The text
-wordmark remains readable when images are blocked. The logo and font are fixed
-public Hosting assets with no recipient data, tracking parameters or new
+wordmark remains readable when images are blocked. Clients that support dark-mode CSS display a white drone mark. Other clients use
+the blue mark on a light tile with contrast baked into the image. The marks and
+font are fixed public Hosting assets with no recipient data, tracking parameters or new
 Firestore reads. Template Preview loads them from the app inside its sandbox.
 
 ## Events and recipient rules
@@ -105,8 +106,8 @@ and eight AI calls. Each task query is capped at 120 candidates with one
 overflow check. Greater volumes skip the digest to avoid reporting a partial
 count. Per-run queues use due time order. A job can be tried at most four times
 in 20 hours, with a three-minute lease and exponential backoff inside Resend’s
-24-hour idempotency window. The provider sees the same request and key on a
-retry. An accepted request is not delivered until a matching signed receipt
+24-hour idempotency window. The worker pins the template revision on its first send attempt, so a retry
+uses the same request body and key across deployments. An accepted request is not delivered until a matching signed receipt
 arrives. Duplicate and late callbacks cannot regress a delivered outcome.
 The callback has a per-instance rate limit of 120 requests per minute before
 parsing or verifying signatures. Hard bounces and complaints suppress that address. Suppressions retain only

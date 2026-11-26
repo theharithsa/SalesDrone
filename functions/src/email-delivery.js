@@ -6,7 +6,7 @@ import {
   deliveryKey, emailOn, emailPreferencePath, emailPreferences, EMAIL_MILLIS,
   readEmailSettings, readEmailPreferences, scheduleKey, weekStart, writeDigestSchedule, writeEmailJob,
 } from './email-policy.js';
-import { EMAIL_FROM, digestCopy, sampleDigest, renderEmail, TEMPLATE_VERSION } from './email-templates.js';
+import { EMAIL_FROM, digestCopy, sampleDigest, renderEmail, LEGACY_TEMPLATE_VERSION, TEMPLATE_VERSION } from './email-templates.js';
 import { readResearchSettings } from './lead-research-settings.js';
 import { resetActive, RESET_STATE } from './lead-data-reset.js';
 import { canReadLead, effectiveMember, hash, path } from './policy.js';
@@ -198,6 +198,8 @@ async function armEmail(store, job, prepared, at) {
     const work = {
       ...latest, recipientHash: prepared.recipientHash,
       facts: prepared.facts, insight: prepared.insight,
+      // Keep the same body and tags if a retry crosses a deployment.
+      templateVersion: latest.templateVersion ?? (latest.attempts ? LEGACY_TEMPLATE_VERSION : TEMPLATE_VERSION),
       attempts: latest.attempts + 1, sendingAt: at,
     };
     tx.set(location, work);
@@ -251,14 +253,14 @@ export async function dispatchEmails({ store, config, at, telemetry }) {
       const template = job.template || job.event;
       const message = renderEmail({
         template, origin: config.origin, preprod, facts: prepared.facts,
-        insight: prepared.insight, leadId: job.leadId, taskId: job.taskId,
+        insight: prepared.insight, leadId: job.leadId, taskId: job.taskId, templateVersion: armed.templateVersion,
       });
       const send = () => config.send({
         ...message, from: EMAIL_FROM, to: [prepared.to],
         tags: [
           { name: 'salesdrone_job', value: job.id },
           { name: 'salesdrone_env', value: config.environment },
-          { name: 'template_version', value: String(TEMPLATE_VERSION) },
+          { name: 'template_version', value: String(armed.templateVersion) },
         ],
       }, config.environment + '/' + job.id);
       const result = telemetry?.span ? await telemetry.span('resend.send', send) : await send();

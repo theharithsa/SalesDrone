@@ -276,7 +276,8 @@ transaction as the source operation. A due-time index built from sortable job
 keys and a bounded worker process claims without periodic scans of leads or
 membership. The worker rechecks membership, scopes and workspace policy before
 sending. Raw Resend callbacks verify the signature and update monotone provider
-states. Scheduled digests use projected task and lead fields and a finite
+states. Delivery jobs pin the rendered template revision at the first outbound
+attempt to preserve Resend idempotency across deployments. Scheduled digests use projected task and lead fields and a finite
 Gemini choice constrained to server-generated insights. See
 [Email](EMAIL.md) for indexes, schedules, retention and environment gates.
 

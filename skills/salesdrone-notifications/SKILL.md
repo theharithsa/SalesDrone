@@ -104,7 +104,6 @@ worker access and probe for anonymous denial. Verify an OIDC invocation with a
 signed test delivery and check the simulator outcomes and an approved inbox.
 Disable a shared pre-production subscription before live production sending.
 
-All email events share one branded Astryx template with Open Sans, the public
-drone mark, and a text wordmark. Keep the font and image URLs fixed, with native
-font and text fallbacks. The sandboxed preview uses current-site assets and
-synthetic data. Keep visual changes inside the existing preview/render path.
+Email uses an Astryx layout, Open Sans, fixed first-party light and dark marks
+and a text wordmark. The sandbox uses synthetic data and same-site assets.
+Pin the template revision at first send so retries keep the same payload.

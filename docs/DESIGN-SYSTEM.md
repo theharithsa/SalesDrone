@@ -9,7 +9,9 @@ This does not claim native platform behavior, Material certification or Dynamic 
 **Transactional email.** The shared mail renderer uses Astryx Neutral surface,
 border, spacing, and heading roles with the SalesDrone blue accent and Open Sans
 from the public Astryx pages. Use inline sRGB values, table layout, the existing
-drone mark, and a live text wordmark. Web fonts fall back to the Astryx system
+drone mark, and a live text wordmark. Use the white mark on a dark tile when
+the client supports dark-mode styles and a baked-in blue-on-light tile otherwise.
+Web fonts fall back to the Astryx system
 stack in mail clients that block them. [Email runbook](EMAIL.md).
 
 ## Architecture
