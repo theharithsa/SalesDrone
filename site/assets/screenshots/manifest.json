@@ -822,12 +822,22 @@
   {
     "file": "email-weekly-branded-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "7c6601f76f888d638b96affd44826f89bc6818f4f8d31ca8b5236d899a86c300",
-    "capturedAt": "2026-11-25T23:23:45Z",
-    "viewport": "390 CSS pixels in a sandboxed Chromium email frame",
-    "capturePixels": "391 x 601",
+    "sha256": "80aa11af0f2bdc5362f0fe2b2128ab7a343148d9e924edbcead3be4676d07791",
+    "capturedAt": "2026-11-27",
+    "viewport": "390 x 900 CSS pixels; cropped sandboxed Chrome preview",
+    "capturePixels": "390 x 600",
     "version": "2.15.0",
-    "review": "Weekly digest from the actual renderer with fictional task totals. Checked the first-party mark and font, blocked-asset fallback, and 320 to 1440 CSS pixels. Inbox rendering requires separate verification."
+    "review": "Fictional weekly recap showing the light logo variant. All twelve templates checked at 320, 390, 768 and 1440 CSS pixels in both themes."
+  },
+  {
+    "file": "email-weekly-dark-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "8a5158dbfb4b6a2f1ba223cb3571e65e3efe299eb5eece4bc963e2c4d0691928",
+    "capturedAt": "2026-11-27",
+    "viewport": "390 x 900 CSS pixels; cropped sandboxed Chrome preview",
+    "capturePixels": "390 x 600",
+    "version": "2.15.0",
+    "review": "Fictional weekly recap showing the dark logo variant. All twelve templates checked at 320, 390, 768 and 1440 CSS pixels in both themes."
   },
   {
     "file": "email-preprod-test-outcome-demo.jpg",

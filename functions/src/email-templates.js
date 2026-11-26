@@ -1,5 +1,6 @@
 export const EMAIL_FROM = 'SalesDrone <notifications@salesdrone.in>';
-export const TEMPLATE_VERSION = 2;
+export const LEGACY_TEMPLATE_VERSION = 2;
+export const TEMPLATE_VERSION = 3;
 export const templateInfo = {
   invitation: ['Workspace', 'You’re invited to SalesDrone', 'A workspace admin invited you to SalesDrone. Sign in with the Google account that received this invitation.', 'Accept invitation'],
   access_ready: ['Workspace', 'Your SalesDrone access is ready', 'A workspace admin approved your access. Sign in to get started.', 'Open SalesDrone'],
@@ -32,12 +33,15 @@ const dateLabel = date => new Intl.DateTimeFormat('en-IN', {
   timeZone: 'UTC', day: 'numeric', month: 'short',
 }).format(new Date(date + 'T00:00:00Z'));
 
-export function renderEmail({ template, origin, preprod = false, preview = false, leadId, taskId, facts, insight }) {
+export function renderEmail({ template, origin, preprod = false, preview = false, leadId, taskId, facts, insight, templateVersion = TEMPLATE_VERSION }) {
   const [category, title, intro, action] = templateInfo[template];
   const settings = new URL('/settings?section=email-preferences', origin).href;
   // The sandboxed srcdoc preview can load only the current site's public assets.
   const font = preview ? fontPath : new URL(fontPath, origin).href;
-  const mark = preview ? markPath : new URL(markPath, origin).href;
+  const adaptiveMark = templateVersion >= 3;
+  const asset = path => preview ? path : new URL(path, origin).href;
+  const mark = asset(adaptiveMark ? '/brand/salesdrone-email-mark-light.png' : markPath);
+  const darkMark = adaptiveMark ? asset('/brand/salesdrone-email-mark-dark.png') : null;
   let href = new URL('/', origin);
   if (['daily', 'weekly'].includes(template)) href = new URL('/tasks', origin);
   if (template === 'weekly' && facts) {
@@ -79,19 +83,26 @@ export function renderEmail({ template, origin, preprod = false, preview = false
     actionLabel + '</td></tr></table>';
   const masthead = '<tr><td class="pad masthead" style="padding:16px 24px;border-bottom:1px solid ' + theme.border + '">' +
     '<table role="presentation" cellpadding="0" cellspacing="0"><tr>' +
-    '<td width="32" height="32" valign="middle" bgcolor="' + theme.info + '" style="border-radius:6px">' +
-    '<img src="' + escape(mark) + '" alt="" width="32" height="32" style="display:block;border:0" referrerpolicy="no-referrer"></td>' +
+    (adaptiveMark
+      ? '<td width="32" height="32" valign="middle">' +
+        '<img class="mark-light" src="' + escape(mark) + '" alt="" width="32" height="32" style="display:block;border:0" referrerpolicy="no-referrer">' +
+        '<!--[if !mso]><!--><img class="mark-dark" src="' + escape(darkMark) +
+        '" alt="" width="32" height="32" style="display:none;max-height:0;overflow:hidden;border:0;mso-hide:all" referrerpolicy="no-referrer"><!--<![endif]--></td>'
+      : '<td width="32" height="32" valign="middle" bgcolor="' + theme.info + '" style="border-radius:6px">' +
+        '<img src="' + escape(mark) + '" alt="" width="32" height="32" style="display:block;border:0" referrerpolicy="no-referrer"></td>') +
     '<td valign="middle" style="padding-left:12px;font-size:17px;line-height:24px;font-weight:600">SalesDrone</td>' +
     '</tr></table></td></tr>';
   const html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
     '<meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><meta name="referrer" content="no-referrer">' +
     '<title>' + escape(subject) + '</title><style>' +
+    (adaptiveMark ? ':root{color-scheme:light dark}' : '') +
     '@font-face{font-family:Open Sans;src:url("' + escape(font) + '") format("woff2");font-weight:300 800;font-style:normal;font-display:swap}' +
     '@media(max-width:420px){.gutter{padding:12px 8px!important}.pad{padding-left:16px!important;padding-right:16px!important}}' +
     '@media(prefers-color-scheme:dark){.outer{background:' + theme.darkCanvas + '!important}.paper{background:' + theme.darkSurface +
     '!important;color:' + theme.darkText + '!important}.muted{color:' + theme.darkMuted + '!important}.paper,.masthead,.footer,.stats,.insight{border-color:' + theme.darkBorder +
     '!important}.stats{background:' + theme.darkCanvas + '!important}.insight{background:' + theme.darkInfo + '!important}.footer a{color:' + theme.darkAccent +
-    '!important}.action{background:' + theme.darkAccent + '!important}.action-label{color:' + theme.darkCanvas + '!important}}' +
+    '!important}.action{background:' + theme.darkAccent + '!important}.action-label{color:' + theme.darkCanvas + '!important}' +
+    (adaptiveMark ? '.mark-light{display:none!important}.mark-dark{display:block!important;max-height:none!important}' : '') + '}' +
     '</style><!--[if mso]><style>body,table,td,h1,h2,p,a,span{font-family:Segoe UI,Arial,sans-serif!important}</style><![endif]-->' +
     '</head><body style="margin:0;background:' + theme.canvas + ';font-family:' + fontFamily + '">' +
     '<div style="display:none;max-height:0;overflow:hidden;mso-hide:all">' + escape(intro) + '</div>' +

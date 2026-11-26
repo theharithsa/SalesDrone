@@ -494,7 +494,7 @@
         },
         {
           "id": "EMAIL-INBOX-01",
-          "expected": "An approved inbox receives a synthetic digest with the sender identity, branded layout and authenticated app link. Review desktop and phone clients and fallback with images or fonts blocked.",
+          "expected": "An approved inbox receives a synthetic digest with the sender identity, branded layout and authenticated app link. Review desktop and phone clients, the white logo in dark-mode-aware clients, and fallback with images or fonts blocked.",
           "fixture": "explicitly approved test inbox and synthetic digest"
         }
       ]

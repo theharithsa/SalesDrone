@@ -10,7 +10,7 @@ import { PRESETS } from '../src/contracts.js';
 import { dispatchEmails, verifyEmailReceipt } from '../src/email-delivery.js';
 import { emailSettings, emailPreferences, nextDigestSlot } from '../src/email-policy.js';
 import { digestFacts } from '../src/email-digests.js';
-import { renderEmail, sampleDigest, templateInfo, templatePreview } from '../src/email-templates.js';
+import { LEGACY_TEMPLATE_VERSION, renderEmail, sampleDigest, templateInfo, templatePreview } from '../src/email-templates.js';
 
 const initial = '2026-11-23T03:29:00.000Z';
 const signingKey = Buffer.alloc(32, 125);
@@ -103,10 +103,13 @@ test('every email uses first-party SalesDrone branding in delivery and the sandb
   for (const template of Object.keys(templateInfo)) {
     const preview = templatePreview(template, origin);
     const delivery = renderEmail({ template, origin, preprod: true, facts: sampleDigest[template] });
-    assert.match(preview.html, /src="\/brand\/salesdrone-mark\.png"/);
+    assert.match(preview.html, /class="mark-light" src="\/brand\/salesdrone-email-mark-light\.png"/);
+    assert.match(preview.html, /class="mark-dark" src="\/brand\/salesdrone-email-mark-dark\.png"[^>]+display:none/);
+    assert.match(preview.html, /@media\(prefers-color-scheme:dark\)[^<]+\.mark-light\{display:none!important}\.mark-dark\{display:block!important/);
     assert.match(preview.html, /url\("\/fonts\/open-sans\/open-sans-latin\.woff2"\)/);
     assert.doesNotMatch(preview.html, /<a\s/);
-    assert.match(delivery.html, /src="https:\/\/example-preprod\.test\/brand\/salesdrone-mark\.png"/);
+    for (const variant of ['light', 'dark'])
+      assert.ok(delivery.html.includes('src="https://example-preprod.test/brand/salesdrone-email-mark-' + variant + '.png"'));
     assert.match(delivery.html, /url\("https:\/\/example-preprod\.test\/fonts\/open-sans\/open-sans-latin\.woff2"\)/);
     assert.match(delivery.html, /<!--\[if mso\]><style>/);
     assert.match(delivery.html, />SalesDrone<\/td>/);
@@ -129,10 +132,16 @@ test('invitation is atomic, only a genuine reissue sends, and acceptance emits n
   assert.match(f.transport[0].payload.text, /https:\/\/example-preprod\.test/);
   assert.doesNotMatch(f.transport[0].payload.html + f.transport[0].payload.text, /new@example/);
   await f.call('admin', 'post', '/email/invitations/' + invite.id + '/resend', { expectedVersion: invite.version }).expect(200);
+  assert.equal((await f.drain()).accepted, 1);
+  assert.match(f.transport[1].payload.subject, /invited to SalesDrone/);
+  assert.notEqual(f.transport[0].key, f.transport[1].key);
+  f.at('2026-11-23T03:35:00.000Z');
+  const active = await f.store.get(path('invitations', invite.id));
+  await f.call('admin', 'post', '/email/invitations/' + invite.id + '/resend', { expectedVersion: active.version }).expect(200);
   await f.call('new', 'post', '/invitations/' + invite.id + '/accept', {}).expect(200);
-  const run = await f.drain();
-  assert.equal(run.suppressed, 1);
-  assert.deepEqual((await f.jobs()).map(job => job.event), ['invitation', 'invitation']);
+  assert.equal((await f.drain()).suppressed, 1);
+  assert.equal(f.transport.length, 2);
+  assert.deepEqual((await f.jobs()).map(job => job.event), ['invitation', 'invitation', 'invitation']);
 });
 
 test('lead assignment, configured outcomes and shared task changes respect permission, current versions and self-actions', async () => {
@@ -256,6 +265,34 @@ test('concurrent drains, bounded retries, raw signed receipts and suppression ar
   assert.doesNotMatch(JSON.stringify(events), /bounced@|Weekly Completion|Internal task title/);
 });
 
+test('a delivery already attempted before the dark-logo release keeps the old payload and tag', async () => {
+  const f = await fixture();
+  await f.call('admin', 'post', '/email/test', { template: 'weekly' }).expect(200);
+  const [job] = await f.jobs();
+  await f.write('emailJobs', job.id, { ...job, attempts: 1 });
+  assert.equal((await f.drain()).accepted, 1);
+  const [{ payload, key }] = f.transport;
+  assert.equal(key, 'pre-production/' + job.id);
+  assert.equal(payload.html, renderEmail({
+    template: 'weekly', origin: 'https://example-preprod.test', preprod: true,
+    facts: sampleDigest.weekly, templateVersion: LEGACY_TEMPLATE_VERSION,
+  }).html);
+  assert.match(payload.html, /src="https:\/\/example-preprod\.test\/brand\/salesdrone-mark\.png"/);
+  assert.equal(payload.tags.find(tag => tag.name === 'template_version').value, '2');
+});
+
+test('direct access approval delivers the access-ready message', async () => {
+  const f = await fixture();
+  await f.policy();
+  await f.write('members', 'approved', { ...rep, id: 'approved', uid: 'approved', email: 'approved@example.test', active: false });
+  await f.call('admin', 'patch', '/members/approved', {
+    active: true, expectedVersion: 1, role: 'SDR', scope: 'assigned',
+  }).expect(200);
+  assert.equal((await f.drain()).accepted, 1);
+  assert.deepEqual(f.transport[0].payload.to, ['delivered@resend.dev']);
+  assert.match(f.transport[0].payload.subject, /Your SalesDrone access is ready/);
+});
+
 test('all supported signed provider events update only their matching delivery', async t => {
   for (const [type, state, bounce, suppression] of [
     ['email.sent', 'Accepted'],
@@ -354,6 +391,28 @@ test('weekly recap counts distinct accessible leads and prior week, and its link
     const preview = templatePreview(template, 'https://example-preprod.test');
     assert.match(preview.html, /SalesDrone/);
     assert.ok(preview.text.includes(preview.subject));
+  }
+});
+
+test('assigning and reassigning a shared lead task deliver the assignment template', async () => {
+  const f = await fixture();
+  await f.policy();
+  await f.preferences('rep', { taskUpdates: true });
+  const task = (await f.call('admin', 'post', '/tasks', {
+    title: 'Synthetic private task title', leadId: lead.id, dueAt: basicTask.dueAt,
+    kind: 'administrative', recipientUid: 'rep',
+  }).expect(200)).body;
+  const endpoint = '/leads/' + lead.id + '/tasks/' + task.id + '/assignment';
+  assert.equal((await f.drain()).accepted, 1);
+  await f.call('admin', 'patch', endpoint, { expectedVersion: task.version, recipientUid: 'admin' }).expect(200);
+  assert.equal((await f.drain()).accepted, 0);
+  await f.call('admin', 'patch', endpoint, { expectedVersion: task.version + 1, recipientUid: 'rep' }).expect(200);
+  assert.equal((await f.drain()).accepted, 1);
+  assert.equal(f.transport.length, 2);
+  for (const { payload } of f.transport) {
+    assert.match(payload.subject, /A task was assigned to you/);
+    assert.ok(payload.text.includes('/tasks?task=' + task.id));
+    assert.doesNotMatch(payload.html + payload.text, /Synthetic private task title/);
   }
 });
 
