@@ -17,7 +17,7 @@ Read [SHARED.md](../SHARED.md), [design system](../../docs/DESIGN-SYSTEM.md) and
 - [UI.tsx](../../apps/web/src/components/UI.tsx): semantic actions, Radix dialogs,
   feedback, avatars and branded names.
 - [LeadPage.tsx](../../apps/web/src/components/LeadPage.tsx): full lead workspace
-  with a stage picker that opens a Material sheet on phones.
+  with an anchored stage dropdown.
 - [lead-table.ts](../../apps/web/src/lib/lead-table.ts): presentation order and
   configured labels; import/export mappings and stored field IDs do not change.
 - [appearance.ts](../../apps/web/src/lib/appearance.ts), fonts/display-scale helpers:

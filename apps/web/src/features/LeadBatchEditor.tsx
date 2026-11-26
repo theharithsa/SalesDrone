@@ -18,6 +18,8 @@ export default function LeadBatchEditor({
   onDone,
   canEdit,
   canAssign,
+  stageBusy,
+  onStageChange,
 }: {
   leads: Lead[];
   config: FieldOptions;
@@ -32,6 +34,8 @@ export default function LeadBatchEditor({
   onDone: () => void;
   canEdit: boolean;
   canAssign: boolean;
+  stageBusy?: boolean;
+  onStageChange?: (lead: Lead, stage: string) => void;
 }) {
   const [selected, setSelected] = useState<Set<string>>(new Set()),
     [open, setOpen] = useState(false),
@@ -259,6 +263,8 @@ export default function LeadBatchEditor({
           onSelect={onSelect}
           checkedIds={canEdit ? selected : undefined}
           onToggle={toggle}
+          stageBusy={stageBusy || busy}
+          onStageChange={onStageChange}
         />
       </div>
       <Modal

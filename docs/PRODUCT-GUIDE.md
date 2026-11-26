@@ -132,7 +132,7 @@ On mobile, tap the magnifying glass in the top-right corner to search. Clear sea
 
 Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment.
 
-The list has no row-level Edit controls or Actions column. Open the customer name (or the mobile lead card), then choose Edit lead. When the customer-name column is hidden by configuration, the desktop row remains keyboard-focusable: press Enter or Space to open its details.
+To change Sales stage, select the current stage in the table or on a mobile lead card, then choose a stage. The change saves immediately when you have edit access. Open the lead to edit its other details. If the customer-name column is hidden, press Enter or Space on the focused desktop row to open the lead.
 
 Infinite scrolling loads the next page automatically as you approach the bottom of the lead list. The initial live page requests up to 30 leads; sparse filtered scans may contain fewer results with another cursor. Loading continues until the API returns no cursor. Load more leads remains available as a keyboard/browser fallback; failures pause automatic loading and show Retry loading leads. Changing filters starts a fresh list. Demo mode uses 96 fictional leads, revealed 30 at a time.
 
@@ -148,7 +148,7 @@ Admins can choose Assigned to in desktop Filters or the phone filter dialog. Cho
 
 Visible empty lead fields show N/A. The display preserves numeric zero and an explicit No. A blank Excel cell keeps the saved value on update. For multi-select fields, keep the exported list of quoted choices inside brackets. Enter [] to clear an optional selection.
 
-![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/lead-filters-demo.jpg)
+![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/leads-demo.jpg)
 
 ### Questions
 
@@ -220,7 +220,7 @@ Members who can read the lead
 
 1. Select a lead from the list to open its full page on desktop or mobile. The URL is /leads/{leadId}. Bookmarks require current workspace access.
 
-2. Tap the current sales stage in the lead header, then choose a stage from the list. A checkmark identifies the active stage. Use Edit lead to change the assignee when your permissions allow it.
+2. Tap the current sales stage in the lead header, then choose a stage from the dropdown. A checkmark identifies the active stage. Use Edit lead to change the assignee when your permissions allow it.
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.
 

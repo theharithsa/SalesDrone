@@ -161,9 +161,9 @@ Open **Settings → Appearance & time**, enable **Book mode**, and save. The wor
 
 Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).
 
-Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Material 3 while retaining personal font and Book mode preferences. Open Filters for advanced search options; opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
+Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Material 3 while retaining personal font and Book mode preferences. Open Filters for advanced search options; select the current stage to update it from the Leads table or a phone card. Opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
 
-![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=f0705a1b343b)
+![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=7bc3cee1bedd)
 
 ## Reviewed across screen sizes
 
@@ -232,7 +232,7 @@ saved values.
 
 Stage and assignment stack on compact lead surfaces. Outreach tick labels share the chart gridline positions.
 
-<img src="site/assets/screenshots/lead-header-mobile-demo.jpg" alt="Fictional lead with a tappable phone number and inline stage picker" width="412">
+<img src="site/assets/screenshots/lead-header-mobile-demo.jpg?sha=b3a03a958884" alt="Fictional lead with a tappable phone number and inline stage picker" width="412">
 
 ## Companies and daily Excel updates
 

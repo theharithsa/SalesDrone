@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDown } from 'lucide-react';
 import { withCurrent } from '../lib/field-options';
-import { Modal } from './UI';
 
 export default function LeadStagePicker({ label, stage, stages, busy, onChange }: {
   label: string;
@@ -11,51 +11,28 @@ export default function LeadStagePicker({ label, stage, stages, busy, onChange }
   onChange: (stage: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const trigger = useRef<HTMLButtonElement>(null);
-  const current = useRef<HTMLButtonElement>(null);
   return (
-    <>
-      <button
-        ref={trigger}
-        type="button"
-        className="lead-stage-trigger"
-        aria-label={label + ', ' + stage}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-busy={busy}
-        aria-disabled={busy}
-        onClick={() => { if (!busy) setOpen(true); }}
-      >
-        <span>{stage}</span>
-        <ChevronDown size={18} aria-hidden="true" />
-      </button>
-      {open && <Modal
-        open
-        onClose={() => setOpen(false)}
-        title={label}
-        description="Choose the lead’s current stage."
-        returnFocusRef={trigger}
-        initialFocusRef={current}
-      >
-        <ul className="lead-stage-options">
-          {withCurrent(stages, stage).map((value) => (
-            <li key={value}>
-              <button
-                ref={value === stage ? current : undefined}
-                type="button"
-                aria-pressed={value === stage}
-                onClick={() => {
-                  setOpen(false);
-                  if (value !== stage) onChange(value);
-                }}
-              >
-                <span>{value}</span>
-                {value === stage && <Check size={20} aria-hidden="true" />}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </Modal>}
-    </>
+    <Select.Root value={stage} open={open}
+      onOpenChange={(next) => { if (!next || !busy) setOpen(next); }}
+      onValueChange={(value) => { if (open && !busy) onChange(value); }}>
+      <Select.Trigger className="lead-stage-trigger" aria-label={label}
+        aria-disabled={busy} aria-busy={busy} title={stage}>
+        <Select.Value />
+        <Select.Icon asChild><ChevronDown size={16} aria-hidden="true" /></Select.Icon>
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Content position="popper" sideOffset={6} collisionPadding={12}
+          align="start" className="lead-stage-options" onClick={(event) => event.stopPropagation()}>
+          <Select.Viewport className="lead-stage-options-viewport">
+            {withCurrent(stages, stage).filter(Boolean).map((value) => (
+              <Select.Item key={value} value={value} className="lead-stage-option">
+                <Select.ItemText>{value}</Select.ItemText>
+                <Select.ItemIndicator><Check size={18} aria-hidden="true" /></Select.ItemIndicator>
+              </Select.Item>
+            ))}
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
   );
 }
