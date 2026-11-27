@@ -105,5 +105,5 @@ signed test delivery and check the simulator outcomes and an approved inbox.
 Disable a shared pre-production subscription before live production sending.
 
 Email uses an Astryx layout, Open Sans, fixed first-party light and dark marks
-and a text wordmark. The sandbox uses synthetic data and same-site assets.
+and a text wordmark. Release mail waits for published notes and batches eligible members.
 Pin the template revision at first send so retries keep the same payload.

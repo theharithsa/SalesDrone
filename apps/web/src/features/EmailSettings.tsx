@@ -10,7 +10,7 @@ const events = {
   task_rescheduled: 'Task rescheduled', task_reopened: 'Task reopened',
   daily: 'Daily task reminder', weekly: 'Weekly task recap',
 } as const;
-const templates = { ...events, test: 'Delivery check' };
+const templates = { ...events, release: 'Release announcement', test: 'Delivery check' };
 type EmailEvent = keyof typeof events;
 type Template = keyof typeof templates;
 type Policy = {
@@ -19,6 +19,7 @@ type Policy = {
   events: Record<EmailEvent, boolean>;
   outcomeRecipientUid: string | null;
   deliveryReady: boolean;
+  releaseAnnouncementsEnabled?: boolean;
 };
 type Preferences = {
   version: number;
@@ -203,13 +204,17 @@ export function WorkspaceEmail({ request, onEditingChange, timezone }: {
       <form onSubmit={event => {
         event.preventDefault();
         submit.run({ expectedVersion: draft.version, enabled: draft.enabled, events: draft.events,
-          outcomeRecipientUid: draft.outcomeRecipientUid });
+          outcomeRecipientUid: draft.outcomeRecipientUid, releaseAnnouncementsEnabled: draft.releaseAnnouncementsEnabled === true });
       }}>
         <fieldset disabled={submit.busy} className="email-settings-group">
           <legend>Workspace delivery</legend>
           {!draft.deliveryReady ? <p className="field-hint">Sender setup is pending for this environment. You can configure email and preview the templates.</p> : null}
           <Toggle label="Enable workspace email" detail="Pause here to stop queued workspace email. Member opt-ins still apply."
             checked={draft.enabled} onChange={enabled => update({ enabled })} />
+          <Toggle label="Email new releases to all active members"
+            detail="Sends once per published version after the website and release notes are live. Pre-production uses synthetic previews."
+            checked={draft.releaseAnnouncementsEnabled === true}
+            onChange={releaseAnnouncementsEnabled => update({ releaseAnnouncementsEnabled })} />
           <label className="material-field">
             <span className="field-label">Outcomes for unassigned leads</span>
             <select disabled={!!directoryError} value={draft.outcomeRecipientUid ?? ''}

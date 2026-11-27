@@ -1,12 +1,13 @@
 import { renderSdlcGuide } from './sdlc-guide.mjs';
 import { renderReleaseNotes, renderRoadmap } from './whats-new.mjs';
+import { publicReleaseAnnouncement } from './release-announcement.mjs';
 import { publicRoadmapFeatures } from './public-roadmap.mjs';
 import { execFileSync } from 'node:child_process';
 import { renderProductGuide } from './product-guide.mjs';
 import { renderSettings } from './settings-reference.mjs';
 import { TOKEN_SCOPES } from '../functions/src/api-scopes.js';
 // Curated public build: never copy docs/, arbitrary captures or workspace files.
-import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, copyFile, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 const pkg = JSON.parse(await readFile('package.json', 'utf8')),
@@ -116,6 +117,7 @@ const screenshots = [
   'email-workspace-demo.jpg',
   'email-preferences-demo.jpg',
   'email-weekly-branded-demo.jpg',
+  'email-release-announcement-demo.jpg',
   'email-preprod-test-outcome-demo.jpg',
 ];
 for (const name of screenshots) {
@@ -275,6 +277,8 @@ for (const name of ['flight-plan.webp', 'workspace-redesign.webp']) {
 }
 const publicReleases = JSON.parse(await readFile('docs/whats-new/releases.json', 'utf8'));
 const changelog = await readFile('CHANGELOG.md', 'utf8');
+const announcementPath = out + '/release-announcement.json';
+await rm(announcementPath, { force: true });
 if (process.env.DOCS_PUBLISHED_RELEASES) {
   const releases = JSON.parse(await readFile(process.env.DOCS_PUBLISHED_RELEASES, 'utf8'));
   const versions = new Set([...changelog.matchAll(/^## \[(\d+\.\d+\.\d+)\] - /gm)]
@@ -286,6 +290,11 @@ if (process.env.DOCS_PUBLISHED_RELEASES) {
     .filter(({ tagName, isDraft, publishedAt }) => !isDraft && publishedAt && /^v\d+\.\d+\.\d+$/.test(tagName))
     .map(({ tagName, publishedAt }) => [tagName.slice(1), dates.format(new Date(publishedAt))]));
   if (!published.has(pkg.version)) throw Error('Current GitHub release is missing a publication date');
+  const announcement = publicReleaseAnnouncement({
+    version: pkg.version, commit: sourceCommit, releases,
+    notes: publicReleases[pkg.version], changelog,
+  });
+  if (announcement) await writeFile(announcementPath, JSON.stringify(announcement));
   for (const [version, date] of published) {
     if (versions.has(version))
       publicReleases[version] = { ...publicReleases[version], published: date };

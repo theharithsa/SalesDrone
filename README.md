@@ -280,5 +280,5 @@ preview templates and check delivery under Settings → Workspace → Email
 notifications. The [email guide](docs/EMAIL.md) describes event rules,
 pre-production verification and rollback.
 
-[Weekly digest preview](site/assets/screenshots/email-weekly-branded-demo.jpg) · [Dark-mode preview](site/assets/screenshots/email-weekly-dark-demo.jpg)
+[Release announcement preview](site/assets/screenshots/email-release-announcement-demo.jpg) · [Weekly digest preview](site/assets/screenshots/email-weekly-branded-demo.jpg) · [Dark-mode preview](site/assets/screenshots/email-weekly-dark-demo.jpg)
 or [review the email preferences on a phone](site/assets/screenshots/email-preferences-demo.jpg).

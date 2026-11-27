@@ -8,7 +8,7 @@ export const EMAIL_EVENTS = [
   'task_assigned', 'task_completed', 'task_rescheduled', 'task_reopened', 'daily', 'weekly',
 ];
 export const MAIL_SETTINGS = path('settings', 'email');
-export const EMAIL_TEMPLATES = [...EMAIL_EVENTS, 'test'];
+export const EMAIL_TEMPLATES = [...EMAIL_EVENTS, 'release', 'test'];
 export const DIGESTS = ['daily', 'weekly'];
 export const EMAIL_MILLIS = { minute: 60_000, day: 86_400_000 };
 const defaultEvents = Object.fromEntries(EMAIL_EVENTS.map(event => [event, true]));
@@ -20,6 +20,7 @@ export const EmailSettingsPatch = z.object({
   enabled: z.boolean(),
   events: z.object(Object.fromEntries(EMAIL_EVENTS.map(event => [event, z.boolean()]))).strict(),
   outcomeRecipientUid: uidSchema.nullable(),
+  releaseAnnouncementsEnabled: z.boolean().optional(),
 }).strict();
 export const EmailPreferencesPatch = z.object({
   expectedVersion: versions,
@@ -44,6 +45,7 @@ export function emailSettings(value) {
   return {
     version: value?.version || 1,
     enabled: value?.enabled === true,
+    releaseAnnouncementsEnabled: value?.releaseAnnouncementsEnabled === true,
     events: { ...defaultEvents, ...value?.events },
     outcomeRecipientUid: value?.outcomeRecipientUid || null,
   };
@@ -113,7 +115,8 @@ export async function saveEmailPreferences(tx, uid, input, at) {
   tx.set(emailPreferencePath(uid), { id: uid, ...next, scheduled });
   return next;
 }
-export const emailOn = (settings, event) => settings.enabled && settings.events[event] === true;
+export const emailOn = (settings, event) => settings.enabled &&
+  (event === 'release' ? settings.releaseAnnouncementsEnabled : settings.events[event] === true);
 export const deliveryKey = (event, identity) => hash(event + ':' + identity);
 
 export function writeEmailJob(tx, { event, identity, at, settings, trace, ...context }) {

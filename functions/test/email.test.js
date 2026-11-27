@@ -7,6 +7,7 @@ import { memoryStore } from '../src/store.js';
 import { observableStore } from '../src/observable-store.js';
 import { path, hash } from '../src/policy.js';
 import { PRESETS } from '../src/contracts.js';
+import { stageReleaseAnnouncements, releaseAnnouncement, fetchReleaseAnnouncement } from '../src/email-release-announcement.js';
 import { dispatchEmails, verifyEmailReceipt } from '../src/email-delivery.js';
 import { emailSettings, emailPreferences, nextDigestSlot } from '../src/email-policy.js';
 import { digestFacts } from '../src/email-digests.js';
@@ -23,7 +24,7 @@ const basicTask = { id: 'shared', title: 'Internal task title', leadId: lead.id,
   dueAt: '2026-11-23T07:00:00.000Z', timezone: 'Asia/Kolkata', creatorUid: 'admin', recipientUid: rep.uid,
   state: 'Pending', createdAt: '2026-11-21T00:00:00.000Z', version: 1, completedAt: null };
 
-async function fixture({ send, chooseInsight, environment = 'pre-production', allowlist } = {}) {
+async function fixture({ send, chooseInsight, environment = 'pre-production', allowlist, release } = {}) {
   let tick = initial, ready = true;
   const transport = [];
   const base = memoryStore({
@@ -33,7 +34,7 @@ async function fixture({ send, chooseInsight, environment = 'pre-production', al
   });
   const store = observableStore(base);
   const config = {
-    environment, allowlist,
+    environment, allowlist, release,
     origin: environment === 'production' ? 'https://example-production.test' : 'https://example-preprod.test',
     webhookSecret: () => signatureSecret, ready: () => ready, verifiedEmail: async member => member.email,
     chooseInsight,
@@ -442,4 +443,59 @@ test('shared task assignment, direct approval, workspace pause and the daily rat
   await f.policy();
   assert.equal((await f.drain()).suppressed, 1);
   assert.equal(f.transport.length, 1);
+});
+
+const releaseAt = '2026-11-23T03:30:00.000Z';
+const releaseMarker = {
+  version: '2.15.0', commit: 'a'.repeat(40), date: '2026-11-23', publishedAt: initial,
+  summary: 'Release summary', highlights: ['Open <new> tools'],
+};
+
+test('release email requires matching published documentation and embeds only fixed links and escaped notes', async () => {
+  assert.equal(releaseAnnouncement(releaseMarker, { ...releaseMarker, commit: 'b'.repeat(40) }), null);
+  assert.equal(releaseAnnouncement({ ...releaseMarker, version: '../fake' }, releaseMarker), null);
+  const facts = await fetchReleaseAnnouncement(releaseMarker, async url => {
+    assert.equal(url.href, 'https://theharithsa.github.io/SalesDrone/release-announcement.json');
+    return Response.json(releaseMarker);
+  });
+  const email = renderEmail({ template: 'release', origin: 'https://salesdrone.in', facts });
+  assert.match(email.subject, /v2\.15\.0/);
+  assert.match(email.html, /Open &lt;new&gt; tools/);
+  assert.ok(email.html.includes('href="https://theharithsa.github.io/SalesDrone/release-notes/v2.15.0.html"'));
+  assert.match(email.text, /Open <new> tools/);
+});
+
+test('release broadcast is explicitly enabled, production only, and once per currently eligible member', async () => {
+  let reads = 0;
+  const release = { current: releaseMarker, read: async () => { reads++; return releaseMarker; } };
+  const f = await fixture({ environment: 'production', allowlist: ['unrelated@example.test'], release });
+  const stage = (environment, settings) => stageReleaseAnnouncements({
+    store: f.store, config: { environment, release }, settings, at: releaseAt,
+  });
+  await f.policy();
+  f.at(releaseAt);
+  assert.equal((await f.drain()).accepted, 0);
+  assert.equal(reads, 0);
+  const { body: enabled } = await f.policy({ releaseAnnouncementsEnabled: true });
+  assert.equal(await stage('pre-production', enabled), 0);
+  assert.equal((await Promise.all([stage('production', enabled), stage('production', enabled)])).reduce((a, b) => a + b), 2);
+  assert.equal(await stage('production', enabled), 0);
+  await f.write('members', rep.uid, { ...rep, active: false });
+  assert.equal((await f.drain()).accepted, 1);
+  assert.deepEqual(f.transport.map(({ payload }) => payload.to), [['admin@example.test']]);
+  assert.match(f.transport[0].payload.subject, /v2\.15\.0/);
+  assert.equal((await f.drain()).accepted, 0);
+  assert.equal(f.transport.length, 1);
+});
+
+test('unattempted release mail waits for the next UTC day when the shared send cap is reached', async () => {
+  const release = { current: releaseMarker, read: async () => releaseMarker };
+  const f = await fixture({ environment: 'production', allowlist: ['unrelated@example.test'], release });
+  await f.policy({ releaseAnnouncementsEnabled: true });
+  await f.write('emailBudgets', '2026-11-23', { id: '2026-11-23', sends: 30 });
+  f.at(releaseAt);
+  assert.equal((await f.drain()).delayed, 2);
+  assert.equal(f.transport.length, 0);
+  f.at('2026-11-24T00:00:00.000Z');
+  assert.equal((await f.drain()).accepted, 2);
 });

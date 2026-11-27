@@ -1,6 +1,8 @@
 import { applicationDefault } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { resendClient } from './email-delivery.js';
+import { fetchReleaseAnnouncement } from './email-release-announcement.js';
+import { BUILD_RELEASE } from './version.js';
 
 const cacheMillis = 5 * 60_000;
 const productionProject = 'sales-drone-avinya';
@@ -42,6 +44,7 @@ export function createEmailConfig({ environment, origin, chooseInsight, env = pr
   const productionHook = productionSecret('SALESDRONE_RESEND_WEBHOOK_SECRET', credential, fetchImpl);
   return {
     environment, origin, ready, allowlist, chooseInsight,
+    release: preprod ? null : { current: BUILD_RELEASE, read: current => fetchReleaseAnnouncement(current, fetchImpl) },
     testInbox: preprod ? env.SDR_EMAIL_TEST_INBOX?.trim().toLowerCase() : null,
     send: resendClient(() => ready() ? preprod ? env.SDR_RESEND_API_KEY : productionKey() : null, fetchImpl),
     webhookSecret: () => ready() ? preprod ? env.SDR_RESEND_WEBHOOK_SECRET : productionHook() : null,

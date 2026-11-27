@@ -1,4 +1,12 @@
 {
+  "2.15.0": {
+    "summary": "Change stages faster, review Excel imports in the redesigned workspace, and get useful updates by email.",
+    "emailHighlights": [
+      "Update a sales stage directly in the Leads table, on a phone card or in the lead header.",
+      "Review and map enquiries in the redesigned Excel import.",
+      "Choose daily task reminders and weekly recaps in Email preferences."
+    ]
+  },
   "2.13.9": {
     "summary": "Explore an illustrated roadmap and a redesigned, searchable release archive."
   },
