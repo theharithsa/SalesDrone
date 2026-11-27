@@ -906,11 +906,11 @@ schemas.EmailBetaThread = object({
   id: string, subject: string, correspondent: string, updatedAt: string, latestMessageId: string,
   lastDirection: { type: 'string', enum: ['inbound','outbound'] },
   version: { type: 'integer' }, unread: { type: 'boolean' }, canSend: { type: 'boolean' },
-  lead: { anyOf: [ref('EmailBetaLead'), { type: 'null' }] },
-});
+  lead: { anyOf: [ref('EmailBetaLead'), { type: 'null' }] }, preview: { type: 'string', maxLength: 160 },
+}, ['id','subject','correspondent','updatedAt','latestMessageId','lastDirection','version','unread','canSend','lead']);
 schemas.EmailBetaMessage = object({
   id: string, direction: { type: 'string', enum: ['inbound','outbound'] }, body: string, createdAt: string, state: string,
-  attachments: { type: 'boolean' }, truncated: { type: 'boolean' }, formatVersion: { const: 1 },
+  attachments: { type: 'boolean' }, truncated: { type: 'boolean' }, formatVersion: { type: 'integer', enum: [1, 2] }, html: { type: 'string', maxLength: 48000 },
 }, ['id','direction','body','createdAt','state','attachments','truncated']);
 schemas.EmailBetaThreadDetail = {
   allOf: [ref('EmailBetaThread'), object({ messages: { type: 'array', maxItems: 25, items: ref('EmailBetaMessage') },

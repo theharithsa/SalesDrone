@@ -92,7 +92,7 @@ export function createBetaEmailConfig({ environment, env = process.env, credenti
     async receive(id) {
       const token = ready() ? await inboundKey() : null;
       if (!token) throw new Error('Email Beta provider setup is unavailable');
-      const response = await fetchImpl('https://api.resend.com/emails/receiving/' + encodeURIComponent(id), {
+      const response = await fetchImpl('https://api.resend.com/emails/receiving/' + encodeURIComponent(id) + '?html_format=cid', {
         headers: { Authorization: 'Bearer ' + token }, redirect: 'error', signal: AbortSignal.timeout(8_000),
       });
       if (!response.ok || !response.body) {

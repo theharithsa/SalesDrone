@@ -285,7 +285,7 @@ The lead header uses the saved `headerFields` sequence. Quick stage changes go t
 
 ### Lead correspondence
 
-Email Beta stores thread summaries, plain-text messages, due work and content-free
+Email Beta stores thread summaries, plain-text and sanitized HTML message bodies, due work and content-free
 deduplication keys under workspace server-only Firestore collections. Every
 thread read checks current lead access. Lead resets remove linked message bodies.
 Signed provider receipts are isolated by environment and scheduled work is

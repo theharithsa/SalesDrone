@@ -46471,6 +46471,11 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 16000
+          },
+          "html": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48000
           }
         },
         "required": [
@@ -46488,6 +46493,11 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 16000
+          },
+          "html": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48000
           },
           "expectedVersion": {
             "type": "integer",
@@ -51298,6 +51308,10 @@
                 "type": "null"
               }
             ]
+          },
+          "preview": {
+            "type": "string",
+            "maxLength": 160
           }
         },
         "required": [
@@ -51342,7 +51356,15 @@
             "type": "boolean"
           },
           "formatVersion": {
-            "const": 1
+            "type": "integer",
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "html": {
+            "type": "string",
+            "maxLength": 48000
           }
         },
         "required": [

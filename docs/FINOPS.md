@@ -80,6 +80,12 @@ Disabled by default. The browser makes no inbox or lead timeline reads while
 disabled. When enabled, a list request scans at most 25 thread summaries and
 batch-checks at most 25 current leads. Opening a thread reads 25 messages and
 marks its latest unread entry once. Refresh and pagination are explicit.
+New thread previews add at most 160 characters to each existing summary.
+Sanitized markup adds at most 48,000 characters to each message, up to 1.2
+million HTML characters per 25-message detail page. The reader only initializes
+open HTML messages. The production build loads the editor on first compose or
+reply (about 141 kB gzip). No polling, extra Firestore reads or automatic
+resource requests are added.
 The existing worker reads at most six delivery jobs and two deletion jobs per
 run. Each deletion batch removes up to 40 messages. Beta permits up to 10 send
 attempts and accepts up to 60 inbound messages per UTC day. Sends count toward the existing shared 30-attempt email budget.

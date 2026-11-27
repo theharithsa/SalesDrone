@@ -6,7 +6,7 @@ import { displayDate } from '../lib/types';
 export type EmailMessage = {
   id: string; direction: 'inbound' | 'outbound'; body: string;
   createdAt: string; state: string; attachments: boolean; truncated: boolean;
-  formatVersion?: 1;
+  formatVersion?: 1 | 2; html?: string;
 };
 
 function splitQuotedReply(value: string) {
@@ -36,10 +36,35 @@ export function FormattedEmailText({ value }: { value: string }) {
   )}</div>;
 }
 
+function HtmlEmailReader({ html, from }: { html: string; from: string }) {
+  const [tall, setTall] = useState(false);
+  const document = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+      :root { color-scheme: light; }
+      body { margin: 12px; font: 1rem/1.55 system-ui, sans-serif; color: #1c2330; background: #fff; overflow-wrap: anywhere; }
+      p:first-child { margin-top: 0; } a { color: #064e95; }
+      table { border-collapse: collapse; max-width: 100%; }
+      td, th { padding: .3rem .5rem; border: 1px solid #cbd1d9; }
+      blockquote { margin-inline: 0; padding-inline-start: 1rem; border-inline-start: 2px solid #cbd1d9; }
+      pre { white-space: pre-wrap; }
+    </style></head><body>${html}</body></html>`;
+  return <>
+    <iframe className={'email-beta-html' + (tall ? ' is-tall' : '')} title={'Formatted message from ' + from}
+      sandbox="allow-popups allow-popups-to-escape-sandbox" referrerPolicy="no-referrer" srcDoc={document} />
+    <button type="button" className="text-button" aria-pressed={tall}
+      onClick={() => setTall(value => !value)}>{tall ? 'Compact reader' : 'Expand reader'}</button>
+  </>;
+}
+
 export default function EmailConversationMessage({ message, correspondent, timezone, latest }: {
   message: EmailMessage; correspondent: string; timezone: string; latest: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [plain, setPlain] = useState(false);
+  const [open, setOpen] = useState(latest);
+  const rich = plain ? undefined : message.html;
   const from = message.direction === 'inbound' ? correspondent : 'SalesDrone';
   const [body, quote] = message.direction === 'inbound' ? splitQuotedReply(message.body) : [message.body, ''];
   const long = body.length > 1200 || body.split('\n').length > 14;
@@ -48,7 +73,7 @@ export default function EmailConversationMessage({ message, correspondent, timez
   const snippet = body.replace(/\s+/g, ' ').slice(0, 140);
   const preview = message.formatVersion === 1 ? emailMessageRuns(snippet).map(run => run.text).join('') : snippet;
   return <li className="email-beta-message">
-    <details open={latest || undefined}>
+    <details open={open} onToggle={event => setOpen(event.currentTarget.open)}>
       <summary>
         <span className="email-beta-message-avatar" aria-hidden="true">{from[0]?.toUpperCase()}</span>
         <span className="email-beta-message-byline">
@@ -58,7 +83,10 @@ export default function EmailConversationMessage({ message, correspondent, timez
         <time dateTime={message.createdAt}>{displayDate(message.createdAt, timezone)}</time>
         <ChevronDown size={16} aria-hidden="true" className="email-beta-message-chevron" />
       </summary>
-      <div className="email-beta-message-content">
+      {open && <div className="email-beta-message-content">
+        {message.html && <button type="button" className="text-button"
+          onClick={() => setPlain(value => !value)}>{plain ? 'Show formatted message' : 'Show plain text'}</button>}
+        {rich ? <HtmlEmailReader html={rich} from={from} /> : <>
         {message.formatVersion === 1 ? <FormattedEmailText value={visible} /> : <p className="email-beta-plain">{visible}</p>}
         {long && <button className="text-button" type="button" aria-expanded={expanded}
           onClick={() => setExpanded(value => !value)}>{expanded ? 'Show less' : 'Read full message'}</button>}
@@ -66,8 +94,9 @@ export default function EmailConversationMessage({ message, correspondent, timez
           <summary>Quoted text</summary>
           <blockquote className="email-beta-plain">{quote}</blockquote>
         </details>}
+        </>}
         <small>{message.state}{message.attachments ? ' · Attachments present' : ''}{message.truncated ? ' · Message shortened' : ''}</small>
-      </div>
+      </div>}
     </details>
   </li>;
 }

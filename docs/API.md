@@ -433,3 +433,13 @@ self-owned. Older clients can omit the new fields and retain the saved choices.
   until date is seven days after from.
 
 Admins can edit active custom field types and send an independently ordered `headerFields` array in the versioned field-options PATCH. The `phone` type accepts local and international numbers as strings. Type changes keep previously saved values, and edits validate the replacement value. The lead header stage control uses the existing versioned lead PATCH.
+
+### Email Beta message formatting
+
+Compose and reply accept an optional `html` field of up to 48,000 characters.
+The required `body` field is retained for text-only clients. For rich messages,
+the server derives the delivered text alternative from sanitized markup.
+Thread detail can include sanitized `html` alongside `body`. List items may
+include a 160-character `preview`; full message bodies are only in detail
+responses. Every request applies current lead access and the existing Beta
+policy. The renderer is pinned to the queued message for retries.
