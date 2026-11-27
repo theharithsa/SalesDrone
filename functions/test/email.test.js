@@ -461,7 +461,7 @@ test('release email requires matching published documentation and embeds only fi
   const email = renderEmail({ template: 'release', origin: 'https://salesdrone.in', facts });
   assert.match(email.subject, /v2\.15\.0/);
   assert.match(email.html, /Open &lt;new&gt; tools/);
-  assert.match(email.html, /https:\/\/theharithsa.github.io\/SalesDrone\/release-notes\/v2\.15\.0.html/);
+  assert.ok(email.html.includes('href="https://theharithsa.github.io/SalesDrone/release-notes/v2.15.0.html"'));
   assert.match(email.text, /Open <new> tools/);
 });
 
