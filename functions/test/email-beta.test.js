@@ -163,3 +163,41 @@ test('a shared pre-prod webhook verifies signatures and dispatches only Pilot in
   assert.equal(body.items.length, 1);
   assert.equal(body.items[0].subject, 'Shared callback');
 });
+
+test('HTML-only replies preserve formatting and rich sends include a safe text fallback', async () => {
+  const { call, receipt, enable, dispatch, incoming, sends } = fixture();
+  await enable();
+  const outbound = await call('post', '/email/threads', 'rep').set('Idempotency-Key', randomUUID())
+    .send({ leadId: lead.id, subject: 'Quote', body: 'Client fallback',
+      html: '<p>Hello <strong>there</strong></p><ul><li><u>Oak</u></li></ul><script>discard-me</script>' }).expect(200);
+  const { threadId } = outbound.body;
+  await dispatch();
+  assert.match(sends[0].payload.html, /<strong>there<\/strong>/);
+  assert.match(sends[0].payload.html, /<li><u>Oak<\/u><\/li>/);
+  assert.doesNotMatch(sends[0].payload.html, /discard-me|<script>/);
+  assert.match(sends[0].payload.text, /Hello there/);
+  assert.doesNotMatch(sends[0].payload.text, /Client fallback/);
+  const id = randomUUID();
+  incoming.set(id, {
+    from: customer, to: [alias(threadId)], subject: 'Re: Quote',
+    message_id: '<formatted@example.test>', authentication: { dmarc: 'pass' },
+    html: '<h2>Sample confirmed</h2><table><tr><td style="text-align:right; background-image:url(https://pixel.invalid)">Oak</td></tr></table>' +
+      '<img src="https://pixel.invalid"><a href="javascript&#58;alert(1)" onclick="alert(2)">Unsafe link</a>' +
+      '<a href="https://example.test/options">Options</a><script>discard-me</script><form action="https://pixel.invalid"><input></form>',
+  });
+  await receipt({ type: 'email.received', data: { email_id: id, to: [alias(threadId)] } }).expect(200);
+  await dispatch();
+  const { body } = await call('get', '/email/threads/' + threadId, 'rep').expect(200);
+  assert.equal(body.messages.length, 2);
+  const reply = body.messages.find(message => message.direction === 'inbound');
+  assert.match(reply.html, /<h2>Sample confirmed<\/h2>/);
+  assert.match(reply.html, /<td style="text-align:right">Oak<\/td>/);
+  assert.match(reply.html, /href="https:\/\/example.test\/options" target="_blank" rel="noopener noreferrer"/);
+  assert.doesNotMatch(reply.html, /pixel\.invalid|javascript:|onclick|discard-me|<form|<img|<input/);
+  assert.match(reply.body, /sample confirmed/i);
+  assert.equal(body.messages.find(message => message.direction === 'outbound').formatVersion, 2);
+  const list = await call('get', '/email/threads', 'rep').expect(200);
+  assert.match(list.body.items[0].preview, /sample confirmed/i);
+  assert.equal(list.body.items[0].html, undefined);
+  await call('get', '/email/threads/' + threadId, 'other').expect(404);
+});

@@ -19,7 +19,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 - Resend delivery with signed receipts, a scoped pilot, bounded retries and verified task facts for AvinyaIntelligence takeaways.
 
 ### Changed
-- Email Beta uses a compact inbox and collapsible conversation history. Compose messages with bold, italic and bullets, and preview the formatting before sending.
+- Email Beta adds a three-pane desktop inbox, a separate conversation view on phones, rich formatting while composing, and an isolated reader for HTML replies.
 - Email templates share the SalesDrone drone mark, Open Sans typography, and Astryx Neutral layout and spacing.
 - Admins can select a simulated delivery or bounce from the pre-production email preview.
 - Includes the Astryx Import enquiries experience for workbook mapping, review and job history.

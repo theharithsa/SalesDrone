@@ -1,3 +1,4 @@
+import { MAX_EMAIL_HTML, prepareEmailHtml, renderRichCorrespondenceV2 } from './email-html.js';
 import { renderCorrespondenceV1 } from './email-message-format.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -21,8 +22,9 @@ const version = z.number().int().positive();
 const body = z.string().trim().min(1).max(16_000);
 const subject = z.string().trim().min(1).max(180).regex(/^[^\r\n]+$/);
 export const BetaSettings = z.object({ enabled: z.boolean(), memberIds: z.array(objectId).max(50), expectedVersion: version }).strict();
-export const BetaCompose = z.object({ leadId: objectId, subject, body }).strict();
-export const BetaReply = z.object({ body, expectedVersion: version }).strict();
+const html = z.string().min(1).max(MAX_EMAIL_HTML).optional();
+export const BetaCompose = z.object({ leadId: objectId, subject, body, html }).strict();
+export const BetaReply = z.object({ body, html, expectedVersion: version }).strict();
 export const BetaLink = z.object({ leadId: objectId.nullable(), expectedVersion: version }).strict();
 export const BetaRead = z.object({ latestMessageId: uuid }).strict();
 export const BetaDelete = z.object({ confirmation: z.literal('DELETE'), expectedVersion: version }).strict();
@@ -83,6 +85,7 @@ const maySend = (member, lead) => lead ? member.capabilities.includes('leads:edi
 const summary = (thread, lead, member) => ({
   id: thread.id, subject: thread.subject, correspondent: thread.correspondent, updatedAt: thread.updatedAt,
   latestMessageId: thread.latestMessageId, lastDirection: thread.lastDirection,
+  ...(thread.preview ? { preview: thread.preview } : {}),
   version: thread.version, lead: leadLabel(lead),
   unread: !!thread.lastInboundMessageId && thread.reads?.[hash(member.uid)] !== thread.lastInboundMessageId,
   canSend: maySend(member, lead),
@@ -122,8 +125,8 @@ export async function betaDetail({ store, config, member, id, cursor, seal, open
   const last = rows.at(-1);
   return {
     ...summary(current, lead, member),
-    messages: rows.map(({ id, direction, body: text, createdAt, state, attachments, truncated, formatVersion }) =>
-      ({ id, direction, body: text, createdAt, state, attachments: !!attachments, truncated: !!truncated, ...(formatVersion === 1 ? { formatVersion } : {}) })),
+    messages: rows.map(({ id, direction, body: text, createdAt, state, attachments, truncated, formatVersion, html }) =>
+      ({ id, direction, body: text, createdAt, state, attachments: !!attachments, truncated: !!truncated, ...([1, 2].includes(formatVersion) ? { formatVersion } : {}), ...(html ? { html } : {}) })),
     nextCursor: rows.length === 25 ? seal([last.orderKey, last.id], binding) : null,
   };
 }
@@ -135,6 +138,7 @@ function writeMessage(tx, thread, message, at) {
   tx.set(ref(messages, message.id), message);
   tx.set(ref(threads, thread.id), {
     ...thread, updatedAt: at, latestMessageId: message.id, lastDirection: message.direction,
+    preview: message.body.replace(/\s+/g, ' ').trim().slice(0, 160),
     ...(message.direction === 'inbound' ? { lastInboundMessageId: message.id } : {}),
     hasSent: message.direction === 'outbound' || thread.hasSent === true, version: thread.version + 1,
   });
@@ -173,8 +177,12 @@ export async function betaSend(tx, config, member, threadId, input, requestKey, 
   if (!config.permits(thread.correspondent)) throw new AppError(403, 'EMAIL_BETA_DESTINATION', 'This environment uses an approved test inbox');
   if (await tx.get(path('emailSuppressions', hash(thread.correspondent))))
     throw new AppError(409, 'EMAIL_SUPPRESSED', 'This address cannot receive email');
+  const rich = input.html ? prepareEmailHtml(input.html) : null;
+  if (rich && (!rich.html || !rich.text || rich.clipped))
+    throw new AppError(400, 'EMAIL_BETA_HTML', 'Use a shorter message with supported formatting');
   const id = randomUUID();
-  const message = { id, threadId: thread.id, direction: 'outbound', state: 'Queued', body: input.body, formatVersion: 1,
+  const message = { id, threadId: thread.id, direction: 'outbound', state: 'Queued',
+    body: rich?.text || input.body, ...(rich ? { html: rich.html, formatVersion: 2 } : { formatVersion: 1 }),
     createdAt: at, orderKey: due(at, id), actorUid: member.uid, target: thread.correspondent,
     subject: thread.version && !/^re:/i.test(thread.subject) ? 'Re: ' + thread.subject : thread.subject,
     replyToId: thread.internetId || null, initialLeadId: thread.leadId,
@@ -273,7 +281,7 @@ const header = (headers, name) => Object.entries(headers || {}).find(([key]) => 
 function referenceIds(value) {
   return typeof value === 'string' ? (value.match(/<[^\s<>]{1,248}>/g) || []).slice(-12) : [];
 }
-async function receiveBeta(tx, config, job, input, at) {
+async function receiveBeta(tx, config, job, input, rich, at) {
   if (!(await tx.get(betaPolicyPath))?.enabled) throw unavailable();
   const correspondent = emailAddress(input.from);
   const destinations = (Array.isArray(input.to) ? input.to : []).slice(0, 10).map(emailAddress);
@@ -292,12 +300,13 @@ async function receiveBeta(tx, config, job, input, at) {
   if (known?.leadId && !await tx.get(path('leads', known.leadId))) return;
   const thread = known || { id: randomUUID(), leadId: null, correspondent, version: 0, reads: {},
     subject: typeof input.subject === 'string' ? input.subject.replace(/[\r\n]/g, ' ').trim().slice(0, 180) || '(No subject)' : '(No subject)' };
-  const text = typeof input.text === 'string' ? input.text.trim() : '';
+  const text = (typeof input.text === 'string' ? input.text.trim() : '') || rich.text;
   const id = job.workId;
   writeMessage(tx, { ...thread, internetId: ownId || thread.internetId || null }, {
     id, threadId: thread.id, orderKey: due(at, id), direction: 'inbound', createdAt: at, state: 'Received',
     body: text.slice(0, 16_000) || 'This message has no plain-text body.',
-    truncated: text.length > 16_000, attachments: Array.isArray(input.attachments) && input.attachments.length > 0,
+    ...(rich.html ? { html: rich.html } : {}),
+    truncated: text.length > 16_000 || rich.clipped, attachments: Array.isArray(input.attachments) && input.attachments.length > 0,
   }, at);
   if (ownId) tx.set(keys('internet', ownId), { threadId: thread.id });
 }
@@ -348,9 +357,10 @@ async function processSend(store, config, job, at, reserve, telemetry) {
   let result = armed?.state ? armed : null;
   if (message) {
     const payload = {
-      from: message.formatVersion === 1 ? 'SalesDrone <' + config.address + '>' : config.address,
+      from: message.formatVersion ? 'SalesDrone <' + config.address + '>' : config.address,
       to: [message.target], subject: message.subject,
-      ...(message.formatVersion === 1 ? renderCorrespondenceV1(message.body) : { text: message.body }),
+      ...(message.formatVersion === 2 ? renderRichCorrespondenceV2(message.body, message.html) :
+        message.formatVersion === 1 ? renderCorrespondenceV1(message.body) : { text: message.body }),
       reply_to: config.replyAddress(armed.thread.id),
       tags: [{ name: 'salesdrone_beta', value: message.id }, { name: 'salesdrone_env', value: config.environment }],
       ...(message.replyToId ? { headers: { 'In-Reply-To': message.replyToId, References: message.replyToId } } : {}),
@@ -391,7 +401,8 @@ export async function dispatchBetaEmail({ store, config, at, reserve, telemetry 
     } else if (job.kind === 'receive') {
       try {
         const received = await config.receive(job.providerId);
-        await complete(store, job, tx => receiveBeta(tx, config, job, received, at));
+        const rich = prepareEmailHtml(received?.html);
+        await complete(store, job, tx => receiveBeta(tx, config, job, received, rich, at));
         telemetry?.log?.('worker.stage', { worker: 'email', 'operation.stage': 'beta_inbound_processed' });
       } catch {
         telemetry?.log?.('worker.stage', { worker: 'email', 'operation.stage': 'beta_inbound_retry' }, 'WARN');

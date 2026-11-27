@@ -35,7 +35,7 @@
   "api": {
     "status": "changed",
     "contractVersion": "1.38.0",
-    "reason": "Adds optional release announcement setting and synthetic template, plus email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment. Adds the custom phone type and accepts changes to active custom field types through the existing settings route. Email Beta adds a scoped correspondence and Admin pilot policy API and an environment-specific signed callback. Formatted messages include an optional render version.",
+    "reason": "Adds optional release announcement setting and synthetic template, plus email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment. Adds the custom phone type and accepts changes to active custom field types through the existing settings route. Email Beta adds a scoped correspondence and Admin pilot policy API and an environment-specific signed callback. Correspondence accepts optional HTML and returns sanitized HTML and a compact thread preview. The existing text request and access policy remain supported.",
     "permissions": "Use Google sign-in, App Check and current access for application requests. Workspace configuration and tests need Admin. Resend callbacks require their own signature. No new PAT scope.",
     "tests": [
       "functions/test/email.test.js",
@@ -117,7 +117,8 @@
       284,
       289,
       291,
-      295
+      295,
+      297
     ],
     "readiness": "ready"
   },

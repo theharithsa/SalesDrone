@@ -154,11 +154,18 @@ to stay enabled.
 Open **Email** to read a conversation, compose to a lead’s current email address,
 or reply. On a phone, tap a conversation to open it, then use **Conversations**
 to return. A linked thread appears in the lead’s **All** timeline. **Send email**
-on the lead opens a composer with that lead selected. Messages appear in time order with the newest one open. Expand earlier
-messages and quoted text when you need context. Long messages have a short
-preview and a **Read full message** control. Use Bold, Italic, Bulleted list
-and Preview in the composer. New outgoing messages include formatted HTML
-and a plain-text fallback. Incoming mail is rendered as text. For an attachment, the inbox shows that one is present.
+on the lead opens a composer with that lead selected. On wide screens, mailbox
+filters, conversation previews and the reading pane appear side by side. The
+newest message starts open. Expand earlier messages by selecting the sender row.
+
+The composer shows bold, italic, underline, headings, lists, quotes and links as
+you type. SalesDrone sends formatted HTML and a plain-text alternative. Incoming
+HTML can preserve paragraphs, links, lists and tables, including messages that
+arrive with HTML alone. Use **Expand reader** for long mail and **Show plain text**
+for the accessible text fallback. Some clients send quoted history inside the HTML.
+The reader blocks embedded images, forms and other active content. Messages received
+before HTML support remain available as saved text. The inbox shows when an
+attachment is present.
 
 Admins can open **Settings → Workspace → Email notifications → Inbox Beta**.
 The inbox starts off. Admins may grant inbox access to up to 50 active members.
@@ -202,8 +209,9 @@ environment tags before it queues any Beta work. This configuration uses the
 existing signing secret. The separate send and receive credentials still apply.
 
 The signed receipt endpoint accepts up to 32 KiB. The worker retrieves up to
-2 MiB and stores at most 16,000 plain-text characters per message. HTML-only
-messages show a placeholder. A recognized reply alias or referenced message ID,
+2 MiB from Resend. Each message stores at most 16,000 plain-text characters and
+48,000 sanitized HTML characters. When HTML exceeds the storage bound, the reader
+uses the text alternative. A recognized reply alias or referenced message ID,
 matching correspondent and a passing DMARC result are required to append
 automatically. Other accepted inbound messages wait in Unlinked. Provider
 retries are bounded. Admins can pause sending and visibility from Inbox Beta.
