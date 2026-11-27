@@ -51340,6 +51340,9 @@
           },
           "truncated": {
             "type": "boolean"
+          },
+          "formatVersion": {
+            "const": 1
           }
         },
         "required": [

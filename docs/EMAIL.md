@@ -154,8 +154,11 @@ to stay enabled.
 Open **Email** to read a conversation, compose to a lead’s current email address,
 or reply. On a phone, tap a conversation to open it, then use **Conversations**
 to return. A linked thread appears in the lead’s **All** timeline. **Send email**
-on the lead opens a composer with that lead selected. Plain-text messages stay in
-the thread. For an attachment, the inbox shows that one is present.
+on the lead opens a composer with that lead selected. Messages appear in time order with the newest one open. Expand earlier
+messages and quoted text when you need context. Long messages have a short
+preview and a **Read full message** control. Use Bold, Italic, Bulleted list
+and Preview in the composer. New outgoing messages include formatted HTML
+and a plain-text fallback. Incoming mail is rendered as text. For an attachment, the inbox shows that one is present.
 
 Admins can open **Settings → Workspace → Email notifications → Inbox Beta**.
 The inbox starts off. Admins may grant inbox access to up to 50 active members.

@@ -1,3 +1,4 @@
+import { renderCorrespondenceV1 } from './email-message-format.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { AppError } from './contracts.js';
@@ -121,8 +122,8 @@ export async function betaDetail({ store, config, member, id, cursor, seal, open
   const last = rows.at(-1);
   return {
     ...summary(current, lead, member),
-    messages: rows.map(({ id, direction, body: text, createdAt, state, attachments, truncated }) =>
-      ({ id, direction, body: text, createdAt, state, attachments: !!attachments, truncated: !!truncated })),
+    messages: rows.map(({ id, direction, body: text, createdAt, state, attachments, truncated, formatVersion }) =>
+      ({ id, direction, body: text, createdAt, state, attachments: !!attachments, truncated: !!truncated, ...(formatVersion === 1 ? { formatVersion } : {}) })),
     nextCursor: rows.length === 25 ? seal([last.orderKey, last.id], binding) : null,
   };
 }
@@ -173,7 +174,7 @@ export async function betaSend(tx, config, member, threadId, input, requestKey, 
   if (await tx.get(path('emailSuppressions', hash(thread.correspondent))))
     throw new AppError(409, 'EMAIL_SUPPRESSED', 'This address cannot receive email');
   const id = randomUUID();
-  const message = { id, threadId: thread.id, direction: 'outbound', state: 'Queued', body: input.body,
+  const message = { id, threadId: thread.id, direction: 'outbound', state: 'Queued', body: input.body, formatVersion: 1,
     createdAt: at, orderKey: due(at, id), actorUid: member.uid, target: thread.correspondent,
     subject: thread.version && !/^re:/i.test(thread.subject) ? 'Re: ' + thread.subject : thread.subject,
     replyToId: thread.internetId || null, initialLeadId: thread.leadId,
@@ -347,7 +348,9 @@ async function processSend(store, config, job, at, reserve, telemetry) {
   let result = armed?.state ? armed : null;
   if (message) {
     const payload = {
-      from: config.address, to: [message.target], subject: message.subject, text: message.body,
+      from: message.formatVersion === 1 ? 'SalesDrone <' + config.address + '>' : config.address,
+      to: [message.target], subject: message.subject,
+      ...(message.formatVersion === 1 ? renderCorrespondenceV1(message.body) : { text: message.body }),
       reply_to: config.replyAddress(armed.thread.id),
       tags: [{ name: 'salesdrone_beta', value: message.id }, { name: 'salesdrone_env', value: config.environment }],
       ...(message.replyToId ? { headers: { 'In-Reply-To': message.replyToId, References: message.replyToId } } : {}),

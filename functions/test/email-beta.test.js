@@ -95,10 +95,15 @@ test('verified replies thread once, release replies stay Admin-only, deletion er
   const { store, call, receipt, enable, dispatch, incoming, sends } = fixture();
   await enable();
   const sent = await call('post', '/email/threads', 'rep').set('Idempotency-Key', randomUUID())
-    .send({ leadId: lead.id, subject: 'Quote', body: 'Sample price' }).expect(200);
+    .send({ leadId: lead.id, subject: 'Quote', body: '**Sample price**\n\n- *Oak*\n- <script>example</script>' }).expect(200);
   const { threadId, messageId } = sent.body;
   await dispatch();
   assert.equal(sends[0].payload.reply_to, alias(threadId));
+  assert.match(sends[0].payload.html, /<strong>Sample price<\/strong>/);
+  assert.match(sends[0].payload.html, /<li><em>Oak<\/em><\/li>/);
+  assert.equal(sends[0].payload.html.includes('<script>'), false);
+  assert.match(sends[0].payload.html, /&lt;script&gt;/);
+  assert.equal(sends[0].payload.text, 'Sample price\n\n• Oak\n• <script>example</script>');
   const originalId = '<original@example.test>';
   await receipt({ type: 'email.delivered', data: { email_id: sends[0].providerId, message_id: originalId,
     tags: { salesdrone_beta: messageId, salesdrone_env: 'pre-production' } } }).expect(200);

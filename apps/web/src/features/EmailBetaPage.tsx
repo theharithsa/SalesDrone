@@ -6,6 +6,7 @@ import { ErrorMessage, Modal } from '../components/UI';
 import { displayDate } from '../lib/types';
 import type { ApiClient } from '../lib/api';
 import ImportSurface from './ImportSurface';
+import EmailConversationMessage, { FormattedEmailText, type EmailMessage } from './EmailConversation';
 import './email-beta.css';
 
 type LeadLink = { id: string; name: string };
@@ -14,11 +15,7 @@ export type EmailThread = {
   latestMessageId: string; version: number; lead: LeadLink | null;
   unread: boolean; canSend: boolean;
 };
-type Message = {
-  id: string; direction: 'inbound' | 'outbound'; body: string;
-  createdAt: string; state: string; attachments: boolean; truncated: boolean;
-};
-type ThreadDetail = EmailThread & { messages: Message[]; nextCursor: string | null };
+type ThreadDetail = EmailThread & { messages: EmailMessage[]; nextCursor: string | null };
 type ThreadPage = { items: EmailThread[]; nextCursor: string | null };
 export type EmailTarget = { lead?: LeadLink; threadId?: string };
 const labels = { all: 'All', unread: 'Unread', sent: 'Sent', unlinked: 'Unlinked' } as const;
@@ -115,6 +112,7 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
     </header>
     <div className={'email-beta-layout' + (selected ? ' has-thread' : '')}>
       <section className="email-beta-list" aria-label="Conversations" aria-busy={loading}>
+        <h2>Conversations</h2>
         <nav className="email-beta-filters" aria-label="Inbox filters">{(Object.keys(labels) as (keyof typeof labels)[])
           .filter(key => key !== 'unlinked' || admin).map(key => <Button key={key}
             aria-pressed={filter === key} onClick={() => {
@@ -151,9 +149,6 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
           <p className="email-beta-correspondent">{active.correspondent}</p>
           <div className="email-beta-actions">
             {active.lead && <Button onClick={() => active.lead && onOpenLead(active.lead)}>Open {active.lead.name}</Button>}
-            {active.canSend && <Button variant="primary" onClick={event => {
-              previousFocus.current = event.currentTarget; setDraft({ reply: active });
-            }}>Reply</Button>}
             {admin && <details className="email-beta-manage">
               <summary>Manage</summary>
               <div>
@@ -166,12 +161,6 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
               </div>
             </details>}
           </div>
-          <ol className="email-beta-messages">{active.messages.map(message =>
-            <li key={message.id}>
-              <div><strong>{message.direction === 'inbound' ? active.correspondent : 'SalesDrone'}</strong><time dateTime={message.createdAt}>{displayDate(message.createdAt, timezone)}</time></div>
-              <p>{message.body}</p>
-              <small>{message.state}{message.attachments ? ' · Attachments present' : ''}{message.truncated ? ' · Message shortened' : ''}</small>
-            </li>)}</ol>
           {active.nextCursor && <Button disabled={detailBusy} onClick={async () => {
             setDetailBusy(true);
             try {
@@ -183,6 +172,14 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
               setDetailError(errorText(cause));
             } finally { setDetailBusy(false); }
           }}>Load older messages</Button>}
+          <ol className="email-beta-messages" aria-label="Conversation messages">
+            {[...active.messages].reverse().map(message =>
+              <EmailConversationMessage key={message.id} message={message} correspondent={active.correspondent}
+                timezone={timezone} latest={message.id === active.latestMessageId} />)}
+          </ol>
+          {active.canSend && <Button variant="primary" onClick={event => {
+            previousFocus.current = event.currentTarget; setDraft({ reply: active });
+          }}>Reply</Button>}
         </>}
       </section>
     </div>
@@ -232,6 +229,28 @@ function EmailComposer({ lead: initialLead, reply, request, onClose, onQueued, r
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const attempt = useRef<{ payload: string; key: string } | null>(null);
+  const editor = useRef<HTMLTextAreaElement>(null);
+  const [preview, setPreview] = useState(false);
+  function format(kind: 'bold' | 'italic' | 'list') {
+    const input = editor.current;
+    if (!input) return;
+    const { selectionStart, selectionEnd: end } = input;
+    const start = kind === 'list' && selectionStart > 0
+      ? body.lastIndexOf('\n', selectionStart - 1) + 1 : selectionStart;
+    const text = body.slice(start, end);
+    const delimiter = kind === 'bold' ? '**' : '*';
+    const replacement = kind === 'list'
+      ? text.split('\n').map(line => '- ' + line).join('\n')
+      : delimiter + text + delimiter;
+    const next = body.slice(0, start) + replacement + body.slice(end);
+    if (next.length > 16000) return;
+    setBody(next);
+    requestAnimationFrame(() => {
+      input.focus();
+      const cursor = text ? start + replacement.length : start + (kind === 'list' ? 2 : delimiter.length);
+      input.setSelectionRange(cursor, cursor);
+    });
+  }
   return <Modal open onClose={() => { if (!busy) onClose(); }} title={reply ? 'Reply' : 'New email'} description={reply ? 'Add a message to this conversation.' : 'Send a message to a lead from SalesDrone.'} wide returnFocusRef={returnFocusRef}>
     <ImportSurface><form className="email-beta-form" onSubmit={async event => {
       event.preventDefault();
@@ -252,7 +271,17 @@ function EmailComposer({ lead: initialLead, reply, request, onClose, onQueued, r
         <Button type="button" disabled={busy} onClick={() => setLead(undefined)}>Change lead</Button></div> :
         <LeadPicker request={request} onSelect={setLead} />}
       {!reply && <label>Subject<input value={subject} maxLength={180} required disabled={busy} onChange={event => setSubject(event.target.value)} /></label>}
-      <label>Message<textarea value={body} maxLength={16000} required disabled={busy} onChange={event => setBody(event.target.value)} /></label>
+      <div className="email-beta-editor">
+        <div className="email-beta-actions" role="group" aria-label="Message formatting">
+          <Button disabled={busy || preview} onClick={() => format('bold')}>Bold</Button>
+          <Button disabled={busy || preview} onClick={() => format('italic')}>Italic</Button>
+          <Button disabled={busy || preview} onClick={() => format('list')}>Bulleted list</Button>
+          <Button aria-pressed={preview} onClick={() => setPreview(value => !value)}>{preview ? 'Edit message' : 'Preview'}</Button>
+        </div>
+        {preview ? <div className="email-beta-preview" aria-label="Message preview">
+          {body.trim() ? <FormattedEmailText value={body} /> : <p>Your message will appear here.</p>}
+        </div> : <label>Message<textarea ref={editor} value={body} maxLength={16000} required disabled={busy} onChange={event => setBody(event.target.value)} /></label>}
+      </div>
       <ErrorMessage error={error} />
       <Button variant="primary" type="submit" disabled={busy || !body.trim() || (!reply && (!lead || !subject.trim()))}><Mail size={16} />{busy ? 'Queuing…' : 'Send email'}</Button>
     </form></ImportSurface>

@@ -106,4 +106,4 @@ Follow [the email runbook](../../docs/EMAIL.md) for transactional email and Emai
 
 Email uses an Astryx layout, Open Sans, fixed first-party light and dark marks
 and a text wordmark. Release mail waits for published notes and batches eligible members.
-Pin template revisions and reply destinations at first send to keep retries stable.
+Pin template revisions and reply destinations to keep retries stable. Beta formats outgoing text and keeps quoted replies expandable.
