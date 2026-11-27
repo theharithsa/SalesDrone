@@ -1,5 +1,6 @@
 import LeadHeaderContext from '../components/LeadHeaderContext';
 import TaskListPreview from './TaskListPreview';
+import EmailReviewFixture from './EmailReviewFixture';
 import LeadAssistantPage from "../features/LeadAssistantPage";
 import LeadAssistantPrototype from './LeadAssistantPrototype';
 import '../research.css';
@@ -32,6 +33,7 @@ import '@fontsource-variable/lora';
 import '@fontsource-variable/open-sans';
 import '@fontsource-variable/source-serif-4';
 import '@fontsource/patrick-hand/latin-400.css';
+import '@astryxdesign/theme-neutral/theme.css';
 import '../material/fonts.css';
 import '../material/tokens.css';
 import '../material/base.css';
@@ -315,6 +317,7 @@ function AdminReview() {
     }
     return request(path, method, body);
   }, [request]);
+  if (new URLSearchParams(window.location.search).get('preview') === 'email') return <EmailReviewFixture />;
   if (new URLSearchParams(window.location.search).get('preview') === 'assistant-agent')return <LeadAssistantPrototype/>;
   if (new URLSearchParams(window.location.search).get('preview') === 'lead-header') {
     const overlay = new URLSearchParams(window.location.search).has('overlay');

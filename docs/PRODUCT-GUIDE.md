@@ -936,7 +936,7 @@ Workspace members and administrators
 
 4. Open a message’s main link, then sign in with your approved Google account to see the linked work.
 
-5. When the Admin enables Inbox Beta, open Email to send and reply to leads. Open linked conversations from the lead’s All timeline. Expand earlier messages as needed. Compose with visible formatting, and use Show plain text to switch views when reading an HTML message.
+5. When the Admin enables Inbox Beta, open Email to send and reply to leads. Open linked conversations from the lead’s All timeline. Expand earlier messages as needed. Format drafts with the icon toolbar. Use the previous or next arrow to move through loaded conversations, and Show plain text to switch views when reading an HTML message.
 
 Emails cover workspace invitations and active access, lead assignments and configured outcomes, and meaningful changes to a teammate’s shared task. A task’s responsible member appears in the app. Admins can use Resend email on an active invitation in People & access.
 

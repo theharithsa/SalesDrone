@@ -2,8 +2,8 @@ import { emailOn, readEmailSettings, writeEmailJob } from './email-policy.js';
 import { documentKey } from './store.js';
 import { path } from './policy.js';
 
-export const RELEASE_NOTES_ORIGIN = 'https://theharithsa.github.io/SalesDrone/';
-export const releaseNotesUrl = version => new URL('release-notes/v' + version + '.html', RELEASE_NOTES_ORIGIN).href;
+import { RELEASE_NOTES_ORIGIN } from './email-release-links.js';
+
 export const releaseQueueDailyLimit = 12;
 const batch = 6;
 const versionPattern = /^\d{1,8}\.\d{1,8}\.\d{1,8}$/;

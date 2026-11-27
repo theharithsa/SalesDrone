@@ -5,8 +5,9 @@
   margin-bottom: 20px;
 }
 .dashboard-kpis > div {
-  padding: 20px 24px;
-  border-radius: 20px;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: var(--panel);
   display: grid;
   gap: 12px;
@@ -47,8 +48,9 @@
   align-items: flex-start;
   gap: 20px;
   padding: 24px;
-  border-radius: 20px;
-  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
   margin-bottom: 20px;
   min-width: 0;
 }

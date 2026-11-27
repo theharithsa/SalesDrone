@@ -7,6 +7,13 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 
 
+## [Unreleased]
+
+### Changed
+
+- Apply shared Astryx Neutral surfaces, control sizes and field labels across the workspace. Align the Leads filters and stage controls, simplify sign-in, and give custom field editing the same layout as other forms.
+- Email Beta uses an icon-only formatting toolbar, clearer recipient and subject rows, previous and next conversation controls, and Cmd/Ctrl+Enter to send.
+
 ## [2.15.0] - 2026-11-29
 
 ### Added

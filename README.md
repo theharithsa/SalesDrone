@@ -1,7 +1,7 @@
 # SalesDrone by AvinyaTech
 
 SalesDrone is a responsive sales workspace for leads, follow-ups, team activity,
-and scoped AI assistance. It uses Material 3 and includes personal appearance
+and scoped AI assistance. It uses Astryx Neutral and includes personal appearance
 options such as Book mode. Screenshots use fictional demo data.
 
 [![Verify, deploy and observe](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/theharithsa/SalesDrone/actions/workflows/deploy.yml)
@@ -161,13 +161,13 @@ Open **Settings → Appearance & time**, enable **Book mode**, and save. The wor
 
 Saved settings now have a [durable audit trail](docs/SETTINGS-AUDIT.md) with safe Dynatrace event/log delivery. Agent guidance: [Book mode skill](skills/salesdrone-book-mode/SKILL.md).
 
-Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), adapted from Material 3 while retaining personal font and Book mode preferences. Open Filters for advanced search options; select the current stage to update it from the Leads table or a phone card. Opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
+Layouts and typography across phones, tablets, laptops and desktops follow the [SalesDrone design principles](docs/DESIGN-SYSTEM.md), using Astryx Neutral while retaining personal font and Book mode preferences. Open Filters for advanced search options; select the current stage to update it from the Leads table or a phone card. Opening a lead on a phone goes straight to its full page. Shared [Wondel Design & UX skills](skills/WONDEL-SOURCE.md) are available through `.agents/skills`.
 
 ![Mobile lead list with synthetic data and compact filters.](site/assets/screenshots/mobile-leads-demo.jpg?sha=7bc3cee1bedd)
 
 ## Reviewed across screen sizes
 
-Material 3 type roles use 16px body text, compact table labels and content-width forms while preserving personal font choices. The [v2.0 review](docs/MATERIAL-3-REVIEW.md) records measured layouts from 360 to 1920px, real infinite-scroll behavior, form checks and browser-only verification limits.
+Workspace type roles use 16px body text, compact table labels and content-width forms while preserving personal font choices. The [v2.0 review](docs/MATERIAL-3-REVIEW.md) records measured layouts from 360 to 1920px, real infinite-scroll behavior, form checks and browser-only verification limits.
 
 ![Compact laptop lead table with synthetic data and editing available inside opened lead details.](site/assets/screenshots/laptop-demo.jpg?sha=f6da044cb4d4)
 
@@ -264,7 +264,7 @@ Review shared contacts and incomplete enquiries in Lead Hygiene. Ask lead-only q
 
 ![Synthetic Lead Assistant evidence and citations](site/assets/screenshots/assistant-demo.jpg)
 
-Admins can use **Team** for current lead workload, recorded comments/calls, task progress and member activity linked to leads. Named **Assigned to** filters narrow Leads and matching exports. The compact grouped Material 3 sidebar supports additional modules while preserving phone targets. See the [Team contract](docs/TEAM.md) and [product handbook](docs/PRODUCT-GUIDE.md#team-insights).
+Admins can use **Team** for current lead workload, recorded comments/calls, task progress and member activity linked to leads. Named **Assigned to** filters narrow Leads and matching exports. The compact grouped Astryx sidebar supports additional modules while preserving phone targets. See the [Team contract](docs/TEAM.md) and [product handbook](docs/PRODUCT-GUIDE.md#team-insights).
 
 ![Admin Team overview — fictional demo data](site/assets/screenshots/team-demo.jpg?sha=2bc1a7dab8c1)
 

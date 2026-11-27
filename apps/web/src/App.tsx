@@ -102,7 +102,6 @@ import {
   PanelLeftOpen,
   Menu,
   LoaderCircle,
-  PhoneCall,
   Filter,
   X,
 } from 'lucide-react';
@@ -1565,63 +1564,11 @@ export default function App() {
         </div>
         <div className="login-content">
           <div className="login-copy">
-            <span className="eyebrow">
-              A LITTLE CLARITY. A LOT OF MOMENTUM.
-            </span>
-            <h1>
-              <span className="conversation-script">Good conversations.</span>
-              <br />
-              <em>Better follow-through.</em>
-            </h1>
-            <p>
-              Your enquiries, calls, and next steps.
-              <br />
-              Together in one calm workspace.
-            </p>
-            <div className="login-art" aria-label="Illustrative sales workflow">
-              <div className="login-art-row">
-                <span>01</span>
-                <span>
-                  <strong>Capture an enquiry</strong>
-                  <small>One place for every conversation</small>
-                </span>
-                <span className="badge">New</span>
-              </div>
-              <div className="login-art-row">
-                <span>02</span>
-                <span>
-                  <strong>Keep the next step clear</strong>
-                  <small>Notes, calls and timely follow-ups</small>
-                </span>
-                <span className="badge">Working</span>
-              </div>
-              <div className="login-art-row">
-                <span>03</span>
-                <span>
-                  <strong>Build the relationship</strong>
-                  <small>From first contact to the right opportunity</small>
-                </span>
-                <span className="badge stage-qualified">Qualified</span>
-              </div>
-            </div>
-            <div className="login-benefits">
-              <span>
-                <UsersRound size={17} /> Know your leads.
-              </span>
-              <span>
-                <PhoneCall size={17} /> Keep the context.
-              </span>
-              <span>
-                <Bell size={17} /> Remember the next step.
-              </span>
-            </div>
+            <h1>Enquiries and follow-ups</h1>
+            <p>Track enquiries, conversations, and follow-ups in one workspace.</p>
           </div>
           <section className="login-card">
-            <span className="login-icon">
-              <ArrowUpRight size={28} />
-            </span>
-            <h2>Welcome to SalesDrone</h2>
-            <p>Sign in to pick up where you left off.</p>
+            <h2>Sign in to SalesDrone</h2>
             <button
               className="button google-button"
               disabled={sessionBusy}
@@ -2233,67 +2180,80 @@ export default function App() {
                         </span>
                       ) : null}
                     </summary>
-                    {admin||demo?<><ErrorMessage error={assigneesError}/><AssigneeFilter value={assignee} onChange={setAssignee} members={assignees} loading={assigneesLoading}/></>:null}
-                    <div className="leads-toolbar">
-                      <select
-                        aria-label="Search field"
-                        value={searchField}
-                        onChange={(e) => setSearchField(e.target.value)}
-                      >
-                        <option value="all">All lead fields and comments</option>
-                        <option value="name">
-                          {labelFor(fieldOptions, 'name')}
-                        </option>
-                        <option value="company">
-                          {labelFor(fieldOptions, 'company')}
-                        </option>
-                        <option value="phone">
-                          {labelFor(fieldOptions, 'phone')}
-                        </option>
-                        <option value="email">
-                          {labelFor(fieldOptions, 'email')}
-                        </option>
-                        <option value="location">
-                          {labelFor(fieldOptions, 'location')}
-                        </option>
-                        <option value="zone">
-                          {labelFor(fieldOptions, 'zone')}
-                        </option>
-                      </select>
-                      <select
-                        aria-label="Filter stage"
-                        value={stage}
-                        onChange={(e) => setStage(e.target.value)}
-                      >
-                        <option value="">
-                          All {labelFor(fieldOptions, 'stage').toLowerCase()}
-                        </option>
-                        {withCurrent(
-                          fieldOptions.values.stage,
-                          selected?.stage,
-                        ).map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
-                      <select
-                        aria-label="Filter source"
-                        value={source}
-                        onChange={(e) => setSource(e.target.value)}
-                      >
-                        <option value="">
-                          All {labelFor(fieldOptions, 'source').toLowerCase()}
-                        </option>
-                        {sourceOptions.map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
+                    <div className="lead-filter-sheet">
+                      {admin || demo ? <ErrorMessage error={assigneesError} /> : null}
+                      <div className="leads-toolbar">
+                        {admin || demo ? <AssigneeFilter value={assignee} onChange={setAssignee}
+                          members={assignees} loading={assigneesLoading} /> : null}
+                        <label>
+                          Search field
+                          <select
+                            aria-label="Search field"
+                            value={searchField}
+                            onChange={(e) => setSearchField(e.target.value)}
+                          >
+                            <option value="all">All fields</option>
+                            <option value="name">
+                              {labelFor(fieldOptions, 'name')}
+                            </option>
+                            <option value="company">
+                              {labelFor(fieldOptions, 'company')}
+                            </option>
+                            <option value="phone">
+                              {labelFor(fieldOptions, 'phone')}
+                            </option>
+                            <option value="email">
+                              {labelFor(fieldOptions, 'email')}
+                            </option>
+                            <option value="location">
+                              {labelFor(fieldOptions, 'location')}
+                            </option>
+                            <option value="zone">
+                              {labelFor(fieldOptions, 'zone')}
+                            </option>
+                          </select>
+                        </label>
+                        <label>
+                          {labelFor(fieldOptions, 'stage')}
+                          <select
+                            aria-label="Filter stage"
+                            value={stage}
+                            onChange={(e) => setStage(e.target.value)}
+                          >
+                            <option value="">
+                              All {labelFor(fieldOptions, 'stage').toLowerCase()}
+                            </option>
+                            {withCurrent(
+                              fieldOptions.values.stage,
+                              selected?.stage,
+                            ).map((s) => (
+                              <option key={s}>{s}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          {labelFor(fieldOptions, 'source')}
+                          <select
+                            aria-label="Filter source"
+                            value={source}
+                            onChange={(e) => setSource(e.target.value)}
+                          >
+                            <option value="">
+                              All {labelFor(fieldOptions, 'source').toLowerCase()}
+                            </option>
+                            {sourceOptions.map((s) => (
+                              <option key={s}>{s}</option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+                      <LeadFilters
+                        config={fieldOptions}
+                        key={session?.identity.uid || 'demo'}
+                        applied={columnFilters}
+                        onApply={setColumnFilters}
+                      />
                     </div>
-                    <LeadFilters
-                      config={fieldOptions}
-                      key={session?.identity.uid || 'demo'}
-                      applied={columnFilters}
-                      onApply={setColumnFilters}
-                    />
                   </details>
                   <div
                     className="stage-tabs"
@@ -2304,6 +2264,7 @@ export default function App() {
                       <button
                         key={s}
                         className={stage === s ? 'active' : ''}
+                        aria-pressed={stage === s}
                         onClick={() => setStage(s)}
                       >
                         {s || 'All leads'}

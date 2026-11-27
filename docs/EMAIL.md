@@ -152,17 +152,16 @@ to stay enabled.
 ## Lead correspondence (Email Beta)
 
 Open **Email** to read a conversation, compose to a lead’s current email address,
-or reply. On a phone, tap a conversation to open it, then use **Conversations**
+or reply. On a phone, tap a conversation to open it, then use **Inbox**
 to return. A linked thread appears in the lead’s **All** timeline. **Send email**
 on the lead opens a composer with that lead selected. On wide screens, mailbox
 filters, conversation previews and the reading pane appear side by side. The
-newest message starts open. Expand earlier messages by selecting the sender row.
+newest message starts open. Expand earlier messages by selecting the sender row. Use the previous and next arrows to move through the loaded conversations. On a phone, **Inbox** returns focus to the selected row.
 
-The composer shows bold, italic, underline, headings, lists, quotes and links as
-you type. SalesDrone sends formatted HTML and a plain-text alternative. Incoming
+The composer keeps the recipient and subject above the message. Icon buttons below it apply bold, italic, underline, headings, lists, quotes and links. Hover or use keyboard focus for each label. Use Cmd/Ctrl+Enter in the message body to send. SalesDrone sends formatted HTML and a plain-text alternative. Incoming
 HTML can preserve paragraphs, links, lists and tables, including messages that
 arrive with HTML alone. Use **Expand reader** for long mail and **Show plain text**
-for the accessible text fallback. Some clients send quoted history inside the HTML.
+for the plain-text alternative. Some clients send quoted history inside the HTML.
 The reader blocks embedded images, forms and other active content. Messages received
 before HTML support remain available as saved text. The inbox shows when an
 attachment is present.

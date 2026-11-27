@@ -1,17 +1,17 @@
 ---
 name: salesdrone-interface
-description: "Maintain SalesDrone Material 3 responsive shell, typography, themes, accessible overlays and synthetic demo adapters. Use for cross-module UI and design work; business logic stays with its owning module."
+description: "Maintain SalesDrone Astryx responsive shell, typography, themes, accessible overlays and synthetic demo adapters. Use for cross-module UI and design work; business logic stays with its owning module."
 ---
 
-# Interface and Material 3 design system
+# Interface and Astryx design system
 
 Read [SHARED.md](../SHARED.md), [design system](../../docs/DESIGN-SYSTEM.md) and the
-[review evidence](../../docs/MATERIAL-3-REVIEW.md). Preserve web accessibility and policy guarantees.
+[review evidence](../../docs/ASTRYX-WORKSPACE-REVIEW.md). Preserve web accessibility and policy guarantees.
 
 ## Responsibility and entry points
 
 - [App.tsx](../../apps/web/src/App.tsx): session shell, navigation, record panes and demo adapters.
-- [main.tsx](../../apps/web/src/main.tsx): the sole Material stylesheet entry.
+- [main.tsx](../../apps/web/src/main.tsx): the Astryx Neutral theme and shared stylesheet entry.
 - [material/](../../apps/web/src/material/): role tokens and owned shell, workspace,
   dashboard, settings and login styles. Do not re-import the v1 refresh cascade.
 - [UI.tsx](../../apps/web/src/components/UI.tsx): semantic actions, Radix dialogs,
@@ -36,13 +36,13 @@ Never weaken Google/App Check, membership or scoped file/token access for a prev
 Preserve immutable comments/corrections, reminder privacy, import replay, optimistic
 versions and cancellation epochs. No private records or credentials in screenshots.
 
-Preserve Material colour roles, Google Sans headings, Manrope body text and monospace phone identifiers. Book mode and personal font/scale choices must preserve accessible touch targets, focus, Escape and independent scrolling. Breakpoints follow content rather than platform detection. Keep synthetic preview transports isolated from production.
+Preserve preference-backed colour roles, Google Sans headings, Manrope body text and monospace phone identifiers. Book mode and personal font/scale choices must preserve accessible touch targets, focus, Escape and independent scrolling. Breakpoints follow content rather than platform detection. Keep synthetic preview transports isolated from production.
 
 For domain controls, also load [leads](../salesdrone-leads/SKILL.md), [tasks](../salesdrone-tasks-reminders/SKILL.md), [workspace settings](../salesdrone-workspace-settings/SKILL.md) or [Book mode](../salesdrone-book-mode/SKILL.md) as applicable. [Product guide](../salesdrone-product-guide/SKILL.md) owns public captures.
 
 Shared desktop/mobile column filters expose Exact match only for source, stage and active custom dropdowns. Keep Equals available and explain literal case/spacing/Unicode matching. Changing columns resets comparison. Mobile search and filters open from the title with focus return. Align Tasks by panel width.
 
-Imports use a lazy Astryx theme without its global reset. Keep native mapping controls and labelled comment choices with column positions. Popup selects keep one-line labels and bounded pickers. In dialogs use native pickers for Escape and focus, and review opened pickers in a browser.
+The workspace uses Astryx Neutral tokens. Import and Email load component CSS on demand. Keep native mapping controls and labelled comment choices with column positions. Popup selects keep one-line labels and bounded pickers. In dialogs use native pickers for Escape and focus, and review opened pickers in a browser.
 
 Transactional emails apply Astryx Neutral spacing and typography with the same
 Open Sans and SalesDrone mark as the public docs. Keep email CSS inline and the
@@ -59,16 +59,16 @@ These are tracked follow-ups, not implemented behavior: [#37](https://github.com
 
 Field-dependent dashboard copy must remain readable with 80-character configured labels at narrow widths and larger display scales. Import conflict messages use local focus links to existing controls; do not silently change column mappings or discard their data.
 
-Modal closed selects use appearance:none so filled heights and inset labels remain CSS-controlled, including Country code/custom dropdowns. Keep the shared chevron and native open menu; appearance:auto belongs only to the picker pseudo-element. Check label/value separation in actual synthetic dialogs.
+Modal closed selects use appearance:none so control heights and separate labels remain CSS-controlled, including Country code/custom dropdowns. Keep the shared chevron and native open menu; appearance:auto belongs only to the picker pseudo-element. Check label/value separation in actual synthetic dialogs.
 
 Lead Hygiene and Lead Assistant are capability-gated navigation destinations with responsive private history/results, explicit loading/stale states and source links. Demo is isolated and disables live scans/AI. The shared ResearchPage marks private content for masking. Keep controls usable at narrow widths and protect async component state across identity/mode changes.
 
-Lead Assistant uses the dedicated Material conversation surface with on-demand history.
+Lead Assistant uses the dedicated conversation surface with on-demand history.
 Its fixed history sheet divides viewport dimensions by interface-scale; verify both
 zoom and short windows. Composer insets account for bottom navigation only inside
 the app shell, so standalone synthetic previews do not inherit a phantom nav gap.
 
-The drone wordmark follows the accent. Book mode uses bound pages and handwriting across the shell and dialogs. Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use existing Material buttons and narrow-card wrapping.
+The drone wordmark follows the accent. Book mode uses bound pages and handwriting across the shell and dialogs. Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use shared buttons and narrow-card wrapping.
 
 ResearchPage uses page-body for the same responsive padding/max-width as other workspace pages. Assistant compound answers render one conversational message, with supporting context in a collapsed native details element and independent result controls beneath it. Preserve visible partial/setup warnings and use returned counts only; no additional model call is required for presentation.
 

@@ -54,6 +54,7 @@ import '@fontsource-variable/open-sans';
 import '@fontsource-variable/source-serif-4';
 import '@fontsource/patrick-hand/latin-400.css';
 
+import '@astryxdesign/theme-neutral/theme.css';
 import './material/fonts.css';
 import './material/tokens.css';
 import './material/base.css';

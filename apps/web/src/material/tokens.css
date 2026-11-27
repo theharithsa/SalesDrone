@@ -1,4 +1,4 @@
-/* SalesDrone 2 — Material 3 role tokens. One palette, no per-screen overrides. */
+/* SalesDrone workspace palette. Compatibility roles keep existing preference palettes working. */
 :root {
   --md-sys-color-primary: #005ca9;
   --md-sys-color-on-primary: #fff;
@@ -10,16 +10,16 @@
   --md-sys-color-tertiary: #006b5f;
   --md-sys-color-tertiary-container: #9ef2df;
   --md-sys-color-on-tertiary-container: #00201b;
-  --md-sys-color-surface: #f8f9ff;
+  --md-sys-color-surface: #f7f8fa;
   --md-sys-color-surface-container-lowest: #fff;
-  --md-sys-color-surface-container-low: #f1f3fa;
-  --md-sys-color-surface-container: #eceff6;
-  --md-sys-color-surface-container-high: #e6e9f0;
+  --md-sys-color-surface-container-low: #f2f3f6;
+  --md-sys-color-surface-container: #eceef2;
+  --md-sys-color-surface-container-high: #e7e9ee;
   --md-sys-color-surface-container-highest: #e0e3ea;
   --md-sys-color-on-surface: #191c20;
   --md-sys-color-on-surface-variant: #434750;
   --md-sys-color-outline: #737781;
-  --md-sys-color-outline-variant: #c3c7d1;
+  --md-sys-color-outline-variant: #d2d6de;
   --md-sys-color-error: #ba1a1a;
   --md-sys-color-error-container: #ffdad6;
   --md-sys-color-on-error-container: #410002;
@@ -55,7 +55,21 @@
   --input: var(--panel);
   --brand-blue: #0054a6;
   --danger: var(--md-sys-color-error);
-  --radius: 20px;
+  --radius: var(--radius-container, 12px);
+  --control-radius: var(--radius-element, 10px);
+  --control-height: max(42px, var(--md-touch-target, 0px));
+  --workspace-gutter: clamp(16px, 2.6vw, 40px);
+  --font-family-body: var(--body-font);
+  --font-family-heading: var(--heading-font);
+  --color-accent: var(--accent);
+  --color-accent-muted: var(--accent-soft);
+  --color-text-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-text-primary: var(--text);
+  --color-text-secondary: var(--muted);
+  --color-background-card: var(--panel);
+  --color-background-muted: var(--md-sys-color-surface-container-low);
+  --color-border: var(--line);
   --shadow: 0 2px 6px #0000000d;
   font-family: var(--body-font);
   font-size: 16px;

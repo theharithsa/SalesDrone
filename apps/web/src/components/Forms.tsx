@@ -157,7 +157,7 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'phone')}</span>
             <input
               name="phone"
-              placeholder="N/A"
+              placeholder={lead ? "N/A" : undefined}
               required={!lead || (!lead.needsReview && !lead.email && !visible('email'))}
               type="tel"
               maxLength={40}

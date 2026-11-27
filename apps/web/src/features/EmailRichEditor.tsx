@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import DOMPurify from 'dompurify';
+import { Bold, Heading2, Italic, Link2, List, ListOrdered, Quote, Underline, Unlink2 } from 'lucide-react';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 
 export type RichDraft = { body: string; html: string };
 
@@ -17,7 +19,13 @@ export default function EmailRichEditor({ disabled, onChange }: {
     })],
     immediatelyRender: false,
     editorProps: {
-      attributes: { role: 'textbox', 'aria-label': 'Message', 'aria-multiline': 'true' },
+      attributes: { role: 'textbox', 'aria-label': 'Message', 'aria-multiline': 'true', 'aria-placeholder': 'Write a message' },
+      handleKeyDown: (view, event) => {
+        if (event.key !== 'Enter' || !(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey) return false;
+        event.preventDefault();
+        view.dom.closest('form')?.requestSubmit();
+        return true;
+      },
       transformPastedHTML: html => DOMPurify.sanitize(html, {
         ALLOWED_TAGS: ['p', 'div', 'span', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'ul', 'ol', 'li', 'a', 'h2', 'h3', 'blockquote', 'code', 'pre'],
         ALLOWED_ATTR: ['href'],
@@ -33,6 +41,7 @@ export default function EmailRichEditor({ disabled, onChange }: {
   const active = useEditorState({
     editor,
     selector: ({ editor }) => ({
+      empty: editor?.isEmpty ?? true,
       bold: editor?.isActive('bold') || false,
       italic: editor?.isActive('italic') || false,
       underline: editor?.isActive('underline') || false,
@@ -47,13 +56,13 @@ export default function EmailRichEditor({ disabled, onChange }: {
   if (!editor || !active) return null;
 
   const formats = [
-    ['Bold', active.bold, () => editor.chain().focus().toggleBold().run()],
-    ['Italic', active.italic, () => editor.chain().focus().toggleItalic().run()],
-    ['Underline', active.underline, () => editor.chain().focus().toggleUnderline().run()],
-    ['Bullets', active.bullets, () => editor.chain().focus().toggleBulletList().run()],
-    ['Numbered list', active.numbered, () => editor.chain().focus().toggleOrderedList().run()],
-    ['Quote', active.quote, () => editor.chain().focus().toggleBlockquote().run()],
-    ['Heading', active.heading, () => editor.chain().focus().toggleHeading({ level: 2 }).run()],
+    ['Bold', Bold, active.bold, () => editor.chain().focus().toggleBold().run()],
+    ['Italic', Italic, active.italic, () => editor.chain().focus().toggleItalic().run()],
+    ['Underline', Underline, active.underline, () => editor.chain().focus().toggleUnderline().run()],
+    ['Bulleted list', List, active.bullets, () => editor.chain().focus().toggleBulletList().run()],
+    ['Numbered list', ListOrdered, active.numbered, () => editor.chain().focus().toggleOrderedList().run()],
+    ['Quote', Quote, active.quote, () => editor.chain().focus().toggleBlockquote().run()],
+    ['Heading', Heading2, active.heading, () => editor.chain().focus().toggleHeading({ level: 2 }).run()],
   ] as const;
 
   function applyLink() {
@@ -67,26 +76,33 @@ export default function EmailRichEditor({ disabled, onChange }: {
     setLink(null);
   }
 
+  const linkLabel = active.link ? 'Edit link' : 'Insert link';
   return <div className="email-beta-editor">
+    <EditorContent editor={editor} className={'email-compose-body' + (active.empty ? ' is-empty' : '')} />
     <div className="email-beta-formatting" role="group" aria-label="Message formatting">
-      {formats.map(([name, pressed, apply]) => <button key={name} type="button" aria-pressed={pressed}
-        disabled={disabled} onMouseDown={event => event.preventDefault()} onClick={apply}>{name}</button>)}
-      <button type="button" aria-expanded={link !== null} disabled={disabled}
-        onMouseDown={event => event.preventDefault()} onClick={() => {
-          setLinkError('');
-          setLink(link === null ? editor.getAttributes('link').href || '' : null);
-        }}>{active.link ? 'Edit link' : 'Link'}</button>
+      {formats.map(([name, Icon, pressed, apply]) => <Tooltip key={name} content={name}>
+        <button className="icon-button" type="button" aria-label={name} aria-pressed={pressed}
+          disabled={disabled} onMouseDown={event => event.preventDefault()} onClick={apply}>
+          <Icon size={17} aria-hidden="true" />
+        </button>
+      </Tooltip>)}
+      <Tooltip content={linkLabel}>
+        <button className="icon-button email-format-link" type="button" aria-label={linkLabel} aria-expanded={link !== null}
+          disabled={disabled} onMouseDown={event => event.preventDefault()} onClick={() => {
+            setLinkError('');
+            setLink(link === null ? editor.getAttributes('link').href || '' : null);
+          }}><Link2 size={17} aria-hidden="true" /></button>
+      </Tooltip>
     </div>
     {link !== null && <div className="email-beta-link-editor">
       <label>Link address<input type="url" value={link} disabled={disabled} onChange={event => setLink(event.target.value)}
         onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); applyLink(); } }} /></label>
-      <button type="button" disabled={disabled} onClick={applyLink}>Apply link</button>
-      {active.link && <button type="button" disabled={disabled} onClick={() => {
+      <button className="button" type="button" disabled={disabled} onClick={applyLink}>Apply link</button>
+      {active.link && <button className="icon-button" aria-label="Remove link" title="Remove link" type="button" disabled={disabled} onClick={() => {
         editor.chain().focus().extendMarkRange('link').unsetLink().run();
         setLink(null);
-      }}>Remove link</button>}
+      }}><Unlink2 size={17} aria-hidden="true" /></button>}
       {linkError && <p role="alert">{linkError}</p>}
     </div>}
-    <EditorContent editor={editor} />
   </div>;
 }
