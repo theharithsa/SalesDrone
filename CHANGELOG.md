@@ -10,6 +10,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 ## [2.15.0] - 2026-11-29
 
 ### Added
+- Send a branded release announcement with highlights and a link to the full notes when workspace email and release announcements are enabled.
 - Change the sales stage from an anchored dropdown in the Leads table, on mobile lead cards, or in the lead header. Admins can order extra header fields and choose Phone number for new or existing custom fields. Saved values carry over when a custom field changes type.
 - Workspace email controls, synthetic template previews and delivery history, plus email preferences for each member.
 - Optional access, lead and shared-task email notifications with independent daily and weekly task digests.
@@ -22,6 +23,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 - Includes the Astryx Import enquiries experience for workbook mapping, review and job history.
 
 ### Fixed
+- Show lead header dates in day-month-year form, such as 27 Nov 26.
 - Email templates show a white drone mark in clients that support dark-mode styles and a high-contrast fallback elsewhere.
 - Signed Resend callbacks now reach the API through Hosting so delivery history can show the provider’s final status.
 - Repeated pre-production deployments of the same commit use a separate build archive for each workflow run and retry.

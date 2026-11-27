@@ -371,12 +371,12 @@ export function createTelemetry({
       queueDepth.set(queue,{count:Math.max(0,count),age:Number.isFinite(timestamp)?Math.max(0,(Date.now()-timestamp)/1000):count===0?0:null});
     },
     emailOperation(kind, outcome, seconds) {
-      if (!['dispatch', 'receipt'].includes(kind) ||
-          !['accepted', 'delayed', 'delivered', 'failed', 'suppressed'].includes(outcome)) return;
+      if (!['dispatch', 'receipt', 'release_queue'].includes(kind) ||
+          !['accepted', 'delayed', 'delivered', 'failed', 'suppressed', 'queued'].includes(outcome)) return;
       const attributes = { 'operation.kind': kind, outcome };
       emailOperations.add(1, attributes);
       if (kind === 'dispatch' && Number.isFinite(seconds)) emailDuration.record(seconds, attributes);
-      self.log('worker.stage', { worker: 'email', 'operation.stage': kind === 'receipt' ? 'received' : 'completed', outcome });
+      self.log('worker.stage', { worker: 'email', 'operation.stage': kind === 'receipt' ? 'received' : kind === 'release_queue' ? 'release_queued' : 'completed', outcome });
     },
     workItem(worker,outcome,dueAt) {
       if(!WORKERS.has(worker)||!WORK_STATS.includes(outcome))return;

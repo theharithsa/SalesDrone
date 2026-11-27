@@ -26,6 +26,7 @@ Firestore reads. Template Preview loads them from the app inside its sandbox.
 | Task assigned or reassigned | The new responsible member, if a teammate assigned the shared lead task. |
 | Task completed, rescheduled or reopened | The current responsible member when a teammate makes the corresponding change to a shared lead task. |
 | Daily reminder | An opted-in member with shared lead tasks due that day or overdue. |
+| Release announcement | Active workspace members with verified Google email, once per version after the app and public release notes are live. An Admin enables announcements in Workspace email. |
 | Weekly recap | An opted-in member with recorded completions from the previous Monday through Sunday. |
 
 Workbooks and history imports generate no email. Routine changes require the
@@ -97,6 +98,25 @@ The GitHub deployment identity does not need Firestore index administration.
    key as SDR_EMAIL_GEMINI_KEY on the private worker. Read the actual Gemini
    usage and billed provider totals before promotion. Ordinary delivery works
    with the factual summary if the key is absent.
+
+## Release announcements
+
+Enable **Email new releases to all active members** after the production
+sender and pilot are verified. It starts off and the workspace email switch
+also applies. Pre-production can preview or test the template using synthetic
+data. Production announcements are the only category sent outside the
+ordinary pilot recipient list. The worker rechecks live membership, verified
+email and suppression before delivery. An announcement contains public
+release notes only.
+
+The published Pages build emits a small marker for the verified application
+version and commit. The worker checks it at most once per quarter hour while
+waiting for publication. It saves a durable member cursor and stages up to
+six recipients per pass and twelve per UTC day. The existing daily send cap
+still applies. Unattempted announcements can wait until the next UTC day
+when that cap is reached. If a prior campaign is still in progress, it
+finishes before the worker stages the current release. Ordinary service
+settings and signed receipts remain authoritative.
 
 ## Limits and recovery
 

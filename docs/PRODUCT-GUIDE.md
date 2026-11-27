@@ -140,6 +140,8 @@ On mobile, New is the primary header action. Export Excel and permitted Import a
 
 Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
 
+Configured dates in the lead header appear as day, short month and two-digit year, for example 27 Nov 26.
+
 The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Leads Management → Lead page header. Select a phone number to open your calling app.
 
 Header phone numbers use the same monospace identifier font as phone fields and remain tappable dial links across personal font choices.
@@ -937,6 +939,8 @@ Workspace members and administrators
 Emails cover workspace invitations and active access, lead assignments and configured outcomes, and meaningful changes to a teammate’s shared task. A task’s responsible member appears in the app. Admins can use Resend email on an active invitation in People & access.
 
 In pre-production, admins can select Simulated delivery or Simulated bounce in Template preview and check the result in Delivery history.
+
+When an Admin enables release announcements, active workspace members receive a versioned email with highlights and a link to the full public release notes.
 
 The daily digest shows due and overdue shared tasks, the next deadline and the age of the oldest overdue task. The weekly recap shows completed tasks, leads covered and upcoming work. The on-time statistic is included when the original deadlines are known.
 

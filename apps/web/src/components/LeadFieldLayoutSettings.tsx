@@ -91,7 +91,12 @@ export default function LeadFieldLayoutSettings({ config, mode, request, onChang
           <small>Live preview · fictional lead</small>
           <h3>Asha Raman</h3>
           <LeadHeaderContext company="Northstar Buildworks" phone="+1 202 555 0100" fields={draft.map((id) => {
-            return { id, label: getLabel(id), value: custom.find((field) => field.id === id)?.type === 'phone' ? '+1 202 555 0110' : examples[id] || 'Sample ' + getLabel(id).toLowerCase(), phone: custom.some((field) => field.id === id && field.type === 'phone') };
+            const type = custom.find((field) => field.id === id)?.type;
+            const date = type === 'date' || id === 'enquiryDate' || id === 'createdAt';
+            return {
+              id, label: getLabel(id), date, phone: type === 'phone',
+              value: date ? '2026-11-27' : type === 'phone' ? '+1 202 555 0110' : examples[id] || 'Sample ' + getLabel(id).toLowerCase(),
+            };
           })} />
         </div>
         <p className="field-hint" role="status">{header.length} of {headerLimit} selected</p>

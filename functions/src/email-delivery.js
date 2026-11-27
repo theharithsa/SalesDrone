@@ -7,6 +7,7 @@ import {
   readEmailSettings, readEmailPreferences, scheduleKey, weekStart, writeDigestSchedule, writeEmailJob,
 } from './email-policy.js';
 import { EMAIL_FROM, digestCopy, sampleDigest, renderEmail, LEGACY_TEMPLATE_VERSION, TEMPLATE_VERSION } from './email-templates.js';
+import { stageReleaseAnnouncements } from './email-release-announcement.js';
 import { readResearchSettings } from './lead-research-settings.js';
 import { resetActive, RESET_STATE } from './lead-data-reset.js';
 import { canReadLead, effectiveMember, hash, path } from './policy.js';
@@ -35,8 +36,8 @@ export async function reserveEmailBudget(tx, kind, at) {
   return true;
 }
 
-export async function stageScheduledDigests({ store, at, telemetry }) {
-  const settings = await readEmailSettings(store);
+export async function stageScheduledDigests({ store, at, telemetry, settings: policy }) {
+  const settings = policy || await readEmailSettings(store);
   if (!emailOn(settings, 'daily') && !emailOn(settings, 'weekly')) return;
   for (const { id } of await readDue(store, 'emailSchedules', at)) {
     await store.run(async tx => {
@@ -66,7 +67,7 @@ function retire(tx, job, state, at, reason = null) {
   if (job.nextId) tx.delete(path('emailDue', job.nextId));
   const id = job.retireId || scheduleKey(nowISO(Date.parse(at) + expiry), job.id);
   tx.set(path('emailRetire', id), { id, jobId: job.id });
-  const { lease: _lease, nextId: _next, facts: _facts, ...result } = job;
+  const { lease: _lease, nextId: _next, facts: _facts, releaseFacts: _release, ...result } = job;
   tx.set(path('emailJobs', job.id), { ...result, state, reason, finishedAt: at, retireId: id });
 }
 async function claimEmail(store, entry, at) {
@@ -76,7 +77,8 @@ async function claimEmail(store, entry, at) {
       if (await tx.get(path('emailDue', entry.id))) tx.delete(path('emailDue', entry.id));
       return null;
     }
-    if ((job.claims || 0) >= maxAttempts || Date.parse(at) - Date.parse(job.createdAt) >= maxAge) {
+    const retryStart = job.event === 'release' ? job.firstSendingAt : job.createdAt;
+    if ((job.claims || 0) >= maxAttempts || retryStart && Date.parse(at) - Date.parse(retryStart) >= maxAge) {
       retire(tx, job, 'Failed', at, 'retry_window_ended');
       return null;
     }
@@ -103,7 +105,8 @@ async function sendContext(store, config, job, at) {
   const member = await effectiveMember(store, await store.get(path('members', job.uid)));
   if (!member?.active || (job.event === 'test' && member.role !== 'Admin')) return null;
   if (job.event === 'access_ready' && member.version !== job.sourceVersion) return null;
-  if (job.event === 'test' || job.event === 'access_ready')
+  if (job.event === 'release' && config.environment !== 'production') return null;
+  if (job.event === 'test' || job.event === 'access_ready' || job.event === 'release')
     return { email: await config.verifiedEmail(member), member };
 
   if (!member.capabilities.includes('leads:read') || resetActive(await store.get(RESET_STATE))) return null;
@@ -133,22 +136,22 @@ async function sendContext(store, config, job, at) {
   return { email: await config.verifiedEmail(member), member, prefs };
 }
 
-function routeRecipient(config, address, scenario) {
+function routeRecipient(config, address, { scenario, event }) {
   if (!address || !addressPattern.test(address)) return null;
   if (config.environment === 'pre-production') {
     if (scenario === 'bounce') return 'bounced@resend.dev';
     return config.testInbox || 'delivered@resend.dev';
   }
-  return config.allowlist?.includes(address) ? address : null;
+  return event === 'release' || config.allowlist?.includes(address) ? address : null;
 }
 
 async function prepareEmail({ store, config, job, context, at, telemetry }) {
-  const to = routeRecipient(config, context?.email, job.scenario);
+  const to = routeRecipient(config, context?.email, job);
   if (!to) return null;
   const recipientHash = hash(to);
   if (job.recipientHash && job.recipientHash !== recipientHash) return null;
   if (await store.get(path('emailSuppressions', recipientHash))) return null;
-  let facts = job.event === 'test' ? sampleDigest[job.template] : null;
+  let facts = job.event === 'test' ? sampleDigest[job.template] : job.releaseFacts || null;
   let insight = job.insight || null;
   let scope = new Map();
   if (job.slot) {
@@ -192,12 +195,21 @@ async function armEmail(store, job, prepared, at) {
       return null;
     }
     if (!(await reserveEmailBudget(tx, 'sends', at))) {
+      if (latest.event === 'release' && latest.attempts === 0) {
+        const nextDay = nowISO(Date.parse(at.slice(0, 10)) + day);
+        const nextId = scheduleKey(nextDay, latest.id);
+        tx.delete(path('emailDue', latest.nextId));
+        tx.set(path('emailDue', nextId), { id: nextId, jobId: latest.id });
+        tx.set(location, { ...latest, state: 'Delayed', nextId, lease: null, claims: 0, reason: 'daily_limit' });
+        return { deferred: true };
+      }
       retire(tx, latest, 'Suppressed', at, 'daily_limit');
       return null;
     }
     const work = {
       ...latest, recipientHash: prepared.recipientHash,
       facts: prepared.facts, insight: prepared.insight,
+      ...(job.event === 'release' ? { firstSendingAt: latest.firstSendingAt || at } : {}),
       // Keep the same body and tags if a retry crosses a deployment.
       templateVersion: latest.templateVersion ?? (latest.attempts ? LEGACY_TEMPLATE_VERSION : TEMPLATE_VERSION),
       attempts: latest.attempts + 1, sendingAt: at,
@@ -212,7 +224,7 @@ async function settleEmail(store, job, at, result) {
     const latest = await tx.get(location);
     if (latest?.lease !== job.lease) return latest?.state || 'Suppressed';
     if (result.retry && latest.claims < maxAttempts &&
-        Date.parse(at) - Date.parse(latest.createdAt) < maxAge) {
+        Date.parse(at) - Date.parse(latest.event === 'release' ? latest.firstSendingAt || at : latest.createdAt) < maxAge) {
       const nextId = scheduleKey(nowISO(Date.parse(at) + 2 ** latest.claims * minute), latest.id);
       tx.delete(path('emailDue', latest.nextId));
       tx.set(path('emailDue', nextId), { id: nextId, jobId: latest.id });
@@ -228,7 +240,14 @@ async function settleEmail(store, job, at, result) {
 export async function dispatchEmails({ store, config, at, telemetry }) {
   const stats = { accepted: 0, failed: 0, delayed: 0, suppressed: 0 };
   if (!config.ready()) return stats;
-  await stageScheduledDigests({ store, at, telemetry });
+  const settings = await readEmailSettings(store);
+  await stageScheduledDigests({ store, at, telemetry, settings });
+  try {
+    const staged = await stageReleaseAnnouncements({ store, config, settings, at, telemetry });
+    if (staged) telemetry?.emailOperation?.('release_queue', 'queued', 0);
+  } catch {
+    telemetry?.log?.('worker.stage', { worker: 'email', 'operation.stage': 'release_queue_failed' }, 'WARN');
+  }
   for (const row of await readDue(store, 'emailDue', at)) {
     const job = await claimEmail(store, row, at);
     if (!job) continue;
@@ -249,6 +268,7 @@ export async function dispatchEmails({ store, config, at, telemetry }) {
         return settleEmail(store, job, at, { state: 'Suppressed', reason: 'no_longer_eligible' });
       const armed = await armEmail(store, job, prepared, at);
       if (!armed) return 'Suppressed';
+      if (armed.deferred) return 'Delayed';
       const preprod = config.environment === 'pre-production';
       const template = job.template || job.event;
       const message = renderEmail({

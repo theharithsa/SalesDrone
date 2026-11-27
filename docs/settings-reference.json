@@ -751,6 +751,14 @@
           "example": ""
         },
         {
+          "id": "releaseAnnouncementsEnabled",
+          "label": "Email new releases to all active members",
+          "default": "Off",
+          "description": "Send the highlights and release notes link after the app and public notes for a version are live.",
+          "effect": "Production only. The workspace email switch must also be on. A release sends once per active verified member in bounded batches.",
+          "example": "Members receive a What’s new in SalesDrone message for a new version."
+        },
+        {
           "id": "events",
           "label": "Email event switches",
           "default": "On individually; master switch off",

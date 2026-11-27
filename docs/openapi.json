@@ -42336,6 +42336,9 @@
                 "type": "null"
               }
             ]
+          },
+          "releaseAnnouncementsEnabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -42436,6 +42439,7 @@
               "task_reopened",
               "daily",
               "weekly",
+              "release",
               "test"
             ]
           }
@@ -42463,6 +42467,7 @@
               "task_reopened",
               "daily",
               "weekly",
+              "release",
               "test"
             ]
           },
@@ -42552,6 +42557,9 @@
               }
             ]
           },
+          "releaseAnnouncementsEnabled": {
+            "type": "boolean"
+          },
           "version": {
             "type": "integer",
             "exclusiveMinimum": 0,
@@ -42565,6 +42573,7 @@
           "enabled",
           "events",
           "outcomeRecipientUid",
+          "releaseAnnouncementsEnabled",
           "version",
           "deliveryReady"
         ]
@@ -46886,6 +46895,7 @@
               "task_reopened",
               "daily",
               "weekly",
+              "release",
               "test"
             ]
           },

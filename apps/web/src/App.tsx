@@ -2404,6 +2404,7 @@ export default function App() {
                         <LeadHeaderContext
                           company={selected.company}
                           phone={selected.phone}
+                          timezone={timezone}
                           allowDial={!selected.doNotContact && !selected.needsReview}
                           fields={(fieldOptions.headerFields || [])
                             .filter((key) => !fieldOptions.hiddenFields.includes(key))
@@ -2412,7 +2413,8 @@ export default function App() {
                               const definition = fieldOptions.customFields.find((field) => field.id === key);
                               const label = definition?.label
                                 || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined);
-                              return { id: key, label, value, phone: definition?.type === 'phone' };
+                              return { id: key, label, value, phone: definition?.type === 'phone',
+                                date: key === 'enquiryDate' || key === 'createdAt' || definition?.type === 'date' };
                             }).filter((field) => field.value)}
                         />
                       </div>

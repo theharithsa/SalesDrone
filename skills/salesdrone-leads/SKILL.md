@@ -9,7 +9,7 @@ Read [the shared operating contract](../SHARED.md) before editing. Paths and com
 are relative to the repository root. Inspect current source rather than assuming
 this map is an immutable schema or a standalone microservice.
 
-Stage edits in lists and details share the versioned PATCH and journey history. Preserve untouched custom field values when editing a lead after an Admin changes a field type.
+Stage edits share versioned PATCH and journey history. Header dates use day, month, year. Preserve untouched custom field values when editing a lead after an Admin changes a field type.
 
 ## Responsibility and entry points
 

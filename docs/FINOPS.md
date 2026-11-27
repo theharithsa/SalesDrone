@@ -63,3 +63,13 @@ Treat the estimate as a design budget. Recheck billable index reads, retries,
 idle schedules and provider usage from pilot metrics before promoting.
 
 Quick stage edits reuse one versioned lead PATCH and the existing refresh. Header order and custom type changes reuse one field-options write and its existing audit. Type changes perform zero lead reads or writes to migrate saved values. These controls add no idle requests.
+
+### Release announcement budget
+
+With announcements off, the existing email worker adds zero reads. When enabled,
+one workspace progress read per quarter hour checks whether the published build
+has already been announced. While staging, one transaction reads progress and
+policy and scans up to six member records, adding two queue writes per recipient
+and one cursor write per batch. Staging is capped at twelve recipients a day and
+delivery shares the existing thirty-attempt daily cap. No Gemini calls or new
+scheduled function are needed. Measure per-release volume in the production pilot.

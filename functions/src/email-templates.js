@@ -1,3 +1,5 @@
+import { releaseNotesUrl } from './email-release-announcement.js';
+
 export const EMAIL_FROM = 'SalesDrone <notifications@salesdrone.in>';
 export const LEGACY_TEMPLATE_VERSION = 2;
 export const TEMPLATE_VERSION = 3;
@@ -13,6 +15,7 @@ export const templateInfo = {
   task_reopened: ['Task update', 'A teammate reopened your task', 'The shared task is back on your list.', 'View task'],
   daily: ['Daily briefing', 'Today in SalesDrone', 'Your lead tasks that need attention today.', 'Open my tasks'],
   weekly: ['Weekly recap', 'Your week in SalesDrone', 'A recap of your completed lead work and what’s coming up.', 'Review my week'],
+  release: ['Product update', 'What’s new in SalesDrone', 'Here are the changes in this release.', 'Read release notes'],
   test: ['Delivery test', 'SalesDrone email check', 'This message checks delivery from SalesDrone with synthetic data.', 'Open SalesDrone'],
 };
 const escape = value => String(value).replace(/[&<>"']/g, char =>
@@ -34,7 +37,10 @@ const dateLabel = date => new Intl.DateTimeFormat('en-IN', {
 }).format(new Date(date + 'T00:00:00Z'));
 
 export function renderEmail({ template, origin, preprod = false, preview = false, leadId, taskId, facts, insight, templateVersion = TEMPLATE_VERSION }) {
-  const [category, title, intro, action] = templateInfo[template];
+  const [category, templateTitle, templateIntro, action] = templateInfo[template];
+  const release = template === 'release' ? facts || sampleDigest.release : null;
+  const title = release ? templateTitle + ' v' + release.version : templateTitle;
+  const intro = release?.summary || templateIntro;
   const settings = new URL('/settings?section=email-preferences', origin).href;
   // The sandboxed srcdoc preview can load only the current site's public assets.
   const font = preview ? fontPath : new URL(fontPath, origin).href;
@@ -43,6 +49,7 @@ export function renderEmail({ template, origin, preprod = false, preview = false
   const mark = asset(adaptiveMark ? '/brand/salesdrone-email-mark-light.png' : markPath);
   const darkMark = adaptiveMark ? asset('/brand/salesdrone-email-mark-dark.png') : null;
   let href = new URL('/', origin);
+  if (release) href = new URL(releaseNotesUrl(release.version));
   if (['daily', 'weekly'].includes(template)) href = new URL('/tasks', origin);
   if (template === 'weekly' && facts) {
     href.searchParams.set('status', 'Completed');
@@ -59,7 +66,7 @@ export function renderEmail({ template, origin, preprod = false, preview = false
   const content = facts && ['daily', 'weekly'].includes(template) ? digestCopy(template, facts) : null;
   const period = template === 'weekly' && facts
     ? dateLabel(facts.from) + ' – ' + dateLabel(new Date(Date.parse(facts.until + 'T00:00:00Z') - 86_400_000).toISOString().slice(0, 10))
-    : template === 'daily' && facts ? dateLabel(facts.date) : '';
+    : template === 'daily' && facts ? dateLabel(facts.date) : release ? dateLabel(release.date) : '';
   const heading = template === 'weekly' ? 'Weekly insight' : 'Today’s priority';
   const allInsights = content?.insights || {};
   const takeaway = allInsights[insight] || Object.values(allInsights)[0];
@@ -68,8 +75,9 @@ export function renderEmail({ template, origin, preprod = false, preview = false
     'SalesDrone', title, intro, period,
     ...(content?.stats || []).map(([count, label]) => label + ': ' + count),
     ...(takeaway ? [heading, takeaway] : []), ...supporting,
+    ...(release?.highlights || []).map(line => '- ' + line),
     action + ': ' + href.href,
-    'Manage email preferences: ' + settings,
+    release ? 'Sent to active SalesDrone workspace members.' : 'Manage email preferences: ' + settings,
   ].filter(Boolean).join('\n\n');
   const statCells = (content?.stats || []).map(([count, label]) =>
     '<td class="metric" width="' + Math.floor(100 / content.stats.length) + '%" valign="top" style="padding:12px 6px;text-align:center">' +
@@ -122,9 +130,12 @@ export function renderEmail({ template, origin, preprod = false, preview = false
     heading + '</h2><p style="margin:0;font-size:14px;line-height:20px">' + escape(takeaway) + '</p>' +
     supporting.map(value => '<p class="muted" style="margin:4px 0 0;color:' + theme.muted + ';font-size:14px;line-height:20px">' + escape(value) + '</p>').join('') +
     '</td></tr></table>') : '') +
+    (release ? section('<h2 style="font-size:17px;line-height:24px;font-weight:600;margin:0 0 8px">In this release</h2>' +
+      '<ul style="margin:0;padding-left:20px">' + release.highlights.map(line =>
+        '<li style="margin-bottom:6px">' + escape(line) + '</li>').join('') + '</ul>') : '') +
     section(cta) +
     '<tr><td class="pad footer muted" style="border-top:1px solid ' + theme.border + ';padding:12px 24px;font-size:12px;line-height:20px;color:' + theme.muted + '">' +
-    (preview ? 'Synthetic template preview' : '<a href="' + escape(settings) + '" style="color:' + theme.accent + '">Manage email preferences</a>') +
+    (preview ? 'Synthetic template preview' : release ? 'Sent to active SalesDrone workspace members.' : '<a href="' + escape(settings) + '" style="color:' + theme.accent + '">Manage email preferences</a>') +
     '</td></tr></table><!--[if mso]></td></tr></table><![endif]--></td></tr></table></body></html>';
   return { subject, html, text };
 }
@@ -174,6 +185,13 @@ export function digestCopy(type, facts) {
 }
 
 export const sampleDigest = {
+  release: {
+    version: '2.15.0', date: '2026-11-29',
+    summary: 'Work through leads faster and get useful task updates by email.',
+    highlights: ['Change a sales stage directly in the Leads table or on a phone card.',
+      'Review Excel imports in the redesigned Import enquiries flow.',
+      'Choose daily reminders and weekly recaps in Email preferences.'],
+  },
   daily: { date: '2026-11-25', timezone: 'Asia/Kolkata', dueToday: 4, overdue: 2,
     nextDeadline: '2026-11-25T06:30:00.000Z', oldestOverdueHours: 49 },
   weekly: { from: '2026-11-16', until: '2026-11-23', timezone: 'Asia/Kolkata', completed: 7, leads: 5,

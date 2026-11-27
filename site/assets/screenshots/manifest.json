@@ -802,12 +802,22 @@
   {
     "file": "email-workspace-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "9cbad8ff0c817216d4e5ccab73a5cb34e625a1a412241ae705b5577950a233db",
-    "capturedAt": "2026-11-25T22:17:11.374Z",
-    "viewport": "1440 x 900 CSS pixels; checked in the in-app Chromium browser",
-    "capturePixels": "2027 x 1286",
+    "sha256": "b98e455ce7f9c77acf4e265cf1d9001896b52c119e08ea391dac5f6e501dbdf3",
+    "capturedAt": "2026-11-27",
+    "viewport": "390 x 900 CSS pixels; Chrome viewport override",
+    "capturePixels": "375 x 1318",
     "version": "2.15.0",
-    "review": "Workspace controls for a fictional admin. Sender setup is paused. No live data or account."
+    "review": "Fictional Admin controls using stubbed email policy and member data. Release announcements are off by default."
+  },
+  {
+    "file": "email-release-announcement-demo.jpg",
+    "mode": "synthetic-demo",
+    "sha256": "ee7dde06a011af6447d389785392dcf1c9e49b5d6fb43421af7f289c7628a9a8",
+    "capturedAt": "2026-11-27",
+    "viewport": "390 x 900 CSS pixels; Chrome viewport override",
+    "capturePixels": "390 x 574",
+    "version": "2.15.0",
+    "review": "Synthetic release announcement from the real renderer. Both themes checked at 320, 390, 768 and 1440 CSS pixels."
   },
   {
     "file": "email-preferences-demo.jpg",

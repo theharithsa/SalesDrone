@@ -866,7 +866,9 @@ export function createApp({
           throw new AppError(400, 'ASSIGNEE', 'Choose a member who can view unassigned leads');
       }
       const { expectedVersion, ...values } = input;
-      if (current.enabled === values.enabled && current.outcomeRecipientUid === values.outcomeRecipientUid &&
+      values.releaseAnnouncementsEnabled ??= current.releaseAnnouncementsEnabled;
+      if (current.releaseAnnouncementsEnabled === values.releaseAnnouncementsEnabled &&
+          current.enabled === values.enabled && current.outcomeRecipientUid === values.outcomeRecipientUid &&
           Object.keys(current.events).every(event => current.events[event] === values.events[event]))
         return { ...current, deliveryReady: emailReady() };
       const next = { ...values, version: current.version + 1 };

@@ -835,6 +835,16 @@ Enable email for the workspace after the environment sender is ready.
 
 Pausing or changing workspace email policy invalidates pending work from the old policy. In-app notifications continue.
 
+### Email new releases to all active members
+
+**Default:** Off.
+
+Send the highlights and release notes link after the app and public notes for a version are live.
+
+Production only. The workspace email switch must also be on. A release sends once per active verified member in bounded batches.
+
+**Example:** Members receive a What’s new in SalesDrone message for a new version.
+
 ### Email event switches
 
 **Default:** On individually; master switch off.
