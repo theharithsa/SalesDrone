@@ -174,7 +174,7 @@ test('HTML-only replies preserve formatting and rich sends include a safe text f
   await dispatch();
   assert.match(sends[0].payload.html, /<strong>there<\/strong>/);
   assert.match(sends[0].payload.html, /<li><u>Oak<\/u><\/li>/);
-  assert.doesNotMatch(sends[0].payload.html, /discard-me|<script>/);
+  assert.doesNotMatch(sends[0].payload.html, /discard-me|<script\b/i);
   assert.match(sends[0].payload.text, /Hello there/);
   assert.doesNotMatch(sends[0].payload.text, /Client fallback/);
   const id = randomUUID();
