@@ -21,6 +21,7 @@ const personalDefaults = {
   ...AUTO_DEFAULTS,
 };
 const definitions = {
+  'email-beta': ['enabled','memberIds'],
   'email-workspace': ['enabled', 'events', 'outcomeRecipientUid'],
   'email-preferences': ['leadUpdates','taskUpdates','dailyEnabled','dailyTime','weeklyEnabled','weeklyTime','weeklyDay','timezone','digestInsights'],
   'ai.research': ['convertedStages','failedStages','archiveReviewStages','inactivityDays','timezone','indexingEnabled'],
@@ -69,6 +70,7 @@ function sections(p) {
         ai: ['ai.insights'],
         scoring: ['ai.scoring'],
         email: ['email-workspace'],
+        emailBeta: ['email-beta'],
         leadResearch: ['ai.research'],
       }[tail[1]] || []
     );
@@ -86,6 +88,7 @@ async function normalized(section, value) {
   if (['appearance', 'reminders', 'dashboard.visualization'].includes(section))
     return { ...personalDefaults, ...value };
   if (section === 'reports-access') return readWorkspaceSettings(reader);
+  if (section === 'email-beta') return { enabled: false, memberIds: [], ...value };
   if (section === 'email-workspace') return emailSettings(value);
   if (section === 'email-preferences') return emailPreferences(value);
   if (section === 'ai.research') return readResearchSettings(reader);

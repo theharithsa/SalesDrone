@@ -16,6 +16,9 @@ export function semanticChanges(domain,before,after) {
   const common={'record.domain':domain,'entity.ref':ref(domain,after.id),'record.version':Number.isFinite(after.version)?after.version:undefined,'changed.fields':changedFields(before,after)};
   const event=(type,data={})=>({type,...common,...data});
   if(domain==='auditEvents')return [event('audit.operation.committed',{'audit.id':ref('audit',after.id),'audit.action':after.action})];
+  if (domain === 'emailBetaMessages' && before?.state !== after.state &&
+      ['Queued', 'Accepted', 'Received', 'Delivered', 'Failed', 'Suppressed'].includes(after.state))
+    return [event('email.beta.' + after.state.toLowerCase(), { 'delivery.state': after.state.toLowerCase() })];
   if (domain === 'emailJobs' && before?.state !== after.state &&
       ['Queued','Accepted','Delivered','Delayed','Failed','Suppressed'].includes(after.state))
     return [event('email.delivery.' + after.state.toLowerCase(), { 'delivery.state': after.state.toLowerCase() })];

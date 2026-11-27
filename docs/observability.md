@@ -397,3 +397,10 @@ Accepted means Resend accepted the request. Delivered requires a signed provider
 receipt. Tenant-search evidence is a separate pre-production acceptance item.
 
 The inline stage control reuses the lead mutation’s transition event and HTTP signals. Header order and field-type edits reuse field-options audit keys and HTTP signals. Phone values stay out of telemetry.
+
+### Email Beta
+
+Measure email worker outcomes and follow the signed webhook operation and
+provider send spans. Settings audit emits only changed key names. Correlate Beta
+queue, delivery and erasure with operation names. Bodies, recipients, subjects,
+reply headers, provider payloads and provider IDs are excluded from telemetry.

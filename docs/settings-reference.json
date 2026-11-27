@@ -739,7 +739,7 @@
     {
       "sectionId": "email-workspace",
       "scope": "Workspace",
-      "api": "GET/PATCH /api/v1/email/settings, POST /api/v1/email/preview, POST /api/v1/email/test and GET /api/v1/email/deliveries",
+      "api": "GET/PATCH /api/v1/email/settings, POST /api/v1/email/preview, POST /api/v1/email/test and GET /api/v1/email/deliveries, GET/PATCH /api/v1/email/beta/settings",
       "permissions": "Admin role with members:write, Google sign-in and App Check. Writes require expectedVersion where documented.",
       "controls": [
         {
@@ -780,6 +780,14 @@
           "default": "Synthetic preview; test sending available when provider setup is ready",
           "description": "Review each layout and plain text. An Admin can queue a test every five minutes.",
           "effect": "Pre-production uses a controlled destination. Delivery history records queued, accepted, delayed, delivered, failed or suppressed states.",
+          "example": ""
+        },
+        {
+          "id": "inboxBeta",
+          "label": "Enable Email Beta",
+          "default": "Off; no selected members",
+          "description": "In Inbox Beta, enable lead email after sender setup and grant access to up to 50 active members.",
+          "effect": "Admins have access when enabled. Shared threads follow current lead access. Unlinked, linking and deletion are Admin-only.",
           "example": ""
         }
       ]

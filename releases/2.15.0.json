@@ -35,18 +35,19 @@
   "api": {
     "status": "changed",
     "contractVersion": "1.38.0",
-    "reason": "Adds optional release announcement setting and synthetic template, plus email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment. Adds the custom phone type and accepts changes to active custom field types through the existing settings route.",
+    "reason": "Adds optional release announcement setting and synthetic template, plus email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment. Adds the custom phone type and accepts changes to active custom field types through the existing settings route. Email Beta adds a scoped correspondence and Admin pilot policy API and an environment-specific signed callback.",
     "permissions": "Use Google sign-in, App Check and current access for application requests. Workspace configuration and tests need Admin. Resend callbacks require their own signature. No new PAT scope.",
     "tests": [
       "functions/test/email.test.js",
       "services/ingress/test/gateway.test.js",
-      "functions/test/custom-fields-and-tasks.test.js"
+      "functions/test/custom-fields-and-tasks.test.js",
+      "functions/test/email-beta.test.js"
     ]
   },
   "observability": {
     "metrics": {
       "status": "changed",
-      "reason": "Track bounded delivery outcomes and dispatch duration without mail address or content dimensions.",
+      "reason": "Track bounded transactional and Beta delivery outcomes and dispatch duration without mail address or content dimensions.",
       "tests": [
         "functions/test/email.test.js"
       ]
@@ -67,7 +68,7 @@
     },
     "businessEvents": {
       "status": "changed",
-      "reason": "Record committed email job states and changed setting names through the durable telemetry outbox.",
+      "reason": "Record committed email job and Beta message states and changed setting names through the durable telemetry outbox.",
       "tests": [
         "functions/test/email.test.js"
       ]
@@ -98,10 +99,10 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Verify the release marker matches the published commit, the Admin switch defaults off, and a repeat release worker run sends no duplicates. Review all email templates in light and dark with the baked-in image fallback. Check invitation reissue and verify that retries across deployments keep the original renderer and idempotency key. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify anchored stage selection and focus return in the Leads table, phone cards and full lead header. The list uses the existing filtered reload after save. Opening the control adds no reads or business events. Check independent header order and custom phone types. These reuse existing writes with no new polling or migration reads.",
+  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Verify the release marker matches the published commit, the Admin switch defaults off, and a repeat release worker run sends no duplicates. Review all email templates in light and dark with the baked-in image fallback. Check invitation reissue and verify that retries across deployments keep the original renderer and idempotency key. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify anchored stage selection and focus return in the Leads table, phone cards and full lead header. The list uses the existing filtered reload after save. Opening the control adds no reads or business events. Check independent header order and custom phone types. These reuse existing writes with no new polling or migration reads. Verify Email Beta defaults off. Before activation, verify scoped lead correspondence, signed delivery, reply threading and erasure on the dedicated provider in each environment.",
   "milestone": {
     "number": 72,
-    "title": "v2.15.0 \u2014 Weekly production release",
+    "title": "v2.15.0 — Weekly production release",
     "issues": [
       217,
       255,
@@ -114,7 +115,8 @@
       262,
       276,
       284,
-      289
+      289,
+      291
     ],
     "readiness": "ready"
   },

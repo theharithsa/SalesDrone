@@ -143,3 +143,5 @@ current access, event settings and the verified recipient. It excludes customer
 and task content from messages, model inputs and monitoring. The pre-production
 recipient is controlled by runtime configuration. Delivery history excludes
 addresses and provider identifiers. Production starts paused.
+
+Email Beta uses a dedicated environment sender and signed webhook. Live email bodies are server-only, plain text, lead-scoped, and excluded from telemetry and demo fixtures. Admin confirmation initiates app-side erasure.

@@ -10,6 +10,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 ## [2.15.0] - 2026-11-29
 
 ### Added
+- Email Beta adds an Astryx inbox, lead-linked replies and timeline history. Admins control pilot access. It starts off while the dedicated sender and inbound delivery are verified.
 - Send a branded release announcement with highlights and a link to the full notes when workspace email and release announcements are enabled.
 - Change the sales stage from an anchored dropdown in the Leads table, on mobile lead cards, or in the lead header. Admins can order extra header fields and choose Phone number for new or existing custom fields. Saved values carry over when a custom field changes type.
 - Workspace email controls, synthetic template previews and delivery history, plus email preferences for each member.

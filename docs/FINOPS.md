@@ -73,3 +73,13 @@ policy and scans up to six member records, adding two queue writes per recipient
 and one cursor write per batch. Staging is capped at twelve recipients a day and
 delivery shares the existing thirty-attempt daily cap. No Gemini calls or new
 scheduled function are needed. Measure per-release volume in the production pilot.
+
+### Email Beta budget
+
+Disabled by default. The browser makes no inbox or lead timeline reads while
+disabled. When enabled, a list request scans at most 25 thread summaries and
+batch-checks at most 25 current leads. Opening a thread reads 25 messages and
+marks its latest unread entry once. Refresh and pagination are explicit.
+The existing worker reads at most six delivery jobs and two deletion jobs per
+run. Each deletion batch removes up to 40 messages. Beta permits up to 10 send
+attempts and accepts up to 60 inbound messages per UTC day. Sends count toward the existing shared 30-attempt email budget.

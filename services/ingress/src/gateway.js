@@ -82,7 +82,7 @@ export function createGateway({ upstream, version, commit, telemetry, timeoutMs 
         // Concatenate only a validated origin-relative path. Never resolve // URLs.
         if (!req.url?.startsWith('/api/') || /[\r\n\\]/.test(req.url) || req.url.includes('#')) throw failure(404, 'NOT_FOUND');
         const json = /^application\/(?:[a-z0-9.+-]+\+)?json(?:\s*;|$)/i.test(req.headers['content-type'] || '');
-        const callback = req.method === 'POST' && req.url.split('?')[0] === '/api/v1/email/receipts/resend';
+        const callback = req.method === 'POST' && ['/api/v1/email/receipts/resend', '/api/v1/email/beta/receipts/resend'].includes(req.url.split('?')[0]);
         const limit = callback ? 32 * 1024 : json ? JSON_LIMIT : BINARY_LIMIT;
         if (callback && req.headers['content-encoding'] && req.headers['content-encoding'].toLowerCase() !== 'identity')
           throw failure(415, 'UNSUPPORTED_ENCODING');

@@ -18,6 +18,13 @@ export function functionEnvironment(env) {
     values.SDR_EMAIL_ENABLED = 'true';
     values.SDR_EMAIL_PILOT_ALLOWLIST = addresses.join(',');
   }
+  if (env.SDR_EMAIL_BETA_ENABLED === 'true') {
+    const address = env.SDR_EMAIL_BETA_ADDRESS;
+    if (!/^[a-z0-9][a-z0-9._+-]*@mail\.salesdrone\.in$/.test(address || ''))
+      throw Error('Configure the production Email Beta sender on mail.salesdrone.in.');
+    values.SDR_EMAIL_BETA_ENABLED = 'true';
+    values.SDR_EMAIL_BETA_ADDRESS = address;
+  }
   return Object.entries(values)
     .map(([name, value]) => name + '=' + JSON.stringify(value))
     .join('\n') + '\n';

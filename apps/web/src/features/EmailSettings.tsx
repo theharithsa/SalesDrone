@@ -171,7 +171,7 @@ export function WorkspaceEmail({ request, onEditingChange, timezone }: {
 }) {
   const { draft, update, dirty, submit, message, error, reload } =
     useEmailEditor<Policy>(request, '/email/settings', onEditingChange);
-  const [view, setView] = useState<'controls' | 'preview' | 'deliveries'>('controls');
+  const [view, setView] = useState<'controls' | 'preview' | 'deliveries' | 'beta'>('controls');
   const [members, setMembers] = useState<Member[]>([]);
   const [directoryError, setDirectoryError] = useState('');
   useEffect(() => {
@@ -196,9 +196,9 @@ export function WorkspaceEmail({ request, onEditingChange, timezone }: {
   </section>;
   return <>
     <div className="stage-tabs email-settings-tabs" role="group" aria-label="Workspace email">
-      {(['controls', 'preview', 'deliveries'] as const).map(tab =>
+      {(['controls', 'preview', 'deliveries', 'beta'] as const).map(tab =>
         <button key={tab} type="button" className={view === tab ? 'active' : undefined} aria-pressed={view === tab}
-          onClick={() => setView(tab)}>{tab === 'controls' ? 'Controls' : tab === 'preview' ? 'Template preview' : 'Delivery history'}</button>)}
+          onClick={() => setView(tab)}>{tab === 'controls' ? 'Controls' : tab === 'preview' ? 'Template preview' : tab === 'deliveries' ? 'Delivery history' : 'Inbox Beta'}</button>)}
     </div>
     {view === 'controls' ? <section className="panel email-settings">
       <form onSubmit={event => {
@@ -238,7 +238,8 @@ export function WorkspaceEmail({ request, onEditingChange, timezone }: {
         <SaveButton label="Save email controls" busy={submit.busy} disabled={!dirty} />
       </form>
     </section> : view === 'preview' ? <TemplatePreview request={request} ready={draft.deliveryReady} /> :
-      <DeliveryHistory request={request} timezone={timezone} />}
+      view === 'deliveries' ? <DeliveryHistory request={request} timezone={timezone} /> :
+      <BetaInboxSettings request={request} onEditingChange={onEditingChange} />}
   </>;
 }
 
@@ -336,5 +337,73 @@ function DeliveryHistory({ request, timezone }: { request: ApiClient; timezone: 
       <span className="email-state">{item.state}</span>
     </li>)}</ul> : busy ? <Loading /> : !error ? <p>No email attempts yet.</p> : null}
     {cursor ? <button className="button" disabled={busy} onClick={() => void load(cursor)}>Load more</button> : null}
+  </section>;
+}
+
+type BetaPolicy = { enabled: boolean; memberIds: string[]; version: number; deliveryReady: boolean };
+
+function BetaInboxSettings({ request, onEditingChange }: { request: ApiClient; onEditingChange: (value: DraftStatus) => void }) {
+  const { draft, update, dirty, submit, message, error, reload } =
+    useEmailEditor<BetaPolicy>(request, '/email/beta/settings', onEditingChange);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [directoryError, setDirectoryError] = useState('');
+  const [directoryBusy, setDirectoryBusy] = useState(true);
+  useEffect(() => {
+    const controller = new AbortController();
+    const readDirectory = async () => {
+      let cursor: string | null = null;
+      const result: Member[] = [];
+      do {
+        const page = await request('/members?limit=100' + (cursor ? '&cursor=' + encodeURIComponent(cursor) : ''),
+          'GET', undefined, undefined, controller.signal) as {
+            items: (Member & { role?: string })[]; nextCursor: string | null
+          };
+        if (controller.signal.aborted) return;
+        result.push(...page.items.filter(member => member.active && member.role !== 'Admin' && member.capabilities.includes('leads:read')));
+        cursor = page.nextCursor;
+      } while (cursor && !controller.signal.aborted);
+      setMembers(result);
+    };
+    void readDirectory().catch(cause => {
+      if (!controller.signal.aborted) setDirectoryError(errorMessage(cause));
+    }).finally(() => { if (!controller.signal.aborted) setDirectoryBusy(false); });
+    return () => controller.abort();
+  }, [request]);
+  return <section className="panel email-settings">
+    <h2>Email inbox Beta</h2>
+    <p>Manage who can exchange email from SalesDrone. Admins have access whenever the inbox is enabled.</p>
+    {!draft ? error ? <><ErrorMessage error={error} /><button className="button" onClick={reload}>Try again</button></> : <Loading /> :
+      <form onSubmit={event => {
+        event.preventDefault();
+        submit.run({ enabled: draft.enabled, memberIds: draft.memberIds, expectedVersion: draft.version });
+      }}>
+        <fieldset className="email-settings-group" disabled={submit.busy}>
+          <legend>Access</legend>
+          <label className="check">
+            <input type="checkbox" checked={draft.enabled} disabled={!draft.deliveryReady && !draft.enabled}
+              onChange={event => update({ enabled: event.target.checked })} />
+            Enable Email Beta
+          </label>
+          {!draft.deliveryReady && <p className="field-hint">Sender and inbound setup is pending in this environment.</p>}
+          <p className="field-hint">Selected members can see correspondence for leads they can view. Select up to 50.</p>
+          {directoryBusy && <p role="status">Loading members…</p>}
+          <ErrorMessage error={directoryError} />
+          {members.map(member => {
+            const id = member.uid || member.id;
+            const selected = draft.memberIds.includes(id);
+            return <label className="check" key={id}>
+              <input type="checkbox" checked={selected} disabled={!selected && draft.memberIds.length >= 50}
+                onChange={() => update({ memberIds: selected ? draft.memberIds.filter(value => value !== id) : [...draft.memberIds, id] })} />
+              {member.name || id}
+            </label>;
+          })}
+          {draft.memberIds.filter(id => !directoryBusy && !directoryError && !members.some(member => (member.uid || member.id) === id))
+            .map(id => <button className="button" key={id} type="button" onClick={() =>
+              update({ memberIds: draft.memberIds.filter(value => value !== id) })}>Remove unavailable member</button>)}
+        </fieldset>
+        <ErrorMessage error={submit.error} />
+        {message && <p role="status">{message} Reload the workspace to refresh navigation.</p>}
+        <SaveButton label="Save Beta access" busy={submit.busy} disabled={!dirty || !!directoryError} />
+      </form>}
   </section>;
 }

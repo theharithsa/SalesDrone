@@ -7,6 +7,7 @@ const database = 'preprod';
 const { indexes } = JSON.parse(readFileSync('firestore.indexes.json', 'utf8'));
 const needed = indexes.filter(index =>
   index.collectionGroup === 'emailJobs' ||
+  (process.env.PREPROD_EMAIL_BETA_ENABLED === 'true' && ['emailBetaThreads','emailBetaMessages'].includes(index.collectionGroup)) ||
   (index.collectionGroup === 'tasks' && index.fields.some(field => field.fieldPath === 'completedAt')));
 const args = ['--project', project, '--database', database, '--quiet'];
 const gcloud = process.env.SDR_GCLOUD_BIN || 'gcloud';

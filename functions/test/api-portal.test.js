@@ -13,9 +13,9 @@ test('published contract covers every route with its explicit authentication sch
     ),
   ].map((m) => [m[1], m[2]]);
   endpoints.push(['get', '/me'], ['post', '/invitations/:id/accept']);
-  const receipt = ['/api/v1/email/receipts/resend', 'post'];
-  assert.equal(endpoints.length + 1, Object.values(spec.paths).reduce((total, methods) => total + Object.keys(methods).length, 0));
-  assert.deepEqual(spec.paths[receipt[0]][receipt[1]].security, [{ resendSignature: [] }]);
+  const receipts = ['/api/v1/email/receipts/resend', '/api/v1/email/beta/receipts/resend'];
+  assert.equal(endpoints.length + receipts.length, Object.values(spec.paths).reduce((total, methods) => total + Object.keys(methods).length, 0));
+  for (const receipt of receipts) assert.deepEqual(spec.paths[receipt].post.security, [{ resendSignature: [] }]);
   assert.equal(spec.components.securitySchemes.resendSignature.name, 'svix-signature');
   for (const [method, url] of endpoints) {
     const op =

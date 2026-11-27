@@ -28,3 +28,5 @@ The pilot caps daily delivery attempts, digest computations, Gemini calls,
 and per-job query sizes. Reuse bounded due indexes and report the actual
 pre-production billing and volume evidence described in [FinOps](../../docs/FINOPS.md)
 before enabling production delivery.
+
+Email Beta uses paged reads and reuses the email worker and daily attempt cap. Budget and environment limits live in docs/FINOPS.md.
