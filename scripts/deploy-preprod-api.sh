@@ -11,7 +11,7 @@ trap 'rm -r "$archive"' EXIT
 source="gs://$project-preprod-build/functions/$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.zip"
 gcloud storage cp "$archive/source.zip" "$source" --project "$project" --quiet
 env_file="$archive/environment.json"
-node --input-type=module -e 'import { writeFileSync } from "node:fs"; writeFileSync(process.argv[1], JSON.stringify({FIREBASE_CONFIG:JSON.stringify({projectId:process.env.GCP_PROJECT_ID}),SDR_REGION:"asia-south1",APP_CHECK_MODE:"enforce",DYNATRACE_TENANT_URL:process.env.DYNATRACE_TENANT_URL,SDR_EMAIL_ENABLED:process.env.PREPROD_EMAIL_ENABLED==="true"?"true":"false"}));' "$env_file"
+node --input-type=module -e 'import { writeFileSync } from "node:fs"; writeFileSync(process.argv[1], JSON.stringify({FIREBASE_CONFIG:JSON.stringify({projectId:process.env.GCP_PROJECT_ID}),SDR_REGION:"asia-south1",APP_CHECK_MODE:"enforce",DYNATRACE_TENANT_URL:process.env.DYNATRACE_TENANT_URL,SDR_EMAIL_ENABLED:process.env.PREPROD_EMAIL_ENABLED==="true"?"true":"false",...(process.env.PREPROD_EMAIL_BETA_ENABLED==="true"?{SDR_EMAIL_BETA_ENABLED:"true",SDR_EMAIL_BETA_ADDRESS:process.env.PREPROD_EMAIL_BETA_ADDRESS,SDR_EMAIL_BETA_TEST_INBOX:process.env.PREPROD_EMAIL_BETA_TEST_INBOX}:{})}));' "$env_file"
 runtime_account="salesdrone-preprod-runtime@$project.iam.gserviceaccount.com"
 secrets='DYNATRACE_API_TOKEN=DYNATRACE_API_TOKEN:latest,PREPROD_CURSOR_SECRET=PREPROD_CURSOR_SECRET:latest'
 if [[ "${PREPROD_EMAIL_ENABLED:-}" == true ]]; then
@@ -29,7 +29,7 @@ worker_exists=false
 if gcloud functions describe "${worker_identity[@]}" --format='value(name)' >/dev/null 2>&1; then
   worker_exists=true
 fi
-if [[ "${PREPROD_EMAIL_ENABLED:-}" == true || "$worker_exists" == true ]]; then
+if [[ "${PREPROD_EMAIL_ENABLED:-}" == true || "${PREPROD_EMAIL_BETA_ENABLED:-}" == true || "$worker_exists" == true ]]; then
   worker_args=(--entry-point preprodEmail --memory 256Mi --max-instances 1 --concurrency 1)
   # Private on creation. Updates keep the scheduler's invocation policy intact.
   if [[ "$worker_exists" == false ]]; then

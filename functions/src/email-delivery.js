@@ -7,6 +7,7 @@ import {
   readEmailSettings, readEmailPreferences, scheduleKey, weekStart, writeDigestSchedule, writeEmailJob,
 } from './email-policy.js';
 import { EMAIL_FROM, digestCopy, sampleDigest, renderEmail, LEGACY_TEMPLATE_VERSION, TEMPLATE_VERSION } from './email-templates.js';
+import { betaPolicyPath } from './email-beta.js';
 import { stageReleaseAnnouncements } from './email-release-announcement.js';
 import { readResearchSettings } from './lead-research-settings.js';
 import { resetActive, RESET_STATE } from './lead-data-reset.js';
@@ -14,7 +15,7 @@ import { canReadLead, effectiveMember, hash, path } from './policy.js';
 
 const { minute, day } = EMAIL_MILLIS;
 const batchLimit = 6;
-const counters = { sends: 30, digestScans: 12, modelCalls: 8 };
+const counters = { sends: 30, betaSends: 10, betaInbound: 60, digestScans: 12, modelCalls: 8 };
 const maxAge = 20 * 60 * minute;
 const maxAttempts = 4;
 const expiry = 30 * day;
@@ -31,8 +32,10 @@ export async function reserveEmailBudget(tx, kind, at) {
   const location = path('emailBudgets', id);
   const prior = await tx.get(location);
   const count = prior?.[kind] || 0;
-  if (count >= counters[kind]) return false;
-  tx.set(location, { ...prior, id, [kind]: count + 1 });
+  const beta = kind === 'betaSends';
+  const totalSends = prior?.sends || 0;
+  if (count >= counters[kind] || beta && totalSends >= counters.sends) return false;
+  tx.set(location, { ...prior, id, [kind]: count + 1, ...(beta ? { sends: totalSends + 1 } : {}) });
   return true;
 }
 
@@ -185,7 +188,7 @@ async function prepareEmail({ store, config, job, context, at, telemetry }) {
   return { to, recipientHash, facts: facts || null, insight, scope };
 }
 
-async function armEmail(store, job, prepared, at) {
+async function armEmail(store, job, prepared, at, betaEmail) {
   return store.run(async tx => {
     const location = path('emailJobs', job.id);
     const latest = await tx.get(location);
@@ -206,8 +209,10 @@ async function armEmail(store, job, prepared, at) {
       retire(tx, latest, 'Suppressed', at, 'daily_limit');
       return null;
     }
+    const releaseReplyTo = latest.event === 'release' && latest.attempts === 0 && betaEmail?.ready() &&
+      (await tx.get(betaPolicyPath))?.enabled ? betaEmail.releaseAddress : latest.releaseReplyTo || null;
     const work = {
-      ...latest, recipientHash: prepared.recipientHash,
+      ...latest, ...(releaseReplyTo ? { releaseReplyTo } : {}), recipientHash: prepared.recipientHash,
       facts: prepared.facts, insight: prepared.insight,
       ...(job.event === 'release' ? { firstSendingAt: latest.firstSendingAt || at } : {}),
       // Keep the same body and tags if a retry crosses a deployment.
@@ -237,7 +242,7 @@ async function settleEmail(store, job, at, result) {
   });
 }
 
-export async function dispatchEmails({ store, config, at, telemetry }) {
+export async function dispatchEmails({ store, config, betaEmail, at, telemetry }) {
   const stats = { accepted: 0, failed: 0, delayed: 0, suppressed: 0 };
   if (!config.ready()) return stats;
   const settings = await readEmailSettings(store);
@@ -266,7 +271,7 @@ export async function dispatchEmails({ store, config, at, telemetry }) {
         ['assignedToUid', 'archived', 'doNotContact', 'needsReview']);
       if (!isDeepStrictEqual(currentScope, [...prepared.scope.values()]))
         return settleEmail(store, job, at, { state: 'Suppressed', reason: 'no_longer_eligible' });
-      const armed = await armEmail(store, job, prepared, at);
+      const armed = await armEmail(store, job, prepared, at, betaEmail);
       if (!armed) return 'Suppressed';
       if (armed.deferred) return 'Delayed';
       const preprod = config.environment === 'pre-production';
@@ -277,6 +282,7 @@ export async function dispatchEmails({ store, config, at, telemetry }) {
       });
       const send = () => config.send({
         ...message, from: EMAIL_FROM, to: [prepared.to],
+        ...(armed.releaseReplyTo ? { reply_to: armed.releaseReplyTo } : {}),
         tags: [
           { name: 'salesdrone_job', value: job.id },
           { name: 'salesdrone_env', value: config.environment },

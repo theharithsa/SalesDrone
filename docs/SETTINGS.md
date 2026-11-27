@@ -823,7 +823,7 @@ Also requires your current AI access. When unavailable, both digests still show 
 
 **Who/where:** Workspace.
 
-**API:** GET/PATCH /api/v1/email/settings, POST /api/v1/email/preview, POST /api/v1/email/test and GET /api/v1/email/deliveries.
+**API:** GET/PATCH /api/v1/email/settings, POST /api/v1/email/preview, POST /api/v1/email/test and GET /api/v1/email/deliveries, GET/PATCH /api/v1/email/beta/settings.
 
 **Permissions:** Admin role with members:write, Google sign-in and App Check. Writes require expectedVersion where documented..
 
@@ -868,6 +868,14 @@ If the chosen member loses access the worker suppresses the delivery.
 Review each layout and plain text. An Admin can queue a test every five minutes.
 
 Pre-production uses a controlled destination. Delivery history records queued, accepted, delayed, delivered, failed or suppressed states.
+
+### Enable Email Beta
+
+**Default:** Off; no selected members.
+
+In Inbox Beta, enable lead email after sender setup and grant access to up to 50 active members.
+
+Admins have access when enabled. Shared threads follow current lead access. Unlinked, linking and deletion are Admin-only.
 
 ## Settings audit trail
 

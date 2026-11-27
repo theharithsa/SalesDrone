@@ -39,6 +39,10 @@ const phases = [
   'leads',
   'requests',
   'members',
+  'emailBetaMessages',
+  'emailBetaDue',
+  'emailBetaErase',
+  'emailBetaThreads',
 ];
 const affected = new Set(
   phases.filter((p) => !['storage', 'members'].includes(p)),
@@ -383,6 +387,16 @@ export async function advanceLeadReset({
               throw Error('Unsafe file path');
             await files.delete(objectPath);
             removedFiles++;
+          }
+          if (job.phase.startsWith('emailBeta')) {
+            const thread = job.phase === 'emailBetaThreads' ? row.data :
+              row.data.threadId ? await store.get(path('emailBetaThreads', row.data.threadId)) : null;
+            next.cursor = row.id;
+            if (!thread?.leadId && !thread?.deleted) continue;
+            if (job.phase === 'emailBetaThreads') {
+              if (!thread.deleted) rewrites.push([p, { id: thread.id, deleted: true, updatedAt: thread.updatedAt, version: thread.version + 1 }]);
+            } else deletions.push(p);
+            continue;
           }
           if (job.phase === 'requests')
             rewrites.push([

@@ -1,3 +1,5 @@
+import { betaAccess, betaChange, betaDetail, betaList, betaMatch, betaReceipt, betaSend,
+  readBetaSettings, saveBetaSettings, BetaSettings, BetaCompose, BetaReply, BetaLink, BetaRead, BetaDelete } from './email-beta.js';
 import { DAY_MS, MINUTE_MS } from './durations.js';
 import { isoNow } from './clock.js';
 import { leadComments, matchesLeadText, matchesCommentText } from './lead-text.js';
@@ -151,7 +153,7 @@ import {
   enqueueEmail, readEmailSettings, MAIL_SETTINGS, readEmailPreferences, saveEmailPreferences,
   emailOn, writeEmailJob, datePlus,
 } from './email-policy.js';
-import { applyEmailReceipt, verifyEmailReceipt } from './email-delivery.js';
+import { applyEmailReceipt, reserveEmailBudget, verifyEmailReceipt } from './email-delivery.js';
 import { assertTaskRecipient, queueLeadEmails, queueTaskEmail } from './email-events.js';
 import { templatePreview } from './email-templates.js';
 const uid = () => Date.now().toString(36) + '_' + randomUUID();
@@ -168,6 +170,7 @@ export function createApp({
   extractScore = null,
   summarizeDashboard = null,
   emailRuntime = null,
+  betaEmail = null,
   now = isoNow,
 }) {
   const maintenanceStore = store.maintenanceStore || store;
@@ -215,6 +218,19 @@ export function createApp({
       const event = verifyEmailReceipt(req.rawBody || req.body, req.headers, secret, at);
       const outcome = await applyEmailReceipt(store, event, emailRuntime.environment, at);
       if (outcome) telemetry()?.emailOperation?.('receipt', outcome.toLowerCase(), 0);
+      res.json({ ok: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+  app.post('/api/v1/email/beta/receipts/resend', receiptLimiter, express.raw({ type: 'application/json', limit: '32kb', inflate: false }), async (req, res, next) => {
+    try {
+      telemetry()?.operation?.('POST /email/beta/receipts/resend');
+      const secret = await betaEmail?.webhookSecret();
+      if (!secret) throw new AppError(503, 'EMAIL_BETA_SETUP', 'Email Beta is unavailable');
+      const at = now();
+      const event = verifyEmailReceipt(req.rawBody || req.body, req.headers, secret, at);
+      await betaReceipt(store, betaEmail, event, at, reserveEmailBudget);
       res.json({ ok: true });
     } catch (error) {
       next(error);
@@ -310,6 +326,7 @@ export function createApp({
             'Lead data is being cleared. Try again after cleanup finishes.',
           );
         const allowed =
+          method === 'get' && url === '/email/threads' ? ['filter', 'leadId', 'cursor'] :
           url === '/companies' ? ['limit', 'cursor', 'search'] : url === '/team' ? ['days','from','to'] : url === '/team/members/:uid/activities' ? ['days','from','to','limit','cursor'] : url === '/lead-assistant/requests/:id/leads' ? ['limit','cursor','part'] : url === '/lead-scores'
             ? ['ids']
             : url === '/leads'
@@ -528,6 +545,7 @@ export function createApp({
         identity: req.identity,
         mode: m ? 'live' : 'demo',
         member: m,
+        emailBeta: await betaAccess(store, betaEmail, m),
         workspaceSettings: m ? await readWorkspaceSettings(store) : undefined,
         preferences: {
           timezone: 'Asia/Kolkata',
@@ -850,6 +868,42 @@ export function createApp({
       return { ok: true };
     });
   });
+  route('get', '/email/beta/settings', 'members:write', async req => {
+    assertAdmin(req.member);
+    return readBetaSettings(store, betaEmail);
+  });
+  route('patch', '/email/beta/settings', 'members:write', req =>
+    mutate(req, 'members:write', async (tx, member) => {
+      assertAdmin(member);
+      return saveBetaSettings(tx, betaEmail, parse(BetaSettings, req.body));
+    }));
+  route('get', '/email/threads', 'leads:read', req => {
+    const filter = req.query.filter || 'all';
+    const leadId = req.query.leadId;
+    if (!['all','unread','sent','unlinked'].includes(filter) ||
+        leadId && (filter !== 'all' || !/^[A-Za-z0-9_.:-]{1,128}$/.test(leadId)))
+      throw new AppError(400, 'FILTER', 'Choose a valid email filter');
+    return betaList({ store, config: betaEmail, member: req.member, leadId, filter, cursor: req.query.cursor,
+      seal: sealCursor, open: openCursor });
+  });
+  route('get', '/email/threads/:id', 'leads:read', req =>
+    betaDetail({ store, config: betaEmail, member: req.member, id: req.params.id, cursor: req.query.cursor,
+      seal: sealCursor, open: openCursor }));
+  route('get', '/email/threads/:id/match', 'members:write', req =>
+    betaMatch(store, betaEmail, req.member, req.params.id));
+  route('post', '/email/threads', 'leads:edit', req =>
+    mutate(req, 'leads:edit', (tx, member) =>
+      betaSend(tx, betaEmail, member, null, parse(BetaCompose, req.body), req.headers['idempotency-key'], now(), telemetry()?.capture?.()?.traceparent)));
+  route('post', '/email/threads/:id/replies', 'leads:read', req =>
+    mutate(req, 'leads:read', (tx, member) =>
+      betaSend(tx, betaEmail, member, req.params.id, parse(BetaReply, req.body), req.headers['idempotency-key'], now(), telemetry()?.capture?.()?.traceparent)));
+  route('patch', '/email/threads/:id/read', 'leads:read', req =>
+    mutate(req, 'leads:read', (tx, member) => betaChange(tx, betaEmail, member, req.params.id, 'read', parse(BetaRead, req.body), now())));
+  route('patch', '/email/threads/:id/lead', 'members:write', req =>
+    mutate(req, 'members:write', (tx, member) => betaChange(tx, betaEmail, member, req.params.id, 'link', parse(BetaLink, req.body), now())));
+  route('delete', '/email/threads/:id', 'members:write', req =>
+    mutate(req, 'members:write', (tx, member) => betaChange(tx, betaEmail, member, req.params.id, 'delete', parse(BetaDelete, req.body), now())));
+
   route('get', '/email/settings', 'members:write', async req => {
     assertAdmin(req.member);
     return { ...await readEmailSettings(store), deliveryReady: emailReady() };

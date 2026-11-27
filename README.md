@@ -277,7 +277,7 @@ Use [`@theharithsa/salesdrone-mcp`](https://github.com/theharithsa/salesdrone-mc
 Members choose lead and shared-task emails and schedule daily and weekly digests
 under Settings → Personal → Email preferences. Admins set workspace controls,
 preview templates and check delivery under Settings → Workspace → Email
-notifications. The [email guide](docs/EMAIL.md) describes event rules,
+notifications. Email Beta gives authorized members an inbox for lead correspondence and starts off while dedicated two-way delivery is verified. The [email guide](docs/EMAIL.md) describes event rules,
 pre-production verification and rollback.
 
 [Release announcement preview](site/assets/screenshots/email-release-announcement-demo.jpg) · [Weekly digest preview](site/assets/screenshots/email-weekly-branded-demo.jpg) · [Dark-mode preview](site/assets/screenshots/email-weekly-dark-demo.jpg)

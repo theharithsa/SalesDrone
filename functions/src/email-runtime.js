@@ -62,3 +62,56 @@ export function createEmailConfig({ environment, origin, chooseInsight, env = pr
     },
   };
 }
+
+/** Provider identities are distinct from transactional email and scoped per environment. */
+export function createBetaEmailConfig({ environment, env = process.env, credential = applicationDefault, fetchImpl = fetch }) {
+  const preprod = environment === 'pre-production';
+  const address = env.SDR_EMAIL_BETA_ADDRESS?.trim().toLowerCase();
+  const testInbox = preprod ? env.SDR_EMAIL_BETA_TEST_INBOX?.trim().toLowerCase() : null;
+  const validAddress = value => typeof value === 'string' && /^[a-z0-9][a-z0-9._+-]*@[a-z0-9][a-z0-9.-]+\.[a-z]{2,}$/.test(value);
+  const domain = address?.split('@')[1];
+  const releaseAddress = 'release@' + domain;
+  const secrets = preprod ? 'PREPROD_EMAIL_BETA_' : 'SALESDRONE_EMAIL_BETA_';
+  const signing = productionSecret(secrets + 'WEBHOOK_SECRET', credential, fetchImpl);
+  const inboundKey = productionSecret(secrets + 'RECEIVE_KEY', credential, fetchImpl);
+  const outboundKey = productionSecret(secrets + 'SEND_KEY', credential, fetchImpl);
+  const ready = () => env.SDR_EMAIL_BETA_ENABLED === 'true' && env.FUNCTIONS_EMULATOR !== 'true' &&
+    validAddress(address) && (preprod ? domain === 'mail-preprod.salesdrone.in' && validAddress(testInbox) : domain === 'mail.salesdrone.in');
+  const threadFromAddress = value => {
+    if (typeof value !== 'string' || !value.endsWith('@' + domain)) return null;
+    return /^reply\+([0-9a-f-]{36})@/.exec(value)?.[1] || null;
+  };
+  return {
+    environment, ready, address, releaseAddress, threadFromAddress,
+    replyAddress: id => 'reply+' + id + '@' + domain,
+    accepts: value => !!value && (value === address || value === releaseAddress || !!threadFromAddress(value)),
+    permits: value => !!value && (!preprod || value === testInbox),
+    webhookSecret: () => ready() ? signing() : null,
+    send: resendClient(() => ready() ? outboundKey() : null, fetchImpl),
+    async receive(id) {
+      const token = ready() ? await inboundKey() : null;
+      if (!token) throw new Error('Email Beta provider setup is unavailable');
+      const response = await fetchImpl('https://api.resend.com/emails/receiving/' + encodeURIComponent(id), {
+        headers: { Authorization: 'Bearer ' + token }, redirect: 'error', signal: AbortSignal.timeout(8_000),
+      });
+      if (!response.ok || !response.body) {
+        await response.body?.cancel();
+        throw new Error('Email Beta receipt is unavailable');
+      }
+      const reader = response.body.getReader();
+      const chunks = [];
+      let bytes = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        bytes += value.length;
+        if (bytes > 2 * 1024 * 1024) {
+          await reader.cancel();
+          return { oversized: true };
+        }
+        chunks.push(value);
+      }
+      return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+    },
+  };
+}

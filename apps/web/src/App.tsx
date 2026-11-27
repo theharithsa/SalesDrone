@@ -1,3 +1,5 @@
+import { Mail } from 'lucide-react';
+import type { EmailTarget, EmailThread } from './features/EmailBetaPage';
 import { normalizeAccent } from './lib/accent';
 import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
@@ -132,6 +134,7 @@ const DashboardPage = lazy(() => import('./features/DashboardPage'));
 
 const LeadAssistantPage = lazy(() => import('./features/LeadAssistantPage'));
 const ResearchPage = lazy(() => import('./features/ResearchPage'));
+const EmailBetaPage = lazy(() => import('./features/EmailBetaPage'));
 const ImportPage = lazy(() => import('./features/ImportPage'));
 const SettingsPage = lazy(() => import('./features/SettingsPage'));
 type Page = NavigationPage | 'members' | 'settings';
@@ -356,7 +359,11 @@ export default function App() {
   const readCache = useRef(new WorkspaceReadCache());
   const sessionRef = useRef(session);
   sessionRef.current = session;
-  const can = (c: string) => demo || session?.member?.capabilities.includes(c);
+  const canEmailBeta = !demo && session?.emailBeta === true;
+  const can = (c: string) => c === 'email-beta' ? canEmailBeta : demo || session?.member?.capabilities.includes(c);
+  const [emailTarget, setEmailTarget] = useState<EmailTarget | null>(null);
+  const [leadEmail, setLeadEmail] = useState<{ leadId: string; items: EmailThread[] } | null>(null);
+  const clearEmailTarget = useCallback(() => setEmailTarget(null), []);
   const notify = (message: string) => setToast(message);
   useEffect(() => {
     if (!toast) return;
@@ -592,7 +599,7 @@ export default function App() {
     };
   }, [session, demo]);
   const request = useCallback(
-    async (path: string, method = 'GET', body?: any, key?: string) => {
+    async (path: string, method = 'GET', body?: any, key?: string, signal?: AbortSignal) => {
       if (!demo) {
         try {
           const current = sessionRef.current;
@@ -600,8 +607,9 @@ export default function App() {
           const scope = member && auth.currentUser?.uid === current.identity.uid
             ? JSON.stringify([generation.current, current.identity.uid, member.version, member.accessPolicyVersion, member.scope])
             : '';
-          const send = () => api(path, method, body, key);
-          const result = method === 'GET' ? await readCache.current.read(scope, path, send) : await send();
+          const privateEmail = path.startsWith('/email/threads');
+          const send = () => api(path, method, body, key, privateEmail || method !== 'GET' ? signal : undefined);
+          const result = method === 'GET' && !privateEmail ? await readCache.current.read(scope, path, send) : await send();
           if (method !== 'GET') readCache.current.clear();
           setOnline(true);
           return result;
@@ -615,7 +623,7 @@ export default function App() {
             setSelected(null);
             void resolveSession();
           }
-          if (e instanceof ApiError && ['EXPORT_DISABLED', 'INTELLIGENCE_DISABLED'].includes(e.code))
+          if (e instanceof ApiError && ['EXPORT_DISABLED', 'INTELLIGENCE_DISABLED', 'EMAIL_BETA_ACCESS'].includes(e.code))
             void resolveSession();
           throw e;
         }
@@ -1168,11 +1176,23 @@ export default function App() {
   });
   const showCombinedTimeline = !!routeLeadId && leadTab === 'all';
   const visibleActivities = filterLeadActivities(timeline, routeLeadId ? leadTab : 'all');
-  const activityEntries = buildLeadTimeline(
+  useEffect(() => {
+    setLeadEmail(null);
+    if (!canEmailBeta || !routeLeadId || !showCombinedTimeline) return;
+    const controller = new AbortController();
+    void request('/email/threads?leadId=' + encodeURIComponent(routeLeadId), 'GET', undefined, undefined, controller.signal)
+      .then(value => {
+        if (!controller.signal.aborted) setLeadEmail({ leadId: routeLeadId, items: (value as { items: EmailThread[] }).items });
+      }).catch(() => { if (!controller.signal.aborted) setLeadEmail(null); });
+    return () => controller.abort();
+  }, [canEmailBeta, routeLeadId, showCombinedTimeline, request]);
+  const activityEntries = [...buildLeadTimeline(
     visibleActivities,
     showCombinedTimeline ? leadTasks.items : [],
     showCombinedTimeline,
-  );
+  ), ...(canEmailBeta && showCombinedTimeline && leadEmail && leadEmail.leadId === routeLeadId
+    ? leadEmail.items.map(thread => ({ kind: 'email' as const, id: thread.id, date: thread.updatedAt, thread })) : [])]
+    .sort((left, right) => (right.date || '').localeCompare(left.date || ''));
 
   const pendingAutomatic = timeline.some(
     (a) => a.autoReminder?.status === 'Pending',
@@ -1243,7 +1263,7 @@ export default function App() {
       if (!signal?.aborted && epoch === detailEpoch.current) setDetailBusy(false);
     }
   }, [request]);
-  async function inspectLead(lead: Lead) {
+  async function inspectLead(lead: Pick<Lead, 'id'>) {
     if (!lead?.id) {
       setError('This lead is unavailable. Return to Leads and refresh.');
       return;
@@ -1794,6 +1814,7 @@ export default function App() {
                   hygiene: 'Lead Hygiene',
                   assistant: 'Lead Assistant',
                   imports: 'Import enquiries',
+                  email: 'Email',
                   members: 'Settings',
                 }[page]
               }
@@ -2382,6 +2403,13 @@ export default function App() {
                             Back to leads
                           </span>
                         </button>
+                        {canEmailBeta && can('leads:edit') && selected.email && !selected.doNotContact &&
+                            !selected.needsReview && !selected.archived && (
+                          <button className="button" onClick={() => {
+                            setEmailTarget({ lead: { id: selected.id, name: selected.name || selected.company || 'Unnamed lead' } });
+                            go('email');
+                          }}><Mail size={16} /> Send email</button>
+                        )}
                         {can('leads:edit') ? (
                           <button
                             className="button detail-edit-button"
@@ -2782,6 +2810,17 @@ export default function App() {
                                   key={leadTab}
                                 >
                                   {activityEntries.map((entry) => {
+                                    if (entry.kind === 'email') return <li key={'email-' + entry.id} className="timeline-item">
+                                      <span className="timeline-icon" aria-hidden="true"><Mail size={14} /></span>
+                                      <div>
+                                        <span className="timeline-kind">Email</span>
+                                        <button className="text-button timeline-task-title" onClick={() => {
+                                          setEmailTarget({ threadId: entry.id });
+                                          go('email');
+                                        }}>{entry.thread.subject}</button>
+                                        <time dateTime={entry.date}>{displayDate(entry.date, timezone)}</time>
+                                      </div>
+                                    </li>;
                                     if (entry.kind !== 'activity') {
                                       const task = entry.task;
                                       const Icon = entry.kind === 'reminder' ? Bell : ListTodo;
@@ -3226,6 +3265,11 @@ export default function App() {
                 />
               </Suspense>
             ) : null}
+            {page === 'email' && (canEmailBeta
+              ? <EmailBetaPage key={session?.identity.uid + ':' + session?.member?.version} request={request}
+                admin={!!admin} target={emailTarget} onConsumeTarget={clearEmailTarget} timezone={timezone}
+                onOpenLead={lead => void inspectLead(lead)} />
+              : <div className="panel"><h2>Email Beta</h2><p>Email access is unavailable for this account.</p></div>)}
             {page === 'imports' ? (
               <ImportPage
                 config={fieldOptions}

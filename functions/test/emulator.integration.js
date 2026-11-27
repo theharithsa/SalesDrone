@@ -1830,3 +1830,47 @@ test('email test jobs and receipt states survive the real Firestore and Google A
   assert.equal(list.body.items.find(job => job.id === queued.body.id).state, 'Delivered');
   assert.doesNotMatch(JSON.stringify(list.body), /delivered@|recipientHash|providerId/);
 });
+
+test('Email Beta thread scope, pagination queries and erasure use actual Auth and Firestore', async () => {
+  const { dispatchBetaEmail } = await import('../src/email-beta.js');
+  const { reserveEmailBudget } = await import('../src/email-delivery.js');
+  const at = '2026-11-27T04:00:00.000Z';
+  const store = observableStore(firestoreStore(db));
+  const adminEmail = 'beta-admin@example.test';
+  const adminToken = await signIn(adminEmail);
+  const memberToken = await signIn('beta-member@example.test');
+  const { uid } = await auth.verifyIdToken(memberToken, true);
+  const leadId = 'email-beta-emulator-lead';
+  const leadEmail = 'synthetic-customer@example.test';
+  await store.run(tx => {
+    tx.set(path('members', uid), {
+      id: uid, uid, active: true, role: 'SDR', scope: 'assigned',
+      capabilities: ['leads:read', 'leads:edit'], version: 1,
+    });
+    tx.set(path('leads', leadId), { id: leadId, name: 'Synthetic customer', email: leadEmail, assignedToUid: uid });
+  });
+  const config = {
+    ready: () => true, environment: 'pre-production', address: 'leads@example.test',
+    permits: value => value === leadEmail, replyAddress: id => 'reply+' + id + '@example.test',
+    send: async () => ({ state: 'Accepted', providerId: randomUUID() }),
+  };
+  const api = request(createApp({
+    store, betaEmail: config, now: () => at, bootstrapAdminEmails: [adminEmail],
+    verifyToken: token => auth.verifyIdToken(token, true),
+  }));
+  const call = (method, url, token = adminToken) => api[method]('/api/v1' + url).set('Authorization', 'Bearer ' + token);
+  await call('get', '/me').expect(200);
+  await call('patch', '/email/beta/settings').send({ expectedVersion: 1, enabled: true, memberIds: [uid] }).expect(200);
+  const queued = await call('post', '/email/threads', memberToken).set('Idempotency-Key', randomUUID())
+    .send({ leadId, subject: 'Synthetic subject', body: 'Synthetic body' }).expect(200);
+  const { threadId, messageId } = queued.body;
+  assert.equal((await call('get', '/email/threads?leadId=' + leadId, memberToken).expect(200)).body.items[0].id, threadId);
+  await dispatchBetaEmail({ store, config, at, reserve: reserveEmailBudget });
+  const detail = await call('get', '/email/threads/' + threadId, memberToken).expect(200);
+  assert.equal(detail.body.messages[0].state, 'Accepted');
+  await call('delete', '/email/threads/' + threadId).send({ expectedVersion: detail.body.version, confirmation: 'DELETE' }).expect(200);
+  await call('get', '/email/threads/' + threadId, memberToken).expect(404);
+  await dispatchBetaEmail({ store, config, at, reserve: reserveEmailBudget });
+  assert.equal(await store.get(path('emailBetaMessages', messageId)), null);
+  assert.equal((await store.get(path('emailBetaThreads', threadId))).deleted, true);
+});

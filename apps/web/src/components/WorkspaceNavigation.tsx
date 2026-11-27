@@ -5,6 +5,7 @@ import {
   Building2,
   ListTodo,
   Bell,
+  Mail,
   Upload,
   ShieldCheck,
   Sparkles,
@@ -20,6 +21,7 @@ export const navigationGroups = [
       { id: "leads", label: "Leads", icon: UsersRound },
       { id: "companies", label: "Companies", icon: Building2, access: "leads:read" },
       { id: "tasks", label: "Tasks", icon: ListTodo },
+      { id: "email", label: "Email", icon: Mail, access: "email-beta" },
       { id: "notifications", label: "Notifications", icon: Bell },
     ],
   },
@@ -141,6 +143,7 @@ export default function WorkspaceNavigation({
                 >
                   <item.icon size={18} />
                   <span>{item.label}</span>
+                  {item.id === "email" && <small>Beta</small>}
                   {item.id === "tasks" && taskCount > 0 ? (
                     <small>{taskCount}</small>
                   ) : null}

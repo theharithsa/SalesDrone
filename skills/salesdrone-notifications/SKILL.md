@@ -31,6 +31,17 @@ Domain write → recipient inbox/outbox → reminders dispatch → FCM data mess
 - GET /api/v1/email/deliveries
 - POST /api/v1/email/test
 - POST /api/v1/email/receipts/resend
+- GET /api/v1/email/beta/settings
+- PATCH /api/v1/email/beta/settings
+- GET /api/v1/email/threads
+- POST /api/v1/email/threads
+- GET /api/v1/email/threads/{id}
+- GET /api/v1/email/threads/{id}/match
+- POST /api/v1/email/threads/{id}/replies
+- PATCH /api/v1/email/threads/{id}/read
+- PATCH /api/v1/email/threads/{id}/lead
+- DELETE /api/v1/email/threads/{id}
+- POST /api/v1/email/beta/receipts/resend
 - GET /api/v1/notifications
 - PATCH /api/v1/notifications/{id}
 - GET /api/v1/devices
@@ -91,19 +102,8 @@ The inbox shows unread counts for the loaded rows only. Keep the overlay compact
 
 ## Transactional email
 
-Read [the email runbook](../../docs/EMAIL.md), the tasks and people skills, and
-FinOps. Versioned email controls, template previews and delivery receipts are
-owned here. The worker consumes atomic emailJobs and emailDue entries from live
-mutations, rechecks active access and an environment allowlist, and uses Resend
-idempotency. A Resend callback verifies raw bytes and advances a finite status.
-Keep production paused until a separate credential and pilot are approved.
-Review email-delivery.js, email-policy.js, email-templates.js and email.test.js
-before operating this path. Keep addresses, provider payloads, names, notes and
-AI content out of monitoring. Pre-production deploys preserve the scheduler's
-worker access and probe for anonymous denial. Verify an OIDC invocation with a
-signed test delivery and check the simulator outcomes and an approved inbox.
-Disable a shared pre-production subscription before live production sending.
+Follow [the email runbook](../../docs/EMAIL.md) for transactional email and Email Beta. Beta stays off until isolated sending and receiving, scope, and erasure are verified. Use signed callbacks, current lead access, idempotent sends and bounded queues. Keep all correspondence and provider payloads out of telemetry. Verify scheduler authorization separately from delivery.
 
 Email uses an Astryx layout, Open Sans, fixed first-party light and dark marks
 and a text wordmark. Release mail waits for published notes and batches eligible members.
-Pin the template revision at first send so retries keep the same payload.
+Pin template revisions and reply destinations at first send to keep retries stable.

@@ -148,3 +148,52 @@ If the pre-production callback shares a Resend workspace with production, disabl
 that subscription before any production send. Resend subscriptions can deliver
 workspace-wide events. Use a separate pilot workspace when both endpoints need
 to stay enabled.
+
+## Lead correspondence (Email Beta)
+
+Open **Email** to read a conversation, compose to a lead’s current email address,
+or reply. On a phone, tap a conversation to open it, then use **Conversations**
+to return. A linked thread appears in the lead’s **All** timeline. **Send email**
+on the lead opens a composer with that lead selected. Plain-text messages stay in
+the thread. For an attachment, the inbox shows that one is present.
+
+Admins can open **Settings → Workspace → Email notifications → Inbox Beta**.
+The inbox starts off. Admins may grant inbox access to up to 50 active members.
+Each conversation follows current lead view permission. Sending to a linked lead
+requires edit access and a current, contactable email address. Admins manage the
+Unlinked inbox and confirm links, including any suggested unique email match.
+An Admin can delete a conversation by typing DELETE. Visibility ends at once.
+A bounded worker removes stored message bodies. Copies held by Resend or
+recipients follow their own retention.
+
+### Pilot activation
+
+Provision a dedicated sending and receiving domain in Resend for each
+environment. Use `mail-preprod.salesdrone.in` for pre-production and
+`mail.salesdrone.in` for production. Add Resend’s records on those subdomains.
+Keep the root-domain MX and transactional sender unchanged. Configure a separate
+signed callback to `/api/v1/email/beta/receipts/resend` on each environment’s
+own host. Subscribe to received, sent, delivered, delayed, failed, bounced,
+complained and suppressed events.
+
+Grant each environment’s runtime service identity access to its own
+`*_EMAIL_BETA_SEND_KEY`, `*_EMAIL_BETA_RECEIVE_KEY` and
+`*_EMAIL_BETA_WEBHOOK_SECRET` in Secret Manager. The prefixes are `PREPROD`
+and `SALESDRONE`. Set `PREPROD_EMAIL_BETA_ADDRESS` and the controlled
+`PREPROD_EMAIL_BETA_TEST_INBOX` before enabling `PREPROD_EMAIL_BETA_ENABLED`.
+Prepare and verify the pre-production email indexes with
+`PREPROD_EMAIL_BETA_ENABLED=true node scripts/preprod-email-indexes.mjs` under
+the index operator identity. The production equivalents are
+`SDR_EMAIL_BETA_ADDRESS` and `SDR_EMAIL_BETA_ENABLED`. Enable workspace access
+only after the checked environment deployment and provider configuration.
+Verify one synthetic outbound message, an inbound reply, a delivery callback,
+manual linking, a denied lead access case, a duplicate callback and deletion.
+Verify pre-production independently before activating a production pilot.
+When enabled, version-announcement replies reach the Admin-only Unlinked inbox.
+
+The signed receipt endpoint accepts up to 32 KiB. The worker retrieves up to
+2 MiB and stores at most 16,000 plain-text characters per message. HTML-only
+messages show a placeholder. A recognized reply alias or referenced message ID,
+matching correspondent and a passing DMARC result are required to append
+automatically. Other accepted inbound messages wait in Unlinked. Provider
+retries are bounded. Admins can pause sending and visibility from Inbox Beta.

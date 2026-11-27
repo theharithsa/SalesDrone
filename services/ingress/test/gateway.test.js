@@ -46,7 +46,7 @@ test('Resend receipt signatures survive only the callback route with original by
   const at = '2026-11-26T00:00:00.000Z';
   const key = Buffer.from('synthetic ingress receipt verification fixture');
   const secret = 'whsec_' + key.toString('base64');
-  const path = '/api/v1/email/receipts/resend';
+  const paths = ['/api/v1/email/receipts/resend', '/api/v1/email/beta/receipts/resend'];
   const body = Buffer.from('{\n  "type": "email.delivered", "data": {}\n}\n');
   const id = 'msg_ingress_test';
   const timestamp = String(Date.parse(at) / 1000);
@@ -66,15 +66,18 @@ test('Resend receipt signatures survive only the callback route with original by
       res.writeHead(error.status ?? 500).end();
     }
   });
-  const signed = await fetch(f.url + path, { method: 'POST', headers, body });
-  assert.equal(signed.status, 200);
-  assert.deepEqual(f.calls[0].body, body);
-  assert.equal(f.calls[0].headers['x-serverless-authorization'], undefined);
-  const tampered = await fetch(f.url + path, { method: 'POST', headers, body: body.toString().trim() });
-  assert.equal(tampered.status, 401);
+  for (const path of paths) {
+    const index = f.calls.length;
+    const signed = await fetch(f.url + path, { method: 'POST', headers, body });
+    assert.equal(signed.status, 200);
+    assert.deepEqual(f.calls[index].body, body);
+    assert.equal(f.calls[index].headers['x-serverless-authorization'], undefined);
+    const tampered = await fetch(f.url + path, { method: 'POST', headers, body: body.toString().trim() });
+    assert.equal(tampered.status, 401);
+  }
   const unrelated = await fetch(f.url + '/api/v1/leads', { method: 'POST', headers, body });
   assert.equal(unrelated.status, 401);
-  assert.ok(Object.keys(f.calls[2].headers).every(name => !name.startsWith('svix-')));
+  assert.ok(Object.keys(f.calls.at(-1).headers).every(name => !name.startsWith('svix-')));
   assert.ok(f.logs.every(entry => !entry.includes(signature) && !entry.includes(id)));
 });
 test('binary attachments and backend denials retain bytes and response contract', async t => {
