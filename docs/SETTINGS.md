@@ -875,7 +875,7 @@ Pre-production uses a controlled destination. Delivery history records queued, a
 
 In Inbox Beta, enable lead email after sender setup and grant access to up to 50 active members.
 
-Admins have access when enabled. Shared threads follow current lead access. Unlinked, linking and deletion are Admin-only.
+Admins have access when enabled. Members with current lead access can read linked conversations in formatted HTML or plain text. Unlinked, linking and deletion are Admin-only.
 
 ## Settings audit trail
 

@@ -23,6 +23,7 @@
     "docs/DESIGN-SYSTEM.md",
     "docs/API.md",
     "docs/SETTINGS.md",
+    "docs/settings-reference.json",
     "docs/TECHNICAL.md",
     "docs/observability.md",
     "docs/FINOPS.md",
@@ -99,7 +100,7 @@
     "public-settings-guide",
     "dynatrace-receipts"
   ],
-  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Verify the release marker matches the published commit, the Admin switch defaults off, and a repeat release worker run sends no duplicates. Review all email templates in light and dark with the baked-in image fallback. Check invitation reissue and verify that retries across deployments keep the original renderer and idempotency key. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify anchored stage selection and focus return in the Leads table, phone cards and full lead header. The list uses the existing filtered reload after save. Opening the control adds no reads or business events. Check independent header order and custom phone types. These reuse existing writes with no new polling or migration reads. Verify Email Beta defaults off. Before activation, verify scoped lead correspondence, signed delivery, reply threading and erasure on the dedicated provider in each environment.",
+  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Verify the release marker matches the published commit, the Admin switch defaults off, and a repeat release worker run sends no duplicates. Review all email templates in light and dark with the baked-in image fallback. Check invitation reissue and verify that retries across deployments keep the original renderer and idempotency key. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify anchored stage selection and focus return in the Leads table, phone cards and full lead header. The list uses the existing filtered reload after save. Opening the control adds no reads or business events. Check independent header order and custom phone types. These reuse existing writes with no new polling or migration reads. Verify Email Beta defaults off. Before activation, verify scoped lead correspondence, signed delivery, reply threading and erasure on the dedicated provider in each environment. On the approved pilot inbox, verify formatted compose, a received HTML-only reply and its plain-text alternative.",
   "milestone": {
     "number": 72,
     "title": "v2.15.0 — Weekly production release",

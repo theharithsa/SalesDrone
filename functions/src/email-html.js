@@ -73,10 +73,13 @@ export function renderRichCorrespondenceV2(body, html) {
   return {
     text: body,
     html: '<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">' +
-      '<meta name="color-scheme" content="light dark"></head><body style="margin:0;font-family:Open Sans,Arial,sans-serif">' +
+      '<meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark">' +
+      '<style>@media(prefers-color-scheme:dark){.mark-light{display:none!important}.mark-dark{display:inline-block!important;max-height:none!important}}</style>' +
+      '</head><body style="margin:0;font-family:Open Sans,Arial,sans-serif">' +
       '<div style="max-width:680px;margin:auto;padding:24px;line-height:1.6;overflow-wrap:anywhere">' +
       html + '<div style="border-top:1px solid #b9c3d0;margin-top:24px;padding-top:12px;font-size:13px">' +
-      '<img alt="" width="18" height="18" style="vertical-align:middle;margin-right:7px;border:0" src="https://salesdrone.in/brand/salesdrone-mark.png">SalesDrone' +
+      '<img class="mark-light" alt="" width="18" height="18" style="vertical-align:middle;margin-right:7px;border:0" src="https://salesdrone.in/brand/salesdrone-email-mark-light.png">' +
+      '<!--[if !mso]><!--><img class="mark-dark" alt="" width="18" height="18" style="display:none;max-height:0;vertical-align:middle;margin-right:7px;border:0" src="https://salesdrone.in/brand/salesdrone-email-mark-dark.png"><!--<![endif]-->SalesDrone' +
       '</div></div></body></html>',
   };
 }
