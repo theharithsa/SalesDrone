@@ -191,6 +191,13 @@ manual linking, a denied lead access case, a duplicate callback and deletion.
 Verify pre-production independently before activating a production pilot.
 When enabled, version-announcement replies reach the Admin-only Unlinked inbox.
 
+When pre-prod shares the Resend team with transactional email, set
+`PREPROD_EMAIL_BETA_SHARED_WEBHOOK=true` and add `email.received` to the
+existing signed `/api/v1/email/receipts/resend` subscription. Leave the other
+subscriptions in place. The callback checks Beta recipient addresses and
+environment tags before it queues any Beta work. This configuration uses the
+existing signing secret. The separate send and receive credentials still apply.
+
 The signed receipt endpoint accepts up to 32 KiB. The worker retrieves up to
 2 MiB and stores at most 16,000 plain-text characters per message. HTML-only
 messages show a placeholder. A recognized reply alias or referenced message ID,

@@ -218,6 +218,8 @@ export function createApp({
       const event = verifyEmailReceipt(req.rawBody || req.body, req.headers, secret, at);
       const outcome = await applyEmailReceipt(store, event, emailRuntime.environment, at);
       if (outcome) telemetry()?.emailOperation?.('receipt', outcome.toLowerCase(), 0);
+      if (betaEmail?.sharedWebhook && betaEmail.environment === 'pre-production' && betaEmail.ready())
+        await betaReceipt(store, betaEmail, event, at, reserveEmailBudget);
       res.json({ ok: true });
     } catch (error) {
       next(error);

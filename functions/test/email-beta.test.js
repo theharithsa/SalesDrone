@@ -18,7 +18,7 @@ const alias = id => 'reply+' + id + '@' + domain;
 const lead = { id: 'lead1', name: 'Synthetic lead', assignedToUid: 'rep', version: 1, email: customer };
 const member = id => ({ id, uid: id, active: true, role: 'SDR', scope: 'assigned', capabilities: PRESETS.SDR, version: 1 });
 
-function fixture() {
+function fixture({ sharedWebhook = false } = {}) {
   const store = memoryStore({
     [path('members', 'rep')]: member('rep'),
     [path('members', 'other')]: member('other'),
@@ -27,7 +27,7 @@ function fixture() {
   const sends = [];
   const incoming = new Map();
   const config = {
-    ready: () => true, environment: 'pre-production', address, releaseAddress: 'release@' + domain,
+    sharedWebhook, ready: () => true, environment: 'pre-production', address, releaseAddress: 'release@' + domain,
     permits: value => value === customer, replyAddress: alias,
     threadFromAddress: value => value?.startsWith('reply+') ? value.split('@')[0].slice(6) : null,
     accepts: value => value === address || value === 'release@' + domain || value?.startsWith('reply+'),
@@ -40,7 +40,7 @@ function fixture() {
     },
   };
   const api = request(createApp({
-    store, betaEmail: config, cursorSecret: 'synthetic-cursor-secret-1234567890123456',
+    store, betaEmail: config, ...(sharedWebhook ? { emailRuntime: config } : {}), cursorSecret: 'synthetic-cursor-secret-1234567890123456',
     now: () => at, bootstrapAdminEmails: ['admin@example.test'],
     verifyToken: async uid => ({ uid, email: uid + '@example.test', email_verified: true, firebase: { sign_in_provider: 'google.com' } }),
     verifyAppCheck: async value => assert.equal(value, 'verified'),
@@ -52,7 +52,7 @@ function fixture() {
     const stamp = String(Date.parse(at) / 1000);
     const id = 'msg_' + randomUUID();
     const signature = createHmac('sha256', key).update(id + '.' + stamp + '.' + body).digest('base64');
-    return api.post('/api/v1/email/beta/receipts/resend').set('Content-Type', 'application/json')
+    return api.post(sharedWebhook ? '/api/v1/email/receipts/resend' : '/api/v1/email/beta/receipts/resend').set('Content-Type', 'application/json')
       .set('svix-id', id).set('svix-timestamp', stamp)
       .set('svix-signature', 'v1,' + (signed ? signature : 'bad')).send(body);
   };
@@ -141,4 +141,20 @@ test('verified replies thread once, release replies stay Admin-only, deletion er
   assert.deepEqual(bodyRows, []);
   await receive(alias(threadId), '<late@example.test>');
   assert.equal((await call('get', '/email/threads?filter=unlinked').expect(200)).body.items.length, 1);
+});
+
+test('a shared pre-prod webhook verifies signatures and dispatches only Pilot inbox mail', async () => {
+  const { call, receipt, enable, dispatch, incoming } = fixture({ sharedWebhook: true });
+  await enable();
+  for (const to of ['unrelated@example.test', address]) {
+    const id = randomUUID();
+    incoming.set(id, { from: customer, to: [to], subject: 'Shared callback', text: 'Synthetic reply' });
+    const event = { type: 'email.received', data: { email_id: id, to: [to] } };
+    await receipt(event, false).expect(401);
+    await receipt(event).expect(200);
+  }
+  await dispatch();
+  const { body } = await call('get', '/email/threads?filter=unlinked').expect(200);
+  assert.equal(body.items.length, 1);
+  assert.equal(body.items[0].subject, 'Shared callback');
 });
