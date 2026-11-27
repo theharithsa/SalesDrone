@@ -102,7 +102,7 @@ The inbox shows unread counts for the loaded rows only. Keep the overlay compact
 
 ## Transactional email
 
-Follow [the email runbook](../../docs/EMAIL.md) for transactional email and Email Beta. Beta stays off until isolated sending and receiving, scope, and erasure are verified. Use signed callbacks, current lead access, idempotent sends and bounded queues. Keep all correspondence and provider payloads out of telemetry. Verify scheduler authorization separately from delivery.
+Follow [the email runbook](../../docs/EMAIL.md) for transactional email and Email Beta. Beta stays off until isolated sending and receiving, scope, and erasure are verified. Pre-prod can share the transactional callback using address and tag checks. Use signed callbacks, current lead access, idempotent sends and bounded queues. Keep all correspondence and provider payloads out of telemetry. Verify scheduler authorization separately from delivery.
 
 Email uses an Astryx layout, Open Sans, fixed first-party light and dark marks
 and a text wordmark. Release mail waits for published notes and batches eligible members.

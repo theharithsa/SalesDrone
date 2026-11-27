@@ -24,6 +24,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 - Includes the Astryx Import enquiries experience for workbook mapping, review and job history.
 
 ### Fixed
+- Pre-production can route Beta replies and transactional receipts through its existing signed Resend webhook.
 - Show lead header dates in day-month-year form, such as 27 Nov 26.
 - Email templates show a white drone mark in clients that support dark-mode styles and a high-contrast fallback elsewhere.
 - Signed Resend callbacks now reach the API through Hosting so delivery history can show the provider’s final status.

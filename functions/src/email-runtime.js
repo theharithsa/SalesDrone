@@ -83,6 +83,7 @@ export function createBetaEmailConfig({ environment, env = process.env, credenti
   };
   return {
     environment, ready, address, releaseAddress, threadFromAddress,
+    sharedWebhook: preprod && env.SDR_EMAIL_BETA_SHARED_WEBHOOK === 'true',
     replyAddress: id => 'reply+' + id + '@' + domain,
     accepts: value => !!value && (value === address || value === releaseAddress || !!threadFromAddress(value)),
     permits: value => !!value && (!preprod || value === testInbox),
