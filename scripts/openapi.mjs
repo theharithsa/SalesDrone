@@ -910,8 +910,8 @@ schemas.EmailBetaThread = object({
 });
 schemas.EmailBetaMessage = object({
   id: string, direction: { type: 'string', enum: ['inbound','outbound'] }, body: string, createdAt: string, state: string,
-  attachments: { type: 'boolean' }, truncated: { type: 'boolean' },
-});
+  attachments: { type: 'boolean' }, truncated: { type: 'boolean' }, formatVersion: { const: 1 },
+}, ['id','direction','body','createdAt','state','attachments','truncated']);
 schemas.EmailBetaThreadDetail = {
   allOf: [ref('EmailBetaThread'), object({ messages: { type: 'array', maxItems: 25, items: ref('EmailBetaMessage') },
     nextCursor: { type: ['string','null'] } })],

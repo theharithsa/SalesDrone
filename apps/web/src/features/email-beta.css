@@ -29,7 +29,7 @@
 }
 .email-beta-layout {
   display: grid;
-  grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr);
+  grid-template-columns: minmax(230px, 310px) minmax(0, 1fr);
   min-height: 440px;
   border: 1px solid var(--import-border);
   border-radius: var(--import-radius);
@@ -70,21 +70,6 @@
   display: grid;
   gap: 10px;
 }
-.email-beta-messages li {
-  min-width: 0;
-  padding: 14px;
-  background: var(--import-muted);
-  border-radius: var(--import-radius);
-}
-.email-beta-messages li > div {
-  display: flex;
-  gap: 8px 16px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-.email-beta-messages p {
-  white-space: pre-wrap;
-}
 .email-beta-form, .email-beta-pick, .email-beta-form label {
   display: grid;
   gap: 10px;
@@ -101,12 +86,6 @@
 }
 .email-beta .email-beta-back {
   display: none;
-}
-@media (max-width: 820px) {
-  .email-beta-layout { grid-template-columns: minmax(0, 1fr); min-height: 0; }
-  .email-beta-list { border-inline-end: 0; }
-  .email-beta-layout:not(.has-thread) .email-beta-thread, .email-beta-layout.has-thread .email-beta-list { display: none; }
-  .email-beta .email-beta-back { display: inline-flex; margin-block-end: 12px; }
 }
 @media (max-width: 540px) {
   .dialog:has(.email-beta-form) {
@@ -145,4 +124,163 @@
 }
 .email-beta-thread > .email-beta-actions {
   margin-block-start: 10px;
+}
+
+/* Keep the conversation layout responsive to the workspace sidebar width. */
+.email-beta {
+  container-type: inline-size;
+}
+.email-beta-list {
+  padding: 0;
+  background: var(--import-muted);
+  border-start-start-radius: inherit;
+  border-end-start-radius: inherit;
+}
+.email-beta-list h2 {
+  margin: 0;
+  padding: 16px 16px 8px;
+  font-size: 1rem;
+}
+.email-beta-list .email-beta-filters {
+  gap: 4px;
+  padding: 0 12px 12px;
+  border-block-end: 1px solid var(--import-border);
+}
+.email-beta-filters button {
+  min-height: 36px;
+}
+.email-beta-list > ul {
+  margin: 0;
+}
+.email-beta-row {
+  padding: 12px 16px;
+  gap: 3px;
+}
+.email-beta-row > strong, .email-beta-row > span, .email-beta-message-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.email-beta-hint, .email-beta-list > button {
+  margin: 12px 16px;
+}
+.email-beta-thread {
+  padding: clamp(14px, 2.5cqi, 32px);
+}
+.email-beta-correspondent {
+  margin: 6px 0 12px;
+}
+.email-beta-messages {
+  gap: 8px;
+  margin-block: 16px;
+}
+.email-beta-messages > .email-beta-message {
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--import-border);
+}
+.email-beta-message > details > summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  min-height: 48px;
+  list-style: none;
+  cursor: pointer;
+}
+.email-beta-message > details > summary::-webkit-details-marker {
+  display: none;
+}
+.email-beta-message-avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.email-beta-message-byline {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.email-beta-message-preview, .email-beta-message time {
+  color: var(--import-secondary);
+  font-size: .8rem;
+}
+.email-beta-message details[open] > summary .email-beta-message-preview {
+  display: none;
+}
+.email-beta-message details[open] > summary .email-beta-message-chevron {
+  transform: rotate(180deg);
+}
+.email-beta-message-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  gap: 12px;
+  padding: 4px 16px 16px 54px;
+}
+.email-beta-message-content .email-beta-plain, .email-beta-formatted {
+  max-width: min(100%, 72ch);
+  min-width: 0;
+  margin: 0;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.email-beta-formatted ul {
+  list-style: disc;
+  padding-inline-start: 1.5rem;
+}
+.email-beta-formatted li {
+  padding: 0;
+  background: transparent;
+}
+.email-beta-formatted p:first-child, .email-beta-formatted ul:first-child {
+  margin-block-start: 0;
+}
+.email-beta-formatted p:last-child, .email-beta-formatted ul:last-child {
+  margin-block-end: 0;
+}
+.email-beta-quote {
+  color: var(--import-secondary);
+  min-width: 0;
+  max-width: 100%;
+}
+.email-beta-quote summary {
+  width: fit-content;
+  cursor: pointer;
+  padding: 6px 0;
+}
+.email-beta-message-content > .email-beta-plain, .email-beta-formatted {
+  color: var(--color-text-primary);
+}
+.email-beta-quote blockquote {
+  border-inline-start: 2px solid var(--import-border);
+  padding-inline-start: 12px;
+}
+.email-beta-editor {
+  display: grid;
+  gap: 8px;
+}
+.email-beta-preview {
+  min-height: 160px;
+  border: 1px solid var(--import-border);
+  border-radius: var(--import-radius);
+  padding: 12px;
+}
+@container (max-width: 700px) {
+  .email-beta-layout { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .email-beta-list { border-inline-end: 0; border-radius: inherit; }
+  .email-beta-layout:not(.has-thread) .email-beta-thread, .email-beta-layout.has-thread .email-beta-list { display: none; }
+  .email-beta-layout .email-beta-back { display: inline-flex; margin-block-end: 12px; }
+  .email-beta-message-content { padding-inline-start: 12px; }
+}
+@container (max-width: 400px) {
+  .email-beta-message-avatar { display: none; }
+  .email-beta-message > details > summary { grid-template-columns: minmax(0, 1fr) auto auto; }
 }

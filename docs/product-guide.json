@@ -802,7 +802,7 @@
         "Enable the daily or weekly digest, choose the local time and time zone, and save. Turn on AvinyaIntelligence takeaways if you have access and want a highlighted priority.",
         "Admins configure delivery under Settings > Workspace > Email notifications. Use Template preview to review a sample and Delivery history to check a test.",
         "Open a message’s main link, then sign in with your approved Google account to see the linked work.",
-        "When the Admin enables Inbox Beta, open Email to send and reply to leads. Open linked conversations from the lead’s All timeline."
+        "When the Admin enables Inbox Beta, open Email to send and reply to leads. Open linked conversations from the lead’s All timeline. Expand earlier messages or quoted text and preview formatting before sending."
       ],
       "details": [
         "Emails cover workspace invitations and active access, lead assignments and configured outcomes, and meaningful changes to a teammate’s shared task. A task’s responsible member appears in the app. Admins can use Resend email on an active invitation in People & access.",
