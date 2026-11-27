@@ -24,7 +24,7 @@
     "@stylexjs/stylex": "0.19.2",
     "exceljs": "^4.4.0",
     "firebase": "^13.2.0",
-    "lucide-react": "^1.72.0",
+    "lucide-react": "^1.75.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "swagger-ui-dist": "5.34.0"
