@@ -405,3 +405,25 @@
 .home-screen-image:focus-visible { outline-offset: -3px; }
 .home-screen-image img { display: block; max-width: 100%; height: auto; margin-inline: auto; }
 .home-screen-image[data-actual-size='true'] img { max-width: none; }
+
+.home-intro-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
+
+.home-tour-link svg { flex: none; }
+
+.home-tour-video {
+  display: block;
+  width: min(100%, 1040px);
+  height: auto;
+  aspect-ratio: 8 / 5;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.home-tour-transcript { margin-top: 12px; color: var(--muted); }
+.home-tour-transcript summary { width: fit-content; padding-block: 8px; color: var(--accent); cursor: pointer; }
+.home-tour-transcript ol { padding-inline-start: 1.25rem; }

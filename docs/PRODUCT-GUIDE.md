@@ -766,7 +766,7 @@ A lead opens its dedicated page on desktop and mobile. The lead table, journey a
 
 Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.
 
-Standard keeps the current Google Sans/Manrope pairing. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode uses its own handwriting and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
+Standard uses Astryx Neutral’s Figtree typeface for headings and text. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode uses its own handwriting and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
 
 Settings > Appearance & time > Display zoom offers 85%, 90%, 100%, 110% or 125%. Save changes applies it on phones, tablets and desktops. Touch targets stay usable when making the content smaller. Browser and pinch zoom remain available; choose 100% to reset. This is personal and does not change permissions or lead data.
 

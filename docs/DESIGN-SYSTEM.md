@@ -33,7 +33,7 @@ another global refresh/override file or mix the v1 cascade into this entry.
 ## Typography
 
 Default root is 16px, using rem roles so browser text preferences and zoom work.
-Use Google Sans headings and Manrope body; alternate fonts change the same roles.
+Astryx Neutral uses Figtree for headings, body text and controls. Alternate fonts change the same roles.
 
 | Role | Size / line height | Use |
 | --- | --- | --- |

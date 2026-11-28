@@ -404,7 +404,7 @@ it('rejects destination reuse from fresh field configuration before any schema o
  const file=new File([csv],'fresh.csv',{type:'text/csv'});Object.defineProperty(file,'text',{value:async()=>csv});await user.upload(screen.getByLabelText('Choose a workbook'),file);
  await user.selectOptions(await screen.findByLabelText('Status mapping field'),'cf_region');
  await user.click(screen.getByRole('button',{name:/Create \/ reuse 2 fields/}));
- expect(await screen.findByRole('alert')).toHaveTextContent('An additional field would reuse the status destination');
+ expect(await screen.findByText(/An additional field would reuse the status destination/)).toHaveAttribute('role','alert');
  expect(request.mock.calls).not.toContainEqual(['/field-options','PATCH',expect.anything()]);
  expect(request.mock.calls.some(([p,m])=>p==='/field-options'&&m==='PATCH')).toBe(false);
  expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(false);

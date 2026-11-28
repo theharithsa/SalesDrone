@@ -54,7 +54,7 @@ Saved with your account through PATCH /me. The full SalesDrone mark follows your
 
 ### Interface font
 
-**Default:** Standard (Google Sans headings and Manrope text).
+**Default:** Standard (Astryx Neutral Figtree).
 
 Choose Standard, Inter, Source Sans 3, Lora, Open Sans, Source Serif 4, Patrick Hand or Caveat. A sample previews the draft selection; the workspace changes after a successful Save changes. Font files are self-hosted, with no runtime Google Fonts request.
 

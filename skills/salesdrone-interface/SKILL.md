@@ -36,7 +36,7 @@ Never weaken Google/App Check, membership or scoped file/token access for a prev
 Preserve immutable comments/corrections, reminder privacy, import replay, optimistic
 versions and cancellation epochs. No private records or credentials in screenshots.
 
-Preserve preference-backed colour roles, Google Sans headings, Manrope body text and monospace phone identifiers. Book mode and personal font/scale choices must preserve accessible touch targets, focus, Escape and independent scrolling. Breakpoints follow content rather than platform detection. Keep synthetic preview transports isolated from production.
+Use Astryx Neutral Figtree by default, with saved font choices and monospace phone identifiers. Book mode and personal font/scale choices must preserve accessible touch targets, focus, Escape and independent scrolling. Breakpoints follow content rather than platform detection. Keep synthetic preview transports isolated from production.
 
 For domain controls, also load [leads](../salesdrone-leads/SKILL.md), [tasks](../salesdrone-tasks-reminders/SKILL.md), [workspace settings](../salesdrone-workspace-settings/SKILL.md) or [Book mode](../salesdrone-book-mode/SKILL.md) as applicable. [Product guide](../salesdrone-product-guide/SKILL.md) owns public captures.
 
@@ -68,7 +68,7 @@ Its fixed history sheet divides viewport dimensions by interface-scale; verify b
 zoom and short windows. Composer insets account for bottom navigation only inside
 the app shell, so standalone synthetic previews do not inherit a phantom nav gap.
 
-Theme-matched captures offer an actual-size viewer. Startup uses the drone. Book mode uses bound pages and handwriting in the shell and dialogs. Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore uses shared wrapping controls.
+The homepage has a captioned tour and an actual-size screenshot viewer. Startup uses the drone. Book mode uses bound pages and handwriting in the shell and dialogs. Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore uses shared wrapping controls.
 
 ResearchPage uses page-body for the same responsive padding/max-width as other workspace pages. Assistant compound answers render one conversational message, with supporting context in a collapsed native details element and independent result controls beneath it. Preserve visible partial/setup warnings and use returned counts only; no additional model call is required for presentation.
 

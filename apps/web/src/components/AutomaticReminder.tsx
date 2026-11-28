@@ -1,3 +1,4 @@
+import { WorkspaceDateTimeField } from './WorkspaceDateField';
 import { useState } from "react";
 import { Bell } from "lucide-react";
 import { Entity, displayDate } from "../lib/types";
@@ -118,10 +119,7 @@ export default function AutomaticReminder({
               required
             />
           </label>
-          <label>
-            Date and time
-            <input name="dueAt" type="datetime-local" required />
-          </label>
+          <WorkspaceDateTimeField label="Date and time" name="dueAt" required />
           <p className="field-hint">
             Entered in {Intl.DateTimeFormat().resolvedOptions().timeZone}.
           </p>

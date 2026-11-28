@@ -138,17 +138,20 @@ export default function WorkspaceNavigation({
                   className={"nav-item " + (page === item.id ? "active" : "")}
                   aria-current={page === item.id ? "page" : undefined}
                   aria-label={item.label}
+                  aria-description={item.id === "tasks" && taskCount > 0
+                    ? taskCount + " open tasks"
+                    : item.id === "notifications" && unread ? "Unread notifications" : undefined}
                   title={item.label}
                   onClick={() => onNavigate(item.id)}
                 >
                   <item.icon size={18} />
                   <span>{item.label}</span>
-                  {item.id === "email" && <small>Beta</small>}
+                  {item.id === "email" && <small className="nav-indicator nav-beta">Beta</small>}
                   {item.id === "tasks" && taskCount > 0 ? (
-                    <small>{taskCount}</small>
+                    <small className="nav-indicator">{taskCount > 99 ? "99+" : taskCount}</small>
                   ) : null}
                   {item.id === "notifications" && unread ? (
-                    <i className="notification-dot" />
+                    <small className="nav-indicator nav-unread" aria-hidden="true"><i className="notification-dot" /></small>
                   ) : null}
                 </button>
               ))}

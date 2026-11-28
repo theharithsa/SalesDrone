@@ -116,12 +116,18 @@
   background: var(--md-sys-color-secondary-container);
   font-weight: 650;
 }
-.nav-item small {
-  margin-left: auto;
-  font-size: 0.6875rem;
-  min-width: 20px;
-  text-align: center;
+.nav-item .nav-indicator {
+  display: grid;
+  place-items: center;
+  margin-inline-start: auto;
+  flex: none;
+  inline-size: 24px;
+  min-block-size: 18px;
+  line-height: 1;
+  font-size: .6875rem;
+  font-variant-numeric: tabular-nums;
 }
+.nav-item .nav-beta { padding-inline: 2px; }
 .nav-item:hover {
   background: color-mix(in srgb, var(--accent) 8%, var(--sidebar));
   text-decoration: none;
@@ -253,9 +259,7 @@
   top: 8px;
   outline: 2px solid var(--bg);
 }
-.notification-dot {
-  margin-left: auto;
-}
+
 .demo-banner {
   display: flex;
   align-items: center;
@@ -376,7 +380,7 @@
 .sidebar-collapsed .quick-search kbd,
 .sidebar-collapsed .nav-section,
 .sidebar-collapsed .nav-item > span,
-.sidebar-collapsed .nav-item small,
+
 .sidebar-collapsed .sidebar-profile > div,
 .sidebar-collapsed .sidebar-profile > .icon-button,
 .sidebar-collapsed .sidebar-attribution {
@@ -401,11 +405,7 @@
   padding: 16px 0 4px;
   justify-content: center;
 }
-.sidebar-collapsed .notification-dot {
-  position: absolute;
-  right: 4px;
-  top: 4px;
-}
+
 .sidebar-collapsed .nav-item {
   position: relative;
 }
@@ -494,10 +494,9 @@
     position: relative;
     text-align: center;
   }
-  .nav-item small {
+  .nav-item .nav-indicator {
     position: absolute;
-    top: 4px;
-    right: 6px;
+    inset: 2px 1px auto auto;
     margin: 0;
   }
   .nav-item > span {
@@ -510,11 +509,7 @@
     justify-content: center;
     padding: 16px 0 4px;
   }
-  .notification-dot {
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
+
   .page-body {
     padding: 24px;
   }
@@ -750,7 +745,7 @@
 .quick-search {min-height:40px;padding:8px 12px;border-radius:10px;margin-bottom:12px;flex-shrink:0;}
 .navigation-scroll {flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:0 2px 8px;}
 .navigation-group {margin-bottom:10px;}
-.navigation-group-toggle {display:flex;align-items:center;justify-content:space-between;width:100%;min-height:32px;border:0;padding:6px 12px;background:transparent;color:var(--muted);font-size:.6875rem;font-weight:650;letter-spacing:.04em;text-align:left;border-radius:8px;}
+.navigation-group-toggle {display:flex;align-items:center;justify-content:space-between;width:100%;min-height:32px;border:0;padding:6px 17px 6px 12px;background:transparent;color:var(--muted);font-size:.6875rem;font-weight:650;letter-spacing:.04em;text-align:left;border-radius:8px;}
 .navigation-group-toggle:hover {background:var(--md-sys-color-surface-container-highest);}
 .navigation-group-toggle svg {transition:transform 160ms;}
 .navigation-group.is-collapsed .navigation-group-toggle svg {transform:rotate(-90deg);}
@@ -769,7 +764,10 @@
   .sidebar .nav-item{width:68px;min-height:56px;padding:7px 2px;gap:3px;font-size:.625rem;}
   .sidebar .nav-item.active{box-shadow:none;}.sidebar-brand{padding:0 0 16px;}.sidebar .quick-search{padding:8px;}
 }
-@media(min-width:1200px){.sidebar-collapsed .navigation-group-toggle{display:none;}.sidebar-collapsed .navigation-group.is-collapsed nav{display:grid;}.sidebar-collapsed .nav-item{width:56px;justify-content:center;padding:8px;}.sidebar-collapsed .nav-item.active{box-shadow:none;}}
+@media(min-width:1200px){.sidebar-collapsed .navigation-group-toggle{display:none;}.sidebar-collapsed .navigation-group.is-collapsed nav{display:grid;}.sidebar-collapsed .nav-item{width:56px;justify-content:center;padding:8px;}.sidebar-collapsed .nav-item.active{box-shadow:none;}
+  .sidebar-collapsed .nav-item .nav-indicator{position:absolute;inset:1px 0 auto auto;margin:0;}
+  .sidebar-collapsed .nav-item .nav-beta{display:none;}
+}
 @media(pointer:coarse),(max-width:599.99px){.sidebar .nav-item,.sidebar .navigation-group-toggle,.sidebar .quick-search{min-height:max(var(--md-touch-target,0px),48px);}.sidebar .nav-item{padding:10px 12px;font-size:.875rem;}.sidebar .sidebar-profile{padding-top:8px;}.sidebar.mobile-open{padding:16px 8px 8px;}.sidebar-collapsed .sidebar-brand{padding:0 10px 16px;}}
 /* The mobile drawer and short rails need one scroll surface, including the footer. */
 @media (max-width: 599.99px), (max-height: 650px) {

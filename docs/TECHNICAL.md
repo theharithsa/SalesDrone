@@ -11,7 +11,7 @@ uses the MIT license. See the third-party notices for bundled assets and librari
 | Layer       | Implementation                                                                             |
 | ----------- | ------------------------------------------------------------------------------------------ |
 | UI          | React 19, TypeScript 5, Vite 8, Lucide icons, Radix Dialog, responsive CSS                 |
-| Fonts       | Manrope body; Google Sans headings; Google Sans first names in lead details; monospace contacts |
+| Fonts       | Self-hosted Figtree as the Astryx Neutral default; Google Sans wordmark; monospace contacts |
 | API         | Node.js 22, Express 5, Zod 4, Firebase Admin SDK                                           |
 | Identity    | Firebase Auth Google provider, App Check, server memberships/capabilities                  |
 | Persistence | Firestore Standard, transactionally consistent writes and service-owned outboxes           |

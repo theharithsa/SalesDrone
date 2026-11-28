@@ -15,6 +15,8 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 ### Changed
 
+- Use Astryx Neutral Figtree by default, use Astryx calendars in date fields, and align sidebar indicators.
+- Add a captioned product tour to the signed-out homepage.
 - Improve homepage screenshot clarity with high-density captures, wider frames, and an expandable viewer.
 - Match every homepage screenshot to the active light or dark appearance, add reduced-motion-aware transitions, and show an animated drone mark while SalesDrone starts.
 - Use the SalesDrone drone mark in the collapsed sidebar, browser tab, installed web app, and push notifications.

@@ -33,8 +33,8 @@
   --md-sys-motion-easing: cubic-bezier(0.2, 0, 0, 1);
   --md-sys-motion-short: 160ms;
   --md-sys-motion-medium: 260ms;
-  --heading-font: 'Google Sans Variable', 'Manrope Variable', Arial, sans-serif;
-  --body-font: 'Manrope Variable', Arial, sans-serif;
+  --heading-font: var(--body-font);
+  --body-font: 'Figtree Variable', system-ui, sans-serif;
   --mono-font: ui-monospace, SFMono-Regular, Consolas, monospace;
   --md-type-headline: 2rem;
   --md-type-title: 1.375rem;

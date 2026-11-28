@@ -1,3 +1,4 @@
+import { WorkspaceDateField } from '../components/WorkspaceDateField';
 import { Button } from '@astryxdesign/core/Button';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Trash2, RefreshCw, Download, ChevronRight } from 'lucide-react';
@@ -673,22 +674,8 @@ export default function ImportReviewPanel({
               ))}
             </select>
           </label>
-          <label>
-            From
-            <input
-              type="date"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
-          </label>
-          <label>
-            Through
-            <input
-              type="date"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
-          </label>
+          <WorkspaceDateField label="From" value={from} onValueChange={setFrom} />
+          <WorkspaceDateField label="Through" value={to} onValueChange={setTo} />
           <Button label="Filter history" type="submit" className="import-history-filter" />
         </form>
         {!history.length ? (

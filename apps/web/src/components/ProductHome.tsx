@@ -2,7 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Session } from '../lib/types';
 import {
-  ArrowDown, ArrowRight, Download, FileSpreadsheet, KeyRound,
+  ArrowDown, ArrowRight, Download, FileSpreadsheet, KeyRound, Play,
   Laptop, Maximize2, SlidersHorizontal, Smartphone, X,
 } from 'lucide-react';
 import { Brand } from './UI';
@@ -81,7 +81,7 @@ const workspace = [
 ];
 
 const featureLinks = [
-  ['leads', 'Leads'], ['follow-ups', 'Tasks & reminders'], ['email', 'Email & digests'],
+  ['tour', 'Product tour'], ['leads', 'Leads'], ['follow-ups', 'Tasks & reminders'], ['email', 'Email & digests'],
   ['lead-intelligence', 'Lead Intelligence'], ['lead-score', 'Lead score'], ['lead-hygiene', 'Lead Hygiene'],
   ['import-export', 'Import & export'], ['appearance', 'Appearance'], ['install-app', 'Install app'],
 ];
@@ -100,7 +100,7 @@ const screenSizes = {
   email: [1360, 715],
   appearance: [1000, 494],
   book: [1360, 494],
-  reminder: [560, 440],
+  reminder: [560, 538],
   phone: [390, 790],
 } as const;
 
@@ -160,8 +160,17 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
   onDemo: () => void;
 }) {
   const main = useRef<HTMLElement>(null);
+  const [deviceDark, setDeviceDark] = useState(() => matchMedia('(prefers-color-scheme: dark)').matches);
+  const darkPoster = appearanceMode === 'dark' || (appearanceMode === 'system' && deviceDark);
   const darkMedia = appearanceMode === 'dark' ? 'all'
     : appearanceMode === 'light' ? 'not all' : '(prefers-color-scheme: dark)';
+
+  useEffect(() => {
+    const query = matchMedia('(prefers-color-scheme: dark)');
+    const update = () => setDeviceDark(query.matches);
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
 
   useEffect(() => {
     if (!main.current || !('IntersectionObserver' in window) ||
@@ -200,7 +209,10 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
           <div className="home-intro-copy">
             <h1 id="product-title">From first enquiry<br /> to next follow-up.</h1>
             <p>SalesDrone gives sales teams one place to track leads, keep conversations in context, and follow through on shared work.</p>
-            <a className="home-scroll-link" href="#leads">Explore the product <ArrowDown size={16} aria-hidden="true" /></a>
+            <div className="home-intro-links">
+              <a className="home-scroll-link" href="#leads">Explore the product <ArrowDown size={16} aria-hidden="true" /></a>
+              <a className="home-scroll-link home-tour-link" href="#tour"><Play size={16} aria-hidden="true" /> Watch the tour</a>
+            </div>
           </div>
           {signIn}
         </div>
@@ -218,6 +230,36 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
       <nav className="home-feature-index home-boundary" aria-label="Explore SalesDrone">
         {featureLinks.map(([id, label]) => <a key={id} href={'#' + id}>{label}</a>)}
       </nav>
+
+      <section id="tour" className="home-workspace home-boundary" aria-labelledby="tour-title">
+        <div className="home-story-heading">
+          <h2 id="tour-title">Take a product tour.</h2>
+          <p>Follow a sample enquiry from the pipeline to its lead record, set a reminder, and see Email and Lead Assistant in action.</p>
+        </div>
+        <video
+          className="home-tour-video"
+          aria-label="SalesDrone product tour"
+          controls
+          playsInline
+          preload="none"
+          width={1280}
+          height={800}
+          poster={darkPoster ? '/product-home/dark/dashboard.webp' : '/product-home/tour-poster.webp'}
+        >
+          <source src="/product-home/salesdrone-tour.mp4" type="video/mp4" />
+          <track kind="captions" src="/product-home/salesdrone-tour.en.vtt" srcLang="en" label="English" default />
+          <a href="/product-home/salesdrone-tour.mp4">Download the SalesDrone tour</a>
+        </video>
+        <details className="home-tour-transcript">
+          <summary>Tour transcript</summary>
+          <ol>
+            <li>Open Today to see the pipeline and upcoming follow-ups.</li>
+            <li>Search Leads and open a record to review its stage and history.</li>
+            <li>Use Remind me and choose a date for the follow-up.</li>
+            <li>Read email threads tied to a lead and ask Lead Assistant about patterns in recorded notes.</li>
+          </ol>
+        </details>
+      </section>
 
       <div className="home-stories">
         {stories.map((story) => <section key={story.id} id={story.id} className="home-story home-boundary" aria-labelledby={story.id + '-title'}>
