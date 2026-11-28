@@ -16,7 +16,7 @@ Atomic lead/call stage mutation → recordStage → leadTransitions → scoped j
 - [functions/src/journey.js](../../functions/src/journey.js)
 - [functions/src/app.js](../../functions/src/app.js)
 - [apps/web/src/components/LeadJourney.tsx](../../apps/web/src/components/LeadJourney.tsx)
-- [apps/web/src/lead-refinements.css](../../apps/web/src/lead-refinements.css)
+- [apps/web/src/material/workspaces.css](../../apps/web/src/material/workspaces.css)
 
 ## Primary API ownership
 
@@ -34,7 +34,7 @@ leadTransitions keyed from lead identity/version, with the current lead and conf
 - Custom/retired stage names must remain readable; stage order changes do not rewrite prior events.
 - Authorize journey reads against the current lead and preserve bounded pagination/version ordering.
 
-The journey responds to the LeadBlade container: wider desktop blades (500px+) use a horizontal path with internal overflow for long/custom stages; compact/mobile views remain vertical. CSS reflow must not request history again or imply prior-stage completion. Only the current stage is highlighted. Keep recorded history distinct, and verify orientation with the actual container width rather than viewport width.
+On the full lead page, the horizontal stage path fills the card inside its normal padding. Stage items grow to fill available space and scroll within the path when the list needs more room. Check the actual card width and last stage at both wide and narrow sizes. CSS reflow must not request history again or imply prior-stage completion. Only the current stage is highlighted. Keep recorded history distinct.
 
 ## Change and diagnosis
 
