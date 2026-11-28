@@ -50,7 +50,13 @@ export default function MembersPage({
     [role, setRole] = useState('SDR'),
     [scope, setScope] = useState('assigned'),
     [capabilities, setCapabilities] = useState(grants),
-    [error, setError] = useState('');
+    [error, setError] = useState(''),
+    [emailResult, setEmailResult] = useState('');
+  const resend = useSubmit(async (data, key, isCurrent) => {
+    await request('/email/invitations/' + encodeURIComponent(data.id) + '/resend', 'POST',
+      { expectedVersion: data.version }, key);
+    if (isCurrent()) setEmailResult('Invitation email queued.');
+  });
   const submit = useSubmit(async (data, key) => {
     if (editing)
       await request('/members/' + editing.uid, 'PATCH', {
@@ -169,6 +175,13 @@ export default function MembersPage({
                   </small>
                 </div>
                 <button
+                  className="text-button"
+                  disabled={resend.busy}
+                  onClick={() => { setEmailResult(''); resend.run({ id: i.id, version: i.version }); }}
+                >
+                  Resend email
+                </button>
+                <button
                   className="text-button danger"
                   onClick={() => revoke(i.id)}
                 >
@@ -182,6 +195,8 @@ export default function MembersPage({
           </Empty>
         )}
         <ErrorMessage error={error} />
+        <ErrorMessage error={resend.error} />
+        {emailResult ? <p role="status">{emailResult}</p> : null}
       </section>
       <Modal
         open={open}

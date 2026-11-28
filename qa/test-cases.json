@@ -473,7 +473,8 @@
       "ownerSkill": "skills/salesdrone-notifications/SKILL.md",
       "automatedTests": [
         "functions/test/app.test.js",
-        "functions/test/notifications.test.js"
+        "functions/test/notifications.test.js",
+        "functions/test/email.test.js"
       ],
       "manualCases": [
         {
@@ -485,6 +486,16 @@
           "id": "NOTIFICATIONS-02",
           "expected": "Read/unread state, recipient scope and test push remain separate from task completion.",
           "fixture": "synthetic demo or demo-salesdrone emulator; no customer data"
+        },
+        {
+          "id": "EMAIL-RECEIPTS-01",
+          "expected": "Admin queues a delivery test and a bounce test. The private worker sends them and signed Resend receipts advance Delivery history. A later test to the same bounced address is suppressed.",
+          "fixture": "named pre-production database with synthetic data and Resend simulator addresses"
+        },
+        {
+          "id": "EMAIL-INBOX-01",
+          "expected": "An approved inbox receives a synthetic digest with the sender identity, branded layout and authenticated app link. Review desktop and phone clients, the white logo in dark-mode-aware clients, and fallback with images or fonts blocked.",
+          "fixture": "explicitly approved test inbox and synthetic digest"
         }
       ]
     },

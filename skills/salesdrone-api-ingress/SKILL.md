@@ -66,3 +66,16 @@ Preserve validated W3C traceparent **and tracestate** through native ingress/api
 A Firebase-managed replacement needs the staged parser and rollout gates in [FinOps](../salesdrone-finops/SKILL.md). A transport switch does not remove the Functions Framework pre-parser.
 
 Under request-based billing, finish forwarding and flush OTel before releasing the final response byte. Stage the tagged revision with zero traffic and confirm both minimums, CPU throttling and parser behavior before promotion.
+
+## Resend callback
+
+Allowlist `svix-id`, `svix-timestamp` and `svix-signature` for
+`POST /api/v1/email/receipts/resend`. Preserve the raw uncompressed JSON and
+enforce the 32 KiB limit before buffering. The API validates the signature
+without a user token. Keep the headers and body out of telemetry.
+
+The gateway test sends a signed receipt through real HTTP to the API signature
+verifier and checks a tampered body and a different route. During live acceptance,
+check that a signed Resend receipt advances Delivery history to Delivered or
+Suppressed. A successful provider send can leave the app at Accepted when the
+gateway fails to forward the receipt headers.

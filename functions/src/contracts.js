@@ -133,6 +133,12 @@ export const TaskInput = z
     kind: z.enum(TASK_KINDS).default('outreach'),
   })
   .strict();
+const taskRecipientUid = z.string().min(1).max(128).regex(/^[A-Za-z0-9_.:-]+$/);
+export const SharedTaskInput = TaskInput.extend({ recipientUid: taskRecipientUid.optional() });
+export const TaskAssignment = z.object({
+  recipientUid: taskRecipientUid,
+  expectedVersion: z.number().int().positive(),
+}).strict();
 export const TaskPatch = z
   .object({
     expectedVersion: z.number().int().positive(),

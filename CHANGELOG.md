@@ -3,7 +3,51 @@
 Application versions follow the [weekly release policy](docs/RELEASE-GOVERNANCE.md#weekly-production-cadence).
 API contract versions track compatibility independently.
 
-> The v2.14.0 section describes the pre-production candidate. Confirm the published version and date in [GitHub Releases](https://github.com/theharithsa/SalesDrone/releases).
+Confirm the published version and date in [GitHub Releases](https://github.com/theharithsa/SalesDrone/releases).
+
+
+
+## [Unreleased]
+
+## [2.15.0] - 2026-11-29
+
+### Added
+- A product homepage at sign-in with tightly cropped workspace previews, sections for email, lead intelligence, reminders, import and export, and appearance, plus Mac and Android installation instructions.
+- Email Beta adds an Astryx inbox, lead-linked replies and timeline history. Admins control pilot access. It starts off while the dedicated sender and inbound delivery are verified.
+- Send a branded release announcement with highlights and a link to the full notes when workspace email and release announcements are enabled.
+- Change the sales stage from an anchored dropdown in the Leads table, on mobile lead cards, or in the lead header. Admins can order extra header fields and choose Phone number for new or existing custom fields. Saved values carry over when a custom field changes type.
+- Workspace email controls, synthetic template previews and delivery history, plus email preferences for each member.
+- Optional access, lead and shared-task email notifications with independent daily and weekly task digests.
+- Shared-task assignment for eligible team members and a completed-week task view linked from the weekly recap.
+- Resend delivery with signed receipts, a scoped pilot, bounded retries and verified task facts for AvinyaIntelligence takeaways.
+
+### Changed
+- Use Astryx Neutral Figtree by default, use Astryx calendars in date fields, and align sidebar indicators.
+- Add a captioned product tour to the signed-out homepage.
+- Present Leads, Tasks, Reporting, and Email in one interactive homepage walkthrough. Align the smaller Appearance and Book mode previews and keep full-resolution viewing available.
+- Match every homepage screenshot to the active light or dark appearance, add reduced-motion-aware transitions, and show an animated drone mark while SalesDrone starts.
+- Use the SalesDrone drone mark in the collapsed sidebar, browser tab, installed web app, and push notifications.
+- Apply shared Astryx Neutral surfaces, control sizes and field labels across the workspace. Align the Leads filters and stage controls, simplify sign-in, and give custom field editing the same layout as other forms.
+- Email Beta uses an icon-only formatting toolbar, clearer recipient and subject rows, previous and next conversation controls, and Cmd/Ctrl+Enter to send.
+- Email Beta adds a three-pane desktop inbox, a separate conversation view on phones, rich formatting while composing, and an isolated reader for HTML replies.
+- Email templates share the SalesDrone drone mark, Open Sans typography, and Astryx Neutral layout and spacing.
+- Admins can select a simulated delivery or bounce from the pre-production email preview.
+- Includes the Astryx Import enquiries experience for workbook mapping, review and job history.
+
+### Fixed
+- Use the full Lead journey card for the stage path and keep horizontal scrolling on narrow screens.
+- Pre-production can route Beta replies and transactional receipts through its existing signed Resend webhook.
+- Show lead header dates in day-month-year form, such as 27 Nov 26.
+- Email templates show a white drone mark in clients that support dark-mode styles and a high-contrast fallback elsewhere.
+- Signed Resend callbacks now reach the API through Hosting so delivery history can show the provider’s final status.
+- Repeated pre-production deployments of the same commit use a separate build archive for each workflow run and retry.
+- Pre-production email worker updates preserve the private scheduler’s access and check that anonymous callers are denied.
+
+## [2.14.1] - 2026-11-29
+
+### Changed
+- Migrated Import enquiries to Astryx. Upload, column mapping, review and import history share a clearer layout, with touch-sized actions and a scrollable workbook preview on phones.
+- Refreshed the workbook guide with updated desktop and phone views.
 
 ## [2.14.0] - 2026-11-22
 

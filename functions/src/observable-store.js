@@ -4,7 +4,7 @@ import { semanticChanges } from './business-observability.js';
 import { randomUUID } from 'node:crypto';
 import { hash, path, ROOT } from './policy.js';
 import { APP_VERSION, BUILD_COMMIT } from './version.js';
-const asyncQueues=new Set(['noteAnalyses','reminderDeliveries','researchIndexJobs']);
+const asyncQueues=new Set(['noteAnalyses','reminderDeliveries','researchIndexJobs','emailJobs','emailBetaDue']);
 const domains = new Set([
   'leads',
   'leadDataResets',
@@ -22,13 +22,16 @@ const domains = new Set([
   'assistantConversations',
   'assistantRequests',
   'auditEvents',
+  'emailJobs',
+  'emailBetaMessages',
+  'emailBetaThreads',
 ]);
 function domain(p, data) {
   const parts = p.split('/');
   if (p.startsWith(ROOT + '/')) {
     const d = parts[2];
     if (d === 'settings')
-      return ['fields', 'scoring', 'ai', 'workspace'].includes(parts[3])
+      return ['fields', 'scoring', 'ai', 'workspace', 'email', 'emailBeta'].includes(parts[3])
         ? 'settings'
         : null;
     if (d === 'leadScores' && !['Ready', 'Failed'].includes(data?.status))

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { PAT_ROUTES } from '../src/api-scopes.js';
 const root = new URL('../../', import.meta.url),
   read = (p) => readFile(new URL(p, root), 'utf8');
-test('published contract covers every route with explicit PAT or Google/App Check authentication', async () => {
+test('published contract covers every route with its explicit authentication scheme', async () => {
   const spec = JSON.parse(await read('docs/openapi.json')),
     source = await read('functions/src/app.js');
   const endpoints = [
@@ -13,7 +13,10 @@ test('published contract covers every route with explicit PAT or Google/App Chec
     ),
   ].map((m) => [m[1], m[2]]);
   endpoints.push(['get', '/me'], ['post', '/invitations/:id/accept']);
-  assert.equal(endpoints.length, 98);
+  const receipts = ['/api/v1/email/receipts/resend', '/api/v1/email/beta/receipts/resend'];
+  assert.equal(endpoints.length + receipts.length, Object.values(spec.paths).reduce((total, methods) => total + Object.keys(methods).length, 0));
+  for (const receipt of receipts) assert.deepEqual(spec.paths[receipt].post.security, [{ resendSignature: [] }]);
+  assert.equal(spec.components.securitySchemes.resendSignature.name, 'svix-signature');
   for (const [method, url] of endpoints) {
     const op =
       spec.paths['/api/v1' + url.replace(/:([a-zA-Z]+)/g, '{$1}')][method];

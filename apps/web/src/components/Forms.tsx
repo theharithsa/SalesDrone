@@ -1,3 +1,4 @@
+import { WorkspaceDateField, WorkspaceDateTimeField } from './WorkspaceDateField';
 import CustomFieldInputs from './CustomFieldInputs';
 import {
   defaultFieldOptions,
@@ -8,7 +9,7 @@ import {
   type CustomFieldValue,
   labelFor,
 } from '../lib/field-options';
-import { Children, isValidElement, useState, type FormEvent, type ReactElement, type ReactNode } from 'react';
+import { Children, isValidElement, useRef, useState, type FormEvent, type ReactElement, type ReactNode } from 'react';
 import { localInstant } from '../lib/dates';
 import {Lead, dateOnly} from '../lib/types';
 import { ErrorMessage, SaveButton, useSubmit } from './UI';
@@ -53,6 +54,7 @@ export function LeadForm({
     [allowDuplicate, setAllowDuplicate] = useState(false),
     [reset, setReset] = useState(0);
   const [fieldError, setFieldError] = useState('');
+  const changedCustomFields = useRef(new Set<string>());
   const submit = useSubmit(async (data, key, isCurrent) => {
     await onSave(data, key);
     if (!isCurrent()) return;
@@ -62,6 +64,12 @@ export function LeadForm({
   return (
     <form
       key={reset}
+      onChange={(event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+        const { name } = target;
+        if (name?.startsWith('custom:')) changedCustomFields.current.add(name);
+      }}
       onSubmit={(e) => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -70,6 +78,11 @@ export function LeadForm({
         const customFields: Record<string, CustomFieldValue> = {};
         for (const f of config.customFields.filter((f) => !f.deleted)) {
           const key = 'custom:' + f.id;
+          const prior = lead?.customFields?.[f.id];
+          if (prior !== undefined && prior !== null && prior !== '' && !changedCustomFields.current.has(key)) {
+            delete d[key];
+            continue;
+          }
           if (f.type === 'multiSelect') {
             const chosen = formData.getAll(key).map(String);
             if ((f.required && !chosen.length) || chosen.length > 30) {
@@ -145,7 +158,7 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'phone')}</span>
             <input
               name="phone"
-              placeholder="N/A"
+              placeholder={lead ? "N/A" : undefined}
               required={!lead || (!lead.needsReview && !lead.email && !visible('email'))}
               type="tel"
               maxLength={40}
@@ -193,18 +206,17 @@ export function LeadForm({
             />
           </label>
         ) : null}
-        <label key="enquiryDate" className="material-field">
-          <span className="field-label">{labelFor(config, 'enquiryDate')}</span>
-          <input
+        <div key="enquiryDate">
+          <WorkspaceDateField
+            label={labelFor(config, 'enquiryDate')}
             name="enquiryDate"
-            type="date"
             required={!lead?.needsReview}
             defaultValue={lead ? lead.enquiryDate : dateOnly()}
           />
           {lead?.originalEnquiryDate ? (
             <small>Original: {lead.originalEnquiryDate}</small>
           ) : null}
-        </label>
+        </div>
         {visible('legacyStatus') ? (
           <label key="legacyStatus" className="material-field">
             <span className="field-label">
@@ -472,10 +484,7 @@ export function CallForm({
                 placeholder="e.g. Share the product overview"
               />
             </label>
-            <label className="material-field">
-              <span className="field-label">Remind me</span>
-              <input name="dueAt" type="datetime-local" required />
-            </label>
+            <WorkspaceDateTimeField label="Remind me" name="dueAt" required />
             <p className="field-hint full">
               Time is in your device timezone:{' '}
               {Intl.DateTimeFormat().resolvedOptions().timeZone}.
@@ -506,10 +515,12 @@ export function CallForm({
 }
 export function TaskForm({
   leadId,
+  members = [],
   onSave,
   onCancel,
 }: {
   leadId?: string;
+  members?: { id: string; name: string }[];
   onSave: (data: any, key: string) => Promise<void>;
   onCancel: () => void;
 }) {
@@ -536,6 +547,7 @@ export function TaskForm({
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           kind: d.kind,
           ...(leadId ? { leadId } : {}),
+          ...(leadId && d.recipientUid ? { recipientUid: d.recipientUid } : {}),
         });
       }}
     >
@@ -550,10 +562,14 @@ export function TaskForm({
             placeholder="e.g. Follow up on the enquiry"
           />
         </label>
-        <label className="material-field">
-          <span className="field-label">Due date and time</span>
-          <input name="dueAt" type="datetime-local" required />
-        </label>
+        <WorkspaceDateTimeField label="Due date and time" name="dueAt" required />
+        {leadId && members.length ? <label className="material-field">
+          <span className="field-label">Responsible member</span>
+          <select name="recipientUid">
+            <option value="">Me</option>
+            {members.map(member => <option key={member.id} value={member.id}>{member.name}</option>)}
+          </select>
+        </label> : null}
         <label className="material-field">
           <span className="field-label">Task type</span>
           <select
@@ -567,7 +583,7 @@ export function TaskForm({
       </div>
       <p className="field-hint">
         Entered in {Intl.DateTimeFormat().resolvedOptions().timeZone}. Push is
-        optional; the task always stays in your list.
+        optional. Shared tasks appear in the responsible member’s list.
       </p>
       <ErrorMessage error={submit.error} />
       <div className="form-footer">
@@ -576,11 +592,33 @@ export function TaskForm({
           <button className="button" type="button" onClick={onCancel}>
             Cancel
           </button>
-          <SaveButton busy={submit.busy} label="Set reminder" />
+          <SaveButton busy={submit.busy} label={leadId ? 'Create task' : 'Set reminder'} />
         </div>
       </div>
     </form>
   );
+}
+export function TaskAssignmentForm({ task, members, onSave }: {
+  task: { recipientUid?: string; version: number };
+  members: { id: string; name: string }[];
+  onSave: (data: { expectedVersion: number; recipientUid: string }, key: string) => Promise<void>;
+}) {
+  const submit = useSubmit(onSave);
+  return <form className="form-grid" onSubmit={event => {
+    event.preventDefault();
+    const recipientUid = String(inputData(event).recipientUid);
+    if (recipientUid !== task.recipientUid) submit.run({ recipientUid, expectedVersion: task.version });
+  }}>
+    <label className="material-field"><span className="field-label">Responsible member</span>
+      <select name="recipientUid" defaultValue={task.recipientUid || ''} required disabled={submit.busy}>
+        {!members.some(member => member.id === task.recipientUid)
+          ? <option value={task.recipientUid || ''}>Current member</option> : null}
+        {members.map(member => <option key={member.id} value={member.id}>{member.name}</option>)}
+      </select>
+    </label>
+    <div className="form-footer"><SaveButton busy={submit.busy} label="Assign task" /></div>
+    <ErrorMessage error={submit.error} />
+  </form>;
 }
 export function NoteForm({
   onSave,
@@ -675,15 +713,7 @@ export function RescheduleForm({
       }}
     >
       {action !== 'complete' ? <>
-      <label className="material-field">
-        <span className="field-label">New date and time</span>
-        <input
-          name="dueAt"
-          type="datetime-local"
-          required
-          defaultValue={local}
-        />
-      </label>
+      <WorkspaceDateTimeField label="New date and time" name="dueAt" required defaultValue={local} />
       <p className="field-hint">
         Time is in {Intl.DateTimeFormat().resolvedOptions().timeZone}.
       </p>

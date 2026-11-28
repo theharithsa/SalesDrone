@@ -1,13 +1,16 @@
+import { Mail } from 'lucide-react';
+import type { EmailTarget, EmailThread } from './features/EmailBetaPage';
 import { normalizeAccent } from './lib/accent';
 import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
+import ProductHome from './components/ProductHome';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
 import CompaniesPage from './features/CompaniesPage';
 import WorkspaceNavigation, { availableNavigation, navigationPages, type NavigationPage } from './components/WorkspaceNavigation';
 import AssigneeFilter, { type Assignee } from './components/AssigneeFilter';
 import { teamDemo, demoAssignees } from './lib/team-demo';
-import LeadHeaderContext from './components/LeadHeaderContext';
+import LeadHeaderContext, { dialNumber } from './components/LeadHeaderContext';
 import TaskRow from './components/TaskRow';
 import './research.css';
 import LeadFiles from './features/LeadFiles';
@@ -32,6 +35,7 @@ import {
 } from './lib/lead-workspace';
 import Assignment from './components/Assignment';
 import LeadPage, { LeadPageLoading } from './components/LeadPage';
+import LeadStagePicker from './components/LeadStagePicker';
 import LeadReportExport from './features/LeadReportExport';
 import NotificationsPage from './features/NotificationsPage';
 import { setRumIdentity, rumPage } from './lib/rum';
@@ -48,7 +52,6 @@ import {
   withCurrent,
   leadFieldValue,
   displayFieldValue,
-  orderedFields,
   labelFor,
 } from './lib/field-options';
 import LeadFilters from './components/LeadFilters';
@@ -100,7 +103,6 @@ import {
   PanelLeftOpen,
   Menu,
   LoaderCircle,
-  PhoneCall,
   Filter,
   X,
 } from 'lucide-react';
@@ -123,6 +125,7 @@ import {
   LeadForm,
   NoteForm,
   TaskForm,
+  TaskAssignmentForm,
   RescheduleForm,
   CorrectionForm,
 } from './components/Forms';
@@ -131,6 +134,7 @@ const DashboardPage = lazy(() => import('./features/DashboardPage'));
 
 const LeadAssistantPage = lazy(() => import('./features/LeadAssistantPage'));
 const ResearchPage = lazy(() => import('./features/ResearchPage'));
+const EmailBetaPage = lazy(() => import('./features/EmailBetaPage'));
 const ImportPage = lazy(() => import('./features/ImportPage'));
 const SettingsPage = lazy(() => import('./features/SettingsPage'));
 type Page = NavigationPage | 'members' | 'settings';
@@ -167,7 +171,14 @@ function demoTaskChange(task: Task, body: Record<string, any>): Task {
   };
 }
 
-export default function App() {
+function taskDigestWindow() {
+  if (window.location.pathname !== '/tasks') return null;
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get('from'), until = params.get('until'), tz = params.get('tz');
+  return params.get('status') === 'Completed' && from && until && tz &&
+    [from, until].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value)) ? { from, until, tz } : null;
+}
+export default function App({ onReady }: { onReady: () => void }) {
   const [session, setSession] = useState<Session | null>(null),
     [guest, setGuest] = useState(false),
     [inboxHasUnread, setInboxHasUnread] = useState(false),
@@ -213,7 +224,8 @@ export default function App() {
     [assignees, setAssignees] = useState<Assignee[]>([]),
     [assigneesLoading, setAssigneesLoading] = useState(false),
     [assigneesError, setAssigneesError] = useState(''),
-    [taskFilter, setTaskFilter] = useState('Pending'),
+    [taskFilter, setTaskFilter] = useState(() => taskDigestWindow() ? 'Completed' : 'Pending'),
+    [taskWindow, setTaskWindow] = useState(taskDigestWindow),
     [nextCursor, setNextCursor] = useState<string | null>(null),
     [demoLeadLimit, setDemoLeadLimit] = useState(30),
     [listLoadError, setListLoadError] = useState(false),
@@ -347,7 +359,11 @@ export default function App() {
   const readCache = useRef(new WorkspaceReadCache());
   const sessionRef = useRef(session);
   sessionRef.current = session;
-  const can = (c: string) => demo || session?.member?.capabilities.includes(c);
+  const canEmailBeta = !demo && session?.emailBeta === true;
+  const can = (c: string) => c === 'email-beta' ? canEmailBeta : demo || session?.member?.capabilities.includes(c);
+  const [emailTarget, setEmailTarget] = useState<EmailTarget | null>(null);
+  const [leadEmail, setLeadEmail] = useState<{ leadId: string; items: EmailThread[] } | null>(null);
+  const clearEmailTarget = useCallback(() => setEmailTarget(null), []);
   const notify = (message: string) => setToast(message);
   useEffect(() => {
     if (!toast) return;
@@ -503,6 +519,9 @@ export default function App() {
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
   }, [appearance, bookMode, fontStyle, displayScale, accentPalette]);
+  useEffect(() => {
+    if (authReady) onReady();
+  }, [authReady, onReady]);
   async function changeTheme(next: 'light' | 'dark') {
     if (demo || !session) {
       setGuestAppearance(next);
@@ -583,7 +602,7 @@ export default function App() {
     };
   }, [session, demo]);
   const request = useCallback(
-    async (path: string, method = 'GET', body?: any, key?: string) => {
+    async (path: string, method = 'GET', body?: any, key?: string, signal?: AbortSignal) => {
       if (!demo) {
         try {
           const current = sessionRef.current;
@@ -591,8 +610,9 @@ export default function App() {
           const scope = member && auth.currentUser?.uid === current.identity.uid
             ? JSON.stringify([generation.current, current.identity.uid, member.version, member.accessPolicyVersion, member.scope])
             : '';
-          const send = () => api(path, method, body, key);
-          const result = method === 'GET' ? await readCache.current.read(scope, path, send) : await send();
+          const privateEmail = path.startsWith('/email/threads');
+          const send = () => api(path, method, body, key, privateEmail || method !== 'GET' ? signal : undefined);
+          const result = method === 'GET' && !privateEmail ? await readCache.current.read(scope, path, send) : await send();
           if (method !== 'GET') readCache.current.clear();
           setOnline(true);
           return result;
@@ -606,7 +626,7 @@ export default function App() {
             setSelected(null);
             void resolveSession();
           }
-          if (e instanceof ApiError && ['EXPORT_DISABLED', 'INTELLIGENCE_DISABLED'].includes(e.code))
+          if (e instanceof ApiError && ['EXPORT_DISABLED', 'INTELLIGENCE_DISABLED', 'EMAIL_BETA_ACCESS'].includes(e.code))
             void resolveSession();
           throw e;
         }
@@ -935,7 +955,12 @@ export default function App() {
             params.set('field', searchField);
           }
         }
-        if (page === 'tasks') {params.set('state', taskFilter);params.set('view','accessible');}
+        if (page === 'tasks') {
+          params.set('state', taskFilter);
+          params.set('view', 'accessible');
+          if (taskFilter === 'Completed' && taskWindow)
+            for (const [key, value] of Object.entries(taskWindow)) params.set(key, value);
+        }
         if (append && nextCursor) params.set('cursor', nextCursor);
         const endpoint =
           page === 'leads'
@@ -1011,6 +1036,7 @@ export default function App() {
       searchField,
       columnFilters,
       taskFilter,
+      taskWindow,
       nextCursor,
       request,
     ],
@@ -1039,6 +1065,7 @@ export default function App() {
     searchField,
     columnFilters,
     taskFilter,
+    taskWindow,
     session?.member?.version,
   ]);
   useEffect(() => {
@@ -1152,11 +1179,23 @@ export default function App() {
   });
   const showCombinedTimeline = !!routeLeadId && leadTab === 'all';
   const visibleActivities = filterLeadActivities(timeline, routeLeadId ? leadTab : 'all');
-  const activityEntries = buildLeadTimeline(
+  useEffect(() => {
+    setLeadEmail(null);
+    if (!canEmailBeta || !routeLeadId || !showCombinedTimeline) return;
+    const controller = new AbortController();
+    void request('/email/threads?leadId=' + encodeURIComponent(routeLeadId), 'GET', undefined, undefined, controller.signal)
+      .then(value => {
+        if (!controller.signal.aborted) setLeadEmail({ leadId: routeLeadId, items: (value as { items: EmailThread[] }).items });
+      }).catch(() => { if (!controller.signal.aborted) setLeadEmail(null); });
+    return () => controller.abort();
+  }, [canEmailBeta, routeLeadId, showCombinedTimeline, request]);
+  const activityEntries = [...buildLeadTimeline(
     visibleActivities,
     showCombinedTimeline ? leadTasks.items : [],
     showCombinedTimeline,
-  );
+  ), ...(canEmailBeta && showCombinedTimeline && leadEmail && leadEmail.leadId === routeLeadId
+    ? leadEmail.items.map(thread => ({ kind: 'email' as const, id: thread.id, date: thread.updatedAt, thread })) : [])]
+    .sort((left, right) => (right.date || '').localeCompare(left.date || ''));
 
   const pendingAutomatic = timeline.some(
     (a) => a.autoReminder?.status === 'Pending',
@@ -1227,7 +1266,7 @@ export default function App() {
       if (!signal?.aborted && epoch === detailEpoch.current) setDetailBusy(false);
     }
   }, [request]);
-  async function inspectLead(lead: Lead) {
+  async function inspectLead(lead: Pick<Lead, 'id'>) {
     if (!lead?.id) {
       setError('This lead is unavailable. Return to Leads and refresh.');
       return;
@@ -1294,6 +1333,9 @@ export default function App() {
       detailEpoch.current++;
       setRouteLeadId(id);
       setLeadTab(defaultLeadTab);
+      const digestWindow = taskDigestWindow();
+      setTaskWindow(digestWindow);
+      if (digestWindow) setTaskFilter('Completed');
       if (id) setPage('leads');
       else {
         detailEpoch.current++;
@@ -1327,6 +1369,7 @@ export default function App() {
     listEpoch.current++;
     detailEpoch.current++;
     setPage(p);
+    setTaskWindow(null);
     selectedIdRef.current = undefined;
     setRouteLeadId(null);
     setSelected(null);
@@ -1391,18 +1434,21 @@ export default function App() {
       setMutationBusy(false);
     }
   }
-  async function leadAction(patch: any) {
-    if (!selected) return;
+  async function leadAction(patch: any, lead = selected) {
+    if (!lead || mutationBusy) return;
+    const currentGeneration = generation.current;
     setMutationBusy(true);
     try {
-      await request('/leads/' + selected.id, 'PATCH', {
-        expectedVersion: selected.version,
+      await request('/leads/' + encodeURIComponent(lead.id), 'PATCH', {
+        expectedVersion: lead.version,
         ...patch,
       });
-      await refresh();
-      notify('Lead updated.');
+      if (currentGeneration !== generation.current) return;
+      if (selectedIdRef.current === lead.id) await refresh();
+      else await loadRef.current();
+      if (currentGeneration === generation.current) notify('Lead updated.');
     } catch (e) {
-      setError((e as Error).message);
+      if (currentGeneration === generation.current) setError((e as Error).message);
     } finally {
       setMutationBusy(false);
     }
@@ -1500,128 +1546,41 @@ export default function App() {
       ...data.leads.map((lead) => lead.source).filter(Boolean),
     ]),
   ];
-  if (!authReady)
-    return (
-      <div className="startup">
-        <Brand full />
-        <Loading />
-      </div>
-    );
-  if (!active)
-    return (
-      <div className="login-page">
-        <div className="login-top">
-          <Brand full />
-          <div className="login-top-actions">
-            <ThemeToggle
-              appearance={appearance}
-              onChange={(next) => void changeTheme(next)}
-              busy={themeBusy}
-            />
-          </div>
-        </div>
-        <div className="login-content">
-          <div className="login-copy">
-            <span className="eyebrow">
-              A LITTLE CLARITY. A LOT OF MOMENTUM.
-            </span>
-            <h1>
-              <span className="conversation-script">Good conversations.</span>
-              <br />
-              <em>Better follow-through.</em>
-            </h1>
-            <p>
-              Your enquiries, calls, and next steps.
-              <br />
-              Together in one calm workspace.
-            </p>
-            <div className="login-art" aria-label="Illustrative sales workflow">
-              <div className="login-art-row">
-                <span>01</span>
-                <span>
-                  <strong>Capture an enquiry</strong>
-                  <small>One place for every conversation</small>
-                </span>
-                <span className="badge">New</span>
-              </div>
-              <div className="login-art-row">
-                <span>02</span>
-                <span>
-                  <strong>Keep the next step clear</strong>
-                  <small>Notes, calls and timely follow-ups</small>
-                </span>
-                <span className="badge">Working</span>
-              </div>
-              <div className="login-art-row">
-                <span>03</span>
-                <span>
-                  <strong>Build the relationship</strong>
-                  <small>From first contact to the right opportunity</small>
-                </span>
-                <span className="badge stage-qualified">Qualified</span>
-              </div>
-            </div>
-            <div className="login-benefits">
-              <span>
-                <UsersRound size={17} /> Know your leads.
-              </span>
-              <span>
-                <PhoneCall size={17} /> Keep the context.
-              </span>
-              <span>
-                <Bell size={17} /> Remember the next step.
-              </span>
-            </div>
-          </div>
-          <section className="login-card">
-            <span className="login-icon">
-              <ArrowUpRight size={28} />
-            </span>
-            <h2>Welcome to SalesDrone</h2>
-            <p>Sign in to pick up where you left off.</p>
-            <button
-              className="button google-button"
-              disabled={sessionBusy}
-              onClick={() => authAction()}
-            >
-              {sessionBusy ? (
-                <LoaderCircle className="spin" size={18} />
-              ) : (
-                <GoogleIcon />
-              )}
-              Continue with Google
-            </button>
-            <button className="text-button" onClick={() => authAction(true)}>
-              Having trouble? Use redirect sign-in
-            </button>
-            <div className="login-divider">
-              <span>or take a look around</span>
-            </div>
-            <button
-              className="button demo-button"
-              onClick={() => {
-                setGuest(true);
-                setPage('today');
-                demoRef.current = demoData();
-                setError('');
-              }}
-            >
-              Explore the demo <ArrowRight size={16} />
-            </button>
-            <p className="login-fine">
-              Live access is managed by your administrator.
-              <br />
-              Other accounts can explore with sample data.
-            </p>
-            <ErrorMessage error={error} />
-          </section>
-        </div>
-        <footer className="login-bottom">
-          <span>SalesDrone by AvinyaTech</span>
-          <span>Built for a more focused workday.</span>
-        </footer>
-      </div>
-    );
+  if (!authReady) return null;
+  if (!active) {
+    const openDemo = () => {
+      setGuest(true);
+      setPage('today');
+      demoRef.current = demoData();
+      setError('');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    };
+    return <ProductHome
+      appearanceMode={appearance}
+      appearance={<ThemeToggle
+        appearance={appearance}
+        onChange={(next) => void changeTheme(next)}
+        busy={themeBusy}
+      />}
+      onDemo={openDemo}
+      signIn={<section className="login-card" id="sign-in" aria-labelledby="sign-in-title" tabIndex={-1}>
+        <h2 id="sign-in-title">Sign in to SalesDrone</h2>
+        <p>Use the Google account approved by your workspace Admin.</p>
+        <button className="button google-button" type="button" disabled={sessionBusy} onClick={() => authAction()}>
+          {sessionBusy ? <LoaderCircle className="spin" size={18} /> : <GoogleIcon />}
+          Continue with Google
+        </button>
+        <button className="text-button" type="button" disabled={sessionBusy} onClick={() => authAction(true)}>
+          Having trouble? Use redirect sign-in
+        </button>
+        <div className="login-divider">or try it with sample data</div>
+        <button className="button demo-button" type="button" onClick={openDemo}>
+          Explore the demo <ArrowRight size={16} aria-hidden="true" />
+        </button>
+        <ErrorMessage error={error} />
+      </section>}
+    />;
+  }
   return (
     <div
       className={'app-shell ' + (sidebarCollapsed ? 'sidebar-collapsed' : '')}
@@ -1771,6 +1730,7 @@ export default function App() {
                   hygiene: 'Lead Hygiene',
                   assistant: 'Lead Assistant',
                   imports: 'Import enquiries',
+                  email: 'Email',
                   members: 'Settings',
                 }[page]
               }
@@ -2189,67 +2149,80 @@ export default function App() {
                         </span>
                       ) : null}
                     </summary>
-                    {admin||demo?<><ErrorMessage error={assigneesError}/><AssigneeFilter value={assignee} onChange={setAssignee} members={assignees} loading={assigneesLoading}/></>:null}
-                    <div className="leads-toolbar">
-                      <select
-                        aria-label="Search field"
-                        value={searchField}
-                        onChange={(e) => setSearchField(e.target.value)}
-                      >
-                        <option value="all">All lead fields and comments</option>
-                        <option value="name">
-                          {labelFor(fieldOptions, 'name')}
-                        </option>
-                        <option value="company">
-                          {labelFor(fieldOptions, 'company')}
-                        </option>
-                        <option value="phone">
-                          {labelFor(fieldOptions, 'phone')}
-                        </option>
-                        <option value="email">
-                          {labelFor(fieldOptions, 'email')}
-                        </option>
-                        <option value="location">
-                          {labelFor(fieldOptions, 'location')}
-                        </option>
-                        <option value="zone">
-                          {labelFor(fieldOptions, 'zone')}
-                        </option>
-                      </select>
-                      <select
-                        aria-label="Filter stage"
-                        value={stage}
-                        onChange={(e) => setStage(e.target.value)}
-                      >
-                        <option value="">
-                          All {labelFor(fieldOptions, 'stage').toLowerCase()}
-                        </option>
-                        {withCurrent(
-                          fieldOptions.values.stage,
-                          selected?.stage,
-                        ).map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
-                      <select
-                        aria-label="Filter source"
-                        value={source}
-                        onChange={(e) => setSource(e.target.value)}
-                      >
-                        <option value="">
-                          All {labelFor(fieldOptions, 'source').toLowerCase()}
-                        </option>
-                        {sourceOptions.map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
+                    <div className="lead-filter-sheet">
+                      {admin || demo ? <ErrorMessage error={assigneesError} /> : null}
+                      <div className="leads-toolbar">
+                        {admin || demo ? <AssigneeFilter value={assignee} onChange={setAssignee}
+                          members={assignees} loading={assigneesLoading} /> : null}
+                        <label>
+                          Search field
+                          <select
+                            aria-label="Search field"
+                            value={searchField}
+                            onChange={(e) => setSearchField(e.target.value)}
+                          >
+                            <option value="all">All fields</option>
+                            <option value="name">
+                              {labelFor(fieldOptions, 'name')}
+                            </option>
+                            <option value="company">
+                              {labelFor(fieldOptions, 'company')}
+                            </option>
+                            <option value="phone">
+                              {labelFor(fieldOptions, 'phone')}
+                            </option>
+                            <option value="email">
+                              {labelFor(fieldOptions, 'email')}
+                            </option>
+                            <option value="location">
+                              {labelFor(fieldOptions, 'location')}
+                            </option>
+                            <option value="zone">
+                              {labelFor(fieldOptions, 'zone')}
+                            </option>
+                          </select>
+                        </label>
+                        <label>
+                          {labelFor(fieldOptions, 'stage')}
+                          <select
+                            aria-label="Filter stage"
+                            value={stage}
+                            onChange={(e) => setStage(e.target.value)}
+                          >
+                            <option value="">
+                              All {labelFor(fieldOptions, 'stage').toLowerCase()}
+                            </option>
+                            {withCurrent(
+                              fieldOptions.values.stage,
+                              selected?.stage,
+                            ).map((s) => (
+                              <option key={s}>{s}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          {labelFor(fieldOptions, 'source')}
+                          <select
+                            aria-label="Filter source"
+                            value={source}
+                            onChange={(e) => setSource(e.target.value)}
+                          >
+                            <option value="">
+                              All {labelFor(fieldOptions, 'source').toLowerCase()}
+                            </option>
+                            {sourceOptions.map((s) => (
+                              <option key={s}>{s}</option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+                      <LeadFilters
+                        config={fieldOptions}
+                        key={session?.identity.uid || 'demo'}
+                        applied={columnFilters}
+                        onApply={setColumnFilters}
+                      />
                     </div>
-                    <LeadFilters
-                      config={fieldOptions}
-                      key={session?.identity.uid || 'demo'}
-                      applied={columnFilters}
-                      onApply={setColumnFilters}
-                    />
                   </details>
                   <div
                     className="stage-tabs"
@@ -2260,6 +2233,7 @@ export default function App() {
                       <button
                         key={s}
                         className={stage === s ? 'active' : ''}
+                        aria-pressed={stage === s}
                         onClick={() => setStage(s)}
                       >
                         {s || 'All leads'}
@@ -2274,6 +2248,10 @@ export default function App() {
                         key={leadQueryKey}
                         canEdit={!compactLeads && !!can('leads:edit')}
                         canAssign={!!can('assignments:write')}
+                        stageBusy={mutationBusy}
+                        onStageChange={can('leads:edit')
+                          ? (lead, value) => void leadAction({ stage: value }, lead)
+                          : undefined}
                         request={request}
                         onDone={() => void load()}
                         config={fieldOptions}
@@ -2355,6 +2333,13 @@ export default function App() {
                             Back to leads
                           </span>
                         </button>
+                        {canEmailBeta && can('leads:edit') && selected.email && !selected.doNotContact &&
+                            !selected.needsReview && !selected.archived && (
+                          <button className="button" onClick={() => {
+                            setEmailTarget({ lead: { id: selected.id, name: selected.name || selected.company || 'Unnamed lead' } });
+                            go('email');
+                          }}><Mail size={16} /> Send email</button>
+                        )}
                         {can('leads:edit') ? (
                           <button
                             className="button detail-edit-button"
@@ -2377,14 +2362,18 @@ export default function App() {
                         <LeadHeaderContext
                           company={selected.company}
                           phone={selected.phone}
-                          fields={orderedFields(fieldOptions, fieldOptions.headerFields || [], (key) => key)
+                          timezone={timezone}
+                          allowDial={!selected.doNotContact && !selected.needsReview}
+                          fields={(fieldOptions.headerFields || [])
                             .filter((key) => !fieldOptions.hiddenFields.includes(key))
                             .map((key) => {
                               const value = leadFieldValue(selected, key).trim();
-                              const label = fieldOptions.customFields.find((field) => field.id === key)?.label
+                              const definition = fieldOptions.customFields.find((field) => field.id === key);
+                              const label = definition?.label
                                 || labelFor(fieldOptions, key, key === 'createdAt' ? 'Created at' : undefined);
-                              return { id: key, label, value: displayFieldValue(value) };
-                            })}
+                              return { id: key, label, value, phone: definition?.type === 'phone',
+                                date: key === 'enquiryDate' || key === 'createdAt' || definition?.type === 'date' };
+                            }).filter((field) => field.value)}
                         />
                       </div>
                     }
@@ -2404,7 +2393,16 @@ export default function App() {
                           <h3>
                             {labelFor(fieldOptions, 'stage', 'Sales stage')}
                           </h3>
-                          <Badge stage={selected.stage} />
+                          {can('leads:edit') && !fieldOptions.hiddenFields.includes('stage') ? (
+                            <LeadStagePicker
+                              key={selected.id}
+                              label={labelFor(fieldOptions, 'stage', 'Sales stage')}
+                              stage={selected.stage}
+                              stages={fieldOptions.values.stage}
+                              busy={mutationBusy}
+                              onChange={(stage) => void leadAction({ stage })}
+                            />
+                          ) : <Badge stage={selected.stage} />}
                         </div>
                         <div className="lead-assignment-summary">
                           <h3>Assigned to</h3>
@@ -2535,17 +2533,22 @@ export default function App() {
                                       selected.customFields?.[f.id] !==
                                         undefined,
                                   )
-                                  .map((f) => (
+                                  .map((f) => {
+                                    const value = displayFieldValue(selected.customFields?.[f.id]);
+                                    const dial = f.type === 'phone' && !selected.doNotContact && !selected.needsReview
+                                      ? dialNumber(value) : null;
+                                    return (
                                     <div key={f.id}>
                                       <dt>
                                         {f.label}
                                         {f.deleted ? ' (removed field)' : ''}
                                       </dt>
                                       <dd>
-                                        {displayFieldValue(selected.customFields?.[f.id])}
+                                        {dial ? <a className="phone-number" href={'tel:' + dial}>{value}</a> : value}
                                       </dd>
                                     </div>
-                                  ))}
+                                    );
+                                  })}
                               </dl>
                             </details>
                           ) : null}
@@ -2737,6 +2740,17 @@ export default function App() {
                                   key={leadTab}
                                 >
                                   {activityEntries.map((entry) => {
+                                    if (entry.kind === 'email') return <li key={'email-' + entry.id} className="timeline-item">
+                                      <span className="timeline-icon" aria-hidden="true"><Mail size={14} /></span>
+                                      <div>
+                                        <span className="timeline-kind">Email</span>
+                                        <button className="text-button timeline-task-title" onClick={() => {
+                                          setEmailTarget({ threadId: entry.id });
+                                          go('email');
+                                        }}>{entry.thread.subject}</button>
+                                        <time dateTime={entry.date}>{displayDate(entry.date, timezone)}</time>
+                                      </div>
+                                    </li>;
                                     if (entry.kind !== 'activity') {
                                       const task = entry.task;
                                       const Icon = entry.kind === 'reminder' ? Bell : ListTodo;
@@ -3077,6 +3091,13 @@ export default function App() {
                   <div className="task-list-context">
                     <Clock size={14} aria-hidden="true" />
                     <span>Times in {timezone}</span>
+                    {taskWindow && taskFilter === 'Completed' && !demo ? <>
+                      <span>· Week of {taskWindow.from}</span>
+                      <button className="text-button" onClick={() => {
+                        setTaskWindow(null);
+                        window.history.replaceState({}, '', '/tasks');
+                      }}>Show all completed tasks</button>
+                    </> : null}
                   </div>
                   <div className="task-list-head" aria-hidden="true">
                     <span /><span>Task</span><span>Lead</span><span>Responsible</span><span>Due</span><span>Actions</span>
@@ -3174,6 +3195,11 @@ export default function App() {
                 />
               </Suspense>
             ) : null}
+            {page === 'email' && (canEmailBeta
+              ? <EmailBetaPage key={session?.identity.uid + ':' + session?.member?.version} request={request}
+                admin={!!admin} target={emailTarget} onConsumeTarget={clearEmailTarget} timezone={timezone}
+                onOpenLead={lead => void inspectLead(lead)} />
+              : <div className="panel"><h2>Email Beta</h2><p>Email access is unavailable for this account.</p></div>)}
             {page === 'imports' ? (
               <ImportPage
                 config={fieldOptions}
@@ -3362,6 +3388,8 @@ export default function App() {
         {modal === 'task' ? (
           <TaskForm
             leadId={selected?.id}
+            members={admin && can('assignments:write') && can('leads:edit')
+              ? assignees.filter(member => member.active && member.id !== session?.member?.uid) : undefined}
             onCancel={() => setModal(null)}
             onSave={async (d, k) => {
               await request('/tasks', 'POST', d, k);
@@ -3512,6 +3540,21 @@ export default function App() {
                     <p>{entry.comment}</p>
                   </li>
                 ))}</ul>
+              </details>
+            ) : null}
+            {!demo && focusedTask.leadId && focusedTask.state === 'Pending' &&
+              can('assignments:write') && can('leads:edit') && assignees.some(member => member.active) ? (
+              <details className="task-assignment">
+                <summary>Change responsible member</summary>
+                <TaskAssignmentForm key={focusedTask.version} task={focusedTask} members={assignees.filter(member => member.active)}
+                  onSave={async (data, key) => {
+                    const next = await request('/leads/' + encodeURIComponent(focusedTask.leadId!) +
+                      '/tasks/' + encodeURIComponent(focusedTask.id) + '/assignment', 'PATCH', data, key);
+                    setModal(null);
+                    setFocusedTask(next);
+                    await refresh();
+                    notify('Task assigned.');
+                  }} />
               </details>
             ) : null}
             {(focusedTask.sharedLeadContext ? focusedTask.canManage && can('leads:edit') : (demo || focusedTask.recipientUid === session?.member?.uid) && can('tasks:write')) &&

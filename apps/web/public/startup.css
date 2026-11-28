@@ -1,0 +1,109 @@
+.workspace-startup {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+  background: var(--bg, #f7f8fa);
+  color: var(--text, #191c20);
+  font: 400 .875rem/1.5 system-ui, sans-serif;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-short, 160ms) var(--md-sys-motion-easing, ease-out),
+    visibility 0s var(--md-sys-motion-short, 160ms);
+}
+
+:root[data-color-scheme='dark'] .workspace-startup {
+  background: var(--bg, #15181e);
+  color: var(--text, #eef1f7);
+}
+
+.workspace-startup[data-ready] { opacity: 0; visibility: hidden; }
+.workspace-startup[data-ready] * { animation-play-state: paused; }
+.workspace-startup strong { font-size: 1.625rem; letter-spacing: -.045em; }
+.workspace-startup > span { color: var(--muted, currentColor); }
+
+.startup-flight {
+  position: relative;
+  width: 104px;
+  height: 124px;
+}
+
+.startup-drone {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  color: var(--accent, #005ca9);
+}
+
+:root[data-color-scheme='dark'] .startup-drone { color: var(--accent, #a5c8ff); }
+
+.startup-drone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  -webkit-mask: url('/brand/salesdrone-mark.png') center / contain no-repeat;
+  mask: url('/brand/salesdrone-mark.png') center / contain no-repeat;
+}
+
+.startup-rotor {
+  position: absolute;
+  top: 28%;
+  left: 25%;
+  width: 14px;
+  height: 3px;
+  margin: -1.5px 0 0 -7px;
+  border-radius: 4px;
+  background: currentColor;
+  opacity: .65;
+  transform: rotate(32deg);
+}
+
+.startup-rotor:nth-child(even) { left: 75%; }
+.startup-rotor:nth-child(n + 3) { top: 76%; }
+
+.startup-shadow {
+  position: absolute;
+  bottom: 8px;
+  left: 25%;
+  width: 50%;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .11;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .startup-drone { animation: startup-hover 1.6s ease-in-out infinite; }
+  .startup-shadow { animation: startup-shadow 1.6s ease-in-out infinite; }
+  .startup-rotor { animation: startup-rotor 850ms linear infinite; }
+  .startup-rotor:nth-child(2n) { animation-direction: reverse; animation-delay: -180ms; }
+  .startup-rotor:nth-child(3) { animation-delay: -300ms; }
+}
+
+@media (scripting: none) {
+  .workspace-startup * { animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-startup { transition: none; }
+}
+
+@keyframes startup-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes startup-shadow {
+  0%, 100% { transform: scale(1); opacity: .11; }
+  50% { transform: scale(.8); opacity: .055; }
+}
+
+@keyframes startup-rotor {
+  from { transform: rotate(32deg); }
+  to { transform: rotate(392deg); }
+}

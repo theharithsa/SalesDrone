@@ -303,7 +303,7 @@ describe('workbook field discovery',()=>{
  it('blocks schema creation for non-admin importers and allows explicit exclusion',async()=>{
   const user=userEvent.setup(),request=vi.fn(async(_path:string)=>({items:[],nextCursor:null}));render(<ImportPage demo={false} request={request} onImported={vi.fn()}/>);
   await upload(user,'Customer name,Phone number,Product\nSynthetic,12025550100,0012');
-  expect(await screen.findByRole('button',{name:/Create \/ reuse 1 fields/})).toBeDisabled();
+  expect(await screen.findByRole('button',{name:/Create \/ reuse 1 fields/})).toHaveAttribute('aria-disabled','true');
   expect(screen.getByLabelText('New field name for column 3')).toBeDisabled();
   const section=screen.getByText('Additional workbook fields').closest('fieldset')!;await user.click(within(section).getByRole('checkbox'));
   expect(screen.getByRole('button',{name:/Validate records/})).toBeEnabled();expect(request.mock.calls.some(([p])=>p==='/field-options')).toBe(false);
@@ -363,10 +363,10 @@ describe('mapped status destinations',()=>{
   await upload(user,'Customer name,Phone number,Status,Zone,Source\nSynthetic,12025550100,Sent details on WA,South,Website');
   const picker=await screen.findByLabelText('Status mapping field');
   expect(within(picker).getByRole('option',{name:'Zone'})).toBeEnabled();expect(within(picker).getByRole('option',{name:'Enquiry source'})).toBeEnabled();
-  await user.selectOptions(picker,'zone');expect(screen.getByRole('button',{name:/Validate records/})).toBeDisabled();
+  await user.selectOptions(picker,'zone');expect(screen.getByRole('button',{name:/Validate records/})).toHaveAttribute('aria-disabled','true');
   await user.click(screen.getByRole('button',{name:'Review existing column'}));expect(screen.getByLabelText('Workbook column for Zone')).toHaveFocus();
   await user.selectOptions(screen.getByLabelText('Workbook column for Zone'),'-1');
-  expect(screen.getByRole('button',{name:/Create \/ reuse 1 fields/})).toBeDisabled();
+  expect(screen.getByRole('button',{name:/Create \/ reuse 1 fields/})).toHaveAttribute('aria-disabled','true');
   expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(false);
   await user.click(screen.getByLabelText('Import column 4: Zone as a field'));
   await user.selectOptions(screen.getByLabelText('Map status Sent details on WA'),'North');
@@ -383,7 +383,7 @@ describe('mapped status destinations',()=>{
   await user.selectOptions(await screen.findByLabelText('Status mapping field'),'cf_region');
   await user.selectOptions(screen.getByLabelText('Workbook column for Delivery region'),'-1');
   expect(screen.getByText(/An additional field would reuse Delivery region/)).toBeInTheDocument();
-  expect(screen.getByRole('button',{name:/Create \/ reuse 1 fields/})).toBeDisabled();
+  expect(screen.getByRole('button',{name:/Create \/ reuse 1 fields/})).toHaveAttribute('aria-disabled','true');
   await user.click(screen.getByRole('button',{name:'Review additional field'}));expect(screen.getByLabelText('New field name for column 4')).toHaveFocus();
   await user.clear(screen.getByLabelText('New field name for column 4'));await user.type(screen.getByLabelText('New field name for column 4'),'Previous region');
   await user.click(screen.getByRole('button',{name:/Create \/ reuse 1 fields/}));
@@ -404,7 +404,7 @@ it('rejects destination reuse from fresh field configuration before any schema o
  const file=new File([csv],'fresh.csv',{type:'text/csv'});Object.defineProperty(file,'text',{value:async()=>csv});await user.upload(screen.getByLabelText('Choose a workbook'),file);
  await user.selectOptions(await screen.findByLabelText('Status mapping field'),'cf_region');
  await user.click(screen.getByRole('button',{name:/Create \/ reuse 2 fields/}));
- expect(await screen.findByRole('alert')).toHaveTextContent('An additional field would reuse the status destination');
+ expect(await screen.findByText(/An additional field would reuse the status destination/)).toHaveAttribute('role','alert');
  expect(request.mock.calls).not.toContainEqual(['/field-options','PATCH',expect.anything()]);
  expect(request.mock.calls.some(([p,m])=>p==='/field-options'&&m==='PATCH')).toBe(false);
  expect(request.mock.calls.some(([p])=>p==='/imports/preview')).toBe(false);

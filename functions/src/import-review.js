@@ -174,7 +174,7 @@ function normalizeSource(raw, input, options, index) {
               : ['false', 'no'].includes(String(rawValue).trim().toLowerCase())
                 ? false
                 : rawValue
-            : rawValue;
+            : f.type === 'phone' ? String(rawValue).trim() : rawValue;
   }
   const result = previewRows(
     { ...input, rows: [fields] },

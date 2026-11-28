@@ -1,6 +1,6 @@
 # SalesDrone product handbook
 
-Version 2.14.0
+Version 2.15.0
 
 [Complete settings reference](SETTINGS.md) · [API guide](API.md) · [Technical architecture](TECHNICAL.md)
 
@@ -12,9 +12,11 @@ Everyone
 
 2. An approved active member enters the live workspace. An unapproved identity sees isolated demonstration records. Signing in alone does not grant access to company leads.
 
-3. For a safe rehearsal, choose Explore the demo on the login screen. Changes are temporary and reset when you leave or choose Reset demo.
+3. Use the homepage to see what SalesDrone does. Choose Explore the demo beside sign-in, or Open sample workspace near the end of the page. Changes are temporary and reset when you leave or choose Reset demo.
 
 4. Check your profile and timezone in Settings before scheduling follow-ups. Enable notifications on each browser where you want alerts.
+
+5. To install SalesDrone as a web app, open it in Safari on macOS Sonoma or later and choose File > Add to Dock. In Chrome on Android, use the browser menu to install it or add it to your home screen.
 
 SalesDrone by AvinyaTech, part of Avinya Enterprises, helps small teams move from enquiry spreadsheets to a clear next step for each relationship. Start with imports, then capture new enquiries through the app form. No telephony integration is implied: you log the outcome of calls you make.
 
@@ -132,13 +134,15 @@ On mobile, tap the magnifying glass in the top-right corner to search. Clear sea
 
 Customer names in the table align to the same column edge, including names that wrap. The table scrolls locally when columns need more room; reducing the whole application zoom is not required for alignment.
 
-The list has no row-level Edit controls or Actions column. Open the customer name (or the mobile lead card), then choose Edit lead. When the customer-name column is hidden by configuration, the desktop row remains keyboard-focusable: press Enter or Space to open its details.
+To change Sales stage, select the current stage in the table or on a mobile lead card, then choose a stage. The change saves immediately when you have edit access. Open the lead to edit its other details. If the customer-name column is hidden, press Enter or Space on the focused desktop row to open the lead.
 
 Infinite scrolling loads the next page automatically as you approach the bottom of the lead list. The initial live page requests up to 30 leads; sparse filtered scans may contain fewer results with another cursor. Loading continues until the API returns no cursor. Load more leads remains available as a keyboard/browser fallback; failures pause automatic loading and show Retry loading leads. Changing filters starts a fresh list. Demo mode uses 96 fictional leads, revealed 30 at a time.
 
 On mobile, New is the primary header action. Export Excel and permitted Import actions are under the three-dot More lead actions button. Search and Filters sit beside the title, so the lead list starts immediately below the header. Small screens shorten action labels, and large mobile counts use compact notation.
 
 Choose Exact match for Enquiry source, Sales stage or an available custom dropdown to match the saved value exactly, including case, spacing and Unicode. Equals continues to ignore case and surrounding spaces. All conditions narrow the accessible list together; filters never expand assignment access.
+
+Configured dates in the lead header appear as day, short month and two-digit year, for example 27 Nov 26.
 
 The lead header shows the company or Individual Customer, phone and any extra values below the name. Admins choose extras in Settings → Leads Management → Lead page header. Select a phone number to open your calling app.
 
@@ -148,7 +152,7 @@ Admins can choose Assigned to in desktop Filters or the phone filter dialog. Cho
 
 Visible empty lead fields show N/A. The display preserves numeric zero and an explicit No. A blank Excel cell keeps the saved value on update. For multi-select fields, keep the exported list of quoted choices inside brackets. Enter [] to clear an optional selection.
 
-![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/lead-filters-demo.jpg)
+![Leads: capture, search, filters and editing — synthetic demo only](../site/assets/screenshots/leads-demo.jpg)
 
 ### Questions
 
@@ -220,7 +224,7 @@ Members who can read the lead
 
 1. Select a lead from the list to open its full page on desktop or mobile. The URL is /leads/{leadId}. Bookmarks require current workspace access.
 
-2. Check the current stage and assignee in the header. Open Edit lead to change the stage or assignment when your permissions allow it.
+2. Tap the current sales stage in the lead header, then choose a stage from the dropdown. A checkmark identifies the active stage. Use Edit lead to change the assignee when your permissions allow it.
 
 3. Read the horizontal journey. Expand Recorded stage changes for actual recorded transitions. Open Details & qualification when you need the full enquiry context.
 
@@ -234,7 +238,7 @@ Tasks for this lead is shared with everyone who can read the lead. Each task sho
 
 Review shows contact review/suppression information and automatic follow-ups with Pending, Failed or NeedsReview state in the loaded activity. It is not an approval queue for every company operation. Load earlier activity to inspect older entries; an empty loaded page does not prove all historical work is reviewed. Use the existing reminder card to set a date, retry or dismiss when allowed.
 
-The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage badge moving below the name in narrow containers.
+The full-page identity header reads first and last names horizontally. Long names wrap naturally, with company below and the stage control moving below the name in narrow containers.
 
 Lead actions at the bottom use full-size buttons. Mark as do not contact pauses eligible outreach; Archive lead archives the record. Neither label means permanent deletion. Buttons wrap on narrow screens, retain keyboard focus and follow the existing permission/loading checks.
 
@@ -424,7 +428,7 @@ Members with optional import permissions and import-capable administrators
 
 1. For daily Excel edits, open Leads, apply your filters and choose Export Excel. Include Sales stage and the fields you want to update. In Excel, edit the Leads sheet. Keep SalesDrone lead ID and SalesDrone version with each row when sorting or copying.
 
-2. Open Import enquiries and select the saved XLSX. A recognized export opens in Review updates. For a third-party file, select its header and map the columns. Update this workbook on an earlier completed import reuses the earlier comparison.
+2. Open Import enquiries and choose Choose a workbook. The step bar tracks your progress. A recognized SalesDrone export opens in Review updates. For a third-party file, select its header and map the columns under Match your columns. Update this workbook on an earlier completed import reuses the earlier comparison.
 
 3. Check the Sales stage column in the preview. Current stages match even with differences in capitalization or spacing. Under Match sales stages, choose what each unfamiliar workbook value means. For example, choose Supplied for a workbook value of Delivered if your team uses Supplied for that outcome.
 
@@ -438,7 +442,7 @@ Members with optional import permissions and import-capable administrators
 
 8. Skip rows you do not want to process, or explicitly clear mapped optional values. Apply reviewed changes starts bounded, versioned commits. A blocked job requires Refresh remaining matches and another review.
 
-9. Use View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
+9. Choose View history to find a saved job, then View import to reopen progress from any browser. Authorized collaborators can resume; current lead scope still applies. Admins can delete retained import details without deleting already saved leads.
 
 SalesDrone reports identify the target by its exported ID. When the saved version still matches, clean field edits can be approved together. A later edit sends differences to review. An unknown or inaccessible ID cannot create a new lead. External sheets default to skipping duplicate contacts and allow a separate review-updates mode.
 
@@ -556,7 +560,7 @@ Personal controls for members; workspace controls for administrators
 
 1. Open Settings and search by name or browse the available categories. Desktop shows a category rail. On a phone, open a setting and use its back link to return to the category.
 
-2. Under Leads Management, choose Field definitions, Field order, Lead page header or Choice lists. Header choices show a fictional live preview.
+2. Under Leads Management, choose Field definitions, Field order, Lead page header or Choice lists. Use the arrows to arrange the selected header fields and check the fictional preview before saving.
 
 3. Change personal preferences only for your account. Review the scope of a workspace setting before saving, because it can change other members’ workflow.
 
@@ -564,7 +568,7 @@ Personal controls for members; workspace controls for administrators
 
 Profile and appearance cover identity display, theme and timezone. Follow-up preferences control automatic reminder behavior, default time, next-week interpretation and weekend movement. Notifications manages browser device registration and tests.
 
-Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. To let users select several products, open Settings > Leads Management > Field definitions, edit Product, choose Multi-select and save. Existing choices carry over. New custom fields can also start as Multi-select. Up to 30 choices can be selected per lead. Filter by an individual choice in Leads or Lead Assistant. Dashboard grouping uses single-valued fields. Retirement preserves stored values.
+Field definitions includes editable built-in labels, delete/restore icons for standard-field visibility, adding custom fields with stable IDs and types, and editing/retiring existing definitions. New manual enquiries require a phone number and enquiry date. Customer name is optional. To let users select several products, open Settings > Leads Management > Field definitions, edit Product, choose Multi-select and save. Existing choices carry over. New custom fields can also start as Multi-select. Use Phone number for a secondary contact field to make valid values tappable. Admins can change an active custom field type and retain its saved values. Up to 30 choices can be selected per lead. Filter by an individual choice in Leads or Lead Assistant. Dashboard grouping uses single-valued fields. Retirement preserves stored values.
 
 Reports & lead access controls exports and assigned-only visibility for non-admins. People & access manages members, invitations, role/capability and assignment scope. Developer settings manages scoped Personal Access Tokens. About describes the product and version.
 
@@ -572,7 +576,7 @@ The linked Settings reference is the authoritative per-control checklist. This c
 
 The top-right theme switch shows sun and moon icons with a solid indicator on the active mode. It remains keyboard-accessible and removes animation when your device requests reduced motion. Book mode is available from v1.6.3 in Appearance & time; save the personal preference to apply it.
 
-On phones, the lead header displays Sales stage and Assigned to. Open Edit lead to change either value when permitted.
+On phones, the Sales stage control is beside the assignment summary under the lead name. Use Edit lead to change the assignee.
 
 ![Settings: complete control reference — synthetic demo only](../site/assets/screenshots/field-manager-multi-select-demo.jpg)
 
@@ -584,7 +588,7 @@ Use Leads Management > Field definitions. A label change does not rename its sta
 
 **Can I remove a field without losing historical data?**
 
-Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose up to six fields to show under a lead’s name. A selected field displays N/A when it is empty.
+Use the delete icon in Leads Management > Field definitions. Standard fields can be restored with the restore icon; saved values remain intact. Customer name is optional. Manual enquiries require an enquiry date and a phone number. In Leads Management, open Field order to arrange visible built-in and custom fields across forms, the Leads worksheet and Excel. Open Lead page header to choose and order up to six fields to show under a lead’s name. Fields appear when they have a value.
 
 ## Book mode: a quieter reading workspace
 
@@ -762,7 +766,7 @@ A lead opens its dedicated page on desktop and mobile. The lead table, journey a
 
 Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.
 
-Standard keeps the current Google Sans/Manrope pairing. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode uses its own handwriting and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
+Standard uses Astryx Neutral’s Figtree typeface for headings and text. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode uses its own handwriting and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
 
 Settings > Appearance & time > Display zoom offers 85%, 90%, 100%, 110% or 125%. Save changes applies it on phones, tablets and desktops. Touch targets stay usable when making the content smaller. Browser and pinch zoom remain available; choose 100% to reset. This is personal and does not change permissions or lead data.
 
@@ -921,3 +925,41 @@ Current source/settings access is authoritative. Ask again after data or permiss
 **Can another Admin read my chats?**
 
 The app’s conversation APIs expose only your own chats. Admin status alone does not grant another person’s chat history.
+
+## Email updates and task digests
+
+Workspace members and administrators
+
+1. Open Settings > Personal > Email preferences. Choose the lead and shared-task updates you want to receive.
+
+2. Enable the daily or weekly digest, choose the local time and time zone, and save. Turn on AvinyaIntelligence takeaways if you have access and want a highlighted priority.
+
+3. Admins configure delivery under Settings > Workspace > Email notifications. Use Template preview to review a sample and Delivery history to check a test.
+
+4. Open a message’s main link, then sign in with your approved Google account to see the linked work.
+
+5. When the Admin enables Inbox Beta, open Email to send and reply to leads. Open linked conversations from the lead’s All timeline. Expand earlier messages as needed. Format drafts with the icon toolbar. Use the previous or next arrow to move through loaded conversations, and Show plain text to switch views when reading an HTML message.
+
+Emails cover workspace invitations and active access, lead assignments and configured outcomes, and meaningful changes to a teammate’s shared task. A task’s responsible member appears in the app. Admins can use Resend email on an active invitation in People & access.
+
+In pre-production, admins can select Simulated delivery or Simulated bounce in Template preview and check the result in Delivery history.
+
+When an Admin enables release announcements, active workspace members receive a versioned email with highlights and a link to the full public release notes.
+
+The daily digest shows due and overdue shared tasks, the next deadline and the age of the oldest overdue task. The weekly recap shows completed tasks, leads covered and upcoming work. The on-time statistic is included when the original deadlines are known.
+
+Email clients that support dark-mode styling show the white SalesDrone logo. The text wordmark remains visible if images are blocked.
+
+The sender uses generic copy. Lead names, contact details, task titles, private reminders and comments stay in SalesDrone. The links check current access each time you open them.
+
+![Email updates and task digests — synthetic demo only](../site/assets/screenshots/email-weekly-branded-demo.jpg)
+
+### Questions
+
+**Why did I not get a digest?**
+
+Check that your workspace enabled the digest, your own preference is on, and you have eligible lead tasks. Empty periods, revoked access and the pilot limit can suppress a scheduled delivery.
+
+**Why does Delivery history say Accepted?**
+
+The email provider accepted the request. After a verified delivery receipt arrives, SalesDrone shows Delivered.

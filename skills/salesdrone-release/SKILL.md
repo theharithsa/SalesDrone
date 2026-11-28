@@ -91,7 +91,7 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 
 ## Hosting promotion
 
-Verify the staged Hosting version before deploying the backend. Promote that exact version after ingress checks. Follow the [partial-release runbook](../../docs/RELEASE.md).
+Verify staged Hosting before backend deploy. Promote that version after ingress checks. Key pre-production archives by commit, run ID, and attempt.
 
 Promotion validates the exact pre-prod receipt and SHA-256 digest. Verify runtime and Scheduler identities before Hosting cutover. [Recovery](references/operations.md).
 

@@ -283,7 +283,7 @@
     {
       "id": "salesdrone-interface",
       "path": "skills/salesdrone-interface/SKILL.md",
-      "description": "Maintain SalesDrone Material 3 responsive shell, typography, themes, accessible overlays and synthetic demo adapters. Use for cross-module UI and design work; business logic stays with its owning module.",
+      "description": "Maintain SalesDrone Astryx responsive shell, typography, themes, accessible overlays and synthetic demo adapters. Use for cross-module UI and design work; business logic stays with its owning module.",
       "matchTerms": [
         "sidebar",
         "mobile ui",
@@ -502,6 +502,25 @@
         "salesdrone-interface"
       ],
       "apiOperations": [
+        "GET /api/v1/email/settings",
+        "PATCH /api/v1/email/settings",
+        "GET /api/v1/email/preferences",
+        "PATCH /api/v1/email/preferences",
+        "POST /api/v1/email/preview",
+        "GET /api/v1/email/deliveries",
+        "POST /api/v1/email/test",
+        "POST /api/v1/email/receipts/resend",
+        "GET /api/v1/email/beta/settings",
+        "PATCH /api/v1/email/beta/settings",
+        "GET /api/v1/email/threads",
+        "POST /api/v1/email/threads",
+        "GET /api/v1/email/threads/{id}",
+        "GET /api/v1/email/threads/{id}/match",
+        "POST /api/v1/email/threads/{id}/replies",
+        "PATCH /api/v1/email/threads/{id}/read",
+        "PATCH /api/v1/email/threads/{id}/lead",
+        "DELETE /api/v1/email/threads/{id}",
+        "POST /api/v1/email/beta/receipts/resend",
         "GET /api/v1/notifications",
         "PATCH /api/v1/notifications/{id}",
         "GET /api/v1/devices",
@@ -554,6 +573,7 @@
         "salesdrone-mcp"
       ],
       "apiOperations": [
+        "POST /api/v1/email/invitations/{id}/resend",
         "GET /api/v1/members",
         "GET /api/v1/invitations",
         "POST /api/v1/invitations",
@@ -633,6 +653,7 @@
         "salesdrone-people-permissions"
       ],
       "apiOperations": [
+        "PATCH /api/v1/leads/{id}/tasks/{taskId}/assignment",
         "GET /api/v1/tasks",
         "POST /api/v1/tasks",
         "GET /api/v1/tasks/{id}",

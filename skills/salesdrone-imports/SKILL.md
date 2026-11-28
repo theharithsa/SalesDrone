@@ -9,6 +9,8 @@ Read [the shared operating contract](../SHARED.md) before editing. Paths and com
 are relative to the repository root. Inspect current source rather than assuming
 this map is an immutable schema or a standalone microservice.
 
+Treat mapped custom phone numbers as text and apply the shared custom-field validation. A workbook numeric cell cannot restore leading zeroes.
+
 ## Responsibility and entry points
 
 Browser worker parses first sheet → mapping/comment selection → server preview → persisted job/chunks → bounded validated commit → replay-safe recovery/errors.
@@ -97,7 +99,7 @@ A 503 LEAD_DATA_RESET means cleanup is still active, not workbook validation fai
 
 The Excel export uses the workspace field order and can include numbered comment columns on the authorized lead rows. Preserve imported note labels in the recorded note text and write text cells as literal strings. Import source mapping and validation are independent from the export layout.
 
-The Imports page links directly to history when the operator has access and announces the current upload, mapping or commit step.
+The Astryx Imports page links directly to history when permitted and announces the active step. Keep workbook selection keyboard-accessible, mapping controls native and the preview table independently scrollable on phones. Verify presentation with `node scripts/review-imports.mjs` in the isolated design preview.
 
 Test a real report export through ExcelJS, the first-sheet worker reader, column mapping, reviewed API and saved lead. Keep the exported ID and version together. Native reports default to update, blanks preserve saved values, numbered comments are reference columns and stale exports require explicit decisions. Resolve active stages by canonical label or an explicit mapping. Verify repeat uploads, shared contacts and unknown or hidden stages.
 

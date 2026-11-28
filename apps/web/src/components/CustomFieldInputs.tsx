@@ -11,6 +11,10 @@ export default function CustomFieldInputs({
       {fields
         .filter((f) => !f.deleted)
         .map((f) => {
+          const savedValue = values[f.id];
+          const hasSavedValue = savedValue !== undefined && savedValue !== null && savedValue !== '';
+          const required = f.required && !hasSavedValue;
+          const textValue = Array.isArray(savedValue) ? savedValue.join(', ') : String(savedValue ?? '');
           if (f.type === 'multiSelect') {
             const saved = values[f.id];
             const selected: string[] = Array.isArray(saved) ? saved : typeof saved === 'string' && saved ? [saved] : [];
@@ -49,11 +53,11 @@ export default function CustomFieldInputs({
               {f.type === 'select' ? (
                 <select
                   name={'custom:' + f.id}
-                  defaultValue={values[f.id] ?? ''}
-                  required={f.required}
+                  defaultValue={textValue}
+                  required={required}
                 >
                   <option value="">{f.required ? "Select " + f.label.toLowerCase() : "N/A"}</option>
-                  {withCurrent(f.options, values[f.id]).map((v) => (
+                  {withCurrent(f.options, textValue).map((v) => (
                     <option key={v}>{v}</option>
                   ))}
                 </select>
@@ -63,25 +67,25 @@ export default function CustomFieldInputs({
                   rows={3}
                   placeholder="N/A"
                   maxLength={4000}
-                  defaultValue={values[f.id] ?? ''}
-                  required={f.required}
+                  defaultValue={textValue}
+                  required={required}
                 />
               ) : f.type === 'checkbox' ? (
                 <input
                   name={'custom:' + f.id}
                   type="checkbox"
                   defaultChecked={values[f.id] === true}
-                  required={f.required}
+                  required={required}
                 />
               ) : (
                 <input
                   name={'custom:' + f.id}
-                  type={f.type}
+                  type={f.type === 'phone' ? 'tel' : f.type}
                   step={f.type === 'number' ? 'any' : undefined}
                   placeholder="N/A"
                   maxLength={500}
-                  defaultValue={values[f.id] ?? ''}
-                  required={f.required}
+                  defaultValue={textValue}
+                  required={required}
                 />
               )}
               {f.type === 'checkbox' ? (

@@ -9,6 +9,7 @@ import {
 import { normalizeLead } from './leads.js';
 import { recordStage } from './journey.js';
 import { queueLeadNotification } from './notifications.js';
+import { queueLeadEmails } from './email-events.js';
 const fields = [
   'company',
   'jobTitle',
@@ -54,7 +55,7 @@ export const BulkLeadInput = z
     (v) => Object.keys(v.changes).length || v.assignedToUid !== undefined,
     'Choose at least one change',
   );
-export async function planBulkLeads(tx, member, input, now, apply = false) {
+export async function planBulkLeads(tx, member, input, now, apply = false, emailTrace = null) {
   const options = await readFieldOptions(tx);
   const assigning = input.assignedToUid !== undefined;
   if (assigning && !member.capabilities.includes('assignments:write'))
@@ -154,6 +155,8 @@ export async function planBulkLeads(tx, member, input, now, apply = false) {
       'BATCH_SIZE',
       'This batch contains too much stored data; select fewer leads',
     );
+  if (apply && emailTrace !== null)
+    await queueLeadEmails(tx, plans.filter(plan => plan.changed).map(plan => ({ old: plan.old, lead: plan.updated })), now, emailTrace);
   if (apply)
     for (const p of plans) {
       if (!p.changed) continue;

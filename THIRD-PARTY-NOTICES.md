@@ -8,7 +8,7 @@ lockfiles identify exact versions. This document does not replace their notices.
 - OpenTelemetry JavaScript API/SDK/exporters and the OTLP protocol are Apache-2.0.
   The minimal independent test wire schema follows the OpenTelemetry protocol field
   definitions; see https://github.com/open-telemetry/opentelemetry-proto.
-- Manrope, Google Sans and Caveat font licences are preserved under
+- Manrope, Google Sans, Caveat and the Open Sans email font licences are preserved under
   apps/web/public/licenses and copied with any fonts used in public documentation.
 - Avinya Enterprises/AvinyaTech/SalesDrone names and logos are product identifiers.
   The MIT licence does not grant trademark rights or suggest endorsement of forks.

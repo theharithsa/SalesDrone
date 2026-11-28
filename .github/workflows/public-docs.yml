@@ -56,7 +56,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           RELEASES_FILE="$RUNNER_TEMP/salesdrone-published-releases.json"
-          gh release list --limit 1000 --json tagName,isDraft,publishedAt > "$RELEASES_FILE"
+          gh release list --limit 1000 --json tagName,isDraft,isPrerelease,publishedAt > "$RELEASES_FILE"
           ISSUES_FILE="$RUNNER_TEMP/salesdrone-roadmap-issues.json"
           gh api "repos/$GITHUB_REPOSITORY/issues?state=open&labels=roadmap-public&per_page=100" --paginate --slurp > "$ISSUES_FILE"
           DOCS_PUBLISHED_RELEASES="$RELEASES_FILE" DOCS_ROADMAP_ISSUES="$ISSUES_FILE" npm run docs:build

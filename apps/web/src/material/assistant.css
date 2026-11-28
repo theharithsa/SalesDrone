@@ -102,8 +102,9 @@
   position: static;
 }
 .assistant-composer {
-  background: var(--md-sys-color-surface-container-high);
-  border-radius: 28px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 16px 16px 12px;
 }
 .assistant-composer:focus-within {

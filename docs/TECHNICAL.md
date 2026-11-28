@@ -11,7 +11,7 @@ uses the MIT license. See the third-party notices for bundled assets and librari
 | Layer       | Implementation                                                                             |
 | ----------- | ------------------------------------------------------------------------------------------ |
 | UI          | React 19, TypeScript 5, Vite 8, Lucide icons, Radix Dialog, responsive CSS                 |
-| Fonts       | Manrope body; Google Sans headings; Google Sans first names in lead details; monospace contacts |
+| Fonts       | Self-hosted Figtree as the Astryx Neutral default; Google Sans wordmark; monospace contacts |
 | API         | Node.js 22, Express 5, Zod 4, Firebase Admin SDK                                           |
 | Identity    | Firebase Auth Google provider, App Check, server memberships/capabilities                  |
 | Persistence | Firestore Standard, transactionally consistent writes and service-owned outboxes           |
@@ -159,6 +159,8 @@ Release readiness is the cross-module completion owner. Shared settings catalogs
 
 ## Lead detail, Companies and workbook updates
 
+The lazy Import enquiries route loads Astryx controls and theme CSS. It uses the same browser worker, readiness checks, versioned requests and saved job cursors. Rendering the route adds no database reads or writes.
+
 Lead links open the full `/leads/{id}` page. The default **All** view combines
 scoped activities and lead-linked tasks, ordered by creation time. It shares the
 lead task page with the unfiltered **Tasks** tab and offers separate continuations
@@ -266,3 +268,26 @@ Repeat workspace navigation can reuse eligible first-page reads and aggregates i
 ## Company directory and spreadsheet updates
 
 Company names are derived from active lead documents using the existing normalized company field and scope indexes. The directory projects two fields per document and pages past the last company key. Forms continue to write leads through the ordinary transaction. A lead report exports its stable ID and version. Reviewed import planning reads an accessible ID, checks the exported version and compares nonempty editable fields. Commit rechecks current membership, lead and baseline versions and changed contact ownership in the transaction. See [Imports](IMPORTS.md).
+
+## Transactional email
+
+Live lead, task and access mutations enqueue email in the same Firestore
+transaction as the source operation. A due-time index built from sortable job
+keys and a bounded worker process claims without periodic scans of leads or
+membership. The worker rechecks membership, scopes and workspace policy before
+sending. Raw Resend callbacks verify the signature and update monotone provider
+states. Delivery jobs pin the rendered template revision at the first outbound
+attempt to preserve Resend idempotency across deployments. Scheduled digests use projected task and lead fields and a finite
+Gemini choice constrained to server-generated insights. See
+[Email](EMAIL.md) for indexes, schedules, retention and environment gates. Release announcements are gated by the public Pages release marker, current build identity and Admin setting. A transaction commits each batch alongside its member cursor.
+
+The lead header uses the saved `headerFields` sequence. Quick stage changes go through the existing versioned lead update. An Admin field-type edit updates the configuration document without scanning or rewriting leads. Unchanged custom values stay intact and replacements validate against the active field definition.
+
+### Lead correspondence
+
+Email Beta stores thread summaries, plain-text and sanitized HTML message bodies, due work and content-free
+deduplication keys under workspace server-only Firestore collections. Every
+thread read checks current lead access. Lead resets remove linked message bodies.
+Signed provider receipts are isolated by environment and scheduled work is
+bounded. See [Email Beta](EMAIL.md#lead-correspondence-email-beta) for the
+configuration and operational checks.

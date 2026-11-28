@@ -30,3 +30,15 @@ describe('Lead header contact',()=>{
   expect(screen.getByText('2025550118;ext=123').closest('a')).toBeNull();
  });
 });
+
+it('header dates use a short day-month-year and respect calendar dates and timestamp time zones', () => {
+  render(<LeadHeaderContext timezone="Asia/Kolkata" fields={[
+    { id: 'enquiryDate', label: 'Enquiry date', value: '2026-11-27', date: true },
+    { id: 'createdAt', label: 'Created at', value: '2026-11-26T20:00:00Z', date: true },
+    { id: 'cf_legacy', label: 'Old date', value: '2026-02-31', date: true },
+    { id: 'cf_ref', label: 'Reference', value: '2026-11-27' },
+  ]} />);
+  expect(screen.getAllByText('27 Nov 26')).toHaveLength(2);
+  expect(screen.getByText('2026-02-31')).toBeTruthy();
+  expect(screen.getByText('2026-11-27')).toBeTruthy();
+});

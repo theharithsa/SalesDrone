@@ -1,5 +1,6 @@
 import LeadHeaderContext from '../components/LeadHeaderContext';
 import TaskListPreview from './TaskListPreview';
+import EmailReviewFixture from './EmailReviewFixture';
 import LeadAssistantPage from "../features/LeadAssistantPage";
 import LeadAssistantPrototype from './LeadAssistantPrototype';
 import '../research.css';
@@ -16,7 +17,7 @@ import { Avatar, Badge, Brand, LeadName, Loading, Modal } from '../components/UI
 import LeadBlade from '../components/LeadBlade';
 import LeadPage from '../components/LeadPage';
 import Assignment from '../components/Assignment';
-import { ScoreBadge } from '../components/LeadScore';
+import LeadScore, { ScoreBadge } from '../components/LeadScore';
 import { ChevronLeft, Pencil } from 'lucide-react';
 import { LeadForm, CallForm, TaskForm } from '../components/Forms';
 import TaskEditForm from '../components/TaskEditForm';
@@ -24,6 +25,7 @@ import { demoData } from '../lib/demo';
 import { defaultFieldOptions, type FieldOptions } from '../lib/field-options';
 import type { Session } from '../lib/types';
 import { TOKEN_SCOPES } from '../../../../functions/src/api-scopes.js';
+import { templatePreview } from '../../../../functions/src/email-templates.js';
 import '@fontsource-variable/manrope';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/source-sans-3';
@@ -31,6 +33,7 @@ import '@fontsource-variable/lora';
 import '@fontsource-variable/open-sans';
 import '@fontsource-variable/source-serif-4';
 import '@fontsource/patrick-hand/latin-400.css';
+import '@astryxdesign/theme-neutral/theme.css';
 import '../material/fonts.css';
 import '../material/tokens.css';
 import '../material/base.css';
@@ -220,6 +223,16 @@ function AdminReview() {
   const request = useCallback(
     async (path: string, method = 'GET', body: any = {}) => {
       const key = path.split('?')[0];
+      if (key === '/email/settings')
+        return { version: 1, enabled: false, deliveryReady: false, outcomeRecipientUid: null,
+          events: Object.fromEntries(['invitation','access_ready','lead_assigned','lead_converted','lead_failed',
+            'task_assigned','task_completed','task_rescheduled','task_reopened','daily','weekly'].map(event => [event, true])) };
+      if (key === '/email/preferences')
+        return { version: 1, leadUpdates: true, taskUpdates: true, dailyEnabled: true, dailyTime: '09:00',
+          weeklyEnabled: true, weeklyTime: '09:00', weeklyDay: 1, timezone: 'Asia/Kolkata', digestInsights: true };
+      if (key === '/email/deliveries') return { items: [], nextCursor: null };
+      if (key === '/email/preview')
+        return templatePreview(body.template, 'https://salesdrone.example.test');
       if(key.startsWith('/lead-hygiene/')||key.startsWith('/lead-assistant/'))return structuredClone(researchFixture(path,method,body));
       if (key === '/lead-data-reset/preview')
         return {
@@ -304,6 +317,20 @@ function AdminReview() {
     }
     return request(path, method, body);
   }, [request]);
+  if (new URLSearchParams(window.location.search).get('preview') === 'lead-score') {
+    return <main className="page-body" style={{ maxWidth: 700 }}>
+      <div className="panel">
+        <LeadScore leadId="fictional-score" version={1} canRefresh={false} timezone="Asia/Kolkata"
+          request={async () => ({
+            status: 'Ready', score: 71, fit: 32, intent: 42, penalty: 3,
+            band: 'Prioritize follow-up', knownFactors: 5, totalFactors: 14,
+            factors: [{ id: 'sample', label: 'Material samples requested', state: 'present', points: 8,
+              evidence: [{ quote: 'The installation team asked to compare both finishes on Friday.' }] }],
+          })} />
+      </div>
+    </main>;
+  }
+  if (new URLSearchParams(window.location.search).get('preview') === 'email') return <EmailReviewFixture />;
   if (new URLSearchParams(window.location.search).get('preview') === 'assistant-agent')return <LeadAssistantPrototype/>;
   if (new URLSearchParams(window.location.search).get('preview') === 'lead-header') {
     const overlay = new URLSearchParams(window.location.search).has('overlay');

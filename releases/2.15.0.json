@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "version": "2.15.0",
+  "summary": "Introduce controlled transactional email and task digests, the Astryx workspace, the interactive public homepage, and wider lead journeys.",
+  "modules": [
+    "salesdrone-notifications",
+    "salesdrone-people-permissions",
+    "salesdrone-tasks-reminders",
+    "salesdrone-finops",
+    "salesdrone-observability",
+    "salesdrone-product-guide",
+    "salesdrone-imports",
+    "salesdrone-api-ingress",
+    "salesdrone-workspace-settings",
+    "salesdrone-leads",
+    "salesdrone-interface",
+    "salesdrone-lead-journey"
+  ],
+  "documentation": [
+    "README.md",
+    "SECURITY.md",
+    "docs/EMAIL.md",
+    "docs/API-INGRESS.md",
+    "docs/DESIGN-SYSTEM.md",
+    "docs/API.md",
+    "docs/SETTINGS.md",
+    "docs/settings-reference.json",
+    "docs/TECHNICAL.md",
+    "docs/observability.md",
+    "docs/FINOPS.md",
+    "docs/product-guide.json",
+    "docs/ASTRYX-WORKSPACE-REVIEW.md",
+    "docs/whats-new/releases.json"
+  ],
+  "settingsSections": [
+    "email-workspace",
+    "email-preferences"
+  ],
+  "api": {
+    "status": "changed",
+    "contractVersion": "1.38.0",
+    "reason": "Adds optional release announcement setting and synthetic template, plus email settings, history, synthetic previews, bounded tests, signature-only receipts and task assignment. Adds the custom phone type and accepts changes to active custom field types through the existing settings route. Email Beta adds a scoped correspondence and Admin pilot policy API and an environment-specific signed callback. Correspondence accepts optional HTML and returns sanitized HTML and a compact thread preview. The existing text request and access policy remain supported.",
+    "permissions": "Use Google sign-in, App Check and current access for application requests. Workspace configuration and tests need Admin. Resend callbacks require their own signature. No new PAT scope.",
+    "tests": [
+      "functions/test/email.test.js",
+      "services/ingress/test/gateway.test.js",
+      "functions/test/custom-fields-and-tasks.test.js",
+      "functions/test/email-beta.test.js"
+    ]
+  },
+  "observability": {
+    "metrics": {
+      "status": "changed",
+      "reason": "Track bounded transactional and Beta delivery outcomes and dispatch duration without mail address or content dimensions.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "traces": {
+      "status": "changed",
+      "reason": "Link queue consumers to the original committed workflow and trace provider sends.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "logs": {
+      "status": "changed",
+      "reason": "Emit bounded queue and signed receipt outcomes with no message or provider payload.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "businessEvents": {
+      "status": "changed",
+      "reason": "Record committed email job and Beta message states and changed setting names through the durable telemetry outbox.",
+      "tests": [
+        "functions/test/email.test.js"
+      ]
+    },
+    "deploymentEvents": {
+      "status": "changed",
+      "reason": "The standard checked pre-production and production workflows report release identity through Dynatrace.",
+      "tests": [
+        "tests/release-readiness.test.ts"
+      ]
+    }
+  },
+  "preDeployment": [
+    "unit-tests",
+    "types",
+    "emulator",
+    "api-contract",
+    "settings-docs",
+    "skill-tree",
+    "security-scan",
+    "production-build"
+  ],
+  "postDeployment": [
+    "live-version",
+    "live-contract",
+    "unauthenticated-denial",
+    "function-revisions",
+    "public-settings-guide",
+    "dynatrace-receipts"
+  ],
+  "manualVerification": "Verify the same pre-production tree through GitHub Actions. Check that the worker denies anonymous requests and accepts the scheduler identity. Verify the release marker matches the published commit, the Admin switch defaults off, and a repeat release worker run sends no duplicates. Review all email templates in light and dark with the baked-in image fallback. Check invitation reissue and verify that retries across deployments keep the original renderer and idempotency key. Queue delivery and bounce simulations from Template preview and confirm signed outcomes in Delivery history. Verify an approved inbox, provider quotas and environment isolation before production promotion. The test selector reuses the existing API and adds no idle reads or telemetry. Verify anchored stage selection and focus return in the Leads table, phone cards and full lead header. The list uses the existing filtered reload after save. Opening the control adds no reads or business events. Check independent header order and custom phone types. These reuse existing writes with no new polling or migration reads. Verify Email Beta defaults off. Before activation, verify scoped lead correspondence, signed delivery, reply threading and erasure on the dedicated provider in each environment. On the approved pilot inbox, verify formatted compose, a received HTML-only reply and its plain-text alternative.",
+  "milestone": {
+    "number": 72,
+    "title": "v2.15.0 — Weekly production release",
+    "issues": [
+      217,
+      255,
+      256,
+      257,
+      258,
+      259,
+      260,
+      261,
+      262,
+      276,
+      284,
+      289,
+      291,
+      295,
+      297
+    ],
+    "readiness": "ready"
+  },
+  "screenshots": [
+    "email-workspace-demo.jpg",
+    "email-preferences-demo.jpg",
+    "email-weekly-branded-demo.jpg",
+    "email-release-announcement-demo.jpg",
+    "email-weekly-dark-demo.jpg",
+    "email-preprod-test-outcome-demo.jpg",
+    "leads-demo.jpg",
+    "mobile-leads-demo.jpg",
+    "lead-header-mobile-demo.jpg",
+    "journey-demo.jpg",
+    "field-manager-multi-select-demo.jpg"
+  ]
+}

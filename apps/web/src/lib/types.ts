@@ -29,6 +29,7 @@ export type Task = Entity & {
   leadId: string | null;
 };
 export type Session = {
+  emailBeta?: boolean;
   identity: { uid: string; email: string; name: string; photoURL?: string };
   mode: 'live' | 'demo';
   workspaceSettings?: {

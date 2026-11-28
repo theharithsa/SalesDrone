@@ -14,7 +14,7 @@ async function files(dir) {
   ).flat();
 }
 for (const file of await files(root)) {
-  if (/design-(admin|review)\.html$|AdminReview|ImportReviewFixture|ResearchFixture|LeadAssistantPrototype/.test(file))
+  if (/design-(admin|review)\.html$|AdminReview|EmailReviewFixture|ImportReviewFixture|ResearchFixture|LeadAssistantPrototype/.test(file))
     throw Error('Development review entry leaked into application build');
   if (
     file.endsWith('.js') &&

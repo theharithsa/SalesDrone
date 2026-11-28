@@ -1,3 +1,5 @@
+import { WorkspaceDateField } from '../components/WorkspaceDateField';
+import { Button } from '@astryxdesign/core/Button';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Trash2, RefreshCw, Download, ChevronRight } from 'lucide-react';
 import { ErrorMessage } from '../components/UI';
@@ -155,15 +157,13 @@ function RowReview({
                   maxLength={150}
                 />
               </label>
-              <button
-                className="button"
-                disabled={!target}
+              <Button
+                label="Compare selected lead"
+                isDisabled={!target}
                 onClick={() =>
                   decide(row.index, { action: 'match', leadId: target })
                 }
-              >
-                Compare selected lead
-              </button>
+              />
             </div>
           ) : null}
           {row.mapped?.length &&
@@ -203,8 +203,10 @@ function RowReview({
             {['New', 'Update', 'Unchanged', 'Duplicate'].includes(
               row.classification,
             ) ? (
-              <button
-                className="button"
+              <Button
+                label={row.classification === 'Duplicate'
+                  ? 'Confirm skip'
+                  : 'Accept selected changes'}
                 onClick={() =>
                   decide(row.index, {
                     action: 'accept',
@@ -212,26 +214,12 @@ function RowReview({
                     clearFields: clear,
                   })
                 }
-              >
-                {row.classification === 'Duplicate'
-                  ? 'Confirm skip'
-                  : 'Accept selected changes'}
-              </button>
+              />
             ) : null}
             {row.classification === 'Conflict' ? (
-              <button
-                className="button"
-                onClick={() => decide(row.index, { action: 'create' })}
-              >
-                Create a separate lead
-              </button>
+              <Button label="Create a separate lead" onClick={() => decide(row.index, { action: 'create' })} />
             ) : null}
-            <button
-              className="text-button"
-              onClick={() => decide(row.index, { action: 'skip' })}
-            >
-              Skip this row
-            </button>
+            <Button label="Skip this row" variant="ghost" onClick={() => decide(row.index, { action: 'skip' })} />
           </div>
         </div>
       ) : null}
@@ -381,20 +369,19 @@ export default function ImportReviewPanel({
                 {job.status} · Uploaded by {job.createdByName || 'Member'}
               </p>
             </div>
-            <button
-              className="icon-button"
-              title="Reload import"
-              aria-label="Reload import"
-              disabled={busy}
+            <Button
+              label="Reload import"
+              variant="ghost"
+              isIconOnly
+              isDisabled={busy}
               onClick={() =>
                 operate(async () => {
                   onJob(await request('/imports/' + job.id));
                   await loadRows();
                 })
               }
-            >
-              <RefreshCw size={18} />
-            </button>
+              icon={<RefreshCw size={18} aria-hidden="true" />}
+            />
           </div>
           {job.planCounts ? (
             <div className="import-counts" aria-label="Review proposals">
@@ -438,9 +425,10 @@ export default function ImportReviewPanel({
           ) : null}
           <div className="form-actions">
             {canWrite && job.status === 'Preparing' ? (
-              <button
-                className="button primary"
-                disabled={busy || externalBusy}
+              <Button
+                label="Continue comparison"
+                variant="primary"
+                isDisabled={busy || externalBusy}
                 onClick={() =>
                   operate(async () => {
                     await progress(
@@ -451,16 +439,14 @@ export default function ImportReviewPanel({
                     await loadRows();
                   })
                 }
-              >
-                Continue comparison
-              </button>
+              />
             ) : null}
             {canWrite &&
             job.status === 'Preview' &&
             job.reviewOffset < job.total ? (
-              <button
-                className="button"
-                disabled={busy || externalBusy}
+              <Button
+                label="Approve clear proposals"
+                isDisabled={busy || externalBusy}
                 onClick={() =>
                   operate(async () => {
                     await progress(
@@ -471,14 +457,13 @@ export default function ImportReviewPanel({
                     await loadRows();
                   })
                 }
-              >
-                Approve clear proposals
-              </button>
+              />
             ) : null}
             {canWrite && ['Preview', 'Importing'].includes(job.status) ? (
-              <button
-                className="button primary"
-                disabled={
+              <Button
+                label={job.offset ? 'Resume import' : 'Apply reviewed changes'}
+                variant="primary"
+                isDisabled={
                   busy ||
                   externalBusy ||
                   job.pending > 0 ||
@@ -496,15 +481,13 @@ export default function ImportReviewPanel({
                     if (current.status === 'Completed') onImported();
                   })
                 }
-              >
-                {job.offset ? 'Resume import' : 'Apply reviewed changes'}
-              </button>
+              />
             ) : null}
             {canWrite &&
             ['Preview', 'Blocked', 'Importing'].includes(job.status) ? (
-              <button
-                className="button"
-                disabled={busy || externalBusy}
+              <Button
+                label="Refresh remaining matches"
+                isDisabled={busy || externalBusy}
                 onClick={() =>
                   operate(async () => {
                     const current = await request(
@@ -521,14 +504,12 @@ export default function ImportReviewPanel({
                     await loadRows();
                   })
                 }
-              >
-                Refresh remaining matches
-              </button>
+              />
             ) : null}
             {job.status !== 'DetailsDeleted' ? (
-              <button
-                className="button"
-                disabled={busy}
+              <Button
+                label="Download results"
+                isDisabled={busy}
                 onClick={() =>
                   operate(async () => {
                     const records = [];
@@ -559,17 +540,15 @@ export default function ImportReviewPanel({
                     setTimeout(() => URL.revokeObjectURL(href), 1000);
                   })
                 }
-              >
-                <Download size={16} />
-                Download results
-              </button>
+                icon={<Download size={16} aria-hidden="true" />}
+              />
             ) : null}
             {canDelete && job.status !== 'DetailsDeleted' ? (
-              <button
-                className="icon-button danger"
-                title="Delete retained import details"
-                aria-label="Delete retained import details"
-                disabled={busy}
+              <Button
+                label="Delete retained import details"
+                variant="destructive"
+                isIconOnly
+                isDisabled={busy}
                 onClick={() => {
                   if (
                     !window.confirm(
@@ -590,9 +569,8 @@ export default function ImportReviewPanel({
                     await loadHistory();
                   });
                 }}
-              >
-                <Trash2 size={18} />
-              </button>
+                icon={<Trash2 size={18} aria-hidden="true" />}
+              />
             ) : null}
           </div>
           {job.pending > 0 ? (
@@ -614,30 +592,27 @@ export default function ImportReviewPanel({
             ))}
           </div>
           <div className="form-actions">
-            <button
-              className="text-button"
-              disabled={busy}
+            <Button
+              label="First rows"
+              variant="ghost"
+              isDisabled={busy}
               onClick={() =>
                 operate(async () => {
                   await loadRows();
                 })
               }
-            >
-              First rows
-            </button>
+            />
             {rowCursor ? (
-              <button
-                className="button"
-                disabled={busy}
+              <Button
+                label="Next rows"
+                isDisabled={busy}
                 onClick={() =>
                   operate(async () => {
                     await loadRows(rowCursor);
                   })
                 }
-              >
-                Next rows
-                <ChevronRight size={16} />
-              </button>
+                endContent={<ChevronRight size={16} aria-hidden="true" />}
+              />
             ) : null}
           </div>
         </section>
@@ -648,19 +623,18 @@ export default function ImportReviewPanel({
             <h2 id="import-job-history-title">Import history</h2>
             <p>Your jobs and shared jobs you have permission to access.</p>
           </div>
-          <button
-            className="icon-button"
-            aria-label="Refresh import history"
-            title="Refresh import history"
-            disabled={busy}
+          <Button
+            label="Refresh import history"
+            variant="ghost"
+            isIconOnly
+            isDisabled={busy}
             onClick={() =>
               operate(async () => {
                 await loadHistory();
               })
             }
-          >
-            <RefreshCw size={18} />
-          </button>
+            icon={<RefreshCw size={18} aria-hidden="true" />}
+          />
         </div>
         <form
           className="form-grid"
@@ -700,23 +674,9 @@ export default function ImportReviewPanel({
               ))}
             </select>
           </label>
-          <label>
-            From
-            <input
-              type="date"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
-          </label>
-          <label>
-            Through
-            <input
-              type="date"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
-          </label>
-          <button className="button">Filter history</button>
+          <WorkspaceDateField label="From" value={from} onValueChange={setFrom} />
+          <WorkspaceDateField label="Through" value={to} onValueChange={setTo} />
+          <Button label="Filter history" type="submit" className="import-history-filter" />
         </form>
         {!history.length ? (
           <p className="settings-empty">No imports found.</p>
@@ -737,42 +697,37 @@ export default function ImportReviewPanel({
                 </small>
               </div>
               <div className="form-actions">
-                <button
-                  className="button"
-                  disabled={busy}
+                <Button
+                  label="View import"
+                  isDisabled={busy}
                   onClick={() =>
                     operate(async () => {
                       onJob(await request('/imports/' + j.id));
                     })
                   }
-                >
-                  View import
-                </button>
+                />
                 {canWrite && j.status === 'Completed' ? (
-                  <button
-                    className="text-button"
-                    disabled={busy}
+                  <Button
+                    label="Update this workbook"
+                    variant="ghost"
+                    isDisabled={busy}
                     onClick={() => onSource(j.id)}
-                  >
-                    Update this workbook
-                  </button>
+                  />
                 ) : null}
               </div>
             </article>
           ))}
         </div>
         {historyCursor ? (
-          <button
-            className="button"
-            disabled={busy}
+          <Button
+            label="Load older imports"
+            isDisabled={busy}
             onClick={() =>
               operate(async () => {
                 await loadHistory(historyCursor);
               })
             }
-          >
-            Load older imports
-          </button>
+          />
         ) : null}
       </section>
     </>

@@ -1,6 +1,7 @@
 /** Fictional component preview only. Never included by the production entry. */
 import { useCallback, useRef, useState } from 'react';
 import ImportReviewPanel from '../features/ImportReviewPanel';
+import ImportSurface from '../features/ImportSurface';
 const initialJob = {
   id: 'synthetic-review',
   filename: 'Northstar enquiries.csv',
@@ -104,7 +105,7 @@ export default function ImportReviewFixture() {
     [],
   );
   return (
-    <>
+    <ImportSurface>
       <p className="notice">
         Fictional review preview · No server connection or database writes
       </p>
@@ -117,6 +118,6 @@ export default function ImportReviewFixture() {
         canDelete={false}
         onImported={() => {}}
       />
-    </>
+    </ImportSurface>
   );
 }

@@ -1,19 +1,21 @@
 import {HEALTH_PATH} from '../src/contract.js';
 import {checkIngress,checkIngressIdentity} from '../../../scripts/ingress-checks.mjs';
-import {randomUUID} from 'node:crypto';
+import {createHmac, randomUUID} from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { gzipSync } from 'node:zlib';
 import { once } from 'node:events';
 import { createGateway, JSON_LIMIT } from '../src/gateway.js';
+import { verifyEmailReceipt } from '../../../functions/src/email-delivery.js';
 
 async function fixture(t, handler) {
   const calls = []; const logs = [];
   const upstream = http.createServer(async (req, res) => {
     const chunks = []; for await (const c of req) chunks.push(c);
-    calls.push({ url: req.url, headers: req.headers, body: Buffer.concat(chunks) });
-    if (handler) return handler(req, res);
+    const body = Buffer.concat(chunks);
+    calls.push({ url: req.url, headers: req.headers, body });
+    if (handler) return handler(req, res, body);
     res.setHeader('Content-Type', 'application/json'); res.end('{"ok":true}');
   }).listen(0, '127.0.0.1'); await once(upstream, 'listening');
   const gateway = createGateway({ upstream: `http://127.0.0.1:${upstream.address().port}`, allowLocalTest: true, version: '2.6.1', commit: 'synthetic', log: x => logs.push(x), timeoutMs: 1000 }).listen(0, '127.0.0.1'); await once(gateway, 'listening');
@@ -39,6 +41,44 @@ test('valid compressed JSON preserves original bytes and authenticated headers',
   const f = await fixture(t); const bytes = gzipSync('{"value":"synthetic"}');
   const r = await fetch(f.url + '/api/v1/leads?example=private', { method: 'POST', headers: { 'content-type': 'application/json', 'content-encoding': 'gzip', authorization: 'Bearer synthetic', 'x-firebase-appcheck': 'synthetic', 'idempotency-key': 'synthetic', 'x-serverless-authorization': 'spoofed' }, body: bytes });
   assert.equal(r.status, 200); assert.deepEqual(f.calls[0].body, bytes); assert.equal(f.calls[0].headers.authorization, 'Bearer synthetic'); assert.equal(f.calls[0].headers['x-firebase-appcheck'], 'synthetic'); assert.equal(f.calls[0].headers['x-serverless-authorization'], undefined); assert.ok(f.logs.every(x => !x.includes('private') && !x.includes('Bearer')));
+});
+test('Resend receipt signatures survive only the callback route with original bytes', async t => {
+  const at = '2026-11-26T00:00:00.000Z';
+  const key = Buffer.from('synthetic ingress receipt verification fixture');
+  const secret = 'whsec_' + key.toString('base64');
+  const paths = ['/api/v1/email/receipts/resend', '/api/v1/email/beta/receipts/resend'];
+  const body = Buffer.from('{\n  "type": "email.delivered", "data": {}\n}\n');
+  const id = 'msg_ingress_test';
+  const timestamp = String(Date.parse(at) / 1000);
+  const signature = createHmac('sha256', key).update(id + '.' + timestamp + '.').update(body).digest('base64');
+  const headers = {
+    'content-type': 'application/json',
+    'svix-id': id,
+    'svix-timestamp': timestamp,
+    'svix-signature': 'v1,' + signature,
+    'x-serverless-authorization': 'untrusted',
+  };
+  const f = await fixture(t, (req, res, bytes) => {
+    try {
+      verifyEmailReceipt(bytes, req.headers, secret, at);
+      res.writeHead(200).end();
+    } catch (error) {
+      res.writeHead(error.status ?? 500).end();
+    }
+  });
+  for (const path of paths) {
+    const index = f.calls.length;
+    const signed = await fetch(f.url + path, { method: 'POST', headers, body });
+    assert.equal(signed.status, 200);
+    assert.deepEqual(f.calls[index].body, body);
+    assert.equal(f.calls[index].headers['x-serverless-authorization'], undefined);
+    const tampered = await fetch(f.url + path, { method: 'POST', headers, body: body.toString().trim() });
+    assert.equal(tampered.status, 401);
+  }
+  const unrelated = await fetch(f.url + '/api/v1/leads', { method: 'POST', headers, body });
+  assert.equal(unrelated.status, 401);
+  assert.ok(Object.keys(f.calls.at(-1).headers).every(name => !name.startsWith('svix-')));
+  assert.ok(f.logs.every(entry => !entry.includes(signature) && !entry.includes(id)));
 });
 test('binary attachments and backend denials retain bytes and response contract', async t => {
   const f = await fixture(t, (req, res) => { res.statusCode = 403; res.setHeader('Content-Type', 'application/json'); res.end('{"error":{"code":"FORBIDDEN"}}'); });

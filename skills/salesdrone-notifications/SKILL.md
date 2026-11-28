@@ -23,6 +23,25 @@ Domain write → recipient inbox/outbox → reminders dispatch → FCM data mess
 
 ## Primary API ownership
 
+- GET /api/v1/email/settings
+- PATCH /api/v1/email/settings
+- GET /api/v1/email/preferences
+- PATCH /api/v1/email/preferences
+- POST /api/v1/email/preview
+- GET /api/v1/email/deliveries
+- POST /api/v1/email/test
+- POST /api/v1/email/receipts/resend
+- GET /api/v1/email/beta/settings
+- PATCH /api/v1/email/beta/settings
+- GET /api/v1/email/threads
+- POST /api/v1/email/threads
+- GET /api/v1/email/threads/{id}
+- GET /api/v1/email/threads/{id}/match
+- POST /api/v1/email/threads/{id}/replies
+- PATCH /api/v1/email/threads/{id}/read
+- PATCH /api/v1/email/threads/{id}/lead
+- DELETE /api/v1/email/threads/{id}
+- POST /api/v1/email/beta/receipts/resend
 - GET /api/v1/notifications
 - PATCH /api/v1/notifications/{id}
 - GET /api/v1/devices
@@ -80,3 +99,11 @@ For detailed UI, recovery and integration recipes, read [operations](references/
 These are tracked follow-ups, not implemented behavior: [#25](https://github.com/theharithsa/SalesDrone/issues/25), [#39](https://github.com/theharithsa/SalesDrone/issues/39), [#40](https://github.com/theharithsa/SalesDrone/issues/40). Check their current status before changing the contract.
 
 The inbox shows unread counts for the loaded rows only. Keep the overlay compact and retain independent pagination.
+
+## Transactional email
+
+Follow [the email runbook](../../docs/EMAIL.md) for transactional email and Email Beta. Beta stays off until isolated sending and receiving, scope, and erasure are verified. Pre-prod can share the transactional callback using address and tag checks. Use signed callbacks, current lead access, idempotent sends and bounded queues. Keep the composer icons labelled and navigation on loaded threads. Sanitize HTML in both directions, isolate the reader, preserve text and stable retries, and exclude correspondence and provider payloads from telemetry. Verify scheduler authorization separately from delivery.
+
+Email uses an Astryx layout, Open Sans, fixed first-party light and dark marks
+and a text wordmark. Release mail waits for the versioned Pages marker and batches eligible members. For the first production send, verify the deployment and Pages commit, then enable announcements and check signed outcomes.
+Pin template revisions and reply destinations to keep retries stable. Beta formats outgoing text and keeps quoted replies expandable.

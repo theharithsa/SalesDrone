@@ -17,6 +17,12 @@ export function accessibilityLinter() {
           ? [rule[0] === 0 || rule[0] === 'off' ? 'off' : 'warn', ...rule.slice(1)]
           : rule === 0 || rule === 'off' ? 'off' : 'warn',
       ])),
+    }, {
+      files: ['apps/web/src/features/ImportPage.tsx', 'apps/web/src/components/ProductHome.tsx'],
+      rules: {
+        // Labelled workbook and screenshot viewports need focus for keyboard scrolling.
+        'jsx-a11y/no-noninteractive-tabindex': ['warn', { roles: ['region', 'tabpanel'] }],
+      },
     }],
   });
 }

@@ -28,7 +28,7 @@ export type FieldKey = keyof typeof defaultFieldValues;
 export type CustomField = {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'number' | 'date' | 'select' | 'multiSelect' | 'checkbox';
+  type: 'text' | 'textarea' | 'number' | 'date' | 'phone' | 'select' | 'multiSelect' | 'checkbox';
   options: string[];
   required: boolean;
   deleted: boolean;

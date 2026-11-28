@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
+import { JSDOM } from 'jsdom';
 const server = await createServer({
   root: resolve('apps/web'),
   configFile: resolve('apps/web/vite.config.ts'),
@@ -60,7 +61,23 @@ try {
   ];
   for (const [component, props, fields] of cases) {
     const html = renderToStaticMarkup(createElement(component, props));
+    const document = new JSDOM(html).window.document;
     for (const name of fields) {
+      if (name === 'enquiryDate' || name === 'dueAt') {
+        const submission = document.querySelector(`input[name="${name}"]`);
+        const group = submission?.closest('[role="group"][aria-labelledby]');
+        assert.ok(group, `${component.name}: ${name} is in a labelled date group`);
+        const label = document.getElementById(group.getAttribute('aria-labelledby'));
+        assert.ok(label?.classList.contains('field-label') && label.textContent.trim());
+        assert.ok(group.querySelector('input[type="date"][required]'));
+        if (name === 'dueAt') {
+          assert.equal(submission.type, 'hidden');
+          assert.ok(group.querySelector('label.material-field input[type="time"][required]'));
+        } else {
+          assert.equal(submission.type, 'date');
+        }
+        continue;
+      }
       const label = [
         ...html.matchAll(/<label\b[^>]*>([\s\S]*?)<\/label>/g),
       ].find(([value]) => value.includes(`name="${name}"`));
@@ -83,11 +100,7 @@ try {
     assert.match(html, /type="button"/);
     if (component === forms.LeadForm)
       assert.ok(html.includes('Customer / account'));
-    if (component === forms.TaskForm)
-      assert.match(
-        html,
-        /<input(?=[^>]*name="dueAt")(?=[^>]*required="")[^>]*>/,
-      );
+
   }
   const html = renderToStaticMarkup(
     createElement(CustomFieldInputs, {

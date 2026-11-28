@@ -1,3 +1,4 @@
+import { WorkspaceDateTimeField } from './WorkspaceDateField';
 import { useState } from 'react';
 import { Task } from '../lib/types';
 import { localInstant } from '../lib/dates';
@@ -48,17 +49,14 @@ export default function TaskEditForm({
         />
       </label>
       <div className="form-grid">
-        <label className="material-field">
-          <span className="field-label">Due date and time</span>
-          <input
-            name="dueAt"
-            type="datetime-local"
-            value={dueAt}
-            onChange={(e) => setDueAt(e.target.value)}
-            disabled={task.state !== 'Pending'}
-            required
-          />
-        </label>
+        <WorkspaceDateTimeField
+          label="Due date and time"
+          name="dueAt"
+          defaultValue={dueAt}
+          onValueChange={setDueAt}
+          disabled={task.state !== 'Pending'}
+          required
+        />
         <label className="material-field">
           <span className="field-label">Task type</span>
           <select name="kind" defaultValue={task.kind || 'outreach'}>

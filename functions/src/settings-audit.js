@@ -9,6 +9,7 @@ import { readFieldOptions } from './field-options.js';
 import { readScoring } from './scoring.js';
 import { readAISettings } from './ai-settings.js';
 import { readWorkspaceSettings } from './workspace-settings.js';
+import { EMAIL_EVENTS, emailSettings, emailPreferences } from './email-policy.js';
 const personalDefaults = {
   timezone: 'Asia/Kolkata',
   appearance: 'system',
@@ -20,6 +21,9 @@ const personalDefaults = {
   ...AUTO_DEFAULTS,
 };
 const definitions = {
+  'email-beta': ['enabled','memberIds'],
+  'email-workspace': ['enabled', 'events', 'outcomeRecipientUid'],
+  'email-preferences': ['leadUpdates','taskUpdates','dailyEnabled','dailyTime','weeklyEnabled','weeklyTime','weeklyDay','timezone','digestInsights'],
   'ai.research': ['convertedStages','failedStages','archiveReviewStages','inactivityDays','timezone','indexingEnabled'],
   appearance: [
     'appearance',
@@ -65,6 +69,8 @@ function sections(p) {
         workspace: ['reports-access'],
         ai: ['ai.insights'],
         scoring: ['ai.scoring'],
+        email: ['email-workspace'],
+        emailBeta: ['email-beta'],
         leadResearch: ['ai.research'],
       }[tail[1]] || []
     );
@@ -72,6 +78,7 @@ function sections(p) {
     {
       members: ['people.members'],
       invitations: ['people.invitations'],
+      emailPreferences: ['email-preferences'],
       personalAccessTokens: ['developer.tokens'],
     }[tail[0]] || []
   );
@@ -81,6 +88,9 @@ async function normalized(section, value) {
   if (['appearance', 'reminders', 'dashboard.visualization'].includes(section))
     return { ...personalDefaults, ...value };
   if (section === 'reports-access') return readWorkspaceSettings(reader);
+  if (section === 'email-beta') return { enabled: false, memberIds: [], ...value };
+  if (section === 'email-workspace') return emailSettings(value);
+  if (section === 'email-preferences') return emailPreferences(value);
   if (section === 'ai.research') return readResearchSettings(reader);
   if (section === 'ai.insights') return readAISettings(reader);
   if (section === 'ai.scoring') return readScoring(reader);
@@ -143,6 +153,10 @@ export function settingsAuditTransaction(tx) {
           let keys = definitions[section].filter(
             (key) => !isDeepStrictEqual(a[key], b[key]),
           );
+          if (section === 'email-workspace' && keys.includes('events'))
+            keys = keys.filter(key => key !== 'events').concat(
+              EMAIL_EVENTS.filter(event => a.events[event] !== b.events[event]).map(event => 'events.' + event),
+            );
           if (section === 'manage-fields') {
             keys = keys.flatMap((key) =>
               key === 'labels' || key === 'values'

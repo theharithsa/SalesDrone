@@ -1,6 +1,6 @@
 # Customize SalesDrone
 
-Settings guide for **v2.14.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
+Settings guide for **v2.15.0**. Desktop groups expand to reveal their sections; mobile uses a grouped Settings section selector. Admin-only sections are hidden for other members. Changes to workspace data are authorized by the API, not by navigation.
 
 ## Personal → Profile
 
@@ -54,7 +54,7 @@ Saved with your account through PATCH /me. The full SalesDrone mark follows your
 
 ### Interface font
 
-**Default:** Standard (Google Sans headings and Manrope text).
+**Default:** Standard (Astryx Neutral Figtree).
 
 Choose Standard, Inter, Source Sans 3, Lora, Open Sans, Source Serif 4, Patrick Hand or Caveat. A sample previews the draft selection; the workspace changes after a successful Save changes. Font files are self-hosted, with no runtime Google Fonts request.
 
@@ -236,7 +236,7 @@ Existing records and values are preserved. This is workspace-wide presentation c
 
 **Default:** No custom fields.
 
-Add up to 30 custom fields: text, long text, number, date, dropdown, multi-select or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs stay fixed. Edit an active Dropdown and select Multi-select to retain its existing values and allow up to 30 choices per lead. This type change is permanent.
+Add up to 30 custom fields: text, long text, number, date, phone number, dropdown, multi-select or checkbox fields with stable cf_ identifiers. Choose a unique label and optionally make the value required. Existing IDs stay fixed. Admins can edit the type of an active custom field. The saved values remain attached to the same field ID and new edits follow the chosen type.
 
 Required rules apply to new manual entries or explicit custom-value edits. Import can map an existing compatible custom field. Only Admins can create new workspace fields during mapping.
 
@@ -256,7 +256,7 @@ Removing a choice preserves unchanged historical values but prevents new use of 
 
 Remove an unused custom field from new-entry controls without erasing historical lead values.
 
-Retired IDs cannot be reused. Create a new field for a different data type instead of rewriting existing values.
+Retired IDs cannot be reused. Change the type while a field is active to keep its saved values.
 
 ## Leads Management → Field order
 
@@ -290,7 +290,7 @@ New and Edit Enquiry, the Leads worksheet and Excel export apply the saved order
 
 Choose up to six additional visible built-in or custom fields. The fictional preview shows the draft before saving.
 
-Selected header fields appear below the lead name. An empty selected field displays N/A. Phone values open the dialer.
+Use the arrows to order the selected fields independently from the general field order. Fields with values appear below the lead name. Valid phone values open the dialer.
 
 **Example:** Show City / location and Product in the lead header.
 
@@ -762,6 +762,120 @@ Opt in to Google Analytics counts for workspace page categories. This choice is 
 Takes effect immediately. Turning it off stops new page measurements. Only fixed page categories are shared; lead details, search terms and account identifiers are excluded. Demo and emulator use is excluded.
 
 **Example:** A visit to any individual lead counts under Leads.
+
+## Personal → Email preferences
+
+**Who/where:** Personal workspace member.
+
+**API:** GET /api/v1/email/preferences and PATCH /api/v1/email/preferences.
+
+**Permissions:** Active membership, Google sign-in and App Check. Writes require the current expectedVersion..
+
+### Email me lead updates
+
+**Default:** Off.
+
+Opt in to assignments and configured outcome updates for accessible leads.
+
+The workspace master switch and per-event switches also apply.
+
+### Email me shared task updates
+
+**Default:** Off.
+
+Opt in to updates made by teammates on shared tasks you own.
+
+Private reminders and your own task changes do not generate mail.
+
+### Daily task reminder
+
+**Default:** Off; 9:00 a.m. when enabled.
+
+Choose a local send time for your shared lead task summary.
+
+Includes due and overdue counts, the next deadline and the oldest overdue age when available. Empty days are skipped.
+
+### Weekly task recap
+
+**Default:** Off; Monday at 9:00 a.m. when enabled.
+
+Choose a weekday and local send time. The recap covers the previous Monday through Sunday.
+
+Shows completed tasks, distinct leads and work due in the next seven days. Open the email link to review your completed lead tasks for the period. Empty weeks are skipped.
+
+### Digest time zone
+
+**Default:** Your existing account time zone until saved.
+
+Use an IANA time zone such as Asia/Kolkata.
+
+A missing or ambiguous daylight-saving time skips that day. Scheduling changes apply to upcoming runs.
+
+### Choose takeaways with AvinyaIntelligence
+
+**Default:** Off.
+
+Allow a brief takeaway chosen from verified task facts.
+
+Also requires your current AI access. When unavailable, both digests still show the verified summary.
+
+## Workspace → Email notifications
+
+**Who/where:** Workspace.
+
+**API:** GET/PATCH /api/v1/email/settings, POST /api/v1/email/preview, POST /api/v1/email/test and GET /api/v1/email/deliveries, GET/PATCH /api/v1/email/beta/settings.
+
+**Permissions:** Admin role with members:write, Google sign-in and App Check. Writes require expectedVersion where documented..
+
+### Enable workspace email
+
+**Default:** Off.
+
+Enable email for the workspace after the environment sender is ready.
+
+Pausing or changing workspace email policy invalidates pending work from the old policy. In-app notifications continue.
+
+### Email new releases to all active members
+
+**Default:** Off.
+
+Send the highlights and release notes link after the app and public notes for a version are live.
+
+Production only. The workspace email switch must also be on. A release sends once per active verified member in bounded batches.
+
+**Example:** Members receive a What’s new in SalesDrone message for a new version.
+
+### Email event switches
+
+**Default:** On individually; master switch off.
+
+Switch access, lead, shared task, daily and weekly events on or off.
+
+Routine notifications require member opt-in. Outcomes use configured Lead research mappings.
+
+### Outcomes for unassigned leads
+
+**Default:** None.
+
+Choose an active member with all-lead visibility to receive configured outcomes for unassigned leads.
+
+If the chosen member loses access the worker suppresses the delivery.
+
+### Template preview and test send
+
+**Default:** Synthetic preview; test sending available when provider setup is ready.
+
+Review each layout and plain text. An Admin can queue a test every five minutes.
+
+Pre-production uses a controlled destination. Delivery history records queued, accepted, delayed, delivered, failed or suppressed states.
+
+### Enable Email Beta
+
+**Default:** Off; no selected members.
+
+In Inbox Beta, enable lead email after sender setup and grant access to up to 50 active members.
+
+Admins have access when enabled. Members with current lead access can read linked conversations in formatted HTML or plain text. Unlinked, linking and deletion are Admin-only.
 
 ## Settings audit trail
 

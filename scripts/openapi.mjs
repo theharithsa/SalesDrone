@@ -30,6 +30,8 @@ import { z } from 'zod';
 import { LeadFilters } from '../functions/src/lead-filters.js';
 import { replayDays } from '../functions/src/request-replay.js';
 import * as contracts from '../functions/src/contracts.js';
+import { BetaSettings, BetaCompose, BetaReply, BetaLink, BetaRead, BetaDelete } from '../functions/src/email-beta.js';
+import { EmailSettingsPatch, EmailPreferencesPatch, EmailInvitationResend, EmailPreview, EmailTest } from '../functions/src/email-policy.js';
 const names = [
   'LeadInput',
   'LeadPatch',
@@ -37,6 +39,8 @@ const names = [
   'AssignmentPatch',
   'NotificationPatch',
   'TaskInput',
+  'SharedTaskInput',
+  'TaskAssignment',
   'TaskPatch',
   'SharedTaskPatch',
   'TaskDelete',
@@ -59,8 +63,18 @@ for (const [name, schema] of Object.entries({
   ImportVersion,
   ImportDecision,
   ImportDelete,
+  BetaSettings, BetaCompose, BetaReply, BetaLink, BetaRead, BetaDelete,
+  EmailSettingsPatch, EmailPreferencesPatch, EmailInvitationResend, EmailPreview, EmailTest,
 }))
   schemas[name] = z.toJSONSchema(schema, { io: 'input' });
+for (const name of ['EmailSettings', 'EmailPreferences']) {
+  const { expectedVersion, ...properties } = schemas[name + 'Patch'].properties;
+  schemas[name] = {
+    type: 'object', additionalProperties: false,
+    properties: { ...properties, version: expectedVersion, ...(name === 'EmailSettings' ? { deliveryReady: { type: 'boolean' } } : {}) },
+    required: [...Object.keys(properties), 'version', ...(name === 'EmailSettings' ? ['deliveryReady'] : [])],
+  };
+}
 schemas.ImportInput.properties.statusField.description =
   'Reviewed imports only. New browser uploads default to legacyStatus (Enquiry status): retain workbook text unless explicitly remapped. Choose none, an available built-in category or custom text/select field. Hidden/retired targets and targets already supplied by another mapped column are rejected. Non-text categories require configured values. Omission preserves legacy stage mapping for old API clients. Original sourceStatus remains in permission-filtered import row details.';
 schemas.ImportCommit = {
@@ -879,6 +893,29 @@ const source = await readFile(
   new URL('../functions/src/app.js', import.meta.url),
   'utf8',
 );
+schemas.EmailDelivery = object({
+  id: string,
+  event: schemas.EmailPreview.properties.template,
+  createdAt: instant,
+  state: { type: 'string', enum: ['Queued','Accepted','Delivered','Delayed','Failed','Suppressed'] },
+  attempts: { type: 'integer', minimum: 0, maximum: 4 },
+  reason: { type: ['string', 'null'] },
+}, ['id', 'event', 'createdAt', 'state', 'attempts', 'reason']);
+schemas.EmailBetaLead = object({ id: string, name: string });
+schemas.EmailBetaThread = object({
+  id: string, subject: string, correspondent: string, updatedAt: string, latestMessageId: string,
+  lastDirection: { type: 'string', enum: ['inbound','outbound'] },
+  version: { type: 'integer' }, unread: { type: 'boolean' }, canSend: { type: 'boolean' },
+  lead: { anyOf: [ref('EmailBetaLead'), { type: 'null' }] }, preview: { type: 'string', maxLength: 160 },
+}, ['id','subject','correspondent','updatedAt','latestMessageId','lastDirection','version','unread','canSend','lead']);
+schemas.EmailBetaMessage = object({
+  id: string, direction: { type: 'string', enum: ['inbound','outbound'] }, body: string, createdAt: string, state: string,
+  attachments: { type: 'boolean' }, truncated: { type: 'boolean' }, formatVersion: { type: 'integer', enum: [1, 2] }, html: { type: 'string', maxLength: 48000 },
+}, ['id','direction','body','createdAt','state','attachments','truncated']);
+schemas.EmailBetaThreadDetail = {
+  allOf: [ref('EmailBetaThread'), object({ messages: { type: 'array', maxItems: 25, items: ref('EmailBetaMessage') },
+    nextCursor: { type: ['string','null'] } })],
+};
 const endpoints = [
   ...source.matchAll(
     /route\(\s*['"](get|post|put|patch|delete)['"]\s*,\s*['"]([^'"]+)['"]\s*,\s*([^,]+),/g,
@@ -898,8 +935,22 @@ endpoints.push(
     url: '/invitations/:id/accept',
     capability: 'Matching verified Google identity',
   },
+  { method: 'post', url: '/email/receipts/resend', capability: 'Resend webhook signature' },
+  { method: 'post', url: '/email/beta/receipts/resend', capability: 'Resend webhook signature' },
 );
 const bodyFor = (m, u) =>
+  u === '/email/beta/settings' ? 'BetaSettings' :
+  u === '/email/threads' && m === 'post' ? 'BetaCompose' :
+  u === '/email/threads/:id/replies' ? 'BetaReply' :
+  u === '/email/threads/:id/lead' ? 'BetaLink' :
+  u === '/email/threads/:id/read' ? 'BetaRead' :
+  u === '/email/threads/:id' && m === 'delete' ? 'BetaDelete' :
+  u === '/email/settings' ? 'EmailSettingsPatch' :
+  u === '/email/preferences' ? 'EmailPreferencesPatch' :
+  u === '/email/test' ? 'EmailTest' :
+  u === '/email/preview' ? 'EmailPreview' :
+  u === '/email/invitations/:id/resend' ? 'EmailInvitationResend' :
+  u === '/leads/:id/tasks/:taskId/assignment' ? 'TaskAssignment' :
   u==='/lead-research-settings' ? 'ResearchSettingsPatch' :
   u.startsWith('/lead-hygiene/') || u.startsWith('/lead-assistant/') ?
     (m==='delete'||u.endsWith('/summary')?'ResearchVersion':u.endsWith('/questions')?'QuestionInput':u==='/lead-hygiene/scans'?'ScanInput':'ConversationInput') :
@@ -946,7 +997,7 @@ const bodyFor = (m, u) =>
                                         : u.endsWith('/activities')
                                           ? 'ActivityInput'
                                           : u === '/tasks'
-                                            ? 'TaskInput'
+                                            ? 'SharedTaskInput'
                                             : u === '/tasks/:id'
                                               ? m === 'delete'
                                                 ? 'TaskDelete'
@@ -986,6 +1037,9 @@ const savedReplayRoutes = new Set([
   'post /leads/:id/activities',
   'post /activities/:id/corrections',
   'post /tasks',
+  'post /email/test',
+  'post /email/invitations/:id/resend',
+  'patch /leads/:id/tasks/:taskId/assignment',
   'patch /leads/:id/tasks/:taskId',
   'post /invitations',
   'post /imports/preview',
@@ -1070,6 +1124,10 @@ for (const e of endpoints) {
       '/dashboard',
       '/team',
       '/field-options',
+      '/email/settings',
+      '/email/beta/settings',
+      '/email/threads',
+      '/email/preferences',
     ].includes(e.url)
   ) {
     operation.parameters.push(
@@ -1094,6 +1152,25 @@ for (const e of endpoints) {
     operation.description+=' Customer name is optional. Manual browser entries need a phone number and enquiry date. Approved legacy-review and scoped PAT inputs retain their contact compatibility.';
   if(e.method==='patch'&&['/tasks/:id','/leads/:id/tasks/:taskId'].includes(e.url))
     operation.description+=' In the browser workspace, task completion, changed due times and reopening require a nonblank comment (up to 500 characters). Reopen completed tasks with state Pending and a future dueAt. Recheck current lead access, recipient eligibility and outreach suppression. Supported personal-access-token task updates retain their previous validation.';
+  if (e.url === '/tasks' && e.method === 'get') {
+    operation.description += ' A digest may supply from, until and tz together with state=Completed and view=accessible to read your own shared completions for one local week.';
+    for (const name of ['from', 'until', 'tz'])
+      operation.parameters.push({ in: 'query', name, schema: { type: 'string', ...(name !== 'tz' ? { format: 'date' } : {}) }, description: name === 'tz' ? 'IANA reporting timezone' : name === 'from' ? 'Inclusive local start date' : 'Exclusive local end date seven days after from' });
+  }
+  if (e.url === '/tasks' && e.method === 'post' || e.url === '/leads/:id/tasks/:taskId/assignment')
+    operation.description += ' Assigning a shared task needs Google sign-in, assignments:write and leads:edit. The recipient must be an active member who can view that lead; private reminders cannot be reassigned.';
+  if (e.url.startsWith('/email/') && !e.url.startsWith('/email/beta/') && !e.url.startsWith('/email/threads') && !e.url.endsWith('/resend') || e.url.includes('/invitations/:id/resend')) {
+    operation.description += e.url.endsWith('/preferences')
+      ? ' Reads and updates only your email preferences. Opt-ins default off. Schedules use local time and an IANA timezone. PATCH requires expectedVersion.'
+      : ' Admin only. Settings start paused. Test sends use a controlled destination, are independently rate limited and return a queued result. Delivery history omits addresses and external identifiers.';
+  }
+  if (e.url === '/email/receipts/resend' || e.url === '/email/beta/receipts/resend') {
+    operation.security = [{ resendSignature: [] }];
+    operation.description = 'Provider-only callback. Verifies Resend headers and the original uncompressed JSON bytes, up to 32 KiB. Per-instance limit of 120 requests per minute. Duplicate, unrelated and out-of-order callbacks are safe to retry.';
+    operation.requestBody = { required: true, content: { 'application/json': { schema: { type: 'object' } } } };
+    for (const name of ['svix-id', 'svix-timestamp'])
+      operation.parameters.push({ in: 'header', name, required: true, schema: { type: 'string' } });
+  }
   if(e.method==='post'&&e.url==='/leads/export')
     operation.description+=' Non-Admin members need an individual Allow or an enabled memberExportsEnabled default if they inherit it. Individual Block overrides the default. The workspace exportsEnabled switch applies to everyone. Denied reports return 403 EXPORT_DISABLED. Set includeComments=true to include scoped recorded notes. Pages are then capped at ten lead rows and 200 notes per lead. More notes cause an explicit limit error.';
   if (e.method === 'patch' && e.url === '/members/:uid') {
@@ -1189,6 +1266,7 @@ for (const e of endpoints) {
     !e.url.endsWith('/archive') &&
     e.url !== '/dashboard/insights' &&
     e.url !== '/personal-access-tokens' &&
+    !e.url.endsWith('/receipts/resend') &&
     e.url !== '/leads/batch/preview' &&
     !e.url.endsWith('/score/refresh') &&
     e.url !== '/lead-data-reset/preview' &&
@@ -1317,6 +1395,8 @@ for (const e of endpoints) {
   const auditRoutes = new Set([
     'PATCH /me',
     'PATCH /workspace-settings',
+    'PATCH /email/settings',
+    'PATCH /email/preferences',
     'PATCH /ai-settings',
     'PATCH /lead-research-settings',
     'PATCH /field-options',
@@ -1343,11 +1423,52 @@ for (const e of endpoints) {
   if(e.method==='post'&&['/lead-hygiene/scans','/lead-assistant/conversations','/lead-assistant/conversations/:id/questions'].includes(e.url)&&!operation.parameters.some(p=>p.name==='Idempotency-Key'))
     operation.parameters.push({in:'header',name:'Idempotency-Key',required:true,schema:{type:'string',format:'uuid'}});
   if (savedReplayRoutes.has(e.method + ' ' + e.url)) {
-    const key = operation.parameters.find((p) => p.name === 'Idempotency-Key');
+    let key = operation.parameters.find((p) => p.name === 'Idempotency-Key');
+    if (!key) {
+      key = { in: 'header', name: 'Idempotency-Key', required: true, schema: { type: 'string', format: 'uuid' } };
+      operation.parameters.push(key);
+    }
     key.description = `Reuse the same UUID and body for an uncertain response within ${replayDays} days of the original write. A matching key at or after expiry returns IDEMPOTENCY_EXPIRED (409) without running the write again. Check the original outcome before creating another request.`;
     operation.responses[409].description += ' or IDEMPOTENCY_EXPIRED for a saved response past its replay window';
     operation['x-idempotency-replay-days'] = replayDays;
   }
+  if (e.url.startsWith('/email/threads')) {
+    operation.description += ' Email Beta must be enabled for the caller. Linked conversations use current lead access. Admins manage lead links, deletion and unlinked mail. Pages scan at most 25 rows and may be sparse. Follow nextCursor until null.';
+    if (e.url === '/email/threads' && e.method === 'get') {
+      operation.parameters.push({ in: 'query', name: 'filter', schema: { type: 'string', enum: ['all','unread','sent','unlinked'], default: 'all' } });
+      operation.parameters.push({ in: 'query', name: 'leadId', schema: string, description: 'Use with the all filter.' });
+    }
+    if (e.method === 'get' && ['/email/threads','/email/threads/:id'].includes(e.url) &&
+        !operation.parameters.some(parameter => parameter.name === 'cursor'))
+      operation.parameters.push({ in: 'query', name: 'cursor', schema: string });
+    if (e.method === 'get') {
+      const response = e.url.endsWith('/match')
+        ? object({ lead: { anyOf: [ref('EmailBetaLead'), { type: 'null' }] } })
+        : e.url === '/email/threads' ? pageOf('EmailBetaThread') : ref('EmailBetaThreadDetail');
+      operation.responses[200].content['application/json'].schema = response;
+    }
+    if (e.method === 'post') {
+      const key = operation.parameters.find(parameter => parameter.name === 'Idempotency-Key');
+      if (key) key.description = 'Reuse the same UUID and body within seven days. An expired key returns 409 without sending a second email.';
+      operation['x-idempotency-replay-days'] = replayDays;
+      operation.responses[200].content['application/json'].schema = object({ threadId: string, messageId: string }, ['threadId','messageId']);
+    }
+  }
+  if (e.url === '/email/beta/settings') {
+    operation.description += ' Admin only. Email Beta defaults off. A separate environment sender must be configured before activating access. Select up to 50 active members.';
+    operation.responses[200].content['application/json'].schema = object({
+      enabled: { type: 'boolean' }, memberIds: { type: 'array', items: string, maxItems: 50 }, version: { type: 'integer' }, deliveryReady: { type: 'boolean' },
+    }, ['enabled','memberIds','version','deliveryReady']);
+  }
+  const emailResults = {
+    '/email/settings': ref('EmailSettings'),
+    '/email/preferences': ref('EmailPreferences'),
+    '/email/preview': object({ subject: string, html: string, text: string }, ['subject', 'html', 'text']),
+    '/email/deliveries': pageOf('EmailDelivery'),
+    '/email/test': object({ id: string, state: { const: 'Queued' } }, ['id', 'state']),
+    '/email/invitations/:id/resend': object({ id: string, state: { const: 'Queued' } }, ['id', 'state']),
+  };
+  if (emailResults[e.url]) operation.responses[200].content['application/json'].schema = emailResults[e.url];
   paths[url] ??= {};
   paths[url][e.method] = operation;
 }
@@ -1355,7 +1476,7 @@ const spec = {
   openapi: '3.1.0',
   info: {
     title: 'SalesDrone by AvinyaTech API',
-    version: '1.36.0',
+    version: '1.38.0',
     description:
       'Part of Avinya Enterprises. Versioned REST API supporting GET, POST, PUT, PATCH and DELETE. Data operations accept expiring scoped Personal Access Tokens (Authorization: Bearer), or Firebase Google ID token plus App Check. Administration, token management, identity, device management and AI-generation endpoints require Google sign-in and App Check. Tokens inherit the active admin owner’s current capabilities and assigned/all lead scope; revoked or expired tokens fail authorization. Writes may require expectedVersion and Idempotency-Key as documented. Individual lead removal uses archive. The separate Google/Admin-only lead-data reset permanently clears lead data while retaining users and configuration. All responses are no-store; paginate until nextCursor is null. Demo identities cannot read live data.',
   },
@@ -1376,6 +1497,7 @@ const spec = {
         bearerFormat: 'Firebase ID token',
       },
       appCheck: { type: 'apiKey', in: 'header', name: 'X-Firebase-AppCheck' },
+      resendSignature: { type: 'apiKey', in: 'header', name: 'svix-signature' },
     },
     schemas,
   },

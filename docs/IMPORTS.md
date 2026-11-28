@@ -17,6 +17,8 @@ For a multi-select column, keep the bracketed list of quoted choices from the ex
 
 ## Workflow
 
+Open **Import enquiries** and choose **Choose a workbook**. The step bar shows where you are. **Match your columns** displays your source columns, status mappings and a row preview. On a phone, scroll the preview table horizontally to see the remaining columns. **View history** jumps to the saved jobs you can access.
+
 External files default to Skip existing contacts. SalesDrone exports default to Review updates. Keep separate enquiries is available for new enquiries without SalesDrone IDs. Select a previous import with Update this workbook to reuse its dataset baseline. A different filename alone does not establish lineage. Upload, compare bounded chunks, inspect row matches/differences, approve clear proposals, resolve remaining decisions, then apply. Nothing changes in leads during comparison/review. History is paginated and shows uploader, status and created/updated/unchanged/skipped counts. Details show the actual duplicate candidates rather than only a total.
 
 Review updates requires normalized name plus phone/email contact match. Name alone, reused phone with a different name, multiple candidates, overlapping source rows or missing source baselines need explicit review. A mapped SalesDrone lead ID or a manually chosen accessible candidate can establish identity; choosing a candidate compares it without approving changes. Contact normalization reuses lead validation. Inaccessible candidates are redacted and cannot be used to bypass assigned scope. Archived leads cannot be updated. Missing rows never delete leads.

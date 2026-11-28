@@ -133,3 +133,15 @@ for every lead, with no partial transaction on conflict.
 The local npm adapter calls fixed GET API routes and accepts only a process-memory PAT. It has no database/cloud credentials, arbitrary request tool, write tool, redirect following or unrestricted telemetry exporter; opt-in safe OTel configuration is maintained by the standalone MCP repository. Explicit team:read and people:read scopes remain Admin-only; directory output excludes email/security fields. They never grant member administration. Untrusted lead/import/model text is data, never instructions. The operator chooses the MCP host/model receiving authorized data. See [transport and publication limits](docs/MCP.md).
 
 Company directory reads inherit the caller's lead scope. A workbook ID identifies a row only after checking current lead access. Reviewed imports require the usual write and lead permissions, and commits check versions again. Exported workbooks contain business data and should only be shared with authorized recipients.
+
+## Email delivery
+
+SalesDrone uses independent provider keys and webhook signing secrets per
+environment. App operations require Google and App Check. Provider callbacks
+require a time-bounded signature over the original bytes. The worker rechecks
+current access, event settings and the verified recipient. It excludes customer
+and task content from messages, model inputs and monitoring. The pre-production
+recipient is controlled by runtime configuration. Delivery history excludes
+addresses and provider identifiers. Production starts paused.
+
+Email Beta uses a dedicated environment sender and signed webhook. Live email bodies are stored server-side, returned only under current lead access, and excluded from telemetry and demo fixtures. Incoming and composed HTML passes an allowlist. The isolated reader disallows scripts, embedded resources and forms, with a plain-text alternative. Admin confirmation initiates app-side erasure.

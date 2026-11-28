@@ -6,12 +6,6 @@ export function Brand({ full = false }: { full?: boolean }) {
   return (
     <div className="brand">
       <span className="brand-drone" aria-hidden="true" />
-      <span className="brand-symbol" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-      </span>
       <div>
         <strong>
           SalesDrone<span className="brand-dot">.</span>
@@ -105,6 +99,7 @@ export function Modal({
   returnFocusRef?: { current: HTMLElement | null };
   initialFocusRef?: { current: HTMLElement | null };
 }) {
+  const content = useRef<HTMLDivElement>(null);
   return (
     <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
       <Dialog.Portal>
@@ -112,6 +107,19 @@ export function Modal({
         <Dialog.Content
           className={'dialog ' + (wide ? 'wide' : '')}
           onPointerDownOutside={(e) => e.preventDefault()}
+          ref={content}
+          onEscapeKeyDown={(event) => {
+            const date = content.current?.querySelector('.workspace-date-field input[aria-expanded="true"]');
+            if (!date) return;
+            // Radix listens before Astryx's document handler. Close the child without dismissing the form.
+            event.preventDefault();
+            if (date.hasAttribute('aria-controls')) {
+              date.parentElement?.querySelector('button')?.click();
+            } else {
+              date.ownerDocument.querySelector('dialog[open]:has(.astryx-bottom-sheet)')
+                ?.dispatchEvent(new Event('cancel', { cancelable: true }));
+            }
+          }}
           onOpenAutoFocus={(event) => {
             if (initialFocusRef?.current) {
               event.preventDefault();
