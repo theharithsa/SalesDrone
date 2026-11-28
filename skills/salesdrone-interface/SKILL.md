@@ -6,7 +6,7 @@ description: "Maintain SalesDrone Astryx responsive shell, typography, themes, a
 # Interface and Astryx design system
 
 Read [SHARED.md](../SHARED.md), [design system](../../docs/DESIGN-SYSTEM.md) and the
-[review evidence](../../docs/ASTRYX-WORKSPACE-REVIEW.md). Preserve web accessibility and policy guarantees.
+[review evidence](../../docs/ASTRYX-WORKSPACE-REVIEW.md). Keep sign-in and demo visible.
 
 ## Responsibility and entry points
 

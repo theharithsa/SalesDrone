@@ -3,6 +3,7 @@ import type { EmailTarget, EmailThread } from './features/EmailBetaPage';
 import { normalizeAccent } from './lib/accent';
 import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
+import ProductHome from './components/ProductHome';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
 import CompaniesPage from './features/CompaniesPage';
@@ -1549,69 +1550,39 @@ export default function App() {
         <Loading />
       </div>
     );
-  if (!active)
-    return (
-      <div className="login-page">
-        <div className="login-top">
-          <Brand full />
-          <div className="login-top-actions">
-            <ThemeToggle
-              appearance={appearance}
-              onChange={(next) => void changeTheme(next)}
-              busy={themeBusy}
-            />
-          </div>
-        </div>
-        <div className="login-content">
-          <div className="login-copy">
-            <h1>Enquiries and follow-ups</h1>
-            <p>Track enquiries, conversations, and follow-ups in one workspace.</p>
-          </div>
-          <section className="login-card">
-            <h2>Sign in to SalesDrone</h2>
-            <button
-              className="button google-button"
-              disabled={sessionBusy}
-              onClick={() => authAction()}
-            >
-              {sessionBusy ? (
-                <LoaderCircle className="spin" size={18} />
-              ) : (
-                <GoogleIcon />
-              )}
-              Continue with Google
-            </button>
-            <button className="text-button" onClick={() => authAction(true)}>
-              Having trouble? Use redirect sign-in
-            </button>
-            <div className="login-divider">
-              <span>or take a look around</span>
-            </div>
-            <button
-              className="button demo-button"
-              onClick={() => {
-                setGuest(true);
-                setPage('today');
-                demoRef.current = demoData();
-                setError('');
-              }}
-            >
-              Explore the demo <ArrowRight size={16} />
-            </button>
-            <p className="login-fine">
-              Live access is managed by your administrator.
-              <br />
-              Other accounts can explore with sample data.
-            </p>
-            <ErrorMessage error={error} />
-          </section>
-        </div>
-        <footer className="login-bottom">
-          <span>SalesDrone by AvinyaTech</span>
-          <span>Built for a more focused workday.</span>
-        </footer>
-      </div>
-    );
+  if (!active) {
+    const openDemo = () => {
+      setGuest(true);
+      setPage('today');
+      demoRef.current = demoData();
+      setError('');
+      window.scrollTo(0, 0);
+    };
+    return <ProductHome
+      appearance={<ThemeToggle
+        appearance={appearance}
+        onChange={(next) => void changeTheme(next)}
+        busy={themeBusy}
+      />}
+      onDemo={openDemo}
+      signIn={<section className="login-card" id="sign-in" aria-labelledby="sign-in-title" tabIndex={-1}>
+        <h2 id="sign-in-title">Sign in to SalesDrone</h2>
+        <p>Use the Google account approved by your workspace Admin.</p>
+        <button className="button google-button" type="button" disabled={sessionBusy} onClick={() => authAction()}>
+          {sessionBusy ? <LoaderCircle className="spin" size={18} /> : <GoogleIcon />}
+          Continue with Google
+        </button>
+        <button className="text-button" type="button" disabled={sessionBusy} onClick={() => authAction(true)}>
+          Having trouble? Use redirect sign-in
+        </button>
+        <div className="login-divider">or try it with sample data</div>
+        <button className="button demo-button" type="button" onClick={openDemo}>
+          Explore the demo <ArrowRight size={16} aria-hidden="true" />
+        </button>
+        <ErrorMessage error={error} />
+      </section>}
+    />;
+  }
   return (
     <div
       className={'app-shell ' + (sidebarCollapsed ? 'sidebar-collapsed' : '')}

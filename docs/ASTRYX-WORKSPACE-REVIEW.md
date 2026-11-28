@@ -4,7 +4,7 @@ The workspace uses one neutral theme, surface hierarchy and control scale. The a
 
 | Surface | Design treatment |
 | --- | --- |
-| Sign-in and navigation | Compact bordered sidebar, clearer selected navigation and a focused sign-in panel. |
+| Sign-in and navigation | Public product homepage with an immediate sign-in panel, synthetic desktop and phone screenshots, feature walkthroughs and a direct demo action. The workspace uses a compact sidebar and a visible selected state. |
 | Dashboard and Team | Shared bordered surfaces, consistent metric spacing and date controls aligned on the same baseline. |
 | Leads and Companies | Consistent collection headings, search and action heights. Leads groups advanced filters in one panel and aligns the stage selector with worksheet cells. |
 | Lead details, tasks and notifications | Shared record header, table, action, modal and status styles. Keep the full record and locally scrollable tables on small screens. |
@@ -26,3 +26,7 @@ Existing access checks, writes and endpoints still apply. Previous and next use 
 Run `npm run design:dev` and open `/design-review.html`. The canvas uses the app's demo and isolated admin, enquiry and Email fixtures. The synthetic transport cannot send real email. The production build excludes the fixtures.
 
 Browser review covered sidebar navigation at desktop width, the lead stage menu and full record, a narrow new-enquiry dialog, alignment of all four desktop filters, custom multi-select editing at phone and tablet widths, and synthetic email reading and composing at phone, tablet and desktop widths. Also checked the workbook review and a task dialog in dark Book mode at 125% interface scale. Physical-device and Safari review, refreshed public captures and production promotion belong to release acceptance.
+
+### Homepage assets
+
+The eight WebP screenshots under `apps/web/public/product-home/` were captured from the Astryx branch with demo records or the isolated Admin Email and Import fixtures. Source views were desktop 1440 × 900 and phone 390 × 810 CSS pixels. Desktop captures are resized to 1280 × 800. The signed-out page loads its primary hero screenshot first and defers the remaining images. The set is about 300 KiB on disk. The homepage adds no API calls or Firestore reads. Browser review measured 320–1920 CSS pixels, including the tablet layout switch, and verified both demo entry points, image loading, section links, and the dark theme. No public assets come from signed-in customer workspaces. Sign-in, redirect troubleshooting, appearance choice, and the existing in-memory demo remain the same actions.

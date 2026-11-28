@@ -9,6 +9,10 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 ## [Unreleased]
 
+### Added
+
+- A product homepage at sign-in with desktop and phone previews, workflow walkthroughs, and direct access to the sample workspace.
+
 ### Changed
 
 - Apply shared Astryx Neutral surfaces, control sizes and field labels across the workspace. Align the Leads filters and stage controls, simplify sign-in, and give custom field editing the same layout as other forms.

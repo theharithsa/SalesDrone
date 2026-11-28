@@ -12,7 +12,7 @@ Everyone
 
 2. An approved active member enters the live workspace. An unapproved identity sees isolated demonstration records. Signing in alone does not grant access to company leads.
 
-3. For a safe rehearsal, choose Explore the demo on the login screen. Changes are temporary and reset when you leave or choose Reset demo.
+3. Use the homepage to see what SalesDrone does. Choose Explore the demo beside sign-in, or Open sample workspace near the end of the page. Changes are temporary and reset when you leave or choose Reset demo.
 
 4. Check your profile and timezone in Settings before scheduling follow-ups. Enable notifications on each browser where you want alerts.
 
