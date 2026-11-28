@@ -2,8 +2,8 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Session } from '../lib/types';
 import {
-  ArrowDown, ArrowRight, Download, FileSpreadsheet, KeyRound, Play,
-  Laptop, Maximize2, SlidersHorizontal, Smartphone, X,
+  ArrowDown, ArrowRight, BookOpen, ChartNoAxesCombined, Download, FileSpreadsheet, KeyRound,
+  Laptop, ListTodo, Mail, Maximize2, Play, SlidersHorizontal, Smartphone, UsersRound, X,
 } from 'lucide-react';
 import { Brand } from './UI';
 
@@ -13,10 +13,13 @@ const stories = [
   {
     id: 'leads',
     name: 'Leads & companies',
+    icon: UsersRound,
     title: 'See where each enquiry stands.',
     description: 'Search across contact details and comments, then open the full record for the context behind the next call.',
-    image: 'leads',
-    alt: 'SalesDrone Leads worksheet with customer names, sales stages, scores, and phone numbers',
+    screens: [
+      { label: 'Lead list', image: 'leads', alt: 'SalesDrone Leads worksheet with customer names, sales stages, scores, and phone numbers' },
+      { label: 'Lead record', image: 'record', alt: 'Lead details, stage journey, and activity for a fictional enquiry' },
+    ],
     details: [
       ['Find the right leads', 'Filter by stage, source, assignee, or a configured field. Change the stage right from the list.'],
       ['Keep the whole history', 'See stage changes, calls, comments, shared tasks, and reminders on the lead timeline. Keep related files with the record.'],
@@ -26,10 +29,13 @@ const stories = [
   {
     id: 'follow-ups',
     name: 'Tasks & reminders',
+    icon: ListTodo,
     title: 'Know who owns the next step.',
     description: 'Assign follow-ups to teammates, keep personal reminders private, and see what is due from the same workspace.',
-    image: 'tasks',
-    alt: 'SalesDrone Tasks showing the linked lead, responsible person, due date, and reschedule action',
+    screens: [
+      { label: 'Task list', image: 'tasks', alt: 'SalesDrone Tasks showing the linked lead, responsible person, due date, and reschedule action' },
+      { label: 'Reminder form', image: 'reminder', alt: 'Set a reminder form with timing, recipient and notes for a lead follow-up' },
+    ],
     details: [
       ['Follow through together', 'Open the linked lead from Tasks. Complete, reschedule, or reopen shared work with a comment when your access allows it.'],
       ['Set a reminder', 'Choose a follow-up date and time yourself, or review an automatic reminder detected in a note when that feature is enabled.'],
@@ -39,14 +45,31 @@ const stories = [
   {
     id: 'insights',
     name: 'Reporting',
+    icon: ChartNoAxesCombined,
     title: 'Decide what needs attention.',
     description: 'See the current pipeline, compare groups such as sales stages or enquiry sources, and open the leads behind a count.',
-    image: 'team',
-    alt: 'SalesDrone Team overview with workload totals, task completion, and recorded activity charts',
+    screens: [
+      { label: 'Team overview', image: 'team', alt: 'SalesDrone Team overview with workload totals, task completion, and recorded activity charts' },
+    ],
     details: [
       ['See how the team is working', 'Admins can review assigned leads, task progress, and recorded activity using preset or custom date ranges.'],
       ['Compare the pipeline', 'Group leads by configured fields and drill into the current counts from Today.'],
       ['Review recorded activity', 'Admin Team views show recorded comments, calls, and task work by member in the selected time window.'],
+    ],
+  },
+  {
+    id: 'email',
+    name: 'Email & digests',
+    icon: Mail,
+    title: 'Keep email with the lead.',
+    description: 'When your workspace enables Email Beta, send formatted messages and receive replies in SalesDrone.',
+    screens: [
+      { label: 'Email inbox', image: 'email', alt: 'SalesDrone Email Beta with mailbox filters, a conversation list, and a formatted reply' },
+    ],
+    details: [
+      ['Compose and reply', 'Use the formatting toolbar to add headings, lists, and links. Read HTML messages or switch to plain text.'],
+      ['Open the linked lead', 'Read the thread alongside the lead’s calls, comments, and shared tasks as you prepare the next follow-up.'],
+      ['Stay up to date', 'Workspace notifications can cover invitations, assignments, and stage outcomes. Daily reminders and weekly recaps summarize task work when enabled.'],
     ],
   },
 ] as const;
@@ -81,8 +104,7 @@ const workspace = [
 ];
 
 const featureLinks = [
-  ['tour', 'Product tour'], ['leads', 'Leads'], ['follow-ups', 'Tasks & reminders'], ['email', 'Email & digests'],
-  ['lead-intelligence', 'Lead Intelligence'], ['lead-score', 'Lead score'], ['lead-hygiene', 'Lead Hygiene'],
+  ['tour', 'Video tour'], ['lead-intelligence', 'Lead Intelligence'],
   ['import-export', 'Import & export'], ['appearance', 'Appearance'], ['install-app', 'Install app'],
 ];
 
@@ -153,6 +175,84 @@ function Screen({ name, alt, darkMedia, eager = false }: {
   </Dialog.Root>;
 }
 
+function storyFromHash() {
+  return stories.find((story) => '#' + story.id === window.location.hash);
+}
+
+function ProductExplorer({ darkMedia }: { darkMedia: string }) {
+  const [story, setStory] = useState(() => storyFromHash() ?? stories[0]);
+  const [screenIndex, setScreenIndex] = useState(0);
+  const screen = story.screens[screenIndex] ?? story.screens[0];
+
+  useEffect(() => {
+    const followLink = () => {
+      const linkedStory = storyFromHash();
+      if (linkedStory) {
+        setStory(linkedStory);
+        setScreenIndex(0);
+      }
+    };
+    window.addEventListener('hashchange', followLink);
+    return () => window.removeEventListener('hashchange', followLink);
+  }, []);
+
+  return <section className="home-explorer home-boundary" aria-labelledby="explorer-title">
+    <div className="home-story-heading">
+      <h2 id="explorer-title">Follow the work, from lead to close.</h2>
+      <p>Choose a part of the workspace to see how it works.</p>
+    </div>
+    <div className="home-explorer-shell">
+      <div className="home-chapters" role="group" aria-label="Workspace walkthrough">
+        {stories.map((chapter) => <button
+          className="home-chapter"
+          id={chapter.id}
+          key={chapter.id}
+          type="button"
+          aria-pressed={story.id === chapter.id}
+          aria-controls="workspace-preview"
+          onClick={() => {
+            if (chapter.id === story.id) return;
+            setStory(chapter);
+            setScreenIndex(0);
+            window.history.replaceState(window.history.state, '', '#' + chapter.id);
+          }}
+        >
+          <chapter.icon size={19} aria-hidden="true" />
+          <span>{chapter.name}</span>
+          <ArrowRight className="home-chapter-arrow" size={16} aria-hidden="true" />
+        </button>)}
+      </div>
+
+      <div className="home-explorer-panel" id="workspace-preview">
+        <div className="home-explorer-copy" aria-live="polite">
+          <h3>{story.title}</h3>
+          <p>{story.description}</p>
+        </div>
+        <div className="home-explorer-preview">
+          <div className="home-explorer-toolbar">
+            {story.screens.length > 1
+              ? <div className="home-preview-options" role="group" aria-label="Workspace preview">
+                {story.screens.map(({ label }, index) => <button
+                  type="button"
+                  key={label}
+                  aria-pressed={screenIndex === index}
+                  onClick={() => setScreenIndex(index)}
+                >{label}</button>)}
+              </div>
+              : <span>{screen.label}</span>}
+          </div>
+          <div className="home-explorer-screen" key={screen.image}>
+            <Screen darkMedia={darkMedia} name={screen.image} alt={screen.alt} />
+          </div>
+        </div>
+        <dl className="home-story-details">
+          {story.details.map(([title, description]) => <div key={title}><dt>{title}</dt><dd>{description}</dd></div>)}
+        </dl>
+      </div>
+    </div>
+  </section>;
+}
+
 export default function ProductHome({ appearance, appearanceMode, signIn, onDemo }: {
   appearance: ReactNode;
   appearanceMode: Session['preferences']['appearance'];
@@ -173,6 +273,14 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
   }, []);
 
   useEffect(() => {
+    // Fragment targets may mount after the browser's initial anchor lookup.
+    const destination = document.getElementById(window.location.hash.slice(1));
+    if (destination && main.current?.contains(destination)) {
+      destination.scrollIntoView({ behavior: 'instant' });
+    }
+  }, []);
+
+  useEffect(() => {
     if (!main.current || !('IntersectionObserver' in window) ||
       matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const observer = new IntersectionObserver((entries) => {
@@ -182,7 +290,7 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
         observer.unobserve(entry.target);
       }
     }, { threshold: .1 });
-    for (const figure of main.current.querySelectorAll('.home-story figure, .home-workspace figure')) {
+    for (const figure of main.current.querySelectorAll('.home-intelligence-grid figure, .home-data-grid figure, .home-appearance-grid')) {
       if (figure.getBoundingClientRect().top >= window.innerHeight) observer.observe(figure);
     }
     return () => observer.disconnect();
@@ -231,10 +339,21 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
         {featureLinks.map(([id, label]) => <a key={id} href={'#' + id}>{label}</a>)}
       </nav>
 
-      <section id="tour" className="home-workspace home-boundary" aria-labelledby="tour-title">
+      <ProductExplorer darkMedia={darkMedia} />
+
+      <section id="tour" className="home-tour home-workspace home-boundary" aria-labelledby="tour-title">
         <div className="home-story-heading">
           <h2 id="tour-title">Take a product tour.</h2>
           <p>Follow a sample enquiry from the pipeline to its lead record, set a reminder, and see Email and Lead Assistant in action.</p>
+          <details className="home-tour-transcript">
+            <summary>Tour transcript</summary>
+            <ol>
+              <li>Open Today to see the pipeline and upcoming follow-ups.</li>
+              <li>Search Leads and open a record to review its stage and history.</li>
+              <li>Use Remind me and choose a date for the follow-up.</li>
+              <li>Read email threads tied to a lead and ask Lead Assistant about patterns in recorded notes.</li>
+            </ol>
+          </details>
         </div>
         <video
           className="home-tour-video"
@@ -250,47 +369,6 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
           <track kind="captions" src="/product-home/salesdrone-tour.en.vtt" srcLang="en" label="English" default />
           <a href="/product-home/salesdrone-tour.mp4">Download the SalesDrone tour</a>
         </video>
-        <details className="home-tour-transcript">
-          <summary>Tour transcript</summary>
-          <ol>
-            <li>Open Today to see the pipeline and upcoming follow-ups.</li>
-            <li>Search Leads and open a record to review its stage and history.</li>
-            <li>Use Remind me and choose a date for the follow-up.</li>
-            <li>Read email threads tied to a lead and ask Lead Assistant about patterns in recorded notes.</li>
-          </ol>
-        </details>
-      </section>
-
-      <div className="home-stories">
-        {stories.map((story) => <section key={story.id} id={story.id} className="home-story home-boundary" aria-labelledby={story.id + '-title'}>
-          <div className="home-story-heading">
-            <p className="home-kicker">{story.name}</p>
-            <h2 id={story.id + '-title'}>{story.title}</h2>
-            <p>{story.description}</p>
-          </div>
-          <div className={story.id === 'follow-ups' ? 'home-screenshot-pair' : 'home-wide-screens'}>
-            <figure className="home-showcase"><Screen darkMedia={darkMedia} name={story.image} alt={story.alt} /></figure>
-            {story.id === 'leads' && <figure className="home-showcase"><Screen darkMedia={darkMedia} name="record" alt="Lead details, stage journey, and activity for a fictional enquiry" /></figure>}
-            {story.id === 'follow-ups' && <figure className="home-showcase"><Screen darkMedia={darkMedia} name="reminder" alt="Set a reminder form with timing, recipient and notes for a lead follow-up" /></figure>}
-          </div>
-          <dl className="home-story-details">
-            {story.details.map(([title, description]) => <div key={title}><dt>{title}</dt><dd>{description}</dd></div>)}
-          </dl>
-        </section>)}
-      </div>
-
-      <section id="email" className="home-workspace home-boundary" aria-labelledby="email-title">
-        <div className="home-story-heading">
-          <p className="home-kicker">Email & digests</p>
-          <h2 id="email-title">Keep email with the lead.</h2>
-          <p>When your workspace enables Email Beta, send formatted messages and receive replies in SalesDrone.</p>
-        </div>
-        <figure className="home-showcase"><Screen darkMedia={darkMedia} name="email" alt="SalesDrone Email Beta with mailbox filters, a conversation list, and a formatted reply" /></figure>
-        <dl className="home-story-details">
-          <div><dt>Compose and reply</dt><dd>Use the formatting toolbar to add headings, lists, and links. Read HTML messages or switch to plain text.</dd></div>
-          <div><dt>Open the linked lead</dt><dd>Read the thread alongside the lead’s calls, comments, and shared tasks as you prepare the next follow-up.</dd></div>
-          <div><dt>Stay up to date</dt><dd>Workspace notifications can cover invitations, assignments, and stage outcomes. Daily reminders and weekly recaps summarize task work when enabled.</dd></div>
-        </dl>
       </section>
 
       <section id="lead-intelligence" className="home-workspace home-boundary" aria-labelledby="intelligence-title">
@@ -331,14 +409,24 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
         </div>
       </section>
 
-      <section id="appearance" className="home-workspace home-boundary" aria-labelledby="appearance-title">
+      <section id="appearance" className="home-appearance home-workspace home-boundary" aria-labelledby="appearance-title">
         <div className="home-story-heading">
           <h2 id="appearance-title">Choose how SalesDrone looks.</h2>
           <p>Switch between light and dark, choose an accent or monochrome, and adjust the font and display scale. Book mode uses handwritten typography and bound pages.</p>
         </div>
-        <div className="home-workspace-grid">
-          <figure className="home-showcase"><Screen darkMedia={darkMedia} name="appearance" alt="Appearance settings with accent choices and interface preferences" /></figure>
-          <figure className="home-showcase"><Screen darkMedia={darkMedia} name="book" alt="The SalesDrone Tasks page shown in Book mode" /></figure>
+        <div className="home-appearance-grid">
+          <figure>
+            <figcaption><SlidersHorizontal size={18} aria-hidden="true" /> Appearance settings</figcaption>
+            <div className="home-appearance-frame">
+              <Screen darkMedia={darkMedia} name="appearance" alt="Appearance settings with accent choices and interface preferences" />
+            </div>
+          </figure>
+          <figure>
+            <figcaption><BookOpen size={18} aria-hidden="true" /> Book mode</figcaption>
+            <div className="home-appearance-frame">
+              <Screen darkMedia={darkMedia} name="book" alt="The SalesDrone Tasks page shown in Book mode" />
+            </div>
+          </figure>
         </div>
       </section>
 

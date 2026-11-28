@@ -17,7 +17,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 - Use Astryx Neutral Figtree by default, use Astryx calendars in date fields, and align sidebar indicators.
 - Add a captioned product tour to the signed-out homepage.
-- Improve homepage screenshot clarity with high-density captures, wider frames, and an expandable viewer.
+- Present Leads, Tasks, Reporting, and Email in one interactive homepage walkthrough. Align the smaller Appearance and Book mode previews and keep full-resolution viewing available.
 - Match every homepage screenshot to the active light or dark appearance, add reduced-motion-aware transitions, and show an animated drone mark while SalesDrone starts.
 - Use the SalesDrone drone mark in the collapsed sidebar, browser tab, installed web app, and push notifications.
 - Apply shared Astryx Neutral surfaces, control sizes and field labels across the workspace. Align the Leads filters and stage controls, simplify sign-in, and give custom field editing the same layout as other forms.
