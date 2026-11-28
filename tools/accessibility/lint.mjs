@@ -18,9 +18,9 @@ export function accessibilityLinter() {
           : rule === 0 || rule === 'off' ? 'off' : 'warn',
       ])),
     }, {
-      files: ['apps/web/src/features/ImportPage.tsx'],
+      files: ['apps/web/src/features/ImportPage.tsx', 'apps/web/src/components/ProductHome.tsx'],
       rules: {
-        // The labelled workbook viewport needs focus so keyboard users can scroll its columns.
+        // Labelled workbook and screenshot viewports need focus for keyboard scrolling.
         'jsx-a11y/no-noninteractive-tabindex': ['warn', { roles: ['region', 'tabpanel'] }],
       },
     }],

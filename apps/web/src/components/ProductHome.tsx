@@ -1,8 +1,9 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Session } from '../lib/types';
 import {
   ArrowDown, ArrowRight, Download, FileSpreadsheet, KeyRound,
-  Laptop, SlidersHorizontal, Smartphone,
+  Laptop, Maximize2, SlidersHorizontal, Smartphone, X,
 } from 'lucide-react';
 import { Brand } from './UI';
 
@@ -110,18 +111,46 @@ function Screen({ name, alt, darkMedia, eager = false }: {
   eager?: boolean;
 }) {
   const [width, height] = screenSizes[name];
-  return <picture>
-    <source media={darkMedia} srcSet={'/product-home/dark/' + name + '.webp'} />
-    <img
-      src={'/product-home/' + name + '.webp'}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={eager ? undefined : 'lazy'}
-      decoding="async"
-      fetchPriority={eager ? 'high' : undefined}
-    />
-  </picture>;
+  const [actualSize, setActualSize] = useState(false);
+  const light = '/product-home/' + name;
+  const dark = '/product-home/dark/' + name;
+  return <Dialog.Root onOpenChange={(open) => { if (!open) setActualSize(false); }}>
+    <Dialog.Trigger className="home-screen-trigger" aria-label={'Enlarge screenshot: ' + alt}>
+      <picture>
+        <source media={darkMedia} srcSet={`${dark}.webp 1x, ${dark}@2x.webp 2x`} />
+        <img
+          src={light + '.webp'}
+          srcSet={`${light}.webp 1x, ${light}@2x.webp 2x`}
+          alt=""
+          width={width}
+          height={height}
+          loading={eager ? undefined : 'lazy'}
+          decoding="async"
+          fetchPriority={eager ? 'high' : undefined}
+        />
+      </picture>
+      <span className="home-screen-enlarge" aria-hidden="true"><Maximize2 size={16} /></span>
+    </Dialog.Trigger>
+    <Dialog.Portal>
+      <Dialog.Overlay className="dialog-overlay" />
+      <Dialog.Content className="dialog home-screen-dialog">
+        <div className="home-screen-toolbar">
+          <Dialog.Title>Product screenshot</Dialog.Title>
+          <Dialog.Description className="sr-only">{alt}</Dialog.Description>
+          <button type="button" className="button home-screen-size" aria-pressed={actualSize} onClick={() => setActualSize(!actualSize)}>
+            Actual size
+          </button>
+          <Dialog.Close className="icon-button" aria-label="Close screenshot"><X size={20} /></Dialog.Close>
+        </div>
+        <div className="home-screen-image" data-actual-size={actualSize} tabIndex={0} role="region" aria-label="Screenshot preview">
+          <picture>
+            <source media={darkMedia} srcSet={dark + '@2x.webp'} />
+            <img src={light + '@2x.webp'} alt={alt} width={width} height={height} />
+          </picture>
+        </div>
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>;
 }
 
 export default function ProductHome({ appearance, appearanceMode, signIn, onDemo }: {
@@ -182,7 +211,7 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
           <div className="home-hero-phone">
             <Screen darkMedia={darkMedia} name="phone" alt="Phone layout showing a lead follow-up, its due date, and a reschedule action" />
           </div>
-          <figcaption>SalesDrone on desktop and phone, shown with sample data.</figcaption>
+          <figcaption>Desktop and phone with sample data. Select a screenshot to enlarge it.</figcaption>
         </figure>
       </section>
 
@@ -197,7 +226,7 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
             <h2 id={story.id + '-title'}>{story.title}</h2>
             <p>{story.description}</p>
           </div>
-          <div className={story.id !== 'insights' ? 'home-screenshot-pair' : undefined}>
+          <div className={story.id === 'follow-ups' ? 'home-screenshot-pair' : 'home-wide-screens'}>
             <figure className="home-showcase"><Screen darkMedia={darkMedia} name={story.image} alt={story.alt} /></figure>
             {story.id === 'leads' && <figure className="home-showcase"><Screen darkMedia={darkMedia} name="record" alt="Lead details, stage journey, and activity for a fictional enquiry" /></figure>}
             {story.id === 'follow-ups' && <figure className="home-showcase"><Screen darkMedia={darkMedia} name="reminder" alt="Set a reminder form with timing, recipient and notes for a lead follow-up" /></figure>}
@@ -230,8 +259,10 @@ export default function ProductHome({ appearance, appearanceMode, signIn, onDemo
         </div>
         <div className="home-intelligence-grid">
           {intelligence.map((feature) => <article key={feature.id} id={feature.id} className="home-feature-card">
-            <h3>{feature.title}</h3>
-            <p>{feature.text}</p>
+            <div>
+              <h3>{feature.title}</h3>
+              <p>{feature.text}</p>
+            </div>
             <figure><Screen darkMedia={darkMedia} name={feature.image} alt={feature.alt} /></figure>
           </article>)}
         </div>
