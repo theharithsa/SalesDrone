@@ -142,7 +142,6 @@
   --chart-six: var(--md-sys-color-secondary);
   --chart-warning: var(--md-sys-color-error);
 }
-:root[data-accent='monochrome'] .brand-symbol { filter: grayscale(1); }
 
 :root:not([data-reading-mode='book'])[data-font-style='open-sans'],
 [data-preview-font='open-sans'] {
@@ -218,9 +217,6 @@
   -webkit-mask: url('/brand/salesdrone-mark.png') center / 120% no-repeat;
   mask: url('/brand/salesdrone-mark.png') center / 120% no-repeat;
 }
-.brand .brand-symbol { display: none; }
-.sidebar-collapsed .sidebar-brand .brand-drone { display: none; }
-.sidebar-collapsed .sidebar-brand .brand-symbol { display: grid; }
 .brand-dot { color: var(--accent); }
 @media (forced-colors: active) {
   .brand .brand-drone { background: CanvasText; forced-color-adjust: none; }

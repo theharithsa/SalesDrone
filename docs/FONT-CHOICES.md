@@ -1,6 +1,6 @@
 # Personal font choices and activity typography
 
-Settings > Appearance & time includes an Interface font selector and an immediate draft sample. Save changes applies the selection after the account update succeeds. Standard is the default and keeps the existing Google Sans headings and Manrope body. Alternatives are [Inter](https://fonts.google.com/specimen/Inter), [Source Sans 3](https://fonts.google.com/specimen/Source+Sans+3), and [Lora](https://fonts.google.com/specimen/Lora). These are curated interface choices, not arbitrary uploaded fonts or external stylesheet URLs.
+Settings > Appearance & time includes an Interface font selector and an immediate draft sample. Save changes applies the selection after the account update succeeds. Standard is the default and uses the Figtree typeface from Astryx Neutral. Alternatives are [Inter](https://fonts.google.com/specimen/Inter), [Source Sans 3](https://fonts.google.com/specimen/Source+Sans+3), and [Lora](https://fonts.google.com/specimen/Lora). These are curated interface choices, not arbitrary uploaded fonts or external stylesheet URLs.
 
 ## Scope and precedence
 

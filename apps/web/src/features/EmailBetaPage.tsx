@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Inbox, Mail, MailOpen, Plus, RefreshCw, Send, Unlink } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Inbox, MailOpen, Plus, RefreshCw, Reply, Send, Unlink } from 'lucide-react';
 import { Button as AstryxButton } from '@astryxdesign/core/Button';
 import { ErrorMessage, Modal } from '../components/UI';
 import { displayDate } from '../lib/types';
@@ -52,7 +52,8 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
   const [listError, setListError] = useState('');
   const [detailError, setDetailError] = useState('');
   const detailButton = useRef<HTMLHeadingElement>(null);
-  const navigationFocus = useRef<HTMLElement | null>(null);
+  const readingPane = useRef<HTMLElement>(null);
+  const conversationRows = useRef(new Map<string, HTMLButtonElement>());
   const previousFocus = useRef<HTMLElement | null>(null);
   const refreshInbox = () => {
     setListCursor(null);
@@ -102,11 +103,17 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
     return () => controller.abort();
   }, [selected, refresh, request]);
   useEffect(() => {
-    if (selected) detailButton.current?.focus();
+    if (!selected) return;
+    if (readingPane.current) readingPane.current.scrollTop = 0;
+    detailButton.current?.focus({ preventScroll: true });
   }, [selected]);
   const active = thread?.id === selected ? thread : null;
+  const activeIndex = items.findIndex(item => item.id === selected);
+  const previous = activeIndex > 0 ? items[activeIndex - 1] : undefined;
+  const following = activeIndex >= 0 ? items[activeIndex + 1] : undefined;
 
-  return <ImportSurface className="email-beta">
+
+  return <ImportSurface className="page-body email-beta">
     <header className="email-beta-header">
       <div><h1>Email <span className="email-beta-badge">Beta</span></h1><p>Manage your lead conversations.</p></div>
       <div className="email-beta-actions">
@@ -135,10 +142,11 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
         <ErrorMessage error={listError} />
         {!items.length && !listError && <p className="email-beta-hint" role="status">{loading ? 'Loading conversations…' : 'No conversations on this page.'}</p>}
         <ul>{items.map(item => <li key={item.id}><button type="button" className="email-beta-row"
-          aria-current={selected === item.id || undefined} onClick={event => {
-            navigationFocus.current = event.currentTarget;
-            setSelected(item.id);
-          }}>
+          ref={node => {
+            if (node) conversationRows.current.set(item.id, node);
+            else conversationRows.current.delete(item.id);
+          }}
+          aria-current={selected === item.id || undefined} onClick={() => setSelected(item.id)}>
           <span className="email-beta-row-byline">
             <span>{item.unread && <span className="email-beta-unread" aria-label="Unread" role="img" />}{item.correspondent}</span>
             <small>{displayDate(item.updatedAt, timezone)}</small>
@@ -148,11 +156,19 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
         </button></li>)}</ul>
         {next && <Button disabled={loading} onClick={() => setListCursor(next)}>Load more conversations</Button>}
       </section>
-      <section className="email-beta-thread" aria-label="Selected conversation" aria-busy={detailBusy}>
-        <Button className="email-beta-back" onClick={() => {
-          setSelected('');
-          requestAnimationFrame(() => navigationFocus.current?.focus());
-        }}><ArrowLeft size={16} /> Conversations</Button>
+      <section ref={readingPane} className="email-beta-thread" aria-label="Selected conversation" aria-busy={detailBusy}>
+        {selected && <div className="email-beta-reading-toolbar">
+          <Button className="email-beta-back" onClick={() => {
+            setSelected('');
+            requestAnimationFrame(() => conversationRows.current.get(selected)?.focus());
+          }}><ArrowLeft size={16} /> Inbox</Button>
+          {(previous || following) && <div className="email-beta-reading-nav" role="group" aria-label="Conversation navigation">
+            <Button aria-label="Previous conversation" disabled={!previous || detailBusy}
+              onClick={() => previous && setSelected(previous.id)}><ChevronLeft size={18} /></Button>
+            <Button aria-label="Next conversation" disabled={!following || detailBusy}
+              onClick={() => following && setSelected(following.id)}><ChevronRight size={18} /></Button>
+          </div>}
+        </div>}
         <h2 ref={detailButton} tabIndex={-1}>{active?.subject || (selected ? 'Conversation' : 'Select a conversation')}</h2>
         {detailBusy && <p role="status">Loading messages…</p>}
         <ErrorMessage error={detailError} />
@@ -190,7 +206,7 @@ export default function EmailBetaPage({ request, admin, target, onConsumeTarget,
           </ol>
           {active.canSend && <Button variant="primary" onClick={event => {
             previousFocus.current = event.currentTarget; setDraft({ reply: active });
-          }}>Reply</Button>}
+          }}><Reply size={16} /> Reply</Button>}
         </>}
       </section>
     </div>
@@ -258,16 +274,24 @@ function EmailComposer({ lead: initialLead, reply, request, onClose, onQueued, r
       } catch (cause) { setError(errorText(cause)); }
       finally { setBusy(false); }
     }}>
-      {reply ? <p>To {reply.correspondent}</p> : lead ? <div className="email-beta-actions"><span>To {lead.name}</span>
-        <Button type="button" disabled={busy} onClick={() => setLead(undefined)}>Change lead</Button></div> :
-        <LeadPicker request={request} onSelect={setLead} />}
-      {!reply && <label>Subject<input value={subject} maxLength={180} required disabled={busy} onChange={event => setSubject(event.target.value)} /></label>}
+      <div className="email-compose-envelope">
+        {reply || lead ? <div className="email-compose-recipient">
+          <span>To</span>
+          <strong>{reply?.correspondent || lead?.name}</strong>
+          {!reply && <Button type="button" variant="ghost" disabled={busy} onClick={() => setLead(undefined)}>Change lead</Button>}
+        </div> : <LeadPicker request={request} onSelect={setLead} />}
+        {reply ? <p className="email-compose-recipient"><span>Subject</span><strong>{reply.subject}</strong></p>
+          : <label className="email-compose-subject">Subject<input value={subject} maxLength={180} required
+            disabled={busy} onChange={event => setSubject(event.target.value)} /></label>}
+      </div>
       <Suspense fallback={<p role="status">Loading editor…</p>}>
         <EmailRichEditor disabled={busy} onChange={setDraft} />
       </Suspense>
       {tooLong && <p role="alert">This message is too long. Shorten the text or remove some formatting.</p>}
       <ErrorMessage error={error} />
-      <Button variant="primary" type="submit" disabled={!canSend}><Mail size={16} />{busy ? 'Queuing…' : 'Send email'}</Button>
+      <div className="email-compose-footer">
+        <Button variant="primary" type="submit" disabled={!canSend}><Send size={16} />{busy ? 'Queuing…' : 'Send email'}</Button>
+      </div>
     </form></ImportSurface>
   </Modal>;
 }

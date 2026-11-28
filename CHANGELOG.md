@@ -7,6 +7,22 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 
 
+## [Unreleased]
+
+### Added
+
+- A product homepage at sign-in with tightly cropped workspace previews, sections for email, lead intelligence, reminders, import and export, and appearance, plus Mac and Android installation instructions.
+
+### Changed
+
+- Use Astryx Neutral Figtree by default, use Astryx calendars in date fields, and align sidebar indicators.
+- Add a captioned product tour to the signed-out homepage.
+- Present Leads, Tasks, Reporting, and Email in one interactive homepage walkthrough. Align the smaller Appearance and Book mode previews and keep full-resolution viewing available.
+- Match every homepage screenshot to the active light or dark appearance, add reduced-motion-aware transitions, and show an animated drone mark while SalesDrone starts.
+- Use the SalesDrone drone mark in the collapsed sidebar, browser tab, installed web app, and push notifications.
+- Apply shared Astryx Neutral surfaces, control sizes and field labels across the workspace. Align the Leads filters and stage controls, simplify sign-in, and give custom field editing the same layout as other forms.
+- Email Beta uses an icon-only formatting toolbar, clearer recipient and subject rows, previous and next conversation controls, and Cmd/Ctrl+Enter to send.
+
 ## [2.15.0] - 2026-11-29
 
 ### Added

@@ -1,3 +1,4 @@
+import { WorkspaceDateField, WorkspaceDateTimeField } from './WorkspaceDateField';
 import CustomFieldInputs from './CustomFieldInputs';
 import {
   defaultFieldOptions,
@@ -157,7 +158,7 @@ export function LeadForm({
             <span className="field-label">{labelFor(config, 'phone')}</span>
             <input
               name="phone"
-              placeholder="N/A"
+              placeholder={lead ? "N/A" : undefined}
               required={!lead || (!lead.needsReview && !lead.email && !visible('email'))}
               type="tel"
               maxLength={40}
@@ -205,18 +206,17 @@ export function LeadForm({
             />
           </label>
         ) : null}
-        <label key="enquiryDate" className="material-field">
-          <span className="field-label">{labelFor(config, 'enquiryDate')}</span>
-          <input
+        <div key="enquiryDate">
+          <WorkspaceDateField
+            label={labelFor(config, 'enquiryDate')}
             name="enquiryDate"
-            type="date"
             required={!lead?.needsReview}
             defaultValue={lead ? lead.enquiryDate : dateOnly()}
           />
           {lead?.originalEnquiryDate ? (
             <small>Original: {lead.originalEnquiryDate}</small>
           ) : null}
-        </label>
+        </div>
         {visible('legacyStatus') ? (
           <label key="legacyStatus" className="material-field">
             <span className="field-label">
@@ -484,10 +484,7 @@ export function CallForm({
                 placeholder="e.g. Share the product overview"
               />
             </label>
-            <label className="material-field">
-              <span className="field-label">Remind me</span>
-              <input name="dueAt" type="datetime-local" required />
-            </label>
+            <WorkspaceDateTimeField label="Remind me" name="dueAt" required />
             <p className="field-hint full">
               Time is in your device timezone:{' '}
               {Intl.DateTimeFormat().resolvedOptions().timeZone}.
@@ -565,10 +562,7 @@ export function TaskForm({
             placeholder="e.g. Follow up on the enquiry"
           />
         </label>
-        <label className="material-field">
-          <span className="field-label">Due date and time</span>
-          <input name="dueAt" type="datetime-local" required />
-        </label>
+        <WorkspaceDateTimeField label="Due date and time" name="dueAt" required />
         {leadId && members.length ? <label className="material-field">
           <span className="field-label">Responsible member</span>
           <select name="recipientUid">
@@ -719,15 +713,7 @@ export function RescheduleForm({
       }}
     >
       {action !== 'complete' ? <>
-      <label className="material-field">
-        <span className="field-label">New date and time</span>
-        <input
-          name="dueAt"
-          type="datetime-local"
-          required
-          defaultValue={local}
-        />
-      </label>
+      <WorkspaceDateTimeField label="New date and time" name="dueAt" required defaultValue={local} />
       <p className="field-hint">
         Time is in {Intl.DateTimeFormat().resolvedOptions().timeZone}.
       </p>

@@ -3,6 +3,7 @@ import type { EmailTarget, EmailThread } from './features/EmailBetaPage';
 import { normalizeAccent } from './lib/accent';
 import { UsageAnalyticsFrame } from './components/UsageAnalytics';
 import WorkspacePageHeader from './components/WorkspacePageHeader';
+import ProductHome from './components/ProductHome';
 import { WorkspaceReadCache } from './lib/workspace-read-cache';
 import LeadCardOrder from './components/LeadCardOrder';
 import CompaniesPage from './features/CompaniesPage';
@@ -102,7 +103,6 @@ import {
   PanelLeftOpen,
   Menu,
   LoaderCircle,
-  PhoneCall,
   Filter,
   X,
 } from 'lucide-react';
@@ -178,7 +178,7 @@ function taskDigestWindow() {
   return params.get('status') === 'Completed' && from && until && tz &&
     [from, until].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value)) ? { from, until, tz } : null;
 }
-export default function App() {
+export default function App({ onReady }: { onReady: () => void }) {
   const [session, setSession] = useState<Session | null>(null),
     [guest, setGuest] = useState(false),
     [inboxHasUnread, setInboxHasUnread] = useState(false),
@@ -519,6 +519,9 @@ export default function App() {
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
   }, [appearance, bookMode, fontStyle, displayScale, accentPalette]);
+  useEffect(() => {
+    if (authReady) onReady();
+  }, [authReady, onReady]);
   async function changeTheme(next: 'light' | 'dark') {
     if (demo || !session) {
       setGuestAppearance(next);
@@ -1543,128 +1546,41 @@ export default function App() {
       ...data.leads.map((lead) => lead.source).filter(Boolean),
     ]),
   ];
-  if (!authReady)
-    return (
-      <div className="startup">
-        <Brand full />
-        <Loading />
-      </div>
-    );
-  if (!active)
-    return (
-      <div className="login-page">
-        <div className="login-top">
-          <Brand full />
-          <div className="login-top-actions">
-            <ThemeToggle
-              appearance={appearance}
-              onChange={(next) => void changeTheme(next)}
-              busy={themeBusy}
-            />
-          </div>
-        </div>
-        <div className="login-content">
-          <div className="login-copy">
-            <span className="eyebrow">
-              A LITTLE CLARITY. A LOT OF MOMENTUM.
-            </span>
-            <h1>
-              <span className="conversation-script">Good conversations.</span>
-              <br />
-              <em>Better follow-through.</em>
-            </h1>
-            <p>
-              Your enquiries, calls, and next steps.
-              <br />
-              Together in one calm workspace.
-            </p>
-            <div className="login-art" aria-label="Illustrative sales workflow">
-              <div className="login-art-row">
-                <span>01</span>
-                <span>
-                  <strong>Capture an enquiry</strong>
-                  <small>One place for every conversation</small>
-                </span>
-                <span className="badge">New</span>
-              </div>
-              <div className="login-art-row">
-                <span>02</span>
-                <span>
-                  <strong>Keep the next step clear</strong>
-                  <small>Notes, calls and timely follow-ups</small>
-                </span>
-                <span className="badge">Working</span>
-              </div>
-              <div className="login-art-row">
-                <span>03</span>
-                <span>
-                  <strong>Build the relationship</strong>
-                  <small>From first contact to the right opportunity</small>
-                </span>
-                <span className="badge stage-qualified">Qualified</span>
-              </div>
-            </div>
-            <div className="login-benefits">
-              <span>
-                <UsersRound size={17} /> Know your leads.
-              </span>
-              <span>
-                <PhoneCall size={17} /> Keep the context.
-              </span>
-              <span>
-                <Bell size={17} /> Remember the next step.
-              </span>
-            </div>
-          </div>
-          <section className="login-card">
-            <span className="login-icon">
-              <ArrowUpRight size={28} />
-            </span>
-            <h2>Welcome to SalesDrone</h2>
-            <p>Sign in to pick up where you left off.</p>
-            <button
-              className="button google-button"
-              disabled={sessionBusy}
-              onClick={() => authAction()}
-            >
-              {sessionBusy ? (
-                <LoaderCircle className="spin" size={18} />
-              ) : (
-                <GoogleIcon />
-              )}
-              Continue with Google
-            </button>
-            <button className="text-button" onClick={() => authAction(true)}>
-              Having trouble? Use redirect sign-in
-            </button>
-            <div className="login-divider">
-              <span>or take a look around</span>
-            </div>
-            <button
-              className="button demo-button"
-              onClick={() => {
-                setGuest(true);
-                setPage('today');
-                demoRef.current = demoData();
-                setError('');
-              }}
-            >
-              Explore the demo <ArrowRight size={16} />
-            </button>
-            <p className="login-fine">
-              Live access is managed by your administrator.
-              <br />
-              Other accounts can explore with sample data.
-            </p>
-            <ErrorMessage error={error} />
-          </section>
-        </div>
-        <footer className="login-bottom">
-          <span>SalesDrone by AvinyaTech</span>
-          <span>Built for a more focused workday.</span>
-        </footer>
-      </div>
-    );
+  if (!authReady) return null;
+  if (!active) {
+    const openDemo = () => {
+      setGuest(true);
+      setPage('today');
+      demoRef.current = demoData();
+      setError('');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    };
+    return <ProductHome
+      appearanceMode={appearance}
+      appearance={<ThemeToggle
+        appearance={appearance}
+        onChange={(next) => void changeTheme(next)}
+        busy={themeBusy}
+      />}
+      onDemo={openDemo}
+      signIn={<section className="login-card" id="sign-in" aria-labelledby="sign-in-title" tabIndex={-1}>
+        <h2 id="sign-in-title">Sign in to SalesDrone</h2>
+        <p>Use the Google account approved by your workspace Admin.</p>
+        <button className="button google-button" type="button" disabled={sessionBusy} onClick={() => authAction()}>
+          {sessionBusy ? <LoaderCircle className="spin" size={18} /> : <GoogleIcon />}
+          Continue with Google
+        </button>
+        <button className="text-button" type="button" disabled={sessionBusy} onClick={() => authAction(true)}>
+          Having trouble? Use redirect sign-in
+        </button>
+        <div className="login-divider">or try it with sample data</div>
+        <button className="button demo-button" type="button" onClick={openDemo}>
+          Explore the demo <ArrowRight size={16} aria-hidden="true" />
+        </button>
+        <ErrorMessage error={error} />
+      </section>}
+    />;
+  }
   return (
     <div
       className={'app-shell ' + (sidebarCollapsed ? 'sidebar-collapsed' : '')}
@@ -2233,67 +2149,80 @@ export default function App() {
                         </span>
                       ) : null}
                     </summary>
-                    {admin||demo?<><ErrorMessage error={assigneesError}/><AssigneeFilter value={assignee} onChange={setAssignee} members={assignees} loading={assigneesLoading}/></>:null}
-                    <div className="leads-toolbar">
-                      <select
-                        aria-label="Search field"
-                        value={searchField}
-                        onChange={(e) => setSearchField(e.target.value)}
-                      >
-                        <option value="all">All lead fields and comments</option>
-                        <option value="name">
-                          {labelFor(fieldOptions, 'name')}
-                        </option>
-                        <option value="company">
-                          {labelFor(fieldOptions, 'company')}
-                        </option>
-                        <option value="phone">
-                          {labelFor(fieldOptions, 'phone')}
-                        </option>
-                        <option value="email">
-                          {labelFor(fieldOptions, 'email')}
-                        </option>
-                        <option value="location">
-                          {labelFor(fieldOptions, 'location')}
-                        </option>
-                        <option value="zone">
-                          {labelFor(fieldOptions, 'zone')}
-                        </option>
-                      </select>
-                      <select
-                        aria-label="Filter stage"
-                        value={stage}
-                        onChange={(e) => setStage(e.target.value)}
-                      >
-                        <option value="">
-                          All {labelFor(fieldOptions, 'stage').toLowerCase()}
-                        </option>
-                        {withCurrent(
-                          fieldOptions.values.stage,
-                          selected?.stage,
-                        ).map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
-                      <select
-                        aria-label="Filter source"
-                        value={source}
-                        onChange={(e) => setSource(e.target.value)}
-                      >
-                        <option value="">
-                          All {labelFor(fieldOptions, 'source').toLowerCase()}
-                        </option>
-                        {sourceOptions.map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
+                    <div className="lead-filter-sheet">
+                      {admin || demo ? <ErrorMessage error={assigneesError} /> : null}
+                      <div className="leads-toolbar">
+                        {admin || demo ? <AssigneeFilter value={assignee} onChange={setAssignee}
+                          members={assignees} loading={assigneesLoading} /> : null}
+                        <label>
+                          Search field
+                          <select
+                            aria-label="Search field"
+                            value={searchField}
+                            onChange={(e) => setSearchField(e.target.value)}
+                          >
+                            <option value="all">All fields</option>
+                            <option value="name">
+                              {labelFor(fieldOptions, 'name')}
+                            </option>
+                            <option value="company">
+                              {labelFor(fieldOptions, 'company')}
+                            </option>
+                            <option value="phone">
+                              {labelFor(fieldOptions, 'phone')}
+                            </option>
+                            <option value="email">
+                              {labelFor(fieldOptions, 'email')}
+                            </option>
+                            <option value="location">
+                              {labelFor(fieldOptions, 'location')}
+                            </option>
+                            <option value="zone">
+                              {labelFor(fieldOptions, 'zone')}
+                            </option>
+                          </select>
+                        </label>
+                        <label>
+                          {labelFor(fieldOptions, 'stage')}
+                          <select
+                            aria-label="Filter stage"
+                            value={stage}
+                            onChange={(e) => setStage(e.target.value)}
+                          >
+                            <option value="">
+                              All {labelFor(fieldOptions, 'stage').toLowerCase()}
+                            </option>
+                            {withCurrent(
+                              fieldOptions.values.stage,
+                              selected?.stage,
+                            ).map((s) => (
+                              <option key={s}>{s}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          {labelFor(fieldOptions, 'source')}
+                          <select
+                            aria-label="Filter source"
+                            value={source}
+                            onChange={(e) => setSource(e.target.value)}
+                          >
+                            <option value="">
+                              All {labelFor(fieldOptions, 'source').toLowerCase()}
+                            </option>
+                            {sourceOptions.map((s) => (
+                              <option key={s}>{s}</option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+                      <LeadFilters
+                        config={fieldOptions}
+                        key={session?.identity.uid || 'demo'}
+                        applied={columnFilters}
+                        onApply={setColumnFilters}
+                      />
                     </div>
-                    <LeadFilters
-                      config={fieldOptions}
-                      key={session?.identity.uid || 'demo'}
-                      applied={columnFilters}
-                      onApply={setColumnFilters}
-                    />
                   </details>
                   <div
                     className="stage-tabs"
@@ -2304,6 +2233,7 @@ export default function App() {
                       <button
                         key={s}
                         className={stage === s ? 'active' : ''}
+                        aria-pressed={stage === s}
                         onClick={() => setStage(s)}
                       >
                         {s || 'All leads'}

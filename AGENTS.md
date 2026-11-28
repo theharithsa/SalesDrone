@@ -49,7 +49,7 @@ Coordinate shared-file changes and keep one integrated release owner.
 
 A screenshot is an example, not a screen-size limit. Shared UI changes require phone, tablet, laptop, desktop and wide-screen review, fractional breakpoint boundaries, short-window scrolling, large text and affected dialogs. Follow docs/DESIGN-SYSTEM.md and record measured coverage/limits.
 
-Use Material 3 as the primary visual system for v2, following docs/DESIGN-SYSTEM.md. Keep responsive touch controls, keyboard focus, Escape,
+Use Astryx Neutral as the workspace visual system, following docs/DESIGN-SYSTEM.md. Keep responsive touch controls, keyboard focus, Escape,
 light/dark contrast and reduced-motion behavior. Preserve Google Sans headings,
 Manrope body, Google Sans first names in lead details, and monospace phone numbers.
 A funnel is a current stage distribution, not evidence of historic conversion.

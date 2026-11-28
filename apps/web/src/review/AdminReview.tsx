@@ -1,5 +1,6 @@
 import LeadHeaderContext from '../components/LeadHeaderContext';
 import TaskListPreview from './TaskListPreview';
+import EmailReviewFixture from './EmailReviewFixture';
 import LeadAssistantPage from "../features/LeadAssistantPage";
 import LeadAssistantPrototype from './LeadAssistantPrototype';
 import '../research.css';
@@ -16,7 +17,7 @@ import { Avatar, Badge, Brand, LeadName, Loading, Modal } from '../components/UI
 import LeadBlade from '../components/LeadBlade';
 import LeadPage from '../components/LeadPage';
 import Assignment from '../components/Assignment';
-import { ScoreBadge } from '../components/LeadScore';
+import LeadScore, { ScoreBadge } from '../components/LeadScore';
 import { ChevronLeft, Pencil } from 'lucide-react';
 import { LeadForm, CallForm, TaskForm } from '../components/Forms';
 import TaskEditForm from '../components/TaskEditForm';
@@ -32,6 +33,7 @@ import '@fontsource-variable/lora';
 import '@fontsource-variable/open-sans';
 import '@fontsource-variable/source-serif-4';
 import '@fontsource/patrick-hand/latin-400.css';
+import '@astryxdesign/theme-neutral/theme.css';
 import '../material/fonts.css';
 import '../material/tokens.css';
 import '../material/base.css';
@@ -315,6 +317,20 @@ function AdminReview() {
     }
     return request(path, method, body);
   }, [request]);
+  if (new URLSearchParams(window.location.search).get('preview') === 'lead-score') {
+    return <main className="page-body" style={{ maxWidth: 700 }}>
+      <div className="panel">
+        <LeadScore leadId="fictional-score" version={1} canRefresh={false} timezone="Asia/Kolkata"
+          request={async () => ({
+            status: 'Ready', score: 71, fit: 32, intent: 42, penalty: 3,
+            band: 'Prioritize follow-up', knownFactors: 5, totalFactors: 14,
+            factors: [{ id: 'sample', label: 'Material samples requested', state: 'present', points: 8,
+              evidence: [{ quote: 'The installation team asked to compare both finishes on Friday.' }] }],
+          })} />
+      </div>
+    </main>;
+  }
+  if (new URLSearchParams(window.location.search).get('preview') === 'email') return <EmailReviewFixture />;
   if (new URLSearchParams(window.location.search).get('preview') === 'assistant-agent')return <LeadAssistantPrototype/>;
   if (new URLSearchParams(window.location.search).get('preview') === 'lead-header') {
     const overlay = new URLSearchParams(window.location.search).has('overlay');

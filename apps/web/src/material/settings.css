@@ -22,15 +22,16 @@
   gap: 4px;
   min-width: 0;
   padding: 8px;
-  border-radius: 22px;
-  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
 }
 .settings-directory-rail a {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  border-radius: 14px;
+  border-radius: var(--control-radius);
   min-height: max(44px, var(--md-touch-target, 0px));
   color: var(--text);
   font-size: .875rem;
@@ -50,8 +51,9 @@
   min-height: max(52px, var(--md-touch-target, 0px));
   padding-inline: 16px;
   color: var(--muted);
-  border-radius: 28px;
-  background: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--line);
+  border-radius: var(--control-radius);
+  background: var(--panel);
 }
 .settings-search:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .settings-directory .settings-search input[type='search'] {
@@ -85,11 +87,11 @@
   list-style: none;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--radius);
 }
 .settings-directory-group li + li { border-top: 1px solid var(--line); }
-.settings-directory-group li:first-child a { border-start-start-radius: 19px; border-start-end-radius: 19px; }
-.settings-directory-group li:last-child a { border-end-start-radius: 19px; border-end-end-radius: 19px; }
+.settings-directory-group li:first-child a { border-start-start-radius: calc(var(--radius) - 1px); border-start-end-radius: calc(var(--radius) - 1px); }
+.settings-directory-group li:last-child a { border-end-start-radius: calc(var(--radius) - 1px); border-end-end-radius: calc(var(--radius) - 1px); }
 .settings-directory-group a {
   display: flex;
   align-items: center;
@@ -417,9 +419,10 @@ button[role='switch'][aria-checked='true'] > span {
 }
 .standard-label-editor,
 .custom-field-editor {
-  padding: 20px;
-  background: var(--md-sys-color-surface-container-low);
-  border-radius: 16px;
+  padding: clamp(12px, 2vw, 20px);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   margin-block: 16px;
 }
 .standard-label-editor {
@@ -1284,11 +1287,11 @@ button[role='switch'][aria-checked='true'] > span {
 .field-settings-shortcuts small { color: var(--muted); }
 .field-settings-search { max-width: 26rem; margin-block: 16px 24px; }
 .lead-field-manager .settings-field-row {
-  padding: 10px 12px;
+  padding: 12px;
   margin-block: 6px;
-  border: 0;
-  border-radius: 12px;
-  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--line);
+  border-radius: var(--control-radius);
+  background: var(--panel);
 }
 .lead-field-manager .settings-field-row[data-removed] {
   background: transparent;

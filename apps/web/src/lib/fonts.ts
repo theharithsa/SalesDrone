@@ -2,8 +2,8 @@ export const interfaceFonts = [
   {
     id: 'standard',
     label: 'Standard',
-    description: 'Google Sans headings and Manrope text',
-    family: "'Manrope Variable', Arial, sans-serif",
+    description: 'Figtree headings and text from Astryx Neutral',
+    family: "'Figtree Variable', system-ui, sans-serif",
   },
   {
     id: 'inter',

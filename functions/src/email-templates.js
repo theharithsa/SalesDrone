@@ -1,4 +1,4 @@
-import { releaseNotesUrl } from './email-release-announcement.js';
+import { releaseNotesUrl } from './email-release-links.js';
 
 export const EMAIL_FROM = 'SalesDrone <notifications@salesdrone.in>';
 export const LEGACY_TEMPLATE_VERSION = 2;

@@ -12,9 +12,11 @@ Everyone
 
 2. An approved active member enters the live workspace. An unapproved identity sees isolated demonstration records. Signing in alone does not grant access to company leads.
 
-3. For a safe rehearsal, choose Explore the demo on the login screen. Changes are temporary and reset when you leave or choose Reset demo.
+3. Use the homepage to see what SalesDrone does. Choose Explore the demo beside sign-in, or Open sample workspace near the end of the page. Changes are temporary and reset when you leave or choose Reset demo.
 
 4. Check your profile and timezone in Settings before scheduling follow-ups. Enable notifications on each browser where you want alerts.
+
+5. To install SalesDrone as a web app, open it in Safari on macOS Sonoma or later and choose File > Add to Dock. In Chrome on Android, use the browser menu to install it or add it to your home screen.
 
 SalesDrone by AvinyaTech, part of Avinya Enterprises, helps small teams move from enquiry spreadsheets to a clear next step for each relationship. Start with imports, then capture new enquiries through the app form. No telephony integration is implied: you log the outcome of calls you make.
 
@@ -764,7 +766,7 @@ A lead opens its dedicated page on desktop and mobile. The lead table, journey a
 
 Dialogs and Settings forms select columns by their own available width. Dashboard labels remain readable independently of chart geometry. Keyboard focus, reduced motion and 44px control targets remain available.
 
-Standard keeps the current Google Sans/Manrope pairing. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode uses its own handwriting and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
+Standard uses Astryx Neutral’s Figtree typeface for headings and text. Inter and Source Sans 3 offer sans-serif alternatives; Lora is an editorial serif. Book mode uses its own handwriting and restores your saved selection when turned off. Branding, phone numbers and technical code are protected. Unsupported characters use system fallbacks.
 
 Settings > Appearance & time > Display zoom offers 85%, 90%, 100%, 110% or 125%. Save changes applies it on phones, tablets and desktops. Touch targets stay usable when making the content smaller. Browser and pinch zoom remain available; choose 100% to reset. This is personal and does not change permissions or lead data.
 
@@ -936,7 +938,7 @@ Workspace members and administrators
 
 4. Open a message’s main link, then sign in with your approved Google account to see the linked work.
 
-5. When the Admin enables Inbox Beta, open Email to send and reply to leads. Open linked conversations from the lead’s All timeline. Expand earlier messages as needed. Compose with visible formatting, and use Show plain text to switch views when reading an HTML message.
+5. When the Admin enables Inbox Beta, open Email to send and reply to leads. Open linked conversations from the lead’s All timeline. Expand earlier messages as needed. Format drafts with the icon toolbar. Use the previous or next arrow to move through loaded conversations, and Show plain text to switch views when reading an HTML message.
 
 Emails cover workspace invitations and active access, lead assignments and configured outcomes, and meaningful changes to a teammate’s shared task. A task’s responsible member appears in the app. Admins can use Resend email on an active invitation in People & access.
 

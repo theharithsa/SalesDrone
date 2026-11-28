@@ -1,3 +1,4 @@
+import { WorkspaceDateField } from '../components/WorkspaceDateField';
 import WorkspacePageHeader from '../components/WorkspacePageHeader';
 import { useEffect, useRef, useState } from "react";
 import {
@@ -195,8 +196,8 @@ export default function TeamPage({
             setRangeError('');
             setWindowQuery(new URLSearchParams({from, to}).toString());
           }}>
-            <label>From (UTC)<input required type="date" value={range.from} onChange={(e) => setRange({...range, from:e.target.value})} /></label>
-            <label>Through (UTC)<input required type="date" min={range.from} value={range.to} onChange={(e) => setRange({...range, to:e.target.value})} /></label>
+            <WorkspaceDateField label="From (UTC)" required value={range.from} onValueChange={(from) => setRange({...range, from})} />
+            <WorkspaceDateField label="Through (UTC)" required min={range.from} value={range.to} onValueChange={(to) => setRange({...range, to})} />
             <button className="button tonal" type="submit">Apply dates</button>
             <ErrorMessage error={rangeError} />
           </form>

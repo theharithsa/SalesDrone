@@ -1,4 +1,4 @@
 interface:
   display_name: "SalesDrone Interface and demo shell"
   short_description: "Maintain interface and demo shell in SalesDrone"
-  default_prompt: "Use $salesdrone-interface. Preserve Material 3, Google Sans/Manrope, keyboard focus and isolated synthetic previews. Verify with `npm run test:components` and report evidence limits."
+  default_prompt: "Use $salesdrone-interface. Preserve Astryx Neutral, personal appearance, keyboard focus and isolated synthetic previews. Verify with `npm run test:components` and report evidence limits."

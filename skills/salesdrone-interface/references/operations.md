@@ -134,7 +134,7 @@ ImportReviewPanel shows paginated history and row candidate/current/incoming com
 
 The v2 surface uses Material colour pairs, 16px body/forms, 14px labels/supporting,
 12px metadata and 32px page headlines (28px compact). Standard keeps self-hosted
-Google Sans headings and Manrope text; personal font choices remap the same roles.
+Astryx Neutral Figtree; personal font choices remap the same roles.
 Caveat remains on sign-in conversation lettering. Phone identifiers stay monospace.
 Book mode remaps palette/type roles without changing geometry. No default global
 zoom reduction: retain the explicit personal scale setting with usable touch targets.

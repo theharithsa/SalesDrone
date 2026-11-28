@@ -1,10 +1,8 @@
 # SalesDrone 2 interface design system
 
-**Approved v2.0 design:** [review guide](MATERIAL-3-REVIEW.md). Material 3 is the primary
-visual system for this redesign, replacing the previous Apple-derived size cascade.
-This does not claim native platform behavior, Material certification or Dynamic Type.
+**Astryx workspace.** Astryx Neutral supplies the foundation tokens. SalesDrone maps those roles to its accent, fonts, light and dark palettes, display scale, and Book mode. The [v2.0 Material 3 review](MATERIAL-3-REVIEW.md) records the earlier baseline. The [workspace review](ASTRYX-WORKSPACE-REVIEW.md) records the migrated surfaces and verification.
 
-**Import enquiries.** This route loads the pinned Astryx component CSS and neutral theme without the global reset. Use semantic Astryx actions and retain native form controls for workbook mapping. The route inherits workspace typography, accent and display preferences. Keep Astryx styles local when migrating later pages.
+The shell, forms, menus, collections and overlays share a control height, element radius and surface radius. Load Astryx's component CSS on routes that use those components. Use native inputs, selects and checkboxes for supported keyboard, mobile picker and validation behaviors.
 
 **Transactional email.** The shared mail renderer uses Astryx Neutral surface,
 border, spacing, and heading roles with the SalesDrone blue accent and Open Sans
@@ -16,12 +14,12 @@ stack in mail clients that block them. [Email runbook](EMAIL.md).
 
 ## Architecture
 
-`apps/web/src/main.tsx` loads only the Material entry files:
+`apps/web/src/main.tsx` loads the pinned Astryx Neutral theme and the shared styles. The `material/` directory retains its existing path so component ownership and appearance preferences stay stable:
 
 - `material/fonts.css`: existing self-hosted Google Sans/Caveat script subsets.
 - `material/tokens.css`: semantic colour, shape, typography, motion and preference roles.
 - `material/base.css`: shared actions, dialogs, feedback and utilities.
-- `material/controls.css`: filled form fields and progressive native-select menu styling.
+- `material/controls.css`: labelled form fields and progressive native-select menu styling.
 - `material/shell.css`: drawer/rail/bottom navigation, top bar and content spacing.
 - `material/workspaces.css`: collection, inspector, full lead, conversations, tasks and inbox.
 - `material/dashboard.css`: metrics, insights, charts and current-stage distribution.
@@ -35,7 +33,7 @@ another global refresh/override file or mix the v1 cascade into this entry.
 ## Typography
 
 Default root is 16px, using rem roles so browser text preferences and zoom work.
-Use Google Sans headings and Manrope body; alternate fonts change the same roles.
+Astryx Neutral uses Figtree for headings, body text and controls. Alternate fonts change the same roles.
 
 | Role | Size / line height | Use |
 | --- | --- | --- |
@@ -60,23 +58,28 @@ related areas. Error and tertiary pairs express semantic states with text labels
 Four palettes cover day/night and Book day/night. Text role pairs require >=4.5:1.
 Legacy variable names are aliases to these roles for functional component compatibility.
 
-Spacing uses a 4px grid. Rounded chips are 8px, filled form fields and dropdowns 12px corners, cards 20px and dialogs
-28px. Filled primary, tonal, outlined and text buttons carry distinct emphasis.
-Desktop actions have 40px visible containers; phone/coarse-pointer actions are 48px.
+Spacing uses a 4px grid. Field labels sit above the control and can wrap. Element and container radii use the Astryx theme tokens. Panels and dialogs use a visible neutral border. Filled primary, tonal, outlined and text buttons carry distinct emphasis.
+Desktop form controls and primary actions have 42px visible containers; phone/coarse-pointer actions are 48px.
 Focus rings are visible, 3px with offset. Reduced motion disables transitions; normal
 state changes use 160ms and entrances 240–260ms. Dragging follows the pointer directly.
 
+On the signed-out homepage, a brief stagger introduces the hero and sign-in.
+Additional product screenshots enter once as they reach the viewport. Respect
+reduced motion for both these effects and anchor scrolling. Use paired screenshots
+with the same crop dimensions so changing appearance keeps the page layout steady.
+Startup uses the same drone artwork as the shell. Its static HTML appears before
+JavaScript and yields as soon as the app or its recovery view is ready.
+
 ## Responsive composition
 
-- >=1200px: 232px drawer or user-collapsed 88px rail; lead conversation/details panes.
+- >=1200px: 226px drawer or user-collapsed 88px rail; lead conversation/details panes.
 - 600–1199px: labelled 88px navigation rail. Lead inspection opens a dedicated record
   below 1001px; details stack after activity below that width.
 - <600px: modal navigation drawer, 64px bottom navigation (plus safe-area inset at 100% zoom) and full-width content.
 - Lead tables switch to cards below 768px. Additional columns scroll locally.
 - Settings uses a searchable directory with a category rail on wide screens and focused pages with back navigation on phones.
 
-These are web content breakpoints, adapted from Material principles rather than
-native device detection. Keep horizontal scroll within tables, tabs, charts and the
+These are web content breakpoints driven by the available layout width. Keep horizontal scroll within tables, tabs, charts and the
 stage path. Long names/labels must wrap. A long details card must never stretch the
 conversation tab/action rows; the two panes have independent internal layout.
 
@@ -226,7 +229,7 @@ Lead Hygiene shares the page-body wrapper: desktop 32px side gutters, intermedia
 
 ## Compact product navigation and Team
 
-The sidebar retains its 232px drawer / 88px rail but uses 36px pointer rows, 18px icons, 8px selection shape and compact group headings. Phone/coarse controls retain at least 48px targets. WorkspaceNavigation registers capability-gated Workspace, Insights and Manage destinations for sidebar, quick navigation and route discovery; subviews stay in their module. The product list scrolls independently from branding and profile/utilities. Rail mode keeps destinations reachable after drawer-group collapse. Team uses tonal view switches, four summary cards, count-scaled charts and a comparison table; phones use member cards and a stacked chart layout. See [TEAM.md](TEAM.md).
+The sidebar retains its 226px drawer / 88px rail but uses 36px pointer rows, 18px icons, 8px selection shape and compact group headings. Phone/coarse controls retain at least 48px targets. WorkspaceNavigation registers capability-gated Workspace, Insights and Manage destinations for sidebar, quick navigation and route discovery; subviews stay in their module. The product list scrolls independently from branding and profile/utilities. Rail mode keeps destinations reachable after drawer-group collapse. Team uses tonal view switches, four summary cards, count-scaled charts and a comparison table; phones use member cards and a stacked chart layout. See [TEAM.md](TEAM.md).
 
 A lead opens as a dedicated page with the Comments tab active. Show Sales stage and Assigned to as read-only header values and keep their controls in Edit enquiry. Order the Journey, Details and Activity cards in the DOM so screen readers and keyboard navigation follow the same arrangement. Pointer dragging is confined to the grip, and move buttons offer an alternative. Use a brief Material easing on reposition and an immediate move under reduced motion.
 
