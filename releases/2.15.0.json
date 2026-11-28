@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "2.15.0",
-  "summary": "Introduce controlled transactional email, task digests and the Astryx Import enquiries experience for the weekly release candidate.",
+  "summary": "Introduce controlled transactional email and task digests, the Astryx workspace, the interactive public homepage, and wider lead journeys.",
   "modules": [
     "salesdrone-notifications",
     "salesdrone-people-permissions",
@@ -13,7 +13,8 @@
     "salesdrone-api-ingress",
     "salesdrone-workspace-settings",
     "salesdrone-leads",
-    "salesdrone-interface"
+    "salesdrone-interface",
+    "salesdrone-lead-journey"
   ],
   "documentation": [
     "README.md",
@@ -27,7 +28,9 @@
     "docs/TECHNICAL.md",
     "docs/observability.md",
     "docs/FINOPS.md",
-    "docs/product-guide.json"
+    "docs/product-guide.json",
+    "docs/ASTRYX-WORKSPACE-REVIEW.md",
+    "docs/whats-new/releases.json"
   ],
   "settingsSections": [
     "email-workspace",

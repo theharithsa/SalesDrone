@@ -109,6 +109,11 @@ ordinary pilot recipient list. The worker rechecks live membership, verified
 email and suppression before delivery. An announcement contains public
 release notes only.
 
+Verify the production deploy and post-deployment checks before the first send.
+Confirm that the public notes page and published Pages marker match the live
+version and commit. Then enable the workspace email and release announcement
+switches. Check release entries in Delivery history for signed final outcomes.
+
 The published Pages build emits a small marker for the verified application
 version and commit. The worker checks it at most once per quarter hour while
 waiting for publication. It saves a durable member cursor and stages up to

@@ -1,10 +1,11 @@
 {
   "2.15.0": {
-    "summary": "Change stages faster, review Excel imports in the redesigned workspace, and get useful updates by email.",
+    "summary": "Explore the redesigned workspace, update deals faster and choose which SalesDrone updates arrive by email.",
     "emailHighlights": [
       "Update a sales stage directly in the Leads table, on a phone card or in the lead header.",
       "Review and map enquiries in the redesigned Excel import.",
-      "Choose daily task reminders and weekly recaps in Email preferences."
+      "Choose daily task reminders and weekly recaps in Email preferences.",
+      "Try the interactive homepage tour and see the full-width sales stage journey in a lead."
     ]
   },
   "2.13.9": {
