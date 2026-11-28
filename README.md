@@ -43,7 +43,7 @@ Import the first Excel worksheet or CSV, map the fields, and select several disc
 
 A lead’s journey highlights its current stage and lists recorded stage changes. The dashboard groups current lead counts by your chosen field. Its headings and descriptions follow that field’s configured label; selecting a group opens matching leads. Recorded stage changes remain in the lead journey.
 
-![Fictional lead journey with its current stage highlighted.](site/assets/screenshots/journey-demo.jpg?sha=131b1614ba54)
+![Fictional lead journey with its current stage highlighted.](site/assets/screenshots/journey-demo.jpg?sha=b0ac59a1ad45)
 
 Gemini analyzes new call comments and lead notes for actionable follow-ups. Eligible reminders become tasks with visible dates and Edit/Undo; ambiguous instructions request clarification. Manual reminders, task editing, deletion, snoozing and completion remain available. On-demand dashboard AI summaries and configurable evidence-based scores help prioritize outreach; scores do not independently verify credit, licensing or distance claims.
 
@@ -187,7 +187,7 @@ The [testing guide](docs/TESTING.md) and [module case catalog](qa/test-cases.jso
 
 Personal desktop display zoom lives in Settings → Appearance & time. The compact lead header keeps identity, score, stage and assignment together; rings distinguish a known zero from missing evidence.
 
-![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/journey-demo.jpg?sha=131b1614ba54)
+![Compact lead identity, score, stage and assignment. Fictional demo only.](site/assets/screenshots/journey-demo.jpg?sha=b0ac59a1ad45)
 
 Batch edit up to 25 explicitly selected leads with a before/after review and atomic version checks. Lead pages now include a Files tab for private Firebase Storage attachments, with upload progress, retry and forced downloads. See [file architecture](docs/ATTACHMENTS.md) and [the product handbook](docs/PRODUCT-GUIDE.md).
 

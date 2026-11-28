@@ -442,12 +442,12 @@
   {
     "file": "journey-demo.jpg",
     "mode": "synthetic-demo",
-    "sha256": "131b1614ba549aa8d6bee75614965f118eb34b351e1c191b58364ec4ab36d2d4",
-    "capturedAt": "2026-11-07",
-    "viewport": "1440 x 900 CSS pixels; isolated Chromium at 100% scale",
-    "capturePixels": "1440 x 900",
-    "version": "2.10.1",
-    "review": "Visually and privacy reviewed. Fictional local demo or in-memory Admin preview. No customer records, credentials or live writes. Browser viewport review."
+    "sha256": "b0ac59a1ad45f6b2bb5fab8a56fca6453f6c646287eefe9a333c3e220a5b981f",
+    "capturedAt": "2026-11-28",
+    "viewport": "1920 x 1080 CSS pixels; isolated Chromium at 100% scale",
+    "capturePixels": "1920 x 1080",
+    "version": "2.15.0",
+    "review": "Wide lead detail with the stage path spanning the card and highlighting the current stage. Visually reviewed in the fictional demo. No customer data, credentials or live writes."
   },
   {
     "file": "import-fields-demo.jpg",

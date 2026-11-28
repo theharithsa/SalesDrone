@@ -2746,7 +2746,6 @@ input[type='tel'] {
 }
 .lead-card-disclosure[aria-expanded='true'] svg { transform: rotate(180deg); }
 .full-lead-page .lead-order-card .lead-journey { padding-block-start: 4px; }
-.lead-order-card .lead-stage-path { max-width: 1100px; }
 .full-lead-page .lead-qualification:not([hidden]) {
   animation: md-fade var(--md-sys-motion-short) both;
 }
