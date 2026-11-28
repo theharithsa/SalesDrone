@@ -528,11 +528,6 @@ kbd {
   width: 100%;
   padding: 24px;
 }
-.startup > .loading {
-  width: 100%;
-  flex-direction: column;
-  padding: 24px 0;
-}
 .spin {
   animation: md-spin 1s linear infinite;
 }

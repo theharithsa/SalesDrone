@@ -178,7 +178,7 @@ function taskDigestWindow() {
   return params.get('status') === 'Completed' && from && until && tz &&
     [from, until].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value)) ? { from, until, tz } : null;
 }
-export default function App() {
+export default function App({ onReady }: { onReady: () => void }) {
   const [session, setSession] = useState<Session | null>(null),
     [guest, setGuest] = useState(false),
     [inboxHasUnread, setInboxHasUnread] = useState(false),
@@ -519,6 +519,9 @@ export default function App() {
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
   }, [appearance, bookMode, fontStyle, displayScale, accentPalette]);
+  useEffect(() => {
+    if (authReady) onReady();
+  }, [authReady, onReady]);
   async function changeTheme(next: 'light' | 'dark') {
     if (demo || !session) {
       setGuestAppearance(next);
@@ -1543,22 +1546,17 @@ export default function App() {
       ...data.leads.map((lead) => lead.source).filter(Boolean),
     ]),
   ];
-  if (!authReady)
-    return (
-      <div className="startup">
-        <Brand full />
-        <Loading />
-      </div>
-    );
+  if (!authReady) return null;
   if (!active) {
     const openDemo = () => {
       setGuest(true);
       setPage('today');
       demoRef.current = demoData();
       setError('');
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
     return <ProductHome
+      appearanceMode={appearance}
       appearance={<ThemeToggle
         appearance={appearance}
         onChange={(next) => void changeTheme(next)}

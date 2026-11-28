@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
+import type { Session } from '../lib/types';
 import {
   ArrowDown, ArrowRight, Download, FileSpreadsheet, KeyRound,
   Laptop, SlidersHorizontal, Smartphone,
@@ -86,7 +87,7 @@ const featureLinks = [
 
 const screenSizes = {
   dashboard: [1360, 760],
-  leads: [1272, 640],
+  leads: [1134, 640],
   export: [560, 660],
   record: [1102, 670],
   tasks: [1134, 675],
@@ -102,23 +103,53 @@ const screenSizes = {
   phone: [390, 790],
 } as const;
 
-function Screen({ name, alt, eager = false }: { name: keyof typeof screenSizes; alt: string; eager?: boolean }) {
-  return <img
-    src={'/product-home/' + name + '.webp'}
-    alt={alt}
-    width={screenSizes[name][0]}
-    height={screenSizes[name][1]}
-    loading={eager ? undefined : 'lazy'}
-    decoding="async"
-    fetchPriority={eager ? 'high' : undefined}
-  />;
+function Screen({ name, alt, darkMedia, eager = false }: {
+  name: keyof typeof screenSizes;
+  alt: string;
+  darkMedia: string;
+  eager?: boolean;
+}) {
+  const [width, height] = screenSizes[name];
+  return <picture>
+    <source media={darkMedia} srcSet={'/product-home/dark/' + name + '.webp'} />
+    <img
+      src={'/product-home/' + name + '.webp'}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={eager ? undefined : 'lazy'}
+      decoding="async"
+      fetchPriority={eager ? 'high' : undefined}
+    />
+  </picture>;
 }
 
-export default function ProductHome({ appearance, signIn, onDemo }: {
+export default function ProductHome({ appearance, appearanceMode, signIn, onDemo }: {
   appearance: ReactNode;
+  appearanceMode: Session['preferences']['appearance'];
   signIn: ReactNode;
   onDemo: () => void;
 }) {
+  const main = useRef<HTMLElement>(null);
+  const darkMedia = appearanceMode === 'dark' ? 'all'
+    : appearanceMode === 'light' ? 'not all' : '(prefers-color-scheme: dark)';
+
+  useEffect(() => {
+    if (!main.current || !('IntersectionObserver' in window) ||
+      matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        (entry.target as HTMLElement).dataset.homeEntered = '';
+        observer.unobserve(entry.target);
+      }
+    }, { threshold: .1 });
+    for (const figure of main.current.querySelectorAll('.home-story figure, .home-workspace figure')) {
+      if (figure.getBoundingClientRect().top >= window.innerHeight) observer.observe(figure);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   return <div className="login-page product-home" id="top">
     <a className="skip-link" href="#sign-in">Skip to sign-in</a>
     <header className="login-top home-boundary">
@@ -134,7 +165,7 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
         <a className="button home-sign-in-link" href="#sign-in">Sign in</a>
       </div>
     </header>
-    <main>
+    <main ref={main}>
       <section className="home-hero home-boundary" aria-labelledby="product-title">
         <div className="home-intro">
           <div className="home-intro-copy">
@@ -146,10 +177,10 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
         </div>
         <figure className="home-hero-preview">
           <div className="home-hero-screen">
-            <Screen name="dashboard" alt="SalesDrone overview with pipeline, reminders and outreach at a glance" eager />
+            <Screen darkMedia={darkMedia} name="dashboard" alt="SalesDrone overview with pipeline, reminders and outreach at a glance" eager />
           </div>
           <div className="home-hero-phone">
-            <Screen name="phone" alt="Phone layout showing a lead follow-up, its due date, and a reschedule action" />
+            <Screen darkMedia={darkMedia} name="phone" alt="Phone layout showing a lead follow-up, its due date, and a reschedule action" />
           </div>
           <figcaption>SalesDrone on desktop and phone, shown with sample data.</figcaption>
         </figure>
@@ -167,9 +198,9 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
             <p>{story.description}</p>
           </div>
           <div className={story.id !== 'insights' ? 'home-screenshot-pair' : undefined}>
-            <figure className="home-showcase"><Screen name={story.image} alt={story.alt} /></figure>
-            {story.id === 'leads' && <figure className="home-showcase"><Screen name="record" alt="Lead details, stage journey, and activity for a fictional enquiry" /></figure>}
-            {story.id === 'follow-ups' && <figure className="home-showcase"><Screen name="reminder" alt="Set a reminder form with timing, recipient and notes for a lead follow-up" /></figure>}
+            <figure className="home-showcase"><Screen darkMedia={darkMedia} name={story.image} alt={story.alt} /></figure>
+            {story.id === 'leads' && <figure className="home-showcase"><Screen darkMedia={darkMedia} name="record" alt="Lead details, stage journey, and activity for a fictional enquiry" /></figure>}
+            {story.id === 'follow-ups' && <figure className="home-showcase"><Screen darkMedia={darkMedia} name="reminder" alt="Set a reminder form with timing, recipient and notes for a lead follow-up" /></figure>}
           </div>
           <dl className="home-story-details">
             {story.details.map(([title, description]) => <div key={title}><dt>{title}</dt><dd>{description}</dd></div>)}
@@ -183,7 +214,7 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
           <h2 id="email-title">Keep email with the lead.</h2>
           <p>When your workspace enables Email Beta, send formatted messages and receive replies in SalesDrone.</p>
         </div>
-        <figure className="home-showcase"><Screen name="email" alt="SalesDrone Email Beta with mailbox filters, a conversation list, and a formatted reply" /></figure>
+        <figure className="home-showcase"><Screen darkMedia={darkMedia} name="email" alt="SalesDrone Email Beta with mailbox filters, a conversation list, and a formatted reply" /></figure>
         <dl className="home-story-details">
           <div><dt>Compose and reply</dt><dd>Use the formatting toolbar to add headings, lists, and links. Read HTML messages or switch to plain text.</dd></div>
           <div><dt>Open the linked lead</dt><dd>Read the thread alongside the lead’s calls, comments, and shared tasks as you prepare the next follow-up.</dd></div>
@@ -201,7 +232,7 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
           {intelligence.map((feature) => <article key={feature.id} id={feature.id} className="home-feature-card">
             <h3>{feature.title}</h3>
             <p>{feature.text}</p>
-            <figure><Screen name={feature.image} alt={feature.alt} /></figure>
+            <figure><Screen darkMedia={darkMedia} name={feature.image} alt={feature.alt} /></figure>
           </article>)}
         </div>
       </section>
@@ -216,13 +247,13 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
             <FileSpreadsheet size={23} aria-hidden="true" />
             <h3>Import Excel or CSV</h3>
             <p>Map columns and sales stages. Preview updates and possible duplicates before applying changes.</p>
-            <figure><Screen name="import" alt="Workbook import review showing a possible duplicate and proposed changes" /></figure>
+            <figure><Screen darkMedia={darkMedia} name="import" alt="Workbook import review showing a possible duplicate and proposed changes" /></figure>
           </article>
           <article className="home-feature-card">
             <Download size={23} aria-hidden="true" />
             <h3>Export to Excel</h3>
             <p>Download the leads that match your current filters, with configured columns and comments. Export access is managed by your Admin.</p>
-            <figure><Screen name="export" alt="SalesDrone export dialog showing export options" /></figure>
+            <figure><Screen darkMedia={darkMedia} name="export" alt="SalesDrone export dialog showing export options" /></figure>
           </article>
         </div>
       </section>
@@ -233,8 +264,8 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
           <p>Switch between light and dark, choose an accent or monochrome, and adjust the font and display scale. Book mode uses handwritten typography and bound pages.</p>
         </div>
         <div className="home-workspace-grid">
-          <figure className="home-showcase"><Screen name="appearance" alt="Appearance settings with accent choices and interface preferences" /></figure>
-          <figure className="home-showcase"><Screen name="book" alt="The SalesDrone Tasks page shown in dark Book mode" /></figure>
+          <figure className="home-showcase"><Screen darkMedia={darkMedia} name="appearance" alt="Appearance settings with accent choices and interface preferences" /></figure>
+          <figure className="home-showcase"><Screen darkMedia={darkMedia} name="book" alt="The SalesDrone Tasks page shown in Book mode" /></figure>
         </div>
       </section>
 

@@ -3,6 +3,13 @@ import '@fontsource-variable/manrope';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+
+function finishStartup() {
+  const startup = document.getElementById('workspace-startup');
+  if (!startup) return;
+  startup.setAttribute('aria-hidden', 'true');
+  startup.dataset.ready = '';
+}
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { error: boolean }
@@ -11,7 +18,10 @@ class ErrorBoundary extends React.Component<
   static getDerivedStateFromError() {
     return { error: true };
   }
-  componentDidCatch() { reportRumFailure('RENDER'); }
+  componentDidCatch() {
+    finishStartup();
+    reportRumFailure('RENDER');
+  }
   render() {
     return this.state.error ? (
       <div className="startup">
@@ -35,7 +45,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           background: '#fff0c9', color: '#332503', fontWeight: 600,
         }}>Pre-production · Synthetic data</aside>
       )}
-      <App />
+      <App onReady={finishStartup} />
     </ErrorBoundary>
   </React.StrictMode>,
 );

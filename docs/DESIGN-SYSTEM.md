@@ -63,6 +63,13 @@ Desktop form controls and primary actions have 42px visible containers; phone/co
 Focus rings are visible, 3px with offset. Reduced motion disables transitions; normal
 state changes use 160ms and entrances 240–260ms. Dragging follows the pointer directly.
 
+On the signed-out homepage, a brief stagger introduces the hero and sign-in.
+Additional product screenshots enter once as they reach the viewport. Respect
+reduced motion for both these effects and anchor scrolling. Use paired screenshots
+with the same crop dimensions so changing appearance keeps the page layout steady.
+Startup uses the same drone artwork as the shell. Its static HTML appears before
+JavaScript and yields as soon as the app or its recovery view is ready.
+
 ## Responsive composition
 
 - >=1200px: 226px drawer or user-collapsed 88px rail; lead conversation/details panes.

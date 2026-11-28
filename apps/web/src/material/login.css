@@ -147,6 +147,7 @@
   border-radius: clamp(11px, 2.2vw, 26px);
   box-shadow: 0 16px 36px rgb(26 31 65 / .24);
 }
+.product-home figure picture { display: block; }
 .product-home figure img { width: 100%; height: auto; display: block; }
 .home-hero-preview figcaption {
   grid-column: 1 / -1;
@@ -288,4 +289,36 @@
   .login-top .brand strong { font-size: 1.25rem; }
   .login-top-actions { gap: 8px; }
   .home-sign-in-link { display: none; }
+}
+
+/* Motion stays on the public overview and leaves the layout in place. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.product-home):not(:has(.skip-link:focus)) { scroll-behavior: smooth; }
+
+  .home-intro-copy,
+  .product-home .login-card,
+  .home-hero-preview,
+  .product-home [data-home-entered] {
+    animation: home-arrive 420ms var(--md-sys-motion-easing);
+  }
+
+  .product-home .login-card { animation-delay: 40ms; animation-fill-mode: backwards; }
+  .home-hero-preview { animation-delay: 80ms; animation-fill-mode: backwards; }
+
+  .product-home :is(.home-nav a, .home-footer a, .home-feature-index a, .home-scroll-link, .button) {
+    transition: color var(--md-sys-motion-short), background-color var(--md-sys-motion-short),
+      border-color var(--md-sys-motion-short), transform var(--md-sys-motion-short) var(--md-sys-motion-easing);
+  }
+
+  .product-home :is(.button:not(:disabled), .home-feature-index a):active { transform: scale(.98); }
+  .home-scroll-link svg { transition: transform var(--md-sys-motion-short) var(--md-sys-motion-easing); }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .home-scroll-link:hover svg { transform: translateY(3px); }
+}
+
+@keyframes home-arrive {
+  from { opacity: .68; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }

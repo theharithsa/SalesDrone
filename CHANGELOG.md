@@ -15,6 +15,7 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 ### Changed
 
+- Match every homepage screenshot to the active light or dark appearance, add reduced-motion-aware transitions, and show an animated drone mark while SalesDrone starts.
 - Use the SalesDrone drone mark in the collapsed sidebar, browser tab, installed web app, and push notifications.
 - Apply shared Astryx Neutral surfaces, control sizes and field labels across the workspace. Align the Leads filters and stage controls, simplify sign-in, and give custom field editing the same layout as other forms.
 - Email Beta uses an icon-only formatting toolbar, clearer recipient and subject rows, previous and next conversation controls, and Cmd/Ctrl+Enter to send.
