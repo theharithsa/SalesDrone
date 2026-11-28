@@ -32,23 +32,6 @@
   font-family: 'Google Sans Variable', Arial, sans-serif;
   white-space: nowrap;
 }
-.brand-symbol {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 3px;
-  transform: rotate(-8deg);
-  flex-shrink: 0;
-}
-.brand-symbol span {
-  border-radius: 4px;
-  background: #0054a6;
-}
-.brand-symbol span:nth-child(2),
-.brand-symbol span:nth-child(3) {
-  background: #85aee7;
-}
 .brand > div {
   display: flex;
   flex-direction: column;

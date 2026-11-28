@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import {
-  ArrowDown, ArrowRight, Building2, Columns3,
-  FileSpreadsheet, KeyRound, Mail, SlidersHorizontal,
+  ArrowDown, ArrowRight, Download, FileSpreadsheet, KeyRound,
+  Laptop, SlidersHorizontal, Smartphone,
 } from 'lucide-react';
 import { Brand } from './UI';
 
@@ -23,45 +23,91 @@ const stories = [
   },
   {
     id: 'follow-ups',
-    name: 'Tasks & email',
+    name: 'Tasks & reminders',
     title: 'Know who owns the next step.',
     description: 'Assign follow-ups to teammates, keep personal reminders private, and see what is due from the same workspace.',
     image: 'tasks',
     alt: 'SalesDrone Tasks showing the linked lead, responsible person, due date, and reschedule action',
     details: [
       ['Follow through together', 'Open the linked lead from Tasks. Complete, reschedule, or reopen shared work with a comment when your access allows it.'],
-      ['Keep deadlines visible', 'Get workspace notifications and opt into due-task email reminders and weekly recaps when your workspace enables them.'],
-      ['Reply in context', 'With Email Beta enabled, compose formatted email and read replies in a conversation linked to a lead.'],
+      ['Set a reminder', 'Choose a follow-up date and time yourself, or review an automatic reminder detected in a note when that feature is enabled.'],
+      ['Keep deadlines visible', 'Use in-app notifications and supported device push. Opt into daily task reminders or a weekly recap by email when available.'],
     ],
   },
   {
     id: 'insights',
-    name: 'Reporting & intelligence',
+    name: 'Reporting',
     title: 'Decide what needs attention.',
     description: 'See the current pipeline, compare groups such as sales stages or enquiry sources, and open the leads behind a count.',
     image: 'team',
     alt: 'SalesDrone Team overview with workload totals, task completion, and recorded activity charts',
     details: [
       ['See how the team is working', 'Admins can review assigned leads, task progress, and recorded activity using preset or custom date ranges.'],
-      ['Ask about your leads', 'Use Lead Assistant for questions about accessible records. Review the supporting lead details and the evidence behind a score.'],
-      ['Keep the list healthy', 'Use Lead Hygiene to review shared contact details, missing information, and possible archive candidates.'],
+      ['Compare the pipeline', 'Group leads by configured fields and drill into the current counts from Today.'],
+      ['Review recorded activity', 'Admin Team views show recorded comments, calls, and task work by member in the selected time window.'],
     ],
   },
 ] as const;
 
+const intelligence = [
+  {
+    id: 'lead-assistant',
+    title: 'Lead Assistant',
+    text: 'Ask how many leads closed or which follow-ups are due next week. The assistant uses records you can access and includes supporting sources when available.',
+    image: 'assistant',
+    alt: 'Lead Assistant conversation using fictional lead records and source links',
+  },
+  {
+    id: 'lead-score',
+    title: 'Lead score',
+    text: 'See the evidence behind each score. Fit, intent, and reported risks help you prioritize. Leads with too little evidence can remain unscored.',
+    image: 'score',
+    alt: 'Lead score panel with separate fit, intent, and risk values and evidence',
+  },
+  {
+    id: 'lead-hygiene',
+    title: 'Lead Hygiene',
+    text: 'Review shared phone numbers, missing details, and possible archive candidates. Open the affected leads before acting on a finding.',
+    image: 'hygiene',
+    alt: 'Lead Hygiene report with contact matches and archive review findings',
+  },
+] as const;
+
 const workspace = [
-  { icon: FileSpreadsheet, title: 'Filtered Excel reports', text: 'Export the leads that match your filters, with comments and configured field order where available.' },
   { icon: SlidersHorizontal, title: 'Custom fields & layouts', text: 'Configure dropdowns, multi-selects, and phone fields. Set the order for forms and tables, and choose which details appear in the lead header.' },
   { icon: KeyRound, title: 'Workspace access', text: 'Admins control membership, lead scope, AvinyaIntelligence, and who can export. API integrations use scoped tokens and a documented contract.' },
-  { icon: Columns3, title: 'Make it yours', text: 'Choose your font, accent, and display scale. Book mode gives the workspace a quieter reading layout.' },
 ];
 
-function Screen({ name, alt, eager = false }: { name: string; alt: string; eager?: boolean }) {
+const featureLinks = [
+  ['leads', 'Leads'], ['follow-ups', 'Tasks & reminders'], ['email', 'Email & digests'],
+  ['lead-intelligence', 'Lead Intelligence'], ['lead-score', 'Lead score'], ['lead-hygiene', 'Lead Hygiene'],
+  ['import-export', 'Import & export'], ['appearance', 'Appearance'], ['install-app', 'Install app'],
+];
+
+const screenSizes = {
+  dashboard: [1360, 760],
+  leads: [1272, 640],
+  export: [560, 660],
+  record: [1102, 670],
+  tasks: [1134, 675],
+  team: [1134, 720],
+  assistant: [740, 298],
+  score: [579, 422],
+  hygiene: [989, 565],
+  import: [850, 824],
+  email: [1360, 715],
+  appearance: [1000, 494],
+  book: [1360, 494],
+  reminder: [560, 440],
+  phone: [390, 790],
+} as const;
+
+function Screen({ name, alt, eager = false }: { name: keyof typeof screenSizes; alt: string; eager?: boolean }) {
   return <img
     src={'/product-home/' + name + '.webp'}
     alt={alt}
-    width={name === 'phone' ? 390 : 1280}
-    height={name === 'phone' ? 810 : 800}
+    width={screenSizes[name][0]}
+    height={screenSizes[name][1]}
     loading={eager ? undefined : 'lazy'}
     decoding="async"
     fetchPriority={eager ? 'high' : undefined}
@@ -79,9 +125,9 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
       <Brand full />
       <nav className="home-nav" aria-label="Product">
         <a href="#leads">Leads</a>
-        <a href="#follow-ups">Follow-ups</a>
-        <a href="#insights">Insights</a>
-        <a href="#workspace">Workspace</a>
+        <a href="#email">Email</a>
+        <a href="#lead-intelligence">Lead Intelligence</a>
+        <a href="#install-app">Install app</a>
       </nav>
       <div className="login-top-actions">
         {appearance}
@@ -109,6 +155,10 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
         </figure>
       </section>
 
+      <nav className="home-feature-index home-boundary" aria-label="Explore SalesDrone">
+        {featureLinks.map(([id, label]) => <a key={id} href={'#' + id}>{label}</a>)}
+      </nav>
+
       <div className="home-stories">
         {stories.map((story) => <section key={story.id} id={story.id} className="home-story home-boundary" aria-labelledby={story.id + '-title'}>
           <div className="home-story-heading">
@@ -116,45 +166,108 @@ export default function ProductHome({ appearance, signIn, onDemo }: {
             <h2 id={story.id + '-title'}>{story.title}</h2>
             <p>{story.description}</p>
           </div>
-          <figure className="home-showcase"><Screen name={story.image} alt={story.alt} /></figure>
+          <div className={story.id !== 'insights' ? 'home-screenshot-pair' : undefined}>
+            <figure className="home-showcase"><Screen name={story.image} alt={story.alt} /></figure>
+            {story.id === 'leads' && <figure className="home-showcase"><Screen name="record" alt="Lead details, stage journey, and activity for a fictional enquiry" /></figure>}
+            {story.id === 'follow-ups' && <figure className="home-showcase"><Screen name="reminder" alt="Set a reminder form with timing, recipient and notes for a lead follow-up" /></figure>}
+          </div>
           <dl className="home-story-details">
             {story.details.map(([title, description]) => <div key={title}><dt>{title}</dt><dd>{description}</dd></div>)}
           </dl>
         </section>)}
       </div>
 
+      <section id="email" className="home-workspace home-boundary" aria-labelledby="email-title">
+        <div className="home-story-heading">
+          <p className="home-kicker">Email & digests</p>
+          <h2 id="email-title">Keep email with the lead.</h2>
+          <p>When your workspace enables Email Beta, send formatted messages and receive replies in SalesDrone.</p>
+        </div>
+        <figure className="home-showcase"><Screen name="email" alt="SalesDrone Email Beta with mailbox filters, a conversation list, and a formatted reply" /></figure>
+        <dl className="home-story-details">
+          <div><dt>Compose and reply</dt><dd>Use the formatting toolbar to add headings, lists, and links. Read HTML messages or switch to plain text.</dd></div>
+          <div><dt>Open the linked lead</dt><dd>Read the thread alongside the lead’s calls, comments, and shared tasks as you prepare the next follow-up.</dd></div>
+          <div><dt>Stay up to date</dt><dd>Workspace notifications can cover invitations, assignments, and stage outcomes. Daily reminders and weekly recaps summarize task work when enabled.</dd></div>
+        </dl>
+      </section>
+
+      <section id="lead-intelligence" className="home-workspace home-boundary" aria-labelledby="intelligence-title">
+        <div className="home-story-heading">
+          <p className="home-kicker">AvinyaIntelligence</p>
+          <h2 id="intelligence-title">Lead Intelligence</h2>
+          <p>Ask a question, review qualification evidence, or check where your lead data needs attention. Availability follows workspace permissions.</p>
+        </div>
+        <div className="home-intelligence-grid">
+          {intelligence.map((feature) => <article key={feature.id} id={feature.id} className="home-feature-card">
+            <h3>{feature.title}</h3>
+            <p>{feature.text}</p>
+            <figure><Screen name={feature.image} alt={feature.alt} /></figure>
+          </article>)}
+        </div>
+      </section>
+
+      <section id="import-export" className="home-workspace home-boundary" aria-labelledby="data-title">
+        <div className="home-story-heading">
+          <h2 id="data-title">Import & export leads</h2>
+          <p>Use your existing spreadsheet and export the records you’re authorised to work with.</p>
+        </div>
+        <div className="home-workspace-grid home-data-grid">
+          <article className="home-feature-card">
+            <FileSpreadsheet size={23} aria-hidden="true" />
+            <h3>Import Excel or CSV</h3>
+            <p>Map columns and sales stages. Preview updates and possible duplicates before applying changes.</p>
+            <figure><Screen name="import" alt="Workbook import review showing a possible duplicate and proposed changes" /></figure>
+          </article>
+          <article className="home-feature-card">
+            <Download size={23} aria-hidden="true" />
+            <h3>Export to Excel</h3>
+            <p>Download the leads that match your current filters, with configured columns and comments. Export access is managed by your Admin.</p>
+            <figure><Screen name="export" alt="SalesDrone export dialog showing export options" /></figure>
+          </article>
+        </div>
+      </section>
+
+      <section id="appearance" className="home-workspace home-boundary" aria-labelledby="appearance-title">
+        <div className="home-story-heading">
+          <h2 id="appearance-title">Choose how SalesDrone looks.</h2>
+          <p>Switch between light and dark, choose an accent or monochrome, and adjust the font and display scale. Book mode uses handwritten typography and bound pages.</p>
+        </div>
+        <div className="home-workspace-grid">
+          <figure className="home-showcase"><Screen name="appearance" alt="Appearance settings with accent choices and interface preferences" /></figure>
+          <figure className="home-showcase"><Screen name="book" alt="The SalesDrone Tasks page shown in dark Book mode" /></figure>
+        </div>
+      </section>
+
       <section id="workspace" className="home-workspace home-boundary" aria-labelledby="workspace-title">
         <div className="home-story-heading">
-          <p className="home-kicker">Workspace setup</p>
-          <h2 id="workspace-title">Set up SalesDrone around your process.</h2>
-          <p>Bring in existing leads, define what the team tracks, and grant people the access they need.</p>
+          <h2 id="workspace-title">Configure your workspace.</h2>
         </div>
-        <article className="home-import-card">
-          <div>
-            <FileSpreadsheet size={23} aria-hidden="true" />
-            <h3>Bring your spreadsheet with you.</h3>
-            <p>Import Excel or CSV, map the columns and sales stages, and review duplicate matches before applying changes. Export a filtered report for offline work when your access allows it.</p>
-          </div>
-          <figure><Screen name="import" alt="An import review with duplicate matches and individual field changes to approve" /></figure>
-        </article>
         <div className="home-workspace-grid">
-          <article className="home-feature-card home-feature-wide">
-            <Building2 size={23} aria-hidden="true" />
-            <h3>One record from first contact onward</h3>
-            <p>Open a lead to see its contact details, stage history, and activity before a call or handoff.</p>
-            <figure><Screen name="record" alt="A sample lead record with contact information, lead journey, and activity" /></figure>
-          </article>
-          <article className="home-feature-card home-feature-wide">
-            <Mail size={23} aria-hidden="true" />
-            <h3>Lead conversations in Email Beta</h3>
-            <p>Read an HTML reply alongside the conversation list. Compose with formatting and jump back to the linked lead.</p>
-            <figure><Screen name="email" alt="SalesDrone Email Beta showing mailbox filters, a conversation list, and an HTML reply" /></figure>
-          </article>
           {workspace.map(({ icon: Icon, title, text }) => <article key={title} className="home-feature-card">
             <Icon size={23} aria-hidden="true" />
             <h3>{title}</h3>
             <p>{text}</p>
           </article>)}
+        </div>
+      </section>
+
+      <section id="install-app" className="home-workspace home-boundary" aria-labelledby="install-title">
+        <div className="home-story-heading">
+          <p className="home-kicker">Progressive web app</p>
+          <h2 id="install-title">Install SalesDrone on your device.</h2>
+          <p>Open the same workspace from the Mac Dock or your Android home screen.</p>
+        </div>
+        <div className="home-workspace-grid">
+          <article className="home-feature-card">
+            <Laptop size={23} aria-hidden="true" />
+            <h3>Mac</h3>
+            <p>On macOS Sonoma or later, open SalesDrone in Safari and choose <strong>File → Add to Dock</strong>.</p>
+          </article>
+          <article className="home-feature-card">
+            <Smartphone size={23} aria-hidden="true" />
+            <h3>Android</h3>
+            <p>Open SalesDrone in Chrome. From the browser menu, choose the install or Add to Home screen option and confirm.</p>
+          </article>
         </div>
       </section>
 

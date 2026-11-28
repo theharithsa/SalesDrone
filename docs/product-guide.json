@@ -9,7 +9,8 @@
         "Open SalesDrone and choose Continue with Google. Use the account your administrator approved. Allow the sign-in window; if your browser blocks it, use the redirect sign-in option.",
         "An approved active member enters the live workspace. An unapproved identity sees isolated demonstration records. Signing in alone does not grant access to company leads.",
         "Use the homepage to see what SalesDrone does. Choose Explore the demo beside sign-in, or Open sample workspace near the end of the page. Changes are temporary and reset when you leave or choose Reset demo.",
-        "Check your profile and timezone in Settings before scheduling follow-ups. Enable notifications on each browser where you want alerts."
+        "Check your profile and timezone in Settings before scheduling follow-ups. Enable notifications on each browser where you want alerts.",
+        "To install SalesDrone as a web app, open it in Safari on macOS Sonoma or later and choose File > Add to Dock. In Chrome on Android, use the browser menu to install it or add it to your home screen."
       ],
       "details": [
         "SalesDrone by AvinyaTech, part of Avinya Enterprises, helps small teams move from enquiry spreadsheets to a clear next step for each relationship. Start with imports, then capture new enquiries through the app form. No telephony integration is implied: you log the outcome of calls you make.",

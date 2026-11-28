@@ -11,10 +11,11 @@ Confirm the published version and date in [GitHub Releases](https://github.com/t
 
 ### Added
 
-- A product homepage at sign-in with desktop and phone previews, workflow walkthroughs, and direct access to the sample workspace.
+- A product homepage at sign-in with tightly cropped workspace previews, sections for email, lead intelligence, reminders, import and export, and appearance, plus Mac and Android installation instructions.
 
 ### Changed
 
+- Use the SalesDrone drone mark in the collapsed sidebar, browser tab, installed web app, and push notifications.
 - Apply shared Astryx Neutral surfaces, control sizes and field labels across the workspace. Align the Leads filters and stage controls, simplify sign-in, and give custom field editing the same layout as other forms.
 - Email Beta uses an icon-only formatting toolbar, clearer recipient and subject rows, previous and next conversation controls, and Cmd/Ctrl+Enter to send.
 

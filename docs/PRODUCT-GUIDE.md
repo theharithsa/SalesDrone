@@ -16,6 +16,8 @@ Everyone
 
 4. Check your profile and timezone in Settings before scheduling follow-ups. Enable notifications on each browser where you want alerts.
 
+5. To install SalesDrone as a web app, open it in Safari on macOS Sonoma or later and choose File > Add to Dock. In Chrome on Android, use the browser menu to install it or add it to your home screen.
+
 SalesDrone by AvinyaTech, part of Avinya Enterprises, helps small teams move from enquiry spreadsheets to a clear next step for each relationship. Start with imports, then capture new enquiries through the app form. No telephony integration is implied: you log the outcome of calls you make.
 
 Navigation includes Today, Leads, Tasks, Notifications, Documentation and Settings. Members with import access also see Imports and history. The bell opens an inbox overlay; it does not replace your current working page. Documentation opens this handbook in another browser tab.

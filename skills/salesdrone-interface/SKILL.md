@@ -68,7 +68,7 @@ Its fixed history sheet divides viewport dimensions by interface-scale; verify b
 zoom and short windows. Composer insets account for bottom navigation only inside
 the app shell, so standalone synthetic previews do not inherit a phantom nav gap.
 
-The drone wordmark follows the accent. Book mode uses bound pages and handwriting across the shell and dialogs. Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use shared buttons and narrow-card wrapping.
+The shell drone follows the accent. PWA and push use it. Book mode uses bound pages and handwriting in the shell and dialogs. Appearance initialization is external so SPA script-src does not need unsafe-inline. CSP must retain self-hosted fonts, worker/blob exports, Google/App Check and the configured Dynatrace agent/beacon; API portal remains stricter. Restore controls use shared buttons and narrow-card wrapping.
 
 ResearchPage uses page-body for the same responsive padding/max-width as other workspace pages. Assistant compound answers render one conversational message, with supporting context in a collapsed native details element and independent result controls beneath it. Preserve visible partial/setup warnings and use returned counts only; no additional model call is required for presentation.
 

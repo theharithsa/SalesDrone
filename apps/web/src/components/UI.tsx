@@ -6,12 +6,6 @@ export function Brand({ full = false }: { full?: boolean }) {
   return (
     <div className="brand">
       <span className="brand-drone" aria-hidden="true" />
-      <span className="brand-symbol" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-      </span>
       <div>
         <strong>
           SalesDrone<span className="brand-dot">.</span>
