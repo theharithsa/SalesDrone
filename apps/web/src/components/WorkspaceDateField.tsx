@@ -22,6 +22,7 @@ export function WorkspaceDateField({
   const [draft, setDraft] = useState(defaultValue);
   const [entryError, setEntryError] = useState<DateInputEntryError | null>(null);
   const [validation, setValidation] = useState('');
+  const dateLabelId = useId();
   const picker = useRef<HTMLInputElement>(null);
   const formField = useRef<HTMLInputElement>(null);
   const selected = value ?? draft;
@@ -37,8 +38,8 @@ export function WorkspaceDateField({
     onValueChange?.(next);
   }
 
-  return <div className="workspace-date-field">
-    <span className="field-label" aria-hidden="true">{label}</span>
+  return <div className="workspace-date-field" role="group" aria-labelledby={dateLabelId}>
+    <span className="field-label" id={dateLabelId}>{label}</span>
     <Suspense fallback={<div className="workspace-date-loading" role="status">Loading calendar…</div>}>
       <DateInput
         label={label}
